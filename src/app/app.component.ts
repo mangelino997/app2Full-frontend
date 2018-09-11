@@ -7,11 +7,12 @@ import { Router } from '@angular/router';
   templateUrl: './app.component.html'
 })
 export class AppComponent {
-  visible:boolean = false;
-  modulos = null;
-  usuario = {};
-  empresa = {};
-  subopcion = null;
+  private visible:boolean = false;
+  private modulos = null;
+  private usuario = {rol:{id:null}};
+  private empresa = {};
+  private subopcion = null;
+  private rol:number = null;
   constructor(private appService: AppService, private router: Router) {}
   public setVisible(valor) {
     this.visible = valor;
@@ -23,6 +24,10 @@ export class AppComponent {
   //Establece el usuario
   public setUsuario(usuario) {
     this.usuario = usuario;
+  }
+  //Obtiene el rol del usuario actual
+  public getRol() {
+    return this.usuario.rol.id;
   }
   //Obtiene la empresa
   public getEmpresa() {

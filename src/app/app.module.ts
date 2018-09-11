@@ -2,9 +2,11 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule, MatSelectModule, MatTabsModule} from '@angular/material';
+import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule, MatSelectModule, MatTabsModule, MatIconModule, MatCardModule} from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
+import { ToastrModule } from 'ngx-toastr';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 //Servicios
 import { AppService } from './servicios/app.service';
@@ -54,12 +56,21 @@ const appRoutes: Routes = [
     MatDividerModule,
     MatSelectModule,
     MatTabsModule,
+    MatIconModule,
+    MatCardModule,
     ReactiveFormsModule,
+    NgbModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    }),
     RouterModule.forRoot(appRoutes)
   ],
   exports: [
     MatButtonModule,
     MatCheckboxModule,
+    MatIconModule,
     ReactiveFormsModule
   ],
   providers: [

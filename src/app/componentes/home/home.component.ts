@@ -8,6 +8,6 @@ import { AppComponent } from '../../app.component';
 export class HomeComponent {
   constructor(private appComponent: AppComponent) {
     this.appComponent.setVisible(true);
-    this.appComponent.obtenerMenu();
+    //this.appComponent.obtenerMenu();
   }
 }
