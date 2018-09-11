@@ -1,0 +1,30 @@
+<div class="contenedor">
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+      <form [formGroup]="formulario">
+        <div id="divUsername" class="form-group has-float-label">
+          <label id="labelUsername" for="idUsername" class="tamanio-label">Usuario</label>
+          <input id="idUsername" type="text" formControlName="username" autocomplete="off"
+            class="form-control" required [(ngModel)]="elemento.username">
+        </div>
+        <div id="divPassword" class="form-group has-float-label">
+          <label id="labelPassword" for="idPassword" class="tamanio-label">Contraseña</label>
+          <input id="idPassword" type="password" formControlName="password" autocomplete="off"
+            class="form-control" required [(ngModel)]="elemento.password">
+        </div>
+        <div *ngIf="estaAutenticado" class="form-group has-float-label">
+          <label for="idEmpresa" class="tamanio-label">Empresa</label>
+          <select id="idEmpresa" class="form-control" formControlName="empresa" [(ngModel)]="elemento.empresa">
+            <option *ngFor="let empresa of empresas" [ngValue]="empresa">{{empresa.razonSocial}}</option>
+          </select>
+        </div>
+        <hr />
+        <button *ngIf="!estaAutenticado" id="idBotonA" class="btn btn-primary btn-block" type="button"
+          name="buttonA" (click)="login()" [disabled]="!formulario.valid">Autenticarse</button>
+        <button *ngIf="estaAutenticado" id="idBotonI" class="btn btn-primary btn-block" type="button"
+          name="buttonI" (click)="ingresar(elemento)" [disabled]="!formulario.valid">Ingresar</button>
+      </form>
+    </div>
+  </div>
+</div>
