@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { PaisService } from '../../servicios/pais.service';
+import { AgendaTelefonicaService } from '../../servicios/agenda-telefonica.service';
 import { PestaniaService } from '../../servicios/pestania.service';
+import { LocalidadService } from '../../servicios/localidad.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -10,10 +11,10 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
-  selector: 'app-pais',
-  templateUrl: './pais.component.html'
+  selector: 'app-agendatelefonica',
+  templateUrl: './agenda-telefonica.component.html'
 })
-export class PaisComponent implements OnInit {
+export class AgendaTelefonicaComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -39,13 +40,18 @@ export class PaisComponent implements OnInit {
   //Define la lista completa de registros
   private listaCompleta:any = null;
   //Constructor
-  constructor(private paisService: PaisService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService) {
+  constructor(private servicio: AgendaTelefonicaService, private pestaniaService: PestaniaService,
+    private localidadServicio: LocalidadService, private appComponent: AppComponent, private toastr: ToastrService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
       id: new FormControl(),
-      nombre: new FormControl()
+      nombre: new FormControl(),
+      domicilio: new FormControl(),
+      telefonoFijo: new FormControl(),
+      telefonoMovil: new FormControl(),
+      correoelectronico: new FormControl(),
+      localidad: new FormControl()
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -61,7 +67,7 @@ export class PaisComponent implements OnInit {
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Se subscribe al servicio de lista de registros
-    this.paisService.listaCompleta.subscribe(res => {
+    this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
   }
@@ -130,7 +136,7 @@ export class PaisComponent implements OnInit {
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
-    this.paisService.obtenerSiguienteId().subscribe(
+    this.servicio.obtenerSiguienteId().subscribe(
       res => {
         this.elemento.id = res.json();
       },
@@ -141,7 +147,7 @@ export class PaisComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
-    this.paisService.listar().subscribe(
+    this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = res.json();
       },
@@ -152,7 +158,7 @@ export class PaisComponent implements OnInit {
   }
   //Agrega un registro
   private agregar(elemento) {
-    this.paisService.agregar(elemento).subscribe(
+    this.servicio.agregar(elemento).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
@@ -165,10 +171,10 @@ export class PaisComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
+        if(respuesta.codigo == 11003) {
+          document.getElementById("labelCorreoelectronico").classList.add('label-error');
+          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+          document.getElementById("idCorreoelectronico").focus();
           this.toastr.error(respuesta.mensaje);
         }
       }
@@ -176,7 +182,7 @@ export class PaisComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar(elemento) {
-  this.paisService.actualizar(elemento).subscribe(
+  this.servicio.actualizar(elemento).subscribe(
     res => {
       var respuesta = res.json();
       if(respuesta.codigo == 200) {
@@ -206,12 +212,19 @@ export class PaisComponent implements OnInit {
   search = (text$: Observable<string>) =>
     text$.pipe(
       debounceTime(200),
-      map(term => term.length < 2 ? [] : this.paisService.listarPorNombre(term))
+      map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
     )
-    formatter = (x: {nombre: string}) => x.nombre;
+    formatter = (x: {nombre:string}) => x.nombre;
+  //Funcion para listar por nombre
+  listarLocalidadesPorNombre = (text$: Observable<string>) =>
+    text$.pipe(
+      debounceTime(200),
+      map(term => term.length < 2 ? [] : this.localidadServicio.listarPorNombre(term))
+    )
+    formatearLocalidades = (x: {nombre:string, provincia:any}) => x.nombre + ' - ' + x.provincia.nombre;
   //Manejo de colores de campos y labels
-  public cambioCampo() {
-    document.getElementById("idNombre").classList.remove('is-invalid');
-    document.getElementById("labelNombre").classList.remove('label-error');
+  public cambioCampo(id, label) {
+    document.getElementById(id).classList.remove('is-invalid');
+    document.getElementById(label).classList.remove('label-error');
   };
 }
