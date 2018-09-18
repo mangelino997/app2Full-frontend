@@ -241,3 +241,8 @@ button.toast-close-button {
 .label-error {
     color: red;
 }
+/* Coloca cursor y color azul en span con click */
+.cursor-color {
+  cursor: pointer;
+  color: blue;
+}

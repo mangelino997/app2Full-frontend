@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PaisService } from '../../servicios/pais.service';
+import { BancoService } from '../../servicios/banco.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -10,10 +10,10 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
-  selector: 'app-pais',
-  templateUrl: './pais.component.html'
+  selector: 'app-banco',
+  templateUrl: './banco.component.html'
 })
-export class PaisComponent implements OnInit {
+export class BancoComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -39,13 +39,14 @@ export class PaisComponent implements OnInit {
   //Define la lista completa de registros
   private listaCompleta:any = null;
   //Constructor
-  constructor(private servicio: PaisService, private pestaniaService: PestaniaService,
+  constructor(private servicio: BancoService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
       id: new FormControl(),
-      nombre: new FormControl()
+      nombre: new FormControl(),
+      sitioWeb: new FormControl()
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -169,8 +170,12 @@ export class PaisComponent implements OnInit {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
+        } else if(respuesta.codigo == 11008) {
+          document.getElementById("labelSitioweb").classList.add('label-error');
+          document.getElementById("idSitioWeb").classList.add('is-invalid');
+          document.getElementById("idSitioWeb").focus();
         }
+        this.toastr.error(respuesta.mensaje);
       }
     );
   }
@@ -193,8 +198,12 @@ export class PaisComponent implements OnInit {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
+        } else if(respuesta.codigo == 11008) {
+          document.getElementById("labelSitioweb").classList.add('label-error');
+          document.getElementById("idSitioWeb").classList.add('is-invalid');
+          document.getElementById("idSitioWeb").focus();
         }
+        this.toastr.error(respuesta.mensaje);
       }
     );
   }
@@ -207,11 +216,22 @@ export class PaisComponent implements OnInit {
     map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
   )
   formatear = (x: {nombre: string}) => x.nombre;
-  //Manejo de colores de campos y labels
+  //Manejo de colores de campos y labels con error
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  };
+  }
+  //Manejo de colores de campos y labels con patron erroneo
+  public validarPatron(patron, valor, campo) {
+    var patronVerificador = new RegExp(patron);
+    if (!patronVerificador.test(valor)) {
+      if(campo == 'sitioWeb') {
+        document.getElementById("labelSitioweb").classList.add('label-error');
+        document.getElementById("idSitioWeb").classList.add('is-invalid');
+        this.toastr.error('Sitio Web incorrecto');
+      }
+    }
+  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);

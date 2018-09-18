@@ -21,6 +21,14 @@ import { LocalidadService } from './servicios/localidad.service';
 import { EmpresaService } from './servicios/empresa.service';
 import { PestaniaService } from './servicios/pestania.service';
 import { AgendaTelefonicaService } from './servicios/agenda-telefonica.service';
+import { AreaService } from './servicios/area.service';
+import { BancoService } from './servicios/banco.service';
+import { BarrioService } from './servicios/barrio.service';
+import { CategoriaService } from './servicios/categoria.service';
+import { CobradorService } from './servicios/cobrador.service';
+import { CompaniaSeguroService } from './servicios/compania-seguro.service';
+import { MarcaProductoService } from './servicios/marca-producto.service';
+import { MarcaVehiculoService } from './servicios/marca-vehiculo.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -31,6 +39,14 @@ import { UsuarioComponent } from './componentes/usuario/usuario.component';
 import { EmpresaComponent } from './componentes/empresa/empresa.component';
 import { PestaniaComponent } from './componentes/pestania/pestania.component';
 import { AgendaTelefonicaComponent } from './componentes/agenda-telefonica/agenda-telefonica.component';
+import { AreaComponent } from './componentes/area/area.component';
+import { BancoComponent } from './componentes/banco/banco.component';
+import { BarrioComponent } from './componentes/barrio/barrio.component';
+import { CategoriaComponent } from './componentes/categoria/categoria.component';
+import { CobradorComponent } from './componentes/cobrador/cobrador.component';
+import { CompaniaSeguroComponent } from './componentes/compania-seguro/compania-seguro.component';
+import { MarcaProductoComponent } from './componentes/marca-producto/marca-producto.component';
+import { MarcaVehiculoComponent } from './componentes/marca-vehiculo/marca-vehiculo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -38,7 +54,15 @@ const appRoutes: Routes = [
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
-  {path: 'generalesagendatelefonica', component: AgendaTelefonicaComponent, canActivate: [GuardiaService]}
+  {path: 'generalesagendatelefonica', component: AgendaTelefonicaComponent, canActivate: [GuardiaService]},
+  {path: 'area', component: AreaComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'contablebancos', component: BancoComponent, canActivate: [GuardiaService]},
+  {path: 'generalesbarrios', component: BarrioComponent, canActivate: [GuardiaService]},
+  {path: 'categoriasadministrar', component: CategoriaComponent, canActivate: [GuardiaService]},
+  {path: 'generalescobradores', component: CobradorComponent, canActivate: [GuardiaService]},
+  {path: 'companiaseguro', component: CompaniaSeguroComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'logisticamarcasproductos', component: MarcaProductoComponent, canActivate: [GuardiaService]},
+  {path: 'logisticamarcasvehiculos', component: MarcaVehiculoComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -59,7 +83,15 @@ const stompConfig: StompConfig = {
     UsuarioComponent,
     EmpresaComponent,
     PestaniaComponent,
-    AgendaTelefonicaComponent
+    AgendaTelefonicaComponent,
+    AreaComponent,
+    BancoComponent,
+    BarrioComponent,
+    CategoriaComponent,
+    CobradorComponent,
+    CompaniaSeguroComponent,
+    MarcaProductoComponent,
+    MarcaVehiculoComponent
   ],
   imports: [
     BrowserModule,
@@ -75,7 +107,7 @@ const stompConfig: StompConfig = {
     MatTabsModule,
     MatIconModule,
     MatCardModule,
-    ReactiveFormsModule,
+    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     NgbModule,
     ToastrModule.forRoot({
       timeOut: 3000,
@@ -101,6 +133,14 @@ const stompConfig: StompConfig = {
     EmpresaService,
     PestaniaService,
     AgendaTelefonicaService,
+    AreaService,
+    BancoService,
+    BarrioService,
+    CategoriaService,
+    CobradorService,
+    CompaniaSeguroService,
+    MarcaProductoService,
+    MarcaVehiculoService,
     StompService,
     {
       provide: StompConfig,

@@ -70,4 +70,8 @@ export class ProvinciaService {
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
   }
+  //Elimina un registro
+  public eliminar(id) {
+    return this.http.delete(this.url + '/' + id, this.options);
+  }
 }

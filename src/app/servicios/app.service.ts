@@ -28,4 +28,8 @@ export class AppService {
   public getTopic() {
     return this.URL_TOPIC;
   }
+  //Formatear numero a x decimales
+  public setDecimales(valor, cantidad) {
+    return Number(valor).toFixed(cantidad);
+  }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PaisService } from '../../servicios/pais.service';
+import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -10,10 +10,10 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
-  selector: 'app-pais',
-  templateUrl: './pais.component.html'
+  selector: 'app-compania-seguro',
+  templateUrl: './compania-seguro.component.html'
 })
-export class PaisComponent implements OnInit {
+export class CompaniaSeguroComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -39,7 +39,7 @@ export class PaisComponent implements OnInit {
   //Define la lista completa de registros
   private listaCompleta:any = null;
   //Constructor
-  constructor(private servicio: PaisService, private pestaniaService: PestaniaService,
+  constructor(private servicio: CompaniaSeguroService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { PaisService } from '../../servicios/pais.service';
+import { CategoriaService } from '../../servicios/categoria.service';
 import { PestaniaService } from '../../servicios/pestania.service';
+import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -10,10 +11,10 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
-  selector: 'app-pais',
-  templateUrl: './pais.component.html'
+  selector: 'app-categoria',
+  templateUrl: './categoria.component.html'
 })
-export class PaisComponent implements OnInit {
+export class CategoriaComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -39,13 +40,18 @@ export class PaisComponent implements OnInit {
   //Define la lista completa de registros
   private listaCompleta:any = null;
   //Constructor
-  constructor(private servicio: PaisService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService) {
+  constructor(private servicio: CategoriaService, private pestaniaService: PestaniaService,
+    private appService: AppService, private appComponent: AppComponent, private toastr: ToastrService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
       id: new FormControl(),
-      nombre: new FormControl()
+      nombre: new FormControl(),
+      basico: new FormControl(),
+      adicionalBasicoVacaciones: new FormControl(),
+      topeBasicoAdelantos: new FormControl(),
+      diasLaborables: new FormControl(),
+      horasLaborables: new FormControl()
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -152,6 +158,7 @@ export class PaisComponent implements OnInit {
   }
   //Agrega un registro
   private agregar(elemento) {
+    console.log(elemento);
     this.servicio.agregar(elemento).subscribe(
       res => {
         var respuesta = res.json();
@@ -211,7 +218,11 @@ export class PaisComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  };
+  }
+  //Formatea el numero a x decimales
+  public setDecimales(valor, cantidad) {
+    valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);

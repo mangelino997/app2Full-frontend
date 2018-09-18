@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PaisService } from '../../servicios/pais.service';
+import { CobradorService } from '../../servicios/cobrador.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -10,10 +10,10 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
-  selector: 'app-pais',
-  templateUrl: './pais.component.html'
+  selector: 'app-cobrador',
+  templateUrl: './cobrador.component.html'
 })
-export class PaisComponent implements OnInit {
+export class CobradorComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -39,13 +39,14 @@ export class PaisComponent implements OnInit {
   //Define la lista completa de registros
   private listaCompleta:any = null;
   //Constructor
-  constructor(private servicio: PaisService, private pestaniaService: PestaniaService,
+  constructor(private servicio: CobradorService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
       id: new FormControl(),
-      nombre: new FormControl()
+      nombre: new FormControl(),
+      estaActivo: new FormControl()
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -88,15 +89,23 @@ export class PaisComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        //Habilita el campo select
+        this.formulario.get('estaActivo').enable();
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
+        //Deshabilita el campo select
+        this.formulario.get('estaActivo').disable();
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        //Habilita el campo select
+        this.formulario.get('estaActivo').enable();
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        //Deshabilita el campo select
+        this.formulario.get('estaActivo').disable();
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
@@ -152,6 +161,7 @@ export class PaisComponent implements OnInit {
   }
   //Agrega un registro
   private agregar(elemento) {
+    elemento.usuarioAlta = this.appComponent.getUsuario();
     this.servicio.agregar(elemento).subscribe(
       res => {
         var respuesta = res.json();

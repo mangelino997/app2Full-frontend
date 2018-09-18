@@ -209,22 +209,49 @@ export class AgendaTelefonicaComponent implements OnInit {
     console.log(elemento);
   }
   //Funcion para listar por nombre
-  search = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
-    )
-    formatter = (x: {nombre:string}) => x.nombre;
+  buscar = (text$: Observable<string>) => text$.pipe(
+    map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
+  )
+  formatear = (x: {nombre:string}) => x.nombre;
   //Funcion para listar por nombre
-  listarLocalidadesPorNombre = (text$: Observable<string>) =>
-    text$.pipe(
-      debounceTime(200),
-      map(term => term.length < 2 ? [] : this.localidadServicio.listarPorNombre(term))
-    )
-    formatearLocalidades = (x: {nombre:string, provincia:any}) => x.nombre + ' - ' + x.provincia.nombre;
+  listarLocalidadesPorNombre = (text$: Observable<string>) => text$.pipe(
+    map(term => term.length < 2 ? [] : this.localidadServicio.listarPorNombre(term))
+  )
+  formatearLocalidades = (x: {nombre:string, provincia:any}) => x.nombre + ' - ' + x.provincia.nombre;
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   };
+  //Manejo de colores de campos y labels con patron erroneo
+  public validarPatron(patron, valor, campo) {
+    if(valor != undefined) {
+      var patronVerificador = new RegExp(patron);
+      if (!patronVerificador.test(valor)) {
+        if(campo == 'telefonoFijo') {
+          document.getElementById("labelTelefonoFijo").classList.add('label-error');
+          document.getElementById("idTelefonoFijo").classList.add('is-invalid');
+          this.toastr.error('Telefono Fijo incorrecto');
+        } else if(campo == 'telefonoMovil') {
+          document.getElementById("labelTelefonoMovil").classList.add('label-error');
+          document.getElementById("idTelefonoMovil").classList.add('is-invalid');
+          this.toastr.error('Telefono Movil incorrecto');
+        } else if(campo == 'correo') {
+          document.getElementById("labelCorreoelectronico").classList.add('label-error');
+          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+          this.toastr.error('Correo Electronico incorrecto');
+        }
+      }
+    }
+  }
+  //Muestra en la pestania buscar el elemento seleccionado de listar
+  public activarConsultar(elemento) {
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.elemento = elemento;
+  }
+  //Muestra en la pestania actualizar el elemento seleccionado de listar
+  public activarActualizar(elemento) {
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.elemento = elemento;
+  }
 }
