@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class LocalidadService {
+export class ObraSocialService {
   //Define la ruta al servicio web
-  private ruta:string = "/localidad";
+  private ruta:string = "/obrasocial";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -61,10 +61,6 @@ export class LocalidadService {
       }
     );
     return this.listaPorNombre;
-  }
-  //Obtiene el listado de localidades por provincia
-  public listarPorProvincia(idProvincia) {
-    return this.http.get(this.url + '/listarPorProvincia/' + idProvincia, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

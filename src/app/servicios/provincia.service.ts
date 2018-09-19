@@ -62,6 +62,10 @@ export class ProvinciaService {
     );
     return this.listaPorNombre;
   }
+  //Obtiene el listado de provincias por pais
+  public listarPorPais(idPais) {
+    return this.http.get(this.url + '/listarPorPais/' + idPais, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

@@ -48,7 +48,7 @@
               <label for="idDomicilio" class="tamanio-label">Domicilio</label>
               <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off"
                 class="form-control form-control-sm" maxlength="45"
-                [readonly]="soloLectura" [(ngModel)]="elemento.domicilio" required>
+                [readonly]="soloLectura" [(ngModel)]="elemento.domicilio">
             </div>
           </div>
           <div class="col-md-4">
@@ -58,7 +58,7 @@
                 class="form-control form-control-sm" maxlength="45" pattern="^[0-9]{10}(,[0-9]{10})*$"
                 (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', elemento.telefonoFijo, 'telefonoFijo')"
                 (ngModelChange)="cambioCampo('idTelefonoFijo', 'labelTelefonoFijo')"
-                [readonly]="soloLectura" [(ngModel)]="elemento.telefonoFijo" required>
+                [readonly]="soloLectura" [(ngModel)]="elemento.telefonoFijo">
             </div>
           </div>
           <div class="col-md-4">
@@ -68,7 +68,7 @@
                 class="form-control form-control-sm" maxlength="45" pattern="^[0-9]{10}(,[0-9]{10})*$"
                 (blur)="validarPatron('^[0-9]{10}(,[0-9]{10})*$', elemento.telefonoMovil, 'telefonoMovil')"
                 (ngModelChange)="cambioCampo('idTelefonoMovil', 'labelTelefonoMovil')"
-                [readonly]="soloLectura" [(ngModel)]="elemento.telefonoMovil" required>
+                [readonly]="soloLectura" [(ngModel)]="elemento.telefonoMovil">
             </div>
           </div>
         </div>
@@ -82,7 +82,7 @@
                 (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
                 pattern="^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$"
                 (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$', elemento.correoelectronico, 'correo')"
-                [readonly]="soloLectura" [(ngModel)]="elemento.correoelectronico" required>
+                [readonly]="soloLectura" [(ngModel)]="elemento.correoelectronico">
             </div>
           </div>
           <div class="col-md-8">

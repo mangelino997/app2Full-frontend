@@ -29,6 +29,9 @@ import { CobradorService } from './servicios/cobrador.service';
 import { CompaniaSeguroService } from './servicios/compania-seguro.service';
 import { MarcaProductoService } from './servicios/marca-producto.service';
 import { MarcaVehiculoService } from './servicios/marca-vehiculo.service';
+import { ModuloService } from './servicios/modulo.service';
+import { ObraSocialService } from './servicios/obra-social.service';
+import { OrigenDestinoService } from './servicios/origen-destino.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -47,6 +50,11 @@ import { CobradorComponent } from './componentes/cobrador/cobrador.component';
 import { CompaniaSeguroComponent } from './componentes/compania-seguro/compania-seguro.component';
 import { MarcaProductoComponent } from './componentes/marca-producto/marca-producto.component';
 import { MarcaVehiculoComponent } from './componentes/marca-vehiculo/marca-vehiculo.component';
+import { ModuloComponent } from './componentes/modulo/modulo.component';
+import { ObraSocialComponent } from './componentes/obra-social/obra-social.component';
+import { LocalidadComponent } from './componentes/localidad/localidad.component';
+import { OrigenDestinoComponent } from './componentes/origen-destino/origen-destino.component';
+import { ProvinciaComponent } from './componentes/provincia/provincia.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -61,8 +69,13 @@ const appRoutes: Routes = [
   {path: 'categoriasadministrar', component: CategoriaComponent, canActivate: [GuardiaService]},
   {path: 'generalescobradores', component: CobradorComponent, canActivate: [GuardiaService]},
   {path: 'companiaseguro', component: CompaniaSeguroComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'generaleslocalidades', component: LocalidadComponent, canActivate: [GuardiaService]},
   {path: 'logisticamarcasproductos', component: MarcaProductoComponent, canActivate: [GuardiaService]},
-  {path: 'logisticamarcasvehiculos', component: MarcaVehiculoComponent, canActivate: [GuardiaService]}
+  {path: 'logisticamarcasvehiculos', component: MarcaVehiculoComponent, canActivate: [GuardiaService]},
+  {path: 'menumodulos', component: ModuloComponent, canActivate: [GuardiaService]},
+  {path: 'obrassocialesadministrar', component: ObraSocialComponent, canActivate: [GuardiaService]},
+  {path: 'origenesdestinosadministrar', component: OrigenDestinoComponent, canActivate: [GuardiaService]},
+  {path: 'generalesprovincias', component: ProvinciaComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -91,7 +104,12 @@ const stompConfig: StompConfig = {
     CobradorComponent,
     CompaniaSeguroComponent,
     MarcaProductoComponent,
-    MarcaVehiculoComponent
+    MarcaVehiculoComponent,
+    ModuloComponent,
+    ObraSocialComponent,
+    LocalidadComponent,
+    OrigenDestinoComponent,
+    ProvinciaComponent
   ],
   imports: [
     BrowserModule,
@@ -141,6 +159,9 @@ const stompConfig: StompConfig = {
     CompaniaSeguroService,
     MarcaProductoService,
     MarcaVehiculoService,
+    ModuloService,
+    ObraSocialService,
+    OrigenDestinoService,
     StompService,
     {
       provide: StompConfig,
