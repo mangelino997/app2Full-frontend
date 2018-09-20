@@ -32,6 +32,8 @@ import { MarcaVehiculoService } from './servicios/marca-vehiculo.service';
 import { ModuloService } from './servicios/modulo.service';
 import { ObraSocialService } from './servicios/obra-social.service';
 import { OrigenDestinoService } from './servicios/origen-destino.service';
+import { RolService } from './servicios/rol.service';
+import { RubroService } from './servicios/rubro.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -55,6 +57,8 @@ import { ObraSocialComponent } from './componentes/obra-social/obra-social.compo
 import { LocalidadComponent } from './componentes/localidad/localidad.component';
 import { OrigenDestinoComponent } from './componentes/origen-destino/origen-destino.component';
 import { ProvinciaComponent } from './componentes/provincia/provincia.component';
+import { RolComponent } from './componentes/rol/rol.component';
+import { RubroComponent } from './componentes/rubro/rubro.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -75,7 +79,9 @@ const appRoutes: Routes = [
   {path: 'menumodulos', component: ModuloComponent, canActivate: [GuardiaService]},
   {path: 'obrassocialesadministrar', component: ObraSocialComponent, canActivate: [GuardiaService]},
   {path: 'origenesdestinosadministrar', component: OrigenDestinoComponent, canActivate: [GuardiaService]},
-  {path: 'generalesprovincias', component: ProvinciaComponent, canActivate: [GuardiaService]}
+  {path: 'generalesprovincias', component: ProvinciaComponent, canActivate: [GuardiaService]},
+  {path: 'rolesadministrar', component: RolComponent, canActivate: [GuardiaService]},
+  {path: 'generalesrubros', component: RubroComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -109,7 +115,9 @@ const stompConfig: StompConfig = {
     ObraSocialComponent,
     LocalidadComponent,
     OrigenDestinoComponent,
-    ProvinciaComponent
+    ProvinciaComponent,
+    RolComponent,
+    RubroComponent
   ],
   imports: [
     BrowserModule,
@@ -162,6 +170,8 @@ const stompConfig: StompConfig = {
     ModuloService,
     ObraSocialService,
     OrigenDestinoService,
+    RolService,
+    RubroService,
     StompService,
     {
       provide: StompConfig,
