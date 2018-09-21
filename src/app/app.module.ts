@@ -34,6 +34,23 @@ import { ObraSocialService } from './servicios/obra-social.service';
 import { OrigenDestinoService } from './servicios/origen-destino.service';
 import { RolService } from './servicios/rol.service';
 import { RubroService } from './servicios/rubro.service';
+import { RubroProductoService } from './servicios/rubro-producto.service';
+import { SeguridadSocialService } from './servicios/seguridad-social.service';
+import { SexoService } from './servicios/sexo.service';
+import { SindicatoService } from './servicios/sindicato.service';
+import { SituacionClienteService } from './servicios/situacion-cliente.service';
+import { SubmoduloService } from './servicios/submodulo.service';
+import { SubopcionService } from './servicios/subopcion.service';
+import { SucursalService } from './servicios/sucursal.service';
+import { SucursalBancoService } from './servicios/sucursal-banco.service';
+import { TipoComprobanteService } from './servicios/tipo-comprobante.service';
+import { TipoContactoService } from './servicios/tipo-contacto.service';
+import { TipoCuentaBancariaService } from './servicios/tipo-cuenta-bancaria.service';
+import { TipoDocumentoService } from './servicios/tipo-documento.service';
+import { TipoProveedorService } from './servicios/tipo-proveedor.service';
+import { TipoTarifaService } from './servicios/tipo-tarifa.service';
+import { TipoVehiculoService } from './servicios/tipo-vehiculo.service';
+import { TramoService } from './servicios/tramo.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -59,6 +76,23 @@ import { OrigenDestinoComponent } from './componentes/origen-destino/origen-dest
 import { ProvinciaComponent } from './componentes/provincia/provincia.component';
 import { RolComponent } from './componentes/rol/rol.component';
 import { RubroComponent } from './componentes/rubro/rubro.component';
+import { RubroProductoComponent } from './componentes/rubro-producto/rubro-producto.component';
+import { SeguridadSocialComponent } from './componentes/seguridad-social/seguridad-social.component';
+import { SexoComponent } from './componentes/sexo/sexo.component';
+import { SindicatoComponent } from './componentes/sindicato/sindicato.component';
+import { SituacionClienteComponent } from './componentes/situacion-cliente/situacion-cliente.component';
+import { SubmoduloComponent } from './componentes/submodulo/submodulo.component';
+import { SubopcionComponent } from './componentes/subopcion/subopcion.component';
+import { SucursalComponent } from './componentes/sucursal/sucursal.component';
+import { SucursalBancoComponent } from './componentes/sucursal-banco/sucursal-banco.component';
+import { TipoComprobanteComponent } from './componentes/tipo-comprobante/tipo-comprobante.component';
+import { TipoContactoComponent } from './componentes/tipo-contacto/tipo-contacto.component';
+import { TipoCuentaBancariaComponent } from './componentes/tipo-cuenta-bancaria/tipo-cuenta-bancaria.component';
+import { TipoDocumentoComponent } from './componentes/tipo-documento/tipo-documento.component';
+import { TipoProveedorComponent } from './componentes/tipo-proveedor/tipo-proveedor.component';
+import { TipoTarifaComponent } from './componentes/tipo-tarifa/tipo-tarifa.component';
+import { TipoVehiculoComponent } from './componentes/tipo-vehiculo/tipo-vehiculo.component';
+import { TramoComponent } from './componentes/tramo/tramo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -81,7 +115,24 @@ const appRoutes: Routes = [
   {path: 'origenesdestinosadministrar', component: OrigenDestinoComponent, canActivate: [GuardiaService]},
   {path: 'generalesprovincias', component: ProvinciaComponent, canActivate: [GuardiaService]},
   {path: 'rolesadministrar', component: RolComponent, canActivate: [GuardiaService]},
-  {path: 'generalesrubros', component: RubroComponent, canActivate: [GuardiaService]}
+  {path: 'generalesrubros', component: RubroComponent, canActivate: [GuardiaService]},
+  {path: 'logisticarubrosproductos', component: RubroProductoComponent, canActivate: [GuardiaService]},
+  {path: 'orgprevisionalesadministrar', component: SeguridadSocialComponent, canActivate: [GuardiaService]},
+  {path: 'sexo', component: SexoComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'sindicatosadministrar', component: SindicatoComponent, canActivate: [GuardiaService]},
+  {path: 'situacioncliente', component: SituacionClienteComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'menusubmodulos', component: SubmoduloComponent, canActivate: [GuardiaService]},
+  {path: 'menusubopciones', component: SubopcionComponent, canActivate: [GuardiaService]},
+  {path: 'organizacionsucursales', component: SucursalComponent, canActivate: [GuardiaService]},
+  {path: 'contablebancossucursales', component: SucursalBancoComponent, canActivate: [GuardiaService]},
+  {path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'tipocuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'tipodocumento', component: TipoDocumentoComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'tipoproveedor', component: TipoProveedorComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'tipotarifa', component: TipoProveedorComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'logisticatiposdevehiculos', component: TipoVehiculoComponent, canActivate: [GuardiaService]},
+  {path: 'origenesdestinostramos', component: TramoComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -117,7 +168,24 @@ const stompConfig: StompConfig = {
     OrigenDestinoComponent,
     ProvinciaComponent,
     RolComponent,
-    RubroComponent
+    RubroComponent,
+    RubroProductoComponent,
+    SeguridadSocialComponent,
+    SexoComponent,
+    SindicatoComponent,
+    SituacionClienteComponent,
+    SubmoduloComponent,
+    SubopcionComponent,
+    SucursalComponent,
+    SucursalBancoComponent,
+    TipoComprobanteComponent,
+    TipoContactoComponent,
+    TipoCuentaBancariaComponent,
+    TipoDocumentoComponent,
+    TipoProveedorComponent,
+    TipoTarifaComponent,
+    TipoVehiculoComponent,
+    TramoComponent
   ],
   imports: [
     BrowserModule,
@@ -172,6 +240,23 @@ const stompConfig: StompConfig = {
     OrigenDestinoService,
     RolService,
     RubroService,
+    RubroProductoService,
+    SeguridadSocialService,
+    SexoService,
+    SindicatoService,
+    SituacionClienteService,
+    SubmoduloService,
+    SubopcionService,
+    SucursalService,
+    SucursalBancoService,
+    TipoComprobanteService,
+    TipoContactoService,
+    TipoCuentaBancariaService,
+    TipoDocumentoService,
+    TipoProveedorService,
+    TipoTarifaService,
+    TipoVehiculoService,
+    TramoService,
     StompService,
     {
       provide: StompConfig,

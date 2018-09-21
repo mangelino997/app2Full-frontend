@@ -1,0 +1,161 @@
+<div id="tramo">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>TRAMO</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-8 text-center">
+      <h5>{{pestaniaActual}} Tramo</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+              <label for="idAutocompletado" class="tamanio-label">Buscar por Origen</label>
+              <ng-template #rt let-r="result" let-t="term">
+                <ngb-highlight [result]="r.origen.nombre" [term]="t"></ngb-highlight>,
+                <ngb-highlight [result]="r.origen.provincia.nombre" [term]="t"></ngb-highlight>
+              </ng-template>
+              <input id="idAutocompletado" type="text" class="form-control form-control-sm"
+                formControlName="autocompletado" [(ngModel)]="elemento"
+                [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Código</label>
+              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
+                required readonly [(ngModel)]="elemento.id">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idOrigen" class="tamanio-label">Origen</label>
+              <ng-template #rt let-r="result" let-t="term">
+                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight> -
+                <ngb-highlight [result]="r.provincia.nombre" [term]="t"></ngb-highlight>
+              </ng-template>
+              <input id="idOrigen" type="text" class="form-control form-control-sm"
+                formControlName="origen" [(ngModel)]="elemento.origen"
+                [ngbTypeahead]="listarOrigenesDestinosPorNombre" [resultTemplate]="rt"
+                [inputFormatter]="formatearOrigenesDestinos" [readonly]="soloLectura" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idDestino" class="tamanio-label">Destino</label>
+              <ng-template #rt let-r="result" let-t="term">
+                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight> -
+                <ngb-highlight [result]="r.provincia.nombre" [term]="t"></ngb-highlight>
+              </ng-template>
+              <input id="idDestino" type="text" class="form-control form-control-sm"
+                formControlName="destino" [(ngModel)]="elemento.destino"
+                [ngbTypeahead]="listarOrigenesDestinosPorNombre" [resultTemplate]="rt"
+                [inputFormatter]="formatearOrigenesDestinos" [readonly]="soloLectura" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idKm" class="tamanio-label">Kilómetros</label>
+              <input id="idKm" type="number" formControlName="km" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="45"
+                [readonly]="soloLectura" [(ngModel)]="elemento.km" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idRutaAlternativa" class="tamanio-label">Ruta Alternativa</label>
+              <input id="idRutaAlternativa" type="text" formControlName="rutaAlternativa" autocomplete="off"
+                class="form-control form-control-sm" maxlength="20"
+                [readonly]="soloLectura" [(ngModel)]="elemento.rutaAlternativa">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idExcluirLiqChofer" class="tamanio-label">Excluir Liquidación Chofer</label>
+              <select id="idExcluirLiqChofer" formControlName="excluirLiqChofer" class="form-control form-control-sm"
+                [(ngModel)]="elemento.excluirLiqChofer" required>
+                <option value="false">No</option>
+                <option value="true">Si</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idEstaActivo" class="tamanio-label">Esta Activo</label>
+              <select id="idEstaActivo" formControlName="estaActivo" class="form-control form-control-sm"
+                [(ngModel)]="elemento.estaActivo" required>
+                <option value="false">No</option>
+                <option value="true">Si</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">{{pestaniaActual}}</button>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-12">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:5%" scope="col">id</th>
+            <th class="text-center" style="width:20%" scope="col">Origen</th>
+            <th class="text-center" style="width:20%" scope="col">Destino</th>
+            <th class="text-center" style="width:10%" scope="col">km</th>
+            <th class="text-center" style="width:10%" scope="col">Ruta Alternativa</th>
+            <th class="text-center" style="width:15%" scope="col">Excluir Liq. Chofer</th>
+            <th class="text-center" style="width:10%" scope="col">Esta Activo</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.id}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.origen.nombre}}, {{l.origen.provincia.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.destino.nombre}}, {{l.destino.provincia.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.km}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.rutaAlternativa}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.excluirLiqChofer == false ? 'No' : 'Si'}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.estaActivo == false ? 'No' : 'Si'}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

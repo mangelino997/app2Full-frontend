@@ -1,0 +1,86 @@
+<div id="seguridadsocial">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>SEGURIDAD SOCIAL</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-4 text-center">
+      <h5>{{pestaniaActual}} Seguridad Social</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+          <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+          <ng-template #rt let-r="result" let-t="term">
+            <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+          </ng-template>
+          <input id="idAutocompletado" type="text" class="form-control form-control-sm"
+            formControlName="autocompletado" [(ngModel)]="elemento" autocomplete="off"
+            [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Código</label>
+          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
+            required readonly [(ngModel)]="elemento.id">
+        </div>
+        <div class="form-group has-float-label">
+          <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
+          <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+            class="form-control form-control-sm" maxlength="45"
+            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')"
+            [readonly]="soloLectura" [(ngModel)]="elemento.nombre" required>
+        </div>
+        <div class="form-group has-float-label">
+          <label id="labelSitioweb" for="idSitioWeb" class="tamanio-label">Sitio Web</label>
+          <input id="idSitioWeb" type="text" formControlName="sitioWeb" autocomplete="off"
+            class="form-control form-control-sm" maxlength="45"
+            pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$"
+            (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', elemento.sitioWeb, 'sitioWeb')"
+            (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioweb')"
+            [readonly]="soloLectura" [(ngModel)]="elemento.sitioWeb">
+        </div>
+        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">
+          {{pestaniaActual}}
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-8">
+      <table class="table table-bordered table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:10%" scope="col">id</th>
+            <th class="text-center" style="width:40%" scope="col">Nombre</th>
+            <th class="text-center" style="width:30%" scope="col">Sitio Web</th>
+            <th class="text-center" style="width:10%" scope="col">-</th>
+            <th class="text-center" style="width:10%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.id}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.nombre}}</span>
+            </td>
+            <td align="center">
+              <span><a href="https://{{l.sitioWeb}}" target="_blank">{{l.sitioWeb}}</a></span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
