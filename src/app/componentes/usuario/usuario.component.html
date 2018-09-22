@@ -1,3 +1,161 @@
-<p>
-  usuario works!
-</p>
+<div id="usuario">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>USUARIO</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-8 text-center">
+      <h5>{{pestaniaActual}} Usuario</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+              <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+              <ng-template #rt let-r="result" let-t="term">
+                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+              </ng-template>
+              <input id="idAutocompletado" type="text" class="form-control form-control-sm"
+                formControlName="autocompletado" [(ngModel)]="elemento"
+                [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Código</label>
+              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
+                required readonly [(ngModel)]="elemento.id">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idNombre" class="tamanio-label">Nombre</label>
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45"
+                [readonly]="soloLectura" [(ngModel)]="elemento.nombre" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label id="labelUsername" for="idUsername" class="tamanio-label">Usuario</label>
+              <input id="idUsername" type="text" formControlName="username" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45"
+                [readonly]="soloLectura" [(ngModel)]="elemento.username" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idPassword" class="tamanio-label">Contrasenia</label>
+              <input id="idPassword" type="password" formControlName="password" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45"
+                [readonly]="soloLectura" [(ngModel)]="elemento.password" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idPasswordRepeat" class="tamanio-label">Repetir Contrasenia</label>
+              <input id="idPasswordRepeat" type="password" formControlName="passwordRepeat" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45"
+                [readonly]="soloLectura" [(ngModel)]="elemento.passwordRepeat" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idRol" class="tamanio-label">Rol</label>
+              <ng-template #rt let-r="result" let-t="term">
+                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+              </ng-template>
+              <input id="idRol" type="text" class="form-control form-control-sm"
+                formControlName="rol" [(ngModel)]="elemento.rol"
+                [ngbTypeahead]="buscarRol" [resultTemplate]="rt"
+                [inputFormatter]="formatearRol" [readonly]="soloLectura" required>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idSucursal" class="tamanio-label">Sucursal</label>
+              <ng-template #rt let-r="result" let-t="term">
+                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+              </ng-template>
+              <input id="idSucursal" type="text" class="form-control form-control-sm"
+                formControlName="sucursal" [(ngModel)]="elemento.sucursal"
+                [ngbTypeahead]="buscarSucursal" [resultTemplate]="rt"
+                [inputFormatter]="formatearSucursal" [readonly]="soloLectura" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idCuentaHabilitada" class="tamanio-label">Cuenta Habilitada</label>
+              <select id="idCuentaHabilitada" formControlName="cuentaHabilitada" class="form-control form-control-sm"
+                [(ngModel)]="elemento.cuentaHabilitada" required>
+                <option value="false">No</option>
+                <option value="true">Si</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">
+          {{pestaniaActual}}</button>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-10">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:5%" scope="col">id</th>
+            <th class="text-center" style="width:20%" scope="col">Nombre</th>
+            <th class="text-center" style="width:20%" scope="col">Usuario</th>
+            <th class="text-center" style="width:15%" scope="col">Rol</th>
+            <th class="text-center" style="width:15%" scope="col">Sucursal</th>
+            <th class="text-center" style="width:15%" scope="col">Cuenta Habilitada</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.id}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.username}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.rol.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.sucursal.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.cuentaHabilitada == false ? "No" : "Si"}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

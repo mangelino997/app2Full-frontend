@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { LocalidadService } from '../../servicios/localidad.service';
+import { UnidadMedidaService } from '../../servicios/unidad-medida.service';
 import { PestaniaService } from '../../servicios/pestania.service';
-import { ProvinciaService } from '../../servicios/provincia.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -11,10 +10,10 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
-  selector: 'app-localidad',
-  templateUrl: './localidad.component.html'
+  selector: 'app-unidad-medida',
+  templateUrl: './unidad-medida.component.html'
 })
-export class LocalidadComponent implements OnInit {
+export class UnidadMedidaComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -39,18 +38,14 @@ export class LocalidadComponent implements OnInit {
   private siguienteId:number = null;
   //Define la lista completa de registros
   private listaCompleta:any = null;
-  //Define la lista de provincias
-  private provincias:any = null;
   //Constructor
-  constructor(private servicio: LocalidadService, private pestaniaService: PestaniaService,
-    private provinciaServicio: ProvinciaService, private appComponent: AppComponent, private toastr: ToastrService) {
+  constructor(private servicio: UnidadMedidaService, private pestaniaService: PestaniaService,
+    private appComponent: AppComponent, private toastr: ToastrService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
       id: new FormControl(),
-      nombre: new FormControl(),
-      codigoPostal: new FormControl(),
-      provincia: new FormControl()
+      nombre: new FormControl()
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -72,8 +67,8 @@ export class LocalidadComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-    //Obtiene la lista de provincias
-    this.listarProvincias();
+    //Obtiene la lista completa de registros
+    this.listar();
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -90,7 +85,6 @@ export class LocalidadComponent implements OnInit {
     this.reestablecerCampos();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.listaCompleta = null;
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -182,59 +176,42 @@ export class LocalidadComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar(elemento) {
-  this.servicio.actualizar(elemento).subscribe(
-    res => {
-      var respuesta = res.json();
-      if(respuesta.codigo == 200) {
-        this.reestablecerCampos();
-        setTimeout(function() {
-          document.getElementById('idAutocompletado').focus();
-        }, 20);
-        this.toastr.success(respuesta.mensaje);
+    this.servicio.actualizar(elemento).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.reestablecerCampos();
+          setTimeout(function() {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
       }
-    },
-    err => {
-      var respuesta = err.json();
-      if(respuesta.codigo == 11002) {
-        document.getElementById("labelNombre").classList.add('label-error');
-        document.getElementById("idNombre").classList.add('is-invalid');
-        document.getElementById("idNombre").focus();
-        this.toastr.error(respuesta.mensaje);
-      }
-    }
-  );
+    );
   }
   //Elimina un registro
   private eliminar(elemento) {
     console.log(elemento);
   }
-  //Obtiene el listado de provincia
-  private listarProvincias() {
-    this.provinciaServicio.listar().subscribe(res => {
-      this.provincias = res.json();
-    })
-  }
-  //Obtiene la lista de localidades por provincia
-  public listarPorProvincia(idProvincia) {
-    this.servicio.listarPorProvincia(idProvincia).subscribe(res => {
-      this.listaCompleta = res.json();
-    })
-  }
   //Funcion para listar por nombre
   buscar = (text$: Observable<string>) => text$.pipe(
     map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
   )
-  formatear = (x: {nombre:string}) => x.nombre;
-  //Funcion para listar por nombre
-  listarProvinciasPorNombre = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 3 ? [] : this.provinciaServicio.listarPorNombre(term))
-  )
-  formatearProvincias = (x: {nombre:string, pais:any}) => x.nombre + ' - ' + x.pais.nombre;
+  formatear = (x: {nombre: string}) => x.nombre;
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  }
+  };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);

@@ -6,17 +6,17 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class UsuarioService {
+export class ClienteService {
   //Define la ruta al servicio web
-  private ruta:string = "/usuario";
+  private ruta:string = "/cliente";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
+  //Define la lista obtenida por alias
+  private listaPorAlias = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -50,21 +50,17 @@ export class UsuarioService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene por username
-  public obtenerPorUsername(username) {
-    return this.http.get(this.url + '/obtenerPorUsername/' + username, this.options);
-  }
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).subscribe(
+  //Obtiene un listado por alias
+  public listarPorAlias(alias) {
+    this.http.get(this.url + '/listarPorAlias/' + alias, this.options).subscribe(
       res => {
-        this.listaPorNombre = res.json();
+        this.listaPorAlias = res.json();
       },
       err => {
         console.log(err);
       }
     );
-    return this.listaPorNombre;
+    return this.listaPorAlias;
   }
   //Agrega un registro
   public agregar(elemento) {

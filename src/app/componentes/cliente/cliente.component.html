@@ -1,0 +1,322 @@
+<div id="pais">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>PAIS</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div *ngIf="indiceSeleccionado < 5">
+    <mat-sidenav-container>
+      <mat-sidenav #sidenav mode="side" opened class="sidenav"
+        [fixedInViewport]="true" [fixedTopGap]="165"
+        [fixedBottomGap]="0">
+        <div class="row contenedor" *ngFor="let listaOp of opciones; let idx = index">
+          <div class="col">
+            <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" 
+              type="button" class="btn btn-outline-primary btn-block" (click)="seleccionarOpcion(listaOp.id, idx)">
+              {{listaOp.nombre}}</button>
+          </div>
+        </div>
+      </mat-sidenav>
+      <mat-sidenav-content class="sidenav-content">
+        <div class="row contenedor">
+          <div class="col">
+            <form [formGroup]="formulario">
+              <div class="row justify-content-center">
+                <h5>{{pestaniaActual}} Cliente</h5>
+              </div>
+              <div class="contenedor-top-titulo">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+                      <label for="idAutocompletado" class="tamanio-label-titulo">Buscar Cliente</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.alias" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idAutocompletado" type="text" class="form-control form-control-sm"
+                        formControlName="autocompletado" [(ngModel)]="elemento" autocomplete="off"
+                        [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-1">
+                    <button mat-mini-fab color="primary" (click)="sidenav.toggle()">
+                      <mat-icon>menu</mat-icon>
+                    </button>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group has-float-label">
+                      <label for="idCodigo" class="tamanio-label-titulo">N° de Cuenta</label>
+                      <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
+                        required readonly [(ngModel)]="elemento.id">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label id="labelRazonSocial" for="idRazonSocial" class="tamanio-label-titulo">Nombre</label>
+                      <input id="idRazonSocial" type="text" formControlName="razonSocial" autocomplete="off"
+                        class="form-control form-control-sm" maxlength="45"
+                        (ngModelChange)="cambioCampo('idRazonSocial', 'labelRazonSocial')"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.razonSocial" required>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idNombreFantasia" class="tamanio-label-titulo">Nombre Fantasia</label>
+                      <input id="idNombreFantasia" type="text" formControlName="nombreFantasia" autocomplete="off"
+                        class="form-control form-control-sm" maxlength="45"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.nombreFantasia">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label id="labelSitioweb" for="idSitioWeb" class="tamanio-label-titulo">Sitio Web</label>
+                      <input id="idSitioWeb" type="text" formControlName="sitioWeb" autocomplete="off"
+                        class="form-control form-control-sm" maxlength="45"
+                        pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$"
+                        (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', elemento.sitioWeb, 'sitioWeb')"
+                        (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioweb')"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.sitioWeb">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <mat-divider></mat-divider>
+              <div class="contenedor-top" *ngIf="opcionSeleccionada == 1">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idDomicilio" class="tamanio-label">Domicilio</label>
+                      <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off"
+                        class="form-control form-control-sm" maxlength="45"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.domicilio" required>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idBarrio" class="tamanio-label">Barrio</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idBarrio" type="text" class="form-control form-control-sm"
+                        formControlName="barrio" [(ngModel)]="elemento.barrio"
+                        [ngbTypeahead]="buscarBarrio" [resultTemplate]="rt"
+                        [inputFormatter]="formatearBarrio" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idLocalidad" class="tamanio-label">Localidad</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight> -
+                        <ngb-highlight [result]="r.provincia.nombre" [term]="t"></ngb-highlight> -
+                        <ngb-highlight [result]="r.provincia.pais.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idLocalidad" type="text" class="form-control form-control-sm"
+                        formControlName="localidad" [(ngModel)]="elemento.localidad"
+                        [ngbTypeahead]="buscarLocalidad" [resultTemplate]="rt"
+                        [inputFormatter]="formatearLocalidad" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label id="labelTelefono" for="idTelefonoFijo" class="tamanio-label">Teléfono</label>
+                      <input id="idTelefono" type="tel" formControlName="telefono" autocomplete="off"
+                        class="form-control form-control-sm" maxlength="45" pattern="^[0-9]{10}(,[0-9]{10})*$"
+                        (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', elemento.telefono, 'telefono')"
+                        (ngModelChange)="cambioCampo('idTelefono', 'labelTelefono')"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.telefono">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idCobrador" class="tamanio-label">Cobrador</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idCobrador" type="text" class="form-control form-control-sm"
+                        formControlName="cobrador" [(ngModel)]="elemento.cobrador"
+                        [ngbTypeahead]="buscarCobrador" [resultTemplate]="rt"
+                        [inputFormatter]="formatearCobrador" [readonly]="soloLectura" required>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idVendedor" class="tamanio-label">Vendedor</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idVendedor" type="text" class="form-control form-control-sm"
+                        formControlName="vendedor" [(ngModel)]="elemento.vendedor"
+                        [ngbTypeahead]="buscarVendedor" [resultTemplate]="rt"
+                        [inputFormatter]="formatearVendedor" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idZona" class="tamanio-label">Zona</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idZona" type="text" class="form-control form-control-sm"
+                        formControlName="zona" [(ngModel)]="elemento.zona"
+                        [ngbTypeahead]="buscarZona" [resultTemplate]="rt"
+                        [inputFormatter]="formatearZona" [readonly]="soloLectura" required>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idRubro" class="tamanio-label">Rubro</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idRubro" type="text" class="form-control form-control-sm"
+                        formControlName="rubro" [(ngModel)]="elemento.rubro"
+                        [ngbTypeahead]="buscarRubro" [resultTemplate]="rt"
+                        [inputFormatter]="formatearRubro" [readonly]="soloLectura" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
+                      <select id="idCondicionIva" class="form-control form-control-sm" formControlName="condicionIva"
+                        [(ngModel)]="elemento.condicionIva">
+                        <option *ngFor="let condicionIva of condicionesIva" [ngValue]="condicionIva">
+                          {{condicionIva.nombre}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idTipoDocumento" class="tamanio-label">Tipo Documento</label>
+                      <select id="idTipoDocumento" class="form-control form-control-sm" formControlName="tipoDocumento"
+                        [(ngModel)]="elemento.tipoDocumento">
+                        <option *ngFor="let tipoDocumento of tiposDocumentos" [ngValue]="tipoDocumento">
+                          {{tipoDocumento.nombre}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento</label>
+                      <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
+                        class="form-control form-control-sm" min="1" maxlength="11"
+                        (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.numeroDocumento" required>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
+                      <input id="idNumeroIIBB" type="number" formControlName="numeroIIBB" autocomplete="off"
+                        class="form-control form-control-sm" min="1" maxlength="15"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.numeroIIBB" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="contenedor-top" *ngIf="opcionSeleccionada == 2">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idEsCuentaCorriente" class="tamanio-label">Tipo de Cuenta</label>
+                      <select id="idEsCuentaCorriente" formControlName="esCuentaCorriente"
+                        class="form-control form-control-sm" [(ngModel)]="elemento.esCuentaCorriente" required>
+                        <option value="false">Contado</option>
+                        <option value="true">Cuenta Corriente</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+
+                  </div>
+                  <div class="col-md-3">
+
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+
+                  </div>
+                  <div class="col-md-3">
+
+                  </div>
+                  <div class="col-md-3">
+
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+
+                  </div>
+                  <div class="col-md-3">
+
+                  </div>
+                  <div class="col-md-3">
+
+                  </div>
+                  <div class="col-md-3">
+
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="opcionSeleccionada == 3">
+
+              </div>
+              <div *ngIf="opcionSeleccionada == 4">
+
+              </div>
+              <div *ngIf="opcionSeleccionada == 5">
+
+              </div>
+              <div *ngIf="opcionSeleccionada == 6">
+
+              </div>
+              <div *ngIf="opcionSeleccionada == 7">
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+  <div class="row justify-content-center" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-6">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:20%" scope="col">id</th>
+            <th class="text-center" style="width:80%" scope="col">Nombre</th>
+            <th class="text-center" style="width:10%" scope="col">-</th>
+            <th class="text-center" style="width:10%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.id}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.nombre}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

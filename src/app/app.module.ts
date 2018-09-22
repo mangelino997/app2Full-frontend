@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
-  MatSelectModule, MatTabsModule, MatIconModule, MatCardModule} from '@angular/material';
+  MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule} from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -51,6 +51,12 @@ import { TipoProveedorService } from './servicios/tipo-proveedor.service';
 import { TipoTarifaService } from './servicios/tipo-tarifa.service';
 import { TipoVehiculoService } from './servicios/tipo-vehiculo.service';
 import { TramoService } from './servicios/tramo.service';
+import { UnidadMedidaService } from './servicios/unidad-medida.service';
+import { VendedorService } from './servicios/vendedor.service';
+import { ZonaService } from './servicios/zona.service';
+import { ClienteService } from './servicios/cliente.service';
+import { RolOpcionService } from './servicios/rol-opcion.service';
+import { CondicionIvaService } from './servicios/condicion-iva.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -93,6 +99,10 @@ import { TipoProveedorComponent } from './componentes/tipo-proveedor/tipo-provee
 import { TipoTarifaComponent } from './componentes/tipo-tarifa/tipo-tarifa.component';
 import { TipoVehiculoComponent } from './componentes/tipo-vehiculo/tipo-vehiculo.component';
 import { TramoComponent } from './componentes/tramo/tramo.component';
+import { UnidadMedidaComponent } from './componentes/unidad-medida/unidad-medida.component';
+import { VendedorComponent } from './componentes/vendedor/vendedor.component';
+import { ZonaComponent } from './componentes/zona/zona.component';
+import { ClienteComponent } from './componentes/cliente/cliente.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -132,7 +142,12 @@ const appRoutes: Routes = [
   {path: 'tipoproveedor', component: TipoProveedorComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'tipotarifa', component: TipoProveedorComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'logisticatiposdevehiculos', component: TipoVehiculoComponent, canActivate: [GuardiaService]},
-  {path: 'origenesdestinostramos', component: TramoComponent, canActivate: [GuardiaService]}
+  {path: 'origenesdestinostramos', component: TramoComponent, canActivate: [GuardiaService]},
+  {path: 'unidadmedida', component: UnidadMedidaComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'usuariosadministrar', component: UsuarioComponent, canActivate: [GuardiaService]},
+  {path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService]},//revisar
+  {path: 'generaleszonas', component: ZonaComponent, canActivate: [GuardiaService]},
+  {path: 'generalesclientes', component: ClienteComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -185,7 +200,11 @@ const stompConfig: StompConfig = {
     TipoProveedorComponent,
     TipoTarifaComponent,
     TipoVehiculoComponent,
-    TramoComponent
+    TramoComponent,
+    UnidadMedidaComponent,
+    VendedorComponent,
+    ZonaComponent,
+    ClienteComponent
   ],
   imports: [
     BrowserModule,
@@ -201,6 +220,7 @@ const stompConfig: StompConfig = {
     MatTabsModule,
     MatIconModule,
     MatCardModule,
+    MatSidenavModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     NgbModule,
     ToastrModule.forRoot({
@@ -257,6 +277,12 @@ const stompConfig: StompConfig = {
     TipoTarifaService,
     TipoVehiculoService,
     TramoService,
+    UnidadMedidaService,
+    VendedorService,
+    ZonaService,
+    ClienteService,
+    RolOpcionService,
+    CondicionIvaService,
     StompService,
     {
       provide: StompConfig,

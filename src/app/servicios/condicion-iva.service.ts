@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class UsuarioService {
+export class CondicionIvaService {
   //Define la ruta al servicio web
-  private ruta:string = "/usuario";
+  private ruta:string = "/condicioniva";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -49,10 +49,6 @@ export class UsuarioService {
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
-  }
-  //Obtiene por username
-  public obtenerPorUsername(username) {
-    return this.http.get(this.url + '/obtenerPorUsername/' + username, this.options);
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {

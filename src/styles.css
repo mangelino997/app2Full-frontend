@@ -213,6 +213,14 @@ button.toast-close-button {
 .contenedor {
   padding: 10px;
 }
+/* Define margenes del contenedor solo top */
+.contenedor-top {
+  padding-top: 15px;
+}
+/* Define margenes del contenedor titulo solo top */
+.contenedor-top-titulo {
+  padding-top: 8px;
+}
 /* Define el espacio entre componentes */
 .example-spacer {
   flex: 1 1 auto;
@@ -222,7 +230,7 @@ button.toast-close-button {
     font-size: 15px !important;
 }
 .tamanio-label-titulo {
-    font-size: 13px !important;
+    font-size: 16px !important;
     color: #7668FB !important;
     font-weight: bold !important;
 }
@@ -245,4 +253,17 @@ button.toast-close-button {
 .cursor-color {
   cursor: pointer;
   color: blue;
+}
+/* Color y tamanio del sidenav */
+.sidenav-content {
+  background-color: white;
+}
+.sidenav {
+  width: 200px;
+}
+/* Cambia el color del boton de la subopcion al seleccionarlo */
+.activar-boton-subopcion {
+  background-color: blue !important;
+  color: white;
+  font-weight: bold;
 }

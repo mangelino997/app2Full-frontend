@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class UsuarioService {
+export class RolOpcionService {
   //Define la ruta al servicio web
-  private ruta:string = "/usuario";
+  private ruta:string = "/rolopcion";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -42,40 +42,12 @@ export class UsuarioService {
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));
   }
-  //Obtiene el siguiente id
-  public obtenerSiguienteId() {
-    return this.http.get(this.url + '/obtenerSiguienteId', this.options);
-  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene por username
-  public obtenerPorUsername(username) {
-    return this.http.get(this.url + '/obtenerPorUsername/' + username, this.options);
-  }
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).subscribe(
-      res => {
-        this.listaPorNombre = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-    return this.listaPorNombre;
-  }
-  //Agrega un registro
-  public agregar(elemento) {
-    return this.http.post(this.url, elemento, this.options);
-  }
-  //Actualiza un registro
-  public actualizar(elemento) {
-    return this.http.put(this.url, elemento, this.options);
-  }
-  //Elimina un registro
-  public eliminar(id) {
-    return this.http.delete(this.url + '/' + id, this.options);
+  //Obtiene un listado por rol y subopcion
+  public listarPorRolSubopcion(idRol, idSubopcion) {
+    return this.http.get(this.url + '/listarPorRolSubopcion/' + idRol + '/' + idSubopcion, this.options);
   }
 }
