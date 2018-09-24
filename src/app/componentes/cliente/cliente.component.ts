@@ -10,6 +10,10 @@ import { ZonaService } from '../../servicios/zona.service';
 import { RubroService } from '../../servicios/rubro.service';
 import { CondicionIvaService } from '../../servicios/condicion-iva.service';
 import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
+import { ResumenClienteService } from '../../servicios/resumen-cliente.service';
+import { SucursalService } from '../../servicios/sucursal.service';
+import { SituacionClienteService } from '../../servicios/situacion-cliente.service';
+import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -55,6 +59,10 @@ export class ClienteComponent implements OnInit {
   private condicionesIva:any = null;
   //Define la lista de tipos de documentos
   private tiposDocumentos:any = null;
+  //Define la lista de resumenes de clientes
+  private resumenesClientes:any = null;
+  //Define la lista de situaciones de clientes
+  private situacionesClientes:any = null;
   //Define la opcion activa
   private botonOpcionActivo:any = null;
   //Constructor
@@ -64,7 +72,9 @@ export class ClienteComponent implements OnInit {
     private localidadServicio: LocalidadService, private cobradorServicio: CobradorService,
     private vendedorServicio: VendedorService, private zonaServicio: ZonaService,
     private rubroServicio: RubroService, private condicionIvaServicio: CondicionIvaService,
-    private tipoDocumentoServicio: TipoDocumentoService) {
+    private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
+    private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
+    private companiaSeguroServicio: CompaniaSeguroService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
@@ -141,6 +151,10 @@ export class ClienteComponent implements OnInit {
     this.listarCondicionesIva();
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
+    //Obtiene la lista de resumenes de clientes
+    this.listarResumenesClientes();
+    //Obtiene la lista de situaciones de clientes
+    this.listarSituacionesClientes();
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -221,6 +235,28 @@ export class ClienteComponent implements OnInit {
     this.tipoDocumentoServicio.listar().subscribe(
       res => {
         this.tiposDocumentos = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de resumenes de clientes
+  private listarResumenesClientes() {
+    this.resumenClienteServicio.listar().subscribe(
+      res => {
+        this.resumenesClientes = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de situaciones de clientes
+  private listarSituacionesClientes() {
+    this.situacionClienteServicio.listar().subscribe(
+      res => {
+        this.situacionesClientes = res.json();
       },
       err => {
         console.log(err);
@@ -347,6 +383,16 @@ export class ClienteComponent implements OnInit {
     map(term => term.length < 2 ? [] : this.rubroServicio.listarPorNombre(term))
   )
   formatearRubro = (x: {nombre: string}) => x.nombre;
+  //Funcion para listar sucursales por nombre
+  buscarSucursal = (text$: Observable<string>) => text$.pipe(
+    map(term => term.length < 2 ? [] : this.sucursalServicio.listarPorNombre(term))
+  )
+  formatearSucursal = (x: {nombre: string, localidad:any}) => x.nombre + ' - ' + x.localidad.nombre;
+  //Funcion para listar companias seguro por nombre
+  buscarCompaniaSeguro = (text$: Observable<string>) => text$.pipe(
+    map(term => term.length < 2 ? [] : this.companiaSeguroServicio.listarPorNombre(term))
+  )
+  formatearCompaniaSeguro = (x: {nombre: string}) => x.nombre;
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');

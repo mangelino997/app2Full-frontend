@@ -15,7 +15,7 @@
         [fixedBottomGap]="0">
         <div class="row contenedor" *ngFor="let listaOp of opciones; let idx = index">
           <div class="col">
-            <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" 
+            <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]"
               type="button" class="btn btn-outline-primary btn-block" (click)="seleccionarOpcion(listaOp.id, idx)">
               {{listaOp.nombre}}</button>
           </div>
@@ -236,51 +236,200 @@
                     </div>
                   </div>
                   <div class="col-md-3">
-
+                    <div class="form-group has-float-label">
+                      <label for="idOrdenVenta" class="tamanio-label">Orden Venta</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idOrdenVenta" type="text" class="form-control form-control-sm"
+                        formControlName="ordenVenta" [(ngModel)]="elemento.ordenVenta"
+                        [ngbTypeahead]="buscarOrdenVenta" [resultTemplate]="rt"
+                        [inputFormatter]="formatearOrdenVenta" [readonly]="soloLectura">
+                    </div>
                   </div>
                   <div class="col-md-3">
-
+                    <div class="form-group has-float-label">
+                      <label for="idCuentaPrincipal" class="tamanio-label">Cuenta Principal</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idCuentaPrincipal" type="text" class="form-control form-control-sm"
+                        formControlName="cuentaPrincipal" [(ngModel)]="elemento.cuentaPrincipal"
+                        [ngbTypeahead]="buscar" [resultTemplate]="rt"
+                        [inputFormatter]="formatear" [readonly]="soloLectura">
+                    </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-3">
-
+                    <div class="form-group has-float-label">
+                      <label for="idResumenCliente" class="tamanio-label">Resumen</label>
+                      <select id="idResumenCliente" class="form-control form-control-sm" formControlName="resumenCliente"
+                        [(ngModel)]="elemento.resumenCliente" [required]="elemento.esCuentaCorriente === 'false' ? false : true">
+                        <option *ngFor="let resumenCliente of resumenesClientes" [ngValue]="resumenCliente">
+                          {{resumenCliente.nombre}}</option>
+                      </select>
+                    </div>
                   </div>
                   <div class="col-md-3">
-
-                  </div>
-                  <div class="col-md-3">
-
+                    <div class="form-group has-float-label">
+                      <label for="idLimiteCredito" class="tamanio-label">Límite de Crédito</label>
+                      <input id="idLimiteCredito" type="number" formControlName="creditoLimite" autocomplete="off"
+                        class="form-control form-control-sm" min="1" maxlength="12"
+                        [disabled]="elemento.esCuentaCorriente === 'false' ? true : false"
+                        [required]="elemento.esCuentaCorriente === 'false' ? false : true"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.creditoLimite">
+                    </div>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-3">
-
+                    <div class="form-group has-float-label">
+                      <label for="idSucursalLugarPago" class="tamanio-label">Lugar de Pago</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight> -
+                        <ngb-highlight [result]="r.localidad.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idSucursalLugarPago" type="text" class="form-control form-control-sm"
+                        formControlName="sucursalLugarPago" [(ngModel)]="elemento.sucursalLugarPago"
+                        [ngbTypeahead]="buscarSucursal" [resultTemplate]="rt"
+                        [inputFormatter]="formatearSucursal" [readonly]="soloLectura">
+                    </div>
                   </div>
                   <div class="col-md-3">
-
+                    <div class="form-group has-float-label">
+                      <label for="idDescuentoFlete" class="tamanio-label">Descuento en Flete</label>
+                      <input id="idDescuentoFlete" type="number" formControlName="descuentoFlete"
+                        autocomplete="off" class="form-control form-control-sm" min="1" maxlength="5" step="0.01"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.descuentoFlete" (blur)="setDecimales($event, 2)">
+                    </div>
                   </div>
                   <div class="col-md-3">
-
+                    <div class="form-group has-float-label">
+                      <label for="idDescuentoSubtotal" class="tamanio-label">Descuento en Subtotal</label>
+                      <input id="idDescuentoSubtotal" type="number" formControlName="descuentoSubtotal"
+                        autocomplete="off" class="form-control form-control-sm" min="1" maxlength="5" step="0.01"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.descuentoSubtotal" (blur)="setDecimales($event, 2)">
+                    </div>
                   </div>
                   <div class="col-md-3">
-
+                    <div class="form-group has-float-label">
+                      <label for="idSituacionCliente" class="tamanio-label">Situación</label>
+                      <select id="idSituacionCliente" class="form-control form-control-sm"
+                        formControlName="situacionCliente" [(ngModel)]="elemento.situacionCliente">
+                        <option *ngFor="let situacionCliente of situacionesClientes" [ngValue]="situacionCliente">
+                          {{situacionCliente.nombre}}</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>
-              <div *ngIf="opcionSeleccionada == 3">
+              <div class="contenedor-top" *ngIf="opcionSeleccionada == 3">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idEsSeguroPropio" class="tamanio-label">Tipo de Seguro</label>
+                      <select id="idEsSeguroPropio" formControlName="esSeguroPropio"
+                        class="form-control form-control-sm" [(ngModel)]="elemento.esSeguroPropio">
+                        <option value="false">Sin Seguro Propio</option>
+                        <option value="true">Con Seguro Propio</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idCompaniaSeguro" type="text" class="form-control form-control-sm"
+                        formControlName="companiaSeguro" [(ngModel)]="elemento.companiaSeguro"
+                        [ngbTypeahead]="buscarCompaniaSeguro" [resultTemplate]="rt"
+                        [inputFormatter]="formatearCompaniaSeguro" [readonly]="soloLectura"
+                        [required]="elemento.esSeguroPropio === 'true' ? true : false">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idNumeroPoliza" class="tamanio-label">N° de Póliza</label>
+                      <input id="idNumeroPoliza" type="number" formControlName="numeroPolizaSeguro"
+                        autocomplete="off" class="form-control form-control-sm" min="1" maxlength="20"
+                        [required]="elemento.esSeguroPropio === 'true' ? true : false"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.numeroPolizaSeguro">
+                    </div>
+                  </div>
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idVencimiento" class="tamanio-label">Vencimiento</label>
+                      <input id="idVencimiento" type="date" formControlName="vencimientoPolizaSeguro"
+                        autocomplete="off" class="form-control form-control-sm"
+                        [required]="elemento.esSeguroPropio === 'true' ? true : false"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.vencimientoPolizaSeguro">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="contenedor-top" *ngIf="opcionSeleccionada == 4">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group has-float-label">
+                      <label for="idObservaciones" class="tamanio-label">Observaciones</label>
+                      <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones"
+                        maxlength="400" rows="4" [readonly]="soloLectura" [(ngModel)]="elemento.observaciones"></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="contenedor-top" *ngIf="opcionSeleccionada == 5">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group has-float-label">
+                      <label for="idEmitirComprobante" class="tamanio-label">Al Emitir Comprobante</label>
+                      <textarea id="idEmitirComprobante" class="form-control form-control-sm"
+                        formControlName="notaEmisionComprobante" maxlength="200" rows="2"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.notaEmisionComprobante"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group has-float-label">
+                      <label for="idImprimirComprobante" class="tamanio-label">Al Imprimir Comprobante</label>
+                      <textarea id="idImprimirComprobante" class="form-control form-control-sm"
+                        formControlName="notaImpresionComprobante" maxlength="200" rows="2"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.notaImpresionComprobante"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group has-float-label">
+                      <label for="idImprimirRemito" class="tamanio-label">Al Imprimir Remito</label>
+                      <textarea id="idImprimirRemito" class="form-control form-control-sm"
+                        formControlName="notaImpresionRemito" maxlength="200" rows="2"
+                        [readonly]="soloLectura" [(ngModel)]="elemento.notaImpresionRemito"></textarea>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idImprimirControlDeuda" class="tamanio-label">Imprimir Control de Deuda</label>
+                      <select id="idImprimirControlDeuda" formControlName="imprimirControlDeuda"
+                        class="form-control form-control-sm" [(ngModel)]="elemento.imprimirControlDeuda">
+                        <option value="false">No</option>
+                        <option value="true">Si</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="contenedor-top" *ngIf="opcionSeleccionada == 6">
 
               </div>
-              <div *ngIf="opcionSeleccionada == 4">
-
-              </div>
-              <div *ngIf="opcionSeleccionada == 5">
-
-              </div>
-              <div *ngIf="opcionSeleccionada == 6">
-
-              </div>
-              <div *ngIf="opcionSeleccionada == 7">
+              <div class="contenedor-top" *ngIf="opcionSeleccionada == 7">
 
               </div>
             </form>
