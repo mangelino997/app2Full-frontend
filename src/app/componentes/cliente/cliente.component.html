@@ -32,13 +32,16 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                      <label for="idAutocompletado" class="tamanio-label-titulo">Buscar Cliente</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.alias" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idAutocompletado" type="text" class="form-control form-control-sm"
-                        formControlName="autocompletado" [(ngModel)]="elemento" autocomplete="off"
-                        [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+                      <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+                      <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
+                        type="text" matInput [formControl]="buscar" [matAutocomplete]="auto"
+                        autocomplete="off" [(ngModel)]="elemAutocompletado">
+                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="cambioAutocompletado(elemAutocompletado)"
+                        [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let item of resultados" [value]="item">
+                          {{item.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                 </div>
@@ -99,27 +102,27 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idBarrio" class="tamanio-label">Barrio</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idBarrio" type="text" class="form-control form-control-sm"
-                        formControlName="barrio" [(ngModel)]="elemento.barrio"
-                        [ngbTypeahead]="buscarBarrio" [resultTemplate]="rt"
-                        [inputFormatter]="formatearBarrio" [readonly]="soloLectura">
+                      <input id="idBarrio" class="form-control form-control-sm" formControlName="barrio"
+                        type="text" matInput [formControl]="buscarBarrio" [matAutocomplete]="autoBarrio"
+                        autocomplete="off" [(ngModel)]="elemento.barrio" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
+                          {{itemBarrio.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idLocalidad" class="tamanio-label">Localidad</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight> -
-                        <ngb-highlight [result]="r.provincia.nombre" [term]="t"></ngb-highlight> -
-                        <ngb-highlight [result]="r.provincia.pais.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idLocalidad" type="text" class="form-control form-control-sm"
-                        formControlName="localidad" [(ngModel)]="elemento.localidad"
-                        [ngbTypeahead]="buscarLocalidad" [resultTemplate]="rt"
-                        [inputFormatter]="formatearLocalidad" [readonly]="soloLectura">
+                      <input id="idLocalidad" class="form-control form-control-sm" formControlName="localidad"
+                        type="text" matInput [formControl]="buscarLocalidad" [matAutocomplete]="autoLocalidad"
+                        autocomplete="off" [(ngModel)]="elemento.localidad" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                        <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
+                          {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}}, {{itemLocalidad.provincia.pais.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -187,33 +190,12 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
-                      <input class="form-control form-control-sm" formControlName="condicionIva"
-                        type="text" matInput [formControl]="buscarCondicionIva" [matAutocomplete]="auto"
-                        [(ngModel)]="elemento.condicionIva" [readonly]="soloLectura">
-                      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                        <mat-option *ngFor="let item of condicionesIva" [value]="item">
-                          {{item.nombre}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </div>
-                    <!--<div class="form-group has-float-label">
-                      <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idCondicionIva" type="text" class="form-control form-control-sm"
-                        formControlName="condicionIva" [(ngModel)]="elemento.condicionIva"
-                        [ngbTypeahead]="buscarCondicionIva" [resultTemplate]="rt"
-                        [inputFormatter]="formatearCondicionIva" [readonly]="soloLectura" required>
-                    </div>-->
-                    <!--<div class="form-group has-float-label">
-                      <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
                       <select id="idCondicionIva" class="form-control form-control-sm" formControlName="condicionIva"
                         [(ngModel)]="elemento.condicionIva">
                         <option *ngFor="let condicionIva of condicionesIva" value="{{elemento.condicionIva}}">
                           {{condicionIva.nombre}}</option>
                       </select>
-                    </div>-->
+                    </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">

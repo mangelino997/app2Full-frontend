@@ -52,6 +52,13 @@ export class PaisService {
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
+    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
+  /*public listarPorNombre(nombre) {
     this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).subscribe(
       res => {
         this.listaPorNombre = res.json();
@@ -61,7 +68,7 @@ export class PaisService {
       }
     );
     return this.listaPorNombre;
-  }
+  }*/
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>PAIS</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -14,12 +14,15 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
-          <ng-template #rt let-r="result" let-t="term">
-            <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-          </ng-template>
-          <input id="idAutocompletado" type="text" class="form-control form-control-sm"
-            formControlName="autocompletado" [(ngModel)]="elemento" autocomplete="off"
-            [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+          <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
+            type="text" matInput [formControl]="buscar" [matAutocomplete]="auto"
+            autocomplete="off" [(ngModel)]="elemAutocompletado">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="cambioAutocompletado(elemAutocompletado)"
+            [displayWith]="displayFn.bind(this)">
+            <mat-option *ngFor="let item of resultados" [value]="item">
+              {{item.nombre}}
+            </mat-option>
+          </mat-autocomplete>
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Código</label>

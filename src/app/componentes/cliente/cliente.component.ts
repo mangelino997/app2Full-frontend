@@ -20,7 +20,7 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { debounceTime, map, startWith } from 'rxjs/operators';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
@@ -29,8 +29,6 @@ import { StompService } from '@stomp/ng2-stompjs';
   templateUrl: './cliente.component.html'
 })
 export class ClienteComponent implements OnInit {
-  private buscarCondicionIva:FormControl = new FormControl();
-  private condicionesIva:any = [];
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -53,6 +51,8 @@ export class ClienteComponent implements OnInit {
   private formulario = null;
   //Define el elemento
   private elemento:any = {};
+  //Define el elemento de autocompletado
+  private elemAutocompletado:any = null;
   //Define el siguiente id
   private siguienteId:number = null;
   //Define la lista completa de registros
@@ -60,7 +60,7 @@ export class ClienteComponent implements OnInit {
   //Define la opcion seleccionada
   private opcionSeleccionada:number = null;
   //Define la lista de condiciones de iva
-  //private condicionesIva:any = null;
+  private condicionesIva:any = null;
   //Define la lista de tipos de documentos
   private tiposDocumentos:any = null;
   //Define la lista de resumenes de clientes
@@ -69,6 +69,18 @@ export class ClienteComponent implements OnInit {
   private situacionesClientes:any = null;
   //Define la opcion activa
   private botonOpcionActivo:any = null;
+  //Define el form control para las busquedas
+  private buscar:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda
+  private resultados = [];
+  //Define el form control para autocompletado barrio
+  private buscarBarrio:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de barrio
+  private resultadosBarrios = [];
+  //Define el form control para autocompletado localidad
+  private buscarLocalidad:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de barrio
+  private resultadosLocalidades = [];
   //Constructor
   constructor(private servicio: ClienteService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -79,14 +91,6 @@ export class ClienteComponent implements OnInit {
     private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
     private companiaSeguroServicio: CompaniaSeguroService, private ordenVentaServicio: OrdenVentaService) {
-    //Autocompletado CondicionIva
-    this.buscarCondicionIva.valueChanges
-      .debounceTime(200)
-      .subscribe(data => {
-        this.condicionIvaServicio.listarPorNombre(data).subscribe(response =>{
-          this.condicionesIva = response;
-        })
-    })
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
@@ -147,20 +151,47 @@ export class ClienteComponent implements OnInit {
       }
     );
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(1, 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
+    //Autocompletado - Buscar por alias
+    this.buscar.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.servicio.listarPorAlias(data).subscribe(response =>{
+            this.resultados = response;
+          })
+        }
+    })
+    //Autocompletado Barrio - Buscar por nombre
+    this.buscarBarrio.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.barrioServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosBarrios = response;
+          })
+        }
+    })
+    //Autocompletado Localidad - Buscar por nombre
+    this.buscarLocalidad.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.localidadServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosLocalidades = response;
+          })
+        }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de condiciones de iva
-    //this.listarCondicionesIva();
+    this.listarCondicionesIva();
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
     //Obtiene la lista de resumenes de clientes
@@ -168,13 +199,21 @@ export class ClienteComponent implements OnInit {
     //Obtiene la lista de situaciones de clientes
     this.listarSituacionesClientes();
   }
+  //Vacia la lista de resultados de autocompletados
+  public vaciarLista() {
+    this.resultadosBarrios = [];
+    this.resultadosLocalidades = [];
+  }
+  //Cambio en elemento autocompletado
+  public cambioAutocompletado(elemAutocompletado) {
+   this.elemento = elemAutocompletado;
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.displayFn(undefined);
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -200,10 +239,14 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('imprimirControlDeuda').disable();
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
+  public seleccionarPestania(id, nombre, opcion) {
     this.reestablecerCampos();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    if(opcion == 0) {
+      this.elemAutocompletado = null;
+      this.resultados = [];
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -255,6 +298,7 @@ export class ClienteComponent implements OnInit {
   //Reestablece los campos
   private reestablecerCampos() {
     this.elemento = {};
+    this.elemAutocompletado = null;
   }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {
@@ -387,57 +431,6 @@ export class ClienteComponent implements OnInit {
     }
     this.toastr.error(respuesta.mensaje);
   }
-  //Funcion para listar por alias
-  buscar = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.servicio.listarPorAlias(term))
-  )
-  formatear = (x: {alias: string}) => x.alias;
-  //Funcion para listar barrios por nombre
-  buscarBarrio = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.barrioServicio.listarPorNombre(term))
-  )
-  formatearBarrio = (x: {nombre: string}) => x.nombre;
-  //Funcion para listar localidades por nombre
-  buscarLocalidad = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.localidadServicio.listarPorNombre(term))
-  )
-  formatearLocalidad = (x: {nombre: string, provincia:any}) => x.nombre + ', '
-    + x.provincia.nombre + ' - ' + x.provincia.pais.nombre;
-  //Funcion para listar cobradores por nombre
-  buscarCobrador = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.cobradorServicio.listarPorNombre(term))
-  )
-  formatearCobrador = (x: {nombre: string}) => x.nombre;
-  //Funcion para listar vendedores por nombre
-  buscarVendedor = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.vendedorServicio.listarPorNombre(term))
-  )
-  formatearVendedor = (x: {nombre: string}) => x.nombre;
-  //Funcion para listar zonas por nombre
-  buscarZona = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.zonaServicio.listarPorNombre(term))
-  )
-  formatearZona = (x: {nombre: string}) => x.nombre;
-  //Funcion para listar rubros por nombre
-  buscarRubro = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.rubroServicio.listarPorNombre(term))
-  )
-  formatearRubro = (x: {nombre: string}) => x.nombre;
-  //Funcion para listar sucursales por nombre
-  buscarSucursal = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.sucursalServicio.listarPorNombre(term))
-  )
-  formatearSucursal = (x: {nombre: string, localidad:any}) => x.nombre + ' - ' + x.localidad.nombre;
-  //Funcion para listar companias seguro por nombre
-  buscarCompaniaSeguro = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.companiaSeguroServicio.listarPorNombre(term))
-  )
-  formatearCompaniaSeguro = (x: {nombre: string}) => x.nombre;
-  //Funcion para listar ordenes de venta por nombre
-  buscarOrdenVenta = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.companiaSeguroServicio.listarPorNombre(term))
-  )
-  formatearOrdenVenta = (x: {nombre: string}) => x.nombre;
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -462,17 +455,29 @@ export class ClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.elemAutocompletado = elemento;
     this.elemento = elemento;
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.elemAutocompletado = elemento;
     this.elemento = elemento;
   }
-  public displayFn(elemento) {
+  //Define como se muestra los datos en el autcompletado a
+  public displayFa(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
+        + ', ' + elemento.provincia.pais.nombre : elemento;
     } else {
       return elemento;
     }

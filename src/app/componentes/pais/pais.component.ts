@@ -34,10 +34,16 @@ export class PaisComponent implements OnInit {
   private formulario = null;
   //Define el elemento
   private elemento:any = {};
+  //Define el elemento de autocompletado
+  private elemAutocompletado:any = null;
   //Define el siguiente id
   private siguienteId:number = null;
   //Define la lista completa de registros
   private listaCompleta:any = null;
+  //Define el form control para las busquedas
+  private buscar:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda
+  private resultados = [];
   //Constructor
   constructor(private servicio: PaisService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService) {
@@ -59,16 +65,29 @@ export class PaisComponent implements OnInit {
       }
     );
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
+    //Autocompletado - Buscar por nombre
+    this.buscar.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.servicio.listarPorNombre(data).subscribe(response =>{
+            this.resultados = response;
+          })
+        }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
     //Obtiene la lista completa de registros
     this.listar();
+  }
+  //Cambio en elemento autocompletado
+  public cambioAutocompletado(elemAutocompletado) {
+   this.elemento = elemAutocompletado;
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -81,10 +100,14 @@ export class PaisComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
+  public seleccionarPestania(id, nombre, opcion) {
     this.reestablecerCampos();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    if(opcion == 0) {
+      this.elemAutocompletado = null;
+      this.resultados = [];
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -127,6 +150,7 @@ export class PaisComponent implements OnInit {
   //Reestablece los campos
   private reestablecerCampos() {
     this.elemento = {};
+    this.elemAutocompletado = null;
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -202,11 +226,6 @@ export class PaisComponent implements OnInit {
   private eliminar(elemento) {
     console.log(elemento);
   }
-  //Funcion para listar por nombre
-  buscar = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
-  )
-  formatear = (x: {nombre: string}) => x.nombre;
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -214,12 +233,22 @@ export class PaisComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.elemAutocompletado = elemento;
     this.elemento = elemento;
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.elemAutocompletado = elemento;
     this.elemento = elemento;
+  }
+  //Muestra el valor en los autocompletados
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
 }
