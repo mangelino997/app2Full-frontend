@@ -57,7 +57,7 @@
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
-                      <label id="labelRazonSocial" for="idRazonSocial" class="tamanio-label-titulo">Nombre</label>
+                      <label id="labelRazonSocial" for="idRazonSocial" class="tamanio-label-titulo">Razon Social</label>
                       <input id="idRazonSocial" type="text" formControlName="razonSocial" autocomplete="off"
                         class="form-control form-control-sm" maxlength="45"
                         (ngModelChange)="cambioCampo('idRazonSocial', 'labelRazonSocial')"
@@ -179,7 +179,7 @@
                       <input id="idRubro" type="text" class="form-control form-control-sm"
                         formControlName="rubro" [(ngModel)]="elemento.rubro"
                         [ngbTypeahead]="buscarRubro" [resultTemplate]="rt"
-                        [inputFormatter]="formatearRubro" [readonly]="soloLectura" required>
+                        [inputFormatter]="formatearRubro" [readonly]="soloLectura">
                     </div>
                   </div>
                 </div>
@@ -187,12 +187,33 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
+                      <input class="form-control form-control-sm" formControlName="condicionIva"
+                        type="text" matInput [formControl]="buscarCondicionIva" [matAutocomplete]="auto"
+                        [(ngModel)]="elemento.condicionIva" [readonly]="soloLectura">
+                      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                        <mat-option *ngFor="let item of condicionesIva" [value]="item">
+                          {{item.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
+                    </div>
+                    <!--<div class="form-group has-float-label">
+                      <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
+                      <ng-template #rt let-r="result" let-t="term">
+                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+                      </ng-template>
+                      <input id="idCondicionIva" type="text" class="form-control form-control-sm"
+                        formControlName="condicionIva" [(ngModel)]="elemento.condicionIva"
+                        [ngbTypeahead]="buscarCondicionIva" [resultTemplate]="rt"
+                        [inputFormatter]="formatearCondicionIva" [readonly]="soloLectura" required>
+                    </div>-->
+                    <!--<div class="form-group has-float-label">
+                      <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
                       <select id="idCondicionIva" class="form-control form-control-sm" formControlName="condicionIva"
                         [(ngModel)]="elemento.condicionIva">
-                        <option *ngFor="let condicionIva of condicionesIva" [ngValue]="condicionIva">
+                        <option *ngFor="let condicionIva of condicionesIva" value="{{elemento.condicionIva}}">
                           {{condicionIva.nombre}}</option>
                       </select>
-                    </div>
+                    </div>-->
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
@@ -210,7 +231,7 @@
                       <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
                         class="form-control form-control-sm" min="1" maxlength="11"
                         (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')"
-                        [readonly]="soloLectura" [(ngModel)]="elemento.numeroDocumento" required>
+                        [readonly]="soloLectura" [(ngModel)]="elemento.numeroDocumento">
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -218,7 +239,7 @@
                       <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
                       <input id="idNumeroIIBB" type="number" formControlName="numeroIIBB" autocomplete="off"
                         class="form-control form-control-sm" min="1" maxlength="15"
-                        [readonly]="soloLectura" [(ngModel)]="elemento.numeroIIBB" required>
+                        [readonly]="soloLectura" [(ngModel)]="elemento.numeroIIBB">
                     </div>
                   </div>
                 </div>
@@ -229,7 +250,7 @@
                     <div class="form-group has-float-label">
                       <label for="idEsCuentaCorriente" class="tamanio-label">Tipo de Cuenta</label>
                       <select id="idEsCuentaCorriente" formControlName="esCuentaCorriente"
-                        class="form-control form-control-sm" [(ngModel)]="elemento.esCuentaCorriente" required>
+                        class="form-control form-control-sm" [(ngModel)]="elemento.esCuentaCorriente">
                         <option value="false">Contado</option>
                         <option value="true">Cuenta Corriente</option>
                       </select>
@@ -431,6 +452,14 @@
               </div>
               <div class="contenedor-top" *ngIf="opcionSeleccionada == 7">
 
+              </div>
+              <div class="row justify-content-center">
+                <div class="col">
+                  <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+                    formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">
+                    {{pestaniaActual}}
+                  </button>
+                </div>
               </div>
             </form>
           </div>

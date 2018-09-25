@@ -3,7 +3,8 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
-  MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule} from '@angular/material';
+  MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
+  MatAutocompleteModule, MatInputModule} from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -58,6 +59,7 @@ import { ClienteService } from './servicios/cliente.service';
 import { RolOpcionService } from './servicios/rol-opcion.service';
 import { CondicionIvaService } from './servicios/condicion-iva.service';
 import { ResumenClienteService } from './servicios/resumen-cliente.service';
+import { OrdenVentaService } from './servicios/orden-venta.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -105,6 +107,7 @@ import { VendedorComponent } from './componentes/vendedor/vendedor.component';
 import { ZonaComponent } from './componentes/zona/zona.component';
 import { ClienteComponent } from './componentes/cliente/cliente.component';
 import { ResumenClienteComponent } from './componentes/resumen-cliente/resumen-cliente.component';
+import { OrdenVentaComponent } from './componentes/orden-venta/orden-venta.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -149,7 +152,8 @@ const appRoutes: Routes = [
   {path: 'usuariosadministrar', component: UsuarioComponent, canActivate: [GuardiaService]},
   {path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService]},//revisar
   {path: 'generaleszonas', component: ZonaComponent, canActivate: [GuardiaService]},
-  {path: 'generalesclientes', component: ClienteComponent, canActivate: [GuardiaService]}
+  {path: 'generalesclientes', component: ClienteComponent, canActivate: [GuardiaService]},
+  {path: 'ordenventa', component: OrdenVentaComponent, canActivate: [GuardiaService]}//Revisar
 ]
 
 const stompConfig: StompConfig = {
@@ -207,7 +211,8 @@ const stompConfig: StompConfig = {
     VendedorComponent,
     ZonaComponent,
     ClienteComponent,
-    ResumenClienteComponent
+    ResumenClienteComponent,
+    OrdenVentaComponent
   ],
   imports: [
     BrowserModule,
@@ -224,6 +229,8 @@ const stompConfig: StompConfig = {
     MatIconModule,
     MatCardModule,
     MatSidenavModule,
+    MatInputModule,
+    MatAutocompleteModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     NgbModule,
     ToastrModule.forRoot({
@@ -287,6 +294,7 @@ const stompConfig: StompConfig = {
     RolOpcionService,
     CondicionIvaService,
     ResumenClienteService,
+    OrdenVentaService,
     StompService,
     {
       provide: StompConfig,

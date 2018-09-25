@@ -14,6 +14,8 @@ import { ResumenClienteService } from '../../servicios/resumen-cliente.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { SituacionClienteService } from '../../servicios/situacion-cliente.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
+import { OrdenVentaService } from '../../servicios/orden-venta.service';
+import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -27,6 +29,8 @@ import { StompService } from '@stomp/ng2-stompjs';
   templateUrl: './cliente.component.html'
 })
 export class ClienteComponent implements OnInit {
+  private buscarCondicionIva:FormControl = new FormControl();
+  private condicionesIva:any = [];
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -56,7 +60,7 @@ export class ClienteComponent implements OnInit {
   //Define la opcion seleccionada
   private opcionSeleccionada:number = null;
   //Define la lista de condiciones de iva
-  private condicionesIva:any = null;
+  //private condicionesIva:any = null;
   //Define la lista de tipos de documentos
   private tiposDocumentos:any = null;
   //Define la lista de resumenes de clientes
@@ -67,14 +71,22 @@ export class ClienteComponent implements OnInit {
   private botonOpcionActivo:any = null;
   //Constructor
   constructor(private servicio: ClienteService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
+    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private cobradorServicio: CobradorService,
     private vendedorServicio: VendedorService, private zonaServicio: ZonaService,
     private rubroServicio: RubroService, private condicionIvaServicio: CondicionIvaService,
     private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
-    private companiaSeguroServicio: CompaniaSeguroService) {
+    private companiaSeguroServicio: CompaniaSeguroService, private ordenVentaServicio: OrdenVentaService) {
+    //Autocompletado CondicionIva
+    this.buscarCondicionIva.valueChanges
+      .debounceTime(200)
+      .subscribe(data => {
+        this.condicionIvaServicio.listarPorNombre(data).subscribe(response =>{
+          this.condicionesIva = response;
+        })
+    })
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
@@ -148,7 +160,7 @@ export class ClienteComponent implements OnInit {
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de condiciones de iva
-    this.listarCondicionesIva();
+    //this.listarCondicionesIva();
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
     //Obtiene la lista de resumenes de clientes
@@ -162,10 +174,31 @@ export class ClienteComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
+    this.displayFn(undefined);
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
-  };
+  }
+  //Establecer combobox en habilitado
+  private establecerCombosHabilitados() {
+    this.formulario.get('condicionIva').enable();
+    this.formulario.get('tipoDocumento').enable();
+    this.formulario.get('esCuentaCorriente').enable();
+    this.formulario.get('resumenCliente').enable();
+    this.formulario.get('situacionCliente').enable();
+    this.formulario.get('esSeguroPropio').enable();
+    this.formulario.get('imprimirControlDeuda').enable();
+  }
+  //Establecer combobox en deshabilitado
+  private establecerCombosDeshabilitados() {
+    this.formulario.get('condicionIva').disable();
+    this.formulario.get('tipoDocumento').disable();
+    this.formulario.get('esCuentaCorriente').disable();
+    this.formulario.get('resumenCliente').disable();
+    this.formulario.get('situacionCliente').disable();
+    this.formulario.get('esSeguroPropio').disable();
+    this.formulario.get('imprimirControlDeuda').disable();
+  }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.reestablecerCampos();
@@ -174,15 +207,19 @@ export class ClienteComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerCombosHabilitados();
         this.establecerValoresPestania(nombre, false, false, true, 'idRazonSocial');
         break;
       case 2:
+        this.establecerCombosDeshabilitados();
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.establecerCombosHabilitados();
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.establecerCombosDeshabilitados();
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
@@ -287,7 +324,9 @@ export class ClienteComponent implements OnInit {
   }
   //Agrega un registro
   private agregar(elemento) {
-    this.servicio.agregar(elemento).subscribe(
+    elemento.usuarioAlta = this.appComponent.getUsuario();
+    console.log(elemento);
+    /*this.servicio.agregar(elemento).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
@@ -301,11 +340,12 @@ export class ClienteComponent implements OnInit {
       err => {
         this.lanzarError(err);
       }
-    );
+    );*/
   }
   //Actualiza un registro
   private actualizar(elemento) {
-    this.servicio.actualizar(elemento).subscribe(
+    console.log(elemento);
+    /*this.servicio.actualizar(elemento).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
@@ -319,7 +359,7 @@ export class ClienteComponent implements OnInit {
       err => {
         this.lanzarError(err);
       }
-    );
+    );*/
   }
   //Elimina un registro
   private eliminar(elemento) {
@@ -393,11 +433,33 @@ export class ClienteComponent implements OnInit {
     map(term => term.length < 2 ? [] : this.companiaSeguroServicio.listarPorNombre(term))
   )
   formatearCompaniaSeguro = (x: {nombre: string}) => x.nombre;
+  //Funcion para listar ordenes de venta por nombre
+  buscarOrdenVenta = (text$: Observable<string>) => text$.pipe(
+    map(term => term.length < 2 ? [] : this.companiaSeguroServicio.listarPorNombre(term))
+  )
+  formatearOrdenVenta = (x: {nombre: string}) => x.nombre;
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  };
+  }
+  //Formatea el numero a x decimales
+  public setDecimales(valor, cantidad) {
+    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
+  }
+  //Manejo de colores de campos y labels con patron erroneo
+  public validarPatron(patron, valor, campo) {
+    if(valor != undefined) {
+      var patronVerificador = new RegExp(patron);
+      if (!patronVerificador.test(valor)) {
+        if(campo == 'sitioWeb') {
+          document.getElementById("labelSitioWeb").classList.add('label-error');
+          document.getElementById("idSitioWeb").classList.add('is-invalid');
+          this.toastr.error('Sitio Web incorrecto');
+        }
+      }
+    }
+  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
@@ -407,5 +469,12 @@ export class ClienteComponent implements OnInit {
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.elemento = elemento;
+  }
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
 }
