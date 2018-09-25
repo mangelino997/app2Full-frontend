@@ -120,7 +120,8 @@
                         autocomplete="off" [(ngModel)]="elemento.localidad" (blur)="vaciarLista()">
                       <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                         <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
-                          {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}}, {{itemLocalidad.provincia.pais.nombre}}
+                          {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}},
+                          {{itemLocalidad.provincia.pais.nombre}}
                         </mat-option>
                       </mat-autocomplete>
                     </div>
@@ -140,49 +141,53 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idCobrador" class="tamanio-label">Cobrador</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idCobrador" type="text" class="form-control form-control-sm"
-                        formControlName="cobrador" [(ngModel)]="elemento.cobrador"
-                        [ngbTypeahead]="buscarCobrador" [resultTemplate]="rt"
-                        [inputFormatter]="formatearCobrador" [readonly]="soloLectura" required>
+                      <input id="idCobrador" class="form-control form-control-sm" formControlName="cobrador"
+                        type="text" matInput [formControl]="buscarCobrador" [matAutocomplete]="autoCobrador"
+                        autocomplete="off" [(ngModel)]="elemento.cobrador" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoCobrador="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemCobrador of resultadosCobradores" [value]="itemCobrador">
+                          {{itemCobrador.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idVendedor" class="tamanio-label">Vendedor</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idVendedor" type="text" class="form-control form-control-sm"
-                        formControlName="vendedor" [(ngModel)]="elemento.vendedor"
-                        [ngbTypeahead]="buscarVendedor" [resultTemplate]="rt"
-                        [inputFormatter]="formatearVendedor" [readonly]="soloLectura">
+                      <input id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
+                        type="text" matInput [formControl]="buscarVendedor" [matAutocomplete]="autoVendedor"
+                        autocomplete="off" [(ngModel)]="elemento.vendedor" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoVendedor="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemVendedor of resultadosVendedores" [value]="itemVendedor">
+                          {{itemVendedor.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idZona" class="tamanio-label">Zona</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idZona" type="text" class="form-control form-control-sm"
-                        formControlName="zona" [(ngModel)]="elemento.zona"
-                        [ngbTypeahead]="buscarZona" [resultTemplate]="rt"
-                        [inputFormatter]="formatearZona" [readonly]="soloLectura" required>
+                      <input id="idZona" class="form-control form-control-sm" formControlName="zona"
+                        type="text" matInput [formControl]="buscarZona" [matAutocomplete]="autoZona"
+                        autocomplete="off" [(ngModel)]="elemento.zona" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoZona="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemZona of resultadosZonas" [value]="itemZona">
+                          {{itemZona.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idRubro" class="tamanio-label">Rubro</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idRubro" type="text" class="form-control form-control-sm"
-                        formControlName="rubro" [(ngModel)]="elemento.rubro"
-                        [ngbTypeahead]="buscarRubro" [resultTemplate]="rt"
-                        [inputFormatter]="formatearRubro" [readonly]="soloLectura">
+                      <input id="idRubro" class="form-control form-control-sm" formControlName="rubro"
+                        type="text" matInput [formControl]="buscarRubro" [matAutocomplete]="autoRubro"
+                        autocomplete="off" [(ngModel)]="elemento.rubro" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoRubro="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemRubro of resultadosRubros" [value]="itemRubro">
+                          {{itemRubro.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                 </div>
@@ -190,21 +195,27 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
-                      <select id="idCondicionIva" class="form-control form-control-sm" formControlName="condicionIva"
+                      <input id="idCondicionIva" class="form-control form-control-sm" formControlName="condicionIva"
+                        type="text" matInput [matAutocomplete]="autoCondicionIva" autocomplete="off"
                         [(ngModel)]="elemento.condicionIva">
-                        <option *ngFor="let condicionIva of condicionesIva" value="{{elemento.condicionIva}}">
-                          {{condicionIva.nombre}}</option>
-                      </select>
+                      <mat-autocomplete #autoCondicionIva="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemCondicionIva of condicionesIva" [value]="itemCondicionIva">
+                          {{itemCondicionIva.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idTipoDocumento" class="tamanio-label">Tipo Documento</label>
-                      <select id="idTipoDocumento" class="form-control form-control-sm" formControlName="tipoDocumento"
+                      <input id="idTipoDocumento" class="form-control form-control-sm" formControlName="tipoDocumento"
+                        type="text" matInput [matAutocomplete]="autoTipoDocumento" autocomplete="off"
                         [(ngModel)]="elemento.tipoDocumento">
-                        <option *ngFor="let tipoDocumento of tiposDocumentos" [ngValue]="tipoDocumento">
-                          {{tipoDocumento.nombre}}</option>
-                      </select>
+                      <mat-autocomplete #autoTipoDocumento="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemTipoDocumento of tiposDocumentos" [value]="itemTipoDocumento">
+                          {{itemTipoDocumento.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -231,35 +242,37 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idEsCuentaCorriente" class="tamanio-label">Tipo de Cuenta</label>
-                      <select id="idEsCuentaCorriente" formControlName="esCuentaCorriente"
+                      <mat-select id="idEsCuentaCorriente" formControlName="esCuentaCorriente"
                         class="form-control form-control-sm" [(ngModel)]="elemento.esCuentaCorriente">
-                        <option value="false">Contado</option>
-                        <option value="true">Cuenta Corriente</option>
-                      </select>
+                        <mat-option [value]="false">Contado</mat-option>
+                        <mat-option [value]="true">Cuenta Corriente</mat-option>
+                      </mat-select>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idOrdenVenta" class="tamanio-label">Orden Venta</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idOrdenVenta" type="text" class="form-control form-control-sm"
-                        formControlName="ordenVenta" [(ngModel)]="elemento.ordenVenta"
-                        [ngbTypeahead]="buscarOrdenVenta" [resultTemplate]="rt"
-                        [inputFormatter]="formatearOrdenVenta" [readonly]="soloLectura">
+                      <input id="idOrdenVenta" class="form-control form-control-sm" formControlName="ordenVenta"
+                        type="text" matInput [formControl]="buscarOrdenVenta" [matAutocomplete]="autoOrdenVenta"
+                        autocomplete="off" [(ngModel)]="elemento.ordenVenta" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoOrdenVenta="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemOrdenVenta of resultadosOrdenesVentas" [value]="itemOrdenVenta">
+                          {{itemOrdenVenta.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idCuentaPrincipal" class="tamanio-label">Cuenta Principal</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idCuentaPrincipal" type="text" class="form-control form-control-sm"
-                        formControlName="cuentaPrincipal" [(ngModel)]="elemento.cuentaPrincipal"
-                        [ngbTypeahead]="buscar" [resultTemplate]="rt"
-                        [inputFormatter]="formatear" [readonly]="soloLectura">
+                      <input id="idCuentaPrincipal" class="form-control form-control-sm" formControlName="cuentaPrincipal"
+                        type="text" matInput [formControl]="buscarCuentaPrincipal" [matAutocomplete]="autoCuentaPrincipal"
+                        autocomplete="off" [(ngModel)]="elemento.cuentaPrincipal" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoCuentaPrincipal="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemCuentaPrincipal of resultadosCuentasPrincipales" [value]="itemCuentaPrincipal">
+                          {{itemCuentaPrincipal.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                 </div>
@@ -267,11 +280,14 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idResumenCliente" class="tamanio-label">Resumen</label>
-                      <select id="idResumenCliente" class="form-control form-control-sm" formControlName="resumenCliente"
-                        [(ngModel)]="elemento.resumenCliente" [required]="elemento.esCuentaCorriente === 'false' ? false : true">
-                        <option *ngFor="let resumenCliente of resumenesClientes" [ngValue]="resumenCliente">
-                          {{resumenCliente.nombre}}</option>
-                      </select>
+                      <input id="idResumenCliente" class="form-control form-control-sm" formControlName="resumenCliente"
+                        type="text" matInput [matAutocomplete]="autoResumenCliente" autocomplete="off"
+                        [(ngModel)]="elemento.resumenCliente">
+                      <mat-autocomplete #autoResumenCliente="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemResumenCliente of resumenesClientes" [value]="itemResumenCliente">
+                          {{itemResumenCliente.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -288,15 +304,15 @@
                 <div class="row">
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
-                      <label for="idSucursalLugarPago" class="tamanio-label">Lugar de Pago</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight> -
-                        <ngb-highlight [result]="r.localidad.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idSucursalLugarPago" type="text" class="form-control form-control-sm"
-                        formControlName="sucursalLugarPago" [(ngModel)]="elemento.sucursalLugarPago"
-                        [ngbTypeahead]="buscarSucursal" [resultTemplate]="rt"
-                        [inputFormatter]="formatearSucursal" [readonly]="soloLectura">
+                      <label for="idSucursalLugarPago" class="tamanio-label">Sucursal Lugar de Pago</label>
+                      <input id="idSucursalLugarPago" class="form-control form-control-sm" formControlName="sucursalLugarPago"
+                        type="text" matInput [formControl]="buscarSucursalLugarPago" [matAutocomplete]="autoSucursalLugarPago"
+                        autocomplete="off" [(ngModel)]="elemento.sucursalLugarPago" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoSucursalLugarPago="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                        <mat-option *ngFor="let itemSucursalLugarPago of resultadosSucursalesPago" [value]="itemSucursalLugarPago">
+                          {{itemSucursalLugarPago.nombre}}, {{itemSucursalLugarPago.localidad.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -317,12 +333,15 @@
                   </div>
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
-                      <label for="idSituacionCliente" class="tamanio-label">Situación</label>
-                      <select id="idSituacionCliente" class="form-control form-control-sm"
-                        formControlName="situacionCliente" [(ngModel)]="elemento.situacionCliente">
-                        <option *ngFor="let situacionCliente of situacionesClientes" [ngValue]="situacionCliente">
-                          {{situacionCliente.nombre}}</option>
-                      </select>
+                      <label for="idSituacionCliente" class="tamanio-label">Situacion</label>
+                      <input id="idSituacionCliente" class="form-control form-control-sm" formControlName="situacionCliente"
+                        type="text" matInput [matAutocomplete]="autoSituacionCliente" autocomplete="off"
+                        [(ngModel)]="elemento.situacionCliente">
+                      <mat-autocomplete #autoSituacionCliente="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemSituacionCliente of situacionesClientes" [value]="itemSituacionCliente">
+                          {{itemSituacionCliente.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                 </div>
@@ -332,11 +351,11 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idEsSeguroPropio" class="tamanio-label">Tipo de Seguro</label>
-                      <select id="idEsSeguroPropio" formControlName="esSeguroPropio"
+                      <mat-select id="idEsSeguroPropio" formControlName="esSeguroPropio"
                         class="form-control form-control-sm" [(ngModel)]="elemento.esSeguroPropio">
-                        <option value="false">Sin Seguro Propio</option>
-                        <option value="true">Con Seguro Propio</option>
-                      </select>
+                        <mat-option [value]="false">Sin Seguro Propio</mat-option>
+                        <mat-option [value]="true">Con Seguro Propio</mat-option>
+                      </mat-select>
                     </div>
                   </div>
                 </div>
@@ -344,14 +363,14 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
-                      <ng-template #rt let-r="result" let-t="term">
-                        <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-                      </ng-template>
-                      <input id="idCompaniaSeguro" type="text" class="form-control form-control-sm"
-                        formControlName="companiaSeguro" [(ngModel)]="elemento.companiaSeguro"
-                        [ngbTypeahead]="buscarCompaniaSeguro" [resultTemplate]="rt"
-                        [inputFormatter]="formatearCompaniaSeguro" [readonly]="soloLectura"
-                        [required]="elemento.esSeguroPropio === 'true' ? true : false">
+                      <input id="idCompaniaSeguro" class="form-control form-control-sm" formControlName="companiaSeguro"
+                        type="text" matInput [formControl]="buscarCompaniaSeguro" [matAutocomplete]="autoCompaniaSeguro"
+                        autocomplete="off" [(ngModel)]="elemento.companiaSeguro" (blur)="vaciarLista()">
+                      <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
+                          {{itemCompaniaSeguro.nombre}}
+                        </mat-option>
+                      </mat-autocomplete>
                     </div>
                   </div>
                   <div class="col-md-3">

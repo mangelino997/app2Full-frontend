@@ -81,6 +81,38 @@ export class ClienteComponent implements OnInit {
   private buscarLocalidad:FormControl = new FormControl();
   //Define la lista de resultados de busqueda de barrio
   private resultadosLocalidades = [];
+  //Define el form control para autocompletado cobrador
+  private buscarCobrador:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de cobrador
+  private resultadosCobradores = [];
+  //Define el form control para autocompletado vendedor
+  private buscarVendedor:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de vendedor
+  private resultadosVendedores = [];
+  //Define el form control para autocompletado zona
+  private buscarZona:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de zona
+  private resultadosZonas = [];
+  //Define el form control para autocompletado rubro
+  private buscarRubro:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de rubro
+  private resultadosRubros = [];
+  //Define el form control para autocompletado orden venta
+  private buscarOrdenVenta:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de orden venta
+  private resultadosOrdenesVentas = [];
+  //Define el form control para autocompletado cuenta principal
+  private buscarCuentaPrincipal:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de cuenta principal
+  private resultadosCuentasPrincipales = [];
+  //Define el form control para autocompletado sucursal lugar pago
+  private buscarSucursalLugarPago:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de sucursal lugar pago
+  private resultadosSucursalesPago = [];
+  //Define el form control para autocompletado compania seguro
+  private buscarCompaniaSeguro:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda de compania seguro
+  private resultadosCompaniasSeguros = [];
   //Constructor
   constructor(private servicio: ClienteService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -185,6 +217,78 @@ export class ClienteComponent implements OnInit {
           })
         }
     })
+    //Autocompletado Cobrador - Buscar por nombre
+    this.buscarCobrador.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.cobradorServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosCobradores = response;
+          })
+        }
+    })
+    //Autocompletado Vendedor - Buscar por nombre
+    this.buscarVendedor.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.vendedorServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosVendedores = response;
+          })
+        }
+    })
+    //Autocompletado Zona - Buscar por nombre
+    this.buscarZona.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.zonaServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosZonas = response;
+          })
+        }
+    })
+    //Autocompletado Rubro - Buscar por nombre
+    this.buscarRubro.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.rubroServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosRubros = response;
+          })
+        }
+    })
+    //Autocompletado Orden Venta - Buscar por nombre
+    this.buscarOrdenVenta.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.ordenVentaServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosOrdenesVentas = response;
+          })
+        }
+    })
+    //Autocompletado Cuenta Principal - Buscar por nombre
+    this.buscarCuentaPrincipal.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.servicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosCuentasPrincipales = response;
+          })
+        }
+    })
+    //Autocompletado Sucursal Lugar Pago - Buscar por nombre
+    this.buscarSucursalLugarPago.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.sucursalServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosSucursalesPago = response;
+          })
+        }
+    })
+    //Autocompletado Compania Seguro - Buscar por nombre
+    this.buscarCompaniaSeguro.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
+            this.resultadosCompaniasSeguros = response;
+          })
+        }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -203,6 +307,14 @@ export class ClienteComponent implements OnInit {
   public vaciarLista() {
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
+    this.resultadosCobradores = [];
+    this.resultadosVendedores = [];
+    this.resultadosZonas = [];
+    this.resultadosRubros = [];
+    this.resultadosOrdenesVentas = [];
+    this.resultadosCuentasPrincipales = [];
+    this.resultadosSucursalesPago = [];
+    this.resultadosCompaniasSeguros = [];
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
