@@ -15,6 +15,7 @@ export class EmpresaService {
   }
   //Obtiene un listado de empresas activas del usuario
   public listarEmpresasActivasDeUsuario(idUsuario) {
-    return this.http.get(this.appService.getUrlBase() + '/usuarioempresa/listarEmpresasActivasDeUsuario/' + idUsuario, this.options);
+    return this.http.get(this.appService.getUrlBase() + '/usuarioempresa/listarEmpresasActivasDeUsuario/'
+      + idUsuario, this.options);
   }
 }

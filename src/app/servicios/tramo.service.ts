@@ -51,16 +51,12 @@ export class TramoService {
     return this.http.get(this.url, this.options);
   }
   //Obtiene un listado por origen
-  public listarPorOrigen(nombre) {
-    this.http.get(this.url + '/listarPorOrigen/' + nombre, this.options).subscribe(
-      res => {
-        this.listaPorNombre = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-    return this.listaPorNombre;
+  public listarPorOrigen(origen) {
+    return this.http.get(this.url + '/listarPorOrigen/' + origen, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
   }
   //Agrega un registro
   public agregar(elemento) {

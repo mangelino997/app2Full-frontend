@@ -52,15 +52,11 @@ export class CobradorService {
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
-    this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).subscribe(
-      res => {
-        this.listaPorNombre = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-    return this.listaPorNombre;
+    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
   }
   //Agrega un registro
   public agregar(elemento) {
