@@ -60,6 +60,8 @@ import { RolOpcionService } from './servicios/rol-opcion.service';
 import { CondicionIvaService } from './servicios/condicion-iva.service';
 import { ResumenClienteService } from './servicios/resumen-cliente.service';
 import { OrdenVentaService } from './servicios/orden-venta.service';
+import { ProveedorService } from './servicios/proveedor.service';
+import { CondicionCompraService } from './servicios/condicion-compra.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -108,6 +110,8 @@ import { ZonaComponent } from './componentes/zona/zona.component';
 import { ClienteComponent } from './componentes/cliente/cliente.component';
 import { ResumenClienteComponent } from './componentes/resumen-cliente/resumen-cliente.component';
 import { OrdenVentaComponent } from './componentes/orden-venta/orden-venta.component';
+import { ProveedorComponent } from './componentes/proveedor/proveedor.component';
+import { CondicionCompraComponent } from './componentes/condicion-compra/condicion-compra.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -212,7 +216,9 @@ const stompConfig: StompConfig = {
     ZonaComponent,
     ClienteComponent,
     ResumenClienteComponent,
-    OrdenVentaComponent
+    OrdenVentaComponent,
+    ProveedorComponent,
+    CondicionCompraComponent
   ],
   imports: [
     BrowserModule,
@@ -295,6 +301,7 @@ const stompConfig: StompConfig = {
     CondicionIvaService,
     ResumenClienteService,
     OrdenVentaService,
+    ProveedorService,
     StompService,
     {
       provide: StompConfig,
