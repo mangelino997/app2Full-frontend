@@ -1,8 +1,8 @@
-<div id="pais">
+<div id="cliente" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
-        <a mat-tab-link disabled>PAIS</a>
+        <a mat-tab-link disabled>CLIENTE</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
           (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
@@ -32,14 +32,14 @@
                 <div class="row">
                   <div class="col-md-6">
                     <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                      <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+                      <label for="idAutocompletado" class="tamanio-label">Buscar Cliente</label>
                       <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
                         type="text" matInput [formControl]="buscar" [matAutocomplete]="auto"
                         autocomplete="off" [(ngModel)]="elemAutocompletado">
                       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="cambioAutocompletado(elemAutocompletado)"
-                        [displayWith]="displayFa.bind(this)">
+                        [displayWith]="displayF.bind(this)">
                         <mat-option *ngFor="let item of resultados" [value]="item">
-                          {{item.nombre}}
+                          {{item.alias}}
                         </mat-option>
                       </mat-autocomplete>
                     </div>
@@ -104,7 +104,8 @@
                       <label for="idBarrio" class="tamanio-label">Barrio</label>
                       <input id="idBarrio" class="form-control form-control-sm" formControlName="barrio"
                         type="text" matInput [formControl]="buscarBarrio" [matAutocomplete]="autoBarrio"
-                        autocomplete="off" [(ngModel)]="elemento.barrio" (blur)="vaciarLista()">
+                        autocomplete="off" [(ngModel)]="elemento.barrio" (blur)="vaciarLista()"
+                        [readonly]="soloLectura">
                       <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                           {{itemBarrio.nombre}}
@@ -117,7 +118,8 @@
                       <label for="idLocalidad" class="tamanio-label">Localidad</label>
                       <input id="idLocalidad" class="form-control form-control-sm" formControlName="localidad"
                         type="text" matInput [formControl]="buscarLocalidad" [matAutocomplete]="autoLocalidad"
-                        autocomplete="off" [(ngModel)]="elemento.localidad" (blur)="vaciarLista()">
+                        autocomplete="off" [(ngModel)]="elemento.localidad" (blur)="vaciarLista()"
+                        [readonly]="soloLectura" required>
                       <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                         <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
                           {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}},
@@ -143,7 +145,8 @@
                       <label for="idCobrador" class="tamanio-label">Cobrador</label>
                       <input id="idCobrador" class="form-control form-control-sm" formControlName="cobrador"
                         type="text" matInput [formControl]="buscarCobrador" [matAutocomplete]="autoCobrador"
-                        autocomplete="off" [(ngModel)]="elemento.cobrador" (blur)="vaciarLista()">
+                        autocomplete="off" [(ngModel)]="elemento.cobrador" (blur)="vaciarLista()"
+                        [readonly]="soloLectura" required>
                       <mat-autocomplete #autoCobrador="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemCobrador of resultadosCobradores" [value]="itemCobrador">
                           {{itemCobrador.nombre}}
@@ -156,7 +159,8 @@
                       <label for="idVendedor" class="tamanio-label">Vendedor</label>
                       <input id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
                         type="text" matInput [formControl]="buscarVendedor" [matAutocomplete]="autoVendedor"
-                        autocomplete="off" [(ngModel)]="elemento.vendedor" (blur)="vaciarLista()">
+                        autocomplete="off" [(ngModel)]="elemento.vendedor" (blur)="vaciarLista()"
+                        [readonly]="soloLectura">
                       <mat-autocomplete #autoVendedor="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemVendedor of resultadosVendedores" [value]="itemVendedor">
                           {{itemVendedor.nombre}}
@@ -169,7 +173,8 @@
                       <label for="idZona" class="tamanio-label">Zona</label>
                       <input id="idZona" class="form-control form-control-sm" formControlName="zona"
                         type="text" matInput [formControl]="buscarZona" [matAutocomplete]="autoZona"
-                        autocomplete="off" [(ngModel)]="elemento.zona" (blur)="vaciarLista()">
+                        autocomplete="off" [(ngModel)]="elemento.zona" (blur)="vaciarLista()"
+                        [readonly]="soloLectura" required>
                       <mat-autocomplete #autoZona="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemZona of resultadosZonas" [value]="itemZona">
                           {{itemZona.nombre}}
@@ -182,7 +187,8 @@
                       <label for="idRubro" class="tamanio-label">Rubro</label>
                       <input id="idRubro" class="form-control form-control-sm" formControlName="rubro"
                         type="text" matInput [formControl]="buscarRubro" [matAutocomplete]="autoRubro"
-                        autocomplete="off" [(ngModel)]="elemento.rubro" (blur)="vaciarLista()">
+                        autocomplete="off" [(ngModel)]="elemento.rubro" (blur)="vaciarLista()"
+                        [readonly]="soloLectura" required>
                       <mat-autocomplete #autoRubro="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemRubro of resultadosRubros" [value]="itemRubro">
                           {{itemRubro.nombre}}
@@ -197,7 +203,7 @@
                       <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
                       <input id="idCondicionIva" class="form-control form-control-sm" formControlName="condicionIva"
                         type="text" matInput [matAutocomplete]="autoCondicionIva" autocomplete="off"
-                        [(ngModel)]="elemento.condicionIva">
+                        [(ngModel)]="elemento.condicionIva" [readonly]="soloLectura" required>
                       <mat-autocomplete #autoCondicionIva="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemCondicionIva of condicionesIva" [value]="itemCondicionIva">
                           {{itemCondicionIva.nombre}}
@@ -210,7 +216,7 @@
                       <label for="idTipoDocumento" class="tamanio-label">Tipo Documento</label>
                       <input id="idTipoDocumento" class="form-control form-control-sm" formControlName="tipoDocumento"
                         type="text" matInput [matAutocomplete]="autoTipoDocumento" autocomplete="off"
-                        [(ngModel)]="elemento.tipoDocumento">
+                        [(ngModel)]="elemento.tipoDocumento" [readonly]="soloLectura" required>
                       <mat-autocomplete #autoTipoDocumento="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemTipoDocumento of tiposDocumentos" [value]="itemTipoDocumento">
                           {{itemTipoDocumento.nombre}}
@@ -224,7 +230,7 @@
                       <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
                         class="form-control form-control-sm" min="1" maxlength="11"
                         (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')"
-                        [readonly]="soloLectura" [(ngModel)]="elemento.numeroDocumento">
+                        [readonly]="soloLectura" [(ngModel)]="elemento.numeroDocumento" required>
                     </div>
                   </div>
                   <div class="col-md-3">
@@ -243,7 +249,8 @@
                     <div class="form-group has-float-label">
                       <label for="idEsCuentaCorriente" class="tamanio-label">Tipo de Cuenta</label>
                       <mat-select id="idEsCuentaCorriente" formControlName="esCuentaCorriente"
-                        class="form-control form-control-sm" [(ngModel)]="elemento.esCuentaCorriente">
+                        class="form-control form-control-sm" [(ngModel)]="elemento.esCuentaCorriente"
+                        [disabled]="soloLectura" required>
                         <mat-option [value]="false">Contado</mat-option>
                         <mat-option [value]="true">Cuenta Corriente</mat-option>
                       </mat-select>
@@ -254,7 +261,8 @@
                       <label for="idOrdenVenta" class="tamanio-label">Orden Venta</label>
                       <input id="idOrdenVenta" class="form-control form-control-sm" formControlName="ordenVenta"
                         type="text" matInput [formControl]="buscarOrdenVenta" [matAutocomplete]="autoOrdenVenta"
-                        autocomplete="off" [(ngModel)]="elemento.ordenVenta" (blur)="vaciarLista()">
+                        autocomplete="off" [(ngModel)]="elemento.ordenVenta" (blur)="vaciarLista()"
+                        [readonly]="soloLectura">
                       <mat-autocomplete #autoOrdenVenta="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemOrdenVenta of resultadosOrdenesVentas" [value]="itemOrdenVenta">
                           {{itemOrdenVenta.nombre}}
@@ -267,7 +275,8 @@
                       <label for="idCuentaPrincipal" class="tamanio-label">Cuenta Principal</label>
                       <input id="idCuentaPrincipal" class="form-control form-control-sm" formControlName="cuentaPrincipal"
                         type="text" matInput [formControl]="buscarCuentaPrincipal" [matAutocomplete]="autoCuentaPrincipal"
-                        autocomplete="off" [(ngModel)]="elemento.cuentaPrincipal" (blur)="vaciarLista()">
+                        autocomplete="off" [(ngModel)]="elemento.cuentaPrincipal" (blur)="vaciarLista()"
+                        [readonly]="soloLectura">
                       <mat-autocomplete #autoCuentaPrincipal="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemCuentaPrincipal of resultadosCuentasPrincipales" [value]="itemCuentaPrincipal">
                           {{itemCuentaPrincipal.nombre}}
@@ -282,7 +291,7 @@
                       <label for="idResumenCliente" class="tamanio-label">Resumen</label>
                       <input id="idResumenCliente" class="form-control form-control-sm" formControlName="resumenCliente"
                         type="text" matInput [matAutocomplete]="autoResumenCliente" autocomplete="off"
-                        [(ngModel)]="elemento.resumenCliente">
+                        [(ngModel)]="elemento.resumenCliente" [readonly]="soloLectura">
                       <mat-autocomplete #autoResumenCliente="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemResumenCliente of resumenesClientes" [value]="itemResumenCliente">
                           {{itemResumenCliente.nombre}}
@@ -307,8 +316,9 @@
                       <label for="idSucursalLugarPago" class="tamanio-label">Sucursal Lugar de Pago</label>
                       <input id="idSucursalLugarPago" class="form-control form-control-sm" formControlName="sucursalLugarPago"
                         type="text" matInput [formControl]="buscarSucursalLugarPago" [matAutocomplete]="autoSucursalLugarPago"
-                        autocomplete="off" [(ngModel)]="elemento.sucursalLugarPago" (blur)="vaciarLista()">
-                      <mat-autocomplete #autoSucursalLugarPago="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                        autocomplete="off" [(ngModel)]="elemento.sucursalLugarPago" (blur)="vaciarLista()"
+                        [readonly]="soloLectura">
+                      <mat-autocomplete #autoSucursalLugarPago="matAutocomplete" [displayWith]="displayFc.bind(this)">
                         <mat-option *ngFor="let itemSucursalLugarPago of resultadosSucursalesPago" [value]="itemSucursalLugarPago">
                           {{itemSucursalLugarPago.nombre}}, {{itemSucursalLugarPago.localidad.nombre}}
                         </mat-option>
@@ -336,7 +346,7 @@
                       <label for="idSituacionCliente" class="tamanio-label">Situacion</label>
                       <input id="idSituacionCliente" class="form-control form-control-sm" formControlName="situacionCliente"
                         type="text" matInput [matAutocomplete]="autoSituacionCliente" autocomplete="off"
-                        [(ngModel)]="elemento.situacionCliente">
+                        [(ngModel)]="elemento.situacionCliente" [readonly]="soloLectura">
                       <mat-autocomplete #autoSituacionCliente="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemSituacionCliente of situacionesClientes" [value]="itemSituacionCliente">
                           {{itemSituacionCliente.nombre}}
@@ -351,7 +361,7 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idEsSeguroPropio" class="tamanio-label">Tipo de Seguro</label>
-                      <mat-select id="idEsSeguroPropio" formControlName="esSeguroPropio"
+                      <mat-select id="idEsSeguroPropio" formControlName="esSeguroPropio" [disabled]="soloLectura"
                         class="form-control form-control-sm" [(ngModel)]="elemento.esSeguroPropio">
                         <mat-option [value]="false">Sin Seguro Propio</mat-option>
                         <mat-option [value]="true">Con Seguro Propio</mat-option>
@@ -365,7 +375,8 @@
                       <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
                       <input id="idCompaniaSeguro" class="form-control form-control-sm" formControlName="companiaSeguro"
                         type="text" matInput [formControl]="buscarCompaniaSeguro" [matAutocomplete]="autoCompaniaSeguro"
-                        autocomplete="off" [(ngModel)]="elemento.companiaSeguro" (blur)="vaciarLista()">
+                        autocomplete="off" [(ngModel)]="elemento.companiaSeguro" (blur)="vaciarLista()"
+                        [required]="elemento.esSeguroPropio ? true : false" [readonly]="soloLectura">
                       <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFa.bind(this)">
                         <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
                           {{itemCompaniaSeguro.nombre}}
@@ -378,7 +389,7 @@
                       <label for="idNumeroPoliza" class="tamanio-label">N° de Póliza</label>
                       <input id="idNumeroPoliza" type="number" formControlName="numeroPolizaSeguro"
                         autocomplete="off" class="form-control form-control-sm" min="1" maxlength="20"
-                        [required]="elemento.esSeguroPropio === 'true' ? true : false"
+                        [required]="elemento.esSeguroPropio ? true : false"
                         [readonly]="soloLectura" [(ngModel)]="elemento.numeroPolizaSeguro">
                     </div>
                   </div>
@@ -387,7 +398,7 @@
                       <label for="idVencimiento" class="tamanio-label">Vencimiento</label>
                       <input id="idVencimiento" type="date" formControlName="vencimientoPolizaSeguro"
                         autocomplete="off" class="form-control form-control-sm"
-                        [required]="elemento.esSeguroPropio === 'true' ? true : false"
+                        [required]="elemento.esSeguroPropio ? true : false"
                         [readonly]="soloLectura" [(ngModel)]="elemento.vencimientoPolizaSeguro">
                     </div>
                   </div>
@@ -439,11 +450,12 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idImprimirControlDeuda" class="tamanio-label">Imprimir Control de Deuda</label>
-                      <select id="idImprimirControlDeuda" formControlName="imprimirControlDeuda"
-                        class="form-control form-control-sm" [(ngModel)]="elemento.imprimirControlDeuda">
-                        <option value="false">No</option>
-                        <option value="true">Si</option>
-                      </select>
+                      <mat-select id="idImprimirControlDeuda" formControlName="imprimirControlDeuda"
+                        class="form-control form-control-sm" [(ngModel)]="elemento.imprimirControlDeuda"
+                        [disabled]="soloLectura" required>
+                        <mat-option [value]="false">No</mat-option>
+                        <mat-option [value]="true">Si</mat-option>
+                      </mat-select>
                     </div>
                   </div>
                 </div>
@@ -469,14 +481,19 @@
     </mat-sidenav-container>
   </div>
   <div class="row justify-content-center" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-6">
+    <div class="col-md-12">
       <table class="table table-bordered table-striped table-sm">
         <thead>
           <tr>
-            <th class="text-center" style="width:20%" scope="col">id</th>
-            <th class="text-center" style="width:80%" scope="col">Nombre</th>
-            <th class="text-center" style="width:10%" scope="col">-</th>
-            <th class="text-center" style="width:10%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">id</th>
+            <th class="text-center" style="width:15%" scope="col">Razon Social</th>
+            <th class="text-center" style="width:15%" scope="col">Tipo Documento</th>
+            <th class="text-center" style="width:15%" scope="col">N Documento</th>
+            <th class="text-center" style="width:10%" scope="col">Telefono</th>
+            <th class="text-center" style="width:15%" scope="col">Domicilio</th>
+            <th class="text-center" style="width:15%" scope="col">Localidad</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
           </tr>
         </thead>
         <tbody>
@@ -485,7 +502,22 @@
               <span>{{l.id}}</span>
             </td>
             <td align="center">
-              <span>{{l.nombre}}</span>
+              <span>{{l.razonSocial}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.tipoDocumento.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.numeroDocumento}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.telefono}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.domicilio}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.localidad.nombre}}, {{l.localidad.provincia.nombre}}</span>
             </td>
             <td align="center">
               <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>

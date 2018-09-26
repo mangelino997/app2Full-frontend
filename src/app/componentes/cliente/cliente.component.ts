@@ -305,6 +305,7 @@ export class ClienteComponent implements OnInit {
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
+    this.resultados = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
     this.resultadosCobradores = [];
@@ -326,29 +327,10 @@ export class ClienteComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
+    this.vaciarLista();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
-  }
-  //Establecer combobox en habilitado
-  private establecerCombosHabilitados() {
-    this.formulario.get('condicionIva').enable();
-    this.formulario.get('tipoDocumento').enable();
-    this.formulario.get('esCuentaCorriente').enable();
-    this.formulario.get('resumenCliente').enable();
-    this.formulario.get('situacionCliente').enable();
-    this.formulario.get('esSeguroPropio').enable();
-    this.formulario.get('imprimirControlDeuda').enable();
-  }
-  //Establecer combobox en deshabilitado
-  private establecerCombosDeshabilitados() {
-    this.formulario.get('condicionIva').disable();
-    this.formulario.get('tipoDocumento').disable();
-    this.formulario.get('esCuentaCorriente').disable();
-    this.formulario.get('resumenCliente').disable();
-    this.formulario.get('situacionCliente').disable();
-    this.formulario.get('esSeguroPropio').disable();
-    this.formulario.get('imprimirControlDeuda').disable();
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -362,19 +344,15 @@ export class ClienteComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerCombosHabilitados();
         this.establecerValoresPestania(nombre, false, false, true, 'idRazonSocial');
         break;
       case 2:
-        this.establecerCombosDeshabilitados();
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.establecerCombosHabilitados();
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.establecerCombosDeshabilitados();
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
@@ -385,6 +363,33 @@ export class ClienteComponent implements OnInit {
   public seleccionarOpcion(opcion, indice) {
     this.opcionSeleccionada = opcion;
     this.botonOpcionActivo = indice;
+    switch(opcion) {
+      case 1:
+        setTimeout(function () {
+          document.getElementById('idRazonSocial').focus();
+        }, 20);
+        break;
+      case 2:
+        setTimeout(function () {
+          document.getElementById('idEsCuentaCorriente').focus();
+        }, 20);
+        break;
+      case 3:
+        setTimeout(function () {
+          document.getElementById('idEsSeguroPropio').focus();
+        }, 20);
+        break;
+      case 4:
+        setTimeout(function () {
+          document.getElementById('idObservaciones').focus();
+        }, 20);
+        break;
+      case 5:
+        setTimeout(function () {
+          document.getElementById('idEmitirComprobante').focus();
+        }, 20);
+        break;
+    }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice, elemento) {
@@ -406,11 +411,13 @@ export class ClienteComponent implements OnInit {
   private reestablecerCamposAgregar(id) {
     this.elemento = {};
     this.elemento.id = id;
+    this.vaciarLista();
   }
   //Reestablece los campos
   private reestablecerCampos() {
     this.elemento = {};
     this.elemAutocompletado = null;
+    this.vaciarLista();
   }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {
@@ -481,8 +488,7 @@ export class ClienteComponent implements OnInit {
   //Agrega un registro
   private agregar(elemento) {
     elemento.usuarioAlta = this.appComponent.getUsuario();
-    console.log(elemento);
-    /*this.servicio.agregar(elemento).subscribe(
+    this.servicio.agregar(elemento).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
@@ -496,12 +502,11 @@ export class ClienteComponent implements OnInit {
       err => {
         this.lanzarError(err);
       }
-    );*/
+    );
   }
   //Actualiza un registro
   private actualizar(elemento) {
-    console.log(elemento);
-    /*this.servicio.actualizar(elemento).subscribe(
+    this.servicio.actualizar(elemento).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
@@ -515,7 +520,7 @@ export class ClienteComponent implements OnInit {
       err => {
         this.lanzarError(err);
       }
-    );*/
+    );
   }
   //Elimina un registro
   private eliminar(elemento) {
@@ -577,6 +582,14 @@ export class ClienteComponent implements OnInit {
     this.elemAutocompletado = elemento;
     this.elemento = elemento;
   }
+  //Define como se muestra los datos en el autcompletado
+  public displayF(elemento) {
+    if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {
     if(elemento != undefined) {
@@ -592,6 +605,32 @@ export class ClienteComponent implements OnInit {
         + ', ' + elemento.provincia.pais.nombre : elemento;
     } else {
       return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    var opcion = this.opcionSeleccionada;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
+    } else if(keycode == 114) {
+      if(opcion < this.opciones.length) {
+        this.seleccionarOpcion(opcion+1, opcion);
+      } else {
+        this.seleccionarOpcion(1, 0);
+      }
     }
   }
 }

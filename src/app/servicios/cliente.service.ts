@@ -52,15 +52,11 @@ export class ClienteService {
   }
   //Obtiene un listado por alias
   public listarPorAlias(alias) {
-    this.http.get(this.url + '/listarPorAlias/' + alias, this.options).subscribe(
-      res => {
-        this.listaPorAlias = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-    return this.listaPorAlias;
+    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
   }
   //Agrega un registro
   public agregar(elemento) {
