@@ -171,7 +171,7 @@ const appRoutes: Routes = [
   {path: 'ordenventa', component: OrdenVentaComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'generalesproveedores', component: ProveedorComponent, canActivate: [GuardiaService]},
   {path: 'condicioncompra', component: CondicionCompraComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'personaladministrar', component: PersonalComponent, canActivate: [GuardiaService]}
+  {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {

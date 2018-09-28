@@ -528,7 +528,7 @@ export class ProveedorComponent implements OnInit {
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
-    } else if(keycode == 114) {
+    } else if(keycode == 115) {
       if(opcion < this.opciones[(this.opciones.length-1)].id) {
         this.seleccionarOpcion(opcion+1, opcion-7);
       } else {

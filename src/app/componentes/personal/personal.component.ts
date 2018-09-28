@@ -32,7 +32,7 @@ import { StompService } from '@stomp/ng2-stompjs';
   selector: 'app-personal',
   templateUrl: './personal.component.html'
 })
-export class ProveedorComponent implements OnInit {
+export class PersonalComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -175,7 +175,7 @@ export class ProveedorComponent implements OnInit {
       afipActividad: new FormControl(),
       afipModContratacion: new FormControl(),
       afipLocalidad: new FormControl(),
-      afipSiniestado: new FormControl(),
+      afipSiniestrado: new FormControl(),
       adherenteObraSocial: new FormControl(),
       aporteAdicObraSocial: new FormControl(),
       contribAdicObraSocial: new FormControl(),
@@ -202,11 +202,11 @@ export class ProveedorComponent implements OnInit {
       fechaModCNRT: new FormControl(),
       fechaModLNH: new FormControl(),
       fechaModLS: new FormControl(),
-      tallaCamisa: new FormControl(),
+      talleCamisa: new FormControl(),
       tallePantalon: new FormControl(),
       talleCalzado: new FormControl(),
       turnoMEntrada: new FormControl(),
-      turnoMSalidad: new FormControl(),
+      turnoMSalida: new FormControl(),
       turnoTEntrada: new FormControl(),
       turnoTSalida: new FormControl(),
       turnoNEntrada: new FormControl(),
@@ -214,7 +214,7 @@ export class ProveedorComponent implements OnInit {
       turnoSEntrada: new FormControl(),
       turnoSSalida: new FormControl(),
       turnoDEntrada: new FormControl(),
-      turnoDSalidad: new FormControl(),
+      turnoDSalida: new FormControl(),
       turnoRotativo: new FormControl(),
       turnoFueraConvenio: new FormControl(),
       telefonoMovilEmpresa: new FormControl(),
@@ -488,7 +488,7 @@ export class ProveedorComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idRazonSocial');
+        this.establecerValoresPestania(nombre, false, false, true, 'idApellido');
         break;
       case 2:
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
@@ -510,35 +510,37 @@ export class ProveedorComponent implements OnInit {
     switch(opcion) {
       case 15:
         setTimeout(function () {
-          document.getElementById('idRazonSocial').focus();
+          document.getElementById('idApellido').focus();
         }, 20);
         break;
       case 16:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idSucursal').focus();
         }, 20);
         break;
       case 17:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idCuil').focus();
         }, 20);
         break;
       case 18:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idRecibeAdelanto').focus();
         }, 20);
         break;
       case 19:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idEsChofer').focus();
         }, 20);
+        break;
       case 20:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idTalleCamisa').focus();
         }, 20);
+        break;
       case 21:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idCorreoelectronico').focus();
         }, 20);
         break;
     }
@@ -602,7 +604,7 @@ export class ProveedorComponent implements OnInit {
         if(respuesta.codigo == 201) {
           this.reestablecerCamposAgregar(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idRazonSocial').focus();
+            document.getElementById('idApellido').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -745,7 +747,7 @@ export class ProveedorComponent implements OnInit {
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
-    } else if(keycode == 114) {
+    } else if(keycode == 115) {
       if(opcion < this.opciones[(this.opciones.length-1)].id) {
         this.seleccionarOpcion(opcion+1, opcion-14);
       } else {
