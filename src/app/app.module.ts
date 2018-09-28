@@ -62,6 +62,15 @@ import { ResumenClienteService } from './servicios/resumen-cliente.service';
 import { OrdenVentaService } from './servicios/orden-venta.service';
 import { ProveedorService } from './servicios/proveedor.service';
 import { CondicionCompraService } from './servicios/condicion-compra.service';
+import { PersonalService } from './servicios/personal.service';
+import { EstadoCivilService } from './servicios/estado-civil.service';
+import { AfipActividadService } from './servicios/afip-actividad.service';
+import { AfipComprobanteService } from './servicios/afip-comprobante.service';
+import { AfipCondicionService } from './servicios/afip-condicion.service';
+import { AfipLocalidadService } from './servicios/afip-localidad.service';
+import { AfipModContratacionService } from './servicios/afip-mod-contratacion.service';
+import { AfipSiniestradoService } from './servicios/afip-siniestrado.service';
+import { AfipSituacionService } from './servicios/afip-situacion.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -112,6 +121,8 @@ import { ResumenClienteComponent } from './componentes/resumen-cliente/resumen-c
 import { OrdenVentaComponent } from './componentes/orden-venta/orden-venta.component';
 import { ProveedorComponent } from './componentes/proveedor/proveedor.component';
 import { CondicionCompraComponent } from './componentes/condicion-compra/condicion-compra.component';
+import { PersonalComponent } from './componentes/personal/personal.component';
+import { EstadoCivilComponent } from './componentes/estado-civil/estado-civil.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -157,7 +168,10 @@ const appRoutes: Routes = [
   {path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService]},//revisar
   {path: 'generaleszonas', component: ZonaComponent, canActivate: [GuardiaService]},
   {path: 'generalesclientes', component: ClienteComponent, canActivate: [GuardiaService]},
-  {path: 'ordenventa', component: OrdenVentaComponent, canActivate: [GuardiaService]}//Revisar
+  {path: 'ordenventa', component: OrdenVentaComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'generalesproveedores', component: ProveedorComponent, canActivate: [GuardiaService]},
+  {path: 'condicioncompra', component: CondicionCompraComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'personaladministrar', component: PersonalComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -218,7 +232,9 @@ const stompConfig: StompConfig = {
     ResumenClienteComponent,
     OrdenVentaComponent,
     ProveedorComponent,
-    CondicionCompraComponent
+    CondicionCompraComponent,
+    PersonalComponent,
+    EstadoCivilComponent
   ],
   imports: [
     BrowserModule,
@@ -302,6 +318,16 @@ const stompConfig: StompConfig = {
     ResumenClienteService,
     OrdenVentaService,
     ProveedorService,
+    CondicionCompraService,
+    PersonalService,
+    EstadoCivilService,
+    AfipActividadService,
+    AfipComprobanteService,
+    AfipCondicionService,
+    AfipLocalidadService,
+    AfipModContratacionService,
+    AfipSiniestradoService,
+    AfipSituacionService,
     StompService,
     {
       provide: StompConfig,

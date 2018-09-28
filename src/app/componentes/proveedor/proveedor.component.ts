@@ -121,7 +121,9 @@ export class ProveedorComponent implements OnInit {
       aliasCBU: new FormControl(),
       tipoProveedor: new FormControl(),
       estaActivo: new FormControl(),
-      alias: new FormControl()
+      alias: new FormControl(),
+      cuentaGasto: new FormControl(),//Revisar
+      cuentaPasivo: new FormControl()//Revisar
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -147,7 +149,7 @@ export class ProveedorComponent implements OnInit {
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la primera opcion seleccionada
-    this.seleccionarOpcion(1, 0);
+    this.seleccionarOpcion(8, 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -313,29 +315,29 @@ export class ProveedorComponent implements OnInit {
     this.opcionSeleccionada = opcion;
     this.botonOpcionActivo = indice;
     switch(opcion) {
-      case 1:
+      case 8:
         setTimeout(function () {
           document.getElementById('idRazonSocial').focus();
         }, 20);
         break;
-      case 2:
+      case 9:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idCondicionCompra').focus();
         }, 20);
         break;
-      case 3:
+      case 10:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idBanco').focus();
         }, 20);
         break;
-      case 4:
+      case 11:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idObservaciones').focus();
         }, 20);
         break;
-      case 5:
+      case 12:
         setTimeout(function () {
-          document.getElementById('').focus();
+          document.getElementById('idIngresarComprobante').focus();
         }, 20);
         break;
     }
@@ -450,6 +452,10 @@ export class ProveedorComponent implements OnInit {
       document.getElementById("labelNumeroDocumento").classList.add('label-error');
       document.getElementById("idNumeroDocumento").classList.add('is-invalid');
       document.getElementById("idNumeroDocumento").focus();
+    } else if(respuesta.codigo == 11011) {
+      document.getElementById("labelNumeroCBU").classList.add('label-error');
+      document.getElementById("idNumeroCBU").classList.add('is-invalid');
+      document.getElementById("idNumeroCBU").focus();
     }
     this.toastr.error(respuesta.mensaje);
   }
@@ -512,14 +518,6 @@ export class ProveedorComponent implements OnInit {
       return elemento;
     }
   }
-  //Define como se muestra los datos en el autcompletado c
-  public displayFc(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
@@ -531,10 +529,10 @@ export class ProveedorComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     } else if(keycode == 114) {
-      if(opcion < this.opciones.length) {
-        this.seleccionarOpcion(opcion+1, opcion);
+      if(opcion < this.opciones[(this.opciones.length-1)].id) {
+        this.seleccionarOpcion(opcion+1, opcion-7);
       } else {
-        this.seleccionarOpcion(1, 0);
+        this.seleccionarOpcion(8, 0);
       }
     }
   }
