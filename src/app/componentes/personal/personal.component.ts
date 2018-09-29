@@ -63,6 +63,8 @@ export class PersonalComponent implements OnInit {
   private listaCompleta:any = null;
   //Define la opcion seleccionada
   private opcionSeleccionada:number = null;
+  //Define la nacionalidad
+  private nacionalidad:string = null;
   //Define la lista de sexos
   private sexos:any = null;
   //Define la lista de estados civiles
@@ -225,7 +227,8 @@ export class PersonalComponent implements OnInit {
       esChoferLargaDistancia: new FormControl(),
       esAcompReparto: new FormControl(),
       observaciones: new FormControl(),
-      alias: new FormControl()
+      alias: new FormControl(),
+      nacionalidadNacimiento: new FormControl()
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -379,6 +382,8 @@ export class PersonalComponent implements OnInit {
     this.listarSucursales();
     //Obtiene la lista de areas
     this.listarAreas();
+    //Obtiene la lista de sindicatos
+    this.listarSindicatos();
   }
   //Obtiene el listado de sexos
   private listarSexos() {
@@ -711,6 +716,11 @@ export class PersonalComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.elemAutocompletado = elemento;
     this.elemento = elemento;
+  }
+  //Establece la nacionalidad
+  public establecerNacionalidad(localidad) {
+    console.log(localidad);
+    this.nacionalidad = localidad.provincia.pais.nombre;
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
