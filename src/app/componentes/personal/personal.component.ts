@@ -469,6 +469,29 @@ export class PersonalComponent implements OnInit {
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
    this.elemento = elemAutocompletado;
+   this.elemento.fechaNacimiento = elemAutocompletado.fechaNacimiento.substring(0, 10);
+   this.elemento.fechaInicio = elemAutocompletado.fechaInicio.substring(0, 10);
+   if(elemAutocompletado.fechaFin != null) {
+     this.elemento.fechaFin = elemAutocompletado.fechaFin.substring(0, 10);
+   }
+   if(elemAutocompletado.vtoLicenciaConducir != null) {
+     this.elemento.vtoLicenciaConducir = elemAutocompletado.vtoLicenciaConducir.substring(0, 10);
+   }
+   if(elemAutocompletado.vtoCursoCNRT != null) {
+     this.elemento.vtoCursoCNRT = elemAutocompletado.vtoCursoCNRT.substring(0, 10);
+   }
+   if(elemAutocompletado.vtoLNH != null) {
+     this.elemento.vtoLNH = elemAutocompletado.vtoLNH.substring(0, 10);
+   }
+   if(elemAutocompletado.vtoLibretaSanidad != null) {
+     this.elemento.vtoLibretaSanidad = elemAutocompletado.vtoLibretaSanidad.substring(0, 10);
+   }
+   if(elemAutocompletado.telefonoMovilFechaEntrega != null) {
+     this.elemento.telefonoMovilFechaEntrega = elemAutocompletado.telefonoMovilFechaEntrega.substring(0, 10);
+   }
+   if(elemAutocompletado.telefonoMovilFechaDevolucion != null) {
+     this.elemento.telefonoMovilFechaDevolucion = elemAutocompletado.telefonoMovilFechaDevolucion.substring(0, 10);
+   }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -570,12 +593,14 @@ export class PersonalComponent implements OnInit {
   private reestablecerCamposAgregar(id) {
     this.elemento = {};
     this.elemento.id = id;
+    this.nacionalidad = null;
     this.vaciarLista();
   }
   //Reestablece los campos
   private reestablecerCampos() {
     this.elemento = {};
     this.elemAutocompletado = null;
+    this.nacionalidad = null;
     this.vaciarLista();
   }
   //Obtiene el siguiente id
@@ -603,6 +628,9 @@ export class PersonalComponent implements OnInit {
   //Agrega un registro
   private agregar(elemento) {
     elemento.usuarioAlta = this.appComponent.getUsuario();
+    elemento.empresa = this.appComponent.getEmpresa();
+    elemento.esJubilado = false;
+    elemento.esMensualizado = true;
     this.servicio.agregar(elemento).subscribe(
       res => {
         var respuesta = res.json();
@@ -621,6 +649,10 @@ export class PersonalComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar(elemento) {
+    elemento.usuarioMod = this.appComponent.getUsuario();
+    elemento.empresa = this.appComponent.getEmpresa();
+    elemento.esJubilado = false;
+    elemento.esMensualizado = true;
     this.servicio.actualizar(elemento).subscribe(
       res => {
         var respuesta = res.json();
