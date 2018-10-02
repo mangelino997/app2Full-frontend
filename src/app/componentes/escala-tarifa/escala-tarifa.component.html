@@ -1,0 +1,59 @@
+<br>
+<div id="escalatarifa" class="container-fluid">
+  <div class="row justify-content-center">
+    <h5>Escala de Tarifas</h5>
+  </div>
+  <form [formGroup]="formulario">
+    <div class="row justify-content-center">
+      <div class="col-md-2">
+        <div id="divValor" class="form-group has-float-label">
+          <label id="labelValor" for="idValor" class="tamanio-label">Valor</label>
+          <input id="idValor" type="number" formControlName="valor" autocomplete="off"
+          class="form-control form-control-sm" min="1" maxlength="45"
+          (ngModelChange)="cambioCampo('idValor', 'labelValor')"
+          (blur)="establecerHasta($event)"
+          [readonly]="soloLectura" [(ngModel)]="elemento.valor" required>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="form-group has-float-label">
+          <label for="idDescripcion" class="tamanio-label">Descripción</label>
+          <input id="idDescripcion" type="text" formControlName="descripcion" autocomplete="off"
+          class="form-control form-control-sm" maxlength="45" readonly [(ngModel)]="elemento.descripcion">
+        </div>
+      </div>
+      <div class="col-md-1">
+        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="agregar(elemento)" [disabled]="!formulario.valid">
+          Agregar
+        </button>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-4">
+        <table class="table table-bordered table-striped table-sm">
+          <thead>
+            <tr>
+              <th class="text-center" style="width:30%" scope="col">-</th>
+              <th class="text-center" style="width:40%" scope="col">Valor</th>
+              <th class="text-center" style="width:20%" scope="col">-</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let l of listaCompleta">
+              <td align="center">
+                <span>Hasta</span>
+              </td>
+              <td align="right">
+                <span>{{l.valor | number:'1.2-2'}}</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color" (click)="eliminar(l.id)">Eliminar</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </form>
+</div>

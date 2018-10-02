@@ -71,6 +71,7 @@ import { AfipLocalidadService } from './servicios/afip-localidad.service';
 import { AfipModContratacionService } from './servicios/afip-mod-contratacion.service';
 import { AfipSiniestradoService } from './servicios/afip-siniestrado.service';
 import { AfipSituacionService } from './servicios/afip-situacion.service';
+import { EscalaTarifaService } from './servicios/escala-tarifa.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -123,6 +124,7 @@ import { ProveedorComponent } from './componentes/proveedor/proveedor.component'
 import { CondicionCompraComponent } from './componentes/condicion-compra/condicion-compra.component';
 import { PersonalComponent } from './componentes/personal/personal.component';
 import { EstadoCivilComponent } from './componentes/estado-civil/estado-civil.component';
+import { EscalaTarifaComponent } from './componentes/escala-tarifa/escala-tarifa.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -171,7 +173,8 @@ const appRoutes: Routes = [
   {path: 'ordenventa', component: OrdenVentaComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'generalesproveedores', component: ProveedorComponent, canActivate: [GuardiaService]},
   {path: 'condicioncompra', component: CondicionCompraComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]}
+  {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]},
+  {path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -234,7 +237,8 @@ const stompConfig: StompConfig = {
     ProveedorComponent,
     CondicionCompraComponent,
     PersonalComponent,
-    EstadoCivilComponent
+    EstadoCivilComponent,
+    EscalaTarifaComponent
   ],
   imports: [
     BrowserModule,
@@ -328,6 +332,7 @@ const stompConfig: StompConfig = {
     AfipModContratacionService,
     AfipSiniestradoService,
     AfipSituacionService,
+    EscalaTarifaService,
     StompService,
     {
       provide: StompConfig,
