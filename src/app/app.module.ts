@@ -74,6 +74,7 @@ import { AfipSituacionService } from './servicios/afip-situacion.service';
 import { EscalaTarifaService } from './servicios/escala-tarifa.service';
 import { ChoferProveedorService } from './servicios/chofer-proveedor.service';
 import { ConfiguracionVehiculoService } from './servicios/configuracion-vehiculo.service';
+import { ContactoBancoService } from './servicios/contacto-banco.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -129,6 +130,7 @@ import { EstadoCivilComponent } from './componentes/estado-civil/estado-civil.co
 import { EscalaTarifaComponent } from './componentes/escala-tarifa/escala-tarifa.component';
 import { ChoferProveedorComponent } from './componentes/chofer-proveedor/chofer-proveedor.component';
 import { ConfiguracionVehiculoComponent } from './componentes/configuracion-vehiculo/configuracion-vehiculo.component';
+import { ContactoBancoComponent } from './componentes/contacto-banco/contacto-banco.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -179,8 +181,9 @@ const appRoutes: Routes = [
   {path: 'condicioncompra', component: CondicionCompraComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]},
   {path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService]},
-  {path: 'choferproveedor', component: ChoferProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'configuracionvehiculo', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]}
+  {path: 'choferproveedor', component: ChoferProveedorComponent, canActivate: [GuardiaService]},//VER
+  {path: 'configuracionvehiculo', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]},//VER
+  {path: 'contactobanco', component: ContactoBancoComponent, canActivate: [GuardiaService]}//VER
 ]
 
 const stompConfig: StompConfig = {
@@ -246,7 +249,8 @@ const stompConfig: StompConfig = {
     EstadoCivilComponent,
     EscalaTarifaComponent,
     ChoferProveedorComponent,
-    ConfiguracionVehiculoComponent
+    ConfiguracionVehiculoComponent,
+    ContactoBancoComponent
   ],
   imports: [
     BrowserModule,
@@ -343,6 +347,7 @@ const stompConfig: StompConfig = {
     EscalaTarifaService,
     ChoferProveedorService,
     ConfiguracionVehiculoService,
+    ContactoBancoService,
     StompService,
     {
       provide: StompConfig,
