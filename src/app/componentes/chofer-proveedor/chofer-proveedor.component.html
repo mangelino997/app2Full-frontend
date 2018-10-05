@@ -1,0 +1,161 @@
+<div id="choferproveedor">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>CHOFER PROVEEDOR</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-8 text-center">
+      <h5>{{pestaniaActual}} Chofer de Proveedor</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idAutocompletado" class="tamanio-label">Buscar Proveedor</label>
+              <ng-template #rt let-r="result" let-t="term">
+                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+              </ng-template>
+              <input id="idAutocompletado" type="text" class="form-control form-control-sm"
+                formControlName="autocompletado" [(ngModel)]="elemento"
+                [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">N° de Cuenta</label>
+              <input id="idCodigo" type="number" formControlName="id" readonly
+                class="form-control form-control-sm" [(ngModel)]="elemento.proveedor.id">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idRazonSocial" class="tamanio-label">Razón Social</label>
+              <input id="idRazonSocial" type="text" formControlName="razonSocial" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45"
+                [(ngModel)]="elemento.proveedor.razonSocial" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3" *ngIf="mostrarAutocompletado">
+            <div class="form-group has-float-label">
+              <label for="idListaChoferes" class="tamanio-label">Lista de Choferes</label>
+              <input id="idListaChoferes" class="form-control form-control-sm" formControlName="listaChoferes"
+                type="text" matInput [matAutocomplete]="autoListaChoferes" autocomplete="off"
+                [(ngModel)]="elemento.listaChoferes" [readonly]="soloLectura" required>
+              <mat-autocomplete #autoListaChoferes="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                <mat-option *ngFor="let itemTipoDocumento of choferes" [value]="itemTipoDocumento">
+                  {{itemTipoDocumento.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-3">
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-3">
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-3">
+
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-3">
+
+          </div>
+          <div class="col-md-3">
+
+          </div>
+        </div>
+        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">{{pestaniaActual}}</button>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-12">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:5%" scope="col">id</th>
+            <th class="text-center" style="width:20%" scope="col">Nombre</th>
+            <th class="text-center" style="width:20%" scope="col">Proveedor</th>
+            <th class="text-center" style="width:10%" scope="col">Tipo Documento</th>
+            <th class="text-center" style="width:15%" scope="col">N° Documento</th>
+            <th class="text-center" style="width:20%" scope="col">Localidad</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.id}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.proveedor.razonSocial}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.tipoDocumento.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.numeroDocumento}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.localidad.nombre}}, {{l.localidad.provincia.nombre}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
