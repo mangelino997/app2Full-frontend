@@ -73,6 +73,7 @@ import { AfipSiniestradoService } from './servicios/afip-siniestrado.service';
 import { AfipSituacionService } from './servicios/afip-situacion.service';
 import { EscalaTarifaService } from './servicios/escala-tarifa.service';
 import { ChoferProveedorService } from './servicios/chofer-proveedor.service';
+import { ConfiguracionVehiculoService } from './servicios/configuracion-vehiculo.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -127,6 +128,7 @@ import { PersonalComponent } from './componentes/personal/personal.component';
 import { EstadoCivilComponent } from './componentes/estado-civil/estado-civil.component';
 import { EscalaTarifaComponent } from './componentes/escala-tarifa/escala-tarifa.component';
 import { ChoferProveedorComponent } from './componentes/chofer-proveedor/chofer-proveedor.component';
+import { ConfiguracionVehiculoComponent } from './componentes/configuracion-vehiculo/configuracion-vehiculo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -177,7 +179,8 @@ const appRoutes: Routes = [
   {path: 'condicioncompra', component: CondicionCompraComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]},
   {path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService]},
-  {path: 'choferproveedor', component: ChoferProveedorComponent, canActivate: [GuardiaService]}
+  {path: 'choferproveedor', component: ChoferProveedorComponent, canActivate: [GuardiaService]},
+  {path: 'configuracionvehiculo', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -242,7 +245,8 @@ const stompConfig: StompConfig = {
     PersonalComponent,
     EstadoCivilComponent,
     EscalaTarifaComponent,
-    ChoferProveedorComponent
+    ChoferProveedorComponent,
+    ConfiguracionVehiculoComponent
   ],
   imports: [
     BrowserModule,
@@ -338,6 +342,7 @@ const stompConfig: StompConfig = {
     AfipSituacionService,
     EscalaTarifaService,
     ChoferProveedorService,
+    ConfiguracionVehiculoService,
     StompService,
     {
       provide: StompConfig,

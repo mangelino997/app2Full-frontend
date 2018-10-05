@@ -1,0 +1,196 @@
+<div id="configuracionvehiculo">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>CONFIGURACION VEHICULO</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-8 text-center">
+      <h5>{{pestaniaActual}} Configuracion de Vehiculo</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehiculo</label>
+              <input id="idTipoVehiculo" class="form-control form-control-sm" formControlName="tipoVehiculo"
+                type="text" matInput [matAutocomplete]="autoTipoVehiculo" autocomplete="off"
+                [(ngModel)]="elemento.tipoVehiculo" [readonly]="soloLectura" required>
+              <mat-autocomplete #autoTipoVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)"
+                (optionSelected)="listarPorTipoVehiculoMarcaVehiculo(elemento.tipoVehiculo, elemento.marcaVehiculo)">
+                <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
+                  {{itemTipoVehiculo.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehiculo</label>
+              <input id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo"
+                type="text" matInput [matAutocomplete]="autoMarcaVehiculo" autocomplete="off"
+                [(ngModel)]="elemento.marcaVehiculo" [readonly]="soloLectura" required>
+              <mat-autocomplete #autoMarcaVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)"
+                (optionSelected)="listarPorTipoVehiculoMarcaVehiculo(elemento.tipoVehiculo, elemento.marcaVehiculo)">
+                <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
+                  {{itemMarcaVehiculo.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+              <div class="form-group has-float-label">
+                <label for="idAutocompletado" class="tamanio-label">Lista de Configuraciones</label>
+                <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
+                  type="text" matInput [matAutocomplete]="autoAutocompletado" autocomplete="off"
+                  [(ngModel)]="elemento" [readonly]="soloLectura" required>
+                <mat-autocomplete #autoAutocompletado="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                  <mat-option *ngFor="let itemAutocompletado of listaConfiguraciones" [value]="itemAutocompletado">
+                    {{itemAutocompletado.nombre}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idModelo" class="tamanio-label-titulo">Modelo</label>
+              <input id="idModelo" type="text" formControlName="modelo" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45"
+                [readonly]="soloLectura" [(ngModel)]="elemento.modelo" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idDescripcion" class="tamanio-label">Descripcion</label>
+              <textarea id="idDescripcion" class="form-control form-control-sm" formControlName="descripcion"
+                maxlength="100" rows="1" [readonly]="soloLectura" [(ngModel)]="elemento.descripcion"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idCantidadEjes" class="tamanio-label">Cantidad de Ejes</label>
+              <input id="idCantidadEjes" class="form-control form-control-sm" formControlName="cantidadEjes"
+                type="text" matInput [matAutocomplete]="autoCantidadEjes" autocomplete="off"
+                [(ngModel)]="elemento.cantidadEjes" [readonly]="soloLectura" required>
+              <mat-autocomplete #autoCantidadEjes="matAutocomplete">
+                <mat-option [value]="1">1</mat-option>
+                <mat-option [value]="2">2</mat-option>
+                <mat-option [value]="3">3</mat-option>
+                <mat-option [value]="4">4</mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idCapacidadCarga" class="tamanio-label-titulo">Capacidad Total de Carga(Tn)</label>
+              <input id="idCapacidadCarga" type="number" formControlName="capacidadCarga" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="5"
+                [readonly]="soloLectura" [(ngModel)]="elemento.capacidadCarga" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idTara" class="tamanio-label-titulo">Tara(Tn)</label>
+              <input id="idTara" type="number" formControlName="tara" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="5"
+                [readonly]="soloLectura" [(ngModel)]="elemento.tara">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idAltura" class="tamanio-label-titulo">Altura(m)</label>
+              <input id="idAltura" type="number" formControlName="altura" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="5"
+                [readonly]="soloLectura" [(ngModel)]="elemento.altura">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idLargo" class="tamanio-label-titulo">Largo(m)</label>
+              <input id="idLargo" type="number" formControlName="largo" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="5"
+                [readonly]="soloLectura" [(ngModel)]="elemento.largo">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idAncho" class="tamanio-label-titulo">Ancho(m)</label>
+              <input id="idAncho" type="number" formControlName="ancho" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="5"
+                [readonly]="soloLectura" [(ngModel)]="elemento.ancho">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idM3" class="tamanio-label-titulo">M3(m)</label>
+              <input id="idM3" type="number" formControlName="m3" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="5"
+                [readonly]="soloLectura" [(ngModel)]="elemento.m3">
+            </div>
+          </div>
+        </div>
+        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">{{pestaniaActual}}</button>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-12">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:5%" scope="col">id</th>
+            <th class="text-center" style="width:15%" scope="col">Tipo Vehiculo</th>
+            <th class="text-center" style="width:20%" scope="col">Marca Vehiculo</th>
+            <th class="text-center" style="width:10%" scope="col">Modelo</th>
+            <th class="text-center" style="width:10%" scope="col">Cantidad Ejes</th>
+            <th class="text-center" style="width:10%" scope="col">Capacidad Carga</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.id}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.tipoVehiculo.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.marcaVehiculo.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.modelo}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.cantidadEjes}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.capacidadCarga}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

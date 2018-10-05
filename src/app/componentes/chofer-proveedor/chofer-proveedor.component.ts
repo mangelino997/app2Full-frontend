@@ -18,7 +18,7 @@ import { StompService } from '@stomp/ng2-stompjs';
   selector: 'app-chofer-proveedor',
   templateUrl: './chofer-proveedor.component.html'
 })
-export class ClienteComponent implements OnInit {
+export class ChoferProveedorComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
