@@ -1,8 +1,8 @@
-<div id="contactobanco">
+<div id="contactocompaniaseguro">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
-        <a mat-tab-link disabled>CONTACTO BANCO</a>
+        <a mat-tab-link disabled>CONTACTO COMPAÑIA SEGURO</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
           (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
@@ -10,39 +10,21 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-8 text-center">
-      <h5>{{pestaniaActual}} Contácto de Banco</h5>
+      <h5>{{pestaniaActual}} Contácto de Compañia de Seguro</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-6">
             <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Buscar por Banco-Sucursal</label>
-              <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
+              <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
+              <input id="idCompaniaSeguro" class="form-control form-control-sm" formControlName="companiaSeguro"
                 type="text" matInput [formControl]="buscar" [matAutocomplete]="auto"
                 autocomplete="off" [(ngModel)]="elemAutocompletado" required>
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
-                (optionSelected)="listarPorSucursalBanco(elemAutocompletado)">
+                (optionSelected)="listarPorCompaniaSeguro(elemAutocompletado)">
                 <mat-option *ngFor="let item of resultados" [value]="item">
-                  {{item.banco.nombre}} - {{item.nombre}}
+                  {{item.nombre}}
                 </mat-option>
               </mat-autocomplete>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-3">
-            <div class="form-group has-float-label">
-              <label for="idBanco" class="tamanio-label-titulo">Banco</label>
-              <input id="idBanco" type="text" formControlName="banco" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45"
-                [readonly]="true" [(ngModel)]="elemAutocompletado.banco.nombre">
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group has-float-label">
-              <label for="idSucursal" class="tamanio-label-titulo">Sucursal</label>
-              <input id="idSucursal" type="text" formControlName="sucursal" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45"
-                [readonly]="true" [(ngModel)]="elemAutocompletado.nombre">
             </div>
           </div>
         </div>
@@ -52,7 +34,7 @@
               <label for="idContacto" class="tamanio-label">Lista de Contáctos</label>
               <input id="idContacto" class="form-control form-control-sm" formControlName="contacto"
                 type="text" matInput [matAutocomplete]="autoContacto" autocomplete="off"
-                [(ngModel)]="elemento.contacto" [readonly]="soloLectura" required>
+                [(ngModel)]="elemento" [readonly]="soloLectura" required>
               <mat-autocomplete #autoContacto="matAutocomplete" [displayWith]="displayFb.bind(this)">
                 <mat-option *ngFor="let itemContacto of contactos" [value]="itemContacto">
                   {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}}
@@ -129,13 +111,12 @@
         <thead>
           <tr>
             <th class="text-center" style="width:5%" scope="col">id</th>
-            <th class="text-center" style="width:10%" scope="col">Banco</th>
-            <th class="text-center" style="width:15%" scope="col">Sucursal Banco</th>
-            <th class="text-center" style="width:15%" scope="col">Nombre Contácto</th>
-            <th class="text-center" style="width:10%" scope="col">Tipo Contaćto</th>
-            <th class="text-center" style="width:10%" scope="col">Telefono Fijo</th>
-            <th class="text-center" style="width:10%" scope="col">Telefono Móvil</th>
-            <th class="text-center" style="width:15%" scope="col">Correo Electrónico</th>
+            <th class="text-center" style="width:15%" scope="col">Nombre</th>
+            <th class="text-center" style="width:20%" scope="col">Compañia Seguro</th>
+            <th class="text-center" style="width:10%" scope="col">Tipo Contácto</th>
+            <th class="text-center" style="width:10%" scope="col">Teléfono Fijo</th>
+            <th class="text-center" style="width:10%" scope="col">Teléfono Móvil</th>
+            <th class="text-center" style="width:20%" scope="col">Correo Electrónico</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
           </tr>
@@ -146,13 +127,10 @@
               <span>{{l.id}}</span>
             </td>
             <td align="center">
-              <span>{{l.sucursalBanco.banco.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.sucursalBanco.nombre}}</span>
-            </td>
-            <td align="center">
               <span>{{l.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.companiaSeguro.nombre}}</span>
             </td>
             <td align="center">
               <span>{{l.tipoContacto.nombre}}</span>

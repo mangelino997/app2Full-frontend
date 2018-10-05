@@ -75,6 +75,9 @@ import { EscalaTarifaService } from './servicios/escala-tarifa.service';
 import { ChoferProveedorService } from './servicios/chofer-proveedor.service';
 import { ConfiguracionVehiculoService } from './servicios/configuracion-vehiculo.service';
 import { ContactoBancoService } from './servicios/contacto-banco.service';
+import { ContactoClienteService } from './servicios/contacto-cliente.service';
+import { ContactoCompaniaSeguroService } from './servicios/contacto-compania-seguro.service';
+import { ContactoProveedorService } from './servicios/contacto-proveedor.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -131,6 +134,9 @@ import { EscalaTarifaComponent } from './componentes/escala-tarifa/escala-tarifa
 import { ChoferProveedorComponent } from './componentes/chofer-proveedor/chofer-proveedor.component';
 import { ConfiguracionVehiculoComponent } from './componentes/configuracion-vehiculo/configuracion-vehiculo.component';
 import { ContactoBancoComponent } from './componentes/contacto-banco/contacto-banco.component';
+import { ContactoClienteComponent } from './componentes/contacto-cliente/contacto-cliente.component';
+import { ContactoCompaniaSeguroComponent } from './componentes/contacto-compania-seguro/contacto-compania-seguro.component';
+import { ContactoProveedorComponent } from './componentes/contacto-proveedor/contacto-proveedor.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -183,7 +189,10 @@ const appRoutes: Routes = [
   {path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService]},
   {path: 'choferproveedor', component: ChoferProveedorComponent, canActivate: [GuardiaService]},//VER
   {path: 'configuracionvehiculo', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]},//VER
-  {path: 'contactobanco', component: ContactoBancoComponent, canActivate: [GuardiaService]}//VER
+  {path: 'contactobanco', component: ContactoBancoComponent, canActivate: [GuardiaService]},//VER
+  {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//VER
+  {path: 'contactocompaniaseguro', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//VER
+  {path: 'contactoproveedor', component: ContactoProveedorComponent, canActivate: [GuardiaService]}//VER
 ]
 
 const stompConfig: StompConfig = {
@@ -250,7 +259,10 @@ const stompConfig: StompConfig = {
     EscalaTarifaComponent,
     ChoferProveedorComponent,
     ConfiguracionVehiculoComponent,
-    ContactoBancoComponent
+    ContactoBancoComponent,
+    ContactoClienteComponent,
+    ContactoCompaniaSeguroComponent,
+    ContactoProveedorComponent
   ],
   imports: [
     BrowserModule,
@@ -348,6 +360,9 @@ const stompConfig: StompConfig = {
     ChoferProveedorService,
     ConfiguracionVehiculoService,
     ContactoBancoService,
+    ContactoClienteService,
+    ContactoCompaniaSeguroService,
+    ContactoProveedorService,
     StompService,
     {
       provide: StompConfig,

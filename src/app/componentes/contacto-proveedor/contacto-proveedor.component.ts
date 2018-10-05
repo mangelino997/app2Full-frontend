@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ContactoBancoService } from '../../servicios/contacto-banco.service';
+import { ContactoProveedorService } from '../../servicios/contacto-proveedor.service';
 import { PestaniaService } from '../../servicios/pestania.service';
-import { BancoService } from '../../servicios/banco.service';
-import { SucursalBancoService } from '../../servicios/sucursal-banco.service';
+import { ProveedorService } from '../../servicios/proveedor.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
@@ -14,11 +13,10 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
-  selector: 'app-contacto-banco',
-  templateUrl: './contacto-banco.component.html',
-  styleUrls: ['./contacto-banco.component.css']
+  selector: 'app-contacto-proveedor',
+  templateUrl: './contacto-proveedor.component.html'
 })
-export class ContactoBancoComponent implements OnInit {
+export class ContactoProveedorComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -55,20 +53,15 @@ export class ContactoBancoComponent implements OnInit {
   private buscar:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   private resultados = [];
-  //Define el form control para autocompletado banco
-  private buscarBanco:FormControl = new FormControl();
-  //Define la lista de resultados de busqueda de bancos
-  private resultadosBancos = [];
   //Constructor
-  constructor(private servicio: ContactoBancoService, private pestaniaService: PestaniaService,
+  constructor(private servicio: ContactoProveedorService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private bancoServicio: BancoService, private sucursalBancoServicio: SucursalBancoService,
-    private tipoContactoServicio: TipoContactoService) {
+    private proveedorServicio: ProveedorService, private tipoContactoServicio: TipoContactoService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
       id: new FormControl(),
-      sucursalBanco: new FormControl(),
+      proveedor: new FormControl(),
       tipoContacto: new FormControl(),
       nombre: new FormControl(),
       telefonoFijo: new FormControl(),
@@ -95,21 +88,12 @@ export class ContactoBancoComponent implements OnInit {
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
-    //Autocompletado - Buscar por nombre banco
+    //Autocompletado - Buscar por alias proveedor
     this.buscar.valueChanges
       .subscribe(data => {
         if(typeof data == 'string') {
-          this.sucursalBancoServicio.listarPorNombreBanco(data).subscribe(response =>{
+          this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
             this.resultados = response;
-          })
-        }
-    })
-    //Autocompletado Banco - Buscar por nombre
-    this.buscarBanco.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.bancoServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosBancos = response;
           })
         }
     })
@@ -135,7 +119,6 @@ export class ContactoBancoComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
     this.resultados = [];
-    this.resultadosBancos = [];
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
@@ -160,16 +143,16 @@ export class ContactoBancoComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, false, false, true, 'idProveedor');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idProveedor');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idProveedor');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
         break;
       default:
         break;
@@ -225,10 +208,10 @@ export class ContactoBancoComponent implements OnInit {
       }
     );
   }
-  //Obtiene la lista de contactos por sucursal banco
-  public listarPorSucursalBanco(elemento) {
+  //Obtiene la lista por proveedor
+  public listarPorProveedor(elemento) {
     if(this.mostrarAutocompletado) {
-      this.servicio.listarPorSucursalBanco(elemento.id).subscribe(
+      this.servicio.listarPorProveedor(elemento.id).subscribe(
         res => {
           this.contactos = res.json();
         },
@@ -247,7 +230,7 @@ export class ContactoBancoComponent implements OnInit {
         if(respuesta.codigo == 201) {
           this.reestablecerCamposAgregar(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -265,7 +248,7 @@ export class ContactoBancoComponent implements OnInit {
         if(respuesta.codigo == 200) {
           this.reestablecerCampos();
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -330,15 +313,7 @@ export class ContactoBancoComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.banco.nombre + ' - ' + elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado a
-  public displayFa(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + '' : elemento;
+      return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
     }

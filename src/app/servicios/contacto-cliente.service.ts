@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class ContactoBancoService {
+export class ContactoClienteService {
   //Define la ruta al servicio web
-  private ruta:string = "/contactobanco";
+  private ruta:string = "/contactocliente";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -58,9 +58,9 @@ export class ContactoBancoService {
       })
     })
   }
-  //Obtiene una lista de contactos por sucursal banco
-  public listarPorSucursalBanco(idSucursalBanco) {
-    return this.http.get(this.url + '/listarPorSucursalBanco/' + idSucursalBanco, this.options);
+  //Obtiene una lista por cliente
+  public listarPorCliente(idCliente) {
+    return this.http.get(this.url + '/listarPorCliente/' + idCliente, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
