@@ -12,33 +12,37 @@
     <div class="col-md-4 text-center">
       <h5>{{pestaniaActual}} Sucursal de Banco</h5>
       <form [formGroup]="formulario" class="contenedor">
+        <div class="form-group has-float-label">
+          <label for="idBanco" class="tamanio-label">Banco</label>
+          <input id="idBanco" class="form-control form-control-sm" formControlName="banco"
+            type="text" matInput [formControl]="buscarBanco" [matAutocomplete]="autoBanco"
+            autocomplete="off" [(ngModel)]="elemento.banco" (blur)="vaciarLista()"
+            [readonly]="soloLectura">
+          <mat-autocomplete #autoBanco="matAutocomplete" [displayWith]="displayFa.bind(this)"
+            (optionSelected)="listarPorBanco(elemento.banco)">
+            <mat-option *ngFor="let itemBanco of resultadosBancos" [value]="itemBanco">
+              {{itemBanco.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar por Banco</label>
-          <ng-template #rt let-r="result" let-t="term">
-            <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight> -
-            <ngb-highlight [result]="r.banco.nombre" [term]="t"></ngb-highlight>
-          </ng-template>
-          <input id="idAutocompletado" type="text" class="form-control form-control-sm"
-            formControlName="autocompletado" [(ngModel)]="elemento" autocomplete="off"
-            [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+          <label for="idAutocompletado" class="tamanio-label">Lista de Sucursales de Banco</label>
+          <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
+            type="text" matInput [matAutocomplete]="auto" autocomplete="off"
+            [(ngModel)]="elemento" [readonly]="soloLectura" required>
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+            <mat-option *ngFor="let item of sucursales" [value]="item">
+              {{item.nombre}} - {{item.banco.nombre}}
+            </mat-option>
+          </mat-autocomplete>
         </div>
         <div class="form-group has-float-label">
-          <label for="idCodigo" class="tamanio-label">Código</label>
+          <label for="idCodigo" class="tamanio-label-titulo">Código</label>
           <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
             required readonly [(ngModel)]="elemento.id">
         </div>
         <div class="form-group has-float-label">
-          <label for="idBanco" class="tamanio-label">Banco</label>
-          <ng-template #rt let-r="result" let-t="term">
-            <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-          </ng-template>
-          <input id="idBanco" type="text" class="form-control form-control-sm"
-            formControlName="banco" [(ngModel)]="elemento.banco"
-            [ngbTypeahead]="listarBancosPorNombre" [resultTemplate]="rt"
-            [inputFormatter]="formatearBancos" [readonly]="soloLectura" required>
-        </div>
-        <div id="divNombre" class="form-group has-float-label">
-          <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
+          <label id="labelNombre" for="idNombre" class="tamanio-label-titulo">Nombre</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
             class="form-control form-control-sm" maxlength="45"
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')"
@@ -57,8 +61,8 @@
         <thead>
           <tr>
             <th class="text-center" style="width:10%" scope="col">id</th>
-            <th class="text-center" style="width:30%" scope="col">Nombre</th>
-            <th class="text-center" style="width:20%" scope="col">Banco</th>
+            <th class="text-center" style="width:40%" scope="col">Banco</th>
+            <th class="text-center" style="width:30%" scope="col">nombre</th>
             <th class="text-center" style="width:10%" scope="col">-</th>
             <th class="text-center" style="width:10%" scope="col">-</th>
           </tr>
@@ -69,10 +73,10 @@
               <span>{{l.id}}</span>
             </td>
             <td align="center">
-              <span>{{l.nombre}}</span>
+              <span>{{l.banco.nombre}}</span>
             </td>
             <td align="center">
-              <span>{{l.banco.nombre}}</span>
+              <span>{{l.nombre}}</span>
             </td>
             <td align="center">
               <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>

@@ -60,13 +60,9 @@ export class SucursalBancoService {
       })
     })
   }
-  //Obtiene el listado por nombre de banco
-  public listarPorNombreBanco(nombre) {
-    return this.http.get(this.url + '/listarPorNombreBanco/' + nombre, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
+  //Obtiene el listado por banco
+  public listarPorBanco(id) {
+    return this.http.get(this.url + '/listarPorBanco/' + id, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

@@ -1,21 +1,23 @@
 import { Component, OnInit } from '@angular/core';
-import { SucursalBancoService } from '../../servicios/sucursal-banco.service';
+import { PuntoVentaService } from '../../servicios/punto-venta.service';
 import { PestaniaService } from '../../servicios/pestania.service';
-import { BancoService } from '../../servicios/banco.service';
+import { SucursalService } from '../../servicios/sucursal.service';
+import { EmpresaService } from '../../servicios/empresa.service';
+import { AfipComprobanteService } from '../../servicios/afip-comprobante.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
+import { debounceTime, map, startWith } from 'rxjs/operators';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
-  selector: 'app-sucursal-banco',
-  templateUrl: './sucursal-banco.component.html'
+  selector: 'app-punto-venta',
+  templateUrl: './punto-venta.component.html'
 })
-export class SucursalBancoComponent implements OnInit {
+export class PuntoVentaComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -46,20 +48,35 @@ export class SucursalBancoComponent implements OnInit {
   private opcionSeleccionada:number = null;
   //Define la lista de sucursales
   private sucursales:any = null;
-  //Define el form control para las busquedas banco
-  private buscarBanco:FormControl = new FormControl();
-  //Define la lista de resultados de busqueda banco
-  private resultadosBancos = [];
+  //Define la lista de empresas
+  private empresas:any = null;
+  //Define la lista de puntos de ventas de sucursal
+  private puntosVentas:any = null;
+  //Define el form control para las busquedas afip comprobante
+  private buscarAfipComprobante:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda afip comprobante
+  private resultadosAfipComprobantes = [];
   //Constructor
-  constructor(private servicio: SucursalBancoService, private pestaniaService: PestaniaService,
+  constructor(private servicio: PuntoVentaService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private bancoServicio: BancoService) {
+    private sucursalServicio: SucursalService, private empresaServicio: EmpresaService,
+    private afipComprobanteServicio: AfipComprobanteService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
       id: new FormControl(),
-      banco: new FormControl(),
-      nombre: new FormControl()
+      sucursal: new FormControl(),
+      empresa: new FormControl(),
+      puntoVenta: new FormControl(),
+      afipComprobante: new FormControl(),
+      fe: new FormControl(),
+      feEnLinea: new FormControl(),
+      feCAEA: new FormControl(),
+      esCuentaOrden: new FormControl(),
+      ultimoNumero: new FormControl(),
+      copias: new FormControl(),
+      imprime: new FormControl(),
+      estaHabilitado: new FormControl()
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -78,12 +95,12 @@ export class SucursalBancoComponent implements OnInit {
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
-    //Autocompletado - Buscar por nombre banco
-    this.buscarBanco.valueChanges
+    //Autocompletado - Buscar por nombre afip comprobante
+    this.buscarAfipComprobante.valueChanges
       .subscribe(data => {
         if(typeof data == 'string') {
-          this.bancoServicio.listarPorNombre(data).subscribe(response =>{
-            this.resultadosBancos = response;
+          this.afipComprobanteServicio.listarPorNombre(data).subscribe(response =>{
+            this.resultadosAfipComprobantes = response;
           })
         }
     })
@@ -92,14 +109,36 @@ export class SucursalBancoComponent implements OnInit {
   ngOnInit() {
     //Obtiene la lista completa de registros
     this.listar();
+    //Obtiene la lista de sucursales
+    this.listarSucursales();
+    //Obtiene la lista de empresas
+    this.listarEmpresas();
+  }
+  //Obtiene el listado de sucursales
+  private listarSucursales() {
+    this.sucursalServicio.listar().subscribe(
+      res => {
+        this.sucursales = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de empresas
+  private listarEmpresas() {
+    this.empresaServicio.listar().subscribe(
+      res => {
+        this.sucursales = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
-    this.resultadosBancos = [];
-  }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.elemento = elemAutocompletado;
+    this.resultadosAfipComprobantes = [];
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -120,16 +159,16 @@ export class SucursalBancoComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idBanco');
+        this.establecerValoresPestania(nombre, false, false, true, 'idSucursal');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idSucursal');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idSucursal');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idSucursal');
         break;
       default:
         break;
@@ -185,12 +224,12 @@ export class SucursalBancoComponent implements OnInit {
       }
     );
   }
-  //Obtiene una lista por banco
-  public listarPorBanco(elemento) {
+  //Obtiene la lista por sucursal
+  public listarPorSucursal(elemento) {
     if(this.mostrarAutocompletado) {
-      this.servicio.listarPorBanco(elemento.id).subscribe(
+      this.servicio.listarPorSucursal(elemento.id).subscribe(
         res => {
-          this.sucursales = res.json();
+          this.puntosVentas = res.json();
         },
         err => {
           console.log(err);
@@ -200,14 +239,13 @@ export class SucursalBancoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar(elemento) {
-    elemento.usuarioAlta = this.appComponent.getUsuario();
     this.servicio.agregar(elemento).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerCamposAgregar(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idBanco').focus();
+            document.getElementById('idSucursal').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -225,7 +263,7 @@ export class SucursalBancoComponent implements OnInit {
         if(respuesta.codigo == 200) {
           this.reestablecerCampos();
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idSucursal').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -242,10 +280,10 @@ export class SucursalBancoComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    if(respuesta.codigo == 11002) {
-      document.getElementById("labelNombre").classList.add('label-error');
-      document.getElementById("idNombre").classList.add('is-invalid');
-      document.getElementById("idNombre").focus();
+    if(respuesta.codigo == 11013) {
+      document.getElementById("labelTelefonoFijo").classList.add('label-error');
+      document.getElementById("idTelefonoFijo").classList.add('is-invalid');
+      document.getElementById("idTelefonoFijo").focus();
     }
     this.toastr.error(respuesta.mensaje);
   }
@@ -266,18 +304,18 @@ export class SucursalBancoComponent implements OnInit {
     this.elemAutocompletado = elemento;
     this.elemento = elemento;
   }
-  //Define como se muestra los datos en el autcompletado
-  public displayF(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ' - ' + elemento.banco.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento.puntoVenta ? elemento.puntoVenta + ' - ' + elemento.afipComprobante.nombre : elemento;
     } else {
       return elemento;
     }

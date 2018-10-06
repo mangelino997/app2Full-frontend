@@ -1,0 +1,161 @@
+<div id="sucursalcliente">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>SUCURSAL CLIENTE</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-8 text-center">
+      <h5>{{pestaniaActual}} Sucursal de Cliente</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idCliente" class="tamanio-label">Cliente</label>
+              <input id="idCliente" class="form-control form-control-sm" formControlName="cliente"
+                type="text" matInput [formControl]="buscarCliente" [matAutocomplete]="autoCliente"
+                autocomplete="off" [(ngModel)]="elemento.cliente" (blur)="vaciarLista()"
+                [readonly]="soloLectura">
+              <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFa.bind(this)"
+                (optionSelected)="listarPorCliente(elemento.banco)">
+                <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
+                  {{itemCliente.alias}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label id="labelNombre" for="idNombre" class="tamanio-label-titulo">Nombre Sucursal</label>
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45"
+                (ngModelChange)="cambioCampo('idNombre', 'labelNombre')"
+                [readonly]="soloLectura" [(ngModel)]="elemento.nombre" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idDomicilio" class="tamanio-label-titulo">Domicilio</label>
+              <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45"
+                [readonly]="soloLectura" [(ngModel)]="elemento.domicilio">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idBarrio" class="tamanio-label">Barrio</label>
+              <input id="idBarrio" class="form-control form-control-sm" formControlName="barrio"
+                type="text" matInput [formControl]="buscarBarrio" [matAutocomplete]="autoBarrio"
+                autocomplete="off" [(ngModel)]="elemento.barrio" (blur)="vaciarLista()"
+                [readonly]="soloLectura">
+              <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
+                  {{itemBarrio.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idLocalidad" class="tamanio-label">Localidad</label>
+              <input id="idLocalidad" class="form-control form-control-sm" formControlName="localidad"
+                type="text" matInput [formControl]="buscarLocalidad" [matAutocomplete]="autoLocalidad"
+                autocomplete="off" [(ngModel)]="elemento.localidad" (blur)="vaciarLista()"
+                [readonly]="soloLectura" required>
+              <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFc.bind(this)">
+                <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
+                  {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}},
+                  {{itemLocalidad.provincia.pais.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
+              <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45" pattern="^[0-9]{10}(,[0-9]{10})*$"
+                (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', elemento.telefonoFijo, 'telefonoFijo')"
+                (ngModelChange)="cambioCampo('idTelefonoFijo', 'labelTelefonoFijo')"
+                [readonly]="soloLectura" [(ngModel)]="elemento.telefonoFijo">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil</label>
+              <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45" pattern="^[0-9]{10}(,[0-9]{10})*$"
+                (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', elemento.telefonoMovil, 'telefonoMovil')"
+                (ngModelChange)="cambioCampo('idTelefonoMovil', 'labelTelefonoMovil')"
+                [readonly]="soloLectura" [(ngModel)]="elemento.telefonoMovil">
+            </div>
+          </div>
+        </div>
+        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">{{pestaniaActual}}</button>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-12">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:5%" scope="col">id</th>
+            <th class="text-center" style="width:15%" scope="col">Cliente</th>
+            <th class="text-center" style="width:15%" scope="col">Nombre</th>
+            <th class="text-center" style="width:10%" scope="col">Domicilio</th>
+            <th class="text-center" style="width:10%" scope="col">Barrio</th>
+            <th class="text-center" style="width:15%" scope="col">Localidad</th>
+            <th class="text-center" style="width:10%" scope="col">Teléfono Fijo</th>
+            <th class="text-center" style="width:10%" scope="col">Teléfono Móvil</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.id}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.cliente.razonSocial}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.domicilio}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.barrio.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.localidad.nombre}}, {{l.localidad.provincia.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.telefonoFijo}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.telefonoMovil}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

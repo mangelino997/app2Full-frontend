@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { SucursalBancoService } from '../../servicios/sucursal-banco.service';
+import { SucursalClienteService } from '../../servicios/sucursal-cliente.service';
 import { PestaniaService } from '../../servicios/pestania.service';
-import { BancoService } from '../../servicios/banco.service';
+import { ClienteService } from '../../servicios/cliente.service';
+import { BarrioService } from '../../servicios/barrio.service';
+import { LocalidadService } from '../../servicios/localidad.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -12,10 +14,10 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
-  selector: 'app-sucursal-banco',
-  templateUrl: './sucursal-banco.component.html'
+  selector: 'app-sucursal-cliente',
+  templateUrl: './sucursal-cliente.component.html'
 })
-export class SucursalBancoComponent implements OnInit {
+export class SucursalClienteComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -46,20 +48,34 @@ export class SucursalBancoComponent implements OnInit {
   private opcionSeleccionada:number = null;
   //Define la lista de sucursales
   private sucursales:any = null;
-  //Define el form control para las busquedas banco
-  private buscarBanco:FormControl = new FormControl();
-  //Define la lista de resultados de busqueda banco
-  private resultadosBancos = [];
+  //Define el form control para las busquedas cliente
+  private buscarCliente:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda cliente
+  private resultadosClientes = [];
+  //Define el form control para las busquedas barrio
+  private buscarBarrio:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda barrio
+  private resultadosBarrios = [];
+  //Define el form control para las busquedas localidad
+  private buscarLocalidad:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda localidad
+  private resultadosLocalidades = [];
   //Constructor
-  constructor(private servicio: SucursalBancoService, private pestaniaService: PestaniaService,
+  constructor(private servicio: SucursalClienteService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private bancoServicio: BancoService) {
+    private clienteServicio: ClienteService, private barrioServicio: BarrioService,
+    private localidadServicio: LocalidadService) {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       autocompletado: new FormControl(),
       id: new FormControl(),
-      banco: new FormControl(),
-      nombre: new FormControl()
+      nombre: new FormControl(),
+      domicilio: new FormControl(),
+      barrio: new FormControl(),
+      telefonoFijo: new FormControl(),
+      telefonoMovil: new FormControl(),
+      cliente: new FormControl(),
+      localidad: new FormControl()
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -78,12 +94,30 @@ export class SucursalBancoComponent implements OnInit {
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
-    //Autocompletado - Buscar por nombre banco
-    this.buscarBanco.valueChanges
+    //Autocompletado - Buscar por alias cliente
+    this.buscarCliente.valueChanges
       .subscribe(data => {
         if(typeof data == 'string') {
-          this.bancoServicio.listarPorNombre(data).subscribe(response =>{
-            this.resultadosBancos = response;
+          this.clienteServicio.listarPorAlias(data).subscribe(response =>{
+            this.resultadosClientes = response;
+          })
+        }
+    })
+    //Autocompletado - Buscar por nombre barrio
+    this.buscarBarrio.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.barrioServicio.listarPorNombre(data).subscribe(response =>{
+            this.resultadosBarrios = response;
+          })
+        }
+    })
+    //Autocompletado - Buscar por nombre localidad
+    this.buscarLocalidad.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.localidadServicio.listarPorNombre(data).subscribe(response =>{
+            this.resultadosLocalidades = response;
           })
         }
     })
@@ -95,7 +129,9 @@ export class SucursalBancoComponent implements OnInit {
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
-    this.resultadosBancos = [];
+    this.resultadosClientes = [];
+    this.resultadosBarrios = [];
+    this.resultadosLocalidades = [];
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
@@ -120,16 +156,16 @@ export class SucursalBancoComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idBanco');
+        this.establecerValoresPestania(nombre, false, false, true, 'idCliente');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idCliente');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idCliente');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idCliente');
         break;
       default:
         break;
@@ -185,10 +221,10 @@ export class SucursalBancoComponent implements OnInit {
       }
     );
   }
-  //Obtiene una lista por banco
-  public listarPorBanco(elemento) {
+  //Obtiene una lista por cliente
+  public listarPorCliente(elemento) {
     if(this.mostrarAutocompletado) {
-      this.servicio.listarPorBanco(elemento.id).subscribe(
+      this.servicio.listarPorCliente(elemento.id).subscribe(
         res => {
           this.sucursales = res.json();
         },
@@ -207,7 +243,7 @@ export class SucursalBancoComponent implements OnInit {
         if(respuesta.codigo == 201) {
           this.reestablecerCamposAgregar(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idBanco').focus();
+            document.getElementById('idCliente').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -225,7 +261,7 @@ export class SucursalBancoComponent implements OnInit {
         if(respuesta.codigo == 200) {
           this.reestablecerCampos();
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idCliente').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -246,6 +282,14 @@ export class SucursalBancoComponent implements OnInit {
       document.getElementById("labelNombre").classList.add('label-error');
       document.getElementById("idNombre").classList.add('is-invalid');
       document.getElementById("idNombre").focus();
+    } else if(respuesta.codigo == 11013) {
+      document.getElementById("labelTelefonoFijo").classList.add('label-error');
+      document.getElementById("idTelefonoFijo").classList.add('is-invalid');
+      document.getElementById("idTelefonoFijo").focus();
+    } else if(respuesta.codigo == 11014) {
+      document.getElementById("labelTelefonoMovil").classList.add('label-error');
+      document.getElementById("idTelefonoMovil").classList.add('is-invalid');
+      document.getElementById("idTelefonoMovil").focus();
     }
     this.toastr.error(respuesta.mensaje);
   }
@@ -269,7 +313,7 @@ export class SucursalBancoComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ' - ' + elemento.banco.nombre : elemento;
+      return elemento.nombre ? elemento.nombre + ' - ' + elemento.cliente.razonSocial : elemento;
     } else {
       return elemento;
     }
@@ -277,7 +321,24 @@ export class SucursalBancoComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {
     if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
+        + ', ' + elemento.provincia.pais.nombre : elemento;
     } else {
       return elemento;
     }

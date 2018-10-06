@@ -44,6 +44,7 @@ import { SubmoduloService } from './servicios/submodulo.service';
 import { SubopcionService } from './servicios/subopcion.service';
 import { SucursalService } from './servicios/sucursal.service';
 import { SucursalBancoService } from './servicios/sucursal-banco.service';
+import { SucursalClienteService } from './servicios/sucursal-cliente.service';
 import { TipoComprobanteService } from './servicios/tipo-comprobante.service';
 import { TipoContactoService } from './servicios/tipo-contacto.service';
 import { TipoCuentaBancariaService } from './servicios/tipo-cuenta-bancaria.service';
@@ -78,6 +79,7 @@ import { ContactoBancoService } from './servicios/contacto-banco.service';
 import { ContactoClienteService } from './servicios/contacto-cliente.service';
 import { ContactoCompaniaSeguroService } from './servicios/contacto-compania-seguro.service';
 import { ContactoProveedorService } from './servicios/contacto-proveedor.service';
+import { PuntoVentaService } from './servicios/punto-venta.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -137,6 +139,8 @@ import { ContactoBancoComponent } from './componentes/contacto-banco/contacto-ba
 import { ContactoClienteComponent } from './componentes/contacto-cliente/contacto-cliente.component';
 import { ContactoCompaniaSeguroComponent } from './componentes/contacto-compania-seguro/contacto-compania-seguro.component';
 import { ContactoProveedorComponent } from './componentes/contacto-proveedor/contacto-proveedor.component';
+import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.component';
+import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -169,6 +173,7 @@ const appRoutes: Routes = [
   {path: 'menusubopciones', component: SubopcionComponent, canActivate: [GuardiaService]},
   {path: 'organizacionsucursales', component: SucursalComponent, canActivate: [GuardiaService]},
   {path: 'contablebancossucursales', component: SucursalBancoComponent, canActivate: [GuardiaService]},
+  {path: 'contableclientessucursales', component: SucursalClienteComponent, canActivate: [GuardiaService]},//VER
   {path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'tipocuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService]},//Revisar
@@ -192,7 +197,8 @@ const appRoutes: Routes = [
   {path: 'contactobanco', component: ContactoBancoComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactocompaniaseguro', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//VER
-  {path: 'contactoproveedor', component: ContactoProveedorComponent, canActivate: [GuardiaService]}//VER
+  {path: 'contactoproveedor', component: ContactoProveedorComponent, canActivate: [GuardiaService]},//VER
+  {path: 'puntoventa', component: PuntoVentaComponent, canActivate: [GuardiaService]}//VER
 ]
 
 const stompConfig: StompConfig = {
@@ -262,7 +268,9 @@ const stompConfig: StompConfig = {
     ContactoBancoComponent,
     ContactoClienteComponent,
     ContactoCompaniaSeguroComponent,
-    ContactoProveedorComponent
+    ContactoProveedorComponent,
+    PuntoVentaComponent,
+    SucursalClienteComponent
   ],
   imports: [
     BrowserModule,
@@ -329,6 +337,7 @@ const stompConfig: StompConfig = {
     SubopcionService,
     SucursalService,
     SucursalBancoService,
+    SucursalClienteService,
     TipoComprobanteService,
     TipoContactoService,
     TipoCuentaBancariaService,
@@ -363,6 +372,7 @@ const stompConfig: StompConfig = {
     ContactoClienteService,
     ContactoCompaniaSeguroService,
     ContactoProveedorService,
+    PuntoVentaService,
     StompService,
     {
       provide: StompConfig,

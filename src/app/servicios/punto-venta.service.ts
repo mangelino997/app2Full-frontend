@@ -6,15 +6,17 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class EmpresaService {
+export class PuntoVentaService {
   //Define la ruta al servicio web
-  private ruta:string = "/empresa";
+  private ruta:string = "/puntoventa";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
+  //Define la lista obtenida por nombre
+  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -40,13 +42,28 @@ export class EmpresaService {
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));
   }
+  //Obtiene el siguiente id
+  public obtenerSiguienteId() {
+    return this.http.get(this.url + '/obtenerSiguienteId', this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene un listado de empresas activas del usuario
-  public listarEmpresasActivasDeUsuario(idUsuario) {
-    return this.http.get(this.appService.getUrlBase() + '/usuarioempresa/listarEmpresasActivasDeUsuario/'
-      + idUsuario, this.options);
+  //Obtiene una lista por sucursal
+  public listarPorSucursal(id) {
+    return this.http.get(this.url + '/listarPorSucursal/' + id, this.options);
+  }
+  //Agrega un registro
+  public agregar(elemento) {
+    return this.http.post(this.url, elemento, this.options);
+  }
+  //Actualiza un registro
+  public actualizar(elemento) {
+    return this.http.put(this.url, elemento, this.options);
+  }
+  //Elimina un registro
+  public eliminar(id) {
+    return this.http.delete(this.url + '/' + id, this.options);
   }
 }
