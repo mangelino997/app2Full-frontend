@@ -15,8 +15,7 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-contacto-banco',
-  templateUrl: './contacto-banco.component.html',
-  styleUrls: ['./contacto-banco.component.css']
+  templateUrl: './contacto-banco.component.html'
 })
 export class ContactoBancoComponent implements OnInit {
   //Define la pestania activa
@@ -95,15 +94,6 @@ export class ContactoBancoComponent implements OnInit {
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
-    //Autocompletado - Buscar por nombre banco
-    this.buscar.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.sucursalBancoServicio.listarPorNombreBanco(data).subscribe(response =>{
-            this.resultados = response;
-          })
-        }
-    })
     //Autocompletado Banco - Buscar por nombre
     this.buscarBanco.valueChanges
       .subscribe(data => {

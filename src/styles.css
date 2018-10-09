@@ -267,3 +267,20 @@ button.toast-close-button {
   color: white;
   font-weight: bold;
 }
+.mat-radio-button {
+  margin-right: 20px;
+}
+input[type=number] { text-align:right }
+.input-edicion-tabla {
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  width: 100% !important;
+  border-radius: 0 !important;
+  line-height: 1 !important;
+}
+.td-edicion-tabla {
+  margin: 0 !important;
+  padding: 0 !important;
+}

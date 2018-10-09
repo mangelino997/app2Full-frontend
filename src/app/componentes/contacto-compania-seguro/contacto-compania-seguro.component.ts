@@ -14,8 +14,7 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-contacto-compania-seguro',
-  templateUrl: './contacto-compania-seguro.component.html',
-  styleUrls: ['./contacto-compania-seguro.component.css']
+  templateUrl: './contacto-compania-seguro.component.html'
 })
 export class ContactoCompaniaSeguroComponent implements OnInit {
   //Define la pestania activa

@@ -1,6 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
 import { PestaniaService } from '../../servicios/pestania.service';
+import { EmpresaService } from '../../servicios/empresa.service';
+import { ClienteService } from '../../servicios/cliente.service';
+import { VendedorService } from '../../servicios/vendedor.service';
+import { TipoTarifaService } from '../../servicios/tipo-tarifa.service';
+import { EscalaTarifaService } from '../../servicios/escala-tarifa.service';
+import { OrdenVentaEscalaService } from '../../servicios/orden-venta-escala.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -8,6 +14,7 @@ import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
+import { AppService } from '../../servicios/app.service';
 
 @Component({
   selector: 'app-orden-venta',
@@ -34,20 +41,54 @@ export class OrdenVentaComponent implements OnInit {
   private formulario = null;
   //Define el elemento
   private elemento:any = {};
+  //Define el elemento de autocompletado
+  private elemAutocompletado:any = null;
   //Define el siguiente id
   private siguienteId:number = null;
   //Define la lista completa de registros
   private listaCompleta:any = null;
+  //Define la lista de empresas
+  private empresas:any = null;
+  //Define la lista de tipos de tarifas
+  private tiposTarifas:any = null;
+  //Define la lista de escalas tarifas
+  private escalasTarifas:any = null;
+  //Define el form control para las busquedas
+  private buscar:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda
+  private resultados = [];
+  //Define el form control para las busquedas cliente
+  private buscarCliente:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda cliente
+  private resultadosClientes = [];
+  //Define el form control para las busquedas vendedor
+  private buscarVendedor:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda vendedor
+  private resultadosVendedores = [];
+  //Define el estado de edicion de la tabla
+  private estadoEdicionTabla:boolean = false;
+  //Define una variable campos para el manejo de ediciones de tabla
+  private campoTablaEditar:any = {};
   //Constructor
   constructor(private servicio: OrdenVentaService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService) {
+    private appComponent: AppComponent, private toastr: ToastrService,
+    private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
+    private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService,
+    private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
+    private ordenVentaEscalaServicio: OrdenVentaEscalaService) {
+    //Establece estado de campos de tabla
+    this.campoTablaEditar = {
+      escala: false,
+      precioFijo: false,
+      precioUnitario: false,
+      segunTarifa: false,
+      minimo: false
+    }
     //Define los campos para validaciones
     this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
       nombre: new FormControl(),
-      cliente: new FormControl(),
       empresa: new FormControl(),
+      cliente: new FormControl(),
       vendedor: new FormControl(),
       fechaAlta: new FormControl(),
       tipoTarifa: new FormControl(),
@@ -56,7 +97,13 @@ export class OrdenVentaComponent implements OnInit {
       comisionCR: new FormControl(),
       observaciones: new FormControl(),
       estaActiva: new FormControl(),
-      activaDesde: new FormControl()
+      activaDesde: new FormControl(),
+      tipoOrdenVenta: new FormControl(),
+      importeFijo: new FormControl(),
+      precioUnitario: new FormControl(),
+      segunTarifa: new FormControl(),
+      minimo: new FormControl(),
+      preciosDesde: new FormControl()
     });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -70,16 +117,102 @@ export class OrdenVentaComponent implements OnInit {
       }
     );
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
+    //Autocompletado - Buscar por nombre
+    this.buscar.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.servicio.listarPorNombre(data).subscribe(response =>{
+            this.resultados = response;
+          })
+        }
+    })
+    //Autocompletado - Buscar por nombre cliente
+    this.buscarCliente.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.clienteServicio.listarPorAlias(data).subscribe(response =>{
+            this.resultadosClientes = response;
+          })
+        }
+    })
+    //Autocompletado - Buscar por nombre vendedor
+    this.buscarVendedor.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.vendedorServicio.listarPorNombre(data).subscribe(response =>{
+            this.resultadosVendedores = response;
+          })
+        }
+    })
+    //Crea elemento tipo tarifa
+    this.elemento.tipoTarifa = {};
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece valor por defecto de tipo de orden de venta
+    this.elemento.tipoOrdenVenta = '1';
+    //Establece valor por defecto seguro
+    this.elemento.seguro = 8;
+    this.elemento.seguro = this.appService.setDecimales(this.elemento.seguro, 2);
+    //Establece valor por defecto aforo
+    this.elemento.aforo = 350;
     //Obtiene la lista completa de registros
-    this.listar();
+    //this.listar();
+    //Obtiene la lista de empresas
+    this.listarEmpresas();
+    //Obtiene la lista de tipos de tarifas
+    this.listarTiposTarifas();
+    //Obtiene una lista con escalas tarifas asignadas
+    this.listarConEscalaTarifa();
+  }
+  //Obtiene la lista de empresas
+  private listarEmpresas() {
+    this.empresaSevicio.listar().subscribe(
+      res => {
+        this.empresas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+  //Obtiene la lista de tipos de tarifas
+  private listarTiposTarifas() {
+    this.tipoTarifaServicio.listar().subscribe(
+      res => {
+        this.tiposTarifas = res.json();
+        this.elemento.tipoTarifa = this.tiposTarifas[0];
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+  //Obtiene una lista con escalas tarifas asignadas
+  private listarConEscalaTarifa() {
+    this.ordenVentaEscalaServicio.listarConEscalaTarifa().subscribe(
+      res => {
+        this.escalasTarifas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    )
+  }
+  //Vacia la lista de resultados de autocompletados
+  public vaciarLista() {
+    this.resultados = [];
+    this.resultadosClientes = [];
+    this.resultadosVendedores = [];
+  }
+  //Cambio en elemento autocompletado
+  public cambioAutocompletado(elemAutocompletado) {
+   this.elemento = elemAutocompletado;
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -92,14 +225,17 @@ export class OrdenVentaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
+  public seleccionarPestania(id, nombre, opcion) {
     this.reestablecerCampos();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    if(opcion == 0) {
+      this.elemAutocompletado = null;
+      this.resultados = [];
+    }
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+        this.establecerValoresPestania(nombre, false, false, true, 'idEmpresa');
         break;
       case 2:
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
@@ -115,10 +251,10 @@ export class OrdenVentaComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice, elemento, lista) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar(elemento, lista);
         break;
       case 3:
         this.actualizar(elemento);
@@ -138,17 +274,7 @@ export class OrdenVentaComponent implements OnInit {
   //Reestablece los campos
   private reestablecerCampos() {
     this.elemento = {};
-  }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.elemento.id = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.elemAutocompletado = null;
   }
   //Obtiene el listado de registros
   private listar() {
@@ -162,7 +288,8 @@ export class OrdenVentaComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento) {
+  private agregar(elemento, lista) {
+    elemento.ordenesVentasEscalas = lista;
     this.servicio.agregar(elemento).subscribe(
       res => {
         var respuesta = res.json();
@@ -176,7 +303,11 @@ export class OrdenVentaComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        this.toastr.error(respuesta.mensaje);
+        if(respuesta.codigo == 5001) {
+          this.toastr.warning(respuesta.mensaje, 'Registro agregado con éxito');
+        } else {
+          this.toastr.error(respuesta.mensaje);
+        }
       }
     );
   }
@@ -195,7 +326,11 @@ export class OrdenVentaComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        this.toastr.error(respuesta.mensaje);
+        if(respuesta.codigo == 5001) {
+          this.toastr.warning(respuesta.mensaje, 'Registro actualizado con éxito');
+        } else {
+          this.toastr.error(respuesta.mensaje);
+        }
       }
     );
   }
@@ -203,24 +338,64 @@ export class OrdenVentaComponent implements OnInit {
   private eliminar(elemento) {
     console.log(elemento);
   }
-  //Funcion para listar por nombre
-  buscar = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
-  )
-  formatear = (x: {nombre: string}) => x.nombre;
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  };
-  //Muestra en la pestania buscar el elemento seleccionado de listar
-  public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+  }
+  //Formatea el numero a x decimales
+  public setDecimales(valor, cantidad) {
+    valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+  }
+  //Habilita los campos para editar en la tabla
+  public activarEditar(elemento) {
+    this.estadoEdicionTabla = true;
+    if(elemento.porPorcentaje == false) {
+      this.campoTablaEditar.precioFijo = true;
+      this.campoTablaEditar.precioUnitario = true;
+      this.campoTablaEditar.minimo = true;
+    }
+  }
+  //Deshabilita los campos editar - listo
+  public activarListo(elemento) {
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.elemAutocompletado = elemento;
     this.elemento = elemento;
   }
-  //Muestra en la pestania actualizar el elemento seleccionado de listar
-  public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.elemento = elemento;
+  //Verifica el importe fijo y unitario para que solo uno sea cargado
+  public verificarImporteFijo(elemento) {
+    if(elemento.importeFijo != undefined) {
+      elemento.precioUnitario = undefined;
+    }
+  }
+  //Verifica el precio fijo y unitario para que solo uno sea cargado
+  public verificarPrecioUnitario(elemento) {
+    if(elemento.precioUnitario != undefined) {
+      elemento.importeFijo = undefined;
+    }
+  }
+  //Muestra el valor en los autocompletados
+  public displayF(elemento) {
+    if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Muestra el valor en los autocompletados a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.razonSocial ? elemento.razonSocial : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Muestra el valor en los autocompletados b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
 }

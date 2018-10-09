@@ -4,7 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
-  MatAutocompleteModule, MatInputModule} from '@angular/material';
+  MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule } from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -80,6 +80,7 @@ import { ContactoClienteService } from './servicios/contacto-cliente.service';
 import { ContactoCompaniaSeguroService } from './servicios/contacto-compania-seguro.service';
 import { ContactoProveedorService } from './servicios/contacto-proveedor.service';
 import { PuntoVentaService } from './servicios/punto-venta.service';
+import { OrdenVentaEscalaService } from './servicios/orden-venta-escala.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -187,7 +188,7 @@ const appRoutes: Routes = [
   {path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService]},//revisar
   {path: 'generaleszonas', component: ZonaComponent, canActivate: [GuardiaService]},
   {path: 'generalesclientes', component: ClienteComponent, canActivate: [GuardiaService]},
-  {path: 'ordenventa', component: OrdenVentaComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'listasdepreciosordenesdeventa', component: OrdenVentaComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'generalesproveedores', component: ProveedorComponent, canActivate: [GuardiaService]},
   {path: 'condicioncompra', component: CondicionCompraComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]},
@@ -289,6 +290,8 @@ const stompConfig: StompConfig = {
     MatSidenavModule,
     MatInputModule,
     MatAutocompleteModule,
+    MatRadioModule,
+    MatTableModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     NgbModule,
     ToastrModule.forRoot({
@@ -299,9 +302,19 @@ const stompConfig: StompConfig = {
     RouterModule.forRoot(appRoutes)
   ],
   exports: [
+    MatAutocompleteModule,
     MatButtonModule,
+    MatCardModule,
     MatCheckboxModule,
+    MatTableModule,
     MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    MatRadioModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatTabsModule,
+    MatToolbarModule,
     ReactiveFormsModule
   ],
   providers: [
@@ -373,6 +386,7 @@ const stompConfig: StompConfig = {
     ContactoCompaniaSeguroService,
     ContactoProveedorService,
     PuntoVentaService,
+    OrdenVentaEscalaService,
     StompService,
     {
       provide: StompConfig,
