@@ -81,6 +81,8 @@ import { ContactoCompaniaSeguroService } from './servicios/contacto-compania-seg
 import { ContactoProveedorService } from './servicios/contacto-proveedor.service';
 import { PuntoVentaService } from './servicios/punto-venta.service';
 import { OrdenVentaEscalaService } from './servicios/orden-venta-escala.service';
+import { ViajePropioService } from './servicios/viaje-propio.service';
+import { FechaService } from './servicios/fecha.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -142,6 +144,9 @@ import { ContactoCompaniaSeguroComponent } from './componentes/contacto-compania
 import { ContactoProveedorComponent } from './componentes/contacto-proveedor/contacto-proveedor.component';
 import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.component';
 import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component';
+import { ViajeComponent } from './componentes/viaje/viaje.component';
+import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component';
+import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -199,7 +204,8 @@ const appRoutes: Routes = [
   {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactocompaniaseguro', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactoproveedor', component: ContactoProveedorComponent, canActivate: [GuardiaService]},//VER
-  {path: 'puntoventa', component: PuntoVentaComponent, canActivate: [GuardiaService]}//VER
+  {path: 'puntoventa', component: PuntoVentaComponent, canActivate: [GuardiaService]},//VER
+  {path: 'viajepropio', component: PuntoVentaComponent, canActivate: [GuardiaService]}//VER
 ]
 
 const stompConfig: StompConfig = {
@@ -271,7 +277,10 @@ const stompConfig: StompConfig = {
     ContactoCompaniaSeguroComponent,
     ContactoProveedorComponent,
     PuntoVentaComponent,
-    SucursalClienteComponent
+    SucursalClienteComponent,
+    ViajeComponent,
+    VehiculoComponent,
+    VehiculoProveedorComponent
   ],
   imports: [
     BrowserModule,
@@ -387,6 +396,8 @@ const stompConfig: StompConfig = {
     ContactoProveedorService,
     PuntoVentaService,
     OrdenVentaEscalaService,
+    ViajePropioService,
+    FechaService,
     StompService,
     {
       provide: StompConfig,
