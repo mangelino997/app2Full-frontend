@@ -15,10 +15,10 @@
         <div class="row" *ngIf="mostrarAutocompletado">
           <div class="col-md-6">
             <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Buscar Vehículo</label>
+              <label for="idAutocompletado" class="tamanio-label">Buscar Vehiculo</label>
               <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
-                type="text" matInput [matAutocomplete]="auto" autocomplete="off"
-                [(ngModel)]="elemAutocompletado" [readonly]="soloLectura" required>
+                type="text" matInput [formControl]="buscar" [matAutocomplete]="auto"
+                autocomplete="off" [(ngModel)]="elemAutocompletado">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="cambioAutocompletado(elemAutocompletado)">
                 <mat-option *ngFor="let item of resultados" [value]="item">

@@ -28,8 +28,6 @@ export class VehiculoProveedorComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define si mostrar la lista de configuraciones de vehiculos
-  private mostrarConfiguracionVehiculo:boolean = null;
   //Define una lista
   private lista = null;
   //Define la lista de pestanias
@@ -150,15 +148,6 @@ export class VehiculoProveedorComponent implements OnInit {
           })
         }
     })
-    //Autocompletado Personal - Buscar chofer por alias
-    this.buscarPersonal.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.personalServicio.listarChoferPorAlias(data).subscribe(response =>{
-            this.resultadosPersonales = response;
-          })
-        }
-    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -166,8 +155,6 @@ export class VehiculoProveedorComponent implements OnInit {
     this.listarTiposVehiculos();
     //Obtiene la lista de marcas de vehiculos
     this.listarMarcasVehiculos();
-    //Obtiene la lista de empresas
-    this.listarEmpresas();
   }
   //Obtiene la lista de tipos de vehiculos
   private listarTiposVehiculos() {
@@ -181,19 +168,12 @@ export class VehiculoProveedorComponent implements OnInit {
       this.marcasVehiculos = res.json();
     })
   }
-  //Obtiene la lista de empresas
-  private listarEmpresas() {
-    this.empresaServicio.listar().subscribe(res => {
-      this.empresas = res.json();
-    })
-  }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
     this.resultados = [];
     this.resultadosVehiculosRemolques = [];
     this.resultadosLocalidades = [];
     this.resultadosCompaniasSeguros = [];
-    this.resultadosPersonales = [];
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
@@ -201,12 +181,11 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura,
-    boton, configuracionVehiculo, componente) {
+    boton, componente) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.mostrarConfiguracionVehiculo = configuracionVehiculo;
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -224,16 +203,16 @@ export class VehiculoProveedorComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, true,'idTipoVehiculo');
+        this.establecerValoresPestania(nombre, false, false, true,'idProveedor');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
         break;
@@ -287,20 +266,6 @@ export class VehiculoProveedorComponent implements OnInit {
       }
     );
   }
-  //Obtiene la lista de configuraciones de vehiculos por tipoVehiculo y marcaVehiculo
-  public listarConfiguracionesPorTipoVehiculoMarcaVehiculo(tipoVehiculo, marcaVehiculo) {
-    if(tipoVehiculo != null && marcaVehiculo != null) {
-      this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id)
-        .subscribe(
-          res => {
-            this.configuracionesVehiculos = res.json();
-          },
-          err => {
-            console.log(err);
-          }
-        )
-    }
-  }
   //Agrega un registro
   private agregar(elemento) {
     this.servicio.agregar(elemento).subscribe(
@@ -309,7 +274,7 @@ export class VehiculoProveedorComponent implements OnInit {
         if(respuesta.codigo == 201) {
           this.reestablecerCamposAgregar(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idTipoVehiculo').focus();
+            document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -320,10 +285,6 @@ export class VehiculoProveedorComponent implements OnInit {
           document.getElementById("labelDominio").classList.add('label-error');
           document.getElementById("idDominio").classList.add('is-invalid');
           document.getElementById("idDominio").focus();
-        } else if(respuesta.codigo == 11018) {
-          document.getElementById("labelNumeroInterno").classList.add('label-error');
-          document.getElementById("idNumeroInterno").classList.add('is-invalid');
-          document.getElementById("idNumeroInterno").focus();
         }
         this.toastr.error(respuesta.mensaje);
       }
@@ -348,10 +309,6 @@ export class VehiculoProveedorComponent implements OnInit {
         document.getElementById("labelDominio").classList.add('label-error');
         document.getElementById("idDominio").classList.add('is-invalid');
         document.getElementById("idDominio").focus();
-      } else if(respuesta.codigo == 11018) {
-        document.getElementById("labelNumeroInterno").classList.add('label-error');
-        document.getElementById("idNumeroInterno").classList.add('is-invalid');
-        document.getElementById("idNumeroInterno").focus();
       }
       this.toastr.error(respuesta.mensaje);
     }
@@ -360,20 +317,6 @@ export class VehiculoProveedorComponent implements OnInit {
   //Elimina un registro
   private eliminar(elemento) {
     console.log(elemento);
-  }
-  /*
-  * Establece la configuracion de vehiculo al seleccionar un item de la lista
-  * configuraciones de vehiculos
-  */
-  public establecerConfiguracion(elemento) {
-    this.elemento.configuracion = 'Modelo: ' + elemento.modelo +
-      ' - Cantidad de Ejes: ' + elemento.cantidadEjes +
-      ' - Capacidad de Carga: ' + elemento.capacidadCarga + '\n' +
-      'Descripcion: ' + elemento.descripcion + '\n' +
-      'Tara: ' + parseFloat(elemento.tara).toFixed(2) +
-      ' - Altura: ' + parseFloat(elemento.altura).toFixed(2) +
-      ' - Largo: ' + parseFloat(elemento.largo).toFixed(2) +
-      ' - Ancho: ' + parseFloat(elemento.ancho).toFixed(2);;
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -412,24 +355,6 @@ export class VehiculoProveedorComponent implements OnInit {
   public displayFb(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Muestra el valor en los autocompletados c
-  public displayFc(elemento) {
-    if(elemento != undefined) {
-      return elemento.configuracionVehiculo ? 'Modelo: ' + elemento.configuracionVehiculo.modelo +
-        ' - Cantidad Ejes: ' + elemento.configuracionVehiculo.cantidadEjes +
-        ' - Capacidad Carga: ' + elemento.configuracionVehiculo.capacidadCarga : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Muestra el valor en los autocompletados d
-  public displayFd(elemento) {
-    if(elemento != undefined) {
-      return elemento.razonSocial ? elemento.razonSocial : elemento;
     } else {
       return elemento;
     }
