@@ -28,8 +28,6 @@ export class VehiculoProveedorComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define si mostrar la lista de configuraciones de vehiculos
-  private mostrarConfiguracionVehiculo:boolean = null;
   //Define una lista
   private lista = null;
   //Define la lista de pestanias
@@ -183,12 +181,11 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura,
-    boton, configuracionVehiculo, componente) {
+    boton, componente) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.mostrarConfiguracionVehiculo = configuracionVehiculo;
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -206,16 +203,16 @@ export class VehiculoProveedorComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, true,'idTipoVehiculo');
+        this.establecerValoresPestania(nombre, false, false, true,'idProveedor');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
         break;
@@ -277,7 +274,7 @@ export class VehiculoProveedorComponent implements OnInit {
         if(respuesta.codigo == 201) {
           this.reestablecerCamposAgregar(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idTipoVehiculo').focus();
+            document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -288,10 +285,6 @@ export class VehiculoProveedorComponent implements OnInit {
           document.getElementById("labelDominio").classList.add('label-error');
           document.getElementById("idDominio").classList.add('is-invalid');
           document.getElementById("idDominio").focus();
-        } else if(respuesta.codigo == 11018) {
-          document.getElementById("labelNumeroInterno").classList.add('label-error');
-          document.getElementById("idNumeroInterno").classList.add('is-invalid');
-          document.getElementById("idNumeroInterno").focus();
         }
         this.toastr.error(respuesta.mensaje);
       }
@@ -316,10 +309,6 @@ export class VehiculoProveedorComponent implements OnInit {
         document.getElementById("labelDominio").classList.add('label-error');
         document.getElementById("idDominio").classList.add('is-invalid');
         document.getElementById("idDominio").focus();
-      } else if(respuesta.codigo == 11018) {
-        document.getElementById("labelNumeroInterno").classList.add('label-error');
-        document.getElementById("idNumeroInterno").classList.add('is-invalid');
-        document.getElementById("idNumeroInterno").focus();
       }
       this.toastr.error(respuesta.mensaje);
     }
@@ -328,20 +317,6 @@ export class VehiculoProveedorComponent implements OnInit {
   //Elimina un registro
   private eliminar(elemento) {
     console.log(elemento);
-  }
-  /*
-  * Establece la configuracion de vehiculo al seleccionar un item de la lista
-  * configuraciones de vehiculos
-  */
-  public establecerConfiguracion(elemento) {
-    this.elemento.configuracion = 'Modelo: ' + elemento.modelo +
-      ' - Cantidad de Ejes: ' + elemento.cantidadEjes +
-      ' - Capacidad de Carga: ' + elemento.capacidadCarga + '\n' +
-      'Descripcion: ' + elemento.descripcion + '\n' +
-      'Tara: ' + parseFloat(elemento.tara).toFixed(2) +
-      ' - Altura: ' + parseFloat(elemento.altura).toFixed(2) +
-      ' - Largo: ' + parseFloat(elemento.largo).toFixed(2) +
-      ' - Ancho: ' + parseFloat(elemento.ancho).toFixed(2);;
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -380,24 +355,6 @@ export class VehiculoProveedorComponent implements OnInit {
   public displayFb(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Muestra el valor en los autocompletados c
-  public displayFc(elemento) {
-    if(elemento != undefined) {
-      return elemento.configuracionVehiculo ? 'Modelo: ' + elemento.configuracionVehiculo.modelo +
-        ' - Cantidad Ejes: ' + elemento.configuracionVehiculo.cantidadEjes +
-        ' - Capacidad Carga: ' + elemento.configuracionVehiculo.capacidadCarga : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Muestra el valor en los autocompletados d
-  public displayFd(elemento) {
-    if(elemento != undefined) {
-      return elemento.razonSocial ? elemento.razonSocial : elemento;
     } else {
       return elemento;
     }

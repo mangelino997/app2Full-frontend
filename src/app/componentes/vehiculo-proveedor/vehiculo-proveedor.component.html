@@ -1,3 +1,289 @@
-<p>
-  vehiculo-proveedor works!
-</p>
+<div id="vehiculoproveedor">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>VEHICULO PROVEEDOR</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-8 text-center">
+      <h5>{{pestaniaActual}} Vehículo Proveedor</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row" *ngIf="mostrarAutocompletado">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idAutocompletado" class="tamanio-label">Buscar Vehiculo de Proveedor</label>
+              <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
+                type="text" matInput [formControl]="buscar" [matAutocomplete]="auto"
+                autocomplete="off" [(ngModel)]="elemAutocompletado">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
+                (optionSelected)="cambioAutocompletado(elemAutocompletado)">
+                <mat-option *ngFor="let item of resultados" [value]="item">
+                  {{item.alias}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idProveedor" class="tamanio-label">Proveedor</label>
+              <input id="idProveedor" class="form-control form-control-sm" formControlName="proveedor"
+                type="text" matInput [formControl]="buscarProveedor" [matAutocomplete]="autoProveedor"
+                autocomplete="off" [(ngModel)]="elemento.proveedor">
+              <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)"
+                (optionSelected)="cambioAutocompletado(elemAutocompletado)">
+                <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
+                  {{itemProveedor.alias}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo</label>
+              <input id="idTipoVehiculo" class="form-control form-control-sm" formControlName="tipoVehiculo"
+                type="text" matInput [matAutocomplete]="autoTipoVehiculo" autocomplete="off"
+                [(ngModel)]="elemento.tipoVehiculo" [readonly]="soloLectura" required>
+              <mat-autocomplete #autoTipoVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)"
+                (optionSelected)="listarConfiguracionesPorTipoVehiculoMarcaVehiculo(elemento.tipoVehiculo,
+                  elemento.marcaVehiculo)">
+                <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
+                  {{itemTipoVehiculo.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo</label>
+              <input id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo"
+                type="text" matInput [matAutocomplete]="autoMarcaVehiculo" autocomplete="off"
+                [(ngModel)]="elemento.marcaVehiculo" [readonly]="soloLectura" required>
+              <mat-autocomplete #autoMarcaVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)"
+                (optionSelected)="listarConfiguracionesPorTipoVehiculoMarcaVehiculo(elemento.tipoVehiculo,
+                  elemento.marcaVehiculo)">
+                <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
+                  {{itemMarcaVehiculo.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idDominio" class="tamanio-label-titulo">Dominio</label>
+              <input id="idDominio" type="text" formControlName="dominio" autocomplete="off"
+                class="form-control form-control-sm" maxlength="7"
+                [readonly]="soloLectura" [(ngModel)]="elemento.dominio" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idAnioFabricacion" class="tamanio-label">Año de Fabricación</label>
+              <input id="idAnioFabricacion" type="date" formControlName="anioFabricacion"
+                autocomplete="off" class="form-control form-control-sm" min="1" minlength="4" maxlength="4"
+                [readonly]="soloLectura" [(ngModel)]="elemento.anioFabricacion" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idNumeroMotor" class="tamanio-label-titulo">Número de Motor</label>
+              <input id="idNumeroMotor" type="number" formControlName="numeroMotor" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="25"
+                [readonly]="soloLectura" [(ngModel)]="elemento.numeroMotor">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idNumeroChasis" class="tamanio-label-titulo">Número de Chasis</label>
+              <input id="idNumeroChasis" type="number" formControlName="numeroChasis" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="25"
+                [readonly]="soloLectura" [(ngModel)]="elemento.numeroChasis">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idPersonal" class="tamanio-label">Chofer Habitual</label>
+              <input id="idPersonal" class="form-control form-control-sm" formControlName="personal"
+                type="text" matInput [formControl]="buscarPersonal" [matAutocomplete]="autoPersonal"
+                autocomplete="off" [(ngModel)]="elemento.personal" (blur)="vaciarLista()"
+                [readonly]="soloLectura">
+              <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
+                <mat-option *ngFor="let itemPersonal of resultadosPersonales" [value]="itemPersonal">
+                  {{itemPersonal.alias}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVehiculoRemolque" class="tamanio-label">Remolque Habitual</label>
+              <input id="idVehiculoRemolque" class="form-control form-control-sm" formControlName="vehiculoRemolque"
+                type="text" matInput [formControl]="buscarVehiculoRemolque" [matAutocomplete]="autoVehiculoRemolque"
+                autocomplete="off" [(ngModel)]="elemento.vehiculoRemolque" (blur)="vaciarLista()"
+                [readonly]="soloLectura">
+              <mat-autocomplete #autoVehiculoRemolque="matAutocomplete" [displayWith]="displayF.bind(this)">
+                <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
+                  [value]="itemVehiculoRemolque">
+                  {{itemVehiculoRemolque.alias}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idLocalidad" class="tamanio-label">Radicación Localidad</label>
+              <input id="idLocalidad" class="form-control form-control-sm" formControlName="localidad"
+                type="text" matInput [formControl]="buscarLocalidad" [matAutocomplete]="autoLocalidad"
+                autocomplete="off" [(ngModel)]="elemento.localidad" (blur)="vaciarLista()"
+                [readonly]="soloLectura" required>
+              <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
+                  {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
+              <input id="idCompaniaSeguro" class="form-control form-control-sm" formControlName="companiaSeguro"
+                type="text" matInput [formControl]="buscarCompaniaSeguro" [matAutocomplete]="autoCompaniaSeguro"
+                autocomplete="off" [(ngModel)]="elemento.companiaSeguro" (blur)="vaciarLista()"
+                [readonly]="soloLectura" required>
+              <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
+                  {{itemCompaniaSeguro.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idNumeroPoliza" class="tamanio-label-titulo">Número de Póliza</label>
+              <input id="idNumeroPoliza" type="number" formControlName="numeroPoliza" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="15"
+                [readonly]="soloLectura" [(ngModel)]="elemento.numeroPoliza" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoPoliza" class="tamanio-label">Vto. Póliza</label>
+              <input id="idVtoPoliza" type="date" formControlName="vtoPoliza"
+                autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura" [(ngModel)]="elemento.vtoPoliza" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idNumeroRuta" class="tamanio-label-titulo">Número de Ruta</label>
+              <input id="idNumeroRuta" type="number" formControlName="numeroRuta" autocomplete="off"
+                class="form-control form-control-sm" min="1" maxlength="15"
+                [readonly]="soloLectura" [(ngModel)]="elemento.numeroRuta" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoRuta" class="tamanio-label">Vto. Ruta</label>
+              <input id="idVtoRuta" type="date" formControlName="vtoRuta"
+                autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura" [(ngModel)]="elemento.vtoRuta" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoRTO" class="tamanio-label">Vto. Inspección Técnica</label>
+              <input id="idVtoRTO" type="date" formControlName="vtoRTO"
+                autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura" [(ngModel)]="elemento.vtoRTO" required>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoSenasa" class="tamanio-label">Vto. Senasa</label>
+              <input id="idVtoSenasa" type="date" formControlName="vtoSenasa"
+                autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura" [(ngModel)]="elemento.vtoSenasa">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoHabBromatologica" class="tamanio-label">Vto. Hab. Bromatologica</label>
+              <input id="idVtoHabBromatologica" type="date" formControlName="vtoHabBromatologica"
+                autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura" [(ngModel)]="elemento.vtoHabBromatologica">
+            </div>
+          </div>
+        </div>
+        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">
+          {{pestaniaActual}}
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-12">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:5%" scope="col">id</th>
+            <th class="text-center" style="width:15%" scope="col">Dominio</th>
+            <th class="text-center" style="width:20%" scope="col">Proveedor</th>
+            <th class="text-center" style="width:15%" scope="col">Tipo Vehículo</th>
+            <th class="text-center" style="width:15%" scope="col">Marca Vehículo</th>
+            <th class="text-center" style="width:20%" scope="col">Compania Seguro</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.id}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.dominio}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.proveedor.razonSocial}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.configuracionVehiculo.tipoVehiculo.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.configuracionVehiculo.marcaVehiculo.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.companiaSeguro.nombre}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
