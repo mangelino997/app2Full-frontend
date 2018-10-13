@@ -7,8 +7,9 @@ import { VendedorService } from '../../servicios/vendedor.service';
 import { TipoTarifaService } from '../../servicios/tipo-tarifa.service';
 import { EscalaTarifaService } from '../../servicios/escala-tarifa.service';
 import { OrdenVentaEscalaService } from '../../servicios/orden-venta-escala.service';
+import { TramoService } from '../../servicios/tramo.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -18,7 +19,8 @@ import { AppService } from '../../servicios/app.service';
 
 @Component({
   selector: 'app-orden-venta',
-  templateUrl: './orden-venta.component.html'
+  templateUrl: './orden-venta.component.html',
+  styleUrls: ['./orden-venta.component.css']
 })
 export class OrdenVentaComponent implements OnInit {
   //Define la pestania activa
@@ -38,9 +40,11 @@ export class OrdenVentaComponent implements OnInit {
   //Define la lista de pestanias
   private pestanias = null;
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
+  private formulario:FormGroup;
+  //Define los elementos A de la primera tabla
+  private elementosA:FormArray;
+  //Define los elementos B de la segunda tabla
+  private elementosB:FormArray;
   //Define el elemento de autocompletado
   private elemAutocompletado:any = null;
   //Define el siguiente id
@@ -51,8 +55,8 @@ export class OrdenVentaComponent implements OnInit {
   private empresas:any = null;
   //Define la lista de tipos de tarifas
   private tiposTarifas:any = null;
-  //Define la lista de escalas tarifas
-  private escalasTarifas:any = null;
+  //Define la lista de tramos para la segunda tabla
+  private listaTramos:any = [];
   //Define el form control para las busquedas
   private buscar:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
@@ -65,17 +69,22 @@ export class OrdenVentaComponent implements OnInit {
   private buscarVendedor:FormControl = new FormControl();
   //Define la lista de resultados de busqueda vendedor
   private resultadosVendedores = [];
+  //Define el form control para las busquedas tramo
+  private buscarTramo:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda tramo
+  private resultadosTramos = [];
   //Define el estado de edicion de la tabla
   private estadoEdicionTabla:boolean = false;
   //Define una variable campos para el manejo de ediciones de tabla
   private campoTablaEditar:any = {};
   //Constructor
   constructor(private servicio: OrdenVentaService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
+    private appComponent: AppComponent, private toastr: ToastrService, private formBuilder: FormBuilder,
     private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService,
     private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
-    private ordenVentaEscalaServicio: OrdenVentaEscalaService) {
+    private ordenVentaEscalaServicio: OrdenVentaEscalaService,
+    private tramoServicio: TramoService) {
     //Establece estado de campos de tabla
     this.campoTablaEditar = {
       escala: false,
@@ -84,27 +93,6 @@ export class OrdenVentaComponent implements OnInit {
       segunTarifa: false,
       minimo: false
     }
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      nombre: new FormControl(),
-      empresa: new FormControl(),
-      cliente: new FormControl(),
-      vendedor: new FormControl(),
-      fechaAlta: new FormControl(),
-      tipoTarifa: new FormControl(),
-      seguro: new FormControl(),
-      aforo: new FormControl(),
-      comisionCR: new FormControl(),
-      observaciones: new FormControl(),
-      estaActiva: new FormControl(),
-      activaDesde: new FormControl(),
-      tipoOrdenVenta: new FormControl(),
-      importeFijo: new FormControl(),
-      precioUnitario: new FormControl(),
-      segunTarifa: new FormControl(),
-      minimo: new FormControl(),
-      preciosDesde: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -149,26 +137,65 @@ export class OrdenVentaComponent implements OnInit {
           })
         }
     })
-    //Crea elemento tipo tarifa
-    this.elemento.tipoTarifa = {};
+    //Autocompletado Tramo - Buscar por nombre
+    this.buscarTramo.valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.tramoServicio.listarPorOrigen(data).subscribe(response =>{
+            this.resultadosTramos = response;
+          })
+        }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
-    //Establece valor por defecto de tipo de orden de venta
-    this.elemento.tipoOrdenVenta = '1';
-    //Establece valor por defecto seguro
-    this.elemento.seguro = 8;
-    this.elemento.seguro = this.appService.setDecimales(this.elemento.seguro, 2);
-    //Establece valor por defecto aforo
-    this.elemento.aforo = 350;
-    //Obtiene la lista completa de registros
-    //this.listar();
+    //Define los campos para validaciones
+    this.formulario = this.formBuilder.group({
+      nombre: new FormControl('', Validators.required),
+      empresa: new FormControl('', Validators.required),
+      cliente: new FormControl('', Validators.required),
+      vendedor: new FormControl('', Validators.required),
+      fechaAlta: new FormControl(),
+      tipoTarifa: new FormControl('', Validators.required),
+      seguro: new FormControl('8.00', Validators.required),
+      aforo: new FormControl('350', Validators.required),
+      comisionCR: new FormControl('', Validators.required),
+      observaciones: new FormControl(),
+      estaActiva: new FormControl(),
+      activaDesde: new FormControl(),
+      tipoOrdenVenta: new FormControl(false, Validators.required),
+      preciosDesde: new FormControl(),
+      elementosA: this.formBuilder.array([]),
+      elementosB: this.formBuilder.array([this.crearElementoB()])
+    });
     //Obtiene la lista de empresas
     this.listarEmpresas();
     //Obtiene la lista de tipos de tarifas
     this.listarTiposTarifas();
-    //Obtiene una lista con escalas tarifas asignadas
-    this.listarConEscalaTarifa();
+    //Obtiene la lista de escalas tarifas
+    this.listarEscalaTarifa();
+  }
+  //Crea el elemento A (form) para la primera tabla
+  private crearElementoA(valor): FormGroup {
+    return this.formBuilder.group({
+      escala: valor,
+      importeFijo: '',
+      precioUnitario: '',
+      segunTarifa: '',
+      minimo: ''
+    })
+  }
+  //Crea el elemento B (form) para la segunda tabla
+  private crearElementoB(): FormGroup {
+    return this.formBuilder.group({
+      tramo: '',
+      kmTramo: '',
+      kmPactado: '',
+      importeFijoSeco: '',
+      importeFijoRef: '',
+      precioUnitarioSeco: '',
+      precioUnitarioRef: ''
+    })
   }
   //Obtiene la lista de empresas
   private listarEmpresas() {
@@ -186,18 +213,22 @@ export class OrdenVentaComponent implements OnInit {
     this.tipoTarifaServicio.listar().subscribe(
       res => {
         this.tiposTarifas = res.json();
-        this.elemento.tipoTarifa = this.tiposTarifas[0];
+        this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
       },
       err => {
         console.log(err);
       }
     )
   }
-  //Obtiene una lista con escalas tarifas asignadas
-  private listarConEscalaTarifa() {
-    this.ordenVentaEscalaServicio.listarConEscalaTarifa().subscribe(
+  //Obtiene una lista de escalas tarifas
+  private listarEscalaTarifa() {
+    this.escalaTarifaServicio.listar().subscribe(
       res => {
-        this.escalasTarifas = res.json();
+        let escalasTarifas = res.json();
+        for(let i = 0 ; i < escalasTarifas.length ; i++) {
+          this.elementosA = this.formulario.get('elementosA') as FormArray;
+          this.elementosA.push(this.crearElementoA(escalasTarifas[i].valor));
+        }
       },
       err => {
         console.log(err);
@@ -209,10 +240,11 @@ export class OrdenVentaComponent implements OnInit {
     this.resultados = [];
     this.resultadosClientes = [];
     this.resultadosVendedores = [];
+    this.resultadosTramos = [];
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
-   this.elemento = elemAutocompletado;
+   //this.elemento = elemAutocompletado;
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -226,7 +258,7 @@ export class OrdenVentaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerCampos();
+    //this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
@@ -235,7 +267,7 @@ export class OrdenVentaComponent implements OnInit {
     }
     switch (id) {
       case 1:
-        this.establecerValoresPestania(nombre, false, false, true, 'idEmpresa');
+        this.establecerValoresPestania(nombre, false, false, true, 'idTipoOrdenVenta');
         break;
       case 2:
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
@@ -251,30 +283,20 @@ export class OrdenVentaComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento, lista) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento, lista);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
-  }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-    this.elemAutocompletado = null;
   }
   //Obtiene el listado de registros
   private listar() {
@@ -288,8 +310,9 @@ export class OrdenVentaComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento, lista) {
-    elemento.ordenesVentasEscalas = lista;
+  private agregar() {
+    console.log(this.formulario.value);
+    /*elemento.ordenesVentasEscalas = lista;
     this.servicio.agregar(elemento).subscribe(
       res => {
         var respuesta = res.json();
@@ -309,15 +332,15 @@ export class OrdenVentaComponent implements OnInit {
           this.toastr.error(respuesta.mensaje);
         }
       }
-    );
+    );*/
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-    this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.formulario.reset();
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -335,17 +358,36 @@ export class OrdenVentaComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   }
+  //Manejo de cambio de autocompletado tramo
+  public cambioAutocompletadoTramo(elemento, indice) {
+    (<FormArray>this.formulario.get('elementosB')).at(indice).get('tramo').setValue(elemento);
+    (<FormArray>this.formulario.get('elementosB')).at(indice).get('kmTramo').setValue(elemento.km);
+  }
+  public cambioImporte(valor, elemento, i) {
+    if(valor != undefined) {
+      (<FormArray>this.formulario.get('elementosA')).at(i).get(elemento).patchValue(undefined);
+    }
+  }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+  }
+  //Agrega una fila a la segunda tabla
+  public agregarElemento() {
+    this.elementosB = this.formulario.get('elementosB') as FormArray;
+    this.elementosB.push(this.crearElementoB());
+  }
+  //Elimina una fila de la segunda tabla
+  public eliminarElemento(indice) {
+    this.elementosB.removeAt(indice);
   }
   //Habilita los campos para editar en la tabla
   public activarEditar(elemento) {
@@ -357,23 +399,11 @@ export class OrdenVentaComponent implements OnInit {
     }
   }
   //Deshabilita los campos editar - listo
-  public activarListo(elemento) {
+  /*public activarListo(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.elemAutocompletado = elemento;
     this.elemento = elemento;
-  }
-  //Verifica el importe fijo y unitario para que solo uno sea cargado
-  public verificarImporteFijo(elemento) {
-    if(elemento.importeFijo != undefined) {
-      elemento.precioUnitario = undefined;
-    }
-  }
-  //Verifica el precio fijo y unitario para que solo uno sea cargado
-  public verificarPrecioUnitario(elemento) {
-    if(elemento.precioUnitario != undefined) {
-      elemento.importeFijo = undefined;
-    }
-  }
+  }*/
   //Muestra el valor en los autocompletados
   public displayF(elemento) {
     if(elemento != undefined) {
@@ -394,6 +424,14 @@ export class OrdenVentaComponent implements OnInit {
   public displayFb(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Muestra el valor en los autocompletados c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento.origen ? elemento.origen.nombre + ' - ' + elemento.destino.nombre : elemento;
     } else {
       return elemento;
     }

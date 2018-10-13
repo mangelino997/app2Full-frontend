@@ -144,9 +144,9 @@ import { ContactoCompaniaSeguroComponent } from './componentes/contacto-compania
 import { ContactoProveedorComponent } from './componentes/contacto-proveedor/contacto-proveedor.component';
 import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.component';
 import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component';
-import { ViajeComponent } from './componentes/viaje/viaje.component';
-import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component';
-import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component';
+//import { ViajeComponent } from './componentes/viaje/viaje.component';
+//import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component';
+//import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -204,8 +204,8 @@ const appRoutes: Routes = [
   {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactocompaniaseguro', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactoproveedor', component: ContactoProveedorComponent, canActivate: [GuardiaService]},//VER
-  {path: 'puntoventa', component: PuntoVentaComponent, canActivate: [GuardiaService]},//VER
-  {path: 'viajepropio', component: PuntoVentaComponent, canActivate: [GuardiaService]}//VER
+  {path: 'puntoventa', component: PuntoVentaComponent, canActivate: [GuardiaService]}//VER
+  //{path: 'viajepropio', component: ViajeComponent, canActivate: [GuardiaService]}//VER
 ]
 
 const stompConfig: StompConfig = {
@@ -277,10 +277,10 @@ const stompConfig: StompConfig = {
     ContactoCompaniaSeguroComponent,
     ContactoProveedorComponent,
     PuntoVentaComponent,
-    SucursalClienteComponent,
-    ViajeComponent,
-    VehiculoComponent,
-    VehiculoProveedorComponent
+    SucursalClienteComponent
+    //ViajeComponent,
+    //VehiculoComponent,
+    //VehiculoProveedorComponent
   ],
   imports: [
     BrowserModule,

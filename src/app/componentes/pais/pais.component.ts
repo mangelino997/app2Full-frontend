@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PaisService } from '../../servicios/pais.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -11,7 +11,8 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-pais',
-  templateUrl: './pais.component.html'
+  templateUrl: './pais.component.html',
+  styleUrls: ['./pais.component.css']
 })
 export class PaisComponent implements OnInit {
   //Define la pestania activa
@@ -31,28 +32,16 @@ export class PaisComponent implements OnInit {
   //Define la lista de pestanias
   private pestanias = null;
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el elemento de autocompletado
-  private elemAutocompletado:any = null;
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
   //Define la lista completa de registros
   private listaCompleta:any = null;
   //Define el form control para las busquedas
   private buscar:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  private resultados = [];
+  private resultados:Array<any> = [];
   //Constructor
   constructor(private servicio: PaisService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      nombre: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -64,30 +53,40 @@ export class PaisComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
     //Autocompletado - Buscar por nombre
-    this.buscar.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.servicio.listarPorNombre(data).subscribe(response =>{
-            this.resultados = response;
-          })
-        }
+    this.buscar.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
     })
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
+    });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
   }
+  private crearFormulario(id) {
+    return {
+      id: new FormControl(id),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
+    }
+  }
   //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.elemento = elemAutocompletado;
+  public cambioAutocompletado(elemento) {
+    this.formulario.patchValue(elemento);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -101,11 +100,15 @@ export class PaisComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerCampos();
+    this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    /*
+    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
+    * cuando se hace click en ver o mod de la pestania lista
+    */
     if(opcion == 0) {
-      this.elemAutocompletado = null;
+      this.buscar.setValue(undefined);
       this.resultados = [];
     }
     switch (id) {
@@ -127,36 +130,26 @@ export class PaisComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
   }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-    this.elemAutocompletado = null;
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -175,12 +168,12 @@ export class PaisComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento) {
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.formulario.reset(this.crearFormulario(respuesta.id));
           setTimeout(function() {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -199,12 +192,12 @@ export class PaisComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-    this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.formulario.reset();
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -223,8 +216,8 @@ export class PaisComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -234,14 +227,14 @@ export class PaisComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
+    this.buscar.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
+    this.buscar.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Muestra el valor en los autocompletados
   public displayFn(elemento) {

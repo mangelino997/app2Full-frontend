@@ -150,15 +150,6 @@ export class VehiculoProveedorComponent implements OnInit {
           })
         }
     })
-    //Autocompletado Personal - Buscar chofer por alias
-    this.buscarPersonal.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.personalServicio.listarChoferPorAlias(data).subscribe(response =>{
-            this.resultadosPersonales = response;
-          })
-        }
-    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -166,8 +157,6 @@ export class VehiculoProveedorComponent implements OnInit {
     this.listarTiposVehiculos();
     //Obtiene la lista de marcas de vehiculos
     this.listarMarcasVehiculos();
-    //Obtiene la lista de empresas
-    this.listarEmpresas();
   }
   //Obtiene la lista de tipos de vehiculos
   private listarTiposVehiculos() {
@@ -181,19 +170,12 @@ export class VehiculoProveedorComponent implements OnInit {
       this.marcasVehiculos = res.json();
     })
   }
-  //Obtiene la lista de empresas
-  private listarEmpresas() {
-    this.empresaServicio.listar().subscribe(res => {
-      this.empresas = res.json();
-    })
-  }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
     this.resultados = [];
     this.resultadosVehiculosRemolques = [];
     this.resultadosLocalidades = [];
     this.resultadosCompaniasSeguros = [];
-    this.resultadosPersonales = [];
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
@@ -286,20 +268,6 @@ export class VehiculoProveedorComponent implements OnInit {
         console.log(err);
       }
     );
-  }
-  //Obtiene la lista de configuraciones de vehiculos por tipoVehiculo y marcaVehiculo
-  public listarConfiguracionesPorTipoVehiculoMarcaVehiculo(tipoVehiculo, marcaVehiculo) {
-    if(tipoVehiculo != null && marcaVehiculo != null) {
-      this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id)
-        .subscribe(
-          res => {
-            this.configuracionesVehiculos = res.json();
-          },
-          err => {
-            console.log(err);
-          }
-        )
-    }
   }
   //Agrega un registro
   private agregar(elemento) {

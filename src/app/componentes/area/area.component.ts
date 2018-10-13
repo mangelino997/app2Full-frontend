@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AreaService } from '../../servicios/area.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -11,7 +11,8 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-area',
-  templateUrl: './area.component.html'
+  templateUrl: './area.component.html',
+  styleUrls: ['./area.component.css']
 })
 export class AreaComponent implements OnInit {
   //Define la pestania activa
@@ -31,22 +32,17 @@ export class AreaComponent implements OnInit {
   //Define la lista de pestanias
   private pestanias = null;
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
   //Define la lista completa de registros
   private listaCompleta:any = null;
+  //Define el form control para las busquedas
+  private buscar:FormControl = new FormControl();
+  //Define la lista de resultados de la busqueda
+  private resultados:Array<any> = [];
   //Constructor
   constructor(private servicio: AreaService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      nombre: new FormControl()
-    });
+    private appComponent: AppComponent, private toastr: ToastrService,
+    private formBuilder: FormBuilder) {
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -64,11 +60,28 @@ export class AreaComponent implements OnInit {
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
+    //Define el autocompletado - buscar por nombre
+    this.buscar.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = this.formBuilder.group(this.crearFormulario(''));
     //Obtiene la lista completa de registros
     this.listar();
+  }
+  private crearFormulario(id): FormGroup {
+    return this.formBuilder.group({
+      autocompletado: new FormControl(),
+      id: new FormControl(id),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
+    })
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -82,7 +95,7 @@ export class AreaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerCampos();
+    console.log(this.formulario);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     switch (id) {
@@ -119,20 +132,11 @@ export class AreaComponent implements OnInit {
         break;
     }
   }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -156,7 +160,7 @@ export class AreaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          //this.formulario.reset(this.crearFormulario(respuesta.id));
           setTimeout(function() {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -180,7 +184,7 @@ export class AreaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          //this.formulario.reset('');
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -202,11 +206,10 @@ export class AreaComponent implements OnInit {
   private eliminar(elemento) {
     console.log(elemento);
   }
-  //Funcion para listar por nombre
-  buscar = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
-  )
-  formatear = (x: {nombre: string}) => x.nombre;
+  //Establece el formulario al seleccionar elemento de autocompletado
+  public cambioAutocompletado(elemAutocompletado) {
+    this.formulario.setValue(elemAutocompletado);
+  }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -215,11 +218,19 @@ export class AreaComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
-    this.elemento = elemento;
+    this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.elemento = elemento;
+    this.formulario.setValue(elemento);
+  }
+  //Formatea los valores del autocompletado
+  public displayF(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
 }

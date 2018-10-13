@@ -4,139 +4,143 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>ORDEN VENTA</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+        (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
-  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-    <div class="col-md-8 text-center">
-      <h5>{{pestaniaActual}} Orden de Venta</h5>
-      <form [formGroup]="formulario" class="contenedor">
-        <div class="row">
-          <div class="col-md-4">
-            <mat-radio-group formControlName="tipoOrdenVenta"
-              [(ngModel)]="elemento.tipoOrdenVenta">
-              <mat-radio-button checked value="1">Por Empresa</mat-radio-button>
-              <mat-radio-button value="2">Por Cliente</mat-radio-button>
-            </mat-radio-group>
-          </div>
-          <div class="col-md-4" *ngIf="elemento.tipoOrdenVenta == '1'">
-            <div class="form-group has-float-label">
-              <label for="idEmpresa" class="tamanio-label">Empresa</label>
-              <input id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
+  <div *ngIf="indiceSeleccionado < 5">
+    <form [formGroup]="formulario" class="contenedor">
+      <div class="row justify-content-center contenedor">
+        <div class="col-md-6 text-center">
+          <h5>{{pestaniaActual}} Orden de Venta</h5>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idTipoOrdenVenta" class="tamanio-label">Tipo</label>
+                <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta"
+                  class="form-control form-control-sm" required>
+                  <mat-option [value]="false">Por Empresa</mat-option>
+                  <mat-option [value]="true">Por Cliente</mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-4" *ngIf="formulario.get('tipoOrdenVenta').value == false">
+              <div class="form-group has-float-label">
+                <label for="idEmpresa" class="tamanio-label">Empresa</label>
+                <input id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
                 type="text" matInput [matAutocomplete]="autoEmpresa" autocomplete="off"
-                [(ngModel)]="elemento.empresa" [readonly]="soloLectura"
-                [required]="elemento.tipoOrdenVenta == '1'">
-              <mat-autocomplete #autoEmpresa="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
-                  {{itemEmpresa.razonSocial}}
-                </mat-option>
-              </mat-autocomplete>
+                [readonly]="soloLectura" [required]="formulario.get('tipoOrdenVenta').value == false">
+                <mat-autocomplete #autoEmpresa="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                  <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
+                    {{itemEmpresa.razonSocial}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
             </div>
-          </div>
-          <div class="col-md-4" *ngIf="elemento.tipoOrdenVenta == '2'">
-            <div class="form-group has-float-label">
-              <label for="idCliente" class="tamanio-label">Cliente</label>
-              <input id="idCliente" class="form-control form-control-sm" formControlName="cliente"
+            <div class="col-md-4" *ngIf="formulario.get('tipoOrdenVenta').value == true">
+              <div class="form-group has-float-label">
+                <label for="idCliente" class="tamanio-label">Cliente</label>
+                <input id="idCliente" class="form-control form-control-sm" formControlName="cliente"
                 type="text" matInput [formControl]="buscarCliente" [matAutocomplete]="autoCliente"
-                autocomplete="off" [(ngModel)]="elemento.cliente" (blur)="vaciarLista()"
-                [readonly]="soloLectura" [required]="elemento.tipoOrdenVenta == '2'">
-              <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
-                <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
-                  {{itemCliente.alias}}
-                </mat-option>
-              </mat-autocomplete>
+                autocomplete="off" (blur)="vaciarLista()" [readonly]="soloLectura"
+                [required]="formulario.get('tipoOrdenVenta').value == true">
+                <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
+                  <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
+                    {{itemCliente.alias}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idNombre" class="tamanio-label">Descripcion</label>
-              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idNombre" class="tamanio-label">Descripcion</label>
+                <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
                 class="form-control form-control-sm" maxlength="45"
-                [readonly]="soloLectura" [(ngModel)]="elemento.nombre" required>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idVendedor" class="tamanio-label">Vendedor</label>
-              <input id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
-                type="text" matInput [formControl]="buscarVendedor" [matAutocomplete]="autoVendedor"
-                autocomplete="off" [(ngModel)]="elemento.vendedor" (blur)="vaciarLista()"
                 [readonly]="soloLectura" required>
-              <mat-autocomplete #autoVendedor="matAutocomplete" [displayWith]="displayFb.bind(this)">
-                <mat-option *ngFor="let itemVendedor of resultadosVendedores" [value]="itemVendedor">
-                  {{itemVendedor.nombre}}
-                </mat-option>
-              </mat-autocomplete>
+              </div>
             </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idTipoTarifa" class="tamanio-label">Tarifa</label>
-              <input id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idVendedor" class="tamanio-label">Vendedor</label>
+                <input id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
+                type="text" matInput [formControl]="buscarVendedor" [matAutocomplete]="autoVendedor"
+                autocomplete="off" (blur)="vaciarLista()"
+                [readonly]="soloLectura" required>
+                <mat-autocomplete #autoVendedor="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                  <mat-option *ngFor="let itemVendedor of resultadosVendedores" [value]="itemVendedor">
+                    {{itemVendedor.nombre}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idTipoTarifa" class="tamanio-label">Tarifa</label>
+                <input id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
                 type="text" matInput [matAutocomplete]="autoTipoTarifa" autocomplete="off"
-                [(ngModel)]="elemento.tipoTarifa" [readonly]="soloLectura" required>
-              <mat-autocomplete #autoTipoTarifa="matAutocomplete" [displayWith]="displayFb.bind(this)">
-                <mat-option *ngFor="let itemTipoTarifa of tiposTarifas" [value]="itemTipoTarifa">
-                  {{itemTipoTarifa.nombre}}
-                </mat-option>
-              </mat-autocomplete>
+                [readonly]="soloLectura" required>
+                <mat-autocomplete #autoTipoTarifa="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                  <mat-option *ngFor="let itemTipoTarifa of tiposTarifas" [value]="itemTipoTarifa">
+                    {{itemTipoTarifa.nombre}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idSeguro" class="tamanio-label">Seguro(%)</label>
-              <input id="idSeguro" type="number" formControlName="seguro" autocomplete="off"
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idSeguro" class="tamanio-label">Seguro(%)</label>
+                <input id="idSeguro" type="number" formControlName="seguro" autocomplete="off"
                 class="form-control form-control-sm" min="1" maxlength="4"
-                [readonly]="soloLectura" [(ngModel)]="elemento.seguro"
+                [readonly]="soloLectura"
                 (blur)="setDecimales($event, 2)" required>
+              </div>
             </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idAforo" class="tamanio-label">Aforo(kg)</label>
-              <input id="idAforo" type="number" formControlName="aforo" autocomplete="off"
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idAforo" class="tamanio-label">Aforo(kg)</label>
+                <input id="idAforo" type="number" formControlName="aforo" autocomplete="off"
                 class="form-control form-control-sm" min="1" maxlength="4"
-                [readonly]="soloLectura" [(ngModel)]="elemento.aforo" required>
+                [readonly]="soloLectura" required>
+              </div>
             </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idComisionCR" class="tamanio-label">Comision Contra Reembolso(%)</label>
-              <input id="idComisionCR" type="number" formControlName="comisionCR" autocomplete="off"
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idComisionCR" class="tamanio-label">Comision Contra Reembolso(%)</label>
+                <input id="idComisionCR" type="number" formControlName="comisionCR" autocomplete="off"
                 class="form-control form-control-sm" min="1" maxlength="4" [readonly]="soloLectura"
-                [(ngModel)]="elemento.comisionCR" (blur)="setDecimales($event, 2)">
+                (blur)="setDecimales($event, 2)">
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-8">
-            <div class="form-group has-float-label">
-              <label for="idObservaciones" class="tamanio-label">Observaciones</label>
-              <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones"
-                maxlength="200" rows="2" [readonly]="soloLectura" [(ngModel)]="elemento.observaciones"></textarea>
+          <div class="row">
+            <div class="col-md-8">
+              <div class="form-group has-float-label">
+                <label for="idObservaciones" class="tamanio-label">Observaciones</label>
+                <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones"
+                maxlength="200" rows="2" [readonly]="soloLectura"></textarea>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idPreciosDesde" class="tamanio-label">Precios Desde</label>
-              <input id="idPreciosDesde" type="date" formControlName="preciosDesde"
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Precios Desde</label>
+                <input id="idPreciosDesde" type="date" formControlName="preciosDesde"
                 autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura" [(ngModel)]="elemento.activaDesde">
+                [readonly]="soloLectura">
+              </div>
             </div>
-          </div>
-          <div class="col-md-3">
-
+            <div class="col-md-3"></div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-12" *ngIf="elemento.tipoTarifa.porEscala == true">
+      </div>
+      <div class="row justify-content-center contenedor">
+        <div class="col-md-12 text-center">
+          <div formArrayName="elementosA" *ngIf="formulario.get('tipoTarifa').value.porEscala">
             <table class="table table-bordered table-sm">
               <thead>
                 <tr>
@@ -148,50 +152,114 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let l of escalasTarifas">
-                  <td align="center">
-                    <span>Hasta {{l.escalaTarifa.valor}}</span>
+                <tr *ngFor="let a of formulario.get('elementosA').controls; let i = index" [formGroupName]="i">
+                  <td class="text-center">
+                    <span>Hasta {{a.value.escala}}</span>
                   </td>
                   <td class="td-edicion-tabla">
-                    <input class="input-edicion-tabla" id="idImporteFijo" formControlName="importeFijo"
-                      type="number" autocomplete="off" class="form-control form-control-sm"
-                      min="1" maxlength="4" [(ngModel)]="l.importeFijo" (blur)="verificarImporteFijo(l)"
-                      [readonly]="elemento.tipoTarifa.porPorcentaje">
+                    <input id="idImporteFijo" formControlName="importeFijo" type="number" autocomplete="off"
+                    class="form-control form-control-sm input-edicion-tabla" min="1" maxlength="4"
+                    [readonly]="formulario.get('tipoTarifa').value.porPorcentaje"
+                    (blur)="cambioImporte(a.value.importeFijo, 'precioUnitario', i)">
                   </td>
                   <td class="td-edicion-tabla">
-                    <input class="input-edicion-tabla" id="idPrecioUnitario" formControlName="precioUnitario"
-                      type="number" autocomplete="off" class="form-control form-control-sm"
-                      min="1" maxlength="4" [(ngModel)]="l.precioUnitario" (blur)="verificarPrecioUnitario(l)"
-                      [readonly]="elemento.tipoTarifa.porPorcentaje">
+                    <input id="idPrecioUnitario" formControlName="precioUnitario"
+                    type="number" autocomplete="off" class="form-control form-control-sm input-edicion-tabla"
+                    min="1" maxlength="4" [readonly]="formulario.get('tipoTarifa').value.porPorcentaje"
+                    (blur)="cambioImporte(a.value.precioUnitario, 'importeFijo', i)">
                   </td>
                   <td class="td-edicion-tabla">
-                    <input class="input-edicion-tabla" id="idSegunTarifa" formControlName="segunTarifa"
-                      type="number" autocomplete="off" class="form-control form-control-sm"
-                      min="1" maxlength="4" [readonly]="!elemento.tipoTarifa.porPorcentaje"
-                      [(ngModel)]="l.segunTarifa">
+                    <input id="idSegunTarifa" formControlName="segunTarifa"
+                    type="number" autocomplete="off" class="form-control form-control-sm input-edicion-tabla"
+                    min="1" maxlength="4" [readonly]="!formulario.get('tipoTarifa').value.porPorcentaje">
                   </td>
                   <td class="td-edicion-tabla">
-                    <input class="input-edicion-tabla" id="idMinimo" formControlName="minimo"
-                      type="number" autocomplete="off" class="form-control form-control-sm"
-                      min="1" maxlength="4" [(ngModel)]="l.minimo">
+                    <input id="idMinimo" formControlName="minimo"
+                    type="number" autocomplete="off" class="form-control form-control-sm input-edicion-tabla"
+                    min="1" maxlength="4">
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <div class="col-md-12" *ngIf="elemento.tipoTarifa.porEscala == false">
-
+          <div formArrayName="elementosB" *ngIf="!formulario.get('tipoTarifa').value.porEscala">
+            <table class="table table-bordered table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:15%" scope="col">Tramo</th>
+                  <th class="text-center" style="width:5%" scope="col">Km</th>
+                  <th class="text-center" style="width:10%" scope="col">Km Pactado</th>
+                  <th class="text-center" style="width:10%" scope="col">Precio Fijo Seco</th>
+                  <th class="text-center" style="width:15%" scope="col">Precio Unitario Seco</th>
+                  <th class="text-center" style="width:20%" scope="col">Precio Fijo Refrigerado</th>
+                  <th class="text-center" style="width:20%" scope="col">Precio Unitario Refrigerado</th>
+                  <th class="text-center" style="width:5%" scope="col">
+                    <button mat-button (click)="agregarElemento()">
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let b of formulario.get('elementosB').controls; let i = index" [formGroupName]="i">
+                  <td class="td-edicion-tabla">
+                    <input id="idTramo{{i}}" class="form-control form-control-sm input-edicion-tabla"
+                      formControlName="tramo" type="text" matInput [formControl]="buscarTramo"
+                      [matAutocomplete]="autoTramo" autocomplete="off"
+                      (blur)="vaciarLista()" [readonly]="soloLectura" required>
+                    <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFc.bind(this)">
+                      <mat-option *ngFor="let itemTramo of resultadosTramos"
+                        [value]="itemTramo" (onSelectionChange)="cambioAutocompletadoTramo(itemTramo, i)">
+                        {{itemTramo.origen.nombre}} - {{itemTramo.destino.nombre}}
+                      </mat-option>
+                    </mat-autocomplete>
+                  </td>
+                  <td class="td-edicion-tabla">
+                    <input id="idKmTramo" class="form-control form-control-sm input-edicion-tabla" type="number"
+                    formControlName="kmTramo" autocomplete="off" readonly>
+                  </td>
+                  <td class="td-edicion-tabla">
+                    <input id="idKmPactado" class="form-control form-control-sm input-edicion-tabla"
+                    formControlName="kmPactado" type="number" autocomplete="off"
+                    min="1" maxlength="4">
+                  </td>
+                  <td class="td-edicion-tabla">
+                    <input id="idImporteFijoSeco" class="form-control form-control-sm input-edicion-tabla"
+                    formControlName="importeFijoSeco" type="number" autocomplete="off"
+                    min="1" maxlength="12">
+                  </td>
+                  <td class="td-edicion-tabla">
+                    <input id="idPrecioUnitarioSeco" class="form-control form-control-sm input-edicion-tabla"
+                    formControlName="precioUnitarioSeco" type="number" autocomplete="off"
+                    min="1" maxlength="12">
+                  </td>
+                  <td class="td-edicion-tabla">
+                    <input id="idImporteFijoRef" class="form-control form-control-sm input-edicion-tabla"
+                    formControlName="importeFijoRef" type="number" autocomplete="off"
+                    min="1" maxlength="12">
+                  </td>
+                  <td class="td-edicion-tabla">
+                    <input id="idPrecioUnitarioRef" class="form-control form-control-sm input-edicion-tabla"
+                    formControlName="precioUnitarioRef" type="number" autocomplete="off"
+                    min="1" maxlength="12">
+                  </td>
+                  <td>
+                    <span class="cursor-color" (click)="eliminarElemento(i)">Eliminar</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
+    </form>
+    <div class="row justify-content-center contenedor">
+      <div class="col-md-12 text-center">
         <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado, elemento, escalasTarifas)"
-          [disabled]="!formulario.valid">{{pestaniaActual}}</button>
-      </form>
-    </div>
-  </div>
-  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-12">
-
+        formnovalidate (click)="accion(indiceSeleccionado)">
+          {{pestaniaActual}}
+        </button>
+      </div>
     </div>
   </div>
 </div>
