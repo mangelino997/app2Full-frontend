@@ -28,15 +28,15 @@ export class PaisComponent implements OnInit {
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
   //Define una lista
-  private lista = null;
+  private lista:Array<any> = [];
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
   private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
-  //Define el form control para las busquedas
-  private buscar:FormControl = new FormControl();
+  private listaCompleta:Array<any> = [];
+  //Define el autocompletado
+  private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   private resultados:Array<any> = [];
   //Constructor
@@ -58,7 +58,7 @@ export class PaisComponent implements OnInit {
       this.listaCompleta = res;
     });
     //Autocompletado - Buscar por nombre
-    this.buscar.valueChanges.subscribe(data => {
+    this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
@@ -68,11 +68,8 @@ export class PaisComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
-    });
+    //Define el formulario y validaciones
+    this.formulario = new FormGroup(this.crearFormulario(''));
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
@@ -84,7 +81,7 @@ export class PaisComponent implements OnInit {
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
     }
   }
-  //Cambio en elemento autocompletado
+  //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
     this.formulario.patchValue(elemento);
   }
@@ -108,7 +105,7 @@ export class PaisComponent implements OnInit {
     * cuando se hace click en ver o mod de la pestania lista
     */
     if(opcion == 0) {
-      this.buscar.setValue(undefined);
+      this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
     switch (id) {
@@ -227,16 +224,16 @@ export class PaisComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.buscar.setValue(elemento);
+    this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.buscar.setValue(elemento);
+    this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
-  //Muestra el valor en los autocompletados
+  //Formatea el valor del autocompletado
   public displayFn(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
