@@ -1,4 +1,4 @@
-<div id="pais" class="container-fluid">
+<div id="pais" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="centrar">
       <nav mat-tab-nav-bar>
@@ -15,7 +15,7 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
           <input id="idAutocompletado" class="form-control form-control-sm"
-            type="text" matInput [formControl]="buscar" [matAutocomplete]="auto" autocomplete="off">
+            type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item"
               (onSelectionChange)="cambioAutocompletado(item)">
@@ -33,7 +33,7 @@
             class="form-control form-control-sm" [readonly]="soloLectura"
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
         </div>
-        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

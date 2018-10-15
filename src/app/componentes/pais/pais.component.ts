@@ -69,21 +69,27 @@ export class PaisComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = new FormGroup(this.crearFormulario(''));
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
+    });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
   }
-  private crearFormulario(id) {
-    return {
-      id: new FormControl(id),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
-    }
-  }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
     this.formulario.patchValue(elemento);
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -170,7 +176,7 @@ export class PaisComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.formulario.reset(this.crearFormulario(respuesta.id));
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -194,7 +200,7 @@ export class PaisComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.formulario.reset();
+          this.reestablecerFormulario(undefined);
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -216,6 +222,13 @@ export class PaisComponent implements OnInit {
   private eliminar() {
     console.log();
   }
+  //Reestablece los campos formularios
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.autocompletado.setValue(undefined);
+    this.resultados = [];
+  }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -233,12 +246,15 @@ export class PaisComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
-  //Formatea el valor del autocompletado
-  public displayFn(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
     }
   }
 }
