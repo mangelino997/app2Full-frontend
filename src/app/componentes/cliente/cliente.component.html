@@ -36,12 +36,11 @@
                     <div class="col-md-6">
                       <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
                         <label for="idAutocompletado" class="tamanio-label">Buscar Cliente</label>
-                        <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
-                          type="text" matInput [formControl]="buscar" [matAutocomplete]="auto"
-                          autocomplete="off" [(ngModel)]="elemAutocompletado">
-                        <mat-autocomplete #auto="matAutocomplete" (optionSelected)="cambioAutocompletado(elemAutocompletado)"
-                          [displayWith]="displayF.bind(this)">
-                          <mat-option *ngFor="let item of resultados" [value]="item">
+                        <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off"
+                          type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+                          <mat-option *ngFor="let item of resultados" [value]="item"
+                            (onSelectionChange)="cambioAutocompletado(item)">
                             {{item.alias}}
                           </mat-option>
                         </mat-autocomplete>
@@ -57,36 +56,32 @@
                     <div class="col-md-2">
                       <div class="form-group has-float-label">
                         <label for="idCodigo" class="tamanio-label-titulo">N° de Cuenta</label>
-                        <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
-                          required readonly [(ngModel)]="elemento.id">
+                        <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label id="labelRazonSocial" for="idRazonSocial" class="tamanio-label-titulo">Razon Social</label>
+                        <label id="labelRazonSocial" for="idRazonSocial" class="tamanio-label-titulo">Razón Social</label>
                         <input id="idRazonSocial" type="text" formControlName="razonSocial" autocomplete="off"
-                          class="form-control form-control-sm" maxlength="45"
-                          (ngModelChange)="cambioCampo('idRazonSocial', 'labelRazonSocial')"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.razonSocial" required>
+                          class="form-control form-control-sm" [readonly]="soloLectura"
+                          (ngModelChange)="cambioCampo('idRazonSocial', 'labelRazonSocial')">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idNombreFantasia" class="tamanio-label-titulo">Nombre Fantasia</label>
+                        <label for="idNombreFantasia" class="tamanio-label-titulo">Nombre Fantasía</label>
                         <input id="idNombreFantasia" type="text" formControlName="nombreFantasia" autocomplete="off"
-                          class="form-control form-control-sm" maxlength="45"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.nombreFantasia">
+                          class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label id="labelSitioweb" for="idSitioWeb" class="tamanio-label-titulo">Sitio Web</label>
                         <input id="idSitioWeb" type="text" formControlName="sitioWeb" autocomplete="off"
-                          class="form-control form-control-sm" maxlength="45"
+                          class="form-control form-control-sm" [readonly]="soloLectura"
                           pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$"
-                          (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', elemento.sitioWeb, 'sitioWeb')"
-                          (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioweb')"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.sitioWeb">
+                          (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', 'sitioWeb')"
+                          (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioweb')">
                       </div>
                     </div>
                   </div>
@@ -98,17 +93,15 @@
                       <div class="form-group has-float-label">
                         <label for="idDomicilio" class="tamanio-label">Domicilio</label>
                         <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off"
-                          class="form-control form-control-sm" maxlength="45"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.domicilio" required>
+                          class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idBarrio" class="tamanio-label">Barrio</label>
-                        <input id="idBarrio" class="form-control form-control-sm" formControlName="barrio"
-                          type="text" matInput [formControl]="buscarBarrio" [matAutocomplete]="autoBarrio"
-                          autocomplete="off" [(ngModel)]="elemento.barrio" (blur)="vaciarLista()"
-                          [readonly]="soloLectura">
+                        <input id="idBarrio" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio"
+                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
                         <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                             {{itemBarrio.nombre}}
@@ -119,10 +112,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idLocalidad" class="tamanio-label">Localidad</label>
-                        <input id="idLocalidad" class="form-control form-control-sm" formControlName="localidad"
-                          type="text" matInput [formControl]="buscarLocalidad" [matAutocomplete]="autoLocalidad"
-                          autocomplete="off" [(ngModel)]="elemento.localidad" (blur)="vaciarLista()"
-                          [readonly]="soloLectura" required>
+                        <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
+                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
                         <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                           <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
                             {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}},
@@ -135,10 +127,9 @@
                       <div class="form-group has-float-label">
                         <label id="labelTelefono" for="idTelefonoFijo" class="tamanio-label">Teléfono</label>
                         <input id="idTelefono" type="tel" formControlName="telefono" autocomplete="off"
-                          class="form-control form-control-sm" maxlength="45" pattern="^[0-9]{10}(,[0-9]{10})*$"
-                          (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', elemento.telefono, 'telefono')"
-                          (ngModelChange)="cambioCampo('idTelefono', 'labelTelefono')"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.telefono">
+                          class="form-control form-control-sm" pattern="^[0-9]{10}(,[0-9]{10})*$"
+                          (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', 'telefono')"
+                          (ngModelChange)="cambioCampo('idTelefono', 'labelTelefono')" [readonly]="soloLectura">
                       </div>
                     </div>
                   </div>
@@ -146,10 +137,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCobrador" class="tamanio-label">Cobrador</label>
-                        <input id="idCobrador" class="form-control form-control-sm" formControlName="cobrador"
-                          type="text" matInput [formControl]="buscarCobrador" [matAutocomplete]="autoCobrador"
-                          autocomplete="off" [(ngModel)]="elemento.cobrador" (blur)="vaciarLista()"
-                          [readonly]="soloLectura" required>
+                        <input id="idCobrador" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('cobrador')" [matAutocomplete]="autoCobrador"
+                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
                         <mat-autocomplete #autoCobrador="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemCobrador of resultadosCobradores" [value]="itemCobrador">
                             {{itemCobrador.nombre}}
@@ -160,10 +150,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idVendedor" class="tamanio-label">Vendedor</label>
-                        <input id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
-                          type="text" matInput [formControl]="buscarVendedor" [matAutocomplete]="autoVendedor"
-                          autocomplete="off" [(ngModel)]="elemento.vendedor" (blur)="vaciarLista()"
-                          [readonly]="soloLectura">
+                        <input id="idVendedor" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('vendedor')" [matAutocomplete]="autoVendedor"
+                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
                         <mat-autocomplete #autoVendedor="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemVendedor of resultadosVendedores" [value]="itemVendedor">
                             {{itemVendedor.nombre}}
@@ -174,10 +163,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idZona" class="tamanio-label">Zona</label>
-                        <input id="idZona" class="form-control form-control-sm" formControlName="zona"
-                          type="text" matInput [formControl]="buscarZona" [matAutocomplete]="autoZona"
-                          autocomplete="off" [(ngModel)]="elemento.zona" (blur)="vaciarLista()"
-                          [readonly]="soloLectura" required>
+                        <input id="idZona" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('zona')" [matAutocomplete]="autoZona" autocomplete="off"
+                          (blur)="vaciarListas()" [readonly]="soloLectura">
                         <mat-autocomplete #autoZona="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemZona of resultadosZonas" [value]="itemZona">
                             {{itemZona.nombre}}
@@ -188,10 +176,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idRubro" class="tamanio-label">Rubro</label>
-                        <input id="idRubro" class="form-control form-control-sm" formControlName="rubro"
-                          type="text" matInput [formControl]="buscarRubro" [matAutocomplete]="autoRubro"
-                          autocomplete="off" [(ngModel)]="elemento.rubro" (blur)="vaciarLista()"
-                          [readonly]="soloLectura" required>
+                        <input id="idRubro" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('rubro')" [matAutocomplete]="autoRubro" autocomplete="off"
+                          (blur)="vaciarListas()" [readonly]="soloLectura">
                         <mat-autocomplete #autoRubro="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemRubro of resultadosRubros" [value]="itemRubro">
                             {{itemRubro.nombre}}
@@ -204,9 +191,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCondicionIva" class="tamanio-label">Condicion Iva</label>
-                        <input id="idCondicionIva" class="form-control form-control-sm" formControlName="condicionIva"
-                          type="text" matInput [matAutocomplete]="autoCondicionIva" autocomplete="off"
-                          [(ngModel)]="elemento.condicionIva" [readonly]="soloLectura" required>
+                        <input id="idCondicionIva" class="form-control form-control-sm" type="text" matInput
+                          formControlName="condicionIva" [matAutocomplete]="autoCondicionIva"
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoCondicionIva="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemCondicionIva of condicionesIva" [value]="itemCondicionIva">
                             {{itemCondicionIva.nombre}}
@@ -218,8 +205,7 @@
                       <div class="form-group has-float-label">
                         <label for="idTipoDocumento" class="tamanio-label">Tipo Documento</label>
                         <input id="idTipoDocumento" class="form-control form-control-sm" formControlName="tipoDocumento"
-                          type="text" matInput [matAutocomplete]="autoTipoDocumento" autocomplete="off"
-                          [(ngModel)]="elemento.tipoDocumento" [readonly]="soloLectura" required>
+                          type="text" matInput [matAutocomplete]="autoTipoDocumento" autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoTipoDocumento="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemTipoDocumento of tiposDocumentos" [value]="itemTipoDocumento">
                             {{itemTipoDocumento.nombre}}
@@ -231,17 +217,15 @@
                       <div class="form-group has-float-label">
                         <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento</label>
                         <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
-                          class="form-control form-control-sm" min="1" maxlength="11"
-                          (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.numeroDocumento" required>
+                          class="form-control form-control-sm" [readonly]="soloLectura"
+                          (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
                         <input id="idNumeroIIBB" type="number" formControlName="numeroIIBB" autocomplete="off"
-                          class="form-control form-control-sm" min="1" maxlength="15"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.numeroIIBB">
+                          class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                   </div>
@@ -252,8 +236,7 @@
                       <div class="form-group has-float-label">
                         <label for="idEsCuentaCorriente" class="tamanio-label">Tipo de Cuenta</label>
                         <mat-select id="idEsCuentaCorriente" formControlName="esCuentaCorriente"
-                          class="form-control form-control-sm" [(ngModel)]="elemento.esCuentaCorriente"
-                          [disabled]="soloLectura" required>
+                          class="form-control form-control-sm" [disabled]="soloLectura">
                           <mat-option [value]="false">Contado</mat-option>
                           <mat-option [value]="true">Cuenta Corriente</mat-option>
                         </mat-select>
@@ -262,10 +245,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idOrdenVenta" class="tamanio-label">Orden Venta</label>
-                        <input id="idOrdenVenta" class="form-control form-control-sm" formControlName="ordenVenta"
-                          type="text" matInput [formControl]="buscarOrdenVenta" [matAutocomplete]="autoOrdenVenta"
-                          autocomplete="off" [(ngModel)]="elemento.ordenVenta" (blur)="vaciarLista()"
-                          [readonly]="soloLectura">
+                        <input id="idOrdenVenta" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('ordenVenta')" [matAutocomplete]="autoOrdenVenta" autocomplete="off"
+                          (blur)="vaciarListas()" [readonly]="soloLectura">
                         <mat-autocomplete #autoOrdenVenta="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemOrdenVenta of resultadosOrdenesVentas" [value]="itemOrdenVenta">
                             {{itemOrdenVenta.nombre}}
@@ -278,8 +260,7 @@
                         <label for="idCuentaPrincipal" class="tamanio-label">Cuenta Principal</label>
                         <input id="idCuentaPrincipal" class="form-control form-control-sm" formControlName="cuentaPrincipal"
                           type="text" matInput [formControl]="buscarCuentaPrincipal" [matAutocomplete]="autoCuentaPrincipal"
-                          autocomplete="off" [(ngModel)]="elemento.cuentaPrincipal" (blur)="vaciarLista()"
-                          [readonly]="soloLectura">
+                          autocomplete="off" (blur)="vaciarLista()" [readonly]="soloLectura">
                         <mat-autocomplete #autoCuentaPrincipal="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemCuentaPrincipal of resultadosCuentasPrincipales" [value]="itemCuentaPrincipal">
                             {{itemCuentaPrincipal.nombre}}
@@ -293,8 +274,7 @@
                       <div class="form-group has-float-label">
                         <label for="idResumenCliente" class="tamanio-label">Resumen</label>
                         <input id="idResumenCliente" class="form-control form-control-sm" formControlName="resumenCliente"
-                          type="text" matInput [matAutocomplete]="autoResumenCliente" autocomplete="off"
-                          [(ngModel)]="elemento.resumenCliente" [readonly]="soloLectura">
+                          type="text" matInput [matAutocomplete]="autoResumenCliente" autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoResumenCliente="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemResumenCliente of resumenesClientes" [value]="itemResumenCliente">
                             {{itemResumenCliente.nombre}}
@@ -305,11 +285,10 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idLimiteCredito" class="tamanio-label">Límite de Crédito</label>
-                        <input id="idLimiteCredito" type="number" formControlName="creditoLimite" autocomplete="off"
-                          class="form-control form-control-sm" min="1" maxlength="12"
-                          [disabled]="elemento.esCuentaCorriente === 'false' ? true : false"
-                          [required]="elemento.esCuentaCorriente === 'false' ? false : true"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.creditoLimite">
+                        <input id="idLimiteCredito" type="number" formControlName="creditoLimite"
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
+                          [disabled]="formulario.get('esCuentaCorriente') ? false : true"
+                          [required]="formulario.get('esCuentaCorriente') ? true : false">
                       </div>
                     </div>
                   </div>
@@ -317,10 +296,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idSucursalLugarPago" class="tamanio-label">Sucursal Lugar de Pago</label>
-                        <input id="idSucursalLugarPago" class="form-control form-control-sm" formControlName="sucursalLugarPago"
-                          type="text" matInput [formControl]="buscarSucursalLugarPago" [matAutocomplete]="autoSucursalLugarPago"
-                          autocomplete="off" [(ngModel)]="elemento.sucursalLugarPago" (blur)="vaciarLista()"
-                          [readonly]="soloLectura">
+                        <input id="idSucursalLugarPago" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('sucursalLugarPago')" [matAutocomplete]="autoSucursalLugarPago"
+                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
                         <mat-autocomplete #autoSucursalLugarPago="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option *ngFor="let itemSucursalLugarPago of resultadosSucursalesPago" [value]="itemSucursalLugarPago">
                             {{itemSucursalLugarPago.nombre}}, {{itemSucursalLugarPago.localidad.nombre}}
@@ -332,24 +310,24 @@
                       <div class="form-group has-float-label">
                         <label for="idDescuentoFlete" class="tamanio-label">Descuento en Flete</label>
                         <input id="idDescuentoFlete" type="number" formControlName="descuentoFlete"
-                          autocomplete="off" class="form-control form-control-sm" min="1" maxlength="5" step="0.01"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.descuentoFlete" (blur)="setDecimales($event, 2)">
+                          autocomplete="off" class="form-control form-control-sm"
+                          [readonly]="soloLectura" (blur)="setDecimales($event, 2)">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idDescuentoSubtotal" class="tamanio-label">Descuento en Subtotal</label>
                         <input id="idDescuentoSubtotal" type="number" formControlName="descuentoSubtotal"
-                          autocomplete="off" class="form-control form-control-sm" min="1" maxlength="5" step="0.01"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.descuentoSubtotal" (blur)="setDecimales($event, 2)">
+                          autocomplete="off" class="form-control form-control-sm"
+                          [readonly]="soloLectura" (blur)="setDecimales($event, 2)">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idSituacionCliente" class="tamanio-label">Situacion</label>
-                        <input id="idSituacionCliente" class="form-control form-control-sm" formControlName="situacionCliente"
-                          type="text" matInput [matAutocomplete]="autoSituacionCliente" autocomplete="off"
-                          [(ngModel)]="elemento.situacionCliente" [readonly]="soloLectura">
+                        <input id="idSituacionCliente" class="form-control form-control-sm" type="text" matInput
+                          formControlName="situacionCliente" [matAutocomplete]="autoSituacionCliente"
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoSituacionCliente="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemSituacionCliente of situacionesClientes" [value]="itemSituacionCliente">
                             {{itemSituacionCliente.nombre}}
@@ -365,7 +343,7 @@
                       <div class="form-group has-float-label">
                         <label for="idEsSeguroPropio" class="tamanio-label">Tipo de Seguro</label>
                         <mat-select id="idEsSeguroPropio" formControlName="esSeguroPropio" [disabled]="soloLectura"
-                          class="form-control form-control-sm" [(ngModel)]="elemento.esSeguroPropio">
+                          class="form-control form-control-sm">
                           <mat-option [value]="false">Sin Seguro Propio</mat-option>
                           <mat-option [value]="true">Con Seguro Propio</mat-option>
                         </mat-select>
@@ -376,12 +354,13 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
-                        <input id="idCompaniaSeguro" class="form-control form-control-sm" formControlName="companiaSeguro"
-                          type="text" matInput [formControl]="buscarCompaniaSeguro" [matAutocomplete]="autoCompaniaSeguro"
-                          autocomplete="off" [(ngModel)]="elemento.companiaSeguro" (blur)="vaciarLista()"
-                          [required]="elemento.esSeguroPropio ? true : false" [readonly]="soloLectura">
+                        <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
+                          autocomplete="off" (blur)="vaciarLista()" [readonly]="soloLectura"
+                          [required]="formulario.get('esSeguroPropio') ? true : false">
                         <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                          <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
+                          <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros"
+                            [value]="itemCompaniaSeguro">
                             {{itemCompaniaSeguro.nombre}}
                           </mat-option>
                         </mat-autocomplete>
@@ -391,9 +370,8 @@
                       <div class="form-group has-float-label">
                         <label for="idNumeroPoliza" class="tamanio-label">N° de Póliza</label>
                         <input id="idNumeroPoliza" type="number" formControlName="numeroPolizaSeguro"
-                          autocomplete="off" class="form-control form-control-sm" min="1" maxlength="20"
-                          [required]="elemento.esSeguroPropio ? true : false"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.numeroPolizaSeguro">
+                          autocomplete="off" class="form-control form-control-sm"
+                          [required]="formulario.get('esSeguroPropio') ? true : false" [readonly]="soloLectura" >
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -401,8 +379,7 @@
                         <label for="idVencimiento" class="tamanio-label">Vencimiento</label>
                         <input id="idVencimiento" type="date" formControlName="vencimientoPolizaSeguro"
                           autocomplete="off" class="form-control form-control-sm"
-                          [required]="elemento.esSeguroPropio ? true : false"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.vencimientoPolizaSeguro">
+                          [required]="formulario.get('esSeguroPropio') ? true : false" [readonly]="soloLectura">
                       </div>
                     </div>
                   </div>
@@ -412,8 +389,8 @@
                     <div class="col-md-6">
                       <div class="form-group has-float-label">
                         <label for="idObservaciones" class="tamanio-label">Observaciones</label>
-                        <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones"
-                          maxlength="400" rows="4" [readonly]="soloLectura" [(ngModel)]="elemento.observaciones"></textarea>
+                        <textarea id="idObservaciones" class="form-control form-control-sm"
+                          formControlName="observaciones" rows="4" [readonly]="soloLectura"></textarea>
                       </div>
                     </div>
                   </div>
@@ -424,8 +401,7 @@
                       <div class="form-group has-float-label">
                         <label for="idEmitirComprobante" class="tamanio-label">Al Emitir Comprobante</label>
                         <textarea id="idEmitirComprobante" class="form-control form-control-sm"
-                          formControlName="notaEmisionComprobante" maxlength="200" rows="2"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.notaEmisionComprobante"></textarea>
+                          formControlName="notaEmisionComprobante" rows="2" [readonly]="soloLectura"></textarea>
                       </div>
                     </div>
                   </div>
@@ -434,8 +410,7 @@
                       <div class="form-group has-float-label">
                         <label for="idImprimirComprobante" class="tamanio-label">Al Imprimir Comprobante</label>
                         <textarea id="idImprimirComprobante" class="form-control form-control-sm"
-                          formControlName="notaImpresionComprobante" maxlength="200" rows="2"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.notaImpresionComprobante"></textarea>
+                          formControlName="notaImpresionComprobante" rows="2" [readonly]="soloLectura"></textarea>
                       </div>
                     </div>
                   </div>
@@ -444,8 +419,7 @@
                       <div class="form-group has-float-label">
                         <label for="idImprimirRemito" class="tamanio-label">Al Imprimir Remito</label>
                         <textarea id="idImprimirRemito" class="form-control form-control-sm"
-                          formControlName="notaImpresionRemito" maxlength="200" rows="2"
-                          [readonly]="soloLectura" [(ngModel)]="elemento.notaImpresionRemito"></textarea>
+                          formControlName="notaImpresionRemito" rows="2" [readonly]="soloLectura"></textarea>
                       </div>
                     </div>
                   </div>
@@ -454,8 +428,7 @@
                       <div class="form-group has-float-label">
                         <label for="idImprimirControlDeuda" class="tamanio-label">Imprimir Control de Deuda</label>
                         <mat-select id="idImprimirControlDeuda" formControlName="imprimirControlDeuda"
-                          class="form-control form-control-sm" [(ngModel)]="elemento.imprimirControlDeuda"
-                          [disabled]="soloLectura" required>
+                          class="form-control form-control-sm" [disabled]="soloLectura" required>
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -471,8 +444,8 @@
                 </div>
                 <div class="row">
                   <div class="centrar">
-                    <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
-                      formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">
+                    <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+                      formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
                       {{pestaniaActual}}
                     </button>
                   </div>

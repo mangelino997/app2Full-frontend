@@ -1,4 +1,4 @@
-<div id="categoria">
+<div id="categoria" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
@@ -10,18 +10,20 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-8 text-center">
-      <h5>{{pestaniaActual}} Categoria</h5>
+      <h5>{{pestaniaActual}} Categoría</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-8">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
-              <ng-template #rt let-r="result" let-t="term">
-                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-              </ng-template>
-              <input id="idAutocompletado" type="text" class="form-control form-control-sm"
-                formControlName="autocompletado" [(ngModel)]="elemento"
-                [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+              <input id="idAutocompletado" class="form-control form-control-sm"
+                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let item of resultados" [value]="item"
+                  (onSelectionChange)="cambioAutocompletado(item)">
+                  {{item.nombre}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
           </div>
         </div>
@@ -29,17 +31,15 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">Código</label>
-              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
-                required readonly [(ngModel)]="elemento.id">
+              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45"
-                (ngModelChange)="cambioCampo('idNombre', 'labelNombre')"
-                [readonly]="soloLectura" [(ngModel)]="elemento.nombre" required>
+                class="form-control form-control-sm" [readonly]="soloLectura"
+                (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
             </div>
           </div>
         </div>
@@ -48,26 +48,23 @@
             <div class="form-group has-float-label">
               <label for="idBasico" class="tamanio-label">Básico</label>
               <input id="idBasico" type="number" formControlName="basico" autocomplete="off"
-                class="form-control form-control-sm" min="1" maxlength="12" (blur)="setDecimales($event, 2)"
-                [readonly]="soloLectura" [(ngModel)]="elemento.basico" required>
+                class="form-control form-control-sm" (blur)="setDecimales($event, 2)" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idAdicionalBasicoVacaciones" class="tamanio-label">Adicional por Vacaciones</label>
               <input id="idAdicionalBasicoVacaciones" type="number" formControlName="adicionalBasicoVacaciones"
-                autocomplete="off" class="form-control form-control-sm" min="1" maxlength="4" step="0.01"
-                [readonly]="soloLectura" [(ngModel)]="elemento.adicionalBasicoVacaciones"
-                (blur)="setDecimales($event, 2)" required>
+                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
+                (blur)="setDecimales($event, 2)">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTopeBasicoAdelantos" class="tamanio-label">Tope de Adelantos</label>
               <input id="idTopeBasicoAdelantos" type="number" formControlName="topeBasicoAdelantos"
-                autocomplete="off" class="form-control form-control-sm" min="1" maxlength="4"
-                [readonly]="soloLectura" [(ngModel)]="elemento.topeBasicoAdelantos"
-                (blur)="setDecimales($event, 2)" required>
+                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
+                (blur)="setDecimales($event, 2)">
             </div>
           </div>
         </div>
@@ -76,21 +73,19 @@
             <div class="form-group has-float-label">
               <label for="idDiasLaborables" class="tamanio-label">Días Laborables</label>
               <input id="idDiasLaborables" type="number" formControlName="diasLaborables"
-                autocomplete="off" class="form-control form-control-sm" min="1" maxlength="4"
-                [readonly]="soloLectura" [(ngModel)]="elemento.diasLaborables" required>
+                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idHorasLaborables" class="tamanio-label">Horas Laborables</label>
               <input id="idHorasLaborables" type="number" formControlName="horasLaborables"
-                autocomplete="off" class="form-control form-control-sm" min="1" maxlength="4"
-                [readonly]="soloLectura" [(ngModel)]="elemento.horasLaborables" required>
+                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
-        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}</button>
       </form>
     </div>

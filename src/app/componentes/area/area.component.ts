@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AreaService } from '../../servicios/area.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -28,21 +28,20 @@ export class AreaComponent implements OnInit {
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
   //Define una lista
-  private lista = null;
+  private lista:Array<any> = [];
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
   private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
-  //Define el form control para las busquedas
-  private buscar:FormControl = new FormControl();
-  //Define la lista de resultados de la busqueda
+  private listaCompleta:Array<any> = [];
+  //Define el autocompletado
+  private autocompletado:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda
   private resultados:Array<any> = [];
   //Constructor
   constructor(private servicio: AreaService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
-    private formBuilder: FormBuilder) {
+    private appComponent: AppComponent, private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -54,14 +53,12 @@ export class AreaComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
-    //Define el autocompletado - buscar por nombre
-    this.buscar.valueChanges.subscribe(data => {
+    //Autocompletado - Buscar por nombre
+    this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
@@ -71,17 +68,28 @@ export class AreaComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-    //Define los campos para validaciones
-    this.formulario = this.formBuilder.group(this.crearFormulario(''));
+    //Define el formulario y validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
+    });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
   }
-  private crearFormulario(id): FormGroup {
-    return this.formBuilder.group({
-      autocompletado: new FormControl(),
-      id: new FormControl(id),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
-    })
+  //Establece el formulario al seleccionar elemento del autocompletado
+  public cambioAutocompletado(elemento) {
+    this.formulario.patchValue(elemento);
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -94,10 +102,18 @@ export class AreaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
-    console.log(this.formulario);
+  public seleccionarPestania(id, nombre, opcion) {
+    this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    /*
+    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
+    * cuando se hace click en ver o mod de la pestania lista
+    */
+    if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
+      this.resultados = [];
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -117,16 +133,16 @@ export class AreaComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
@@ -155,12 +171,12 @@ export class AreaComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento) {
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          //this.formulario.reset(this.crearFormulario(respuesta.id));
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -179,12 +195,12 @@ export class AreaComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-    this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          //this.formulario.reset('');
+          this.reestablecerFormulario(undefined);
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -203,34 +219,42 @@ export class AreaComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
   }
-  //Establece el formulario al seleccionar elemento de autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-    this.formulario.setValue(elemAutocompletado);
+  //Reestablece los campos formularios
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.autocompletado.setValue(undefined);
+    this.resultados = [];
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  }
+  };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
-    this.formulario.setValue(elemento);
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.formulario.setValue(elemento);
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
-  //Formatea los valores del autocompletado
-  public displayF(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
     }
   }
 }

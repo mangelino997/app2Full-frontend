@@ -16,42 +16,43 @@
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Buscar Proveedor</label>
-              <ng-template #rt let-r="result" let-t="term">
-                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-              </ng-template>
-              <input id="idAutocompletado" type="text" class="form-control form-control-sm"
-                formControlName="autocompletado" [(ngModel)]="elemento"
-                [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+              <input id="idAutocompletado" class="form-control form-control-sm"
+                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+                <mat-option *ngFor="let item of resultados" [value]="item"
+                  (onSelectionChange)="cambioAutocompletado(item)">
+                  {{item.nombre}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label">N° de Cuenta</label>
-              <input id="idCodigo" type="number" formControlName="id" readonly
-                class="form-control form-control-sm" [(ngModel)]="elemento.proveedor.id">
+              <label for="idProveedor" class="tamanio-label">N° de Cuenta</label>
+              <input id="idProveedor" type="text" formControlName="idProveedor"
+                class="form-control form-control-sm" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idRazonSocial" class="tamanio-label">Razón Social</label>
               <input id="idRazonSocial" type="text" formControlName="razonSocial" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45"
-                [(ngModel)]="elemento.proveedor.razonSocial" readonly>
+                class="form-control form-control-sm" readonly>
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-md-3" *ngIf="mostrarAutocompletado">
             <div class="form-group has-float-label">
-              <label for="idListaChoferes" class="tamanio-label">Lista de Choferes</label>
-              <input id="idListaChoferes" class="form-control form-control-sm" formControlName="listaChoferes"
-                type="text" matInput [matAutocomplete]="autoListaChoferes" autocomplete="off"
-                [(ngModel)]="elemento.listaChoferes" [readonly]="soloLectura" required>
-              <mat-autocomplete #autoListaChoferes="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let itemTipoDocumento of choferes" [value]="itemTipoDocumento">
-                  {{itemTipoDocumento.nombre}}
+              <label for="idChoferes" class="tamanio-label">Lista de Choferes</label>
+              <input id="idChoferes" class="form-control form-control-sm" formControlName="choferes"
+                type="text" matInput [matAutocomplete]="autoChoferes" autocomplete="off"
+                [readonly]="soloLectura" required>
+              <mat-autocomplete #autoChoferes="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                <mat-option *ngFor="let itemChoferes of resultadosChoferes" [value]="itemChoferes">
+                  {{itemChoferes.nombre}}
                 </mat-option>
               </mat-autocomplete>
             </div>

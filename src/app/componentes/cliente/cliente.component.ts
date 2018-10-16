@@ -17,7 +17,7 @@ import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
@@ -26,7 +26,8 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-cliente',
-  templateUrl: './cliente.component.html'
+  templateUrl: './cliente.component.html',
+  styleUrls: ['./cliente.component.css']
 })
 export class ClienteComponent implements OnInit {
   //Define la pestania activa
@@ -42,77 +43,51 @@ export class ClienteComponent implements OnInit {
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
   //Define una lista
-  private lista = null;
+  private lista:Array<any> = [];
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define la lista de opciones
-  private opciones = null;
+  private opciones:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el elemento de autocompletado
-  private elemAutocompletado:any = null;
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
+  private listaCompleta:Array<any> = [];
   //Define la opcion seleccionada
   private opcionSeleccionada:number = null;
   //Define la lista de condiciones de iva
-  private condicionesIva:any = null;
+  private condicionesIva:Array<any> = [];
   //Define la lista de tipos de documentos
-  private tiposDocumentos:any = null;
+  private tiposDocumentos:Array<any> = [];
   //Define la lista de resumenes de clientes
-  private resumenesClientes:any = null;
+  private resumenesClientes:Array<any> = [];
   //Define la lista de situaciones de clientes
-  private situacionesClientes:any = null;
+  private situacionesClientes:Array<any> = [];
   //Define la opcion activa
-  private botonOpcionActivo:any = null;
+  private botonOpcionActivo:boolean = null;
   //Define el form control para las busquedas
-  private buscar:FormControl = new FormControl();
+  private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  private resultados = [];
-  //Define el form control para autocompletado barrio
-  private buscarBarrio:FormControl = new FormControl();
+  private resultados:Array<any> = [];
   //Define la lista de resultados de busqueda de barrio
-  private resultadosBarrios = [];
-  //Define el form control para autocompletado localidad
-  private buscarLocalidad:FormControl = new FormControl();
+  private resultadosBarrios:Array<any> = [];
   //Define la lista de resultados de busqueda de barrio
-  private resultadosLocalidades = [];
-  //Define el form control para autocompletado cobrador
-  private buscarCobrador:FormControl = new FormControl();
+  private resultadosLocalidades:Array<any> = [];
   //Define la lista de resultados de busqueda de cobrador
-  private resultadosCobradores = [];
-  //Define el form control para autocompletado vendedor
-  private buscarVendedor:FormControl = new FormControl();
+  private resultadosCobradores:Array<any> = [];
   //Define la lista de resultados de busqueda de vendedor
-  private resultadosVendedores = [];
-  //Define el form control para autocompletado zona
-  private buscarZona:FormControl = new FormControl();
+  private resultadosVendedores:Array<any> = [];
   //Define la lista de resultados de busqueda de zona
-  private resultadosZonas = [];
-  //Define el form control para autocompletado rubro
-  private buscarRubro:FormControl = new FormControl();
+  private resultadosZonas:Array<any> = [];
   //Define la lista de resultados de busqueda de rubro
-  private resultadosRubros = [];
-  //Define el form control para autocompletado orden venta
-  private buscarOrdenVenta:FormControl = new FormControl();
+  private resultadosRubros:Array<any> = [];
   //Define la lista de resultados de busqueda de orden venta
-  private resultadosOrdenesVentas = [];
-  //Define el form control para autocompletado cuenta principal
-  private buscarCuentaPrincipal:FormControl = new FormControl();
+  private resultadosOrdenesVentas:Array<any> = [];
   //Define la lista de resultados de busqueda de cuenta principal
-  private resultadosCuentasPrincipales = [];
-  //Define el form control para autocompletado sucursal lugar pago
-  private buscarSucursalLugarPago:FormControl = new FormControl();
+  private resultadosCuentasPrincipales:Array<any> = [];
   //Define la lista de resultados de busqueda de sucursal lugar pago
-  private resultadosSucursalesPago = [];
-  //Define el form control para autocompletado compania seguro
-  private buscarCompaniaSeguro:FormControl = new FormControl();
+  private resultadosSucursalesPago:Array<any> = [];
   //Define la lista de resultados de busqueda de compania seguro
-  private resultadosCompaniasSeguros = [];
+  private resultadosCompaniasSeguros:Array<any> = [];
   //Constructor
   constructor(private servicio: ClienteService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -123,44 +98,6 @@ export class ClienteComponent implements OnInit {
     private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
     private companiaSeguroServicio: CompaniaSeguroService, private ordenVentaServicio: OrdenVentaService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      razonSocial: new FormControl(),
-      nombreFantasia: new FormControl(),
-      cuentaPrincipal: new FormControl(),
-      domicilio: new FormControl(),
-      localidad: new FormControl(),
-      barrio: new FormControl(),
-      telefono: new FormControl(),
-      sitioWeb: new FormControl(),
-      zona: new FormControl(),
-      rubro: new FormControl(),
-      cobrador: new FormControl(),
-      vendedor: new FormControl(),
-      condicionIva: new FormControl(),
-      tipoDocumento: new FormControl(),
-      numeroDocumento: new FormControl(),
-      numeroIIBB: new FormControl(),
-      esCuentaCorriente: new FormControl(),
-      resumenCliente: new FormControl(),
-      situacionCliente: new FormControl(),
-      ordenVenta: new FormControl(),
-      sucursalLugarPago: new FormControl(),
-      creditoLimite: new FormControl(),
-      descuentoFlete: new FormControl(),
-      descuentoSubtotal: new FormControl(),
-      esSeguroPropio: new FormControl(),
-      companiaSeguro: new FormControl(),
-      numeroPolizaSeguro: new FormControl(),
-      vencimientoPolizaSeguro: new FormControl(),
-      observaciones: new FormControl(),
-      notaEmisionComprobante: new FormControl(),
-      notaImpresionComprobante: new FormControl(),
-      notaImpresionRemito: new FormControl(),
-      imprimirControlDeuda: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -191,107 +128,139 @@ export class ClienteComponent implements OnInit {
       this.listaCompleta = res;
     });
     //Autocompletado - Buscar por alias
-    this.buscar.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.servicio.listarPorAlias(data).subscribe(response =>{
-            this.resultados = response;
-          })
-        }
-    })
-    //Autocompletado Barrio - Buscar por nombre
-    this.buscarBarrio.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.barrioServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosBarrios = response;
-          })
-        }
-    })
-    //Autocompletado Localidad - Buscar por nombre
-    this.buscarLocalidad.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.localidadServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosLocalidades = response;
-          })
-        }
-    })
-    //Autocompletado Cobrador - Buscar por nombre
-    this.buscarCobrador.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.cobradorServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosCobradores = response;
-          })
-        }
-    })
-    //Autocompletado Vendedor - Buscar por nombre
-    this.buscarVendedor.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.vendedorServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosVendedores = response;
-          })
-        }
-    })
-    //Autocompletado Zona - Buscar por nombre
-    this.buscarZona.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.zonaServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosZonas = response;
-          })
-        }
-    })
-    //Autocompletado Rubro - Buscar por nombre
-    this.buscarRubro.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.rubroServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosRubros = response;
-          })
-        }
-    })
-    //Autocompletado Orden Venta - Buscar por nombre
-    this.buscarOrdenVenta.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.ordenVentaServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosOrdenesVentas = response;
-          })
-        }
-    })
-    //Autocompletado Cuenta Principal - Buscar por nombre
-    this.buscarCuentaPrincipal.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.servicio.listarPorAlias(data).subscribe(response => {
-            this.resultadosCuentasPrincipales = response;
-          })
-        }
-    })
-    //Autocompletado Sucursal Lugar Pago - Buscar por nombre
-    this.buscarSucursalLugarPago.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.sucursalServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosSucursalesPago = response;
-          })
-        }
-    })
-    //Autocompletado Compania Seguro - Buscar por nombre
-    this.buscarCompaniaSeguro.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosCompaniasSeguros = response;
-          })
-        }
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorAlias(data).subscribe(response =>{
+          this.resultados = response;
+        })
+      }
     })
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      razonSocial: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      nombreFantasia: new FormControl('', Validators.maxLength(45)),
+      cuentaPrincipal: new FormControl(),
+      domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
+      localidad: new FormControl('', [Validators.required]),
+      barrio: new FormControl(),
+      telefono: new FormControl('', [Validators.maxLength(45)]),
+      sitioWeb: new FormControl('', [Validators.maxLength(60)]),
+      zona: new FormControl(),
+      rubro: new FormControl(),
+      cobrador: new FormControl(),
+      vendedor: new FormControl(),
+      condicionIva: new FormControl(),
+      tipoDocumento: new FormControl(),
+      numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(15)]),
+      numeroIIBB: new FormControl('', Validators.maxLength(15)),
+      esCuentaCorriente: new FormControl('', [Validators.required]),
+      resumenCliente: new FormControl(),
+      situacionCliente: new FormControl(),
+      ordenVenta: new FormControl(),
+      sucursalLugarPago: new FormControl(),
+      creditoLimite: new FormControl('', [Validators.min(1), Validators.maxLength(12)]),
+      descuentoFlete: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
+      descuentoSubtotal: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
+      esSeguroPropio: new FormControl(),
+      companiaSeguro: new FormControl(),
+      numeroPolizaSeguro: new FormControl('', Validators.maxLength(20)),
+      vencimientoPolizaSeguro: new FormControl(),
+      observaciones: new FormControl('', Validators.maxLength(400)),
+      notaEmisionComprobante: new FormControl('', Validators.maxLength(200)),
+      notaImpresionComprobante: new FormControl('', Validators.maxLength(200)),
+      notaImpresionRemito: new FormControl('', Validators.maxLength(200)),
+      imprimirControlDeuda: new FormControl('', Validators.required),
+      usuarioAlta: new FormControl(),
+      usuarioBaja: new FormControl(),
+      fechaBaja: new FormControl(),
+      usuarioMod: new FormControl(),
+      fechaUltimaMod: new FormControl(),
+      alias: new FormControl()
+    });
+    //Autocompletado Barrio - Buscar por nombre
+    this.formulario.get('barrio').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.barrioServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosBarrios = response;
+        })
+      }
+    })
+    //Autocompletado Localidad - Buscar por nombre
+    this.formulario.get('localidad').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.localidadServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosLocalidades = response;
+        })
+      }
+    })
+    //Autocompletado Cobrador - Buscar por nombre
+    this.formulario.get('cobrador').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.cobradorServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosCobradores = response;
+        })
+      }
+    })
+    //Autocompletado Vendedor - Buscar por nombre
+    this.formulario.get('vendedor').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.vendedorServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosVendedores = response;
+        })
+      }
+    })
+    //Autocompletado Zona - Buscar por nombre
+    this.formulario.get('zona').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.zonaServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosZonas = response;
+        })
+      }
+    })
+    //Autocompletado Rubro - Buscar por nombre
+    this.formulario.get('rubro').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.rubroServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosRubros = response;
+        })
+      }
+    })
+    //Autocompletado Orden Venta - Buscar por nombre
+    this.formulario.get('ordenVenta').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.ordenVentaServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosOrdenesVentas = response;
+        })
+      }
+    })
+    //Autocompletado Cuenta Principal - Buscar por nombre
+    this.formulario.get('cuentaPrincipal').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosCuentasPrincipales = response;
+        })
+      }
+    })
+    //Autocompletado Sucursal Lugar Pago - Buscar por nombre
+    this.formulario.get('sucursalLugarPago').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.sucursalServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosSucursalesPago = response;
+        })
+      }
+    })
+    //Autocompletado Compania Seguro - Buscar por nombre
+    this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosCompaniasSeguros = response;
+        })
+      }
+    })
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de condiciones de iva
@@ -303,8 +272,41 @@ export class ClienteComponent implements OnInit {
     //Obtiene la lista de situaciones de clientes
     this.listarSituacionesClientes();
   }
+  //Define como se muestra los datos en el autcompletado
+  public displayF(elemento) {
+    if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
+        + ', ' + elemento.provincia.pais.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
   //Vacia la lista de resultados de autocompletados
-  public vaciarLista() {
+  public vaciarListas() {
     this.resultados = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
@@ -319,7 +321,7 @@ export class ClienteComponent implements OnInit {
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
-   this.elemento = elemAutocompletado;
+   this.formulario.patchValue(elemAutocompletado);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -327,18 +329,18 @@ export class ClienteComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarLista();
+    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerCampos();
+    this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
-      this.elemAutocompletado = null;
+      this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
     switch (id) {
@@ -392,32 +394,20 @@ export class ClienteComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
-  }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-    this.vaciarLista();
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-    this.elemAutocompletado = null;
-    this.vaciarLista();
   }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {
@@ -467,7 +457,7 @@ export class ClienteComponent implements OnInit {
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -486,13 +476,13 @@ export class ClienteComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento) {
-    elemento.usuarioAlta = this.appComponent.getUsuario();
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
             document.getElementById('idRazonSocial').focus();
           }, 20);
@@ -505,12 +495,13 @@ export class ClienteComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-    this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.reestablecerFormulario(undefined);
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -523,8 +514,15 @@ export class ClienteComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
+  }
+  //Reestablece el formulario
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.autocompletado.setValue(undefined);
+    this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -558,7 +556,8 @@ export class ClienteComponent implements OnInit {
     valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
   }
   //Manejo de colores de campos y labels con patron erroneo
-  public validarPatron(patron, valor, campo) {
+  public validarPatron(patron, campo) {
+    let valor = this.formulario.get(campo).value;
     if(valor != undefined) {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
@@ -573,47 +572,14 @@ export class ClienteComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
-  }
-  //Define como se muestra los datos en el autcompletado
-  public displayF(elemento) {
-    if(elemento != undefined) {
-      return elemento.alias ? elemento.alias : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado a
-  public displayFa(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado b
-  public displayFb(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
-        + ', ' + elemento.provincia.pais.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado c
-  public displayFc(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
-    } else {
-      return elemento;
-    }
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
