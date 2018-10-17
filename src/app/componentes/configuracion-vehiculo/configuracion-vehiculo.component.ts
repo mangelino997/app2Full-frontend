@@ -4,7 +4,7 @@ import { PestaniaService } from '../../servicios/pestania.service';
 import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
 import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -13,7 +13,8 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-configuracion-vehiculo',
-  templateUrl: './configuracion-vehiculo.component.html'
+  templateUrl: './configuracion-vehiculo.component.html',
+  styleUrls: ['./configuracion-vehiculo.component.css']
 })
 export class ConfiguracionVehiculoComponent implements OnInit {
   //Define la pestania activa
@@ -29,43 +30,25 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
   //Define una lista
-  private lista = null;
+  private lista:Array<any> = [];
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
+  //Define el autocompletado
+  private autocompletado:FormControl = new FormControl();
   //Define la lista completa de registros
-  private listaCompleta:any = null;
-  //Define la lista de configuracion de vehiculo
-  private listaConfiguraciones:any = null;
+  private listaCompleta:Array<any> = [];
+  //Define la lista de configuraciones de vehiculo
+  private configuraciones:Array<any> = [];
   //Define la lista de tipos de vehiculos
-  private tiposVehiculos:any = null;
+  private tiposVehiculos:Array<any> = [];
   //Define la lista de marcas de vehiculos
-  private marcasVehiculos:any = null;
+  private marcasVehiculos:Array<any> = [];
   //Constructor
   constructor(private servicio: ConfiguracionVehiculoService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      tipoVehiculo: new FormControl(),
-      marcaVehiculo: new FormControl(),
-      modelo: new FormControl(),
-      descripcion: new FormControl(),
-      cantidadEjes: new FormControl(),
-      capacidadCarga: new FormControl(),
-      tara: new FormControl(),
-      altura: new FormControl(),
-      largo: new FormControl(),
-      ancho: new FormControl(),
-      m3: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -86,6 +69,21 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      tipoVehiculo: new FormControl('', Validators.required),
+      marcaVehiculo: new FormControl('', Validators.required),
+      modelo: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      descripcion: new FormControl('', Validators.maxLength(100)),
+      cantidadEjes: new FormControl('', [Validators.required, Validators.maxLength(2)]),
+      capacidadCarga: new FormControl('', [Validators.required, Validators.maxLength(5)]),
+      tara: new FormControl('', Validators.maxLength(5)),
+      altura: new FormControl('', Validators.maxLength(5)),
+      largo: new FormControl('', Validators.maxLength(5)),
+      ancho: new FormControl('', Validators.maxLength(5)),
+      m3: new FormControl('', Validators.maxLength(5))
+    });
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de tipos de vehiculos
@@ -126,7 +124,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerCampos();
+    this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     switch (id) {
@@ -148,35 +146,26 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
   }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -195,23 +184,27 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     );
   }
   //Obtiene la lista de configuracion de vehiculos por tipo y marca
-  public listarPorTipoVehiculoMarcaVehiculo(idTipo, idMarca) {
-    this.servicio.listarPorTipoVehiculoMarcaVehiculo(idTipo, idMarca).subscribe(
-      res => {
-        this.listaConfiguraciones = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    )
+  public listarPorTipoVehiculoMarcaVehiculo() {
+    let tipoVehiculo = this.formulario.get('tipoVehiculo').value;
+    let marcaVehiculo = this.formulario.get('marcaVehiculo').value;
+    if(tipoVehiculo && marcaVehiculo) {
+      this.servicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id).subscribe(
+        res => {
+          this.configuraciones = res.json();
+        },
+        err => {
+          console.log(err);
+        }
+      )
+    }
   }
   //Agrega un registro
-  private agregar(elemento) {
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.reestablecerFormulario();
           setTimeout(function() {
             document.getElementById('idTipoVehiculo').focus();
           }, 20);
@@ -225,12 +218,12 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-    this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.reestablecerFormulario();
           setTimeout(function() {
             document.getElementById('idTipoVehiculo').focus();
           }, 20);
@@ -244,18 +237,23 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
+  }
+  //Reestablece el formulario
+  private reestablecerFormulario() {
+    this.formulario.reset();
+    this.autocompletado.setValue(undefined);
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
-    this.elemento = elemento;
+    this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.elemento = elemento;
+    this.formulario.setValue(elemento);
   }
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {

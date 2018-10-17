@@ -16,12 +16,11 @@
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Buscar por Banco-Sucursal</label>
-              <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
-                type="text" matInput [formControl]="buscar" [matAutocomplete]="auto"
-                autocomplete="off" [(ngModel)]="elemAutocompletado" required>
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
-                (optionSelected)="listarPorSucursalBanco(elemAutocompletado)">
-                <mat-option *ngFor="let item of resultados" [value]="item">
+              <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off"
+                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+                <mat-option *ngFor="let item of resultados" [value]="item"
+                  (onSelectionChange)="cambioAutocompletado(item)">
                   {{item.banco.nombre}} - {{item.nombre}}
                 </mat-option>
               </mat-autocomplete>
@@ -33,16 +32,14 @@
             <div class="form-group has-float-label">
               <label for="idBanco" class="tamanio-label-titulo">Banco</label>
               <input id="idBanco" type="text" formControlName="banco" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45"
-                [readonly]="true" [(ngModel)]="elemAutocompletado.banco.nombre">
+                class="form-control form-control-sm" readonly>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idSucursal" class="tamanio-label-titulo">Sucursal</label>
               <input id="idSucursal" type="text" formControlName="sucursal" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45"
-                [readonly]="true" [(ngModel)]="elemAutocompletado.nombre">
+                class="form-control form-control-sm" readonly>
             </div>
           </div>
         </div>
@@ -52,7 +49,7 @@
               <label for="idContacto" class="tamanio-label">Lista de Contáctos</label>
               <input id="idContacto" class="form-control form-control-sm" formControlName="contacto"
                 type="text" matInput [matAutocomplete]="autoContacto" autocomplete="off"
-                [(ngModel)]="elemento.contacto" [readonly]="soloLectura" required>
+                [readonly]="soloLectura" [required]="mostrarAutocompletado">
               <mat-autocomplete #autoContacto="matAutocomplete" [displayWith]="displayFb.bind(this)">
                 <mat-option *ngFor="let itemContacto of contactos" [value]="itemContacto">
                   {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}}
@@ -66,8 +63,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoContacto" class="tamanio-label">Tipo de Contácto</label>
               <input id="idTipoContacto" class="form-control form-control-sm" formControlName="tipoContacto"
-                type="text" matInput [matAutocomplete]="autoTipoContacto" autocomplete="off"
-                [(ngModel)]="elemento.tipoContacto" [readonly]="soloLectura" required>
+                type="text" matInput [matAutocomplete]="autoTipoContacto" autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoTipoContacto="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let itemTipoContacto of tiposContactos" [value]="itemTipoContacto">
                   {{itemTipoContacto.nombre}}
@@ -79,8 +75,7 @@
             <div class="form-group has-float-label">
               <label for="idNombre" class="tamanio-label-titulo">Nombre del Contácto</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45"
-                [readonly]="soloLectura" [(ngModel)]="elemento.nombre" required>
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -89,20 +84,18 @@
             <div class="form-group has-float-label">
               <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
               <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45" pattern="^[0-9]{10}(,[0-9]{10})*$"
-                (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', elemento.telefonoFijo, 'telefonoFijo')"
-                (ngModelChange)="cambioCampo('idTelefonoFijo', 'labelTelefonoFijo')"
-                [readonly]="soloLectura" [(ngModel)]="elemento.telefonoFijo">
+                class="form-control form-control-sm" pattern="^[0-9]{10}(,[0-9]{10})*$"
+                (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', 'telefonoFijo')"
+                (ngModelChange)="cambioCampo('idTelefonoFijo', 'labelTelefonoFijo')" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil</label>
               <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45" pattern="^[0-9]{10}(,[0-9]{10})*$"
-                (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', elemento.telefonoMovil, 'telefonoMovil')"
-                (ngModelChange)="cambioCampo('idTelefonoMovil', 'labelTelefonoMovil')"
-                [readonly]="soloLectura" [(ngModel)]="elemento.telefonoMovil">
+                class="form-control form-control-sm" pattern="^[0-9]{10}(,[0-9]{10})*$"
+                (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', 'telefonoMovil')"
+                (ngModelChange)="cambioCampo('idTelefonoMovil', 'labelTelefonoMovil')" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
@@ -110,16 +103,16 @@
               <label id="labelCorreoelectronico" for="idCorreoelectronico" class="tamanio-label">
                 Correo Electrónico</label>
               <input id="idCorreoelectronico" type="email" formControlName="correoelectronico" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45"
+                class="form-control form-control-sm" pattern="^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$"
                 (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
-                pattern="^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$"
-                (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$', elemento.correoelectronico, 'correo')"
-                [readonly]="soloLectura" [(ngModel)]="elemento.correoelectronico">
+                (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$', 'correo')" [readonly]="soloLectura">
             </div>
           </div>
         </div>
-        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">{{pestaniaActual}}</button>
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+          {{pestaniaActual}}
+        </button>
       </form>
     </div>
   </div>
