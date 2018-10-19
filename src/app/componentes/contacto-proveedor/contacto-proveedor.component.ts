@@ -5,7 +5,7 @@ import { ProveedorService } from '../../servicios/proveedor.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
@@ -14,7 +14,8 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-contacto-proveedor',
-  templateUrl: './contacto-proveedor.component.html'
+  templateUrl: './contacto-proveedor.component.html',
+  styleUrls: ['./contacto-proveedor.component.css']
 })
 export class ContactoProveedorComponent implements OnInit {
   //Define la pestania activa
@@ -29,48 +30,28 @@ export class ContactoProveedorComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define una lista
-  private lista = null;
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el elemento de autocompletado
-  private elemAutocompletado:any = null;
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
+  private listaCompleta:Array<any> = [];
   //Define la opcion seleccionada
   private opcionSeleccionada:number = null;
   //Define la lista de tipos de contactos
-  private tiposContactos:any = null;
+  private tiposContactos:Array<any> = [];
   //Define la lista de contactos
-  private contactos:any = null;
+  private contactos:Array<any> = [];
+  //Define el contacto
+  private contacto:FormControl = new FormControl();
   //Define el form control para las busquedas
-  private buscar:FormControl = new FormControl();
+  private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  private resultados = [];
+  private resultados:Array<any> = [];
   //Constructor
   constructor(private servicio: ContactoProveedorService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private proveedorServicio: ProveedorService, private tipoContactoServicio: TipoContactoService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      proveedor: new FormControl(),
-      tipoContacto: new FormControl(),
-      nombre: new FormControl(),
-      telefonoFijo: new FormControl(),
-      telefonoMovil: new FormControl(),
-      correoelectronico: new FormControl(),
-      usuarioAlta: new FormControl(),
-      usuarioMod: new FormControl(),
-      contacto: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -88,8 +69,23 @@ export class ContactoProveedorComponent implements OnInit {
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
+  }
+  //Al iniciarse el componente
+  ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      proveedor: new FormControl('', Validators.required),
+      tipoContacto: new FormControl('', Validators.required),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      telefonoFijo: new FormControl('', Validators.maxLength(45)),
+      telefonoMovil: new FormControl('', Validators.maxLength(45)),
+      correoelectronico: new FormControl('', Validators.maxLength(30)),
+      usuarioAlta: new FormControl(),
+      usuarioMod: new FormControl()
+    });
     //Autocompletado - Buscar por alias proveedor
-    this.buscar.valueChanges
+    this.formulario.get('proveedor').valueChanges
       .subscribe(data => {
         if(typeof data == 'string') {
           this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
@@ -97,9 +93,6 @@ export class ContactoProveedorComponent implements OnInit {
           })
         }
     })
-  }
-  //Al iniciarse el componente
-  ngOnInit() {
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de tipos de contactos
@@ -117,12 +110,8 @@ export class ContactoProveedorComponent implements OnInit {
     );
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarLista() {
+  public vaciarListas() {
     this.resultados = [];
-  }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.elemento = elemAutocompletado;
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -130,14 +119,14 @@ export class ContactoProveedorComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarLista();
+    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerCampos();
+    this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     switch (id) {
@@ -159,38 +148,26 @@ export class ContactoProveedorComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
   }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-    this.vaciarLista();
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-    this.elemAutocompletado = null;
-    this.vaciarLista();
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -222,13 +199,13 @@ export class ContactoProveedorComponent implements OnInit {
     }
   }
   //Agrega un registro
-  private agregar(elemento) {
-    elemento.usuarioAlta = this.appComponent.getUsuario();
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.reestablecerFormulario();
           setTimeout(function() {
             document.getElementById('idProveedor').focus();
           }, 20);
@@ -241,12 +218,13 @@ export class ContactoProveedorComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-    this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+  this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.reestablecerFormulario();
           setTimeout(function() {
             document.getElementById('idProveedor').focus();
           }, 20);
@@ -259,8 +237,13 @@ export class ContactoProveedorComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
+  }
+  //Reestablece el formulario
+  private reestablecerFormulario() {
+    this.formulario.reset();
+    this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -286,7 +269,8 @@ export class ContactoProveedorComponent implements OnInit {
     document.getElementById(label).classList.remove('label-error');
   }
   //Manejo de colores de campos y labels con patron erroneo
-  public validarPatron(patron, valor, campo) {
+  public validarPatron(patron, campo) {
+    let valor = this.formulario.get(campo).value;
     if(valor != undefined) {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
@@ -301,14 +285,12 @@ export class ContactoProveedorComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
+    this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
+    this.formulario.setValue(elemento);
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {

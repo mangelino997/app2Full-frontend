@@ -3,7 +3,7 @@ import { EscalaTarifaService } from '../../servicios/escala-tarifa.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -12,27 +12,19 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-escala-tarifa',
-  templateUrl: './escala-tarifa.component.html'
+  templateUrl: './escala-tarifa.component.html',
+  styleUrls: ['./escala-tarifa.component.css']
 })
 export class EscalaTarifaComponent implements OnInit {
-  //Define una lista
-  private lista = null;
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
+  private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
+  private listaCompleta:Array<any> = [];
+  //Define la descripcion
+  private descripcion:FormControl = new FormControl();
   //Constructor
   constructor(private servicio: EscalaTarifaService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      valor: new FormControl(),
-      descripcion: new FormControl()
-    });
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -44,23 +36,13 @@ export class EscalaTarifaComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      valor: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(45)])
+    });
     //Obtiene la lista completa de registros
     this.listar();
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-  }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.elemento.id = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
   }
   //Obtiene el listado de registros
   private listar() {
@@ -74,12 +56,12 @@ export class EscalaTarifaComponent implements OnInit {
     );
   }
   //Agrega un registro
-  public agregar(elemento) {
-    this.servicio.agregar(elemento).subscribe(
+  public agregar() {
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCampos();
+          this.reestablecerFormulario();
           setTimeout(function() {
             document.getElementById('idValor').focus();
           }, 20);
@@ -103,7 +85,7 @@ export class EscalaTarifaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.reestablecerFormulario();
           setTimeout(function() {
             document.getElementById('idValor').focus();
           }, 20);
@@ -116,6 +98,10 @@ export class EscalaTarifaComponent implements OnInit {
       }
     )
   }
+  //Reestablece el formulario
+  private reestablecerFormulario() {
+    this.formulario.reset();
+  }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -125,10 +111,10 @@ export class EscalaTarifaComponent implements OnInit {
   public establecerHasta(valor) {
     if(valor.target.value != undefined && valor.target.value != '') {
       valor.target.value = this.setDecimales(valor.target.value, 2);
-      this.elemento.descripcion = 'Hasta ' + valor.target.value;
+      this.descripcion.setValue('Hasta ' + valor.target.value);
 
     } else {
-      this.elemento.descripcion = null;
+      this.descripcion.setValue(undefined);
     }
   }
   //Formatea el numero a x decimales
