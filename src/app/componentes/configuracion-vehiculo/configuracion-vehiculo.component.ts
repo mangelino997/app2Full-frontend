@@ -72,6 +72,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
+      version: new FormControl(),
       tipoVehiculo: new FormControl('', Validators.required),
       marcaVehiculo: new FormControl('', Validators.required),
       modelo: new FormControl('', [Validators.required, Validators.maxLength(45)]),

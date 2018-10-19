@@ -39,6 +39,7 @@ export class EscalaTarifaComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
+      version: new FormControl(),
       valor: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(45)])
     });
     //Obtiene la lista completa de registros

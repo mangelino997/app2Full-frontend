@@ -141,6 +141,7 @@ export class ClienteComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
+      version: new FormControl(),
       razonSocial: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       nombreFantasia: new FormControl('', Validators.maxLength(45)),
       cuentaPrincipal: new FormControl(),
