@@ -119,8 +119,6 @@ export class ClienteComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(1, 0);
     //Se subscribe al servicio de lista de registros
@@ -182,6 +180,8 @@ export class ClienteComponent implements OnInit {
       fechaUltimaMod: new FormControl(),
       alias: new FormControl()
     });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if(typeof data == 'string') {

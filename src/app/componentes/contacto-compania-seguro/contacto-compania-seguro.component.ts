@@ -63,8 +63,6 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -85,6 +83,8 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       usuarioAlta: new FormControl(),
       usuarioMod: new FormControl()
     });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado - Buscar por nombre compania seguro
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
       if(typeof data == 'string') {

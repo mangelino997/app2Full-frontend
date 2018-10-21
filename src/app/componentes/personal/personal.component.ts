@@ -21,7 +21,7 @@ import { AfipSiniestradoService } from '../../servicios/afip-siniestrado.service
 import { AfipSituacionService } from '../../servicios/afip-situacion.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
@@ -45,88 +45,58 @@ export class PersonalComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define una lista
-  private lista = null;
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define la lista de opciones
-  private opciones = null;
+  private opciones:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el elemento de autocompletado
-  private elemAutocompletado:any = null;
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
+  private listaCompleta:Array<any> = [];
   //Define la opcion seleccionada
   private opcionSeleccionada:number = null;
-  //Define la nacionalidad
-  private nacionalidad:string = null;
   //Define la lista de sexos
-  private sexos:any = null;
+  private sexos:Array<any> = [];
   //Define la lista de estados civiles
-  private estadosCiviles:any = null;
+  private estadosCiviles:Array<any> = [];
   //Define la lista de tipos de documentos
-  private tiposDocumentos:any = null;
+  private tiposDocumentos:Array<any> = [];
   //Define la lista de sucursales
-  private sucursales:any = null;
+  private sucursales:Array<any> = [];
   //Define la lista de areas
-  private areas:any = null;
+  private areas:Array<any> = [];
   //Define la lista de sindicatos
-  private sindicatos:any = null;
+  private sindicatos:Array<any> = [];
   //Define la opcion activa
-  private botonOpcionActivo:any = null;
+  private botonOpcionActivo:boolean = null;
+  //Define la nacionalidad de nacimiento
+  private nacionalidadNacimiento:FormControl = new FormControl();
   //Define el form control para las busquedas
-  private buscar:FormControl = new FormControl();
+  private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  private resultados = [];
-  //Define el form control para autocompletado barrio
-  private buscarBarrio:FormControl = new FormControl();
+  private resultados:Array<any> = [];
   //Define la lista de resultados de busqueda de barrios
-  private resultadosBarrios = [];
-  //Define el form control para autocompletado localidad
-  private buscarLocalidad:FormControl = new FormControl();
+  private resultadosBarrios:Array<any> = [];
   //Define la lista de resultados de busqueda de localidades
-  private resultadosLocalidades = [];
-  //Define el form control para autocompletado categoria
-  private buscarCategoria:FormControl = new FormControl();
+  private resultadosLocalidades:Array<any> = [];
   //Define la lista de resultados de busqueda de categorias
-  private resultadosCategorias = [];
-  //Define el form control para autocompletado seguridad social
-  private buscarSeguridadSocial:FormControl = new FormControl();
+  private resultadosCategorias:Array<any> = [];
   //Define la lista de resultados de busqueda de seguridad social
-  private resultadosSeguridadesSociales = [];
-  //Define el form control para autocompletado obra social
-  private buscarObraSocial:FormControl = new FormControl();
+  private resultadosSeguridadesSociales:Array<any> = [];
   //Define la lista de resultados de busqueda de obra social
-  private resultadosObrasSociales = [];
-  //Define el form control para autocompletado afip actividad
-  private buscarAfipActividad:FormControl = new FormControl();
+  private resultadosObrasSociales:Array<any> = [];
   //Define la lista de resultados de busqueda de afip actividad
-  private resultadosAfipActividades = [];
-  //Define el form control para autocompletado afip condicion
-  private buscarAfipCondicion:FormControl = new FormControl();
+  private resultadosAfipActividades:Array<any> = [];
   //Define la lista de resultados de busqueda de afip condicion
-  private resultadosAfipCondiciones = [];
-  //Define el form control para autocompletado afip localidad
-  private buscarAfipLocalidad:FormControl = new FormControl();
+  private resultadosAfipCondiciones:Array<any> = [];
   //Define la lista de resultados de busqueda de afip localidad
-  private resultadosAfipLocalidades = [];
-  //Define el form control para autocompletado afip mod contratacion
-  private buscarAfipModContratacion:FormControl = new FormControl();
+  private resultadosAfipLocalidades:Array<any> = [];
   //Define la lista de resultados de busqueda de afip mod contratacion
-  private resultadosAfipModContrataciones = [];
-  //Define el form control para autocompletado afip siniestrado
-  private buscarAfipSiniestrado:FormControl = new FormControl();
+  private resultadosAfipModContrataciones:Array<any> = [];
   //Define la lista de resultados de busqueda de afip siniestrado
-  private resultadosAfipSiniestrados = [];
-  //Define el form control para autocompletado afip situacion
-  private buscarAfipSituacion:FormControl = new FormControl();
+  private resultadosAfipSiniestrados:Array<any> = [];
   //Define la lista de resultados de busqueda de afip situacion
-  private resultadosAfipSituaciones = [];
+  private resultadosAfipSituaciones:Array<any> = [];
   //Constructor
   constructor(private servicio: PersonalService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -139,97 +109,6 @@ export class PersonalComponent implements OnInit {
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      nombre: new FormControl(),
-      apellido: new FormControl(),
-      nombreCompleto: new FormControl(),
-      tipoDocumento: new FormControl(),
-      numeroDocumento: new FormControl(),
-      cuil: new FormControl(),
-      empresa: new FormControl(),
-      barrio: new FormControl(),
-      localidad: new FormControl(),
-      localidadNacimiento: new FormControl(),
-      fechaNacimiento: new FormControl(),
-      telefonoFijo: new FormControl(),
-      telefonoMovil: new FormControl(),
-      estadoCivil: new FormControl(),
-      correoelectronico: new FormControl(),
-      sexo: new FormControl(),
-      sucursal: new FormControl(),
-      area: new FormControl(),
-      fechaInicio: new FormControl(),
-      fechaFin: new FormControl(),
-      antiguedadAntAnio: new FormControl(),
-      antiguedadAntMes: new FormControl(),
-      domicilio: new FormControl(),
-      esJubilado: new FormControl(),
-      esMensualizado: new FormControl(),
-      categoria: new FormControl(),
-      obraSocial: new FormControl(),
-      sindicato: new FormControl(),
-      seguridadSocial: new FormControl(),
-      afipSituacion: new FormControl(),
-      afipCondicion: new FormControl(),
-      afipActividad: new FormControl(),
-      afipModContratacion: new FormControl(),
-      afipLocalidad: new FormControl(),
-      afipSiniestrado: new FormControl(),
-      adherenteObraSocial: new FormControl(),
-      aporteAdicObraSocial: new FormControl(),
-      contribAdicObraSocial: new FormControl(),
-      aporteAdicSegSoc: new FormControl(),
-      aporteDifSegSoc: new FormControl(),
-      contribTareaDifSegSoc: new FormControl(),
-      enConvenioColectivo: new FormControl(),
-      conCoberturaSCVO: new FormControl(),
-      recibeAdelanto: new FormControl(),
-      recibePrestamo: new FormControl(),
-      cuotasPrestamo: new FormControl(),
-      usuarioAlta: new FormControl(),
-      usuarioBaja: new FormControl(),
-      usuarioMod: new FormControl(),
-      vtoLicenciaConducir: new FormControl(),
-      vtoCursoCNRT: new FormControl(),
-      vtoLNH: new FormControl(),
-      vtoLibretaSanidad: new FormControl(),
-      usuarioModLC: new FormControl(),
-      usuarioModCNRT: new FormControl(),
-      usuarioModLNH: new FormControl(),
-      usuarioModLS: new FormControl(),
-      fechaModLC: new FormControl(),
-      fechaModCNRT: new FormControl(),
-      fechaModLNH: new FormControl(),
-      fechaModLS: new FormControl(),
-      talleCamisa: new FormControl(),
-      tallePantalon: new FormControl(),
-      talleCalzado: new FormControl(),
-      turnoMEntrada: new FormControl(),
-      turnoMSalida: new FormControl(),
-      turnoTEntrada: new FormControl(),
-      turnoTSalida: new FormControl(),
-      turnoNEntrada: new FormControl(),
-      turnoNSalida: new FormControl(),
-      turnoSEntrada: new FormControl(),
-      turnoSSalida: new FormControl(),
-      turnoDEntrada: new FormControl(),
-      turnoDSalida: new FormControl(),
-      turnoRotativo: new FormControl(),
-      turnoFueraConvenio: new FormControl(),
-      telefonoMovilEmpresa: new FormControl(),
-      telefonoMovilFechaEntrega: new FormControl(),
-      telefonoMovilFechaDevolucion: new FormControl(),
-      telefonoMovilObservacion: new FormControl(),
-      esChofer: new FormControl(),
-      esChoferLargaDistancia: new FormControl(),
-      esAcompReparto: new FormControl(),
-      observaciones: new FormControl(),
-      alias: new FormControl(),
-      nacionalidadNacimiento: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -251,125 +130,211 @@ export class PersonalComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
-    //Establece la primera opcion seleccionada
-    this.seleccionarOpcion(15, 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
     //Autocompletado - Buscar por alias
-    this.buscar.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.servicio.listarPorAlias(data).subscribe(response =>{
-            this.resultados = response;
-          })
-        }
-    })
-    //Autocompletado Barrio - Buscar por nombre
-    this.buscarBarrio.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.barrioServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosBarrios = response;
-          })
-        }
-    })
-    //Autocompletado Localidad - Buscar por nombre
-    this.buscarLocalidad.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.localidadServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosLocalidades = response;
-          })
-        }
-    })
-    //Autocompletado Categoria - Buscar por nombre
-    this.buscarCategoria.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.categoriaServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosCategorias = response;
-          })
-        }
-    })
-    //Autocompletado Seguridad Social - Buscar por nombre
-    this.buscarSeguridadSocial.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.seguridadSocialServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosSeguridadesSociales = response;
-          })
-        }
-    })
-    //Autocompletado Obra Social - Buscar por nombre
-    this.buscarObraSocial.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.obraSocialServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosObrasSociales = response;
-          })
-        }
-    })
-    //Autocompletado Afip Actividad - Buscar por nombre
-    this.buscarAfipActividad.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.afipActividadServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosAfipActividades = response;
-          })
-        }
-    })
-    //Autocompletado Afip Condicion - Buscar por nombre
-    this.buscarAfipCondicion.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.afipCondicionServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosAfipCondiciones = response;
-          })
-        }
-    })
-    //Autocompletado Afip Localidad - Buscar por nombre
-    this.buscarAfipLocalidad.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.afipLocalidadServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosAfipLocalidades = response;
-          })
-        }
-    })
-    //Autocompletado Afip Mod Contratacion - Buscar por nombre
-    this.buscarAfipModContratacion.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.afipModContratacionServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosAfipModContrataciones = response;
-          })
-        }
-    })
-    //Autocompletado Afip Siniestrado - Buscar por nombre
-    this.buscarAfipSiniestrado.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.afipSiniestradoServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosAfipSiniestrados = response;
-          })
-        }
-    })
-    //Autocompletado Afip Situacion - Buscar por nombre
-    this.buscarAfipSituacion.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.afipSituacionServicio.listarPorNombre(data).subscribe(response => {
-            this.resultadosAfipSituaciones = response;
-          })
-        }
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorAlias(data).subscribe(response =>{
+          this.resultados = response;
+        })
+      }
     })
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      apellido: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      nombreCompleto: new FormControl('', [Validators.maxLength(40)]),
+      tipoDocumento: new FormControl('', Validators.required),
+      numeroDocumento: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(11)]),
+      cuil: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(11)]),
+      empresa: new FormControl('', Validators.required),
+      barrio: new FormControl(),
+      localidad: new FormControl('', Validators.required),
+      localidadNacimiento: new FormControl('', Validators.required),
+      fechaNacimiento: new FormControl('', Validators.required),
+      telefonoFijo: new FormControl('', Validators.maxLength(45)),
+      telefonoMovil: new FormControl('', Validators.maxLength(45)),
+      estadoCivil: new FormControl('', Validators.required),
+      correoelectronico: new FormControl('', Validators.maxLength(30)),
+      sexo: new FormControl('', Validators.required),
+      sucursal: new FormControl('', Validators.required),
+      area: new FormControl('', Validators.required),
+      fechaInicio: new FormControl('', Validators.required),
+      fechaFin: new FormControl(),
+      antiguedadAntAnio: new FormControl('', [Validators.min(1), Validators.maxLength(5)]),
+      antiguedadAntMes: new FormControl('', [Validators.min(1), Validators.maxLength(5)]),
+      domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
+      esJubilado: new FormControl('', Validators.required),
+      esMensualizado: new FormControl('', Validators.required),
+      categoria: new FormControl('', Validators.required),
+      obraSocial: new FormControl('', Validators.required),
+      sindicato: new FormControl('', Validators.required),
+      seguridadSocial: new FormControl('', Validators.required),
+      afipSituacion: new FormControl('', Validators.required),
+      afipCondicion: new FormControl('', Validators.required),
+      afipActividad: new FormControl('', Validators.required),
+      afipModContratacion: new FormControl('', Validators.required),
+      afipLocalidad: new FormControl('', Validators.required),
+      afipSiniestrado: new FormControl('', Validators.required),
+      adherenteObraSocial: new FormControl('', [Validators.min(1), Validators.maxLength(2)]),
+      aporteAdicObraSocial: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
+      contribAdicObraSocial: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
+      aporteAdicSegSoc: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
+      aporteDifSegSoc: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
+      contribTareaDifSegSoc: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
+      enConvenioColectivo: new FormControl('', Validators.required),
+      conCoberturaSCVO: new FormControl('', Validators.required),
+      recibeAdelanto: new FormControl('', Validators.required),
+      recibePrestamo: new FormControl('', Validators.required),
+      cuotasPrestamo: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(2)]),
+      usuarioAlta: new FormControl(),
+      usuarioBaja: new FormControl(),
+      usuarioMod: new FormControl(),
+      vtoLicenciaConducir: new FormControl(),
+      vtoCursoCNRT: new FormControl(),
+      vtoLNH: new FormControl(),
+      vtoLibretaSanidad: new FormControl(),
+      usuarioModLC: new FormControl(),
+      usuarioModCNRT: new FormControl(),
+      usuarioModLNH: new FormControl(),
+      usuarioModLS: new FormControl(),
+      fechaModLC: new FormControl(),
+      fechaModCNRT: new FormControl(),
+      fechaModLNH: new FormControl(),
+      fechaModLS: new FormControl(),
+      talleCamisa: new FormControl('', Validators.maxLength(20)),
+      tallePantalon: new FormControl('', Validators.maxLength(20)),
+      talleCalzado: new FormControl('', Validators.maxLength(20)),
+      turnoMEntrada: new FormControl(),
+      turnoMSalida: new FormControl(),
+      turnoTEntrada: new FormControl(),
+      turnoTSalida: new FormControl(),
+      turnoNEntrada: new FormControl(),
+      turnoNSalida: new FormControl(),
+      turnoSEntrada: new FormControl(),
+      turnoSSalida: new FormControl(),
+      turnoDEntrada: new FormControl(),
+      turnoDSalida: new FormControl(),
+      turnoRotativo: new FormControl(),
+      turnoFueraConvenio: new FormControl(),
+      telefonoMovilEmpresa: new FormControl('', Validators.maxLength(45)),
+      telefonoMovilFechaEntrega: new FormControl(),
+      telefonoMovilFechaDevolucion: new FormControl(),
+      telefonoMovilObservacion: new FormControl('', Validators.maxLength(100)),
+      esChofer: new FormControl('', Validators.required),
+      esChoferLargaDistancia: new FormControl('', Validators.required),
+      esAcompReparto: new FormControl('', Validators.required),
+      observaciones: new FormControl('', Validators.maxLength(200)),
+      alias: new FormControl('', Validators.maxLength(100))
+    });
+    //Autocompletado Barrio - Buscar por nombre
+    this.formulario.get('barrio').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.barrioServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosBarrios = response;
+        })
+      }
+    })
+    //Autocompletado Localidad - Buscar por nombre
+    this.formulario.get('localidad').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.localidadServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosLocalidades = response;
+        })
+      }
+    })
+    //Autocompletado Localidad Nacimiento - Buscar por nombre
+    this.formulario.get('localidadNacimiento').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.localidadServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosLocalidades = response;
+        })
+      }
+    })
+    //Autocompletado Categoria - Buscar por nombre
+    this.formulario.get('categoria').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.categoriaServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosCategorias = response;
+        })
+      }
+    })
+    //Autocompletado Seguridad Social - Buscar por nombre
+    this.formulario.get('seguridadSocial').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.seguridadSocialServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosSeguridadesSociales = response;
+        })
+      }
+    })
+    //Autocompletado Obra Social - Buscar por nombre
+    this.formulario.get('obraSocial').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.obraSocialServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosObrasSociales = response;
+        })
+      }
+    })
+    //Autocompletado Afip Actividad - Buscar por nombre
+    this.formulario.get('afipActividad').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.afipActividadServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosAfipActividades = response;
+        })
+      }
+    })
+    //Autocompletado Afip Condicion - Buscar por nombre
+    this.formulario.get('afipCondicion').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.afipCondicionServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosAfipCondiciones = response;
+        })
+      }
+    })
+    //Autocompletado Afip Localidad - Buscar por nombre
+    this.formulario.get('afipLocalidad').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.afipLocalidadServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosAfipLocalidades = response;
+        })
+      }
+    })
+    //Autocompletado Afip Mod Contratacion - Buscar por nombre
+    this.formulario.get('afipModContratacion').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.afipModContratacionServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosAfipModContrataciones = response;
+        })
+      }
+    })
+    //Autocompletado Afip Siniestrado - Buscar por nombre
+    this.formulario.get('afipSiniestrado').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.afipSiniestradoServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosAfipSiniestrados = response;
+        })
+      }
+    })
+    //Autocompletado Afip Situacion - Buscar por nombre
+    this.formulario.get('afipSituacion').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.afipSituacionServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosAfipSituaciones = response;
+        })
+      }
+    })
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
+    //Establece la primera opcion seleccionada
+    this.seleccionarOpcion(15, 0);
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de sexos
@@ -452,7 +417,7 @@ export class PersonalComponent implements OnInit {
     );
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarLista() {
+  public vaciarListas() {
     this.resultados = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
@@ -468,29 +433,29 @@ export class PersonalComponent implements OnInit {
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
-   this.elemento = elemAutocompletado;
-   this.elemento.fechaNacimiento = elemAutocompletado.fechaNacimiento.substring(0, 10);
-   this.elemento.fechaInicio = elemAutocompletado.fechaInicio.substring(0, 10);
+   this.formulario.setValue(elemAutocompletado);
+   this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
+   this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
    if(elemAutocompletado.fechaFin != null) {
-     this.elemento.fechaFin = elemAutocompletado.fechaFin.substring(0, 10);
+     this.formulario.get('fechaFin').setValue(elemAutocompletado.fechaFin.substring(0, 10));
    }
    if(elemAutocompletado.vtoLicenciaConducir != null) {
-     this.elemento.vtoLicenciaConducir = elemAutocompletado.vtoLicenciaConducir.substring(0, 10);
+     this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
    }
    if(elemAutocompletado.vtoCursoCNRT != null) {
-     this.elemento.vtoCursoCNRT = elemAutocompletado.vtoCursoCNRT.substring(0, 10);
+     this.formulario.get('vtoCursoCNRT').setValue(elemAutocompletado.vtoCursoCNRT.substring(0, 10));
    }
    if(elemAutocompletado.vtoLNH != null) {
-     this.elemento.vtoLNH = elemAutocompletado.vtoLNH.substring(0, 10);
+     this.formulario.get('vtoLNH').setValue(elemAutocompletado.vtoLNH.substring(0, 10));
    }
    if(elemAutocompletado.vtoLibretaSanidad != null) {
-     this.elemento.vtoLibretaSanidad = elemAutocompletado.vtoLibretaSanidad.substring(0, 10);
+     this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
    }
    if(elemAutocompletado.telefonoMovilFechaEntrega != null) {
-     this.elemento.telefonoMovilFechaEntrega = elemAutocompletado.telefonoMovilFechaEntrega.substring(0, 10);
+     this.formulario.get('telefonoMovilFechaEntrega').setValue(elemAutocompletado.telefonoMovilFechaEntrega.substring(0, 10));
    }
    if(elemAutocompletado.telefonoMovilFechaDevolucion != null) {
-     this.elemento.telefonoMovilFechaDevolucion = elemAutocompletado.telefonoMovilFechaDevolucion.substring(0, 10);
+     this.formulario.get('telefonoMovilFechaDevolucion').setValue(elemAutocompletado.telefonoMovilFechaDevolucion.substring(0, 10));
    }
   }
   //Funcion para establecer los valores de las pestañas
@@ -499,18 +464,18 @@ export class PersonalComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarLista();
+    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerCampos();
+    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
-      this.elemAutocompletado = null;
+      this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
     switch (id) {
@@ -574,40 +539,33 @@ export class PersonalComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
   }
   //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-    this.nacionalidad = null;
-    this.vaciarLista();
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-    this.elemAutocompletado = null;
-    this.nacionalidad = null;
-    this.vaciarLista();
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.nacionalidadNacimiento.setValue(undefined);
+    this.vaciarListas();
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -626,16 +584,16 @@ export class PersonalComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento) {
-    elemento.usuarioAlta = this.appComponent.getUsuario();
-    elemento.empresa = this.appComponent.getEmpresa();
-    elemento.esJubilado = false;
-    elemento.esMensualizado = true;
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('esJubilado').setValue(false);
+    this.formulario.get('esMensualizado').setValue(true);
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
             document.getElementById('idApellido').focus();
           }, 20);
@@ -648,16 +606,16 @@ export class PersonalComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-    elemento.usuarioMod = this.appComponent.getUsuario();
-    elemento.empresa = this.appComponent.getEmpresa();
-    elemento.esJubilado = false;
-    elemento.esMensualizado = true;
-    this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('esJubilado').setValue(false);
+    this.formulario.get('esMensualizado').setValue(true);
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.reestablecerFormulario('');
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -670,8 +628,8 @@ export class PersonalComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -713,7 +671,8 @@ export class PersonalComponent implements OnInit {
     valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
   }
   //Manejo de colores de campos y labels con patron erroneo
-  public validarPatron(patron, valor, campo) {
+  public validarPatron(patron, campo) {
+    let valor = this.formulario.get(campo).value;
     if(valor != undefined) {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
@@ -740,19 +699,18 @@ export class PersonalComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
   }
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {
-    console.log(localidad);
-    this.nacionalidad = localidad.provincia.pais.nombre;
+    this.nacionalidadNacimiento.setValue(localidad.provincia.pais.nombre);
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {

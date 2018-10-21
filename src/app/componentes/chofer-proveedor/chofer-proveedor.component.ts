@@ -74,8 +74,6 @@ export class ChoferProveedorComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -117,6 +115,8 @@ export class ChoferProveedorComponent implements OnInit {
       fechaBaja: new FormControl(),
       alias: new FormControl()
     });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges
       .subscribe(data => {

@@ -106,10 +106,6 @@ export class PaisComponent implements OnInit {
     this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];

@@ -56,8 +56,6 @@ export class LocalidadComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -81,6 +79,8 @@ export class LocalidadComponent implements OnInit {
       codigoPostal: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
       provincia: new FormControl('', Validators.required)
     });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Provincia - Buscar por nombre
     this.formulario.get('provincia').valueChanges.subscribe(data => {
       if(typeof data == 'string') {

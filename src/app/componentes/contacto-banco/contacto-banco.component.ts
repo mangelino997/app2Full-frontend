@@ -69,8 +69,6 @@ export class ContactoBancoComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -99,6 +97,8 @@ export class ContactoBancoComponent implements OnInit {
       usuarioAlta: new FormControl(),
       usuarioMod: new FormControl()
     });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de tipos de contactos
@@ -138,10 +138,14 @@ export class ContactoBancoComponent implements OnInit {
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
+  public seleccionarPestania(id, nombre, opcion) {
     this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
+      this.resultados = [];
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -298,13 +302,13 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
@@ -338,9 +342,9 @@ export class ContactoBancoComponent implements OnInit {
     var opcion = this.opcionSeleccionada;
     if(keycode == 113) {
       if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre);
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre);
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
   }

@@ -60,8 +60,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -85,6 +83,8 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       ancho: new FormControl('', Validators.maxLength(5)),
       m3: new FormControl('', Validators.maxLength(5))
     });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de tipos de vehiculos
