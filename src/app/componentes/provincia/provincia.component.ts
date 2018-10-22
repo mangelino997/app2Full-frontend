@@ -3,7 +3,7 @@ import { ProvinciaService } from '../../servicios/provincia.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { PaisService } from '../../servicios/pais.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -12,7 +12,8 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-provincia',
-  templateUrl: './provincia.component.html'
+  templateUrl: './provincia.component.html',
+  styleUrls: ['./provincia.component.css']
 })
 export class ProvinciaComponent implements OnInit {
   //Define la pestania activa
@@ -27,32 +28,25 @@ export class ProvinciaComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define una lista
-  private lista = null;
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
-  //Define la lista de provincias
-  private paises:any = null;
+  private listaCompleta:Array<any> = [];
+  //Define la lista de paises
+  private paises:Array<any> = [];
+  //Define el autocompletado para las busquedas
+  private autocompletado:FormControl = new FormControl();
+  //Define la lista de resultados del autocompletado
+  private resultados:Array<any> = [];
+  //Define la lista de resultados paises
+  private resultadosPaises:Array<any> = [];
+  //Define el autocompletado para las busquedas
+  private autocompletadoPais:FormControl = new FormControl();
   //Constructor
   constructor(private servicio: ProvinciaService, private pestaniaService: PestaniaService,
     private paisServicio: PaisService, private appComponent: AppComponent, private toastr: ToastrService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      nombre: new FormControl(),
-      codigoIIBB: new FormControl(),
-      codigoAfip: new FormControl(),
-      pais: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -64,17 +58,48 @@ export class ProvinciaComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
+    //Autocompletado - Buscar por nombre
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.paisServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosPaises = res;
+        })
+      }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
-    //Obtiene la lista de paises
-    this.listarPaises();
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      codigoIIBB: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
+      codigoAfip: new FormControl('', [Validators.min(1), Validators.maxLength(3)]),
+      pais: new FormControl('', Validators.required)
+    });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
+    //Autocompletado Pais - Buscar por nombre
+    this.formulario.get('pais').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.paisServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosPaises = res;
+        })
+      }
+    })
+    //Autocompletado Pais Listar - Buscar por nombre
+    this.autocompletadoPais.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.paisServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosPaises = res;
+        })
+      }
+    })
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -87,11 +112,15 @@ export class ProvinciaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
-    this.reestablecerCampos();
+  public seleccionarPestania(id, nombre, opcion) {
+    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.listaCompleta = null;
+    this.listaCompleta = [];
+    if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
+      this.resultados = [];
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -111,35 +140,26 @@ export class ProvinciaComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
   }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -158,12 +178,12 @@ export class ProvinciaComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento) {
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -182,12 +202,12 @@ export class ProvinciaComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-  this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+  this.servicio.actualizar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
       if(respuesta.codigo == 200) {
-        this.reestablecerCampos();
+        this.reestablecerFormulario('');
         setTimeout(function() {
           document.getElementById('idAutocompletado').focus();
         }, 20);
@@ -206,31 +226,22 @@ export class ProvinciaComponent implements OnInit {
   );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
   }
-  //Obtiene el listado de paises
-  private listarPaises() {
-    this.paisServicio.listar().subscribe(res => {
-      this.paises = res.json();
-    })
+  //Reestablece el formulario
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.autocompletado.setValue(undefined);
+    this.resultados = [];
   }
   //Obtiene la lista de provincias por pais
-  public listarPorPais(idPais) {
-    this.servicio.listarPorPais(idPais).subscribe(res => {
+  public listarPorPais(pais) {
+    this.servicio.listarPorPais(pais.id).subscribe(res => {
       this.listaCompleta = res.json();
     })
   }
-  //Funcion para listar por nombre
-  buscar = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
-  )
-  formatear = (x: {nombre:string}) => x.nombre;
-  //Funcion para listar por nombre
-  listarPaisesPorNombre = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.paisServicio.listarPorNombre(term))
-  )
-  formatearPaises = (x: {nombre:string}) => x.nombre;
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -238,12 +249,25 @@ export class ProvinciaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
-    this.elemento = elemento;
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.elemento = elemento;
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
+    }
   }
 }
