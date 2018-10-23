@@ -1,10 +1,10 @@
-<div id="sucursalbanco">
+<div id="sucursalbanco" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>SUCURSAL BANCO</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -14,13 +14,12 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label">
           <label for="idBanco" class="tamanio-label">Banco</label>
-          <input id="idBanco" class="form-control form-control-sm" formControlName="banco"
-            type="text" matInput [formControl]="buscarBanco" [matAutocomplete]="autoBanco"
-            autocomplete="off" [(ngModel)]="elemento.banco" (blur)="vaciarLista()"
-            [readonly]="soloLectura">
-          <mat-autocomplete #autoBanco="matAutocomplete" [displayWith]="displayFa.bind(this)"
-            (optionSelected)="listarPorBanco(elemento.banco)">
-            <mat-option *ngFor="let itemBanco of resultadosBancos" [value]="itemBanco">
+          <input id="idBanco" class="form-control form-control-sm" type="text" matInput
+            [formControl]="formulario.get('banco')" [matAutocomplete]="autoBanco"
+            autocomplete="off" (blur)="vaciarLista()" [readonly]="soloLectura">
+          <mat-autocomplete #autoBanco="matAutocomplete" [displayWith]="displayFa.bind(this)">
+            <mat-option *ngFor="let itemBanco of resultadosBancos" [value]="itemBanco"
+              (onSelectionChange)="listarPorBanco(itemBanco)">
               {{itemBanco.nombre}}
             </mat-option>
           </mat-autocomplete>
@@ -28,8 +27,7 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Lista de Sucursales de Banco</label>
           <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
-            type="text" matInput [matAutocomplete]="auto" autocomplete="off"
-            [(ngModel)]="elemento" [readonly]="soloLectura" required>
+            type="text" matInput [matAutocomplete]="auto" autocomplete="off" [readonly]="soloLectura">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
             <mat-option *ngFor="let item of sucursales" [value]="item">
               {{item.nombre}} - {{item.banco.nombre}}
@@ -38,18 +36,17 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label-titulo">Código</label>
-          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
-            required readonly [(ngModel)]="elemento.id">
+          <input id="idCodigo" type="number" formControlName="id"
+            class="form-control form-control-sm" readonly>
         </div>
         <div class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label-titulo">Nombre</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-            class="form-control form-control-sm" maxlength="45"
-            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')"
-            [readonly]="soloLectura" [(ngModel)]="elemento.nombre" required>
+            class="form-control form-control-sm" [readonly]="soloLectura"
+            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
         </div>
-        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
       </form>

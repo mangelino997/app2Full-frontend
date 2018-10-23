@@ -1,50 +1,52 @@
-<div id="submodulo">
+<div id="submodulo" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>SUBMODULO</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-4 text-center">
-      <h5>{{pestaniaActual}} Submodulo</h5>
+      <h5>{{pestaniaActual}} Submódulo</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
-          <ng-template #rt let-r="result" let-t="term">
-            <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-          </ng-template>
-          <input id="idAutocompletado" type="text" class="form-control form-control-sm"
-            formControlName="autocompletado" [(ngModel)]="elemento" autocomplete="off"
-            [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+          <input id="idAutocompletado" class="form-control form-control-sm"
+            type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+            <mat-option *ngFor="let item of resultados" [value]="item"
+              (onSelectionChange)="formulario.setValue(item)">
+              {{item.nombre}}
+            </mat-option>
+          </mat-autocomplete>
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Código</label>
-          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
-            required readonly [(ngModel)]="elemento.id">
+          <input id="idCodigo" type="number" formControlName="id"
+            class="form-control form-control-sm" readonly>
         </div>
         <div id="divNombre" class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-            class="form-control form-control-sm" maxlength="45"
-            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')"
-            [readonly]="soloLectura" [(ngModel)]="elemento.nombre" required>
+            class="form-control form-control-sm" [readonly]="soloLectura"
+            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
         </div>
         <div class="form-group has-float-label">
           <label for="idModulo" class="tamanio-label">Módulo</label>
-          <ng-template #rt let-r="result" let-t="term">
-            <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
-          </ng-template>
-          <input id="idModulo" type="text" class="form-control form-control-sm"
-            formControlName="modulo" [(ngModel)]="elemento.modulo"
-            [ngbTypeahead]="listarModulosPorNombre" [resultTemplate]="rt"
-            [inputFormatter]="formatearModulos" [readonly]="soloLectura" required>
+          <input id="idModulo" class="form-control form-control-sm" type="text" matInput
+            [formControl]="formulario.get('modulo')" [matAutocomplete]="autoModulo"
+            autocomplete="off" [readonly]="soloLectura">
+          <mat-autocomplete #autoModulo="matAutocomplete" [displayWith]="displayFn.bind(this)">
+            <mat-option *ngFor="let itemModulo of modulos" [value]="itemModulo">
+              {{itemModulo.nombre}}
+            </mat-option>
+          </mat-autocomplete>
         </div>
-        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
       </form>
@@ -54,10 +56,15 @@
     <div class="col-md-6">
       <div class="form-group has-float-label">
         <label for="idModulo" class="tamanio-label">Módulo</label>
-        <select id="idModulo" class="form-control" [(ngModel)]="elemento.modulo"
-          (ngModelChange)="listarPorModulo(elemento.modulo.id)">
-          <option *ngFor="let modulo of modulos" [ngValue]="modulo">{{modulo.nombre}}</option>
-        </select>
+        <input id="idModulo" class="form-control form-control-sm" type="text" matInput
+          formControlName="moduloListar" [matAutocomplete]="autoModuloListar"
+          autocomplete="off" [readonly]="soloLectura">
+        <mat-autocomplete #autoModuloListar="matAutocomplete" [displayWith]="displayFn.bind(this)">
+          <mat-option *ngFor="let itemModuloListar of modulos" [value]="itemModuloListar"
+            (onSelectionChange)="listarPorModulo(itemModuloListar)">
+            {{itemModuloListar.nombre}}
+          </mat-option>
+        </mat-autocomplete>
       </div>
       <table class="table table-bordered table-striped table-sm">
         <thead>
