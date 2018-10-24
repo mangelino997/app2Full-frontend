@@ -1,10 +1,10 @@
-<div id="tramo">
+<div id="tramo" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>TRAMO</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -16,13 +16,14 @@
           <div class="col-md-8">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Buscar por Origen</label>
-              <ng-template #rt let-r="result" let-t="term">
-                <ngb-highlight [result]="r.origen.nombre" [term]="t"></ngb-highlight>,
-                <ngb-highlight [result]="r.origen.provincia.nombre" [term]="t"></ngb-highlight>
-              </ng-template>
-              <input id="idAutocompletado" type="text" class="form-control form-control-sm"
-                formControlName="autocompletado" [(ngModel)]="elemento"
-                [ngbTypeahead]="buscar" [resultTemplate]="rt" [inputFormatter]="formatear">
+              <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
+                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                <mat-option *ngFor="let item of resultados" [value]="item"
+                  (onSelectionChange)="formulario.setValue(item)">
+                  {{item.nombre}}, {{item.origen.provincia.nombre}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
           </div>
         </div>
@@ -30,8 +31,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">Código</label>
-              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
-                required readonly [(ngModel)]="elemento.id">
+              <input id="idCodigo" type="number" formControlName="id"
+                class="form-control form-control-sm" readonly>
             </div>
           </div>
         </div>
@@ -39,35 +40,32 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idOrigen" class="tamanio-label">Origen</label>
-              <ng-template #rt let-r="result" let-t="term">
-                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight> -
-                <ngb-highlight [result]="r.provincia.nombre" [term]="t"></ngb-highlight>
-              </ng-template>
-              <input id="idOrigen" type="text" class="form-control form-control-sm"
-                formControlName="origen" [(ngModel)]="elemento.origen"
-                [ngbTypeahead]="listarOrigenesDestinosPorNombre" [resultTemplate]="rt"
-                [inputFormatter]="formatearOrigenesDestinos" [readonly]="soloLectura" required>
+              <input id="idOrigen" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('origen')" [matAutocomplete]="autoOrigen" autocomplete="off">
+              <mat-autocomplete #autoOrigen="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let itemOrigen of resultadosOrigenesDestinos" [value]="itemOrigen">
+                  {{itemOrigen.nombre}}, {{itemOrigen.provincia.nombre}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idDestino" class="tamanio-label">Destino</label>
-              <ng-template #rt let-r="result" let-t="term">
-                <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight> -
-                <ngb-highlight [result]="r.provincia.nombre" [term]="t"></ngb-highlight>
-              </ng-template>
-              <input id="idDestino" type="text" class="form-control form-control-sm"
-                formControlName="destino" [(ngModel)]="elemento.destino"
-                [ngbTypeahead]="listarOrigenesDestinosPorNombre" [resultTemplate]="rt"
-                [inputFormatter]="formatearOrigenesDestinos" [readonly]="soloLectura" required>
+              <input id="idDestino" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('destino')" [matAutocomplete]="autoDestino" autocomplete="off">
+              <mat-autocomplete #autoDestino="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let itemDestino of resultadosOrigenesDestinos" [value]="itemDestino">
+                  {{itemDestino.nombre}}, {{itemDestino.provincia.nombre}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idKm" class="tamanio-label">Kilómetros</label>
               <input id="idKm" type="number" formControlName="km" autocomplete="off"
-                class="form-control form-control-sm" min="1" maxlength="45"
-                [readonly]="soloLectura" [(ngModel)]="elemento.km" required>
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -76,8 +74,7 @@
             <div class="form-group has-float-label">
               <label for="idRutaAlternativa" class="tamanio-label">Ruta Alternativa</label>
               <input id="idRutaAlternativa" type="text" formControlName="rutaAlternativa" autocomplete="off"
-                class="form-control form-control-sm" maxlength="20"
-                [readonly]="soloLectura" [(ngModel)]="elemento.rutaAlternativa">
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -85,26 +82,32 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idExcluirLiqChofer" class="tamanio-label">Excluir Liquidación Chofer</label>
-              <select id="idExcluirLiqChofer" formControlName="excluirLiqChofer" class="form-control form-control-sm"
-                [(ngModel)]="elemento.excluirLiqChofer" required>
-                <option value="false">No</option>
-                <option value="true">Si</option>
-              </select>
+              <input id="idExcluirLiqChofer" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('excluirLiqChofer')" [matAutocomplete]="autoExcluirLiqChofer"
+                autocomplete="off" [readonly]="soloLectura">
+              <mat-autocomplete #autoExcluirLiqChofer="matAutocomplete">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-autocomplete>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idEstaActivo" class="tamanio-label">Esta Activo</label>
-              <select id="idEstaActivo" formControlName="estaActivo" class="form-control form-control-sm"
-                [(ngModel)]="elemento.estaActivo" required>
-                <option value="false">No</option>
-                <option value="true">Si</option>
-              </select>
+              <input id="idEstaActivo" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('estaActivo')" [matAutocomplete]="autoEstaActivo"
+                autocomplete="off" [readonly]="soloLectura">
+              <mat-autocomplete #autoEstaActivo="matAutocomplete">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-autocomplete>
             </div>
           </div>
         </div>
-        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">{{pestaniaActual}}</button>
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+          {{pestaniaActual}}
+        </button>
       </form>
     </div>
   </div>

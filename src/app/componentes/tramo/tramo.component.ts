@@ -3,7 +3,7 @@ import { TramoService } from '../../servicios/tramo.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { OrigenDestinoService } from '../../servicios/origen-destino.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -12,7 +12,8 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-tramo',
-  templateUrl: './tramo.component.html'
+  templateUrl: './tramo.component.html',
+  styleUrls: ['./tramo.component.css']
 })
 export class TramoComponent implements OnInit {
   //Define la pestania activa
@@ -27,33 +28,22 @@ export class TramoComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define una lista
-  private lista = null;
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
+  private listaCompleta:Array<any> = [];
+  //Define el autocompletado para las busquedas
+  private autocompletado:FormControl = new FormControl();
+  //Define la lista de resultados del autocompletado
+  private resultados:Array<any> = [];
+  //Define la lista de resultados de origenes destinos
+  private resultadosOrigenesDestinos:Array<any> = [];
   //Constructor
   constructor(private servicio: TramoService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private origenDestinoServicio: OrigenDestinoService,
     private toastr: ToastrService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      origen: new FormControl(),
-      destino: new FormControl(),
-      km: new FormControl(),
-      estaActivo: new FormControl(),
-      excluirLiqChofer: new FormControl(),
-      rutaAlternativa: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -65,17 +55,57 @@ export class TramoComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
+    //Autocompletado - Buscar por nombre
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorOrigen(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      origen: new FormControl('', Validators.required),
+      destino: new FormControl('', Validators.required),
+      km: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(5)]),
+      estaActivo: new FormControl('', Validators.required),
+      excluirLiqChofer: new FormControl('', Validators.required),
+      rutaAlternativa: new FormControl('', Validators.maxLength(20))
+    });
+    //Autocompletado Origen - Buscar por nombre
+    this.formulario.get('origen').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosOrigenesDestinos = res;
+        })
+      }
+    })
+    //Autocompletado Destino - Buscar por nombre
+    this.formulario.get('destino').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosOrigenesDestinos = res;
+        })
+      }
+    })
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
+  }
+  //Vacia las listas de resultados
+  public vaciarListas() {
+    this.resultados = [];
+    this.resultadosOrigenesDestinos = [];
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -88,10 +118,14 @@ export class TramoComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
-    this.reestablecerCampos();
+  public seleccionarPestania(id, nombre, opcion) {
+    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
+      this.resultados = [];
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -119,35 +153,26 @@ export class TramoComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
   }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -166,13 +191,12 @@ export class TramoComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento) {
-    console.log(elemento);
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
             document.getElementById('idOrigen').focus();
           }, 20);
@@ -185,12 +209,12 @@ export class TramoComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-    this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.reestablecerFormulario('');
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -203,29 +227,53 @@ export class TramoComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
   }
-  //Funcion para listar por origen
-  buscar = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.servicio.listarPorOrigen(term))
-  )
-  formatear = (x: any) => x.id != undefined ? x.origen.nombre
-    + ', ' + x.origen.provincia.nombre : '';
-  //Funcion para listar por nombre origen-destino
-  listarOrigenesDestinosPorNombre = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.origenDestinoServicio.listarPorNombre(term))
-  )
-  formatearOrigenesDestinos = (x: {nombre: string, provincia:any}) => x.nombre + ' - '
-    + x.provincia.nombre + ' - ' + x.provincia.pais.nombre;
+  //Reestablece el formulario
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.autocompletado.setValue(undefined);
+    this.vaciarListas();
+  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
-    this.elemento = elemento;
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.elemento = elemento;
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
+  }
+  //Define como se muestra los datos en el autocompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autocompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.origen.provincia.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
+    }
   }
 }
