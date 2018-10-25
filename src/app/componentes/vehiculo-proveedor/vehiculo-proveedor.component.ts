@@ -8,13 +8,18 @@ import { LocalidadService } from '../../servicios/localidad.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs'
 
+@Component({
+  selector: 'app-vehiculo-proveedor',
+  templateUrl: './vehiculo-proveedor.component.html',
+  styleUrls: ['./vehiculo-proveedor.component.css']
+})
 export class VehiculoProveedorComponent implements OnInit {
   //Define la pestania activa
   private activeLink:any = null;
@@ -28,38 +33,24 @@ export class VehiculoProveedorComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define una lista
-  private lista = null;
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el elemento de autocompletado
-  private elemAutocompletado:any = null;
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
+  private listaCompleta:Array<any> = [];
   //Define la lista de tipos de vehiculos
-  private tiposVehiculos:any = null;
+  private tiposVehiculos:Array<any> = [];
   //Define la lista de marcas de vehiculos
-  private marcasVehiculos:any = null;
-  //Define el form control para las busquedas
-  private buscar:FormControl = new FormControl();
+  private marcasVehiculos:Array<any> = [];
+  //Define el autocompletado para las busquedas
+  private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   private resultados = [];
-  //Define el form control para las busquedas vehiculo remolque
-  private buscarVehiculoRemolque:FormControl = new FormControl();
   //Define la lista de resultados de busqueda vehiculo remolque
   private resultadosVehiculosRemolques = [];
-  //Define el form control para buscar localidad
-  private buscarLocalidad:FormControl = new FormControl();
   //Define la lista de resultados de busqueda localidad
   private resultadosLocalidades = [];
-  //Define el form control para buscar compania seguro
-  private buscarCompaniaSeguro:FormControl = new FormControl();
   //Define la lista de resultados de busqueda compania seguro
   private resultadosCompaniasSeguros = [];
   //Constructor
@@ -68,33 +59,6 @@ export class VehiculoProveedorComponent implements OnInit {
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private localidadServicio: LocalidadService, private proveedorServicio: ProveedorService,
     private companiaSeguroServicio: CompaniaSeguroService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      dominio: new FormControl(),
-      proveedor: new FormControl(),
-      tipoVehiculo: new FormControl(),
-      marcaVehiculo: new FormControl(),
-      choferProveedor: new FormControl(),
-      vehiculoRemolque: new FormControl(),
-      anioFabricacion: new FormControl(),
-      numeroMotor: new FormControl(),
-      numeroChasis: new FormControl(),
-      companiaSeguro: new FormControl(),
-      numeroPoliza: new FormControl(),
-      vtoPoliza: new FormControl(),
-      vtoRTO: new FormControl(),
-      numeroRuta: new FormControl(),
-      vtoRuta: new FormControl(),
-      vtoSenasa: new FormControl(),
-      vtoHabBromatologica: new FormControl(),
-      usuarioAlta: new FormControl(),
-      fechaBaja: new FormControl(),
-      usuarioMod: new FormControl(),
-      fechaUltimaMod: new FormControl(),
-      alias: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -106,51 +70,74 @@ export class VehiculoProveedorComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
     //Autocompletado - Buscar por alias
-    this.buscar.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.servicio.listarPorAlias(data).subscribe(response =>{
-            this.resultados = response;
-          })
-        }
-    })
-    //Autocompletado - Buscar por alias filtro remolque
-    this.buscarVehiculoRemolque.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.servicio.listarPorAliasFiltroRemolque(data).subscribe(response =>{
-            this.resultadosVehiculosRemolques = response;
-          })
-        }
-    })
-    //Autocompletado Localidad - Buscar por nombre
-    this.buscarLocalidad.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.localidadServicio.listarPorNombre(data).subscribe(response =>{
-            this.resultadosLocalidades = response;
-          })
-        }
-    })
-    //Autocompletado Compania Seguro - Buscar por nombre
-    this.buscarCompaniaSeguro.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.companiaSeguroServicio.listarPorNombre(data).subscribe(response =>{
-            this.resultadosCompaniasSeguros = response;
-          })
-        }
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        this.servicio.listarPorAlias(data).subscribe(response => {
+          this.resultados = response;
+        })
+      }
     })
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      dominio: new FormControl('', [Validators.required, Validators.maxLength(10)]),
+      proveedor: new FormControl('', Validators.required),
+      tipoVehiculo: new FormControl('', Validators.required),
+      marcaVehiculo: new FormControl('', Validators.required),
+      choferProveedor: new FormControl(),
+      vehiculoRemolque: new FormControl(),
+      anioFabricacion: new FormControl('', [Validators.required, Validators.min(1)]),
+      numeroMotor: new FormControl('', Validators.maxLength(25)),
+      numeroChasis: new FormControl('', Validators.maxLength(25)),
+      companiaSeguro: new FormControl('', Validators.required),
+      numeroPoliza: new FormControl('', [Validators.required, Validators.maxLength(15)]),
+      vtoPoliza: new FormControl('', Validators.required),
+      vtoRTO: new FormControl('', Validators.required),
+      numeroRuta: new FormControl('', Validators.required),
+      vtoRuta: new FormControl('', Validators.required),
+      vtoSenasa: new FormControl(),
+      vtoHabBromatologica: new FormControl(),
+      usuarioAlta: new FormControl(),
+      fechaBaja: new FormControl(),
+      usuarioMod: new FormControl(),
+      fechaUltimaMod: new FormControl(),
+      alias: new FormControl('', Validators.maxLength(100))
+    });
+    //Autocompletado - Buscar por alias filtro remolque
+    this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        this.servicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
+          this.resultadosVehiculosRemolques = response;
+        })
+      }
+    })
+    //Autocompletado Localidad - Buscar por nombre
+    this.formulario.get('localidad').valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        this.localidadServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosLocalidades = response;
+        })
+      }
+    })
+    //Autocompletado Compania Seguro - Buscar por nombre
+    this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosCompaniasSeguros = response;
+        })
+        }
+    })
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista de tipos de vehiculos
     this.listarTiposVehiculos();
     //Obtiene la lista de marcas de vehiculos
@@ -175,10 +162,6 @@ export class VehiculoProveedorComponent implements OnInit {
     this.resultadosLocalidades = [];
     this.resultadosCompaniasSeguros = [];
   }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.elemento = elemAutocompletado;
-  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura,
     boton, componente) {
@@ -192,12 +175,12 @@ export class VehiculoProveedorComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerCampos();
+    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.listaCompleta = null;
     if(opcion == 0) {
-      this.elemAutocompletado = null;
+      this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
     switch (id) {
@@ -219,36 +202,26 @@ export class VehiculoProveedorComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
   }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-    this.elemAutocompletado = null;
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -267,12 +240,12 @@ export class VehiculoProveedorComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento) {
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
             document.getElementById('idProveedor').focus();
           }, 20);
@@ -291,12 +264,12 @@ export class VehiculoProveedorComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-  this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+  this.servicio.actualizar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
       if(respuesta.codigo == 200) {
-        this.reestablecerCampos();
+        this.reestablecerFormulario('');
         setTimeout(function() {
           document.getElementById('idAutocompletado').focus();
         }, 20);
@@ -315,8 +288,15 @@ export class VehiculoProveedorComponent implements OnInit {
   );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
+  }
+  //Reestablece el formulario
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.autocompletado.setValue(undefined);
+    this.vaciarLista();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -326,14 +306,14 @@ export class VehiculoProveedorComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
   }
   //Muestra el valor en los autocompletados
   public displayF(elemento) {
@@ -357,6 +337,17 @@ export class VehiculoProveedorComponent implements OnInit {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
     } else {
       return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
     }
   }
 }

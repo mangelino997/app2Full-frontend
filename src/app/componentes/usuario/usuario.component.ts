@@ -4,7 +4,7 @@ import { PestaniaService } from '../../servicios/pestania.service';
 import { RolService } from '../../servicios/rol.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
@@ -13,7 +13,8 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-usuario',
-  templateUrl: './usuario.component.html'
+  templateUrl: './usuario.component.html',
+  styleUrls: ['./usuario.component.css']
 })
 export class UsuarioComponent implements OnInit {
   //Define la pestania activa
@@ -28,34 +29,26 @@ export class UsuarioComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define una lista
-  private lista = null;
   //Define la lista de pestanias
-  private pestanias = null;
+  private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario = null;
-  //Define el elemento
-  private elemento:any = {};
-  //Define el siguiente id
-  private siguienteId:number = null;
+  private formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
+  private listaCompleta:Array<any> = [];
+  //Define el autocompletado para las busquedas
+  private autocompletado:FormControl = new FormControl();
+  //Define la lista de resultados del autocompletado
+  private resultados:Array<any> = [];
+  //Define campo de control de repetir contraseña
+  private passwordRepeat:FormControl = new FormControl();
+  //Define la lista de resultados de autocompletado roles
+  private resultadosRoles:Array<any> = [];
+  //Define la lista de resultados de autocompletado sucursales
+  private resultadosSucursales:Array<any> = [];
   //Constructor
   constructor(private servicio: UsuarioService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
     private rolServicio: RolService, private sucursalServicio: SucursalService) {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      autocompletado: new FormControl(),
-      id: new FormControl(),
-      nombre: new FormControl(),
-      username: new FormControl(),
-      password: new FormControl(),
-      passwordRepeat: new FormControl(),
-      rol: new FormControl(),
-      sucursal: new FormControl(),
-      cuentaHabilitada: new FormControl()
-    });
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -67,15 +60,48 @@ export class UsuarioComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
+    //Autocompletado - Buscar por nombre
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      username: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      password: new FormControl(),
+      rol: new FormControl('', Validators.required),
+      sucursal: new FormControl('', Validators.required),
+      cuentaHabilitada: new FormControl('', Validators.required)
+    });
+    this.formulario.get('rol').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.rolServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosRoles = res;
+        })
+      }
+    })
+    this.formulario.get('sucursal').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.sucursalServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosSucursales = res;
+        })
+      }
+    })
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
   }
@@ -90,10 +116,14 @@ export class UsuarioComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
-    this.reestablecerCampos();
+  public seleccionarPestania(id, nombre, opcion) {
+    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
+      this.resultados = [];
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -113,35 +143,26 @@ export class UsuarioComponent implements OnInit {
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice, elemento) {
+  public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(elemento);
+        this.agregar();
         break;
       case 3:
-        this.actualizar(elemento);
+        this.actualizar();
         break;
       case 4:
-        this.eliminar(elemento);
+        this.eliminar();
         break;
       default:
         break;
     }
   }
-  //Reestablece los campos agregar
-  private reestablecerCamposAgregar(id) {
-    this.elemento = {};
-    this.elemento.id = id;
-  }
-  //Reestablece los campos
-  private reestablecerCampos() {
-    this.elemento = {};
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.elemento.id = res.json();
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -160,12 +181,12 @@ export class UsuarioComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar(elemento) {
-    this.servicio.agregar(elemento).subscribe(
+  private agregar() {
+    this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -184,12 +205,12 @@ export class UsuarioComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar(elemento) {
-    this.servicio.actualizar(elemento).subscribe(
+  private actualizar() {
+    this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.reestablecerFormulario('');
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -208,24 +229,16 @@ export class UsuarioComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(elemento) {
-    console.log(elemento);
+  private eliminar() {
+    console.log();
   }
-  //Funcion para listar por nombre
-  buscar = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.servicio.listarPorNombre(term))
-  )
-  formatear = (x: {nombre: string}) => x.nombre;
-  //Funcion para listar por nombre rol
-  buscarRol = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.rolServicio.listarPorNombre(term))
-  )
-  formatearRol = (x: {nombre: string}) => x.nombre;
-  //Funcion para listar por nombre sucursal
-  buscarSucursal = (text$: Observable<string>) => text$.pipe(
-    map(term => term.length < 2 ? [] : this.sucursalServicio.listarPorNombre(term))
-  )
-  formatearSucursal = (x: {nombre: string}) => x.nombre;
+  //Reestablece el formulario
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.autocompletado.setValue(undefined);
+    this.resultados = [];
+  }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -233,12 +246,33 @@ export class UsuarioComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
-    this.elemento = elemento;
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.elemento = elemento;
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.setValue(elemento);
+  }
+  //Define como se muestra los datos en el autcompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
+    }
   }
 }

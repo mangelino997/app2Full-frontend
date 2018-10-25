@@ -6,7 +6,7 @@ import { FechaService } from '../../servicios/fecha.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map, startWith } from 'rxjs/operators';
@@ -32,70 +32,30 @@ export class ViajeComponent implements OnInit {
   // private soloLectura:boolean = false;
   // //Define si mostrar el boton
   // private mostrarBoton:boolean = null;
-  // //Define una lista
-  // private lista = null;
   // //Define la lista de pestanias
-  // private pestanias = null;
+  // private pestanias:Array<any> = [];
   // //Define la lista de opciones
-  // private opciones = null;
+  // private opciones:Array<any> = [];
   // //Define un formulario para validaciones de campos
-  // private formulario = null;
-  // //Define el elemento
-  // private elemento:any = {};
-  // //Define el elemento de autocompletado
-  // private elemAutocompletado:any = null;
-  // //Define el siguiente id
-  // private siguienteId:number = null;
+  // private formulario:FormGroup;
   // //Define la lista completa de registros
-  // private listaCompleta:any = null;
+  // private listaCompleta:Array<any> = [];
   // //Define la opcion seleccionada
   // private opcionSeleccionada:number = null;
   // //Define la lista de sindicatos
-  // private sindicatos:any = null;
+  // private sindicatos:Array<any> = [];
   // //Define la opcion activa
-  // private botonOpcionActivo:any = null;
+  // private botonOpcionActivo:boolean = null;
   // //Define el form control para las busquedas
-  // private buscar:FormControl = new FormControl();
+  // private autocompletado:FormControl = new FormControl();
   // //Define la lista de resultados de busqueda
-  // private resultados = [];
-  // //Define el form control para autocompletado barrio
-  // private buscarBarrio:FormControl = new FormControl();
+  // private resultados:Array<any> = [];
   // //Define la lista de resultados de busqueda de barrios
-  // private resultadosBarrios = [];
+  // private resultadosBarrios:Array<any> = [];
   // //Constructor
   // constructor(private servicio: ViajePropioService, private pestaniaService: PestaniaService,
   //   private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
   //   private rolOpcionServicio: RolOpcionService, private fechaServicio: FechaService) {
-  //   //Define los campos para validaciones
-  //   this.formulario = new FormGroup({
-  //     autocompletado: new FormControl(),
-  //     id: new FormControl(),
-  //     empresaEmision: new FormControl(),
-  //     sucursal: new FormControl(),
-  //     usuario: new FormControl(),
-  //     fecha: new FormControl(),
-  //     vehiculo: new FormControl(),
-  //     personal: new FormControl(),
-  //     esRemolquePropio: new FormControl(),
-  //     vehiculoRemolque: new FormControl(),
-  //     vehiculoProveedorRemolque: new FormControl(),
-  //     empresa: new FormControl(),
-  //     empresaRemolque: new FormControl(),
-  //     condicionIva: new FormControl(),
-  //     numeroDocumentacion: new FormControl(),
-  //     fechaDocumentacion: new FormControl(),
-  //     usuarioDocumentacion: new FormControl(),
-  //     numeroLiquidacion: new FormControl(),
-  //     fechaLiquidacion: new FormControl(),
-  //     usuarioLiquidacion: new FormControl(),
-  //     usuarioVehiculoAutorizado: new FormControl(),
-  //     usuarioVehiculoRemAutorizado: new FormControl(),
-  //     usuarioChoferAutorizado: new FormControl(),
-  //     observacionVehiculo: new FormControl(),
-  //     observacionVehiculoRemolque: new FormControl(),
-  //     observacionChofer: new FormControl(),
-  //     observaciones: new FormControl()
-  //   });
   //   //Obtiene la lista de pestania por rol y subopcion
   //   this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
   //   .subscribe(
@@ -117,37 +77,48 @@ export class ViajeComponent implements OnInit {
   //       console.log(err);
   //     }
   //   );
-  //   //Establece los valores de la primera pestania activa
-  //   this.seleccionarPestania(1, 'Agregar', 0);
-  //   //Establece la primera opcion seleccionada
-  //   this.seleccionarOpcion(15, 0);
   //   //Se subscribe al servicio de lista de registros
   //   this.servicio.listaCompleta.subscribe(res => {
   //     this.listaCompleta = res;
   //   });
-  //   //Autocompletado - Buscar por alias
-  //   this.buscar.valueChanges
-  //     .subscribe(data => {
-  //       if(typeof data == 'string') {
-  //         this.servicio.listarPorAlias(data).subscribe(response =>{
-  //           this.resultados = response;
-  //         })
-  //       }
-  //   })
-  //   //Autocompletado Barrio - Buscar por nombre
-  //   this.buscarBarrio.valueChanges
-  //     .subscribe(data => {
-  //       if(typeof data == 'string') {
-  //         this.barrioServicio.listarPorNombre(data).subscribe(response => {
-  //           this.resultadosBarrios = response;
-  //         })
-  //       }
-  //   })
+  // }
+  // //Al iniciarse el componente
+  // ngOnInit() {
+  //   //Define los campos para validaciones
+  //   this.formulario = new FormGroup({
+  //     id: new FormControl(),
+  //     version: new FormControl(),
+  //     empresaEmision: new FormControl(),
+  //     sucursal: new FormControl(),
+  //     usuario: new FormControl(),
+  //     fecha: new FormControl(),
+  //     vehiculo: new FormControl('', Validators.required),
+  //     personal: new FormControl('', Validators.required),
+  //     esRemolquePropio: new FormControl('', Validators.required),
+  //     vehiculoRemolque: new FormControl(),
+  //     vehiculoProveedorRemolque: new FormControl(),
+  //     empresa: new FormControl('', Validators.required),
+  //     empresaRemolque: new FormControl(),
+  //     condicionIva: new FormControl('', Validators.required),
+  //     numeroDocumentacion: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
+  //     fechaDocumentacion: new FormControl(),
+  //     usuarioDocumentacion: new FormControl(),
+  //     numeroLiquidacion: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
+  //     fechaLiquidacion: new FormControl(),
+  //     usuarioLiquidacion: new FormControl(),
+  //     usuarioVehiculoAutorizado: new FormControl(),
+  //     usuarioVehiculoRemAutorizado: new FormControl(),
+  //     usuarioChoferAutorizado: new FormControl(),
+  //     observacionVehiculo: new FormControl('', Validators.maxLength(100)),
+  //     observacionVehiculoRemolque: new FormControl('', Validators.maxLength(100)),
+  //     observacionChofer: new FormControl('', Validators.maxLength(100)),
+  //     observaciones: new FormControl('', Validators.maxLength(100))
+  //   });
   //   //Autocompletado Localidad - Buscar por nombre
   //   this.buscarLocalidad.valueChanges
   //     .subscribe(data => {
   //       if(typeof data == 'string') {
-  //         this.localidadServicio.listarPorNombre(data).subscribe(response => {
+  //         this.vehiculoServicio.listarPorNombre(data).subscribe(response => {
   //           this.resultadosLocalidades = response;
   //         })
   //       }
@@ -233,9 +204,10 @@ export class ViajeComponent implements OnInit {
   //         })
   //       }
   //   })
-  // }
-  // //Al iniciarse el componente
-  // ngOnInit() {
+  //   //Establece los valores de la primera pestania activa
+  //   this.seleccionarPestania(1, 'Agregar', 0);
+  //   //Establece la primera opcion seleccionada
+  //   this.seleccionarOpcion(15, 0);
   //   //Obtiene la lista completa de registros
   //   this.listar();
   //   //Obtiene la lista de sexos
