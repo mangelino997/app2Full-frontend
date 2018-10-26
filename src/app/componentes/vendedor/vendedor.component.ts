@@ -8,7 +8,6 @@ import { Observable, Subscription } from 'rxjs';
 import { debounceTime, map } from 'rxjs/operators';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
-import { timingSafeEqual } from 'crypto';
 
 @Component({
   selector: 'app-vendedor',

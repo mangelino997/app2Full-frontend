@@ -92,18 +92,18 @@ import { HomeComponent } from './componentes/home/home.component';
 import { UsuarioComponent } from './componentes/usuario/usuario.component';
 import { EmpresaComponent } from './componentes/empresa/empresa.component';
 import { PestaniaComponent } from './componentes/pestania/pestania.component';
-import { AgendaTelefonicaComponent } from './componentes/agenda-telefonica/agenda-telefonica.component';
+import { AgendaTelefonicaComponent } from './componentes/agenda-telefonica/agenda-telefonica.component'; //Probado
 import { AreaComponent } from './componentes/area/area.component';
-import { BancoComponent } from './componentes/banco/banco.component';
-import { BarrioComponent } from './componentes/barrio/barrio.component';
-import { CategoriaComponent } from './componentes/categoria/categoria.component';
-import { CobradorComponent } from './componentes/cobrador/cobrador.component';
+import { BancoComponent } from './componentes/banco/banco.component'; //Probado
+import { BarrioComponent } from './componentes/barrio/barrio.component'; //Probado
+import { CategoriaComponent } from './componentes/categoria/categoria.component'; //Probado
+import { CobradorComponent } from './componentes/cobrador/cobrador.component'; //Probado
 import { CompaniaSeguroComponent } from './componentes/compania-seguro/compania-seguro.component';
-import { MarcaProductoComponent } from './componentes/marca-producto/marca-producto.component';
-import { MarcaVehiculoComponent } from './componentes/marca-vehiculo/marca-vehiculo.component';
+import { MarcaProductoComponent } from './componentes/marca-producto/marca-producto.component'; //Probado
+import { MarcaVehiculoComponent } from './componentes/marca-vehiculo/marca-vehiculo.component'; //Probado
 import { ModuloComponent } from './componentes/modulo/modulo.component';
-import { ObraSocialComponent } from './componentes/obra-social/obra-social.component';
-import { LocalidadComponent } from './componentes/localidad/localidad.component';
+import { ObraSocialComponent } from './componentes/obra-social/obra-social.component'; //Probado
+import { LocalidadComponent } from './componentes/localidad/localidad.component'; //Probado
 import { OrigenDestinoComponent } from './componentes/origen-destino/origen-destino.component';
 import { ProvinciaComponent } from './componentes/provincia/provincia.component';
 import { RolComponent } from './componentes/rol/rol.component';

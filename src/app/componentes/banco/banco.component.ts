@@ -242,7 +242,22 @@ export class BancoComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  };
+  }
+  //Manejo de colores de campos y labels con patron erroneo
+  public validarPatron(patron, campo) {
+    let valor = this.formulario.get(campo).value;
+    console.log(valor);
+    if(valor != undefined && valor != null && valor != '') {
+      var patronVerificador = new RegExp(patron);
+      if (!patronVerificador.test(valor)) {
+        if(campo == 'sitioWeb') {
+          document.getElementById("labelSitioWeb").classList.add('label-error');
+          document.getElementById("idSitioWeb").classList.add('is-invalid');
+          this.toastr.error('Sitio Web Incorrecto');
+        }
+      }
+    }
+  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);

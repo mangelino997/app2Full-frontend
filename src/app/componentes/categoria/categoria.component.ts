@@ -4,10 +4,7 @@ import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-categoria',
@@ -41,7 +38,7 @@ export class CategoriaComponent implements OnInit {
   private resultados:Array<any> = [];
   //Constructor
   constructor(private servicio: CategoriaService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService) {
+    private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -73,9 +70,9 @@ export class CategoriaComponent implements OnInit {
       id: new FormControl(),
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      basico: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(12)]),
-      adicionalBasicoVacaciones: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(4)]),
-      topeBasicoAdelantos: new FormControl('',[Validators.required, Validators.min(1), Validators.maxLength(4)]),
+      basico: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(13)]),
+      adicionalBasicoVacaciones: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(5)]),
+      topeBasicoAdelantos: new FormControl('',[Validators.required, Validators.min(1), Validators.maxLength(5)]),
       diasLaborables: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(2)]),
       horasLaborables: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(2)])
     });
@@ -86,7 +83,10 @@ export class CategoriaComponent implements OnInit {
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
-    this.formulario.patchValue(elemento);
+    this.formulario.setValue(elemento);
+    this.formulario.get('basico').setValue(elemento.basico.toFixed(2));
+    this.formulario.get('adicionalBasicoVacaciones').setValue(elemento.adicionalBasicoVacaciones.toFixed(2));
+    this.formulario.get('topeBasicoAdelantos').setValue(elemento.topeBasicoAdelantos.toFixed(2));
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -111,10 +111,6 @@ export class CategoriaComponent implements OnInit {
     this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
@@ -234,6 +230,10 @@ export class CategoriaComponent implements OnInit {
     this.autocompletado.setValue(undefined);
     this.resultados = [];
   }
+  //Formatea el numero a x decimales
+  public setDecimales(valor, cantidad) {
+    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
+  }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -243,13 +243,13 @@ export class CategoriaComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
+    this.cambioAutocompletado(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
+    this.cambioAutocompletado(elemento);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {

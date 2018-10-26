@@ -5,10 +5,6 @@ import { ProvinciaService } from '../../servicios/provincia.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-localidad',
@@ -92,9 +88,16 @@ export class LocalidadComponent implements OnInit {
     //Obtiene la lista de provincias
     this.listarProvincias();
   }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.formulario.setValue(elemAutocompletado);
+  //Obtiene el listado de provincia
+  private listarProvincias() {
+    this.provinciaServicio.listar().subscribe(res => {
+      this.provincias = res.json();
+    })
+  }
+  //Vacia la lista de resultados de autocompletados
+  public vaciarListas() {
+    this.resultados = [];
+    this.resultadosProvincias = [];
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -129,6 +132,11 @@ export class LocalidadComponent implements OnInit {
         break;
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        setTimeout(function() {
+          document.getElementById('idProvincia').focus();
+        }, 20);
         break;
       default:
         break;
@@ -229,17 +237,11 @@ export class LocalidadComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
-    this.resultados = [];
-  }
-  //Obtiene el listado de provincia
-  private listarProvincias() {
-    this.provinciaServicio.listar().subscribe(res => {
-      this.provincias = res.json();
-    })
+    this.vaciarListas();
   }
   //Obtiene la lista de localidades por provincia
-  public listarPorProvincia(idProvincia) {
-    this.servicio.listarPorProvincia(idProvincia).subscribe(res => {
+  public listarPorProvincia(provincia) {
+    this.servicio.listarPorProvincia(provincia.id).subscribe(res => {
       this.listaCompleta = res.json();
     })
   }
@@ -274,6 +276,17 @@ export class LocalidadComponent implements OnInit {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.pais.nombre : elemento;
     } else {
       return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
     }
   }
 }

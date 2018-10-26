@@ -4,10 +4,6 @@ import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-obra-social',
@@ -78,10 +74,6 @@ export class ObraSocialComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
-  }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.formulario.setValue(elemAutocompletado);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -233,12 +225,14 @@ export class ObraSocialComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    var patronVerificador = new RegExp(patron);
-    if (!patronVerificador.test(valor)) {
-      if(campo == 'sitioWeb') {
-        document.getElementById("labelSitioweb").classList.add('label-error');
-        document.getElementById("idSitioWeb").classList.add('is-invalid');
-        this.toastr.error('Sitio Web incorrecto');
+    if(valor != undefined && valor != null && valor != '') {
+      var patronVerificador = new RegExp(patron);
+      if (!patronVerificador.test(valor)) {
+        if(campo == 'sitioWeb') {
+          document.getElementById("labelSitioWeb").classList.add('label-error');
+          document.getElementById("idSitioWeb").classList.add('is-invalid');
+          this.toastr.error('Sitio Web Incorrecto');
+        }
       }
     }
   }
@@ -260,6 +254,17 @@ export class ObraSocialComponent implements OnInit {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
     }
   }
 }
