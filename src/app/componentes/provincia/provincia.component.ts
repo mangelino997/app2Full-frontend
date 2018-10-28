@@ -5,10 +5,6 @@ import { PaisService } from '../../servicios/pais.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-provincia',
@@ -42,8 +38,6 @@ export class ProvinciaComponent implements OnInit {
   private resultados:Array<any> = [];
   //Define la lista de resultados paises
   private resultadosPaises:Array<any> = [];
-  //Define el autocompletado para las busquedas
-  private autocompletadoPais:FormControl = new FormControl();
   //Constructor
   constructor(private servicio: ProvinciaService, private pestaniaService: PestaniaService,
     private paisServicio: PaisService, private appComponent: AppComponent, private toastr: ToastrService) {
@@ -65,8 +59,8 @@ export class ProvinciaComponent implements OnInit {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.paisServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosPaises = res;
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
         })
       }
     })
@@ -92,14 +86,11 @@ export class ProvinciaComponent implements OnInit {
         })
       }
     })
-    //Autocompletado Pais Listar - Buscar por nombre
-    this.autocompletadoPais.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.paisServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosPaises = res;
-        })
-      }
-    })
+  }
+  //Vacia las listas de autocompletado
+  public vaciarListas() {
+    this.resultados = [];
+    this.resultadosPaises = [];
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -134,6 +125,11 @@ export class ProvinciaComponent implements OnInit {
         break;
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        setTimeout(function() {
+          document.getElementById('idPais').focus();
+        }, 20);
         break;
       default:
         break;
@@ -234,7 +230,7 @@ export class ProvinciaComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
-    this.resultados = [];
+    this.vaciarListas();
   }
   //Obtiene la lista de provincias por pais
   public listarPorPais(pais) {
@@ -258,6 +254,22 @@ export class ProvinciaComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Formatea el valor del autocompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.pais.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {

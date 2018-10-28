@@ -5,10 +5,6 @@ import { OrigenDestinoService } from '../../servicios/origen-destino.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-tramo',
@@ -129,23 +125,15 @@ export class TramoComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.formulario.get('excluirLiqChofer').enable();
-        this.formulario.get('estaActivo').enable();
         this.establecerValoresPestania(nombre, false, false, true, 'idOrigen');
         break;
       case 2:
-        this.formulario.get('excluirLiqChofer').disable();
-        this.formulario.get('estaActivo').disable();
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.formulario.get('excluirLiqChofer').enable();
-        this.formulario.get('estaActivo').enable();
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.formulario.get('excluirLiqChofer').disable();
-        this.formulario.get('estaActivo').disable();
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
@@ -260,7 +248,15 @@ export class TramoComponent implements OnInit {
   //Define como se muestra los datos en el autocompletado a
   public displayFa(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.origen.provincia.nombre : elemento;
+      return elemento.origen ? elemento.origen.nombre + ' -> ' + elemento.destino.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autocompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento ? 'Si' : 'No';
     } else {
       return elemento;
     }

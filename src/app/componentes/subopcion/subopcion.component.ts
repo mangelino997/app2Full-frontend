@@ -5,10 +5,6 @@ import { SubmoduloService } from '../../servicios/submodulo.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-subopcion',
@@ -40,8 +36,6 @@ export class SubopcionComponent implements OnInit {
   private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
   private resultados:Array<any> = [];
-  //Define el campo de control de submodulo en pestaña listar
-  private submoduloListar:FormControl = new FormControl();
   //Constructor
   constructor(private servicio: SubopcionService, private pestaniaService: PestaniaService,
     private submoduloServicio: SubmoduloService, private appComponent: AppComponent, private toastr: ToastrService) {
@@ -124,6 +118,10 @@ export class SubopcionComponent implements OnInit {
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
+      case 5:
+        setTimeout(function() {
+          document.getElementById('idSubmodulo').focus();
+        }, 20);
       default:
         break;
     }
@@ -219,8 +217,8 @@ export class SubopcionComponent implements OnInit {
     console.log();
   }
   //Obtiene la lista de subopciones por submodulo
-  public listarPorSubmodulo(idSubmodulo) {
-    this.servicio.listarPorSubmodulo(idSubmodulo).subscribe(res => {
+  public listarPorSubmodulo(submodulo) {
+    this.servicio.listarPorSubmodulo(submodulo.id).subscribe(res => {
       this.listaCompleta = res.json();
     })
   }
@@ -260,6 +258,14 @@ export class SubopcionComponent implements OnInit {
   public displayFa(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ' - ' + elemento.modulo.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento ? 'Si' : 'No';
     } else {
       return elemento;
     }

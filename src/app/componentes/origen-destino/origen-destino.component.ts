@@ -5,10 +5,6 @@ import { ProvinciaService } from '../../servicios/provincia.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-origen-destino',
@@ -87,9 +83,9 @@ export class OrigenDestinoComponent implements OnInit {
       }
     })
   }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.formulario.setValue(elemAutocompletado);
+  public vaciarListas() {
+    this.resultados = [];
+    this.resultadosProvincias = [];
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -124,6 +120,11 @@ export class OrigenDestinoComponent implements OnInit {
         break;
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        setTimeout(function() {
+          document.getElementById('idProvincia').focus();
+        }, 20);
         break;
       default:
         break;
@@ -224,11 +225,11 @@ export class OrigenDestinoComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
-    this.resultados = [];
+    this.vaciarListas();
   }
   //Obtiene la lista de localidades por provincia
-  public listarPorProvincia(idProvincia) {
-    this.servicio.listarPorProvincia(idProvincia).subscribe(res => {
+  public listarPorProvincia(provincia) {
+    this.servicio.listarPorProvincia(provincia.id).subscribe(res => {
       this.listaCompleta = res.json();
     })
   }
@@ -252,7 +253,7 @@ export class OrigenDestinoComponent implements OnInit {
   //Muestra el valor en los autocompletados
   public displayFn(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
     } else {
       return elemento;
     }
@@ -260,9 +261,20 @@ export class OrigenDestinoComponent implements OnInit {
   //Muestra el valor en los autocompletados a
   public displayFa(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.pais.nombre : elemento;
     } else {
       return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
     }
   }
 }

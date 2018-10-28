@@ -21,7 +21,7 @@
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="formulario.setValue(item)">
-                  {{item.nombre}}, {{item.origen.provincia.nombre}}
+                  {{item.origen.nombre}} -> {{item.origen.provincia.nombre}}
                 </mat-option>
               </mat-autocomplete>
             </div>
@@ -40,7 +40,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idOrigen" class="tamanio-label">Origen</label>
-              <input id="idOrigen" class="form-control form-control-sm" type="text" matInput
+              <input id="idOrigen" class="form-control form-control-sm" type="text" matInput [readonly]="soloLectura"
                 [formControl]="formulario.get('origen')" [matAutocomplete]="autoOrigen" autocomplete="off">
               <mat-autocomplete #autoOrigen="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let itemOrigen of resultadosOrigenesDestinos" [value]="itemOrigen">
@@ -52,7 +52,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idDestino" class="tamanio-label">Destino</label>
-              <input id="idDestino" class="form-control form-control-sm" type="text" matInput
+              <input id="idDestino" class="form-control form-control-sm" type="text" matInput [readonly]="soloLectura"
                 [formControl]="formulario.get('destino')" [matAutocomplete]="autoDestino" autocomplete="off">
               <mat-autocomplete #autoDestino="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let itemDestino of resultadosOrigenesDestinos" [value]="itemDestino">
@@ -85,7 +85,7 @@
               <input id="idExcluirLiqChofer" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('excluirLiqChofer')" [matAutocomplete]="autoExcluirLiqChofer"
                 autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoExcluirLiqChofer="matAutocomplete">
+              <mat-autocomplete #autoExcluirLiqChofer="matAutocomplete" [displayWith]="displayFb.bind(this)">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-autocomplete>
@@ -97,7 +97,7 @@
               <input id="idEstaActivo" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('estaActivo')" [matAutocomplete]="autoEstaActivo"
                 autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoEstaActivo="matAutocomplete">
+              <mat-autocomplete #autoEstaActivo="matAutocomplete" [displayWith]="displayFb.bind(this)">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-autocomplete>

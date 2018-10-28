@@ -87,7 +87,7 @@ import { FechaService } from './servicios/fecha.service';
 //Componentes
 import { AppComponent } from './app.component';
 import { LoginComponent } from './componentes/login/login.component';
-import { PaisComponent } from './componentes/pais/pais.component';
+import { PaisComponent } from './componentes/pais/pais.component'; //Probado
 import { HomeComponent } from './componentes/home/home.component';
 import { UsuarioComponent } from './componentes/usuario/usuario.component';
 import { EmpresaComponent } from './componentes/empresa/empresa.component';
@@ -104,18 +104,18 @@ import { MarcaVehiculoComponent } from './componentes/marca-vehiculo/marca-vehic
 import { ModuloComponent } from './componentes/modulo/modulo.component';
 import { ObraSocialComponent } from './componentes/obra-social/obra-social.component'; //Probado
 import { LocalidadComponent } from './componentes/localidad/localidad.component'; //Probado
-import { OrigenDestinoComponent } from './componentes/origen-destino/origen-destino.component';
-import { ProvinciaComponent } from './componentes/provincia/provincia.component';
-import { RolComponent } from './componentes/rol/rol.component';
-import { RubroComponent } from './componentes/rubro/rubro.component';
-import { RubroProductoComponent } from './componentes/rubro-producto/rubro-producto.component';
-import { SeguridadSocialComponent } from './componentes/seguridad-social/seguridad-social.component';
+import { OrigenDestinoComponent } from './componentes/origen-destino/origen-destino.component'; //Probado
+import { ProvinciaComponent } from './componentes/provincia/provincia.component'; //Probado
+import { RolComponent } from './componentes/rol/rol.component'; //Probado
+import { RubroComponent } from './componentes/rubro/rubro.component'; //Probado
+import { RubroProductoComponent } from './componentes/rubro-producto/rubro-producto.component'; //Probado
+import { SeguridadSocialComponent } from './componentes/seguridad-social/seguridad-social.component'; //Probado
 import { SexoComponent } from './componentes/sexo/sexo.component';
-import { SindicatoComponent } from './componentes/sindicato/sindicato.component';
+import { SindicatoComponent } from './componentes/sindicato/sindicato.component'; //Probado
 import { SituacionClienteComponent } from './componentes/situacion-cliente/situacion-cliente.component';
-import { SubmoduloComponent } from './componentes/submodulo/submodulo.component';
-import { SubopcionComponent } from './componentes/subopcion/subopcion.component';
-import { SucursalComponent } from './componentes/sucursal/sucursal.component';
+import { SubmoduloComponent } from './componentes/submodulo/submodulo.component'; //Probado
+import { SubopcionComponent } from './componentes/subopcion/subopcion.component'; //Probado
+import { SucursalComponent } from './componentes/sucursal/sucursal.component'; //Probado
 import { SucursalBancoComponent } from './componentes/sucursal-banco/sucursal-banco.component';
 import { TipoComprobanteComponent } from './componentes/tipo-comprobante/tipo-comprobante.component';
 import { TipoContactoComponent } from './componentes/tipo-contacto/tipo-contacto.component';
@@ -123,11 +123,11 @@ import { TipoCuentaBancariaComponent } from './componentes/tipo-cuenta-bancaria/
 import { TipoDocumentoComponent } from './componentes/tipo-documento/tipo-documento.component';
 import { TipoProveedorComponent } from './componentes/tipo-proveedor/tipo-proveedor.component';
 import { TipoTarifaComponent } from './componentes/tipo-tarifa/tipo-tarifa.component';
-import { TipoVehiculoComponent } from './componentes/tipo-vehiculo/tipo-vehiculo.component';
-import { TramoComponent } from './componentes/tramo/tramo.component';
+import { TipoVehiculoComponent } from './componentes/tipo-vehiculo/tipo-vehiculo.component'; //Probado
+import { TramoComponent } from './componentes/tramo/tramo.component'; //Probado
 import { UnidadMedidaComponent } from './componentes/unidad-medida/unidad-medida.component';
 import { VendedorComponent } from './componentes/vendedor/vendedor.component';
-import { ZonaComponent } from './componentes/zona/zona.component';
+import { ZonaComponent } from './componentes/zona/zona.component'; //Probado
 import { ClienteComponent } from './componentes/cliente/cliente.component';
 import { ResumenClienteComponent } from './componentes/resumen-cliente/resumen-cliente.component';
 import { OrdenVentaComponent } from './componentes/orden-venta/orden-venta.component';

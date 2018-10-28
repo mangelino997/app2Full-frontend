@@ -6,10 +6,6 @@ import { LocalidadService } from '../../servicios/localidad.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-sucursal',
@@ -102,6 +98,12 @@ export class SucursalComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista de sucursales
     this.listar();
+  }
+  //Vacia las listas de autocompletado
+  private vaciarListas() {
+    this.resultados = [];
+    this.resultadosBarrios = [];
+    this.resultadosLocalidades = [];
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -235,7 +237,7 @@ export class SucursalComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
-    this.resultados = [];
+    this.vaciarListas();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

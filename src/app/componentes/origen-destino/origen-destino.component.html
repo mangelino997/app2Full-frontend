@@ -1,4 +1,4 @@
-<div id="origendestino">
+<div id="origendestino" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
@@ -15,10 +15,10 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
           <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
-            [formControl]="buscar" [matAutocomplete]="auto" autocomplete="off">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item"
-              (ngSelectionChange)="cambioAutocompletado(item)">
+              (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}}, {{item.provincia.nombre}}
             </mat-option>
           </mat-autocomplete>
@@ -38,10 +38,9 @@
           <label for="idProvincia" class="tamanio-label">Provincia</label>
           <input id="idProvincia" class="form-control form-control-sm" type="text" matInput
             [formControl]="formulario.get('provincia')" [matAutocomplete]="autoProvincia" autocomplete="off">
-          <mat-autocomplete #autoProvincia="matAutocomplete" [displayWith]="displayFn.bind(this)">
-            <mat-option *ngFor="let itemProvincia of resultadosProvincias" [value]="itemProvincia"
-              (ngSelectionChange)="formulario.get('provincia').setValue(itemProvincia)">
-              {{item.nombre}}
+          <mat-autocomplete #autoProvincia="matAutocomplete" [displayWith]="displayFa.bind(this)">
+            <mat-option *ngFor="let itemProvincia of resultadosProvincias" [value]="itemProvincia">
+              {{itemProvincia.nombre}}, {{itemProvincia.pais.nombre}}
             </mat-option>
           </mat-autocomplete>
         </div>
@@ -56,10 +55,15 @@
     <div class="col-md-6">
       <div class="form-group has-float-label">
         <label for="idProvincia" class="tamanio-label">Provincia</label>
-        <select id="idProvincia" class="form-control" [(ngModel)]="elemento.provincia"
-          (ngModelChange)="listarPorProvincia(elemento.provincia.id)">
-          <option *ngFor="let provincia of provincias" [ngValue]="provincia">{{provincia.nombre}}</option>
-        </select>
+        <input id="idProvincia" class="form-control form-control-sm" type="text" matInput 
+          [formControl]="formulario.get('provincia')" [matAutocomplete]="autoProvincia" 
+          autocomplete="off" (blur)="vaciarListas()">
+        <mat-autocomplete #autoProvincia="matAutocomplete" [displayWith]="displayFa.bind(this)">
+          <mat-option *ngFor="let itemProvincia of resultadosProvincias" [value]="itemProvincia" 
+            (onSelectionChange)="listarPorProvincia(itemProvincia)">
+            {{itemProvincia.nombre}}, {{itemProvincia.pais.nombre}}
+          </mat-option>
+        </mat-autocomplete>
       </div>
       <table class="table table-bordered table-striped table-sm">
         <thead>
@@ -72,10 +76,10 @@
         </thead>
         <tbody>
           <tr *ngFor="let l of listaCompleta">
-            <td align="right">
+            <td align="center">
               <span>{{l.id}}</span>
             </td>
-            <td align="right">
+            <td align="center">
               <span>{{l.nombre}}</span>
             </td>
             <td align="center">

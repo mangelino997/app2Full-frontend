@@ -1,4 +1,4 @@
-<div id="provincia">
+<div id="provincia" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
@@ -14,19 +14,17 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
-          <input id="idAutocompletado" class="form-control form-control-sm"
-            type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-            <mat-option *ngFor="let item of resultados" [value]="item"
-              (onSelectionChange)="cambioAutocompletado(item)">
-              {{item.nombre}}
+          <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput 
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
+            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
+              {{item.nombre}}, {{item.pais.nombre}}
             </mat-option>
           </mat-autocomplete>
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Código</label>
-          <input id="idCodigo" type="number" formControlName="id"
-            class="form-control form-control-sm" readonly>
+          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
         </div>
         <div id="divNombre" class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
@@ -46,7 +44,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idPais" class="tamanio-label">País</label>
-          <input id="idPais" class="form-control form-control-sm" type="text" matInput
+          <input id="idPais" class="form-control form-control-sm" type="text" matInput [readonly]="soloLectura"
             [formControl]="formulario.get('pais')" [matAutocomplete]="autoPais" autocomplete="off">
           <mat-autocomplete #autoPais="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let itemPais of resultadosPaises" [value]="itemPais">
@@ -54,8 +52,8 @@
             </mat-option>
           </mat-autocomplete>
         </div>
-        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado, elemento)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
       </form>
@@ -64,10 +62,10 @@
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-6">
       <div class="form-group has-float-label">
-        <label for="idAutocompletadoPais" class="tamanio-label">País</label>
-        <input id="idAutocompletadoPais" class="form-control form-control-sm" type="text" matInput
-          [formControl]="autocompletadoPais" [matAutocomplete]="autoAutoPais" autocomplete="off">
-        <mat-autocomplete #autoAutoPais="matAutocomplete" [displayWith]="displayFn.bind(this)">
+        <label for="idPais" class="tamanio-label">País</label>
+        <input id="idPais" class="form-control form-control-sm" type="text" matInput
+          [formControl]="formulario.get('pais')" [matAutocomplete]="autoPais" autocomplete="off">
+        <mat-autocomplete #autoPais="matAutocomplete" [displayWith]="displayFn.bind(this)">
           <mat-option *ngFor="let itemPais of resultadosPaises" [value]="itemPais"
             (onSelectionChange)="listarPorPais(itemPais)">
             {{itemPais.nombre}}

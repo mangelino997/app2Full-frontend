@@ -5,10 +5,6 @@ import { ModuloService } from '../../servicios/modulo.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-submodulo',
@@ -40,8 +36,6 @@ export class SubmoduloComponent implements OnInit {
   private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
   private resultados:Array<any> = [];
-  //Define el campo de control de modulo de pestaña listar
-  private moduloListar:FormControl = new FormControl();
   //Constructor
   constructor(private servicio: SubmoduloService, private pestaniaService: PestaniaService,
     private moduloServicio: ModuloService, private appComponent: AppComponent, private toastr: ToastrService) {
@@ -104,7 +98,7 @@ export class SubmoduloComponent implements OnInit {
     this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.listaCompleta = null;
+    this.listaCompleta = [];
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
@@ -123,6 +117,10 @@ export class SubmoduloComponent implements OnInit {
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
+      case 5:
+        setTimeout(function() {
+          document.getElementById('idModulo').focus();
+        }, 20);
       default:
         break;
     }
@@ -225,8 +223,8 @@ export class SubmoduloComponent implements OnInit {
     this.resultados = [];
   }
   //Obtiene la lista de submodulos por modulo
-  public listarPorModulo(idModulo) {
-    this.servicio.listarPorModulo(idModulo).subscribe(res => {
+  public listarPorModulo(modulo) {
+    this.servicio.listarPorModulo(modulo.id).subscribe(res => {
       this.listaCompleta = res.json();
     })
   }

@@ -10,7 +10,7 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-4 text-center">
-      <h5>{{pestaniaActual}} Tipo Vehículo</h5>
+      <h5>{{pestaniaActual}} Tipo de Vehículo</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
@@ -25,8 +25,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Código</label>
-          <input id="idCodigo" type="number" formControlName="id"
-            class="form-control form-control-sm" readonly>
+          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
         </div>
         <div class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
@@ -37,9 +36,9 @@
         <div class="form-group has-float-label">
           <label for="idEsRemolque" class="tamanio-label">Es Remolque</label>
           <input id="idEsRemolque" class="form-control form-control-sm" type="text" matInput
-            [formControl]="formulario.get('esRemolque')" [matAutocomplete]="autoEsRemolque" autocomplete="off"
-            [readonly]="soloLectura">
-          <mat-autocomplete #autoEsRemolque="matAutocomplete">
+            [formControl]="formulario.get('esRemolque')" [matAutocomplete]="autoEsRemolque" 
+            autocomplete="off" [readonly]="soloLectura">
+          <mat-autocomplete #autoEsRemolque="matAutocomplete" [displayWith]="displayFa.bind(this)">
             <mat-option [value]="false">No</mat-option>
             <mat-option [value]="true">Si</mat-option>
           </mat-autocomplete>
@@ -52,7 +51,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-6">
+    <div class="col-md-10">
       <table class="table table-bordered table-striped table-sm">
         <thead>
           <tr>
