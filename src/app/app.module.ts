@@ -200,7 +200,7 @@ const appRoutes: Routes = [
   {path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService]},
   {path: 'choferproveedor', component: ChoferProveedorComponent, canActivate: [GuardiaService]},//VER
   {path: 'configuracionvehiculo', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]},//VER
-  {path: 'contactobanco', component: ContactoBancoComponent, canActivate: [GuardiaService]},//VER
+  {path: 'contablebancoscontactos', component: ContactoBancoComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactocompaniaseguro', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactoproveedor', component: ContactoProveedorComponent, canActivate: [GuardiaService]},//VER

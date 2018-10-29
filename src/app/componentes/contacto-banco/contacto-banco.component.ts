@@ -7,10 +7,6 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map, startWith } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-contacto-banco',
@@ -48,12 +44,6 @@ export class ContactoBancoComponent implements OnInit {
   private resultados:Array<any> = [];
   //Define la lista de resultados de busqueda de sucursales bancos
   private resultadosSucursalesBancos:Array<any> = [];
-  //Define un contacto
-  private contacto:FormControl = new FormControl();
-  //Define un banco
-  private banco:FormControl = new FormControl();
-  //Define una sucursal
-  private sucursal:FormControl = new FormControl();
   //Constructor
   constructor(private servicio: ContactoBancoService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -73,14 +63,6 @@ export class ContactoBancoComponent implements OnInit {
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
-    //Autocompletado - Buscar por nombre
-    this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.sucursalBancoServicio.listarPorNombreBanco(data).subscribe(response => {
-          this.resultadosSucursalesBancos = response;
-        })
-      }
-    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -97,6 +79,14 @@ export class ContactoBancoComponent implements OnInit {
       usuarioAlta: new FormControl(),
       usuarioMod: new FormControl()
     });
+    //Autocompletado Sucursal Banco - Buscar por nombre
+    this.formulario.get('sucursalBanco').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.sucursalBancoServicio.listarPorNombreBanco(data).subscribe(response => {
+          this.resultadosSucursalesBancos = response;
+        })
+      }
+    })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
@@ -120,12 +110,6 @@ export class ContactoBancoComponent implements OnInit {
     this.resultados = [];
     this.resultadosSucursalesBancos = [];
   }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemento) {
-   this.banco.setValue(elemento.banco);
-   this.sucursal.setValue(elemento.nombre);
-   this.listarPorSucursalBanco(elemento);
-  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -144,7 +128,7 @@ export class ContactoBancoComponent implements OnInit {
     this.activeLink = nombre;
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
-      this.resultados = [];
+      this.vaciarListas();
     }
     switch (id) {
       case 1:
@@ -203,7 +187,7 @@ export class ContactoBancoComponent implements OnInit {
     );
   }
   //Obtiene la lista de contactos por sucursal banco
-  private listarPorSucursalBanco(elemento) {
+  public listarPorSucursalBanco(elemento) {
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorSucursalBanco(elemento.id).subscribe(
         res => {
@@ -260,7 +244,7 @@ export class ContactoBancoComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario() {
     this.formulario.reset();
-    this.autocompletado.reset();
+    this.autocompletado.setValue(undefined);
     this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
@@ -289,7 +273,7 @@ export class ContactoBancoComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined) {
+    if(valor != undefined  && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if(campo == 'correoelectronico') {
@@ -315,7 +299,7 @@ export class ContactoBancoComponent implements OnInit {
   //Define como se muestra los datos en el autocompletado
   public displayF(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.banco.nombre + ' - ' + elemento.nombre : elemento;
+      return elemento.nombre ? elemento.nombre + ' - ' + elemento.banco.nombre : elemento;
     } else {
       return elemento;
     }
