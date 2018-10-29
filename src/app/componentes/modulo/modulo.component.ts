@@ -4,14 +4,11 @@ import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-modulo',
-  templateUrl: './modulo.component.html'
+  templateUrl: './modulo.component.html',
+  styleUrls: ['./modulo.component.css']
 })
 export class ModuloComponent implements OnInit {
   //Define la pestania activa
@@ -75,10 +72,6 @@ export class ModuloComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
-  }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.formulario.setValue(elemAutocompletado);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -237,6 +230,17 @@ export class ModuloComponent implements OnInit {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
     }
   }
 }

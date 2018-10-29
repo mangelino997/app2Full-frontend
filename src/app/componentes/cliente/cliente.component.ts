@@ -19,10 +19,6 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map, startWith } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-cliente',
@@ -119,8 +115,6 @@ export class ClienteComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece la primera opcion seleccionada
-    this.seleccionarOpcion(1, 0);
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -156,7 +150,7 @@ export class ClienteComponent implements OnInit {
       tipoDocumento: new FormControl(),
       numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(15)]),
       numeroIIBB: new FormControl('', Validators.maxLength(15)),
-      esCuentaCorriente: new FormControl('', [Validators.required]),
+      esCuentaCorriente: new FormControl('', Validators.required),
       resumenCliente: new FormControl(),
       situacionCliente: new FormControl(),
       ordenVenta: new FormControl(),
@@ -182,6 +176,8 @@ export class ClienteComponent implements OnInit {
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+    //Establece la primera opcion seleccionada
+    this.seleccionarOpcion(1, 0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -273,38 +269,9 @@ export class ClienteComponent implements OnInit {
     //Obtiene la lista de situaciones de clientes
     this.listarSituacionesClientes();
   }
-  //Define como se muestra los datos en el autcompletado
-  public displayF(elemento) {
-    if(elemento != undefined) {
-      return elemento.alias ? elemento.alias : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado a
-  public displayFa(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado b
-  public displayFb(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
-        + ', ' + elemento.provincia.pais.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado c
-  public displayFc(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
-    } else {
-      return elemento;
-    }
+  //Al cambiar el autocompletado establece valores
+  private cambioAutocompletado(elemento) {
+    this.formulario.setValue(elemento);
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
@@ -319,10 +286,6 @@ export class ClienteComponent implements OnInit {
     this.resultadosCuentasPrincipales = [];
     this.resultadosSucursalesPago = [];
     this.resultadosCompaniasSeguros = [];
-  }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.formulario.patchValue(elemAutocompletado);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -559,13 +522,13 @@ export class ClienteComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined) {
+    if(valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if(campo == 'sitioWeb') {
           document.getElementById("labelSitioWeb").classList.add('label-error');
           document.getElementById("idSitioWeb").classList.add('is-invalid');
-          this.toastr.error('Sitio Web incorrecto');
+          this.toastr.error('Sitio Web Incorrecto');
         }
       }
     }
@@ -581,6 +544,63 @@ export class ClienteComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+  }
+  //Define como se muestra los datos en el autcompletado
+  public displayF(elemento) {
+    if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
+        + ', ' + elemento.provincia.pais.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado d
+  public displayFd(elemento) {
+    if(elemento != undefined) {
+      return elemento ? 'Cuenta Corriente' : 'Contado';
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado e
+  public displayFe(elemento) {
+    if(elemento != undefined) {
+      return elemento ? 'Con Seguro Propio' : 'Sin Seguro Propio';
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado f
+  public displayFf(elemento) {
+    if(elemento != undefined) {
+      return elemento ? 'Si' : 'No';
+    } else {
+      return elemento;
+    }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {

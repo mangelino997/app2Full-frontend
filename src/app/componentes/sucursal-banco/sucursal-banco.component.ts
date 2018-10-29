@@ -6,10 +6,6 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-sucursal-banco',
@@ -86,7 +82,7 @@ export class SucursalBancoComponent implements OnInit {
     this.listar();
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarLista() {
+  public vaciarListas() {
     this.resultados = [];
     this.resultadosBancos = [];
   }
@@ -96,7 +92,7 @@ export class SucursalBancoComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarLista();
+    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -116,13 +112,13 @@ export class SucursalBancoComponent implements OnInit {
         this.establecerValoresPestania(nombre, false, false, true, 'idBanco');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idBanco');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idBanco');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idBanco');
         break;
       default:
         break;
@@ -205,7 +201,7 @@ export class SucursalBancoComponent implements OnInit {
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario('');
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idBanco').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -224,7 +220,7 @@ export class SucursalBancoComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
-    this.vaciarLista();
+    this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

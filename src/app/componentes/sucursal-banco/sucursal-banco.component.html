@@ -16,7 +16,7 @@
           <label for="idBanco" class="tamanio-label">Banco</label>
           <input id="idBanco" class="form-control form-control-sm" type="text" matInput
             [formControl]="formulario.get('banco')" [matAutocomplete]="autoBanco"
-            autocomplete="off" (blur)="vaciarLista()" [readonly]="soloLectura">
+            autocomplete="off" (blur)="vaciarListas()">
           <mat-autocomplete #autoBanco="matAutocomplete" [displayWith]="displayFa.bind(this)">
             <mat-option *ngFor="let itemBanco of resultadosBancos" [value]="itemBanco"
               (onSelectionChange)="listarPorBanco(itemBanco)">
@@ -26,18 +26,18 @@
         </div>
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Lista de Sucursales de Banco</label>
-          <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
-            type="text" matInput [matAutocomplete]="auto" autocomplete="off" [readonly]="soloLectura">
+          <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput 
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
-            <mat-option *ngFor="let item of sucursales" [value]="item">
+            <mat-option *ngFor="let item of sucursales" [value]="item"
+              (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}} - {{item.banco.nombre}}
             </mat-option>
           </mat-autocomplete>
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label-titulo">Código</label>
-          <input id="idCodigo" type="number" formControlName="id"
-            class="form-control form-control-sm" readonly>
+          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
         </div>
         <div class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label-titulo">Nombre</label>

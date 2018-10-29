@@ -101,7 +101,7 @@ import { CobradorComponent } from './componentes/cobrador/cobrador.component'; /
 import { CompaniaSeguroComponent } from './componentes/compania-seguro/compania-seguro.component';
 import { MarcaProductoComponent } from './componentes/marca-producto/marca-producto.component'; //Probado
 import { MarcaVehiculoComponent } from './componentes/marca-vehiculo/marca-vehiculo.component'; //Probado
-import { ModuloComponent } from './componentes/modulo/modulo.component';
+import { ModuloComponent } from './componentes/modulo/modulo.component'; //Probado
 import { ObraSocialComponent } from './componentes/obra-social/obra-social.component'; //Probado
 import { LocalidadComponent } from './componentes/localidad/localidad.component'; //Probado
 import { OrigenDestinoComponent } from './componentes/origen-destino/origen-destino.component'; //Probado
@@ -116,7 +116,7 @@ import { SituacionClienteComponent } from './componentes/situacion-cliente/situa
 import { SubmoduloComponent } from './componentes/submodulo/submodulo.component'; //Probado
 import { SubopcionComponent } from './componentes/subopcion/subopcion.component'; //Probado
 import { SucursalComponent } from './componentes/sucursal/sucursal.component'; //Probado
-import { SucursalBancoComponent } from './componentes/sucursal-banco/sucursal-banco.component';
+import { SucursalBancoComponent } from './componentes/sucursal-banco/sucursal-banco.component'; //Probado
 import { TipoComprobanteComponent } from './componentes/tipo-comprobante/tipo-comprobante.component';
 import { TipoContactoComponent } from './componentes/tipo-contacto/tipo-contacto.component';
 import { TipoCuentaBancariaComponent } from './componentes/tipo-cuenta-bancaria/tipo-cuenta-bancaria.component';
@@ -128,12 +128,12 @@ import { TramoComponent } from './componentes/tramo/tramo.component'; //Probado
 import { UnidadMedidaComponent } from './componentes/unidad-medida/unidad-medida.component';
 import { VendedorComponent } from './componentes/vendedor/vendedor.component';
 import { ZonaComponent } from './componentes/zona/zona.component'; //Probado
-import { ClienteComponent } from './componentes/cliente/cliente.component';
+import { ClienteComponent } from './componentes/cliente/cliente.component'; //Probado
 import { ResumenClienteComponent } from './componentes/resumen-cliente/resumen-cliente.component';
 import { OrdenVentaComponent } from './componentes/orden-venta/orden-venta.component';
-import { ProveedorComponent } from './componentes/proveedor/proveedor.component';
+import { ProveedorComponent } from './componentes/proveedor/proveedor.component'; //Probado
 import { CondicionCompraComponent } from './componentes/condicion-compra/condicion-compra.component';
-import { PersonalComponent } from './componentes/personal/personal.component';
+import { PersonalComponent } from './componentes/personal/personal.component'; //Probado
 import { EstadoCivilComponent } from './componentes/estado-civil/estado-civil.component';
 import { EscalaTarifaComponent } from './componentes/escala-tarifa/escala-tarifa.component';
 import { ChoferProveedorComponent } from './componentes/chofer-proveedor/chofer-proveedor.component';
@@ -143,7 +143,7 @@ import { ContactoClienteComponent } from './componentes/contacto-cliente/contact
 import { ContactoCompaniaSeguroComponent } from './componentes/contacto-compania-seguro/contacto-compania-seguro.component';
 import { ContactoProveedorComponent } from './componentes/contacto-proveedor/contacto-proveedor.component';
 import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.component';
-import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component';
+import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component'; //Probado
 //import { ViajeComponent } from './componentes/viaje/viaje.component';
 //import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component';
 //import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component';
@@ -179,7 +179,7 @@ const appRoutes: Routes = [
   {path: 'menusubopciones', component: SubopcionComponent, canActivate: [GuardiaService]},
   {path: 'organizacionsucursales', component: SucursalComponent, canActivate: [GuardiaService]},
   {path: 'contablebancossucursales', component: SucursalBancoComponent, canActivate: [GuardiaService]},
-  {path: 'contableclientessucursales', component: SucursalClienteComponent, canActivate: [GuardiaService]},//VER
+  {path: 'generalesclientessucursales', component: SucursalClienteComponent, canActivate: [GuardiaService]},
   {path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'tipocuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService]},//Revisar

@@ -8,10 +8,6 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-sucursal-cliente',
@@ -114,7 +110,7 @@ export class SucursalClienteComponent implements OnInit {
     this.listar();
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarLista() {
+  public vaciarListas() {
     this.resultados = [];
     this.resultadosClientes = [];
     this.resultadosBarrios = [];
@@ -126,7 +122,7 @@ export class SucursalClienteComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarLista();
+    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -138,7 +134,7 @@ export class SucursalClienteComponent implements OnInit {
     this.activeLink = nombre;
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
-      this.vaciarLista();
+      this.vaciarListas();
     }
     switch (id) {
       case 1:
@@ -254,7 +250,7 @@ export class SucursalClienteComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
-    this.vaciarLista();
+    this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -277,7 +273,7 @@ export class SucursalClienteComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined) {
+    if(valor != undefined  && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if(campo == 'telefonoFijo') {

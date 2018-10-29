@@ -23,10 +23,6 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map, startWith } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-personal',
@@ -155,7 +151,7 @@ export class PersonalComponent implements OnInit {
       tipoDocumento: new FormControl('', Validators.required),
       numeroDocumento: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(11)]),
       cuil: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(11)]),
-      empresa: new FormControl('', Validators.required),
+      empresa: new FormControl(),
       barrio: new FormControl(),
       localidad: new FormControl('', Validators.required),
       localidadNacimiento: new FormControl('', Validators.required),
@@ -172,8 +168,8 @@ export class PersonalComponent implements OnInit {
       antiguedadAntAnio: new FormControl('', [Validators.min(1), Validators.maxLength(5)]),
       antiguedadAntMes: new FormControl('', [Validators.min(1), Validators.maxLength(5)]),
       domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
-      esJubilado: new FormControl('', Validators.required),
-      esMensualizado: new FormControl('', Validators.required),
+      esJubilado: new FormControl(),
+      esMensualizado: new FormControl(),
       categoria: new FormControl('', Validators.required),
       obraSocial: new FormControl('', Validators.required),
       sindicato: new FormControl('', Validators.required),
@@ -434,6 +430,7 @@ export class PersonalComponent implements OnInit {
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
    this.formulario.setValue(elemAutocompletado);
+   this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
    this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
    this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
    if(elemAutocompletado.fechaFin != null) {
@@ -554,13 +551,6 @@ export class PersonalComponent implements OnInit {
         break;
     }
   }
-  //Reestablece los campos agregar
-  private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.nacionalidadNacimiento.setValue(undefined);
-    this.vaciarListas();
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
@@ -631,6 +621,14 @@ export class PersonalComponent implements OnInit {
   private eliminar() {
     console.log();
   }
+  //Reestablece los campos agregar
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.autocompletado.setValue(undefined);
+    this.nacionalidadNacimiento.setValue(undefined);
+    this.vaciarListas();
+  }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
@@ -673,7 +671,7 @@ export class PersonalComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined) {
+    if(valor != undefined  && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if(campo == 'telefonoFijo') {
@@ -701,12 +699,14 @@ export class PersonalComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+    this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+    this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
   }
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {
@@ -733,6 +733,14 @@ export class PersonalComponent implements OnInit {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
         + ', ' + elemento.provincia.pais.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento ? 'Si' : 'No';
     } else {
       return elemento;
     }

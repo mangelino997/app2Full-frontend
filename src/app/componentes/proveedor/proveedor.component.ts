@@ -14,10 +14,6 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map, startWith } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-proveedor',
@@ -249,10 +245,6 @@ export class ProveedorComponent implements OnInit {
     this.resultadosLocalidades = [];
     this.resultadosBancos = [];
   }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.formulario.setValue(elemAutocompletado);
-  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -448,10 +440,10 @@ export class ProveedorComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined) {
+    if(valor != undefined  && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
-        if(campo == 'sitioWeb') {
+        if(campo == 'telefonoFijo') {
           document.getElementById("labelSitioWeb").classList.add('label-error');
           document.getElementById("idSitioWeb").classList.add('is-invalid');
           this.toastr.error('Sitio Web incorrecto');
@@ -492,6 +484,14 @@ export class ProveedorComponent implements OnInit {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
         + ', ' + elemento.provincia.pais.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento ? 'Suspendida' : 'Activa';
     } else {
       return elemento;
     }
