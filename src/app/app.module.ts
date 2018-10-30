@@ -137,11 +137,11 @@ import { PersonalComponent } from './componentes/personal/personal.component'; /
 import { EstadoCivilComponent } from './componentes/estado-civil/estado-civil.component';
 import { EscalaTarifaComponent } from './componentes/escala-tarifa/escala-tarifa.component';
 import { ChoferProveedorComponent } from './componentes/chofer-proveedor/chofer-proveedor.component';
-import { ConfiguracionVehiculoComponent } from './componentes/configuracion-vehiculo/configuracion-vehiculo.component';
-import { ContactoBancoComponent } from './componentes/contacto-banco/contacto-banco.component';
-import { ContactoClienteComponent } from './componentes/contacto-cliente/contacto-cliente.component';
+import { ConfiguracionVehiculoComponent } from './componentes/configuracion-vehiculo/configuracion-vehiculo.component'; //Probado
+import { ContactoBancoComponent } from './componentes/contacto-banco/contacto-banco.component'; //Probado
+import { ContactoClienteComponent } from './componentes/contacto-cliente/contacto-cliente.component'; //Revisar
 import { ContactoCompaniaSeguroComponent } from './componentes/contacto-compania-seguro/contacto-compania-seguro.component';
-import { ContactoProveedorComponent } from './componentes/contacto-proveedor/contacto-proveedor.component';
+import { ContactoProveedorComponent } from './componentes/contacto-proveedor/contacto-proveedor.component'; //Probado
 import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.component';
 import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component'; //Probado
 //import { ViajeComponent } from './componentes/viaje/viaje.component';
@@ -199,11 +199,11 @@ const appRoutes: Routes = [
   {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]},
   {path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService]},
   {path: 'choferproveedor', component: ChoferProveedorComponent, canActivate: [GuardiaService]},//VER
-  {path: 'configuracionvehiculo', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]},//VER
-  {path: 'contablebancoscontactos', component: ContactoBancoComponent, canActivate: [GuardiaService]},//VER
+  {path: 'logisticavehiculosconfiguracion', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]},
+  {path: 'contablebancoscontactos', component: ContactoBancoComponent, canActivate: [GuardiaService]},
   {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactocompaniaseguro', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//VER
-  {path: 'contactoproveedor', component: ContactoProveedorComponent, canActivate: [GuardiaService]},//VER
+  {path: 'generalesproveedorescontactos', component: ContactoProveedorComponent, canActivate: [GuardiaService]},
   {path: 'puntoventa', component: PuntoVentaComponent, canActivate: [GuardiaService]}//VER
   //{path: 'viajepropio', component: ViajeComponent, canActivate: [GuardiaService]}//VER
 ]

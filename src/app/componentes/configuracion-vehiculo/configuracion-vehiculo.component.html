@@ -1,4 +1,4 @@
-<div id="configuracionvehiculo">
+<div id="configuracionvehiculo" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
@@ -16,8 +16,9 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo</label>
-              <input id="idTipoVehiculo" class="form-control form-control-sm" formControlName="tipoVehiculo"
-                type="text" matInput [matAutocomplete]="autoTipoVehiculo" autocomplete="off" [readonly]="soloLectura">
+              <input id="idTipoVehiculo" class="form-control form-control-sm" type="text" matInput 
+                [formControl]="formulario.get('tipoVehiculo')" [matAutocomplete]="autoTipoVehiculo" 
+                autocomplete="off">
               <mat-autocomplete #autoTipoVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)"
                 (optionSelected)="listarPorTipoVehiculoMarcaVehiculo()">
                 <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
@@ -29,8 +30,9 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo</label>
-              <input id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo"
-                type="text" matInput [matAutocomplete]="autoMarcaVehiculo" autocomplete="off" [readonly]="soloLectura">
+              <input id="idMarcaVehiculo" class="form-control form-control-sm" type="text" matInput 
+                [formControl]="formulario.get('marcaVehiculo')" [matAutocomplete]="autoMarcaVehiculo" 
+                autocomplete="off">
               <mat-autocomplete #autoMarcaVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)"
                 (optionSelected)="listarPorTipoVehiculoMarcaVehiculo()">
                 <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
@@ -43,12 +45,14 @@
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <div class="form-group has-float-label">
                 <label for="idAutocompletado" class="tamanio-label">Lista de Configuraciones</label>
-                <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
-                  type="text" matInput [matAutocomplete]="autoAutocompletado" autocomplete="off"
-                  [readonly]="soloLectura" required>
+                <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput 
+                  [formControl]="autocompletado" [matAutocomplete]="autoAutocompletado" 
+                  autocomplete="off" [required]="mostrarAutocompletado">
                 <mat-autocomplete #autoAutocompletado="matAutocomplete" [displayWith]="displayFb.bind(this)">
-                  <mat-option *ngFor="let itemAutocompletado of configuraciones" [value]="itemAutocompletado">
-                    {{itemAutocompletado.nombre}}
+                  <mat-option *ngFor="let item of configuraciones" [value]="item"
+                    (onSelectionChange)="formulario.setValue(item)">
+                    Modelo: <b>{{item.modelo}}</b> - Cantidad Ejes: <b>{{item.cantidadEjes}}</b> 
+                    - Capacidad Carga: <b>{{item.capacidadCarga}}</b>
                   </mat-option>
                 </mat-autocomplete>
               </div>
@@ -58,9 +62,9 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idModelo" class="tamanio-label-titulo">Modelo</label>
+              <label for="idModelo" class="tamanio-label">Modelo</label>
               <input id="idModelo" type="text" formControlName="modelo" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" >
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -77,8 +81,9 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCantidadEjes" class="tamanio-label">Cantidad de Ejes</label>
-              <input id="idCantidadEjes" class="form-control form-control-sm" formControlName="cantidadEjes"
-                type="text" matInput [matAutocomplete]="autoCantidadEjes" autocomplete="off" [readonly]="soloLectura">
+              <input id="idCantidadEjes" class="form-control form-control-sm" type="text" matInput 
+                [formControl]="formulario.get('cantidadEjes')" [matAutocomplete]="autoCantidadEjes" 
+                autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoCantidadEjes="matAutocomplete">
                 <mat-option [value]="1">1</mat-option>
                 <mat-option [value]="2">2</mat-option>
@@ -89,14 +94,14 @@
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idCapacidadCarga" class="tamanio-label-titulo">Capacidad Total de Carga(Tn)</label>
+              <label for="idCapacidadCarga" class="tamanio-label">Capacidad Total de Carga(Tn)</label>
               <input id="idCapacidadCarga" type="number" formControlName="capacidadCarga" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idTara" class="tamanio-label-titulo">Tara(Tn)</label>
+              <label for="idTara" class="tamanio-label">Tara(Tn)</label>
               <input id="idTara" type="number" formControlName="tara" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -105,28 +110,28 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idAltura" class="tamanio-label-titulo">Altura(m)</label>
+              <label for="idAltura" class="tamanio-label">Altura(m)</label>
               <input id="idAltura" type="number" formControlName="altura" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idLargo" class="tamanio-label-titulo">Largo(m)</label>
+              <label for="idLargo" class="tamanio-label">Largo(m)</label>
               <input id="idLargo" type="number" formControlName="largo" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idAncho" class="tamanio-label-titulo">Ancho(m)</label>
+              <label for="idAncho" class="tamanio-label">Ancho(m)</label>
               <input id="idAncho" type="number" formControlName="ancho" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idM3" class="tamanio-label-titulo">M3(m)</label>
+              <label for="idM3" class="tamanio-label">M3(m)</label>
               <input id="idM3" type="number" formControlName="m3" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>

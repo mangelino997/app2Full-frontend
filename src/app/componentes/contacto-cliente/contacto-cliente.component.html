@@ -13,41 +13,42 @@
       <h5>{{pestaniaActual}} Contácto de Cliente</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idCliente" class="tamanio-label">Cliente</label>
-              <input id="idCliente" class="form-control form-control-sm" type="text" matInput
-                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="listarPorCliente(item)">
-                  {{item.alias}}
+              <label for="idSucursalCliente" class="tamanio-label">Cliente-Sucursal</label>
+              <input id="idSucursalCliente" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('sucursalCliente')" [matAutocomplete]="autoSucursalCliente" autocomplete="off">
+              <mat-autocomplete #autoSucursalCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
+                <mat-option *ngFor="let itemSucursalCliente of resultadosSucursalesClientes" [value]="itemSucursalCliente"
+                  (onSelectionChange)="listarPorSucursalCliente(item)">
+                  {{itemSucursalCliente.nombre}} - {{itemSucursalCliente.cliente.razonSocial}}
                 </mat-option>
               </mat-autocomplete>
             </div>
           </div>
         </div>
         <div class="row" *ngIf="mostrarAutocompletado">
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idContacto" class="tamanio-label">Lista de Contáctos</label>
-              <input id="idContacto" class="form-control form-control-sm" formControlName="contacto"
-                type="text" matInput [matAutocomplete]="autoContacto" autocomplete="off"
+              <label for="idAutocompletado" class="tamanio-label">Lista de Contáctos</label>
+              <input id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
+                type="text" matInput [matAutocomplete]="auto" autocomplete="off"
                 [readonly]="soloLectura" [required]="mostrarAutocompletado">
-              <mat-autocomplete #autoContacto="matAutocomplete" [displayWith]="displayFb.bind(this)">
-                <mat-option *ngFor="let itemContacto of contactos" [value]="itemContacto">
-                  {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}}
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                <mat-option *ngFor="let item of contactos" [value]="item" (onSelectionChange)="formulario.setValue(item)">
+                  {{item.nombre}} - {{item.tipoContacto.nombre}}
                 </mat-option>
               </mat-autocomplete>
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTipoContacto" class="tamanio-label">Tipo de Contácto</label>
-              <input id="idTipoContacto" class="form-control form-control-sm" formControlName="tipoContacto"
-                type="text" matInput [matAutocomplete]="autoTipoContacto" autocomplete="off" [readonly]="soloLectura">
+              <input id="idTipoContacto" class="form-control form-control-sm" type="text" matInput 
+                [formControl]="formulario.get('tipoContacto')" [matAutocomplete]="autoTipoContacto" 
+                autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoTipoContacto="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let itemTipoContacto of tiposContactos" [value]="itemTipoContacto">
                   {{itemTipoContacto.nombre}}

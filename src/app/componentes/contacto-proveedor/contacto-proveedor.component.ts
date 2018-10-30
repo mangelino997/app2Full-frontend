@@ -7,10 +7,6 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map, startWith } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-contacto-proveedor',
@@ -42,12 +38,12 @@ export class ContactoProveedorComponent implements OnInit {
   private tiposContactos:Array<any> = [];
   //Define la lista de contactos
   private contactos:Array<any> = [];
-  //Define el contacto
-  private contacto:FormControl = new FormControl();
   //Define el form control para las busquedas
   private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   private resultados:Array<any> = [];
+  //Define la lista de resultados de busqueda de sucursales bancos
+  private resultadosProveedores:Array<any> = [];
   //Constructor
   constructor(private servicio: ContactoProveedorService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -83,17 +79,16 @@ export class ContactoProveedorComponent implements OnInit {
       usuarioAlta: new FormControl(),
       usuarioMod: new FormControl()
     });
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
-    //Autocompletado - Buscar por alias proveedor
-    this.formulario.get('proveedor').valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
-            this.resultados = response;
-          })
-        }
+    //Autocompletado Sucursal Banco - Buscar por nombre
+    this.formulario.get('proveedor').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.proveedorServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosProveedores = response;
+        })
+      }
     })
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de tipos de contactos
@@ -113,6 +108,7 @@ export class ContactoProveedorComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultados = [];
+    this.resultadosProveedores = [];
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -126,10 +122,14 @@ export class ContactoProveedorComponent implements OnInit {
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
+  public seleccionarPestania(id, nombre, opcion) {
     this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
+      this.vaciarListas();
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -186,7 +186,7 @@ export class ContactoProveedorComponent implements OnInit {
       }
     );
   }
-  //Obtiene la lista por proveedor
+  //Obtiene la lista de contactos por proveedor
   public listarPorProveedor(elemento) {
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorProveedor(elemento.id).subscribe(
@@ -220,7 +220,7 @@ export class ContactoProveedorComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar() {
-  this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -244,6 +244,7 @@ export class ContactoProveedorComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario() {
     this.formulario.reset();
+    this.autocompletado.setValue(undefined);
     this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
@@ -272,7 +273,7 @@ export class ContactoProveedorComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined) {
+    if(valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if(campo == 'correoelectronico') {
@@ -285,15 +286,17 @@ export class ContactoProveedorComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
-  //Define como se muestra los datos en el autcompletado
+  //Define como se muestra los datos en el autocompletado
   public displayF(elemento) {
     if(elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
@@ -301,7 +304,15 @@ export class ContactoProveedorComponent implements OnInit {
       return elemento;
     }
   }
-  //Define como se muestra los datos en el autcompletado b
+  //Define como se muestra los datos en el autocompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + '' : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autocompletado b
   public displayFb(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ' - ' + elemento.tipoContacto.nombre : elemento;
@@ -315,9 +326,9 @@ export class ContactoProveedorComponent implements OnInit {
     var opcion = this.opcionSeleccionada;
     if(keycode == 113) {
       if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre);
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre);
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
   }

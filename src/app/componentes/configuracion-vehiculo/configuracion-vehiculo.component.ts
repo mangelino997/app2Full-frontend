@@ -6,10 +6,6 @@ import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-configuracion-vehiculo',
@@ -29,8 +25,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define una lista
-  private lista:Array<any> = [];
   //Define la lista de pestanias
   private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -188,7 +182,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public listarPorTipoVehiculoMarcaVehiculo() {
     let tipoVehiculo = this.formulario.get('tipoVehiculo').value;
     let marcaVehiculo = this.formulario.get('marcaVehiculo').value;
-    if(tipoVehiculo && marcaVehiculo) {
+    if(tipoVehiculo && marcaVehiculo && this.mostrarAutocompletado) {
       this.servicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id).subscribe(
         res => {
           this.configuraciones = res.json();
@@ -249,11 +243,13 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Define como se muestra los datos en el autcompletado a
@@ -271,6 +267,17 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         + elemento.cantidadEjes + ' - Capacidad Carga: ' + elemento.capacidadCarga : elemento;
     } else {
       return elemento;
+    }
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
+      }
     }
   }
 }

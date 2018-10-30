@@ -1,16 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ContactoClienteService } from '../../servicios/contacto-cliente.service';
 import { PestaniaService } from '../../servicios/pestania.service';
-import { ClienteService } from '../../servicios/cliente.service';
+import { SucursalClienteService } from '../../servicios/sucursal-cliente.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map, startWith } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-contacto-cliente',
@@ -46,12 +42,12 @@ export class ContactoClienteComponent implements OnInit {
   private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   private resultados:Array<any> = [];
-  //Define el contacto
-  private contacto:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda sucursales clientes
+  private resultadosSucursalesClientes:Array<any> = [];
   //Constructor
   constructor(private servicio: ContactoClienteService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private clienteServicio: ClienteService, private tipoContactoServicio: TipoContactoService) {
+    private sucursalClienteServicio: SucursalClienteService, private tipoContactoServicio: TipoContactoService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -70,8 +66,8 @@ export class ContactoClienteComponent implements OnInit {
     //Autocompletado - Buscar por alias cliente
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.clienteServicio.listarPorAlias(data).subscribe(response =>{
-          this.resultados = response;
+        this.sucursalClienteServicio.listarPorAliasCliente(data).subscribe(response =>{
+          this.resultadosSucursalesClientes = response;
         })
       }
     })
@@ -112,6 +108,7 @@ export class ContactoClienteComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultados = [];
+    this.resultadosSucursalesClientes = [];
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -131,7 +128,7 @@ export class ContactoClienteComponent implements OnInit {
     this.activeLink = nombre;
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
-      this.resultados = [];
+      this.vaciarListas();
     }
     switch (id) {
       case 1:
@@ -189,9 +186,8 @@ export class ContactoClienteComponent implements OnInit {
       }
     );
   }
-  //Obtiene la lista por cliente
-  public listarPorCliente(elemento) {
-    this.formulario.get('cliente').setValue(elemento);
+  //Obtiene la lista por sucursal cliente
+  public listarPorSucursalCliente(elemento) {
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorCliente(elemento.id).subscribe(
         res => {
@@ -248,7 +244,7 @@ export class ContactoClienteComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario() {
     this.formulario.reset();
-    this.autocompletado.reset();
+    this.autocompletado.setValue(undefined);
     this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
@@ -277,7 +273,7 @@ export class ContactoClienteComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined) {
+    if(valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if(campo == 'correoelectronico') {
@@ -303,7 +299,15 @@ export class ContactoClienteComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
     if(elemento != undefined) {
-      return elemento.alias ? elemento.alias : elemento;
+      return elemento.nombre ? elemento.nombre + ' - ' + elemento.cliente.razonSocial : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
     }

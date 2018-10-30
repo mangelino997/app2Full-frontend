@@ -64,6 +64,14 @@ export class SucursalClienteService {
   public listarPorCliente(id) {
     return this.http.get(this.url + '/listarPorCliente/' + id, this.options);
   }
+  //Obtiene un listado por alias del cliente
+  public listarPorAliasCliente(alias) {
+    return this.http.get(this.url + '/listarPorAliasCliente/' + alias, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

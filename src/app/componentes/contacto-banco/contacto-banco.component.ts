@@ -133,16 +133,16 @@ export class ContactoBancoComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, false, false, true, 'idSucursalBanco');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idSucursalBanco');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idSucursalBanco');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idSucursalBanco');
         break;
       default:
         break;
@@ -208,7 +208,7 @@ export class ContactoBancoComponent implements OnInit {
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario();
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idSucursalBanco').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -227,7 +227,7 @@ export class ContactoBancoComponent implements OnInit {
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario();
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idSucursalBanco').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -273,7 +273,7 @@ export class ContactoBancoComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined  && valor != null && valor != '') {
+    if(valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if(campo == 'correoelectronico') {
