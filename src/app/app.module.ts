@@ -144,8 +144,9 @@ import { ContactoCompaniaSeguroComponent } from './componentes/contacto-compania
 import { ContactoProveedorComponent } from './componentes/contacto-proveedor/contacto-proveedor.component'; //Probado
 import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.component';
 import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component'; //Probado
+import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component';
+import { VehiculoService } from './servicios/vehiculo.service';
 //import { ViajeComponent } from './componentes/viaje/viaje.component';
-//import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component';
 //import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component';
 
 //Rutas
@@ -204,7 +205,8 @@ const appRoutes: Routes = [
   {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactocompaniaseguro', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//VER
   {path: 'generalesproveedorescontactos', component: ContactoProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'puntoventa', component: PuntoVentaComponent, canActivate: [GuardiaService]}//VER
+  {path: 'puntoventa', component: PuntoVentaComponent, canActivate: [GuardiaService]},//VER
+  {path: 'logisticavehiculos', component: VehiculoComponent, canActivate: [GuardiaService]}
   //{path: 'viajepropio', component: ViajeComponent, canActivate: [GuardiaService]}//VER
 ]
 
@@ -277,9 +279,9 @@ const stompConfig: StompConfig = {
     ContactoCompaniaSeguroComponent,
     ContactoProveedorComponent,
     PuntoVentaComponent,
-    SucursalClienteComponent
+    SucursalClienteComponent,
+    VehiculoComponent
     //ViajeComponent,
-    //VehiculoComponent,
     //VehiculoProveedorComponent
   ],
   imports: [
@@ -398,6 +400,7 @@ const stompConfig: StompConfig = {
     OrdenVentaEscalaService,
     ViajePropioService,
     FechaService,
+    VehiculoService,
     StompService,
     {
       provide: StompConfig,

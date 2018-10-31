@@ -12,10 +12,6 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map, startWith } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs'
 
 @Component({
   selector: 'app-vehiculo',
@@ -53,6 +49,10 @@ export class VehiculoComponent implements OnInit {
   private configuracionesVehiculos:Array<any> = [];
   //Define el autocompletado para las busquedas
   private autocompletado:FormControl = new FormControl();
+  //Define un campo control para tipo vehiculo
+  private tipoVehiculo:FormControl = new FormControl();
+  //Define un campo control para marca vehiculo
+  private marcaVehiculo:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   private resultados = [];
   //Define la lista de resultados de busqueda vehiculo remolque
@@ -107,7 +107,7 @@ export class VehiculoComponent implements OnInit {
       dominio: new FormControl('', [Validators.required, Validators.maxLength(10)]),
       numeroInterno: new FormControl('', Validators.maxLength(5)),
       localidad: new FormControl('', Validators.required),
-      anioFabricacion: new FormControl('', [Validators.required, Validators.min(1)]),
+      anioFabricacion: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(4)]),
       numeroMotor: new FormControl('', [Validators.min(5), Validators.maxLength(25)]),
       numeroChasis: new FormControl('', [Validators.min(5), Validators.maxLength(25)]),
       empresa: new FormControl('', Validators.required),
@@ -144,7 +144,7 @@ export class VehiculoComponent implements OnInit {
       }
     })
     //Autocompletado Compania Seguro - Buscar por nombre
-    this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
+    this.formulario.get('companiaSeguroPoliza').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
         this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosCompaniasSeguros = response;
@@ -202,6 +202,9 @@ export class VehiculoComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.mostrarConfiguracionVehiculo = configuracionVehiculo;
+    this.tipoVehiculo.setValue(undefined);
+    this.marcaVehiculo.setValue(undefined);
+    this.configuracion.setValue(undefined);
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -272,10 +275,20 @@ export class VehiculoComponent implements OnInit {
       }
     );
   }
+  //Establece el tipo de vehiculo seleccionado de lista tipo vehiculos
+  public establecerTipoVehiculo(elemento) {
+    this.tipoVehiculo.setValue(elemento);
+    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
+  }
+  //Establece la marca de vehiculo seleccionado de lista marca vehiculos
+  public establecerMarcaVehiculo(elemento) {
+    this.marcaVehiculo.setValue(elemento);
+    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
+  }
   //Obtiene la lista de configuraciones de vehiculos por tipoVehiculo y marcaVehiculo
-  public listarConfiguracionesPorTipoVehiculoMarcaVehiculo(tipoVehiculo, marcaVehiculo) {
-    if(tipoVehiculo != null && marcaVehiculo != null) {
-      this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id)
+  private listarConfiguracionesPorTipoVehiculoMarcaVehiculo() {
+    if(this.tipoVehiculo.value != null && this.marcaVehiculo.value != null) {
+      this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(this.tipoVehiculo.value.id, this.marcaVehiculo.value.id)
         .subscribe(
           res => {
             this.configuracionesVehiculos = res.json();
@@ -288,34 +301,39 @@ export class VehiculoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    this.servicio.agregar(this.formulario.value).subscribe(
-      res => {
-        var respuesta = res.json();
-        if(respuesta.codigo == 201) {
-          this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
-            document.getElementById('idTipoVehiculo').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-        }
-      },
-      err => {
-        var respuesta = err.json();
-        if(respuesta.codigo == 11017) {
-          document.getElementById("labelDominio").classList.add('label-error');
-          document.getElementById("idDominio").classList.add('is-invalid');
-          document.getElementById("idDominio").focus();
-        } else if(respuesta.codigo == 11018) {
-          document.getElementById("labelNumeroInterno").classList.add('label-error');
-          document.getElementById("idNumeroInterno").classList.add('is-invalid');
-          document.getElementById("idNumeroInterno").focus();
-        }
-        this.toastr.error(respuesta.mensaje);
-      }
-    );
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    console.log(this.formulario.value);
+    // this.servicio.agregar(this.formulario.value).subscribe(
+    //   res => {
+    //     var respuesta = res.json();
+    //     if(respuesta.codigo == 201) {
+    //       this.reestablecerFormulario(respuesta.id);
+    //       setTimeout(function() {
+    //         document.getElementById('idTipoVehiculo').focus();
+    //       }, 20);
+    //       this.toastr.success(respuesta.mensaje);
+    //     }
+    //   },
+    //   err => {
+    //     var respuesta = err.json();
+    //     if(respuesta.codigo == 11017) {
+    //       document.getElementById("labelDominio").classList.add('label-error');
+    //       document.getElementById("idDominio").classList.add('is-invalid');
+    //       document.getElementById("idDominio").focus();
+    //     } else if(respuesta.codigo == 11018) {
+    //       document.getElementById("labelNumeroInterno").classList.add('label-error');
+    //       document.getElementById("idNumeroInterno").classList.add('is-invalid');
+    //       document.getElementById("idNumeroInterno").focus();
+    //     }
+    //     this.toastr.error(respuesta.mensaje);
+    //   }
+    // );
   }
   //Actualiza un registro
   private actualizar() {
+  this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+  this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
   this.servicio.actualizar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
@@ -411,9 +429,8 @@ export class VehiculoComponent implements OnInit {
   //Muestra el valor en los autocompletados c
   public displayFc(elemento) {
     if(elemento != undefined) {
-      return elemento.configuracionVehiculo ? 'Modelo: ' + elemento.configuracionVehiculo.modelo +
-        ' - Cantidad Ejes: ' + elemento.configuracionVehiculo.cantidadEjes +
-        ' - Capacidad Carga: ' + elemento.configuracionVehiculo.capacidadCarga : elemento;
+      return elemento.modelo ? 'Modelo: ' + elemento.modelo + ' - Cantidad Ejes: ' + elemento.cantidadEjes +
+        ' - Capacidad Carga: ' + elemento.capacidadCarga : elemento;
     } else {
       return elemento;
     }
