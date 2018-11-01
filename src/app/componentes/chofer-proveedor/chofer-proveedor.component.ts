@@ -5,14 +5,9 @@ import { ProveedorService } from '../../servicios/proveedor.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
-import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map, startWith } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-chofer-proveedor',
@@ -32,24 +27,14 @@ export class ChoferProveedorComponent implements OnInit {
   private soloLectura:boolean = false;
   //Define si mostrar el boton
   private mostrarBoton:boolean = null;
-  //Define una lista
-  private lista:Array<any> = [];
   //Define la lista de pestanias
   private pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
   private formulario:FormGroup;
   //Define la lista completa de registros
   private listaCompleta:Array<any> = [];
-  //Define la lista de choferes por proveedor
-  private resultadosChoferes:Array<any> = [];
   //Define la lista de tipos de documentos
   private tiposDocumentos:Array<any> = [];
-  //Define el id de proveedor
-  private idProveedor:FormControl = new FormControl();
-  //Define la razon social del proveedor
-  private razonSocial:FormControl = new FormControl();
-  //Define los choferes
-  private choferes:FormControl = new FormControl();
   //Define el form control para las busquedas
   private autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
@@ -58,9 +43,11 @@ export class ChoferProveedorComponent implements OnInit {
   private resultadosBarrios:Array<any> = [];
   //Define la lista de resultados de busqueda de localidad
   private resultadosLocalidades:Array<any> = [];
+  //Define la lista de resultados de proveedores
+  private resultadosProveedores:Array<any> = [];
   //Constructor
   constructor(private servicio: ChoferProveedorService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
+    private appComponent: AppComponent, private toastr: ToastrService,
     private proveedorServicio: ProveedorService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private tipoDocumentoServicio: TipoDocumentoService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -78,14 +65,6 @@ export class ChoferProveedorComponent implements OnInit {
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
-    //Autocompletado - Buscar por alias
-    this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
-          this.resultados = response;
-        })
-      }
-    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -93,19 +72,19 @@ export class ChoferProveedorComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      nombre: new FormControl(),
-      domicilio: new FormControl(),
-      proveedor: new FormControl(),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
+      proveedor: new FormControl('', Validators.required),
       barrio: new FormControl(),
-      localidad: new FormControl(),
-      tipoDocumento: new FormControl(),
-      numeroDocumento: new FormControl(),
-      fechaNacimiento: new FormControl(),
-      telefonoFijo: new FormControl(),
-      telefonoMovil: new FormControl(),
-      vtoCarnet: new FormControl(),
-      vtoCurso: new FormControl(),
-      vtoLNH: new FormControl(),
+      localidad: new FormControl('', Validators.required),
+      tipoDocumento: new FormControl('', Validators.required),
+      numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      fechaNacimiento: new FormControl('', Validators.required),
+      telefonoFijo: new FormControl('', Validators.maxLength(45)),
+      telefonoMovil: new FormControl('', Validators.maxLength(45)),
+      vtoCarnet: new FormControl('', Validators.required),
+      vtoCurso: new FormControl('', Validators.required),
+      vtoLNH: new FormControl('', Validators.required),
       vtoLibretaSanidad: new FormControl(),
       usuarioAlta: new FormControl(),
       fechaAlta: new FormControl(),
@@ -117,6 +96,15 @@ export class ChoferProveedorComponent implements OnInit {
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+    //Autocompletado Proveedor - Buscar por nombre
+    this.formulario.get('proveedor').valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.proveedorServicio.listarPorAlias(data).subscribe(response => {
+            this.resultadosProveedores = response;
+          })
+        }
+    })
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges
       .subscribe(data => {
@@ -140,50 +128,12 @@ export class ChoferProveedorComponent implements OnInit {
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
   }
-  //Define como se muestra los datos en el autcompletado
-  public displayF(elemento) {
-    if(elemento != undefined) {
-      return elemento.alias ? elemento.alias : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado a
-  public displayFa(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado b
-  public displayFb(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
-        + ', ' + elemento.provincia.pais.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado c
-  public displayFc(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
     this.resultados = [];
+    this.resultadosProveedores = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
-  }
-  //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.idProveedor.setValue(elemAutocompletado.id);
-   this.razonSocial.setValue(elemAutocompletado.razonSocial);
-   this.listarPorProveedor(elemAutocompletado.id);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -203,21 +153,21 @@ export class ChoferProveedorComponent implements OnInit {
     this.activeLink = nombre;
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
-      this.resultados = [];
+      this.vaciarLista();
     }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, false, false, true, 'idProveedor');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idProveedor');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idProveedor');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
         break;
       default:
         break;
@@ -251,15 +201,17 @@ export class ChoferProveedorComponent implements OnInit {
     );
   }
   //Obtiene una lista de choferes por proveedor
-  private listarPorProveedor(proveedor) {
-    this.servicio.listarPorProveedor(proveedor.id).subscribe(
-      res => {
-        this.resultadosChoferes = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    )
+  public listarPorProveedor(proveedor) {
+    if(this.mostrarAutocompletado) {
+      this.servicio.listarPorProveedor(proveedor.id).subscribe(
+        res => {
+          this.resultados = res.json();
+        },
+        err => {
+          console.log(err);
+        }
+      )
+    }
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -292,7 +244,7 @@ export class ChoferProveedorComponent implements OnInit {
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -311,7 +263,7 @@ export class ChoferProveedorComponent implements OnInit {
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -354,14 +306,10 @@ export class ChoferProveedorComponent implements OnInit {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   }
-  //Formatea el numero a x decimales
-  public setDecimales(valor, cantidad) {
-    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
-  }
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined) {
+    if(valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if(campo == 'sitioWeb') {
@@ -383,6 +331,39 @@ export class ChoferProveedorComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+  }
+  //Define como se muestra los datos en el autcompletado
+  public displayF(elemento) {
+    if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
+        + ', ' + elemento.provincia.pais.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
   //Maneja los evento al presionar una tacla (para pestanias)
   public manejarEvento(keycode) {

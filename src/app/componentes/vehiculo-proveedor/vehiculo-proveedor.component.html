@@ -13,14 +13,14 @@
       <h5>{{pestaniaActual}} Vehículo Proveedor</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row" *ngIf="mostrarAutocompletado">
-          <div class="col-md-6">
+          <div class="col-md-8">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Buscar Vehículo de Proveedor</label>
               <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput 
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
-                (onSelectionChange)="formulario.setValue(item)">
+                  (onSelectionChange)="formulario.setValue(item)">
                   {{item.alias}}
                 </mat-option>
               </mat-autocomplete>
@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-8">
             <div class="form-group has-float-label">
               <label for="idProveedor" class="tamanio-label">Proveedor</label>
               <input id="idProveedor" class="form-control form-control-sm" type="text" matInput 
@@ -43,31 +43,27 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo</label>
               <input id="idTipoVehiculo" class="form-control form-control-sm" type="text" matInput 
                 [formControl]="formulario.get('tipoVehiculo')" [matAutocomplete]="autoTipoVehiculo" 
                 autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoTipoVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo"
-                  (onSelectionChange)="listarConfiguracionesPorTipoVehiculoMarcaVehiculo(
-                    formulario.get('tipoVehiculo').value, formulario.get('marcaVehiculo').value)">
+                <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
                   {{itemTipoVehiculo.nombre}}
                 </mat-option>
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo</label>
               <input id="idMarcaVehiculo" class="form-control form-control-sm" type="text" matInput 
                 [formControl]="formulario.get('marcaVehiculo')" [matAutocomplete]="autoMarcaVehiculo" 
                 autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoMarcaVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo"
-                  (onSelectionChange)="listarConfiguracionesPorTipoVehiculoMarcaVehiculo(
-                    formulario.get('tipoVehiculo').value, formulario.get('marcaVehiculo').value)">
+                <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                   {{itemMarcaVehiculo.nombre}}
                 </mat-option>
               </mat-autocomplete>
@@ -75,52 +71,53 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idDominio" class="tamanio-label-titulo">Dominio</label>
+              <label for="idDominio" class="tamanio-label">Dominio</label>
               <input id="idDominio" type="text" formControlName="dominio" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idAnioFabricacion" class="tamanio-label">Año de Fabricación</label>
-              <input id="idAnioFabricacion" type="date" formControlName="anioFabricacion"
+              <input id="idAnioFabricacion" type="number" formControlName="anioFabricacion"
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idNumeroMotor" class="tamanio-label-titulo">Número de Motor</label>
+              <label for="idNumeroMotor" class="tamanio-label">Número de Motor</label>
               <input id="idNumeroMotor" type="number" formControlName="numeroMotor" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idNumeroChasis" class="tamanio-label-titulo">Número de Chasis</label>
+              <label for="idNumeroChasis" class="tamanio-label">Número de Chasis</label>
               <input id="idNumeroChasis" type="number" formControlName="numeroChasis" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idPersonal" class="tamanio-label">Chofer Habitual</label>
-              <input id="idPersonal" class="form-control form-control-sm" type="text" matInput 
-                [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal"
+              <label for="idChoferProveedor" class="tamanio-label">Chofer Habitual</label>
+              <input id="idChoferProveedor" class="form-control form-control-sm" type="text" matInput 
+                [formControl]="formulario.get('choferProveedor')" [matAutocomplete]="autoChoferProveedor"
                 autocomplete="off" (blur)="vaciarLista()" [readonly]="soloLectura">
-              <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
-                <mat-option *ngFor="let itemPersonal of resultadosPersonales" [value]="itemPersonal">
-                  {{itemPersonal.alias}}
+              <mat-autocomplete #autoChoferProveedor="matAutocomplete" [displayWith]="displayF.bind(this)">
+                <mat-option *ngFor="let itemChoferProveedor of resultadosChoferesProveedores" 
+                  [value]="itemChoferProveedor">
+                  {{itemChoferProveedor.alias}}
                 </mat-option>
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idVehiculoRemolque" class="tamanio-label">Remolque Habitual</label>
               <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text" matInput 
@@ -134,22 +131,9 @@
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-3">
-            <div class="form-group has-float-label">
-              <label for="idLocalidad" class="tamanio-label">Radicación Localidad</label>
-              <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput 
-                [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
-                autocomplete="off" (blur)="vaciarLista()" [readonly]="soloLectura">
-              <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
-                <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
-                  {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}}
-                </mat-option>
-              </mat-autocomplete>
-            </div>
-          </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput 
@@ -162,14 +146,14 @@
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idNumeroPoliza" class="tamanio-label-titulo">Número de Póliza</label>
+              <label for="idNumeroPoliza" class="tamanio-label">Número de Póliza</label>
               <input id="idNumeroPoliza" type="number" formControlName="numeroPoliza" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idVtoPoliza" class="tamanio-label">Vto. Póliza</label>
               <input id="idVtoPoliza" type="date" formControlName="vtoPoliza"
@@ -178,21 +162,21 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idNumeroRuta" class="tamanio-label-titulo">Número de Ruta</label>
+              <label for="idNumeroRuta" class="tamanio-label">Número de Ruta</label>
               <input id="idNumeroRuta" type="number" formControlName="numeroRuta" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idVtoRuta" class="tamanio-label">Vto. Ruta</label>
               <input id="idVtoRuta" type="date" formControlName="vtoRuta"
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idVtoRTO" class="tamanio-label">Vto. Inspección Técnica</label>
               <input id="idVtoRTO" type="date" formControlName="vtoRTO"
@@ -201,14 +185,14 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idVtoSenasa" class="tamanio-label">Vto. Senasa</label>
               <input id="idVtoSenasa" type="date" formControlName="vtoSenasa"
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idVtoHabBromatologica" class="tamanio-label">Vto. Hab. Bromatologica</label>
               <input id="idVtoHabBromatologica" type="date" formControlName="vtoHabBromatologica"
@@ -250,10 +234,10 @@
               <span>{{l.proveedor.razonSocial}}</span>
             </td>
             <td align="center">
-              <span>{{l.configuracionVehiculo.tipoVehiculo.nombre}}</span>
+              <span>{{l.tipoVehiculo.nombre}}</span>
             </td>
             <td align="center">
-              <span>{{l.configuracionVehiculo.marcaVehiculo.nombre}}</span>
+              <span>{{l.marcaVehiculo.nombre}}</span>
             </td>
             <td align="center">
               <span>{{l.companiaSeguro.nombre}}</span>

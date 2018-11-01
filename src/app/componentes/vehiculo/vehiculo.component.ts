@@ -1,17 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
 import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { EmpresaService } from '../../servicios/empresa.service';
-import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
+import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
 import { PersonalService } from '../../servicios/personal.service';
-import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatAutocompleteTrigger } from '@angular/material';
 
 @Component({
   selector: 'app-vehiculo',
@@ -19,6 +19,8 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./vehiculo.component.css']
 })
 export class VehiculoComponent implements OnInit {
+  @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger }) 
+  autoComplete: MatAutocompleteTrigger;
   //Define la pestania activa
   private activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -65,12 +67,14 @@ export class VehiculoComponent implements OnInit {
   private resultadosPersonales = [];
   //Define el campo de control configuracion
   private configuracion:FormControl = new FormControl();
+  //Defiene la lista de compania seguro poliza
+  private companiasSegurosPolizas:Array<any> = [];
   //Constructor
   constructor(private servicio: VehiculoService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private localidadServicio: LocalidadService, private empresaServicio: EmpresaService,
-    private companiaSeguroServicio: CompaniaSeguroService,
+    private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService,
     private personalServicio: PersonalService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -143,14 +147,6 @@ export class VehiculoComponent implements OnInit {
         })
       }
     })
-    //Autocompletado Compania Seguro - Buscar por nombre
-    this.formulario.get('companiaSeguroPoliza').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
-        this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosCompaniasSeguros = response;
-        })
-      }
-    })
     //Autocompletado Personal - Buscar chofer por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -167,6 +163,8 @@ export class VehiculoComponent implements OnInit {
     this.listarMarcasVehiculos();
     //Obtiene la lista de empresas
     this.listarEmpresas();
+    //Obtiene la lista completa de registros
+    this.listar();
   }
   //Obtiene la lista de tipos de vehiculos
   private listarTiposVehiculos() {
@@ -185,6 +183,19 @@ export class VehiculoComponent implements OnInit {
     this.empresaServicio.listar().subscribe(res => {
       this.empresas = res.json();
     })
+  }
+  //Obtiene la lista de compania de seguros poliza por empresa
+  private listarCompaniasSeguroPolizaPorEmpresa(empresa) {
+    this.companiaSeguroPolizaServicio.listarPorEmpresa(empresa.id).subscribe(res => {
+      this.companiasSegurosPolizas = res.json();
+    })
+  }
+  //Establece el formulario al seleccionar elemento de autocompletado
+  public establecerFormulario(elemento) {
+    this.formulario.setValue(elemento);
+    this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
+    this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
+    this.establecerConfiguracion(elemento);
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
@@ -214,7 +225,6 @@ export class VehiculoComponent implements OnInit {
     this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.listaCompleta = null;
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
@@ -225,12 +235,18 @@ export class VehiculoComponent implements OnInit {
         this.establecerValoresPestania(nombre, false, false, true, true,'idTipoVehiculo');
         break;
       case 2:
+        try {
+          this.autoComplete.closePanel();
+        } catch(e) {}
         this.establecerValoresPestania(nombre, true, true, false, false, 'idAutocompletado');
         break;
       case 3:
         this.establecerValoresPestania(nombre, true, false, true, true, 'idAutocompletado');
         break;
       case 4:
+        try {
+          this.autoComplete.closePanel();
+        } catch(e) {}
         this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
         break;
       default:
@@ -303,32 +319,31 @@ export class VehiculoComponent implements OnInit {
   private agregar() {
     this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    console.log(this.formulario.value);
-    // this.servicio.agregar(this.formulario.value).subscribe(
-    //   res => {
-    //     var respuesta = res.json();
-    //     if(respuesta.codigo == 201) {
-    //       this.reestablecerFormulario(respuesta.id);
-    //       setTimeout(function() {
-    //         document.getElementById('idTipoVehiculo').focus();
-    //       }, 20);
-    //       this.toastr.success(respuesta.mensaje);
-    //     }
-    //   },
-    //   err => {
-    //     var respuesta = err.json();
-    //     if(respuesta.codigo == 11017) {
-    //       document.getElementById("labelDominio").classList.add('label-error');
-    //       document.getElementById("idDominio").classList.add('is-invalid');
-    //       document.getElementById("idDominio").focus();
-    //     } else if(respuesta.codigo == 11018) {
-    //       document.getElementById("labelNumeroInterno").classList.add('label-error');
-    //       document.getElementById("idNumeroInterno").classList.add('is-invalid');
-    //       document.getElementById("idNumeroInterno").focus();
-    //     }
-    //     this.toastr.error(respuesta.mensaje);
-    //   }
-    // );
+    this.servicio.agregar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 201) {
+          this.reestablecerFormulario(respuesta.id);
+          setTimeout(function() {
+            document.getElementById('idTipoVehiculo').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11017) {
+          document.getElementById("labelDominio").classList.add('label-error');
+          document.getElementById("idDominio").classList.add('is-invalid');
+          document.getElementById("idDominio").focus();
+        } else if(respuesta.codigo == 11018) {
+          document.getElementById("labelNumeroInterno").classList.add('label-error');
+          document.getElementById("idNumeroInterno").classList.add('is-invalid');
+          document.getElementById("idNumeroInterno").focus();
+        }
+        this.toastr.error(respuesta.mensaje);
+      }
+    );
   }
   //Actualiza un registro
   private actualizar() {
@@ -369,6 +384,8 @@ export class VehiculoComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
+    this.tipoVehiculo.setValue(undefined);
+    this.marcaVehiculo.setValue(undefined);
     this.vaciarLista();
   }
   /*
@@ -393,14 +410,20 @@ export class VehiculoComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.estableberValoresFormulario(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.estableberValoresFormulario(elemento);
+  }
+  //Establece los valores al "ver" o "modificar" desde la pestaña "lista"
+  private estableberValoresFormulario(elemento) {
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+    this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
+    this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
+    this.establecerConfiguracion(elemento);
   }
   //Muestra el valor en los autocompletados
   public displayF(elemento) {
@@ -439,6 +462,15 @@ export class VehiculoComponent implements OnInit {
   public displayFd(elemento) {
     if(elemento != undefined) {
       return elemento.razonSocial ? elemento.razonSocial : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Muestra el valor en los autocompletados e
+  public displayFe(elemento) {
+    if(elemento != undefined) {
+      return elemento.companiaSeguro ? elemento.companiaSeguro.nombre + ' - N° Póliza: ' + elemento.numeroPoliza +
+        ' - Vto. Póliza: ' + elemento.vtoPoliza : elemento;
     } else {
       return elemento;
     }

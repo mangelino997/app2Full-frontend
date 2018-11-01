@@ -20,7 +20,7 @@
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="formulario.setValue(item)">
+                  (onSelectionChange)="establecerFormulario(item)">
                   {{item.alias}}
                 </mat-option>
               </mat-autocomplete>
@@ -31,7 +31,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo</label>
-              <input id="idTipoVehiculo" class="form-control form-control-sm" type="text" matInput
+              <input #autoCompleteInput id="idTipoVehiculo" class="form-control form-control-sm" type="text" matInput
                 [formControl]="tipoVehiculo" [matAutocomplete]="autoTipoVehiculo" 
                 autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoTipoVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)">
@@ -113,7 +113,8 @@
                 [formControl]="formulario.get('empresa')" [matAutocomplete]="autoEmpresa" 
                 autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoEmpresa="matAutocomplete" [displayWith]="displayFd.bind(this)">
-                <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
+                <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa"
+                  (onSelectionChange)="listarCompaniasSeguroPolizaPorEmpresa(itemEmpresa)">
                   {{itemEmpresa.razonSocial}}
                 </mat-option>
               </mat-autocomplete>
@@ -176,21 +177,22 @@
             </div>
           </div>
         </div>
-        <div class="row" formGroupName="companiaSeguroPoliza">
-          <div class="col-md-4">
+        <div class="row">
+          <div class="col-md-8">
             <div class="form-group has-float-label">
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput 
-                [formControl]="formulario.get('companiaSeguroPoliza').get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
+                [formControl]="formulario.get('companiaSeguroPoliza')" [matAutocomplete]="autoCompaniaSeguro"
                 autocomplete="off" (blur)="vaciarLista()" [readonly]="soloLectura">
-              <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
-                  {{itemCompaniaSeguro.nombre}}
+              <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFe.bind(this)">
+                <mat-option *ngFor="let itemCompaniaSeguro of companiasSegurosPolizas" [value]="itemCompaniaSeguro">
+                  {{itemCompaniaSeguro.companiaSeguro.nombre}} - N° Póliza: {{itemCompaniaSeguro.numeroPoliza}} 
+                  - Vto. Póliza: {{itemCompaniaSeguro.vtoPoliza}}
                 </mat-option>
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-4">
+          <!-- <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNumeroPoliza" class="tamanio-label">Número de Póliza</label>
               <input id="idNumeroPoliza" type="number" formControlName="numeroPoliza" autocomplete="off"
@@ -203,7 +205,7 @@
               <input id="idVtoPoliza" type="date" formControlName="vtoPoliza"
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="row">
           <div class="col-md-4">
