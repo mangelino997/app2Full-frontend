@@ -12,39 +12,39 @@ import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-chofer-proveedor',
   templateUrl: './chofer-proveedor.component.html',
-  styleUrls: ['/chofer-proveedor.component.css']
+  styleUrls: ['./chofer-proveedor.component.css']
 })
 export class ChoferProveedorComponent implements OnInit {
   //Define la pestania activa
-  private activeLink:any = null;
+  public activeLink:any = null;
   //Define el indice seleccionado de pestania
-  private indiceSeleccionado:number = null;
+  public indiceSeleccionado:number = null;
   //Define la pestania actual seleccionada
-  private pestaniaActual:string = null;
+  public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
-  private mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado:boolean = null;
   //Define si el campo es de solo lectura
-  private soloLectura:boolean = false;
+  public soloLectura:boolean = false;
   //Define si mostrar el boton
-  private mostrarBoton:boolean = null;
+  public mostrarBoton:boolean = null;
   //Define la lista de pestanias
-  private pestanias:Array<any> = [];
+  public pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario:FormGroup;
+  public formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:Array<any> = [];
+  public listaCompleta:Array<any> = [];
   //Define la lista de tipos de documentos
-  private tiposDocumentos:Array<any> = [];
+  public tiposDocumentos:Array<any> = [];
   //Define el form control para las busquedas
-  private autocompletado:FormControl = new FormControl();
+  public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  private resultados:Array<any> = [];
+  public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda de barrio
-  private resultadosBarrios:Array<any> = [];
+  public resultadosBarrios:Array<any> = [];
   //Define la lista de resultados de busqueda de localidad
-  private resultadosLocalidades:Array<any> = [];
+  public resultadosLocalidades:Array<any> = [];
   //Define la lista de resultados de proveedores
-  private resultadosProveedores:Array<any> = [];
+  public resultadosProveedores:Array<any> = [];
   //Constructor
   constructor(private servicio: ChoferProveedorService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,

@@ -11,10 +11,6 @@ import { TramoService } from '../../servicios/tramo.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 import { AppService } from '../../servicios/app.service';
 
 @Component({
@@ -24,59 +20,59 @@ import { AppService } from '../../servicios/app.service';
 })
 export class OrdenVentaComponent implements OnInit {
   //Define la pestania activa
-  private activeLink:any = null;
+  public activeLink:any = null;
   //Define el indice seleccionado de pestania
-  private indiceSeleccionado:number = null;
+  public indiceSeleccionado:number = null;
   //Define la pestania actual seleccionada
-  private pestaniaActual:string = null;
+  public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
-  private mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado:boolean = null;
   //Define si el campo es de solo lectura
-  private soloLectura:boolean = false;
+  public soloLectura:boolean = false;
   //Define si mostrar el boton
-  private mostrarBoton:boolean = null;
+  public mostrarBoton:boolean = null;
   //Define una lista
-  private lista = null;
+  public lista = null;
   //Define la lista de pestanias
-  private pestanias = null;
+  public pestanias = null;
   //Define un formulario para validaciones de campos
-  private formulario:FormGroup;
+  public formulario:FormGroup;
   //Define los elementos A de la primera tabla
-  private elementosA:FormArray;
+  public elementosA:FormArray;
   //Define los elementos B de la segunda tabla
-  private elementosB:FormArray;
+  public elementosB:FormArray;
   //Define el elemento de autocompletado
-  private elemAutocompletado:any = null;
+  public elemAutocompletado:any = null;
   //Define el siguiente id
-  private siguienteId:number = null;
+  public siguienteId:number = null;
   //Define la lista completa de registros
-  private listaCompleta:any = null;
+  public listaCompleta:any = null;
   //Define la lista de empresas
-  private empresas:any = null;
+  public empresas:any = null;
   //Define la lista de tipos de tarifas
-  private tiposTarifas:any = null;
+  public tiposTarifas:any = null;
   //Define la lista de tramos para la segunda tabla
-  private listaTramos:any = [];
+  public listaTramos:any = [];
   //Define el form control para las busquedas
-  private buscar:FormControl = new FormControl();
+  public buscar:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  private resultados = [];
+  public resultados = [];
   //Define el form control para las busquedas cliente
-  private buscarCliente:FormControl = new FormControl();
+  public buscarCliente:FormControl = new FormControl();
   //Define la lista de resultados de busqueda cliente
-  private resultadosClientes = [];
+  public resultadosClientes = [];
   //Define el form control para las busquedas vendedor
-  private buscarVendedor:FormControl = new FormControl();
+  public buscarVendedor:FormControl = new FormControl();
   //Define la lista de resultados de busqueda vendedor
-  private resultadosVendedores = [];
+  public resultadosVendedores = [];
   //Define el form control para las busquedas tramo
-  private buscarTramo:FormControl = new FormControl();
+  public buscarTramo:FormControl = new FormControl();
   //Define la lista de resultados de busqueda tramo
-  private resultadosTramos = [];
+  public resultadosTramos = [];
   //Define el estado de edicion de la tabla
-  private estadoEdicionTabla:boolean = false;
+  public estadoEdicionTabla:boolean = false;
   //Define una variable campos para el manejo de ediciones de tabla
-  private campoTablaEditar:any = {};
+  public campoTablaEditar:any = {};
   //Constructor
   constructor(private servicio: OrdenVentaService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private formBuilder: FormBuilder,

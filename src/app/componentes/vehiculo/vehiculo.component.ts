@@ -22,53 +22,53 @@ export class VehiculoComponent implements OnInit {
   @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger }) 
   autoComplete: MatAutocompleteTrigger;
   //Define la pestania activa
-  private activeLink:any = null;
+  public activeLink:any = null;
   //Define el indice seleccionado de pestania
-  private indiceSeleccionado:number = null;
+  public indiceSeleccionado:number = null;
   //Define la pestania actual seleccionada
-  private pestaniaActual:string = null;
+  public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
-  private mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado:boolean = null;
   //Define si el campo es de solo lectura
-  private soloLectura:boolean = false;
+  public soloLectura:boolean = false;
   //Define si mostrar el boton
-  private mostrarBoton:boolean = null;
+  public mostrarBoton:boolean = null;
   //Define si mostrar la lista de configuraciones de vehiculos
-  private mostrarConfiguracionVehiculo:boolean = null;
+  public mostrarConfiguracionVehiculo:boolean = null;
   //Define la lista de pestanias
-  private pestanias:Array<any> = [];
+  public pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario:FormGroup;
+  public formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:Array<any> = [];
+  public listaCompleta:Array<any> = [];
   //Define la lista de tipos de vehiculos
-  private tiposVehiculos:Array<any> = [];
+  public tiposVehiculos:Array<any> = [];
   //Define la lista de marcas de vehiculos
-  private marcasVehiculos:Array<any> = [];
+  public marcasVehiculos:Array<any> = [];
   //Define la lista de empresas
-  private empresas:Array<any> = [];
+  public empresas:Array<any> = [];
   //Define la lista de configuraciones de vehiculos
-  private configuracionesVehiculos:Array<any> = [];
+  public configuracionesVehiculos:Array<any> = [];
   //Define el autocompletado para las busquedas
-  private autocompletado:FormControl = new FormControl();
+  public autocompletado:FormControl = new FormControl();
   //Define un campo control para tipo vehiculo
-  private tipoVehiculo:FormControl = new FormControl();
+  public tipoVehiculo:FormControl = new FormControl();
   //Define un campo control para marca vehiculo
-  private marcaVehiculo:FormControl = new FormControl();
+  public marcaVehiculo:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  private resultados = [];
+  public resultados = [];
   //Define la lista de resultados de busqueda vehiculo remolque
-  private resultadosVehiculosRemolques = [];
+  public resultadosVehiculosRemolques = [];
   //Define la lista de resultados de busqueda localidad
-  private resultadosLocalidades = [];
+  public resultadosLocalidades = [];
   //Define la lista de resultados de busqueda compania seguro
-  private resultadosCompaniasSeguros = [];
+  public resultadosCompaniasSeguros = [];
   //Define la lista de resultados de busqueda personal
-  private resultadosPersonales = [];
+  public resultadosPersonales = [];
   //Define el campo de control configuracion
-  private configuracion:FormControl = new FormControl();
+  public configuracion:FormControl = new FormControl();
   //Defiene la lista de compania seguro poliza
-  private companiasSegurosPolizas:Array<any> = [];
+  public companiasSegurosPolizas:Array<any> = [];
   //Constructor
   constructor(private servicio: VehiculoService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,

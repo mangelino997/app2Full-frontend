@@ -149,7 +149,6 @@ import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.compo
 import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component'; //Probado
 import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component'; //Probado
 import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component'; //Probador
-//import { ViajeComponent } from './componentes/viaje/viaje.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -285,7 +284,6 @@ const stompConfig: StompConfig = {
     SucursalClienteComponent,
     VehiculoComponent,
     VehiculoProveedorComponent
-    //ViajeComponent,
   ],
   imports: [
     BrowserModule,

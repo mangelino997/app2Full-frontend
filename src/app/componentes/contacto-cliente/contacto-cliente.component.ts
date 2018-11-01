@@ -15,35 +15,35 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class ContactoClienteComponent implements OnInit {
   //Define la pestania activa
-  private activeLink:any = null;
+  public activeLink:any = null;
   //Define el indice seleccionado de pestania
-  private indiceSeleccionado:number = null;
+  public indiceSeleccionado:number = null;
   //Define la pestania actual seleccionada
-  private pestaniaActual:string = null;
+  public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
-  private mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado:boolean = null;
   //Define si el campo es de solo lectura
-  private soloLectura:boolean = false;
+  public soloLectura:boolean = false;
   //Define si mostrar el boton
-  private mostrarBoton:boolean = null;
+  public mostrarBoton:boolean = null;
   //Define la lista de pestanias
-  private pestanias:Array<any> = null;
+  public pestanias:Array<any> = null;
   //Define un formulario para validaciones de campos
-  private formulario:FormGroup;
+  public formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:Array<any> = [];
+  public listaCompleta:Array<any> = [];
   //Define la opcion seleccionada
-  private opcionSeleccionada:number = null;
+  public opcionSeleccionada:number = null;
   //Define la lista de tipos de contactos
-  private tiposContactos:Array<any> = [];
+  public tiposContactos:Array<any> = [];
   //Define la lista de contactos
-  private contactos:Array<any> = [];
+  public contactos:Array<any> = [];
   //Define el form control para las busquedas
-  private autocompletado:FormControl = new FormControl();
+  public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  private resultados:Array<any> = [];
+  public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda sucursales clientes
-  private resultadosSucursalesClientes:Array<any> = [];
+  public resultadosSucursalesClientes:Array<any> = [];
   //Constructor
   constructor(private servicio: ContactoClienteService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,

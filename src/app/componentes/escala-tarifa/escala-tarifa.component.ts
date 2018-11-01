@@ -5,10 +5,6 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subscription } from 'rxjs';
-import { debounceTime, map } from 'rxjs/operators';
-import { Message } from '@stomp/stompjs';
-import { StompService } from '@stomp/ng2-stompjs';
 
 @Component({
   selector: 'app-escala-tarifa',
@@ -17,11 +13,15 @@ import { StompService } from '@stomp/ng2-stompjs';
 })
 export class EscalaTarifaComponent implements OnInit {
   //Define un formulario para validaciones de campos
-  private formulario:FormGroup;
+  public formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:Array<any> = [];
+  public listaCompleta:Array<any> = [];
   //Define la descripcion
-  private descripcion:FormControl = new FormControl();
+  public descripcion:FormControl = new FormControl();
+  //Define propiedad de solo lectura
+  public soloLectura:boolean = null;
+  //Define propiedad de mostrar boton
+  public mostrarBoton:boolean = null;
   //Constructor
   constructor(private servicio: EscalaTarifaService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService) {

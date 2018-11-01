@@ -30,69 +30,69 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class PersonalComponent implements OnInit {
   //Define la pestania activa
-  private activeLink:any = null;
+  public activeLink:any = null;
   //Define el indice seleccionado de pestania
-  private indiceSeleccionado:number = null;
+  public indiceSeleccionado:number = null;
   //Define la pestania actual seleccionada
-  private pestaniaActual:string = null;
+  public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
-  private mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado:boolean = null;
   //Define si el campo es de solo lectura
-  private soloLectura:boolean = false;
+  public soloLectura:boolean = false;
   //Define si mostrar el boton
-  private mostrarBoton:boolean = null;
+  public mostrarBoton:boolean = null;
   //Define la lista de pestanias
-  private pestanias:Array<any> = [];
+  public pestanias:Array<any> = [];
   //Define la lista de opciones
-  private opciones:Array<any> = [];
+  public opciones:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario:FormGroup;
+  public formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:Array<any> = [];
+  public listaCompleta:Array<any> = [];
   //Define la opcion seleccionada
-  private opcionSeleccionada:number = null;
+  public opcionSeleccionada:number = null;
   //Define la lista de sexos
-  private sexos:Array<any> = [];
+  public sexos:Array<any> = [];
   //Define la lista de estados civiles
-  private estadosCiviles:Array<any> = [];
+  public estadosCiviles:Array<any> = [];
   //Define la lista de tipos de documentos
-  private tiposDocumentos:Array<any> = [];
+  public tiposDocumentos:Array<any> = [];
   //Define la lista de sucursales
-  private sucursales:Array<any> = [];
+  public sucursales:Array<any> = [];
   //Define la lista de areas
-  private areas:Array<any> = [];
+  public areas:Array<any> = [];
   //Define la lista de sindicatos
-  private sindicatos:Array<any> = [];
+  public sindicatos:Array<any> = [];
   //Define la opcion activa
-  private botonOpcionActivo:boolean = null;
+  public botonOpcionActivo:boolean = null;
   //Define la nacionalidad de nacimiento
-  private nacionalidadNacimiento:FormControl = new FormControl();
+  public nacionalidadNacimiento:FormControl = new FormControl();
   //Define el form control para las busquedas
-  private autocompletado:FormControl = new FormControl();
+  public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  private resultados:Array<any> = [];
+  public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda de barrios
-  private resultadosBarrios:Array<any> = [];
+  public resultadosBarrios:Array<any> = [];
   //Define la lista de resultados de busqueda de localidades
-  private resultadosLocalidades:Array<any> = [];
+  public resultadosLocalidades:Array<any> = [];
   //Define la lista de resultados de busqueda de categorias
-  private resultadosCategorias:Array<any> = [];
+  public resultadosCategorias:Array<any> = [];
   //Define la lista de resultados de busqueda de seguridad social
-  private resultadosSeguridadesSociales:Array<any> = [];
+  public resultadosSeguridadesSociales:Array<any> = [];
   //Define la lista de resultados de busqueda de obra social
-  private resultadosObrasSociales:Array<any> = [];
+  public resultadosObrasSociales:Array<any> = [];
   //Define la lista de resultados de busqueda de afip actividad
-  private resultadosAfipActividades:Array<any> = [];
+  public resultadosAfipActividades:Array<any> = [];
   //Define la lista de resultados de busqueda de afip condicion
-  private resultadosAfipCondiciones:Array<any> = [];
+  public resultadosAfipCondiciones:Array<any> = [];
   //Define la lista de resultados de busqueda de afip localidad
-  private resultadosAfipLocalidades:Array<any> = [];
+  public resultadosAfipLocalidades:Array<any> = [];
   //Define la lista de resultados de busqueda de afip mod contratacion
-  private resultadosAfipModContrataciones:Array<any> = [];
+  public resultadosAfipModContrataciones:Array<any> = [];
   //Define la lista de resultados de busqueda de afip siniestrado
-  private resultadosAfipSiniestrados:Array<any> = [];
+  public resultadosAfipSiniestrados:Array<any> = [];
   //Define la lista de resultados de busqueda de afip situacion
-  private resultadosAfipSituaciones:Array<any> = [];
+  public resultadosAfipSituaciones:Array<any> = [];
   //Constructor
   constructor(private servicio: PersonalService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,

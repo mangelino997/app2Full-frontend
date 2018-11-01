@@ -14,31 +14,31 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class SucursalBancoComponent implements OnInit {
   //Define la pestania activa
-  private activeLink:any = null;
+  public activeLink:any = null;
   //Define el indice seleccionado de pestania
-  private indiceSeleccionado:number = null;
+  public indiceSeleccionado:number = null;
   //Define la pestania actual seleccionada
-  private pestaniaActual:string = null;
+  public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
-  private mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado:boolean = null;
   //Define si el campo es de solo lectura
-  private soloLectura:boolean = false;
+  public soloLectura:boolean = false;
   //Define si mostrar el boton
-  private mostrarBoton:boolean = null;
+  public mostrarBoton:boolean = null;
   //Define la lista de pestanias
-  private pestanias:Array<any> = [];
+  public pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
-  private formulario:FormGroup;
+  public formulario:FormGroup;
   //Define la lista completa de registros
-  private listaCompleta:Array<any> = [];
+  public listaCompleta:Array<any> = [];
   //Define el autocompletado para las busquedas
-  private autocompletado:FormControl = new FormControl();
+  public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
-  private resultados:Array<any> = [];
+  public resultados:Array<any> = [];
   //Define la lista de sucursales
-  private sucursales:Array<any> = [];
+  public sucursales:Array<any> = [];
   //Define la lista de resultados de busqueda banco
-  private resultadosBancos:Array<any> = [];
+  public resultadosBancos:Array<any> = [];
   //Constructor
   constructor(private servicio: SucursalBancoService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,

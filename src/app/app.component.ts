@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { AppService } from './servicios/app.service';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
 import 'rxjs/Rx';
 
 @Component({
@@ -9,12 +8,12 @@ import 'rxjs/Rx';
   templateUrl: './app.component.html'
 })
 export class AppComponent {
-  private visible:boolean = false;
-  private modulos = null;
-  private usuario = {rol:{id:null}};
-  private empresa = {};
-  private subopcion = null;
-  private rol:number = null;
+  public visible:boolean = false;
+  public modulos = null;
+  public usuario = {rol:{id:null}};
+  public empresa = {};
+  public subopcion = null;
+  public rol:number = null;
   constructor(private appService: AppService, private router: Router) {}
   public setVisible(valor) {
     this.visible = valor;
