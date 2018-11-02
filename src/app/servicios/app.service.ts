@@ -4,9 +4,9 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 @Injectable()
 export class AppService {
   //Define la url base
-  private URL_BASE = 'http://localhost:8080/jit/auth';
+  private URL_BASE = 'http://localhost:8080/jitws/auth';
   //Define la url de subcripcion a socket
-  private URL_TOPIC = '/jit/auth/topic';
+  private URL_TOPIC = '/jitws/auth/topic';
   //Define el headers y token de autenticacion
   private options = null;
   //Constructor

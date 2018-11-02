@@ -138,14 +138,14 @@ import { ProveedorComponent } from './componentes/proveedor/proveedor.component'
 import { CondicionCompraComponent } from './componentes/condicion-compra/condicion-compra.component';
 import { PersonalComponent } from './componentes/personal/personal.component'; //Probado
 import { EstadoCivilComponent } from './componentes/estado-civil/estado-civil.component';
-import { EscalaTarifaComponent } from './componentes/escala-tarifa/escala-tarifa.component';
+import { EscalaTarifaComponent } from './componentes/escala-tarifa/escala-tarifa.component'; //Probado
 import { ChoferProveedorComponent } from './componentes/chofer-proveedor/chofer-proveedor.component'; //Probado
 import { ConfiguracionVehiculoComponent } from './componentes/configuracion-vehiculo/configuracion-vehiculo.component'; //Probado
 import { ContactoBancoComponent } from './componentes/contacto-banco/contacto-banco.component'; //Probado
 import { ContactoClienteComponent } from './componentes/contacto-cliente/contacto-cliente.component'; //Revisar
 import { ContactoCompaniaSeguroComponent } from './componentes/contacto-compania-seguro/contacto-compania-seguro.component';
 import { ContactoProveedorComponent } from './componentes/contacto-proveedor/contacto-proveedor.component'; //Probado
-import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.component';
+import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.component'; //Probado
 import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component'; //Probado
 import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component'; //Probado
 import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component'; //Probador
@@ -206,14 +206,14 @@ const appRoutes: Routes = [
   {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//VER
   {path: 'contactocompaniaseguro', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//VER
   {path: 'generalesproveedorescontactos', component: ContactoProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'puntoventa', component: PuntoVentaComponent, canActivate: [GuardiaService]},//VER
+  {path: 'puntosdeventaadministrar', component: PuntoVentaComponent, canActivate: [GuardiaService]},
   {path: 'logisticavehiculos', component: VehiculoComponent, canActivate: [GuardiaService]},
   {path: 'logisticaproveedoresvehiculos', component: VehiculoProveedorComponent, canActivate: [GuardiaService]}
   //{path: 'viajepropio', component: ViajeComponent, canActivate: [GuardiaService]}//VER
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://127.0.0.1:8080/jit/socket',
+  url: 'ws://127.0.0.1:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,

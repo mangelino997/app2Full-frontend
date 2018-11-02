@@ -16,12 +16,6 @@ export class EscalaTarifaComponent implements OnInit {
   public formulario:FormGroup;
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
-  //Define la descripcion
-  public descripcion:FormControl = new FormControl();
-  //Define propiedad de solo lectura
-  public soloLectura:boolean = null;
-  //Define propiedad de mostrar boton
-  public mostrarBoton:boolean = null;
   //Constructor
   constructor(private servicio: EscalaTarifaService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService) {
@@ -40,7 +34,8 @@ export class EscalaTarifaComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      valor: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(45)])
+      valor: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(45)]),
+      descripcion: new FormControl()
     });
     //Obtiene la lista completa de registros
     this.listar();
@@ -112,10 +107,10 @@ export class EscalaTarifaComponent implements OnInit {
   public establecerHasta(valor) {
     if(valor.target.value != undefined && valor.target.value != '') {
       valor.target.value = this.setDecimales(valor.target.value, 2);
-      this.descripcion.setValue('Hasta ' + valor.target.value);
+      this.formulario.get('descripcion').setValue('Hasta ' + valor.target.value);
 
     } else {
-      this.descripcion.setValue(undefined);
+      this.formulario.get('descripcion').setValue(undefined);
     }
   }
   //Formatea el numero a x decimales

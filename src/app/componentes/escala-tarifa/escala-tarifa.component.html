@@ -9,7 +9,7 @@
         <div id="divValor" class="form-group has-float-label">
           <label id="labelValor" for="idValor" class="tamanio-label">Valor</label>
           <input id="idValor" type="number" formControlName="valor" autocomplete="off"
-          class="form-control form-control-sm" [readonly]="soloLectura"
+          class="form-control form-control-sm" 
           (ngModelChange)="cambioCampo('idValor', 'labelValor')" (blur)="establecerHasta($event)" >
         </div>
       </div>
@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="col-md-1">
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+        <button id="idBoton" class="btn btn-primary" type="button"
           formnovalidate (click)="agregar(elemento)" [disabled]="!formulario.valid">
           Agregar
         </button>

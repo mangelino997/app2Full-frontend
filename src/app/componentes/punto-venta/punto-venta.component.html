@@ -1,10 +1,10 @@
-<div id="puntoventa">
+<div id="puntoventa" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>PUNTO VENTA</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -16,12 +16,27 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idSucursal" class="tamanio-label">Sucursal</label>
-              <input id="idSucursal" class="form-control form-control-sm" type="text" matInput
+              <input #autoCompleteInput id="idSucursal" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('sucursal')" [matAutocomplete]="autoSucursal"
-                autocomplete="off" [readonly]="soloLectura">
+                autocomplete="off">
               <mat-autocomplete #autoSucursal="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal">
+                <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal"
+                  (onSelectionChange)="listarPorSucursal(itemSucursal)">
                   {{itemSucursal.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-6" *ngIf="mostrarAutocompletado">
+            <div class="form-group has-float-label">
+              <label for="idAutocompletado" class="tamanio-label">Punto de Venta</label>
+              <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
+                [formControl]="autocompletado" [matAutocomplete]="auto"
+                autocomplete="off">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                <mat-option *ngFor="let item of puntosVentas" [value]="item"
+                  (onSelectionChange)="establecerFormulario(item)">
+                  {{displayFb(item)}}
                 </mat-option>
               </mat-autocomplete>
             </div>
@@ -32,24 +47,9 @@
               <input id="idEmpresa" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('empresa')" [matAutocomplete]="autoEmpresa"
                 autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoEmpresa="matAutocomplete" [displayWith]="displayFa.bind(this)">
+              <mat-autocomplete #autoEmpresa="matAutocomplete" [displayWith]="displayFc.bind(this)">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
-                  {{itemEmpresa.nombre}}
-                </mat-option>
-              </mat-autocomplete>
-            </div>
-          </div>
-        </div>
-        <div class="row" *ngIf="mostrarAutocompletado">
-          <div class="col-md-6">
-            <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Puntos de Ventas</label>
-              <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
-                formControlName="autocompletado" [matAutocomplete]="auto"
-                autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFb.bind(this)">
-                <mat-option *ngFor="let itemPuntoVenta of puntosVentas" [value]="itemPuntoVenta">
-                  {{itemPuntoVenta.nombre}} - {{itemContacto.afipComprobante.nombre}}
+                  {{itemEmpresa.razonSocial}}
                 </mat-option>
               </mat-autocomplete>
             </div>
@@ -58,22 +58,16 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idPuntoVenta" class="tamanio-label-titulo">Punto de Venta</label>
+              <label for="idPuntoVenta" class="tamanio-label">Punto de Venta</label>
               <input id="idPuntoVenta" type="number" formControlName="puntoVenta" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idAfipComprobante" class="tamanio-label">Tipo de Comprobante</label>
-              <input id="idAfipComprobante" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('afipComprobante')" [matAutocomplete]="autoAfipComprobante"
-                autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
-              <mat-autocomplete #autoAfipComprobante="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let itemAfipComprobante of resultadosAfipComprobantes" [value]="itemAfipComprobante">
-                  {{itemAfipComprobante.nombre}}
-                </mat-option>
-              </mat-autocomplete>
+              <label for="idCodigoAfip" class="tamanio-label">Código de Afip</label>
+              <input id="idCodigoAfip" type="number" formControlName="codigoAfip" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -84,7 +78,7 @@
               <input id="idFe" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('fe')" [matAutocomplete]="autoFe"
                 autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoFe="matAutocomplete">
+              <mat-autocomplete #autoFe="matAutocomplete" [displayWith]="displayFd.bind(this)">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-autocomplete>
@@ -96,7 +90,7 @@
               <input id="idFeEnLinea" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('feEnLinea')" [matAutocomplete]="autoFeEnLinea"
                 autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoFeEnLinea="matAutocomplete">
+              <mat-autocomplete #autoFeEnLinea="matAutocomplete" [displayWith]="displayFd.bind(this)">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-autocomplete>
@@ -108,7 +102,7 @@
               <input id="idFeCAEA" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('feCAEA')" [matAutocomplete]="autoFeCAEA"
                 autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoFeCAEA="matAutocomplete">
+              <mat-autocomplete #autoFeCAEA="matAutocomplete" [displayWith]="displayFd.bind(this)">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-autocomplete>
@@ -118,9 +112,9 @@
             <div class="form-group has-float-label">
               <label for="idCuentaOrden" class="tamanio-label">Es por Cuenta y Orden</label>
               <input id="idCuentaOrden" class="form-control form-control-sm" type="text" matInput
-                formControlName="formulario.get('esCuentaOrden')" [matAutocomplete]="autoEsCuentaOrden"
+                [formControl]="formulario.get('esCuentaOrden')" [matAutocomplete]="autoEsCuentaOrden"
                 autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoEsCuentaOrden="matAutocomplete">
+              <mat-autocomplete #autoEsCuentaOrden="matAutocomplete" [displayWith]="displayFd.bind(this)">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-autocomplete>
@@ -130,14 +124,14 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idUltimoNumero" class="tamanio-label-titulo">Ultimo Número</label>
+              <label for="idUltimoNumero" class="tamanio-label">Ultimo Número</label>
               <input id="idUltimoNumero" type="number" formControlName="ultimoNumero" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idCopias" class="tamanio-label-titulo">Copias</label>
+              <label for="idCopias" class="tamanio-label">Copias</label>
               <input id="idCopias" type="number" formControlName="copias" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -148,7 +142,7 @@
               <input id="idImprime" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('imprime')" [matAutocomplete]="autoImprime"
                 autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoImprime="matAutocomplete">
+              <mat-autocomplete #autoImprime="matAutocomplete" [displayWith]="displayFd.bind(this)">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-autocomplete>
@@ -160,7 +154,7 @@
               <input id="idEstaHabilitado" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('estaHabilitado')" [matAutocomplete]="autoEstaHabilitado"
                 autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoEstaHabilitado="matAutocomplete">
+              <mat-autocomplete #autoEstaHabilitado="matAutocomplete" [displayWith]="displayFd.bind(this)">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-autocomplete>
@@ -182,15 +176,14 @@
             <th class="text-center" style="width:10%" scope="col">Sucursal</th>
             <th class="text-center" style="width:10%" scope="col">Empresa</th>
             <th class="text-center" style="width:10%" scope="col">Punto Venta</th>
-            <th class="text-center" style="width:10%" scope="col">Tipo Comprobante</th>
             <th class="text-center" style="width:5%" scope="col">Es FE</th>
-            <th class="text-center" style="width:5%" scope="col">es FE en Línea</th>
+            <th class="text-center" style="width:10%" scope="col">es FE en Línea</th>
             <th class="text-center" style="width:5%" scope="col">Es CAEA</th>
             <th class="text-center" style="width:10%" scope="col">Es Cuenta y Orden</th>
             <th class="text-center" style="width:10%" scope="col">Ultimo Número</th>
             <th class="text-center" style="width:5%" scope="col">Copias</th>
             <th class="text-center" style="width:5%" scope="col">Imprime</th>
-            <th class="text-center" style="width:5%" scope="col">Esta Habilitado</th>
+            <th class="text-center" style="width:10%" scope="col">Esta Habilitado</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
           </tr>
@@ -204,10 +197,7 @@
               <span>{{l.empresa.razonSocial}}</span>
             </td>
             <td align="center">
-              <span>{{l.puntoVenta}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.afipComprobante.nombre}}</span>
+              <span>{{displayFb(l)}}</span>
             </td>
             <td align="center">
               <span>{{l.fe ? 'Si' : 'No'}}</span>

@@ -1,13 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PuntoVentaService } from '../../servicios/punto-venta.service';
 import { PestaniaService } from '../../servicios/pestania.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { EmpresaService } from '../../servicios/empresa.service';
-import { AfipComprobanteService } from '../../servicios/afip-comprobante.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatAutocompleteTrigger } from '@angular/material';
 
 @Component({
   selector: 'app-punto-venta',
@@ -15,6 +15,9 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./punto-venta.component.css']
 })
 export class PuntoVentaComponent implements OnInit {
+  //Obtiene el componente autocompletado sucursal del dom
+  @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger })
+  autoComplete: MatAutocompleteTrigger;
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -39,15 +42,12 @@ export class PuntoVentaComponent implements OnInit {
   public empresas:Array<any> = [];
   //Define la lista de puntos de ventas de sucursal
   public puntosVentas:Array<any> = [];
-  //Define la lista de resultados de busqueda afip comprobante
-  public resultadosAfipComprobantes:Array<any> = [];
   //Define la lista de puntos de ventas como autocompletado
   public autocompletado:FormControl = new FormControl();
   //Constructor
   constructor(private servicio: PuntoVentaService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private sucursalServicio: SucursalService, private empresaServicio: EmpresaService,
-    private afipComprobanteServicio: AfipComprobanteService) {
+    private sucursalServicio: SucursalService, private empresaServicio: EmpresaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -59,8 +59,6 @@ export class PuntoVentaComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -75,8 +73,8 @@ export class PuntoVentaComponent implements OnInit {
       sucursal: new FormControl('', Validators.required),
       empresa: new FormControl('', Validators.required),
       puntoVenta: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(5)]),
-      afipComprobante: new FormControl('', Validators.required),
       fe: new FormControl('', Validators.required),
+      codigoAfip: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(3)]),
       feEnLinea: new FormControl('', Validators.required),
       feCAEA: new FormControl('', Validators.required),
       esCuentaOrden: new FormControl('', Validators.required),
@@ -86,14 +84,8 @@ export class PuntoVentaComponent implements OnInit {
       estaHabilitado: new FormControl('', Validators.required),
       porDefecto: new FormControl()
     });
-    //Autocompletado - Buscar por nombre afip comprobante
-    this.formulario.get('afipComprobante').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.afipComprobanteServicio.listarPorNombre(data).subscribe(response =>{
-          this.resultadosAfipComprobantes = response;
-        })
-      }
-    })
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de sucursales
@@ -116,16 +108,17 @@ export class PuntoVentaComponent implements OnInit {
   private listarEmpresas() {
     this.empresaServicio.listar().subscribe(
       res => {
-        this.sucursales = res.json();
+        this.empresas = res.json();
       },
       err => {
         console.log(err);
       }
     );
   }
-  //Vacia la lista de resultados de autocompletados
-  public vaciarListas() {
-    this.resultadosAfipComprobantes = [];
+  //Establece el formulario al seleccionar elemento de autocompletado
+  public establecerFormulario(elemento) {
+    this.formulario.setValue(elemento);
+    this.formulario.get('puntoVenta').setValue(this.displayFb(elemento));
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -133,28 +126,36 @@ export class PuntoVentaComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
+  public seleccionarPestania(id, nombre, opcion) {
     this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idSucursal');
         break;
       case 2:
+        try {
+          this.autoComplete.closePanel();
+        } catch(e) {}
         this.establecerValoresPestania(nombre, true, true, false, 'idSucursal');
         break;
       case 3:
         this.establecerValoresPestania(nombre, true, false, true, 'idSucursal');
         break;
       case 4:
+        try {
+          this.autoComplete.closePanel();
+        } catch(e) {}
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursal');
         break;
       default:
@@ -256,7 +257,6 @@ export class PuntoVentaComponent implements OnInit {
   private reestablecerFormulario() {
     this.formulario.reset();
     this.autocompletado.setValue(undefined);
-    this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -275,13 +275,13 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
@@ -296,7 +296,23 @@ export class PuntoVentaComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
     if(elemento != undefined) {
-      return elemento.puntoVenta ? elemento.puntoVenta + ' - ' + elemento.afipComprobante.nombre : elemento;
+      return elemento.puntoVenta ? ("00000" + elemento.puntoVenta).slice(-5) : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento.razonSocial ? elemento.razonSocial : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado d
+  public displayFd(elemento) {
+    if(elemento != undefined) {
+      return elemento ? 'Si' : 'No';
     } else {
       return elemento;
     }
@@ -306,9 +322,9 @@ export class PuntoVentaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if(keycode == 113) {
       if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre);
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre);
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
   }

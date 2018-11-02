@@ -19,6 +19,7 @@ import { MatAutocompleteTrigger } from '@angular/material';
   styleUrls: ['./vehiculo.component.css']
 })
 export class VehiculoComponent implements OnInit {
+  //Obtiene el componente autocompletado tipo vehiculo del dom
   @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger }) 
   autoComplete: MatAutocompleteTrigger;
   //Define la pestania activa
