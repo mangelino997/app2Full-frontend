@@ -1,19 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { ContactoCompaniaSeguroService } from '../../servicios/contacto-compania-seguro.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
-import { TipoContactoService } from '../../servicios/tipo-contacto.service';
-import { AppService } from '../../servicios/app.service';
+import { EmpresaService } from '../../servicios/empresa.service';
+import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatAutocompleteTrigger } from '@angular/material';
 
 @Component({
-  selector: 'app-contacto-compania-seguro',
-  templateUrl: './contacto-compania-seguro.component.html',
-  styleUrls: ['./contacto-compania-seguro.component.css']
+  selector: 'app-compania-seguro-poliza',
+  templateUrl: './compania-seguro-poliza.component.html',
+  styleUrls: ['./compania-seguro-poliza.component.css']
 })
-export class ContactoCompaniaSeguroComponent implements OnInit {
+export class CompaniaSeguroPolizaComponent implements OnInit {
+  //Obtiene el componente autocompletado sucursal del dom
+  @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger })
+  public autoComplete: MatAutocompleteTrigger;
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -32,20 +35,18 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   public formulario:FormGroup;
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
-  //Define la opcion seleccionada
-  public opcionSeleccionada:number = null;
-  //Define la lista de tipos de contactos
-  public tiposContactos:Array<any> = [];
-  //Define la lista de contactos
-  public contactos:Array<any> = [];
-  //Define el form control para las busquedas
+  //Define el autocompletado
   public autocompletado:FormControl = new FormControl();
+  //Define la lista de resultados de busqueda
+  public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda companias seguros
   public resultadosCompaniasSeguros:Array<any> = [];
+  //Defien la lista de empresas
+  public empresas:Array<any> = [];
   //Constructor
-  constructor(private servicio: ContactoCompaniaSeguroService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private companiaSeguroServicio: CompaniaSeguroService, private tipoContactoServicio: TipoContactoService) {
+  constructor(private servicio: CompaniaSeguroPolizaService, private pestaniaService: PestaniaService,
+    private appComponent: AppComponent, private toastr: ToastrService,
+    private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -64,46 +65,37 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-    //Define los campos para validaciones
+    //Define el formulario y validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
       companiaSeguro: new FormControl('', Validators.required),
-      tipoContacto: new FormControl('', Validators.required),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      telefonoFijo: new FormControl('', Validators.maxLength(45)),
-      telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      correoelectronico: new FormControl('', Validators.maxLength(30)),
-      usuarioAlta: new FormControl(),
-      usuarioMod: new FormControl()
+      empresa: new FormControl('', Validators.required),
+      numeroPoliza: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      vtoPoliza: new FormControl('', Validators.required)
     });
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
-    //Autocompletado - Buscar por nombre compania seguro
+    //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.companiaSeguroServicio.listarPorNombre(data).subscribe(response =>{
-          this.resultadosCompaniasSeguros = response;
+        this.companiaSeguroServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosCompaniasSeguros = res;
         })
       }
     })
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
-    //Obtiene la lista de tipos de contactos
-    this.listarTiposContactos();
+    //Obtiene la lista de empresas
+    this.listarEmpresas();
   }
-  //Obtiene el listado de tipos de proveedores
-  private listarTiposContactos() {
-    this.tipoContactoServicio.listar().subscribe(
-      res => {
-        this.tiposContactos = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+  //Obtiene la lista de empresas
+  private listarEmpresas() {
+    this.empresaServicio.listar().subscribe(res => {
+      this.empresas = res.json();
+    })
   }
-  //Vacia la lista de resultados de autocompletados
+  //Vacia la listas de resultados autocompletados
   public vaciarListas() {
     this.resultadosCompaniasSeguros = [];
   }
@@ -113,33 +105,38 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
-  }
+  };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario();
+    this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
-      this.resultadosCompaniasSeguros = [];
+      this.vaciarListas();
     }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idCompaniaSeguro');
+        this.establecerValoresPestania(nombre, false, false, true, 'idEmpresa');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idCompaniaSeguro');
+        try {
+          this.autoComplete.closePanel();
+        } catch(e) {}
+        this.establecerValoresPestania(nombre, true, true, false, 'idEmpresa');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idCompaniaSeguro');
+        this.establecerValoresPestania(nombre, true, false, true, 'idEmpresa');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
+        try {
+          this.autoComplete.closePanel();
+        } catch (e) {}
+        this.establecerValoresPestania(nombre, true, true, true, 'idEmpresa');
         break;
       default:
         break;
@@ -183,55 +180,51 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       }
     );
   }
-  //Obtiene la lista por compania seguro
-  public listarPorCompaniaSeguro(elemento) {
-    this.contactos = [];
-    if(this.mostrarAutocompletado) {
-      this.servicio.listarPorCompaniaSeguro(elemento.id).subscribe(
-        res => {
-          this.contactos = res.json();
-        },
-        err => {
-          console.log(err);
-        }
-      )
-    }
-  }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idCompaniaSeguro').focus();
+            document.getElementById('idEmpresa').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
       },
       err => {
-        this.lanzarError(err);
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(undefined);
           setTimeout(function() {
-            document.getElementById('idCompaniaSeguro').focus();
+            document.getElementById('idEmpresa').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
       },
       err => {
-        this.lanzarError(err);
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
       }
     );
   }
@@ -239,49 +232,27 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   private eliminar() {
     console.log();
   }
-  //Reestablece el formulario
-  private reestablecerFormulario() {
+  //Obtiene un listado por empresa
+  public listarPorEmpresa(elemento) {
+    this.resultados = [];
+    if(this.mostrarAutocompletado) {
+      this.servicio.listarPorEmpresa(elemento.id).subscribe(res => {
+        this.resultados = res.json();
+      })
+    }
+  }
+  //Reestablece los campos formularios
+  private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.vaciarListas();
-  }
-  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
-  private lanzarError(err) {
-    var respuesta = err.json();
-    if(respuesta.codigo == 11013) {
-      document.getElementById("labelTelefonoFijo").classList.add('label-error');
-      document.getElementById("idTelefonoFijo").classList.add('is-invalid');
-      document.getElementById("idTelefonoFijo").focus();
-    } else if(respuesta.codigo == 11014) {
-      document.getElementById("labelTelefonoMovil").classList.add('label-error');
-      document.getElementById("idTelefonoMovil").classList.add('is-invalid');
-      document.getElementById("idTelefonoMovil").focus();
-    } else if(respuesta.codigo == 11003) {
-      document.getElementById("labelCorreoelectronico").classList.add('label-error');
-      document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-      document.getElementById("idCorreoelectronico").focus();
-    }
-    this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  }
-  //Manejo de colores de campos y labels con patron erroneo
-  public validarPatron(patron, campo) {
-    let valor = this.formulario.get(campo).value;
-    if(valor != undefined) {
-      var patronVerificador = new RegExp(patron);
-      if (!patronVerificador.test(valor)) {
-        if(campo == 'correoelectronico') {
-          document.getElementById("labelCorreoelectronico").classList.add('label-error');
-          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-          this.toastr.error('Correo Electronico incorrecto');
-        }
-      }
-    }
-  }
+  };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
@@ -294,18 +265,26 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
-  //Define como se muestra los datos en el autcompletado
-  public displayF(elemento) {
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
     }
   }
-  //Define como se muestra los datos en el autcompletado b
+  //Formatea el valor del autocompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.razonSocial ? elemento.razonSocial : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Formatea el valor del autocompletado b
   public displayFb(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ' - ' + elemento.tipoContacto.nombre : elemento;
+      return elemento.numeroPoliza ? elemento.numeroPoliza + ' - ' + elemento.companiaSeguro.nombre : elemento;
     } else {
       return elemento;
     }
@@ -313,7 +292,6 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    var opcion = this.opcionSeleccionada;
     if(keycode == 113) {
       if(indice < this.pestanias.length) {
         this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);

@@ -23,8 +23,6 @@ export class CompaniaSeguroComponent implements OnInit {
   public soloLectura:boolean = false;
   //Define si mostrar el boton
   public mostrarBoton:boolean = null;
-  //Define una lista
-  public lista:Array<any> = [];
   //Define la lista de pestanias
   public pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -75,18 +73,6 @@ export class CompaniaSeguroComponent implements OnInit {
     //Obtiene la lista completa de registros
     this.listar();
   }
-  //Establece el formulario al seleccionar elemento del autocompletado
-  public cambioAutocompletado(elemento) {
-    this.formulario.patchValue(elemento);
-  }
-  //Formatea el valor del autocompletado
-  public displayFn(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -102,10 +88,6 @@ export class CompaniaSeguroComponent implements OnInit {
     this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
     if(opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
@@ -241,6 +223,14 @@ export class CompaniaSeguroComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
