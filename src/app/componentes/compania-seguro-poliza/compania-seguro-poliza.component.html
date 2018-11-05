@@ -18,7 +18,7 @@
               <label for="idEmpresa" class="tamanio-label">Empresa</label>
               <input #autoCompleteInput id="idEmpresa" class="form-control form-control-sm" type="text" 
                 matInput [formControl]="formulario.get('empresa')" [matAutocomplete]="autoEmpresa" 
-                autocomplete="off" (blur)="vaciarListas()">
+                autocomplete="off">
               <mat-autocomplete #autoEmpresa="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa"
                   (onSelectionChange)="listarPorEmpresa(itemEmpresa)">
@@ -49,10 +49,9 @@
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput 
                 [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro" 
-                autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" 
-                  [value]="itemCompaniaSeguro">
+                <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
                   {{itemCompaniaSeguro.nombre}}
                 </mat-option>
               </mat-autocomplete>

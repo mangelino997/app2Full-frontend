@@ -283,3 +283,7 @@ button.toast-close-button {
   margin: 0 !important;
   padding: 0 !important;
 }
+/* Posicion el numero a la derecha en campos numericos */
+input[type=number] { 
+  text-align:right 
+}

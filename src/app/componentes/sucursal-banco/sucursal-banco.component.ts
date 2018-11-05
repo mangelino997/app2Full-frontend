@@ -82,7 +82,7 @@ export class SucursalBancoComponent implements OnInit {
     this.listar();
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarListas() {
+  private vaciarListas() {
     this.resultados = [];
     this.resultadosBancos = [];
   }

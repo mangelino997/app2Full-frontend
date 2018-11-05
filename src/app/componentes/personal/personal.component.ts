@@ -413,7 +413,7 @@ export class PersonalComponent implements OnInit {
     );
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarListas() {
+  private vaciarListas() {
     this.resultados = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];

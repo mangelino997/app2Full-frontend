@@ -96,7 +96,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     })
   }
   //Vacia la listas de resultados autocompletados
-  public vaciarListas() {
+  private vaciarListas() {
     this.resultadosCompaniasSeguros = [];
   }
   //Funcion para establecer los valores de las pestañas

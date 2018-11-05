@@ -170,7 +170,7 @@ export class VehiculoProveedorComponent implements OnInit {
     })
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarLista() {
+  private vaciarLista() {
     this.resultados = [];
     this.resultadosProveedores = [];
     this.resultadosChoferesProveedores = [];

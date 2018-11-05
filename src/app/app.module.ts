@@ -86,6 +86,7 @@ import { FechaService } from './servicios/fecha.service';
 import { VehiculoService } from './servicios/vehiculo.service';
 import { VehiculoProveedorService } from './servicios/vehiculo-proveedor.service';
 import { CompaniaSeguroPolizaService } from './servicios/compania-seguro-poliza.service';
+import { CondicionVentaService } from './servicios/condicion-venta.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -202,13 +203,13 @@ const appRoutes: Routes = [
   {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]},
   {path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService]},
   {path: 'logisticaproveedoreschoferes', component: ChoferProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'logisticavehiculosconfiguracion', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]},
+  {path: 'logisticavehiculospropiosconfiguracion', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]},
   {path: 'contablebancoscontactos', component: ContactoBancoComponent, canActivate: [GuardiaService]},
   {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'generalescompaniadesegurocontactos', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'generalesproveedorescontactos', component: ContactoProveedorComponent, canActivate: [GuardiaService]},
   {path: 'puntosdeventaadministrar', component: PuntoVentaComponent, canActivate: [GuardiaService]},
-  {path: 'logisticavehiculos', component: VehiculoComponent, canActivate: [GuardiaService]},
+  {path: 'logisticavehiculospropios', component: VehiculoComponent, canActivate: [GuardiaService]},
   {path: 'logisticaproveedoresvehiculos', component: VehiculoProveedorComponent, canActivate: [GuardiaService]},
   {path: 'generalescompaniadeseguropolizas', component: CompaniaSeguroPolizaComponent, canActivate: [GuardiaService]}
   //{path: 'viajepropio', component: ViajeComponent, canActivate: [GuardiaService]}//Revisar
@@ -407,6 +408,7 @@ const stompConfig: StompConfig = {
     VehiculoService,
     VehiculoProveedorService,
     CompaniaSeguroPolizaService,
+    CondicionVentaService,
     StompService,
     {
       provide: StompConfig,

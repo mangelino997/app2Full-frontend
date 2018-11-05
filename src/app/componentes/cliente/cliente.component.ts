@@ -15,6 +15,7 @@ import { SucursalService } from '../../servicios/sucursal.service';
 import { SituacionClienteService } from '../../servicios/situacion-cliente.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
+import { CondicionVentaService } from '../../servicios/condicion-venta.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -38,8 +39,6 @@ export class ClienteComponent implements OnInit {
   public soloLectura:boolean = false;
   //Define si mostrar el boton
   public mostrarBoton:boolean = null;
-  //Define una lista
-  public lista:Array<any> = [];
   //Define la lista de pestanias
   public pestanias:Array<any> = [];
   //Define la lista de opciones
@@ -52,6 +51,8 @@ export class ClienteComponent implements OnInit {
   public opcionSeleccionada:number = null;
   //Define la lista de condiciones de iva
   public condicionesIva:Array<any> = [];
+  //Define la lista de condiciones de venta
+  public condicionesVentas:Array<any> = [];
   //Define la lista de tipos de documentos
   public tiposDocumentos:Array<any> = [];
   //Define la lista de resumenes de clientes
@@ -79,7 +80,7 @@ export class ClienteComponent implements OnInit {
   //Define la lista de resultados de busqueda de orden venta
   public resultadosOrdenesVentas:Array<any> = [];
   //Define la lista de resultados de busqueda de cuenta principal
-  public resultadosCuentasPrincipales:Array<any> = [];
+  public resultadosCuentasGrupos:Array<any> = [];
   //Define la lista de resultados de busqueda de sucursal lugar pago
   public resultadosSucursalesPago:Array<any> = [];
   //Define la lista de resultados de busqueda de compania seguro
@@ -93,7 +94,8 @@ export class ClienteComponent implements OnInit {
     private rubroServicio: RubroService, private condicionIvaServicio: CondicionIvaService,
     private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
-    private companiaSeguroServicio: CompaniaSeguroService, private ordenVentaServicio: OrdenVentaService) {
+    private companiaSeguroServicio: CompaniaSeguroService, private ordenVentaServicio: OrdenVentaService,
+    private condicionVentaServicio: CondicionVentaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -136,7 +138,7 @@ export class ClienteComponent implements OnInit {
       version: new FormControl(),
       razonSocial: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       nombreFantasia: new FormControl('', Validators.maxLength(45)),
-      cuentaPrincipal: new FormControl(),
+      cuentaGrupo: new FormControl(),
       domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
       localidad: new FormControl('', [Validators.required]),
       barrio: new FormControl(),
@@ -150,7 +152,8 @@ export class ClienteComponent implements OnInit {
       tipoDocumento: new FormControl(),
       numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(15)]),
       numeroIIBB: new FormControl('', Validators.maxLength(15)),
-      esCuentaCorriente: new FormControl('', Validators.required),
+      esCuentaCorriente: new FormControl(),
+      condicionVenta: new FormControl('', Validators.required),
       resumenCliente: new FormControl(),
       situacionCliente: new FormControl(),
       ordenVenta: new FormControl(),
@@ -234,11 +237,11 @@ export class ClienteComponent implements OnInit {
         })
       }
     })
-    //Autocompletado Cuenta Principal - Buscar por nombre
-    this.formulario.get('cuentaPrincipal').valueChanges.subscribe(data => {
+    //Autocompletado Cuenta Grupo - Buscar por nombre
+    this.formulario.get('cuentaGrupo').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosCuentasPrincipales = response;
+          this.resultadosCuentasGrupos = response;
         })
       }
     })
@@ -268,13 +271,11 @@ export class ClienteComponent implements OnInit {
     this.listarResumenesClientes();
     //Obtiene la lista de situaciones de clientes
     this.listarSituacionesClientes();
-  }
-  //Al cambiar el autocompletado establece valores
-  private cambioAutocompletado(elemento) {
-    this.formulario.setValue(elemento);
+    //Obtiene la lista de condiciones de venta
+    this.listarCondicionesVentas();
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarListas() {
+  private vaciarListas() {
     this.resultados = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
@@ -283,9 +284,64 @@ export class ClienteComponent implements OnInit {
     this.resultadosZonas = [];
     this.resultadosRubros = [];
     this.resultadosOrdenesVentas = [];
-    this.resultadosCuentasPrincipales = [];
+    this.resultadosCuentasGrupos = [];
     this.resultadosSucursalesPago = [];
     this.resultadosCompaniasSeguros = [];
+  }
+  //Obtiene el listado de condiciones de iva
+  private listarCondicionesIva() {
+    this.condicionIvaServicio.listar().subscribe(
+      res => {
+        this.condicionesIva = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de tipos de documentos
+  private listarTiposDocumentos() {
+    this.tipoDocumentoServicio.listar().subscribe(
+      res => {
+        this.tiposDocumentos = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de resumenes de clientes
+  private listarResumenesClientes() {
+    this.resumenClienteServicio.listar().subscribe(
+      res => {
+        this.resumenesClientes = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de situaciones de clientes
+  private listarSituacionesClientes() {
+    this.situacionClienteServicio.listar().subscribe(
+      res => {
+        this.situacionesClientes = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de condiciones de ventas
+  private listarCondicionesVentas() {
+    this.condicionVentaServicio.listar().subscribe(
+      res => {
+        this.condicionesVentas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -337,7 +393,7 @@ export class ClienteComponent implements OnInit {
         break;
       case 2:
         setTimeout(function () {
-          document.getElementById('idEsCuentaCorriente').focus();
+          document.getElementById('idCondicionVenta').focus();
         }, 20);
         break;
       case 3:
@@ -373,50 +429,6 @@ export class ClienteComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el listado de condiciones de iva
-  private listarCondicionesIva() {
-    this.condicionIvaServicio.listar().subscribe(
-      res => {
-        this.condicionesIva = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de tipos de documentos
-  private listarTiposDocumentos() {
-    this.tipoDocumentoServicio.listar().subscribe(
-      res => {
-        this.tiposDocumentos = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de resumenes de clientes
-  private listarResumenesClientes() {
-    this.resumenClienteServicio.listar().subscribe(
-      res => {
-        this.resumenesClientes = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de situaciones de clientes
-  private listarSituacionesClientes() {
-    this.situacionClienteServicio.listar().subscribe(
-      res => {
-        this.situacionesClientes = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
@@ -441,7 +453,9 @@ export class ClienteComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -460,6 +474,7 @@ export class ClienteComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar() {
+    this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {

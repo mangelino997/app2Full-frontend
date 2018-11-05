@@ -16,7 +16,7 @@
           <label for="idBanco" class="tamanio-label">Banco</label>
           <input id="idBanco" class="form-control form-control-sm" type="text" matInput
             [formControl]="formulario.get('banco')" [matAutocomplete]="autoBanco"
-            autocomplete="off" (blur)="vaciarListas()">
+            autocomplete="off">
           <mat-autocomplete #autoBanco="matAutocomplete" [displayWith]="displayFa.bind(this)">
             <mat-option *ngFor="let itemBanco of resultadosBancos" [value]="itemBanco"
               (onSelectionChange)="listarPorBanco(itemBanco)">

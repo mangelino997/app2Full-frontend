@@ -129,7 +129,7 @@ export class ChoferProveedorComponent implements OnInit {
     this.listarTiposDocumentos();
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarLista() {
+  private vaciarLista() {
     this.resultados = [];
     this.resultadosProveedores = [];
     this.resultadosBarrios = [];

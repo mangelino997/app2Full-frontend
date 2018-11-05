@@ -186,7 +186,7 @@ export class VehiculoComponent implements OnInit {
     })
   }
   //Obtiene la lista de compania de seguros poliza por empresa
-  private listarCompaniasSeguroPolizaPorEmpresa(empresa) {
+  public listarCompaniasSeguroPolizaPorEmpresa(empresa) {
     this.companiaSeguroPolizaServicio.listarPorEmpresa(empresa.id).subscribe(res => {
       this.companiasSegurosPolizas = res.json();
     })
@@ -199,7 +199,7 @@ export class VehiculoComponent implements OnInit {
     this.establecerConfiguracion(elemento);
   }
   //Vacia la lista de resultados de autocompletados
-  public vaciarLista() {
+  private vaciarLista() {
     this.resultados = [];
     this.resultadosVehiculosRemolques = [];
     this.resultadosLocalidades = [];

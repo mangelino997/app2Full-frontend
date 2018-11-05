@@ -90,7 +90,7 @@
                         <label for="idBarrio" class="tamanio-label">Barrio</label>
                         <input id="idBarrio" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                             {{itemBarrio.nombre}}
@@ -103,7 +103,7 @@
                         <label for="idLocalidad" class="tamanio-label">Localidad</label>
                         <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                           <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
                             {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}},
@@ -126,7 +126,7 @@
                         <label for="idLocalidadNacimiento" class="tamanio-label">Lugar de Nacimiento</label>
                         <input id="idLocalidadNacimiento" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('localidadNacimiento')" [matAutocomplete]="autoLocalidadNacimiento"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoLocalidadNacimiento="matAutocomplete" [displayWith]="displayFb.bind(this)">
                           <mat-option *ngFor="let itemLocalidadNacimiento of resultadosLocalidades" [value]="itemLocalidadNacimiento"
                             (onSelectionChange)="establecerNacionalidad(itemLocalidadNacimiento)">
@@ -198,18 +198,14 @@
                       <div class="form-group has-float-label">
                         <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
                         <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" pattern="^[0-9]{10}(,[0-9]{10})*$"
-                          (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', 'telefonoFijo')"
-                          (ngModelChange)="cambioCampo('idTelefonoFijo', 'labelTelefonoFijo')">
+                          class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil Propio</label>
                         <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" pattern="^[0-9]{10}(,[0-9]{10})*$"
-                          (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', 'telefonoMovil')"
-                          (ngModelChange)="cambioCampo('idTelefonoMovil', 'labelTelefonoMovil')">
+                          class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                   </div>
@@ -277,7 +273,7 @@
                         <label for="idCategoria" class="tamanio-label">Categoría</label>
                         <input id="idCategoria" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('categoria')" [matAutocomplete]="autoCategoria"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoCategoria="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemCategoria of resultadosCategorias" [value]="itemCategoria">
                             {{itemCategoria.nombre}}
@@ -329,7 +325,7 @@
                         <label for="idSeguridadSocial" class="tamanio-label">Organismo Previsional</label>
                         <input id="idSeguridadSocial" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('seguridadSocial')" [matAutocomplete]="autoSeguridadSocial"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoSeguridadSocial="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemSeguridadSocial of resultadosSeguridadesSociales" [value]="itemSeguridadSocial">
                             {{itemSeguridadSocial.nombre}}
@@ -368,7 +364,7 @@
                         <label for="idAfipSituacion" class="tamanio-label">Situación</label>
                         <input id="idAfipSituacion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipSituacion')" [matAutocomplete]="autoAfipSituacion"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoAfipSituacion="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemAfipSituacion of resultadosAfipSituaciones" [value]="itemAfipSituacion">
                             {{itemAfipSituacion.nombre}}
@@ -381,7 +377,7 @@
                         <label for="idAfipCondicion" class="tamanio-label">Condición</label>
                         <input id="idAfipCondicion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipCondicion')" [matAutocomplete]="autoAfipCondicion"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoAfipCondicion="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemAfipCondicion of resultadosAfipCondiciones" [value]="itemAfipCondicion">
                             {{itemAfipCondicion.nombre}}
@@ -394,7 +390,7 @@
                         <label for="idAfipActividad" class="tamanio-label">Actividad</label>
                         <input id="idAfipActividad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipActividad')" [matAutocomplete]="autoAfipActividad"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoAfipActividad="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemAfipActividad of resultadosAfipActividades" [value]="itemAfipActividad">
                             {{itemAfipActividad.nombre}}
@@ -409,7 +405,7 @@
                         <label for="idAfipModContratacion" class="tamanio-label">Mod. de Contratación</label>
                         <input id="idAfipModContratacion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipModContratacion')" [matAutocomplete]="autoAfipModContratacion"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoAfipModContratacion="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemAfipModContratacion of resultadosAfipModContrataciones"
                             [value]="itemAfipModContratacion">
@@ -423,7 +419,7 @@
                         <label for="idAfipSiniestrado" class="tamanio-label">Código de Siniestrado</label>
                         <input id="idAfipSiniestrado" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipSiniestrado')" [matAutocomplete]="autoAfipSiniestrado"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoAfipSiniestrado="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemAfipSiniestrado of resultadosAfipSiniestrados"
                             [value]="itemAfipSiniestrado">
@@ -437,7 +433,7 @@
                         <label for="idAfipLocalidad" class="tamanio-label">Localidad</label>
                         <input id="idAfipLocalidad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipLocalidad')" [matAutocomplete]="autoAfipLocalidad"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoAfipLocalidad="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemAfipLocalidad of resultadosAfipLocalidades"
                             [value]="itemAfipLocalidad">
@@ -476,7 +472,7 @@
                         <label for="idObraSocial" class="tamanio-label">Obra Social</label>
                         <input id="idObraSocial" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('obraSocial')" [matAutocomplete]="autoObraSocial"
-                          autocomplete="off" (blur)="vaciarListas()" [readonly]="soloLectura">
+                          autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoObraSocial="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemObraSocial of resultadosObrasSociales" [value]="itemObraSocial">
                             {{itemObraSocial.nombre}}
@@ -634,10 +630,7 @@
                         <label id="labelTelefonoMovilEmpresa" for="idTelefonoMovilEmpresa" class="tamanio-label">
                           Teléfono Móvil Empresa</label>
                         <input id="idTelefonoMovilEmpresa" type="tel" formControlName="telefonoMovilEmpresa" autocomplete="off"
-                          class="form-control form-control-sm" pattern="^[0-9]{10}(,[0-9]{10})*$"
-                          (blur)="validarPatron('^\[0-9]{10}(,\[0-9]{10})*$', 'telefonoMovilEmpresa')"
-                          (ngModelChange)="cambioCampo('idTelefonoMovilEmpresa', 'labelTelefonoMovilEmpresa')" 
-                          [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
