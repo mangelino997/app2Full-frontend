@@ -285,5 +285,10 @@ button.toast-close-button {
 }
 /* Posicion el numero a la derecha en campos numericos */
 input[type=number] { 
-  text-align:right 
+  text-align:right;
+  -moz-appearance:textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
 }
