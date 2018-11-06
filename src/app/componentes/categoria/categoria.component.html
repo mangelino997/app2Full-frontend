@@ -36,7 +36,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura"
                 (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
@@ -46,14 +46,14 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idBasico" class="tamanio-label">Básico</label>
+              <label for="idBasico" class="tamanio-label">Básico *</label>
               <input id="idBasico" type="number" formControlName="basico" autocomplete="off"
                 class="form-control form-control-sm" (blur)="setDecimales($event, 2)" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idAdicionalBasicoVacaciones" class="tamanio-label">Adicional por Vacaciones</label>
+              <label for="idAdicionalBasicoVacaciones" class="tamanio-label">Adicional por Vacaciones *</label>
               <input id="idAdicionalBasicoVacaciones" type="number" formControlName="adicionalBasicoVacaciones"
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
                 (blur)="setDecimales($event, 2)">
@@ -61,7 +61,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idTopeBasicoAdelantos" class="tamanio-label">Tope de Adelantos</label>
+              <label for="idTopeBasicoAdelantos" class="tamanio-label">Tope de Adelantos *</label>
               <input id="idTopeBasicoAdelantos" type="number" formControlName="topeBasicoAdelantos"
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
                 (blur)="setDecimales($event, 2)">
@@ -71,14 +71,14 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idDiasLaborables" class="tamanio-label">Días Laborables</label>
+              <label for="idDiasLaborables" class="tamanio-label">Días Laborables *</label>
               <input id="idDiasLaborables" type="number" formControlName="diasLaborables"
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idHorasLaborables" class="tamanio-label">Horas Laborables</label>
+              <label for="idHorasLaborables" class="tamanio-label">Horas Laborables *</label>
               <input id="idHorasLaborables" type="number" formControlName="horasLaborables"
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
