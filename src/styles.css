@@ -296,3 +296,10 @@ input::-webkit-inner-spin-button {
 .upper-case {
   text-transform: uppercase;
 }
+/* Define un color particular para los campos de busqueda */
+.color-busqueda {
+  background: #D6F3F5;
+}
+.color-busqueda:focus {
+  background: #D6F3F5 !important;
+}
