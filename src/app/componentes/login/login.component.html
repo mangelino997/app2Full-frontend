@@ -23,7 +23,7 @@
                   class="form-control" required [(ngModel)]="elemento.password">
                 </div>
                 <div *ngIf="estaAutenticado" class="form-group has-float-label">
-                  <label for="idEmpresa" class="tamanio-label">Empresa</label>
+                  <label for="idEmpresa" class="tamanio-label">Empresa *</label>
                   <select id="idEmpresa" class="form-control" formControlName="empresa" [(ngModel)]="elemento.empresa">
                     <option *ngFor="let empresa of empresas" [ngValue]="empresa">{{empresa.razonSocial}}</option>
                   </select>
