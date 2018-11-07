@@ -61,14 +61,14 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idRazonSocial" class="tamanio-label-titulo">Apellido</label>
+                        <label for="idRazonSocial" class="tamanio-label-titulo">Apellido *</label>
                         <input id="idApellido" type="text" formControlName="apellido" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idNombre" class="tamanio-label-titulo">Nombre</label>
+                        <label for="idNombre" class="tamanio-label-titulo">Nombre *</label>
                         <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
@@ -80,7 +80,7 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idDomicilio" class="tamanio-label">Domicilio</label>
+                        <label for="idDomicilio" class="tamanio-label">Domicilio *</label>
                         <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
@@ -100,7 +100,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idLocalidad" class="tamanio-label">Localidad</label>
+                        <label for="idLocalidad" class="tamanio-label">Localidad *</label>
                         <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
                           autocomplete="off" [readonly]="soloLectura">
@@ -116,14 +116,14 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idFechaNacimiento" class="tamanio-label">Fecha de Nacimiento</label>
+                        <label for="idFechaNacimiento" class="tamanio-label">Fecha de Nacimiento *</label>
                         <input id="idFechaNacimiento" type="date" formControlName="fechaNacimiento"
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idLocalidadNacimiento" class="tamanio-label">Lugar de Nacimiento</label>
+                        <label for="idLocalidadNacimiento" class="tamanio-label">Lugar de Nacimiento *</label>
                         <input id="idLocalidadNacimiento" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('localidadNacimiento')" [matAutocomplete]="autoLocalidadNacimiento"
                           autocomplete="off" [readonly]="soloLectura">
@@ -147,7 +147,7 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idSexo" class="tamanio-label">Sexo</label>
+                        <label for="idSexo" class="tamanio-label">Sexo *</label>
                         <input id="idSexo" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('sexo')" [matAutocomplete]="autoSexo" autocomplete="off"
                           [readonly]="soloLectura">
@@ -160,7 +160,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idEstadoCivil" class="tamanio-label">Estado Civil</label>
+                        <label for="idEstadoCivil" class="tamanio-label">Estado Civil *</label>
                         <input id="idEstadoCivil" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('estadoCivil')" [matAutocomplete]="autoEstadoCivil" autocomplete="off"
                           [readonly]="soloLectura">
@@ -175,7 +175,7 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idTipoDocumento" class="tamanio-label">Tipo Documento</label>
+                        <label for="idTipoDocumento" class="tamanio-label">Tipo Documento *</label>
                         <input id="idTipoDocumento" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('tipoDocumento')" [matAutocomplete]="autoTipoDocumento" autocomplete="off"
                           [readonly]="soloLectura">
@@ -188,7 +188,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento</label>
+                        <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento *</label>
                         <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura"
                           (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
@@ -214,7 +214,7 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idSucursal" class="tamanio-label">Sucursal donde Trabaja</label>
+                        <label for="idSucursal" class="tamanio-label">Sucursal donde Trabaja *</label>
                         <input id="idSucursal" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('sucursal')" [matAutocomplete]="autoSucursal" autocomplete="off"
                           [readonly]="soloLectura">
@@ -227,7 +227,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idArea" class="tamanio-label">Area</label>
+                        <label for="idArea" class="tamanio-label">Area *</label>
                         <input id="idArea" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('area')" [matAutocomplete]="autoArea" autocomplete="off"
                           [readonly]="soloLectura">
@@ -240,7 +240,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idFechaInicio" class="tamanio-label">Fecha de Inicio</label>
+                        <label for="idFechaInicio" class="tamanio-label">Fecha de Inicio *</label>
                         <input id="idFechaInicio" type="date" formControlName="fechaInicio"
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
@@ -270,7 +270,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idCategoria" class="tamanio-label">Categoría</label>
+                        <label for="idCategoria" class="tamanio-label">Categoría *</label>
                         <input id="idCategoria" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('categoria')" [matAutocomplete]="autoCategoria"
                           autocomplete="off" [readonly]="soloLectura">
@@ -283,7 +283,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idSindicato" class="tamanio-label">Sindicato</label>
+                        <label for="idSindicato" class="tamanio-label">Sindicato *</label>
                         <input id="idSindicato" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('sindicato')" [matAutocomplete]="autoSindicato" autocomplete="off"
                           [readonly]="soloLectura">
@@ -298,9 +298,9 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idEsAcompReparto" class="tamanio-label">Es Acompañante en Repartos</label>
-                        <input id="idEsAcompReparto" class="form-control form-control-sm" type="text" matInput 
-                          [formControl]="formulario.get('esAcompReparto')" [matAutocomplete]="autoEsAcompReparto" 
+                        <label for="idEsAcompReparto" class="tamanio-label">Es Acompañante en Repartos *</label>
+                        <input id="idEsAcompReparto" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('esAcompReparto')" [matAutocomplete]="autoEsAcompReparto"
                           autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoEsAcompReparto="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option [value]="false">No</mat-option>
@@ -314,7 +314,7 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label id="labelCuil" for="idCuil" class="tamanio-label">CUIL</label>
+                        <label id="labelCuil" for="idCuil" class="tamanio-label">CUIL *</label>
                         <input id="idCuil" type="number" formControlName="cuil" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura"
                           (ngModelChange)="cambioCampo('idCuil', 'labelCuil')">
@@ -322,7 +322,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idSeguridadSocial" class="tamanio-label">Organismo Previsional</label>
+                        <label for="idSeguridadSocial" class="tamanio-label">Organismo Previsional *</label>
                         <input id="idSeguridadSocial" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('seguridadSocial')" [matAutocomplete]="autoSeguridadSocial"
                           autocomplete="off" [readonly]="soloLectura">
@@ -335,9 +335,9 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idEnConvenioColectivo" class="tamanio-label">Trabajador en Convenio Colectivo</label>
-                        <input id="idEnConvenioColectivo" class="form-control form-control-sm" type="text" matInput 
-                          [formControl]="formulario.get('enConvenioColectivo')" [matAutocomplete]="autoEnConvenioColectivo" 
+                        <label for="idEnConvenioColectivo" class="tamanio-label">Trabajador en Convenio Colectivo *</label>
+                        <input id="idEnConvenioColectivo" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('enConvenioColectivo')" [matAutocomplete]="autoEnConvenioColectivo"
                           autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoEnConvenioColectivo="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option [value]="false">No</mat-option>
@@ -347,9 +347,9 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idConCoberturaSCVO" class="tamanio-label">Con Cobertura de S.V.O</label>
-                        <input id="idConCoberturaSCVO" class="form-control form-control-sm" type="text" matInput 
-                          [formControl]="formulario.get('conCoberturaSCVO')" [matAutocomplete]="autoConCoberturaSCVO" 
+                        <label for="idConCoberturaSCVO" class="tamanio-label">Con Cobertura de S.V.O *</label>
+                        <input id="idConCoberturaSCVO" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('conCoberturaSCVO')" [matAutocomplete]="autoConCoberturaSCVO"
                           autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoConCoberturaSCVO="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option [value]="false">No</mat-option>
@@ -361,7 +361,7 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idAfipSituacion" class="tamanio-label">Situación</label>
+                        <label for="idAfipSituacion" class="tamanio-label">Situación *</label>
                         <input id="idAfipSituacion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipSituacion')" [matAutocomplete]="autoAfipSituacion"
                           autocomplete="off" [readonly]="soloLectura">
@@ -374,7 +374,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idAfipCondicion" class="tamanio-label">Condición</label>
+                        <label for="idAfipCondicion" class="tamanio-label">Condición *</label>
                         <input id="idAfipCondicion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipCondicion')" [matAutocomplete]="autoAfipCondicion"
                           autocomplete="off" [readonly]="soloLectura">
@@ -387,7 +387,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idAfipActividad" class="tamanio-label">Actividad</label>
+                        <label for="idAfipActividad" class="tamanio-label">Actividad *</label>
                         <input id="idAfipActividad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipActividad')" [matAutocomplete]="autoAfipActividad"
                           autocomplete="off" [readonly]="soloLectura">
@@ -402,7 +402,7 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idAfipModContratacion" class="tamanio-label">Mod. de Contratación</label>
+                        <label for="idAfipModContratacion" class="tamanio-label">Mod. de Contratación *</label>
                         <input id="idAfipModContratacion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipModContratacion')" [matAutocomplete]="autoAfipModContratacion"
                           autocomplete="off" [readonly]="soloLectura">
@@ -416,7 +416,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idAfipSiniestrado" class="tamanio-label">Código de Siniestrado</label>
+                        <label for="idAfipSiniestrado" class="tamanio-label">Código de Siniestrado *</label>
                         <input id="idAfipSiniestrado" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipSiniestrado')" [matAutocomplete]="autoAfipSiniestrado"
                           autocomplete="off" [readonly]="soloLectura">
@@ -430,7 +430,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idAfipLocalidad" class="tamanio-label">Localidad</label>
+                        <label for="idAfipLocalidad" class="tamanio-label">Localidad *</label>
                         <input id="idAfipLocalidad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipLocalidad')" [matAutocomplete]="autoAfipLocalidad"
                           autocomplete="off" [readonly]="soloLectura">
@@ -507,9 +507,9 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idRecibeAdelanto" class="tamanio-label">Recibe Adelanto</label>
-                        <input id="idRecibeAdelanto" class="form-control form-control-sm" type="text" matInput 
-                          [formControl]="formulario.get('recibeAdelanto')" [matAutocomplete]="autoRecibeAdelantos" 
+                        <label for="idRecibeAdelanto" class="tamanio-label">Recibe Adelanto *</label>
+                        <input id="idRecibeAdelanto" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('recibeAdelanto')" [matAutocomplete]="autoRecibeAdelantos"
                           autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoRecibeAdelantos="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option [value]="false">No</mat-option>
@@ -521,9 +521,9 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idRecibePrestamo" class="tamanio-label">Recibe Préstamo</label>
-                        <input id="idRecibePrestamo" class="form-control form-control-sm" type="text" matInput 
-                          [formControl]="formulario.get('recibePrestamo')" [matAutocomplete]="autoRecibePrestamo" 
+                        <label for="idRecibePrestamo" class="tamanio-label">Recibe Préstamo *</label>
+                        <input id="idRecibePrestamo" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('recibePrestamo')" [matAutocomplete]="autoRecibePrestamo"
                           autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoRecibePrestamo="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option [value]="false">No</mat-option>
@@ -535,7 +535,7 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idCuotasPrestamo" class="tamanio-label">Cuotas Préstamo</label>
+                        <label for="idCuotasPrestamo" class="tamanio-label">Cuotas Préstamo *</label>
                         <input id="idCuotasPrestamo" type="number" formControlName="cuotasPrestamo"
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
@@ -546,9 +546,9 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idEsChofer" class="tamanio-label">Es Chofer</label>
-                        <input id="idEsChofer" class="form-control form-control-sm" type="text" matInput 
-                          [formControl]="formulario.get('esChofer')" [matAutocomplete]="autoEsChofer" 
+                        <label for="idEsChofer" class="tamanio-label">Es Chofer *</label>
+                        <input id="idEsChofer" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('esChofer')" [matAutocomplete]="autoEsChofer"
                           autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoEsChofer="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option [value]="false">No</mat-option>
@@ -558,9 +558,9 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idEsChoferLargaDistancia" class="tamanio-label">Es Chofer Larga Distancia</label>
-                        <input id="idEsChoferLargaDistancia" class="form-control form-control-sm" type="text" matInput 
-                          [formControl]="formulario.get('esChoferLargaDistancia')" [matAutocomplete]="autoEsChoferLargaDistancia" 
+                        <label for="idEsChoferLargaDistancia" class="tamanio-label">Es Chofer Larga Distancia *</label>
+                        <input id="idEsChoferLargaDistancia" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('esChoferLargaDistancia')" [matAutocomplete]="autoEsChoferLargaDistancia"
                           autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoEsChoferLargaDistancia="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option [value]="false">No</mat-option>
@@ -661,8 +661,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoRotativo" class="tamanio-label">Turno Rotativo</label>
-                        <input id="idTurnoRotativo" class="form-control form-control-sm" type="text" matInput 
-                          [formControl]="formulario.get('turnoRotativo')" [matAutocomplete]="autoTurnoRotativo" 
+                        <input id="idTurnoRotativo" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('turnoRotativo')" [matAutocomplete]="autoTurnoRotativo"
                           autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoTurnoRotativo="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option [value]="false">No</mat-option>
@@ -673,8 +673,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoFueraConvenio" class="tamanio-label">Fuera de Convenio</label>
-                        <input id="idTurnoFueraConvenio" class="form-control form-control-sm" type="text" matInput 
-                          [formControl]="formulario.get('turnoFueraConvenio')" [matAutocomplete]="autoFueraConvenica" 
+                        <input id="idTurnoFueraConvenio" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('turnoFueraConvenio')" [matAutocomplete]="autoFueraConvenica"
                           autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoFueraConvenica="matAutocomplete" [displayWith]="displayFc.bind(this)">
                           <mat-option [value]="false">No</mat-option>

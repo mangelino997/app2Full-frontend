@@ -15,7 +15,7 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo</label>
+              <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
               <input id="idTipoVehiculo" class="form-control form-control-sm" type="text" matInput 
                 [formControl]="formulario.get('tipoVehiculo')" [matAutocomplete]="autoTipoVehiculo" 
                 autocomplete="off">
@@ -29,7 +29,7 @@
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo</label>
+              <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
               <input id="idMarcaVehiculo" class="form-control form-control-sm" type="text" matInput 
                 [formControl]="formulario.get('marcaVehiculo')" [matAutocomplete]="autoMarcaVehiculo" 
                 autocomplete="off">
@@ -62,7 +62,7 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idModelo" class="tamanio-label">Modelo</label>
+              <label for="idModelo" class="tamanio-label">Modelo *</label>
               <input id="idModelo" type="text" formControlName="modelo" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -80,7 +80,7 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idCantidadEjes" class="tamanio-label">Cantidad de Ejes</label>
+              <label for="idCantidadEjes" class="tamanio-label">Cantidad de Ejes *</label>
               <input id="idCantidadEjes" class="form-control form-control-sm" type="text" matInput 
                 [formControl]="formulario.get('cantidadEjes')" [matAutocomplete]="autoCantidadEjes" 
                 autocomplete="off" [readonly]="soloLectura">
@@ -94,7 +94,7 @@
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idCapacidadCarga" class="tamanio-label">Capacidad Total de Carga(Tn)</label>
+              <label for="idCapacidadCarga" class="tamanio-label">Capacidad Total de Carga(Tn) *</label>
               <input id="idCapacidadCarga" type="number" formControlName="capacidadCarga" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
