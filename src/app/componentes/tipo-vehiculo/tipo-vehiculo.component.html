@@ -28,15 +28,15 @@
           <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
         </div>
         <div class="form-group has-float-label">
-          <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
+          <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
         </div>
         <div class="form-group has-float-label">
-          <label for="idEsRemolque" class="tamanio-label">Es Remolque</label>
+          <label for="idEsRemolque" class="tamanio-label">Es Remolque *</label>
           <input id="idEsRemolque" class="form-control form-control-sm" type="text" matInput
-            [formControl]="formulario.get('esRemolque')" [matAutocomplete]="autoEsRemolque" 
+            [formControl]="formulario.get('esRemolque')" [matAutocomplete]="autoEsRemolque"
             autocomplete="off" [readonly]="soloLectura">
           <mat-autocomplete #autoEsRemolque="matAutocomplete" [displayWith]="displayFa.bind(this)">
             <mat-option [value]="false">No</mat-option>

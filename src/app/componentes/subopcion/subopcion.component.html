@@ -14,7 +14,7 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
-          <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput 
+          <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
@@ -27,13 +27,13 @@
           <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
         </div>
         <div id="divNombre" class="form-group has-float-label">
-          <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
+          <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
         </div>
         <div class="form-group has-float-label">
-          <label for="idEsABM" class="tamanio-label">Es ABM</label>
+          <label for="idEsABM" class="tamanio-label">Es ABM *</label>
           <input id="idEsABM" class="form-control form-control-sm" type="text" matInput
             [formControl]="formulario.get('esABM')" [matAutocomplete]="autoEsABM"
             autocomplete="off" [readonly]="soloLectura">
@@ -43,7 +43,7 @@
           </mat-autocomplete>
         </div>
         <div class="form-group has-float-label">
-          <label for="idSubmodulo" class="tamanio-label">Submódulo</label>
+          <label for="idSubmodulo" class="tamanio-label">Submódulo *</label>
           <input id="idSubmodulo" class="form-control form-control-sm" type="text" matInput
             [formControl]="formulario.get('submodulo')" [matAutocomplete]="autoSubmodulo"
             autocomplete="off" [readonly]="soloLectura">
