@@ -7,9 +7,9 @@
     <div class="row justify-content-center">
       <div class="col-md-2">
         <div id="divValor" class="form-group has-float-label">
-          <label id="labelValor" for="idValor" class="tamanio-label">Valor</label>
+          <label id="labelValor" for="idValor" class="tamanio-label">Valor *</label>
           <input id="idValor" type="number" formControlName="valor" autocomplete="off"
-          class="form-control form-control-sm" 
+          class="form-control form-control-sm"
           (ngModelChange)="cambioCampo('idValor', 'labelValor')" (blur)="establecerHasta($event)" >
         </div>
       </div>
