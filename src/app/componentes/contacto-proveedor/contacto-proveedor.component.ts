@@ -250,15 +250,7 @@ export class ContactoProveedorComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    if(respuesta.codigo == 11013) {
-      document.getElementById("labelTelefonoFijo").classList.add('label-error');
-      document.getElementById("idTelefonoFijo").classList.add('is-invalid');
-      document.getElementById("idTelefonoFijo").focus();
-    } else if(respuesta.codigo == 11014) {
-      document.getElementById("labelTelefonoMovil").classList.add('label-error');
-      document.getElementById("idTelefonoMovil").classList.add('is-invalid');
-      document.getElementById("idTelefonoMovil").focus();
-    } else if(respuesta.codigo == 11003) {
+    if(respuesta.codigo == 11003) {
       document.getElementById("labelCorreoelectronico").classList.add('label-error');
       document.getElementById("idCorreoelectronico").classList.add('is-invalid');
       document.getElementById("idCorreoelectronico").focus();

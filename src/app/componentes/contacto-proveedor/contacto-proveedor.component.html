@@ -10,7 +10,7 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-8 text-center">
-      <h5>{{pestaniaActual}} Contácto de Proveedor</h5>
+      <h5>{{pestaniaActual}} Contacto de Proveedor</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-4">
@@ -28,7 +28,7 @@
           </div>
           <div class="col-md-4" *ngIf="mostrarAutocompletado">
             <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Lista de Contáctos</label>
+              <label for="idAutocompletado" class="tamanio-label">Lista de Contactos</label>
               <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput 
                 [formControl]="autocompletado" [matAutocomplete]="auto" 
                 autocomplete="off" [required]="mostrarAutocompletado">
@@ -43,7 +43,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idTipoContacto" class="tamanio-label">Tipo de Contácto</label>
+              <label for="idTipoContacto" class="tamanio-label">Tipo de Contacto</label>
               <input id="idTipoContacto" class="form-control form-control-sm" formControlName="tipoContacto"
                 type="text" matInput [matAutocomplete]="autoTipoContacto" autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoTipoContacto="matAutocomplete" [displayWith]="displayFa.bind(this)">
@@ -55,7 +55,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idNombre" class="tamanio-label">Nombre del Contácto</label>
+              <label for="idNombre" class="tamanio-label">Nombre del Contacto</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -103,9 +103,9 @@
             <th class="text-center" style="width:5%" scope="col">id</th>
             <th class="text-center" style="width:15%" scope="col">Proveedor</th>
             <th class="text-center" style="width:10%" scope="col">Nombre Contácto</th>
-            <th class="text-center" style="width:15%" scope="col">Tipo Contácto</th>
-            <th class="text-center" style="width:10%" scope="col">Telefono Fijo</th>
-            <th class="text-center" style="width:10%" scope="col">Telefono Móvil</th>
+            <th class="text-center" style="width:15%" scope="col">Tipo Contacto</th>
+            <th class="text-center" style="width:10%" scope="col">Teléfono Fijo</th>
+            <th class="text-center" style="width:10%" scope="col">Teléfono Móvil</th>
             <th class="text-center" style="width:15%" scope="col">Correo Electrónico</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
