@@ -63,7 +63,7 @@
                       <div class="form-group has-float-label">
                         <label id="labelRazonSocial" for="idRazonSocial" class="tamanio-label-titulo">Razón Social *</label>
                         <input id="idRazonSocial" type="text" formControlName="razonSocial" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura"
+                          class="form-control form-control-sm upper-case" [readonly]="soloLectura"
                           (ngModelChange)="cambioCampo('idRazonSocial', 'labelRazonSocial')">
                       </div>
                     </div>

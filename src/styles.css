@@ -292,3 +292,7 @@ input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;
 }
+/* Define campos siempre en uppercase */
+.upper-case {
+  text-transform: uppercase;
+}
