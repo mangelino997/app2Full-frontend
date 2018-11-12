@@ -4,7 +4,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
-  MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule } from '@angular/material';
+  MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
+  MatProgressBarModule } from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -87,6 +88,7 @@ import { VehiculoService } from './servicios/vehiculo.service';
 import { VehiculoProveedorService } from './servicios/vehiculo-proveedor.service';
 import { CompaniaSeguroPolizaService } from './servicios/compania-seguro-poliza.service';
 import { CondicionVentaService } from './servicios/condicion-venta.service';
+import { RolSubopcionService } from './servicios/rol-subopcion.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -150,7 +152,9 @@ import { PuntoVentaComponent } from './componentes/punto-venta/punto-venta.compo
 import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursal-cliente.component'; //Probado
 import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component'; //Probado
 import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component'; //Probado
-import { CompaniaSeguroPolizaComponent } from './componentes/compania-seguro-poliza/compania-seguro-poliza.component'; //Probado
+import { CompaniaSeguroPolizaComponent } from './componentes/compania-seguro-poliza/compania-seguro-poliza.component';
+import { ViajeRemitoComponent } from './componentes/viaje-remito/viaje-remito.component';
+import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-subopcion/rol-subopcion.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -211,7 +215,8 @@ const appRoutes: Routes = [
   {path: 'puntosdeventaadministrar', component: PuntoVentaComponent, canActivate: [GuardiaService]},
   {path: 'logisticavehiculospropios', component: VehiculoComponent, canActivate: [GuardiaService]},
   {path: 'logisticaproveedoresvehiculos', component: VehiculoProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'generalescompaniadeseguropolizas', component: CompaniaSeguroPolizaComponent, canActivate: [GuardiaService]}
+  {path: 'generalescompaniadeseguropolizas', component: CompaniaSeguroPolizaComponent, canActivate: [GuardiaService]},
+  {path: 'reestablecertablastablarolsubopcion', component: RolSubopcionComponent, canActivate: [GuardiaService]}
   //{path: 'viajepropio', component: ViajeComponent, canActivate: [GuardiaService]}//Revisar
 ]
 
@@ -287,7 +292,10 @@ const stompConfig: StompConfig = {
     SucursalClienteComponent,
     VehiculoComponent,
     VehiculoProveedorComponent,
-    CompaniaSeguroPolizaComponent
+    CompaniaSeguroPolizaComponent,
+    ViajeRemitoComponent,
+    RolSubopcionComponent,
+    RolSubopcionDialog
   ],
   imports: [
     BrowserModule,
@@ -308,6 +316,8 @@ const stompConfig: StompConfig = {
     MatAutocompleteModule,
     MatRadioModule,
     MatTableModule,
+    MatDialogModule,
+    MatProgressBarModule,
     ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
     NgbModule,
     ToastrModule.forRoot({
@@ -409,12 +419,14 @@ const stompConfig: StompConfig = {
     VehiculoProveedorService,
     CompaniaSeguroPolizaService,
     CondicionVentaService,
+    RolSubopcionService,
     StompService,
     {
       provide: StompConfig,
       useValue: stompConfig
     }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [RolSubopcionDialog]
 })
 export class AppModule { }

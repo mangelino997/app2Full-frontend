@@ -1,0 +1,129 @@
+<div id="viajeremito" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>REMITO</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-6 text-center">
+      <h5>{{pestaniaActual}} Remito</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-3">
+            <!-- Fecha -->
+          </div>
+          <div class="col-md-3">
+            <!-- Numero de Camion -->
+          </div>
+          <div class="col-md-3">
+            <!-- Sucursal Destino -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <!-- Tipo Comprobante -->
+          </div>
+          <div class="col-md-3">
+            <!-- Punto de Venta -->
+          </div>
+          <div class="col-md-3">
+            <!-- Numero de Comprobante -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <!-- Remitente -->
+          </div>
+          <div class="col-md-3">
+            <!-- Destinatario -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <!-- Bultos -->
+          </div>
+          <div class="col-md-3">
+            <!-- Kilos -->
+          </div>
+          <div class="col-md-3">
+            <!-- M3 -->
+          </div>
+          <div class="col-md-3">
+            <!-- Valor Declarado -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <!-- Flete por Retiro -->
+          </div>
+          <div class="col-md-3">
+            <!-- Flete por Entrega -->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <!-- Observaciones -->
+          </div>
+        </div>
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+          {{pestaniaActual}}
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-12">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:15%" scope="col">Sucursal</th>
+            <th class="text-center" style="width:20%" scope="col">Fecha</th>
+            <th class="text-center" style="width:10%" scope="col">Tipo Comprobante</th>
+            <th class="text-center" style="width:10%" scope="col">Punto Venta</th>
+            <th class="text-center" style="width:10%" scope="col">N° Comprobante</th>
+            <th class="text-center" style="width:20%" scope="col">Bultos</th>
+            <th class="text-center" style="width:20%" scope="col">Observaciones</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.sucursal.razonSocial}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.fecha}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.tipoComprobante.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.puntoVenta}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.numero}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.bultos}}</span>
+            </td>
+            <td align="center">
+                <span>{{l.observaciones}}</span>
+              </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

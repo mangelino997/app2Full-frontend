@@ -14,7 +14,12 @@ export class AppComponent {
   public empresa = {};
   public subopcion = null;
   public rol:number = null;
-  constructor(private appService: AppService, private router: Router) {}
+  constructor(private appService: AppService, private router: Router) {
+    //Se subscribe al servicio de lista de registros
+    this.appService.listaCompleta.subscribe(res => {
+      this.obtenerMenu();
+    });
+  }
   public setVisible(valor) {
     this.visible = valor;
   }
