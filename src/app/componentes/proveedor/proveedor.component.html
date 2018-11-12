@@ -135,14 +135,12 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTipoProveedor" class="tamanio-label">Tipo de Proveedor *</label>
-                        <input id="idTipoProveedor" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('tipoProveedor')" [matAutocomplete]="autoTipoProveedor"
-                          autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoTipoProveedor="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-select id="idTipoProveedor" class="form-control form-control-sm" 
+                          formControlName="tipoProveedor" [compareWith]="compareFn">
                           <mat-option *ngFor="let itemTipoProveedor of tiposProveedores" [value]="itemTipoProveedor">
                             {{itemTipoProveedor.nombre}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                   </div>
@@ -150,27 +148,23 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCondicionIva" class="tamanio-label">Condición Iva *</label>
-                        <input id="idCondicionIva" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('condicionIva')" [matAutocomplete]="autoCondicionIva"
-                          autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoCondicionIva="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-select id="idCondicionIva" class="form-control form-control-sm" 
+                          formControlName="condicionIva" [compareWith]="compareFn">
                           <mat-option *ngFor="let itemCondicionIva of condicionesIva" [value]="itemCondicionIva">
                             {{itemCondicionIva.nombre}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTipoDocumento" class="tamanio-label">Tipo Documento *</label>
-                        <input id="idTipoDocumento" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('tipoDocumento')" [matAutocomplete]="autoTipoDocumento"
-                          autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoTipoDocumento="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-select id="idTipoDocumento" class="form-control form-control-sm" 
+                          formControlName="tipoDocumento" [compareWith]="compareFn">
                           <mat-option *ngFor="let itemTipoDocumento of tiposDocumentos" [value]="itemTipoDocumento">
                             {{itemTipoDocumento.nombre}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -195,14 +189,12 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCondicionCompra" class="tamanio-label">Condición de Compra *</label>
-                        <input id="idCondicionCompra" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('condicionCompra')" [matAutocomplete]="autoCondicionCompra"
-                          autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoCondicionCompra="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-select id="idCondicionCompra" class="form-control form-control-sm" 
+                          formControlName="condicionCompra" [compareWith]="compareFn">
                           <mat-option *ngFor="let itemCondicionCompra of condicionesCompras" [value]="itemCondicionCompra">
                             {{itemCondicionCompra.nombre}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -236,13 +228,11 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idEstaActivo" class="tamanio-label">Estado *</label>
-                        <input id="idEstaActivo" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('estaActivo')" [matAutocomplete]="autoEstaActivo"
-                          autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoEstaActivo="matAutocomplete" [displayWith]="displayFc.bind(this)">
+                        <mat-select id="idEstaActivo" class="form-control form-control-sm" 
+                          formControlName="estaActivo" [compareWith]="compareFn">
                           <mat-option [value]="false">Activa</mat-option>
                           <mat-option [value]="true">Suspendida</mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                   </div>
@@ -265,14 +255,12 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTipoCuentaBancaria" class="tamanio-label">Tipo de Cuenta</label>
-                        <input id="idTipoCuentaBancaria" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('tipoCuentaBancaria')" [matAutocomplete]="autoTipoCuentaBancaria"
-                          autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoTipoCuentaBancaria="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-select id="idTipoCuentaBancaria" class="form-control form-control-sm" 
+                          formControlName="tipoCuentaBancaria" [compareWith]="compareFn">
                           <mat-option *ngFor="let itemTipoCuentaBancaria of tiposCuentasBancarias" [value]="itemTipoCuentaBancaria">
                             {{itemTipoCuentaBancaria.nombre}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                   </div>

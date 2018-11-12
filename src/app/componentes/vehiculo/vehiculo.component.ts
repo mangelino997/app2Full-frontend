@@ -19,9 +19,6 @@ import { MatAutocompleteTrigger } from '@angular/material';
   styleUrls: ['./vehiculo.component.css']
 })
 export class VehiculoComponent implements OnInit {
-  //Obtiene el componente autocompletado tipo vehiculo del dom
-  @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger }) 
-  autoComplete: MatAutocompleteTrigger;
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -236,18 +233,12 @@ export class VehiculoComponent implements OnInit {
         this.establecerValoresPestania(nombre, false, false, true, true,'idTipoVehiculo');
         break;
       case 2:
-        try {
-          this.autoComplete.closePanel();
-        } catch(e) {}
         this.establecerValoresPestania(nombre, true, true, false, false, 'idAutocompletado');
         break;
       case 3:
         this.establecerValoresPestania(nombre, true, false, true, true, 'idAutocompletado');
         break;
       case 4:
-        try {
-          this.autoComplete.closePanel();
-        } catch(e) {}
         this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
         break;
       default:
@@ -425,6 +416,13 @@ export class VehiculoComponent implements OnInit {
     this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
     this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
     this.establecerConfiguracion(elemento);
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Muestra el valor en los autocompletados
   public displayF(elemento) {

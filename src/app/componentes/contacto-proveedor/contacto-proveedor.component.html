@@ -29,14 +29,12 @@
           <div class="col-md-4" *ngIf="mostrarAutocompletado">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Lista de Contactos</label>
-              <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput 
-                [formControl]="autocompletado" [matAutocomplete]="auto" 
-                autocomplete="off" [required]="mostrarAutocompletado">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFb.bind(this)">
+              <mat-select id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
+                [compareWith]="compareFn">
                 <mat-option *ngFor="let item of contactos" [value]="item" (onSelectionChange)="formulario.setValue(item)">
                   {{item.nombre}} - {{item.tipoContacto.nombre}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
         </div>
@@ -44,13 +42,12 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTipoContacto" class="tamanio-label">Tipo de Contacto *</label>
-              <input id="idTipoContacto" class="form-control form-control-sm" formControlName="tipoContacto"
-                type="text" matInput [matAutocomplete]="autoTipoContacto" autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoTipoContacto="matAutocomplete" [displayWith]="displayFa.bind(this)">
+              <mat-select id="idTipoContacto" class="form-control form-control-sm" 
+                formControlName="tipoContacto" [compareWith]="compareFn">
                 <mat-option *ngFor="let itemTipoContacto of tiposContactos" [value]="itemTipoContacto">
                   {{itemTipoContacto.nombre}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-4">

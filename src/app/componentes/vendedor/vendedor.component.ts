@@ -228,6 +228,13 @@ export class VendedorComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
