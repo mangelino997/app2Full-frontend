@@ -80,6 +80,14 @@ export class CategoriaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
+    //Establece los valores por defecto
+    this.establecerValoresPorDefecto();
+  }
+  //Establece los valores por defecto
+  private establecerValoresPorDefecto() {
+    this.formulario.get('basico').setValue('0.00');
+    this.formulario.get('adicionalBasicoVacaciones').setValue('0.00');
+    this.formulario.get('topeBasicoAdelantos').setValue('0.00');
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
@@ -87,14 +95,6 @@ export class CategoriaComponent implements OnInit {
     this.formulario.get('basico').setValue(elemento.basico.toFixed(2));
     this.formulario.get('adicionalBasicoVacaciones').setValue(elemento.adicionalBasicoVacaciones.toFixed(2));
     this.formulario.get('topeBasicoAdelantos').setValue(elemento.topeBasicoAdelantos.toFixed(2));
-  }
-  //Formatea el valor del autocompletado
-  public displayFn(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -250,6 +250,14 @@ export class CategoriaComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.cambioAutocompletado(elemento);
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {

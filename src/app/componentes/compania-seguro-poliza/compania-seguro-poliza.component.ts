@@ -6,7 +6,6 @@ import { PestaniaService } from '../../servicios/pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatAutocompleteTrigger } from '@angular/material';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -14,9 +13,6 @@ import { MatAutocompleteTrigger } from '@angular/material';
   styleUrls: ['./compania-seguro-poliza.component.css']
 })
 export class CompaniaSeguroPolizaComponent implements OnInit {
-  //Obtiene el componente autocompletado sucursal del dom
-  @ViewChild('autoCompleteInput', { read: MatAutocompleteTrigger })
-  public autoComplete: MatAutocompleteTrigger;
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -37,12 +33,15 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public listaCompleta:Array<any> = [];
   //Define el autocompletado
   public autocompletado:FormControl = new FormControl();
+  //Define empresa para las busquedas
+  public empresaBusqueda:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda companias seguros
   public resultadosCompaniasSeguros:Array<any> = [];
   //Defien la lista de empresas
   public empresas:Array<any> = [];
+  // public compereFn:any;
   //Constructor
   constructor(private servicio: CompaniaSeguroPolizaService, private pestaniaService: PestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
@@ -109,34 +108,41 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       document.getElementById(componente).focus();
     }, 20);
   };
+  //Habilita o deshabilita los campos dependiendo de la pestaña
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('empresa').enable();
+    } else {
+      this.formulario.get('empresa').disable();
+    }
+  }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
+    if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
+      this.empresaBusqueda.setValue(undefined);
+      this.vaciarListas();
+    }
     this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.vaciarListas();
-    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idEmpresa');
         break;
       case 2:
-        try {
-          this.autoComplete.closePanel();
-        } catch(e) {}
-        this.establecerValoresPestania(nombre, true, true, false, 'idEmpresa');
+        this.establecerEstadoCampos(false);
+        this.establecerValoresPestania(nombre, true, true, false, 'idEmpresaBusqueda');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idEmpresa');
+        this.establecerEstadoCampos(true);
+        this.establecerValoresPestania(nombre, true, false, true, 'idEmpresaBusqueda');
         break;
       case 4:
-        try {
-          this.autoComplete.closePanel();
-        } catch (e) {}
-        this.establecerValoresPestania(nombre, true, true, true, 'idEmpresa');
+        this.establecerEstadoCampos(false);
+        this.establecerValoresPestania(nombre, true, true, true, 'idEmpresaBusqueda');
         break;
       default:
         break;
@@ -212,7 +218,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           setTimeout(function() {
-            document.getElementById('idEmpresa').focus();
+            document.getElementById('idEmpresaBusqueda').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -243,9 +249,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
+    this.empresaBusqueda.setValue(undefined);
     this.autocompletado.setValue(undefined);
+    this.formulario.reset();
     this.vaciarListas();
   }
   //Manejo de colores de campos y labels
@@ -256,14 +262,23 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.empresaBusqueda.setValue(elemento.empresa);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.empresaBusqueda.setValue(elemento.empresa);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {

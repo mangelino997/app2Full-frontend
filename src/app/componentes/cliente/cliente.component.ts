@@ -273,6 +273,16 @@ export class ClienteComponent implements OnInit {
     this.listarSituacionesClientes();
     //Obtiene la lista de condiciones de venta
     this.listarCondicionesVentas();
+    //Establece los valores por defecto
+    this.establecerValoresPorDefecto();
+    //Establece valores por defecto
+    this.establecerValoresPorDefecto();
+  }
+  //Establece los valores por defecto
+  private establecerValoresPorDefecto() {
+    this.formulario.get('creditoLimite').setValue('0.00');
+    this.formulario.get('descuentoFlete').setValue('0.00');
+    this.formulario.get('imprimirControlDeuda').setValue(false);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -350,9 +360,30 @@ export class ClienteComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.vaciarListas();
+    this.establecerValoresPorDefecto();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
+  }
+  //Habilita o deshabilita los campos dependiendo de la pestaña
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('condicionIva').enable();
+      this.formulario.get('tipoDocumento').enable();
+      this.formulario.get('condicionVenta').enable();
+      this.formulario.get('resumenCliente').enable();
+      this.formulario.get('situacionCliente').enable();
+      this.formulario.get('esSeguroPropio').enable();
+      this.formulario.get('imprimirControlDeuda').enable();
+    } else {
+      this.formulario.get('condicionIva').disable();
+      this.formulario.get('tipoDocumento').disable();
+      this.formulario.get('condicionVenta').disable();
+      this.formulario.get('resumenCliente').disable();
+      this.formulario.get('situacionCliente').disable();
+      this.formulario.get('esSeguroPropio').disable();
+      this.formulario.get('imprimirControlDeuda').disable();
+    }
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -366,15 +397,19 @@ export class ClienteComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idRazonSocial');
         break;
       case 2:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
@@ -559,6 +594,13 @@ export class ClienteComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {

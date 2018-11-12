@@ -86,6 +86,8 @@ export class ProvinciaComponent implements OnInit {
         })
       }
     })
+    //Obtiene la lista completa
+    this.listar();
   }
   //Vacia las listas de autocompletado
   public vaciarListas() {

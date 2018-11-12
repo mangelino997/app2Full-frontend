@@ -35,12 +35,10 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idEstaActivo" class="tamanio-label">Cuenta Habilitada *</label>
-          <input id="idEstaActivo" class="form-control form-control-sm" type="text" matInput
-            [formControl]="formulario.get('estaActivo')" [matAutocomplete]="autoEstaActivo" autocomplete="off">
-          <mat-autocomplete #autoEstaActivo="matAutocomplete" [displayWith]="displayFa.bind(this)">
-            <mat-option [value]="false">No</mat-option>
-            <mat-option [value]="true">Si</mat-option>
-          </mat-autocomplete>
+          <select id="idEstaActivo" class="form-control form-control-sm" formControlName="estaActivo">
+            <option [value]="false">No</option>
+            <option [value]="true">Si</option>
+          </select>
         </div>
         <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">

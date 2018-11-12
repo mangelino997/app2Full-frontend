@@ -12,19 +12,17 @@
     <div class="col-md-6 text-center">
       <h5>{{pestaniaActual}} Póliza de Compañia de Seguro</h5>
       <form [formGroup]="formulario" class="contenedor">
-        <div class="row">
+        <div class="row" *ngIf="mostrarAutocompletado">
           <div class="col-md-6">
             <div class="form-group has-float-label">
-              <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-              <input #autoCompleteInput id="idEmpresa" class="form-control form-control-sm" type="text" 
-                matInput [formControl]="formulario.get('empresa')" [matAutocomplete]="autoEmpresa" 
-                autocomplete="off">
-              <mat-autocomplete #autoEmpresa="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa"
-                  (onSelectionChange)="listarPorEmpresa(itemEmpresa)">
-                  {{itemEmpresa.razonSocial}}
+              <label for="idEmpresaBusqueda" class="tamanio-label">Buscar por Empresa *</label>
+              <mat-select id="idEmpresaBusqueda" class="form-control form-control-sm" [formControl]="empresaBusqueda"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let itemEmpresaAuto of empresas" [value]="itemEmpresaAuto" 
+                  (onSelectionChange)="listarPorEmpresa(itemEmpresaAuto)">
+                  {{itemEmpresaAuto.razonSocial}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
         </div>
@@ -32,14 +30,26 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Póliza</label>
-              <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput 
-                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFb.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item" 
-                  (onSelectionChange)="formulario.setValue(item)">
-                  {{item.numeroPoliza}} - {{item.companiaSeguro.nombre}}
+              <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="autocompletado"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let item of resultados" [value]="item"
+                (onSelectionChange)="formulario.setValue(item)">
+                {{item.numeroPoliza}} - {{item.companiaSeguro.nombre}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idEmpresa" class="tamanio-label">Empresa *</label>
+              <mat-select id="idEmpresa" class="form-control form-control-sm" [formControl]="formulario.get('empresa')"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
+                  {{itemEmpresa.razonSocial}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
         </div>

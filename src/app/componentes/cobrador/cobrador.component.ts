@@ -89,6 +89,14 @@ export class CobradorComponent implements OnInit {
       document.getElementById(componente).focus();
     }, 20);
   };
+  //Habilita o deshabilita los campos dependiendo de la pestaña
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('estaActivo').enable();
+    } else {
+      this.formulario.get('estaActivo').disable();
+    }
+  }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.formulario.reset();
@@ -101,19 +109,19 @@ export class CobradorComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.formulario.get('estaActivo').enable();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
-        this.formulario.get('estaActivo').disable();
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.formulario.get('estaActivo').enable();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.formulario.get('estaActivo').disable();
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:

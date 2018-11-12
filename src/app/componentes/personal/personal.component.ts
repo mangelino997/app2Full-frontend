@@ -345,6 +345,16 @@ export class PersonalComponent implements OnInit {
     this.listarAreas();
     //Obtiene la lista de sindicatos
     this.listarSindicatos();
+    //Establece los valores por defecto
+    this.establecerValoresPorDefecto();
+  }
+  //Establece los valores por defecto
+  private establecerValoresPorDefecto() {
+    this.formulario.get('aporteAdicObraSocial').setValue('0.00');
+    this.formulario.get('contribAdicObraSocial').setValue('0.00');
+    this.formulario.get('aporteAdicSegSoc').setValue('0.00');
+    this.formulario.get('aporteDifSegSoc').setValue('0.00');
+    this.formulario.get('contribTareaDifSegSoc').setValue('0.00');
   }
   //Obtiene el listado de sexos
   private listarSexos() {

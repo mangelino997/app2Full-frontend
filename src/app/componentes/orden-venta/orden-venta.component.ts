@@ -170,6 +170,13 @@ export class OrdenVentaComponent implements OnInit {
     this.listarTiposTarifas();
     //Obtiene la lista de escalas tarifas
     this.listarEscalaTarifa();
+    //Establece los valores por defecto
+    this.establecerValoresPorDefecto();
+  }
+  //Establece los valores por defecto
+  private establecerValoresPorDefecto() {
+    this.formulario.get('seguro').setValue('0.00');
+    this.formulario.get('comisionCR').setValue('0.00');
   }
   //Crea el elemento A (form) para la primera tabla
   private crearElementoA(valor): FormGroup {

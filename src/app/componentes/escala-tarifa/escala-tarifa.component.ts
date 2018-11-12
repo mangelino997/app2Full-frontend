@@ -5,6 +5,7 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { TipoVehiculoService } from 'src/app/servicios/tipo-vehiculo.service';
 
 @Component({
   selector: 'app-escala-tarifa',
@@ -39,6 +40,12 @@ export class EscalaTarifaComponent implements OnInit {
     });
     //Obtiene la lista completa de registros
     this.listar();
+    //Establece los valores por defecto
+    this.establecerValoresPorDefecto();
+  }
+  //Establece los valores por defecto
+  private establecerValoresPorDefecto() {
+    this.formulario.get('valor').setValue('0.00');
   }
   //Obtiene el listado de registros
   private listar() {
@@ -106,12 +113,12 @@ export class EscalaTarifaComponent implements OnInit {
   //Establece el valor del campo descripcion al perder foco el campo valor
   public establecerHasta(valor) {
     if(valor.target.value != undefined && valor.target.value != '') {
-      valor.target.value = this.setDecimales(valor.target.value, 2);
       this.formulario.get('descripcion').setValue('Hasta ' + valor.target.value);
 
     } else {
       this.formulario.get('descripcion').setValue(undefined);
     }
+    valor.target.value = this.setDecimales(valor.target.value, 2);
   }
   //Formatea el numero a x decimales
   private setDecimales(valor, cantidad) {

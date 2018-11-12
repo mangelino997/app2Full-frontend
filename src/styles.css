@@ -303,3 +303,12 @@ input::-webkit-inner-spin-button {
 .color-busqueda:focus {
   background: #D6F3F5 !important;
 }
+mat-select {
+  text-align: left;
+}
+.mat-select-disabled {
+  background: #e9ecef !important;
+  color: black !important;
+  font-weight: bold !important;
+  opacity: 1 !important;
+}
