@@ -74,6 +74,14 @@ export class TipoVehiculoComponent implements OnInit {
     //Obtiene la lista completa de registros
     this.listar();
   }
+  //Habilita o deshabilita los campos select dependiendo de la pestania actual
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('esRemolque').enabled;
+    } else {
+      this.formulario.get('esRemolque').disabled;
+    }
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -96,19 +104,19 @@ export class TipoVehiculoComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.formulario.get('esRemolque').enable();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
-        this.formulario.get('esRemolque').disable();
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.formulario.get('esRemolque').enable();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.formulario.get('esRemolque').disable();
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
@@ -228,6 +236,13 @@ export class TipoVehiculoComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

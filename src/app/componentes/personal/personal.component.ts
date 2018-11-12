@@ -427,6 +427,42 @@ export class PersonalComponent implements OnInit {
     this.resultadosAfipSiniestrados = [];
     this.resultadosAfipSituaciones = [];
   }
+  //Habilita o deshabilita los campos select dependiendo de la pestania actual
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('sexo').enabled;
+      this.formulario.get('estadoCivil').enabled;
+      this.formulario.get('tipoDocumento').enabled;
+      this.formulario.get('sucursal').enabled;
+      this.formulario.get('area').enabled;
+      this.formulario.get('sindicato').enabled;
+      this.formulario.get('esAcompReparto').enabled;
+      this.formulario.get('enConvenioColectivo').enabled;
+      this.formulario.get('conCoberturaSCVO').enabled;
+      this.formulario.get('recibeAdelanto').enabled;
+      this.formulario.get('recibePrestamo').enabled;
+      this.formulario.get('esChofer').enabled;
+      this.formulario.get('esChoferLargaDistancia').enabled;
+      this.formulario.get('turnoRotativo').enabled;
+      this.formulario.get('turnoFueraConvenio').enabled;
+    } else {
+      this.formulario.get('sexo').disabled;
+      this.formulario.get('estadoCivil').disabled;
+      this.formulario.get('tipoDocumento').disabled;
+      this.formulario.get('sucursal').disabled;
+      this.formulario.get('area').disabled;
+      this.formulario.get('sindicato').disabled;
+      this.formulario.get('esAcompReparto').disabled;
+      this.formulario.get('enConvenioColectivo').disabled;
+      this.formulario.get('conCoberturaSCVO').disabled;
+      this.formulario.get('recibeAdelanto').disabled;
+      this.formulario.get('recibePrestamo').disabled;
+      this.formulario.get('esChofer').disabled;
+      this.formulario.get('esChoferLargaDistancia').disabled;
+      this.formulario.get('turnoRotativo').disabled;
+      this.formulario.get('turnoFueraConvenio').disabled;
+    }
+  }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
    this.formulario.setValue(elemAutocompletado);
@@ -478,15 +514,19 @@ export class PersonalComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idApellido');
         break;
       case 2:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
@@ -711,6 +751,13 @@ export class PersonalComponent implements OnInit {
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {
     this.nacionalidadNacimiento.setValue(localidad.provincia.pais.nombre);
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {

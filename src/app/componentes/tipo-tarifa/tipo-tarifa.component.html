@@ -36,23 +36,17 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idPorEscala" class="tamanio-label">Por Escala *</label>
-          <input id="idPorEscala" class="form-control form-control-sm" type="text" matInput
-            [formControl]="formulario.get('porEscala')" [matAutocomplete]="autoPorEscala" autocomplete="off"
-            [readonly]="soloLectura">
-          <mat-autocomplete #autoPorEscala="matAutocomplete">
+          <mat-select id="idPorEscala" class="form-control form-control-sm" formControlName="porEscala" [compareWith]="compareFn">
             <mat-option [value]="false">No</mat-option>
             <mat-option [value]="true">Si</mat-option>
-          </mat-autocomplete>
+          </mat-select>
         </div>
         <div class="form-group has-float-label">
           <label for="idPorPorcentaje" class="tamanio-label">Por Porcentaje *</label>
-          <input id="idPorPorcentaje" class="form-control form-control-sm" type="text" matInput
-            [formControl]="formulario.get('porPorcentaje')" [matAutocomplete]="autoPorPorcentaje" autocomplete="off"
-            [readonly]="soloLectura">
-          <mat-autocomplete #autoPorPorcentaje="matAutocomplete">
+          <mat-select id="idPorPorcentaje" class="form-control form-control-sm" formControlName="porPorcentaje" [compareWith]="compareFn">
             <mat-option [value]="false">No</mat-option>
             <mat-option [value]="true">Si</mat-option>
-          </mat-autocomplete>
+          </mat-select>
         </div>
         <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">

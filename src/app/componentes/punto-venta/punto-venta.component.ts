@@ -120,6 +120,26 @@ export class PuntoVentaComponent implements OnInit {
     this.formulario.setValue(elemento);
     this.formulario.get('puntoVenta').setValue(this.displayFb(elemento));
   }
+  //Habilita o deshabilita los campos select dependiendo de la pestania actual
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('empresa').enabled;
+      this.formulario.get('fe').enabled;
+      this.formulario.get('feEnLinea').enabled;
+      this.formulario.get('feCAEA').enabled;
+      this.formulario.get('esCuentaOrden').enabled;
+      this.formulario.get('imprime').enabled;
+      this.formulario.get('estaHabilitado').enabled;
+    } else {
+      this.formulario.get('empresa').disabled;
+      this.formulario.get('fe').disabled;
+      this.formulario.get('feEnLinea').disabled;
+      this.formulario.get('feCAEA').disabled;
+      this.formulario.get('esCuentaOrden').disabled;
+      this.formulario.get('imprime').disabled;
+      this.formulario.get('estaHabilitado').disabled;
+    }
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -141,21 +161,25 @@ export class PuntoVentaComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idSucursal');
         break;
       case 2:
         try {
           this.autoComplete.closePanel();
         } catch(e) {}
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idSucursal');
         break;
       case 3:
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idSucursal');
         break;
       case 4:
         try {
           this.autoComplete.closePanel();
         } catch(e) {}
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursal');
         break;
       default:
@@ -284,6 +308,13 @@ export class PuntoVentaComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {

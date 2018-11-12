@@ -46,27 +46,21 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
-              <input id="idTipoVehiculo" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('tipoVehiculo')" [matAutocomplete]="autoTipoVehiculo"
-                autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoTipoVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)">
+              <mat-select id="idTipoVehiculo" class="form-control form-control-sm" formControlName="tipoVehiculo" [compareWith]="compareFn">
                 <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
                   {{itemTipoVehiculo.nombre}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
-              <input id="idMarcaVehiculo" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('marcaVehiculo')" [matAutocomplete]="autoMarcaVehiculo"
-                autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoMarcaVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)">
+              <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo" [compareWith]="compareFn">
                 <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                   {{itemMarcaVehiculo.nombre}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
         </div>

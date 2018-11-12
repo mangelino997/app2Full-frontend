@@ -249,6 +249,13 @@ export class SucursalBancoComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
     if(elemento != undefined) {

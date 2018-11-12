@@ -70,25 +70,21 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idRol" class="tamanio-label">Rol *</label>
-              <input id="idRol" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('rol')" [matAutocomplete]="autoRol" autocomplete="off">
-              <mat-autocomplete #autoRol="matAutocomplete" [displayWith]="displayFn.bind(this)">
+              <mat-select id="idRol" class="form-control form-control-sm" formControlName="rol" [compareWith]="compareFn">
                 <mat-option *ngFor="let itemRol of resultadosRoles" [value]="itemRol">
                   {{itemRol.nombre}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idSucursal" class="tamanio-label">Sucursal *</label>
-              <input id="idSucursal" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('sucursal')" [matAutocomplete]="autoSucursal" autocomplete="off">
-              <mat-autocomplete #autoSucursal="matAutocomplete" [displayWith]="displayFn.bind(this)">
+              <mat-select id="idSucursal" class="form-control form-control-sm" formControlName="sucursal" [compareWith]="compareFn">
                 <mat-option *ngFor="let itemSucursal of resultadosSucursales" [value]="itemSucursal">
                   {{itemSucursal.nombre}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
         </div>
@@ -96,13 +92,10 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCuentaHabilitada" class="tamanio-label">Cuenta Habilitada *</label>
-              <input id="idCuentaHabilitada" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('cuentaHabilitada')" [matAutocomplete]="autoCuentaHabilitada"
-                autocomplete="off" [readonly]="soloLectura">
-              <mat-autocomplete #autoCuentaHabilitada="matAutocomplete">
+              <mat-select id="idCuentaHabilitada" class="form-control form-control-sm" formControlName="cuentaHabilitada" [compareWith]="compareFn">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
         </div>

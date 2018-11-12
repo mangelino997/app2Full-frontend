@@ -30,13 +30,11 @@
           <div class="col-md-6">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Lista de Sucursales de Cliente</label>
-              <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
-                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+              <mat-select id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado" [compareWith]="compareFn">
                 <mat-option *ngFor="let item of sucursales" [value]="item" (onSelectionChange)="formulario.setValue(item)">
                   {{item.nombre}} - {{item.cliente.razonSocial}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
         </div>

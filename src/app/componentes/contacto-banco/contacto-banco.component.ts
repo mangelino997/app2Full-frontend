@@ -110,6 +110,14 @@ export class ContactoBancoComponent implements OnInit {
     this.resultados = [];
     this.resultadosSucursalesBancos = [];
   }
+  //Habilita o deshabilita los campos select dependiendo de la pestania actual
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('tipoContacto').enabled;
+    } else {
+      this.formulario.get('tipoContacto').disabled;
+    }
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -133,15 +141,19 @@ export class ContactoBancoComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idSucursalBanco');
         break;
       case 2:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idSucursalBanco');
         break;
       case 3:
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idSucursalBanco');
         break;
       case 4:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursalBanco');
         break;
       default:
@@ -287,6 +299,13 @@ export class ContactoBancoComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Define como se muestra los datos en el autocompletado
   public displayF(elemento) {
