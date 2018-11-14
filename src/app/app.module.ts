@@ -89,6 +89,7 @@ import { VehiculoProveedorService } from './servicios/vehiculo-proveedor.service
 import { CompaniaSeguroPolizaService } from './servicios/compania-seguro-poliza.service';
 import { CondicionVentaService } from './servicios/condicion-venta.service';
 import { RolSubopcionService } from './servicios/rol-subopcion.service';
+import { UsuarioEmpresaService } from './servicios/usuario-empresa.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -218,7 +219,8 @@ const appRoutes: Routes = [
   {path: 'logisticaproveedoresvehiculos', component: VehiculoProveedorComponent, canActivate: [GuardiaService]},
   {path: 'generalescompaniadeseguropolizas', component: CompaniaSeguroPolizaComponent, canActivate: [GuardiaService]},
   {path: 'reestablecertablastablarolsubopcion', component: RolSubopcionComponent, canActivate: [GuardiaService]},
-  {path: 'reestablecertablastablasubopcionpestania', component: SubopcionPestaniaComponent, canActivate: [GuardiaService]}
+  {path: 'reestablecertablastablasubopcionpestania', component: SubopcionPestaniaComponent, canActivate: [GuardiaService]},
+  {path: 'organizacionempresas', component: EmpresaComponent, canActivate: [GuardiaService]}
   //{path: 'viajepropio', component: ViajeComponent, canActivate: [GuardiaService]}//Revisar
 ]
 
@@ -424,6 +426,7 @@ const stompConfig: StompConfig = {
     CompaniaSeguroPolizaService,
     CondicionVentaService,
     RolSubopcionService,
+    UsuarioEmpresaService,
     StompService,
     {
       provide: StompConfig,

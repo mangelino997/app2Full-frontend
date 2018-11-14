@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { FormGroup, FormControl } from '@angular/forms';
 import { LoginService } from '../../servicios/login.service';
 import { UsuarioService } from '../../servicios/usuario.service';
-import { EmpresaService } from '../../servicios/empresa.service';
+import { UsuarioEmpresaService } from '../../servicios/usuario-empresa.service';
 import { AppComponent } from '../../app.component';
 
 @Component({
@@ -19,7 +19,7 @@ export class LoginComponent {
   empresas = null;
   //Constructor
   constructor(private loginService: LoginService, private usuarioService: UsuarioService,
-    private appComponent: AppComponent, private empresaService: EmpresaService, private router: Router) {
+    private appComponent: AppComponent, private usuarioEmpresaService: UsuarioEmpresaService, private router: Router) {
       this.formulario = new FormGroup({
         username: new FormControl(),
         password: new FormControl(),
@@ -43,7 +43,7 @@ export class LoginComponent {
           res => {
             this.appComponent.setUsuario(res.json());
             //Obtiene el listado de empresas activas por usuario
-            this.empresaService.listarEmpresasActivasDeUsuario(res.json().id).subscribe(
+            this.usuarioEmpresaService.listarEmpresasActivasDeUsuario(res.json().id).subscribe(
               res => {
                 this.empresas = res.json();
                 setTimeout(function() {

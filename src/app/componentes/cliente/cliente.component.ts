@@ -275,8 +275,6 @@ export class ClienteComponent implements OnInit {
     this.listarCondicionesVentas();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
-    //Establece valores por defecto
-    this.establecerValoresPorDefecto();
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
@@ -490,7 +488,6 @@ export class ClienteComponent implements OnInit {
   private agregar() {
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

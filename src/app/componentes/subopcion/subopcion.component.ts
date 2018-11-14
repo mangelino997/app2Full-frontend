@@ -87,11 +87,11 @@ export class SubopcionComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('esABM').enabled;
-      this.formulario.get('submodulo').enabled;
+      this.formulario.get('esABM').enable();
+      this.formulario.get('submodulo').enable();
     } else {
-      this.formulario.get('esABM').disabled;
-      this.formulario.get('submodulo').disabled;
+      this.formulario.get('esABM').disable();
+      this.formulario.get('submodulo').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
