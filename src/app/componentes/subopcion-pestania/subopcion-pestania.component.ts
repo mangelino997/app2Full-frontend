@@ -1,41 +1,41 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { RolSubopcionService } from 'src/app/servicios/rol-subopcion.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-rol-subopcion',
-  templateUrl: './rol-subopcion.component.html',
-  styleUrls: ['./rol-subopcion.component.css']
+  templateUrl: './subopcion-pestania.component.html',
+  styleUrls: ['./subopcion-pestania.component.css']
 })
-export class RolSubopcionComponent implements OnInit {
+export class SubopcionPestaniaComponent implements OnInit {
   //Constructor
   constructor(public dialog: MatDialog) { }
   ngOnInit() {
   }
   //Abre el dialogo
   openDialog(): void {
-    const dialogRef = this.dialog.open(RolSubopcionDialog, {
+    const dialogRef = this.dialog.open(SubopcionPestaniaDialog, {
       width: '300px'
     });
   }
 }
 
 @Component({
-  selector: 'rol-subopcion-dialog',
-  templateUrl: 'rol-subopcion-dialog.html',
+  selector: 'subopcion-pestania-dialog',
+  templateUrl: 'subopcion-pestania-dialog.html',
 })
-export class RolSubopcionDialog {
+export class SubopcionPestaniaDialog {
   //Define la barra de progreso indeterminada
   public progresoActivo:boolean = false;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<RolSubopcionDialog>,
-    private rolSubopcionServicio: RolSubopcionService,
+  constructor(public dialogRef: MatDialogRef<SubopcionPestaniaDialog>,
+    private subopcionPestaniaServicio: SubopcionPestaniaService,
     private toastr: ToastrService) {}
   //Reestablece la tabla al hacer click en aceptar
   aceptar(): void {
     this.progresoActivo = true;
-    this.rolSubopcionServicio.reestablecerTablaDesdeCero().subscribe(
+    this.subopcionPestaniaServicio.reestablecerTablaDesdeCero().subscribe(
       res => {
         let respuesta = res.json();
         if(respuesta.codigo == 200) {

@@ -64,7 +64,7 @@ export class SubopcionService {
   }
   //Agrega un registro
   public agregar(elemento) {
-    return this.http.post(this.url, elemento, this.options);
+    return this.http.post(this.url + '/agregar', elemento, this.options);
   }
   //Actualiza un registro
   public actualizar(elemento) {

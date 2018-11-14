@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { EmpresaService } from '../../servicios/empresa.service';
 import { ClienteService } from '../../servicios/cliente.service';
 import { VendedorService } from '../../servicios/vendedor.service';
@@ -74,7 +74,7 @@ export class OrdenVentaComponent implements OnInit {
   //Define una variable campos para el manejo de ediciones de tabla
   public campoTablaEditar:any = {};
   //Constructor
-  constructor(private servicio: OrdenVentaService, private pestaniaService: PestaniaService,
+  constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private formBuilder: FormBuilder,
     private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService,
@@ -90,7 +90,7 @@ export class OrdenVentaComponent implements OnInit {
       minimo: false
     }
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

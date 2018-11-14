@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TramoService } from '../../servicios/tramo.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { OrigenDestinoService } from '../../servicios/origen-destino.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -37,11 +37,11 @@ export class TramoComponent implements OnInit {
   //Define la lista de resultados de origenes destinos
   public resultadosOrigenesDestinos:Array<any> = [];
   //Constructor
-  constructor(private servicio: TramoService, private pestaniaService: PestaniaService,
+  constructor(private servicio: TramoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private origenDestinoServicio: OrigenDestinoService,
     private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

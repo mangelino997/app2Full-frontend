@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ChoferProveedorService } from '../../servicios/chofer-proveedor.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
@@ -46,12 +46,12 @@ export class ChoferProveedorComponent implements OnInit {
   //Define la lista de resultados de proveedores
   public resultadosProveedores:Array<any> = [];
   //Constructor
-  constructor(private servicio: ChoferProveedorService, private pestaniaService: PestaniaService,
+  constructor(private servicio: ChoferProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
     private proveedorServicio: ProveedorService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private tipoDocumentoServicio: TipoDocumentoService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

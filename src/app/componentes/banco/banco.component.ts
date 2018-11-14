@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BancoService } from '../../servicios/banco.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -36,10 +36,10 @@ export class BancoComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
   //Constructor
-  constructor(private servicio: BancoService, private pestaniaService: PestaniaService,
+  constructor(private servicio: BancoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

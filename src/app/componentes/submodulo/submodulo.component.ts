@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SubmoduloService } from '../../servicios/submodulo.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ModuloService } from '../../servicios/modulo.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -37,10 +37,10 @@ export class SubmoduloComponent implements OnInit {
   //Define la lista de resultados del autocompletado
   public resultados:Array<any> = [];
   //Constructor
-  constructor(private servicio: SubmoduloService, private pestaniaService: PestaniaService,
+  constructor(private servicio: SubmoduloService, private subopcionPestaniaService: SubopcionPestaniaService,
     private moduloServicio: ModuloService, private appComponent: AppComponent, private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

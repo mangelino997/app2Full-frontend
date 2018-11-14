@@ -1,11 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { EscalaTarifaService } from '../../servicios/escala-tarifa.service';
-import { PestaniaService } from '../../servicios/pestania.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { TipoVehiculoService } from 'src/app/servicios/tipo-vehiculo.service';
 
 @Component({
   selector: 'app-escala-tarifa',
@@ -18,8 +16,8 @@ export class EscalaTarifaComponent implements OnInit {
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
   //Constructor
-  constructor(private servicio: EscalaTarifaService, private pestaniaService: PestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService) {
+  constructor(private servicio: EscalaTarifaService, private appComponent: AppComponent, 
+    private toastr: ToastrService, private appServicio: AppService) {
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;

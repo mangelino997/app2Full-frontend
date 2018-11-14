@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { SubopcionService } from '../../servicios/subopcion.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { SubmoduloService } from '../../servicios/submodulo.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -37,10 +37,10 @@ export class SubopcionComponent implements OnInit {
   //Define la lista de resultados del autocompletado
   public resultados:Array<any> = [];
   //Constructor
-  constructor(private servicio: SubopcionService, private pestaniaService: PestaniaService,
+  constructor(private servicio: SubopcionService, private subopcionPestaniaService: SubopcionPestaniaService,
     private submoduloServicio: SubmoduloService, private appComponent: AppComponent, private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -84,6 +84,16 @@ export class SubopcionComponent implements OnInit {
       this.submodulos = res.json();
     })
   }
+  //Habilita o deshabilita los campos select dependiendo de la pestania actual
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('esABM').enabled;
+      this.formulario.get('submodulo').enabled;
+    } else {
+      this.formulario.get('esABM').disabled;
+      this.formulario.get('submodulo').disabled;
+    }
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -107,15 +117,19 @@ export class SubopcionComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
@@ -245,6 +259,13 @@ export class SubopcionComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

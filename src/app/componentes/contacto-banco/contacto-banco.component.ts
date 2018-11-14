@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ContactoBancoService } from '../../servicios/contacto-banco.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { SucursalBancoService } from '../../servicios/sucursal-banco.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
@@ -45,11 +45,11 @@ export class ContactoBancoComponent implements OnInit {
   //Define la lista de resultados de busqueda de sucursales bancos
   public resultadosSucursalesBancos:Array<any> = [];
   //Constructor
-  constructor(private servicio: ContactoBancoService, private pestaniaService: PestaniaService,
+  constructor(private servicio: ContactoBancoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private sucursalBancoServicio: SucursalBancoService, private tipoContactoServicio: TipoContactoService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

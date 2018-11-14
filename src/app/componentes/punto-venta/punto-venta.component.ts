@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { PuntoVentaService } from '../../servicios/punto-venta.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { EmpresaService } from '../../servicios/empresa.service';
 import { AppService } from '../../servicios/app.service';
@@ -45,11 +45,11 @@ export class PuntoVentaComponent implements OnInit {
   //Define la lista de puntos de ventas como autocompletado
   public autocompletado:FormControl = new FormControl();
   //Constructor
-  constructor(private servicio: PuntoVentaService, private pestaniaService: PestaniaService,
+  constructor(private servicio: PuntoVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private sucursalServicio: SucursalService, private empresaServicio: EmpresaService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

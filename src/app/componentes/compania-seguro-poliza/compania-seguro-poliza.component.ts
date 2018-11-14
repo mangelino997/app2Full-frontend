@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { EmpresaService } from '../../servicios/empresa.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -43,11 +43,11 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public empresas:Array<any> = [];
   // public compereFn:any;
   //Constructor
-  constructor(private servicio: CompaniaSeguroPolizaService, private pestaniaService: PestaniaService,
+  constructor(private servicio: CompaniaSeguroPolizaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

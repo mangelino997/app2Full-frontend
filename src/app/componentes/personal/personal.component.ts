@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PersonalService } from '../../servicios/personal.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
@@ -94,7 +94,7 @@ export class PersonalComponent implements OnInit {
   //Define la lista de resultados de busqueda de afip situacion
   public resultadosAfipSituaciones:Array<any> = [];
   //Constructor
-  constructor(private servicio: PersonalService, private pestaniaService: PestaniaService,
+  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private sexoServicio: SexoService,
@@ -106,7 +106,7 @@ export class PersonalComponent implements OnInit {
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

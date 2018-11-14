@@ -66,7 +66,7 @@ export class RolSubopcionService {
   * Asigna todas las subopciones a cada uno de los roles, eliminando todo los
   * datos y reestableciendo desde cero
   */
- public reestablecerTablaDesdeCero() {
-   return this.http.get(this.url + '/reestablecerTablaDesdeCero', this.options);
- }
+  public reestablecerTablaDesdeCero() {
+    return this.http.get(this.url + '/reestablecerTablaDesdeCero', this.options);
+  }
 }

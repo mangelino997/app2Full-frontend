@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AgendaTelefonicaService } from '../../servicios/agenda-telefonica.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -36,11 +36,11 @@ export class AgendaTelefonicaComponent implements OnInit {
   //Define los resultados de autocompletado localidad
   public resultadosLocalidades:Array<any> = [];
   //Constructor
-  constructor(private servicio: AgendaTelefonicaService, private pestaniaService: PestaniaService,
+  constructor(private servicio: AgendaTelefonicaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private localidadServicio: LocalidadService, private appComponent: AppComponent,
     private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

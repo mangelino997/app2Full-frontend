@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { VehiculoProveedorService } from '../../servicios/vehiculo-proveedor.service';
 import { ChoferProveedorService } from '../../servicios/chofer-proveedor.service';
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
 import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
 import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
@@ -55,14 +55,14 @@ export class VehiculoProveedorComponent implements OnInit {
   //Define la lista de resultados de configuraciones vehiculos
   public configuracionesVehiculos:Array<any> = [];
   //Constructor
-  constructor(private servicio: VehiculoProveedorService, private pestaniaService: PestaniaService,
+  constructor(private servicio: VehiculoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private localidadServicio: LocalidadService, private proveedorServicio: ProveedorService,
     private companiaSeguroServicio: CompaniaSeguroService, private choferProveedorServicio: ChoferProveedorService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

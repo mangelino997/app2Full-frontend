@@ -21,7 +21,7 @@ import { PaisService } from './servicios/pais.service';
 import { ProvinciaService } from './servicios/provincia.service';
 import { LocalidadService } from './servicios/localidad.service';
 import { EmpresaService } from './servicios/empresa.service';
-import { PestaniaService } from './servicios/pestania.service';
+import { SubopcionPestaniaService } from './servicios/subopcion-pestania.service';
 import { AgendaTelefonicaService } from './servicios/agenda-telefonica.service';
 import { AreaService } from './servicios/area.service';
 import { BancoService } from './servicios/banco.service';
@@ -155,6 +155,7 @@ import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/veh
 import { CompaniaSeguroPolizaComponent } from './componentes/compania-seguro-poliza/compania-seguro-poliza.component';
 import { ViajeRemitoComponent } from './componentes/viaje-remito/viaje-remito.component';
 import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-subopcion/rol-subopcion.component';
+import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -216,7 +217,8 @@ const appRoutes: Routes = [
   {path: 'logisticavehiculospropios', component: VehiculoComponent, canActivate: [GuardiaService]},
   {path: 'logisticaproveedoresvehiculos', component: VehiculoProveedorComponent, canActivate: [GuardiaService]},
   {path: 'generalescompaniadeseguropolizas', component: CompaniaSeguroPolizaComponent, canActivate: [GuardiaService]},
-  {path: 'reestablecertablastablarolsubopcion', component: RolSubopcionComponent, canActivate: [GuardiaService]}
+  {path: 'reestablecertablastablarolsubopcion', component: RolSubopcionComponent, canActivate: [GuardiaService]},
+  {path: 'reestablecertablastablasubopcionpestania', component: SubopcionPestaniaComponent, canActivate: [GuardiaService]}
   //{path: 'viajepropio', component: ViajeComponent, canActivate: [GuardiaService]}//Revisar
 ]
 
@@ -295,7 +297,9 @@ const stompConfig: StompConfig = {
     CompaniaSeguroPolizaComponent,
     ViajeRemitoComponent,
     RolSubopcionComponent,
-    RolSubopcionDialog
+    RolSubopcionDialog,
+    SubopcionPestaniaComponent,
+    SubopcionPestaniaDialog
   ],
   imports: [
     BrowserModule,
@@ -352,7 +356,7 @@ const stompConfig: StompConfig = {
     ProvinciaService,
     LocalidadService,
     EmpresaService,
-    PestaniaService,
+    SubopcionPestaniaService,
     AgendaTelefonicaService,
     AreaService,
     BancoService,
@@ -427,6 +431,6 @@ const stompConfig: StompConfig = {
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [RolSubopcionDialog]
+  entryComponents: [RolSubopcionDialog, SubopcionPestaniaDialog]
 })
 export class AppModule { }

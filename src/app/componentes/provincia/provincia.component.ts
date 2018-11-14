@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ProvinciaService } from '../../servicios/provincia.service';
-import { PestaniaService } from '../../servicios/pestania.service';
+import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { PaisService } from '../../servicios/pais.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -39,10 +39,10 @@ export class ProvinciaComponent implements OnInit {
   //Define la lista de resultados paises
   public resultadosPaises:Array<any> = [];
   //Constructor
-  constructor(private servicio: ProvinciaService, private pestaniaService: PestaniaService,
+  constructor(private servicio: ProvinciaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private paisServicio: PaisService, private appComponent: AppComponent, private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.pestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
