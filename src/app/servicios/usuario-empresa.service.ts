@@ -48,4 +48,11 @@ export class UsuarioEmpresaService {
   public listarEmpresasActivasDeUsuario(idUsuario) {
     return this.http.get(this.url + '/listarEmpresasActivasDeUsuario/' + idUsuario, this.options);
   }
+  /*
+  * Asigna todas las empresas a cada uno de los usuarios, eliminando todo los
+  * datos y reestableciendo desde cero
+  */
+  public reestablecerTablaDesdeCero() {
+    return this.http.get(this.url + '/reestablecerTablaDesdeCero', this.options);
+  }
 }

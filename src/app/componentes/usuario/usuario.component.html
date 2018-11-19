@@ -61,7 +61,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idPasswordRepeat" class="tamanio-label">Repetir Contraseña</label>
-              <input id="idPasswordRepeat" type="password" formControlName="passwordRepeat" autocomplete="off"
+              <input id="idPasswordRepeat" type="password" [formControl]="passwordRepeat" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>

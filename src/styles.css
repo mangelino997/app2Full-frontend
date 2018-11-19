@@ -305,10 +305,14 @@ input::-webkit-inner-spin-button {
 }
 mat-select {
   text-align: left;
+  font-weight: bold;
 }
 .mat-select-disabled {
   background: #e9ecef !important;
   color: black !important;
   font-weight: bold !important;
   opacity: 1 !important;
+}
+input {
+  font-weight: bold;
 }

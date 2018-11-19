@@ -90,6 +90,7 @@ import { CompaniaSeguroPolizaService } from './servicios/compania-seguro-poliza.
 import { CondicionVentaService } from './servicios/condicion-venta.service';
 import { RolSubopcionService } from './servicios/rol-subopcion.service';
 import { UsuarioEmpresaService } from './servicios/usuario-empresa.service';
+import { ViajeRemitoService } from './servicios/viaje-remito.service';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -155,8 +156,9 @@ import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component'; /
 import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component'; //Probado
 import { CompaniaSeguroPolizaComponent } from './componentes/compania-seguro-poliza/compania-seguro-poliza.component';
 import { ViajeRemitoComponent } from './componentes/viaje-remito/viaje-remito.component';
-import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-subopcion/rol-subopcion.component';
-import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component';
+import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-subopcion/rol-subopcion.component'; //Probado
+import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component'; //Probado
+import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -220,8 +222,9 @@ const appRoutes: Routes = [
   {path: 'generalescompaniadeseguropolizas', component: CompaniaSeguroPolizaComponent, canActivate: [GuardiaService]},
   {path: 'reestablecertablastablarolsubopcion', component: RolSubopcionComponent, canActivate: [GuardiaService]},
   {path: 'reestablecertablastablasubopcionpestania', component: SubopcionPestaniaComponent, canActivate: [GuardiaService]},
-  {path: 'organizacionempresas', component: EmpresaComponent, canActivate: [GuardiaService]}
-  //{path: 'viajepropio', component: ViajeComponent, canActivate: [GuardiaService]}//Revisar
+  {path: 'reestablecertablastablausuarioempresa', component: UsuarioEmpresaComponent, canActivate: [GuardiaService]},
+  {path: 'organizacionempresas', component: EmpresaComponent, canActivate: [GuardiaService]},
+  {path: 'guiasdeserviciosremitosgs', component: ViajeRemitoComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -301,7 +304,9 @@ const stompConfig: StompConfig = {
     RolSubopcionComponent,
     RolSubopcionDialog,
     SubopcionPestaniaComponent,
-    SubopcionPestaniaDialog
+    SubopcionPestaniaDialog,
+    UsuarioEmpresaComponent,
+    UsuarioEmpresaDialog
   ],
   imports: [
     BrowserModule,
@@ -427,6 +432,7 @@ const stompConfig: StompConfig = {
     CondicionVentaService,
     RolSubopcionService,
     UsuarioEmpresaService,
+    ViajeRemitoService,
     StompService,
     {
       provide: StompConfig,
@@ -434,6 +440,6 @@ const stompConfig: StompConfig = {
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [RolSubopcionDialog, SubopcionPestaniaDialog]
+  entryComponents: [RolSubopcionDialog, SubopcionPestaniaDialog, UsuarioEmpresaDialog]
 })
 export class AppModule { }

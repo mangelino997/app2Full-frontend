@@ -82,35 +82,37 @@ export class UsuarioComponent implements OnInit {
       sucursal: new FormControl('', Validators.required),
       cuentaHabilitada: new FormControl('', Validators.required)
     });
-    this.formulario.get('rol').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.rolServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosRoles = res;
-        })
-      }
-    })
-    this.formulario.get('sucursal').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.sucursalServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosSucursales = res;
-        })
-      }
-    })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
+    //Obtiene la lista de roles
+    this.listarRoles();
+    //Obtiene la lista de sucursales
+    this.listarSucursales();
+  }
+  //Obtiene la lista de roles
+  private listarRoles() {
+    this.rolServicio.listar().subscribe(res => {
+      this.resultadosRoles = res.json();
+    })
+  }
+  //Obtiene la lista de sucursales
+  private listarSucursales() {
+    this.sucursalServicio.listar().subscribe(res => {
+      this.resultadosSucursales = res.json();
+    })
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('rol').enabled;
-      this.formulario.get('sucursal').enabled;
-      this.formulario.get('cuentaHabilitada').enabled;
+      this.formulario.get('rol').enable();
+      this.formulario.get('sucursal').enable();
+      this.formulario.get('cuentaHabilitada').enable();
     } else {
-      this.formulario.get('rol').disabled;
-      this.formulario.get('sucursal').disabled;
-      this.formulario.get('cuentaHabilitada').disabled;
+      this.formulario.get('rol').disable();
+      this.formulario.get('sucursal').disable();
+      this.formulario.get('cuentaHabilitada').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas

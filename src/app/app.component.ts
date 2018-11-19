@@ -10,7 +10,7 @@ import 'rxjs/Rx';
 export class AppComponent {
   public visible:boolean = false;
   public modulos = null;
-  public usuario = {rol:{id:null}};
+  public usuario = {rol:{id:null}, sucursal:{id:null}};
   public empresa = {};
   public subopcion = null;
   public rol:number = null;

@@ -1,0 +1,11 @@
+<h1 mat-dialog-title>Tabla UsuarioEmpresa</h1>
+<div mat-dialog-content>
+    <p>Está seguro que desea reestablecer la tabla dede cero?</p>
+</div>
+<div mat-dialog-actions>
+    <button mat-button [disabled]="progresoActivo" (click)="cancelar()" cdkFocusInitial>Cancelar</button>
+    <button mat-button [disabled]="progresoActivo" (click)="aceptar()">Aceptar</button>
+</div>
+<br><br>
+<span *ngIf="progresoActivo">Reestableciendo...</span>
+<mat-progress-bar *ngIf="progresoActivo" mode="indeterminate"></mat-progress-bar>

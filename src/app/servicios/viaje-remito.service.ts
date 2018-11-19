@@ -50,6 +50,14 @@ export class ViajeRemitoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene una lista por alias
+  public listarPorAlias(alias) {
+    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Obtiene un listado por numero
   public listarPorNumero(numero) {
     return this.http.get(this.url + '/listarPorNumero/' + numero, this.options);
