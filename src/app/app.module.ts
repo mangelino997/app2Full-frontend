@@ -91,6 +91,25 @@ import { CondicionVentaService } from './servicios/condicion-venta.service';
 import { RolSubopcionService } from './servicios/rol-subopcion.service';
 import { UsuarioEmpresaService } from './servicios/usuario-empresa.service';
 import { ViajeRemitoService } from './servicios/viaje-remito.service';
+import { InsumoService } from './servicios/insumo.service';
+import { ViajePrecioService } from './servicios/viaje-precio.service';
+import { ViajeTarifaService } from './servicios/viaje-tarifa.service';
+import { ViajeTipoCargaService } from './servicios/viaje-tipo-carga.service';
+import { ViajeTipoService } from './servicios/viaje-tipo.service';
+import { ViajeTramoClienteService } from './servicios/viaje-tramo-cliente.service';
+import { ViajeTramoService } from './servicios/viaje-tramo.service';
+import { ViajeUnidadNegocioService } from './servicios/viaje-unidad-negocio.service';
+
+//Modelos
+import { ViajePropio } from './modelos/viajePropio';
+import { ViajePropioTramo } from './modelos/viajePropioTramo';
+import { ViajePropioTramoCliente } from './modelos/viajePropioTramoCliente';
+import { ViajePropioCombustible } from './modelos/viajePropioCombustible';
+import { ViajePropioEfectivo } from './modelos/viajePropioEfectivo';
+import { ViajePropioInsumo } from './modelos/viajePropioInsumo';
+import { ViajeRemito } from './modelos/viajeRemito';
+import { ViajePropioGasto } from './modelos/viajePropioGasto';
+import { ViajePropioPeaje } from './modelos/viajePropioPeaje';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -159,6 +178,7 @@ import { ViajeRemitoComponent } from './componentes/viaje-remito/viaje-remito.co
 import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-subopcion/rol-subopcion.component'; //Probado
 import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component'; //Probado
 import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
+import { ViajeComponent } from './componentes/viaje/viaje.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -224,7 +244,8 @@ const appRoutes: Routes = [
   {path: 'reestablecertablastablasubopcionpestania', component: SubopcionPestaniaComponent, canActivate: [GuardiaService]},
   {path: 'reestablecertablastablausuarioempresa', component: UsuarioEmpresaComponent, canActivate: [GuardiaService]},
   {path: 'organizacionempresas', component: EmpresaComponent, canActivate: [GuardiaService]},
-  {path: 'guiasdeserviciosremitosgs', component: ViajeRemitoComponent, canActivate: [GuardiaService]}
+  {path: 'guiasdeserviciosremitosgs', component: ViajeRemitoComponent, canActivate: [GuardiaService]},
+  {path: 'guiasdeserviciosemisiongs', component: ViajeComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -306,7 +327,8 @@ const stompConfig: StompConfig = {
     SubopcionPestaniaComponent,
     SubopcionPestaniaDialog,
     UsuarioEmpresaComponent,
-    UsuarioEmpresaDialog
+    UsuarioEmpresaDialog,
+    ViajeComponent
   ],
   imports: [
     BrowserModule,
@@ -433,6 +455,23 @@ const stompConfig: StompConfig = {
     RolSubopcionService,
     UsuarioEmpresaService,
     ViajeRemitoService,
+    InsumoService,
+    ViajePrecioService,
+    ViajeTarifaService,
+    ViajeTipoCargaService,
+    ViajeTipoService,
+    ViajeTramoClienteService,
+    ViajeTramoService,
+    ViajeUnidadNegocioService,
+    ViajePropio,
+    ViajePropioTramo,
+    ViajePropioTramoCliente,
+    ViajePropioCombustible,
+    ViajePropioEfectivo,
+    ViajePropioInsumo,
+    ViajeRemito,
+    ViajePropioGasto,
+    ViajePropioPeaje,
     StompService,
     {
       provide: StompConfig,

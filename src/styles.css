@@ -254,12 +254,17 @@ button.toast-close-button {
   cursor: pointer;
   color: blue;
 }
+/* Coloca cursor y color rojo en span con click */
+.cursor-color-rojo {
+  cursor: pointer;
+  color: red;
+}
 /* Color y tamanio del sidenav */
 .sidenav-content {
   background-color: white;
 }
 .sidenav {
-  width: 200px;
+  width: 210px;
 }
 /* Cambia el color del boton de la subopcion al seleccionarlo */
 .activar-boton-subopcion {
@@ -315,4 +320,10 @@ mat-select {
 }
 input {
   font-weight: bold;
+}
+.container-fluid-custom {
+  width: 100%;
+  padding-right: 15px;
+  margin-right: auto;
+  margin-left: auto;
 }
