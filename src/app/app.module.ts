@@ -179,10 +179,11 @@ import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-sub
 import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component'; //Probado
 import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
 import { ViajeComponent } from './componentes/viaje/viaje.component';
+import { ActualizacionPreciosComponent } from './componentes/actualizacion-precios/actualizacion-precios.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: LoginComponent},
+  {path: '', component: ActualizacionPreciosComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -328,7 +329,8 @@ const stompConfig: StompConfig = {
     SubopcionPestaniaDialog,
     UsuarioEmpresaComponent,
     UsuarioEmpresaDialog,
-    ViajeComponent
+    ViajeComponent,
+    ActualizacionPreciosComponent
   ],
   imports: [
     BrowserModule,
