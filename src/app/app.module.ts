@@ -180,10 +180,11 @@ import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './component
 import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
 import { ViajeComponent } from './componentes/viaje/viaje.component';
 import { ActualizacionPreciosComponent } from './componentes/actualizacion-precios/actualizacion-precios.component';
+import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: ActualizacionPreciosComponent},
+  {path: '', component: CaeAnticipadoComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -330,7 +331,8 @@ const stompConfig: StompConfig = {
     UsuarioEmpresaComponent,
     UsuarioEmpresaDialog,
     ViajeComponent,
-    ActualizacionPreciosComponent
+    ActualizacionPreciosComponent,
+    CaeAnticipadoComponent
   ],
   imports: [
     BrowserModule,
