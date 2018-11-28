@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-    <div class="col-md-6 text-center">
+    <div class="col-md-8 text-center">
       <h5>{{pestaniaActual}} Contacto de Banco</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
@@ -21,7 +21,7 @@
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemSucursalBanco of resultadosSucursalesBancos" [value]="itemSucursalBanco"
                   (onSelectionChange)="listarPorSucursalBanco(itemSucursalBanco)">
-                  {{itemSucursalBanco.nombre}} - {{itemSucursalBanco.banco.nombre}}
+                  {{itemSucursalBanco.banco.nombre}} - {{itemSucursalBanco.nombre}}
                 </mat-option>
               </mat-autocomplete>
             </div>
@@ -29,9 +29,9 @@
           <div class="col-md-4" *ngIf="mostrarAutocompletado">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Lista de Contactos</label>
-              <mat-select id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
-                [compareWith]="compareFn">
-                <mat-option *ngFor="let itemContacto of contactos" [value]="itemContacto" (onSelectionChange)="formulario.setValue(itemContacto)">
+              <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="autocompletado"
+                [compareWith]="compareFn" (selectionChange)="cambioAutocompletado()">
+                <mat-option *ngFor="let itemContacto of contactos" [value]="itemContacto">
                   {{itemContacto.nombre}} - {{itemContacto.tipoContacto.nombre}}
                 </mat-option>
               </mat-select>
@@ -78,8 +78,8 @@
               <label id="labelCorreoelectronico" for="idCorreoelectronico" class="tamanio-label">
                 Correo Electrónico</label>
               <input id="idCorreoelectronico" type="email" formControlName="correoelectronico" autocomplete="off"
-                [readonly]="soloLectura" class="form-control form-control-sm" pattern="^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$"
-                (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')" (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$', 'correoelectronico')">
+                [readonly]="soloLectura" class="form-control form-control-sm" 
+                (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')">
             </div>
           </div>
         </div>

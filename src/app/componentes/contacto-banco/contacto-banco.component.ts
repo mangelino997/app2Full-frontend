@@ -94,6 +94,10 @@ export class ContactoBancoComponent implements OnInit {
     //Obtiene la lista de tipos de contactos
     this.listarTiposContactos();
   }
+  //Establecer el formulario al cambiar elemento de autocompletado
+  public cambioAutocompletado() {
+    this.formulario.setValue(this.autocompletado.value);
+  }
   //Obtiene el listado de tipos de proveedores
   private listarTiposContactos() {
     this.tipoContactoServicio.listar().subscribe(
@@ -113,9 +117,9 @@ export class ContactoBancoComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('tipoContacto').enabled;
+      this.formulario.get('tipoContacto').enable();
     } else {
-      this.formulario.get('tipoContacto').disabled;
+      this.formulario.get('tipoContacto').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -274,28 +278,16 @@ export class ContactoBancoComponent implements OnInit {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   }
-  //Manejo de colores de campos y labels con patron erroneo
-  public validarPatron(patron, campo) {
-    let valor = this.formulario.get(campo).value;
-    if(valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
-      if (!patronVerificador.test(valor)) {
-        if(campo == 'correoelectronico') {
-          document.getElementById("labelCorreoelectronico").classList.add('label-error');
-          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-          this.toastr.error('Correo Electronico incorrecto');
-        }
-      }
-    }
-  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
+    this.listarPorSucursalBanco(elemento.sucursalBanco);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
+    this.listarPorSucursalBanco(elemento.sucursalBanco);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
