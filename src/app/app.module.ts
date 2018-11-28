@@ -184,7 +184,7 @@ import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticip
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: CaeAnticipadoComponent},
+  {path: '', component: LoginComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
