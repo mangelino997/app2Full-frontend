@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ContactoClienteService } from '../../servicios/contacto-cliente.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { SucursalClienteService } from '../../servicios/sucursal-cliente.service';
+import { ClienteService } from '../../servicios/cliente.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
@@ -43,11 +43,11 @@ export class ContactoClienteComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda sucursales clientes
-  public resultadosSucursalesClientes:Array<any> = [];
+  public resultadosClientes:Array<any> = [];
   //Constructor
   constructor(private servicio: ContactoClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private sucursalClienteServicio: SucursalClienteService, private tipoContactoServicio: TipoContactoService) {
+    private clienteServicio: ClienteService, private tipoContactoServicio: TipoContactoService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -63,14 +63,6 @@ export class ContactoClienteComponent implements OnInit {
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
-    //Autocompletado - Buscar por alias cliente
-    this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.sucursalClienteServicio.listarPorAliasCliente(data).subscribe(response =>{
-          this.resultadosSucursalesClientes = response;
-        })
-      }
-    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -93,6 +85,18 @@ export class ContactoClienteComponent implements OnInit {
     this.listar();
     //Obtiene la lista de tipos de contactos
     this.listarTiposContactos();
+    //Autocompletado Cliente - Buscar por alias
+    this.formulario.get('cliente').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosClientes = response;
+        })
+      }
+    })
+  }
+  //Establecer el formulario al cambiar elemento de autocompletado
+  public cambioAutocompletado() {
+    this.formulario.setValue(this.autocompletado.value);
   }
   //Obtiene el listado de tipos de proveedores
   private listarTiposContactos() {
@@ -108,14 +112,14 @@ export class ContactoClienteComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultados = [];
-    this.resultadosSucursalesClientes = [];
+    this.resultadosClientes = [];
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('tipoContacto').enabled;
+      this.formulario.get('tipoContacto').enable();
     } else {
-      this.formulario.get('tipoContacto').disabled;
+      this.formulario.get('tipoContacto').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -176,6 +180,12 @@ export class ContactoClienteComponent implements OnInit {
         break;
     }
   }
+  //Obtiene la lista de contactos de un cliente
+  public listarPorCliente(elemento) {
+    this.servicio.listarPorCliente(elemento.id).subscribe(res => {
+      this.contactos = res.json();
+    })
+  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
@@ -197,19 +207,6 @@ export class ContactoClienteComponent implements OnInit {
         console.log(err);
       }
     );
-  }
-  //Obtiene la lista por sucursal cliente
-  public listarPorSucursalCliente(elemento) {
-    if(this.mostrarAutocompletado) {
-      this.servicio.listarPorCliente(elemento.id).subscribe(
-        res => {
-          this.contactos = res.json();
-        },
-        err => {
-          console.log(err);
-        }
-      )
-    }
   }
   //Agrega un registro
   private agregar() {
@@ -274,28 +271,16 @@ export class ContactoClienteComponent implements OnInit {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   }
-  //Manejo de colores de campos y labels con patron erroneo
-  public validarPatron(patron, campo) {
-    let valor = this.formulario.get(campo).value;
-    if(valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
-      if (!patronVerificador.test(valor)) {
-        if(campo == 'correoelectronico') {
-          document.getElementById("labelCorreoelectronico").classList.add('label-error');
-          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-          this.toastr.error('Correo Electronico incorrecto');
-        }
-      }
-    }
-  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
+    this.listarPorCliente(elemento.cliente);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
+    this.listarPorCliente(elemento.cliente);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
@@ -308,25 +293,9 @@ export class ContactoClienteComponent implements OnInit {
     }
   }
   //Define como se muestra los datos en el autcompletado
-  public displayF(elemento) {
+  public displayFn(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ' - ' + elemento.cliente.razonSocial : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado a
-  public displayFa(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado b
-  public displayFb(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ' - ' + elemento.tipoContacto.nombre : elemento;
+      return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
     }
