@@ -32,9 +32,9 @@
           <div class="col-md-8">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Contactos</label>
-              <mat-select id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
-                [compareWith]="compareFn">
-                <mat-option *ngFor="let item of contactos" [value]="item" (onSelectionChange)="formulario.setValue(item)">
+              <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="autocompletado"
+                [compareWith]="compareFn" (selectionChange)="cambioAutocompletado()">
+                <mat-option *ngFor="let item of contactos" [value]="item">
                   {{item.nombre}} - {{item.tipoContacto.nombre}}
                 </mat-option>
               </mat-select>
@@ -81,10 +81,8 @@
               <label id="labelCorreoelectronico" for="idCorreoelectronico" class="tamanio-label">
                 Correo Electrónico</label>
               <input id="idCorreoelectronico" type="email" formControlName="correoelectronico" autocomplete="off"
-                class="form-control form-control-sm" pattern="^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$"
-                (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
-                (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$', 'correoelectronico')"
-                [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura" 
+                (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')">
             </div>
           </div>
         </div>

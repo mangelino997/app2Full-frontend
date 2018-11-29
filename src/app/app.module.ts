@@ -238,7 +238,7 @@ const appRoutes: Routes = [
   {path: 'logisticaproveedoreschoferes', component: ChoferProveedorComponent, canActivate: [GuardiaService]},
   {path: 'logisticavehiculospropiosconfiguracion', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]},
   {path: 'contablebancoscontactos', component: ContactoBancoComponent, canActivate: [GuardiaService]},
-  {path: 'contactocliente', component: ContactoClienteComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'generalesclientescontactos', component: ContactoClienteComponent, canActivate: [GuardiaService]},
   {path: 'generalescompaniadesegurocontactos', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'generalesproveedorescontactos', component: ContactoProveedorComponent, canActivate: [GuardiaService]},
   {path: 'puntosdeventaadministrar', component: PuntoVentaComponent, canActivate: [GuardiaService]},
