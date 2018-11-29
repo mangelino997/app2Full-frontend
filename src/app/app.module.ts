@@ -12,6 +12,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
 
+
 //Servicios
 import { AppService } from './servicios/app.service';
 import { LoginService } from './servicios/login.service';
@@ -110,6 +111,8 @@ import { ViajePropioInsumo } from './modelos/viajePropioInsumo';
 import { ViajeRemito } from './modelos/viajeRemito';
 import { ViajePropioGasto } from './modelos/viajePropioGasto';
 import { ViajePropioPeaje } from './modelos/viajePropioPeaje';
+import { NotaCredito } from './modelos/notaCredito';
+import { NotaDebito } from './modelos/notaDebito';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -181,10 +184,14 @@ import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usu
 import { ViajeComponent } from './componentes/viaje/viaje.component';
 import { ActualizacionPreciosComponent } from './componentes/actualizacion-precios/actualizacion-precios.component';
 import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
+import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
+import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-factura.component';
+import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/emitir-nota-credito.component';
+import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: LoginComponent},
+  {path: '', component: EmitirNotaDebitoComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -251,7 +258,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://127.0.0.1:8080/jitws/socket',
+  url: 'ws://192.168.0.99:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -332,7 +339,11 @@ const stompConfig: StompConfig = {
     UsuarioEmpresaDialog,
     ViajeComponent,
     ActualizacionPreciosComponent,
-    CaeAnticipadoComponent
+    CaeAnticipadoComponent,
+    EstadoServicioAfipComponent,
+    EmitirFacturaComponent,
+    EmitirNotaCreditoComponent,
+    EmitirNotaDebitoComponent
   ],
   imports: [
     BrowserModule,
@@ -474,6 +485,8 @@ const stompConfig: StompConfig = {
     ViajePropioEfectivo,
     ViajePropioInsumo,
     ViajeRemito,
+    NotaCredito,
+    NotaDebito,
     ViajePropioGasto,
     ViajePropioPeaje,
     StompService,

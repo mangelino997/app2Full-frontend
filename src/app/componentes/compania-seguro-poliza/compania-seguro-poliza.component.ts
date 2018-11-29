@@ -47,11 +47,12 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     private appComponent: AppComponent, private toastr: ToastrService,
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(1, 195)
     .subscribe(
       res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
+        console.log(res.json());
       },
       err => {
         console.log(err);
