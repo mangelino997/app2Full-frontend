@@ -12,7 +12,6 @@ import { ToastrModule } from 'ngx-toastr';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
 
-
 //Servicios
 import { AppService } from './servicios/app.service';
 import { LoginService } from './servicios/login.service';
@@ -191,7 +190,7 @@ import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emit
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: EmitirNotaDebitoComponent},
+  {path: '', component: LoginComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -254,11 +253,17 @@ const appRoutes: Routes = [
   {path: 'reestablecertablastablausuarioempresa', component: UsuarioEmpresaComponent, canActivate: [GuardiaService]},
   {path: 'organizacionempresas', component: EmpresaComponent, canActivate: [GuardiaService]},
   {path: 'guiasdeserviciosremitosgs', component: ViajeRemitoComponent, canActivate: [GuardiaService]},
-  {path: 'guiasdeserviciosemisiongs', component: ViajeComponent, canActivate: [GuardiaService]}
+  {path: 'guiasdeserviciosemisiongs', component: ViajeComponent, canActivate: [GuardiaService]},
+  {path: 'listasdepreciosactualizaciondeprecios', component: ActualizacionPreciosComponent, canActivate: [GuardiaService]},
+  {path: 'webservicesafipsolicitarcaeanticipado', component: CaeAnticipadoComponent, canActivate: [GuardiaService]},
+  {path: 'webservicesafipconsultarestadodelservicio', component: EstadoServicioAfipComponent, canActivate: [GuardiaService]},
+  {path: 'facturacionfacturas', component: EmitirFacturaComponent, canActivate: [GuardiaService]},
+  {path: 'facturacionnotasdecredito', component: EmitirNotaCreditoComponent, canActivate: [GuardiaService]},
+  {path: 'facturacionnotasdedebito', component: EmitirNotaDebitoComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.99:8080/jitws/socket',
+  url: 'ws://127.0.0.1:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,

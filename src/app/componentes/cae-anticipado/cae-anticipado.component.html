@@ -1,25 +1,25 @@
-<div id="agendatelefonica" class="container-fluid" >
-    <div class="row">
-        <div class="col" class="centrar">
-          <nav mat-tab-nav-bar>
-            <a mat-tab-link disabled>CAE ANTICIPADO</a>
-            <a mat-tab-link (click)="indiceSeleccionado=1">Solicitar</a>
-            <a mat-tab-link (click)="indiceSeleccionado=2">Consultar</a>
-            <a mat-tab-link (click)="indiceSeleccionado=3">Listar</a>
-          </nav>
-        </div>
-      </div>
+<div id="agendatelefonica" class="container-fluid">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>CAE ANTICIPADO</a>
+        <a mat-tab-link (click)="indiceSeleccionado=1" [active]="pestaniaActiva == 1">Solicitar</a>
+        <a mat-tab-link (click)="indiceSeleccionado=2" [active]="pestaniaActiva == 2">Consultar</a>
+        <a mat-tab-link (click)="indiceSeleccionado=3" [active]="pestaniaActiva == 3">Listar</a>
+      </nav>
+    </div>
+  </div>
   <!--Pestaña solicitar-->
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado==1">
-    <div class="col-md-10 text-center">
-        <h5>Solicitar Cae Anticipado</h5>
-        <form [formGroup]="formulario" class="contenedor">
+    <div class="col-md-8 text-center">
+      <h5>Solicitar Cae Anticipado</h5>
+      <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNombre" class="tamanio-label">Empresa</label>
-              <input id="idNombre" type="text" formControlName="empresa" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="empresa" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -27,80 +27,79 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNombre" class="tamanio-label">Año</label>
-              <input id="idNombre" type="text" formControlName="anio" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="anio" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idNombre" class="tamanio-label">Mes</label>
-                <input id="idNombre" type="text" formControlName="mes" autocomplete="off"
-                  class="form-control form-control-sm" [readonly]="soloLectura">
-              </div>
+            <div class="form-group has-float-label">
+              <label for="idNombre" class="tamanio-label">Mes</label>
+              <input id="idNombre" type="text" formControlName="mes" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
-            <div class="col-md-3">
-                <div class="form-group has-float-label">
-                  <label for="idNombre" class="tamanio-label">Quincena</label>
-                  <input id="idNombre" type="text" formControlName="quincena" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
-                </div>
-              </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idNombre" class="tamanio-label">Quincena</label>
+              <input id="idNombre" type="text" formControlName="quincena" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
+            </div>
+          </div>
         </div>
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNombre" class="tamanio-label">N° C.A.E.A</label>
-              <input id="idNombre" type="text" formControlName="numCaea" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="numCaea" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNombre" class="tamanio-label">Fecha de Vigencia Desde</label>
-              <input id="idNombre" type="text" formControlName="vigenciaDesde" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="vigenciaDesde" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idNombre" class="tamanio-label">Fecha de Vigencia Hasta</label>
-                <input id="idNombre" type="text" formControlName="vigenciaHasta" autocomplete="off"
-                  class="form-control form-control-sm" [readonly]="soloLectura">
-              </div>
+            <div class="form-group has-float-label">
+              <label for="idNombre" class="tamanio-label">Fecha de Vigencia Hasta</label>
+              <input id="idNombre" type="text" formControlName="vigenciaHasta" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
-            <div class="col-md-3">
-                <div class="form-group has-float-label">
-                  <label for="idNombre" class="tamanio-label">Fecha Tope para Informar</label>
-                  <input id="idNombre" type="text" formControlName="fechaTope" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
-                </div>
-              </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idNombre" class="tamanio-label">Fecha Tope para Informar</label>
+              <input id="idNombre" type="text" formControlName="fechaTope" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
+            </div>
+          </div>
         </div>
-         <button id="idBoton" class="btn btn-primary" type="button">
+        <button id="idBoton" class="btn btn-primary" type="button">
           Solicitar C.A.E.A AFIP
         </button>
       </form>
     </div>
   </div>
-
   <!--Pestaña Consultar Moneda-->
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado==2">
     <div class="col-md-10 text-center">
-        <h5>Consultar Moneda</h5>
-        <form [formGroup]="formulario" class="contenedor">
+      <h5>Consultar Moneda</h5>
+      <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNombre" class="tamanio-label">Empresa</label>
-              <input id="idNombre" type="text" formControlName="empresa" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="empresa" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNombre" class="tamanio-label">Año</label>
-              <input id="idNombre" type="text" formControlName="anio" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="anio" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -108,206 +107,203 @@
           <div class="col-md-12">
             <h5>Gestión Sistema</h5>
             <table class="table table-bordered table-striped table-sm">
-                <thead>
-                  <tr>
-                      <th class="text-center" style="width:5%" scope="col">Período</th>
-                      <th class="text-center" style="width:5%" scope="col">Mes</th>
-                      <th class="text-center" style="width:10%" scope="col">Quincena</th>
-                      <th class="text-center" style="width:5%" scope="col">C.A.E.A</th>
-                      <th class="text-center" style="width:10%" scope="col">Fecha Desde</th>
-                      <th class="text-center" style="width:10%" scope="col">Fecha Hasta</th>
-                      <th class="text-center" style="width:30%" scope="col">Fecha Reg. Inf.</th>
-                      <th class="text-center" style="width:30%" scope="col">Fecha-Hora Solicitud</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr >
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr >
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr >
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="col-md-10 text-left">
-              <button id="idBoton"  class="btn btn-primary" type="button">
-                Consultar AFIP
-              </button>
-            </div>
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:5%" scope="col">Período</th>
+                  <th class="text-center" style="width:5%" scope="col">Mes</th>
+                  <th class="text-center" style="width:10%" scope="col">Quincena</th>
+                  <th class="text-center" style="width:5%" scope="col">C.A.E.A</th>
+                  <th class="text-center" style="width:10%" scope="col">Fecha Desde</th>
+                  <th class="text-center" style="width:10%" scope="col">Fecha Hasta</th>
+                  <th class="text-center" style="width:30%" scope="col">Fecha Reg. Inf.</th>
+                  <th class="text-center" style="width:30%" scope="col">Fecha-Hora Solicitud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-10 text-left">
+            <button id="idBoton" class="btn btn-primary" type="button">
+              Consultar AFIP
+            </button>
+          </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
-              <table class="table table-bordered table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <th class="text-center" style="width:5%" scope="col">Período</th>
-                      <th class="text-center" style="width:5%" scope="col">Mes</th>
-                      <th class="text-center" style="width:10%" scope="col">Quincena</th>
-                      <th class="text-center" style="width:5%" scope="col">C.A.E.A</th>
-                      <th class="text-center" style="width:10%" scope="col">Fecha Desde</th>
-                      <th class="text-center" style="width:10%" scope="col">Fecha Hasta</th>
-                      <th class="text-center" style="width:30%" scope="col">Fecha Reg. Inf.</th>
-                      <th class="text-center" style="width:30%" scope="col">Fecha-Hora Solicitud</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr >
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          <div class="col-md-12">
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:5%" scope="col">Período</th>
+                  <th class="text-center" style="width:5%" scope="col">Mes</th>
+                  <th class="text-center" style="width:10%" scope="col">Quincena</th>
+                  <th class="text-center" style="width:5%" scope="col">C.A.E.A</th>
+                  <th class="text-center" style="width:10%" scope="col">Fecha Desde</th>
+                  <th class="text-center" style="width:10%" scope="col">Fecha Hasta</th>
+                  <th class="text-center" style="width:30%" scope="col">Fecha Reg. Inf.</th>
+                  <th class="text-center" style="width:30%" scope="col">Fecha-Hora Solicitud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+        </div>
       </form>
     </div>
   </div>
   <!--Pestaña Listar-->
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado==3">
-      <div class="col-md-10 text-center">
-          <form [formGroup]="formulario" class="contenedor">
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idNombre" class="tamanio-label">Empresa</label>
-                <input id="idNombre" type="text" formControlName="empresa" autocomplete="off"
-                  class="form-control form-control-sm" [readonly]="soloLectura">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idNombre" class="tamanio-label">Año</label>
-                <input id="idNombre" type="text" formControlName="anio" autocomplete="off"
-                  class="form-control form-control-sm" [readonly]="soloLectura">
-              </div>
+    <div class="col-md-10 text-center">
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idNombre" class="tamanio-label">Empresa</label>
+              <input id="idNombre" type="text" formControlName="empresa" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-12">
-              <h5>Gestión Sistema</h5>
-              <table class="table table-bordered table-striped table-sm">
-                  <thead>
-                    <tr>
-                        <th class="text-center" style="width:5%" scope="col">Período</th>
-                        <th class="text-center" style="width:5%" scope="col">Mes</th>
-                        <th class="text-center" style="width:10%" scope="col">Quincena</th>
-                        <th class="text-center" style="width:5%" scope="col">C.A.E.A</th>
-                        <th class="text-center" style="width:10%" scope="col">Fecha Desde</th>
-                        <th class="text-center" style="width:10%" scope="col">Fecha Hasta</th>
-                        <th class="text-center" style="width:30%" scope="col">Fecha Reg. Inf.</th>
-                        <th class="text-center" style="width:30%" scope="col">Fecha-Hora Solicitud</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr >
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr >
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr >
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="col-md-10 text-left">
-                <button id="idBoton"  class="btn btn-primary" type="button">
-                  Consultar AFIP
-                </button>
-              </div>
-          </div>
-          <div class="row">
-              <div class="col-md-12">
-                <table class="table table-bordered table-striped table-sm">
-                    <thead>
-                      <tr>
-                          <th class="text-center" style="width:5%" scope="col">Período</th>
-                          <th class="text-center" style="width:5%" scope="col">Mes</th>
-                          <th class="text-center" style="width:10%" scope="col">Quincena</th>
-                          <th class="text-center" style="width:5%" scope="col">C.A.E.A</th>
-                          <th class="text-center" style="width:10%" scope="col">Fecha Desde</th>
-                          <th class="text-center" style="width:10%" scope="col">Fecha Hasta</th>
-                          <th class="text-center" style="width:30%" scope="col">Fecha Reg. Inf.</th>
-                          <th class="text-center" style="width:30%" scope="col">Fecha-Hora Solicitud</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr >
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-                
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idNombre" class="tamanio-label">Año</label>
+              <input id="idNombre" type="text" formControlName="anio" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura">
             </div>
-            
-        </form>
-        
-      </div>
-      <div class="col-md-10 text-right">
-        <button id="idBoton"  class="btn btn-primary " type="button" >
-          Imprimir/Exportar
-        </button>
-      </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <h5>Gestión Sistema</h5>
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:5%" scope="col">Período</th>
+                  <th class="text-center" style="width:5%" scope="col">Mes</th>
+                  <th class="text-center" style="width:10%" scope="col">Quincena</th>
+                  <th class="text-center" style="width:5%" scope="col">C.A.E.A</th>
+                  <th class="text-center" style="width:10%" scope="col">Fecha Desde</th>
+                  <th class="text-center" style="width:10%" scope="col">Fecha Hasta</th>
+                  <th class="text-center" style="width:30%" scope="col">Fecha Reg. Inf.</th>
+                  <th class="text-center" style="width:30%" scope="col">Fecha-Hora Solicitud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-10 text-left">
+            <button id="idBoton" class="btn btn-primary" type="button">
+              Consultar AFIP
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:5%" scope="col">Período</th>
+                  <th class="text-center" style="width:5%" scope="col">Mes</th>
+                  <th class="text-center" style="width:10%" scope="col">Quincena</th>
+                  <th class="text-center" style="width:5%" scope="col">C.A.E.A</th>
+                  <th class="text-center" style="width:10%" scope="col">Fecha Desde</th>
+                  <th class="text-center" style="width:10%" scope="col">Fecha Hasta</th>
+                  <th class="text-center" style="width:30%" scope="col">Fecha Reg. Inf.</th>
+                  <th class="text-center" style="width:30%" scope="col">Fecha-Hora Solicitud</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
     </div>
+    <div class="col-md-10 text-right">
+      <button id="idBoton" class="btn btn-primary " type="button">
+        Imprimir/Exportar
+      </button>
+    </div>
+  </div>
 </div>
