@@ -158,9 +158,9 @@ export class ClienteComponent implements OnInit {
       situacionCliente: new FormControl(),
       ordenVenta: new FormControl(),
       sucursalLugarPago: new FormControl(),
-      creditoLimite: new FormControl('', [Validators.min(1), Validators.maxLength(12)]),
-      descuentoFlete: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
-      descuentoSubtotal: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
+      creditoLimite: new FormControl('', [Validators.min(0), Validators.maxLength(12)]),
+      descuentoFlete: new FormControl('', [Validators.min(0), Validators.maxLength(4)]),
+      descuentoSubtotal: new FormControl('', [Validators.min(0), Validators.maxLength(4)]),
       esSeguroPropio: new FormControl(),
       companiaSeguro: new FormControl(),
       numeroPolizaSeguro: new FormControl('', Validators.maxLength(20)),
@@ -280,7 +280,12 @@ export class ClienteComponent implements OnInit {
   private establecerValoresPorDefecto() {
     this.formulario.get('creditoLimite').setValue('0.00');
     this.formulario.get('descuentoFlete').setValue('0.00');
+    this.formulario.get('esSeguroPropio').setValue(false);
     this.formulario.get('imprimirControlDeuda').setValue(false);
+    this.formulario.get('companiaSeguro').disable();
+    this.formulario.get('numeroPolizaSeguro').disable();
+    this.formulario.get('vencimientoPolizaSeguro').disable();
+    this.formulario.get('resumenCliente').disable();
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -345,6 +350,7 @@ export class ClienteComponent implements OnInit {
     this.condicionVentaServicio.listar().subscribe(
       res => {
         this.condicionesVentas = res.json();
+        this.formulario.get('condicionVenta').setValue(this.condicionesVentas[0]);
       },
       err => {
         console.log(err);
@@ -591,6 +597,35 @@ export class ClienteComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+  }
+  //Cambio de elemento seleccionado en condicion venta
+  public cambioCondicionVenta() {
+    if(this.formulario.get('condicionVenta').value.nombre == "CONTADO") {
+      this.formulario.get('resumenCliente').disable();
+      this.formulario.get('resumenCliente').clearValidators();
+    } else {
+      // this.formulario.controls['resumenCliente'].setValidators(Validators.required);
+      this.formulario.get('resumenCliente').setValidators(Validators.required);
+      this.formulario.get('resumenCliente').enable();
+    }
+  }
+  //Cambio de elemento seleccionado en tipo de seguro
+  public cambioTipoSeguro() {
+    if(this.formulario.get('esSeguroPropio').value) {
+      this.formulario.get('companiaSeguro').setValidators(Validators.required);
+      this.formulario.get('companiaSeguro').enable();
+      this.formulario.get('numeroPolizaSeguro').setValidators(Validators.required);
+      this.formulario.get('numeroPolizaSeguro').enable();
+      this.formulario.get('vencimientoPolizaSeguro').setValidators(Validators.required);
+      this.formulario.get('vencimientoPolizaSeguro').enable();
+    } else {
+      this.formulario.get('companiaSeguro').disable();
+      this.formulario.get('companiaSeguro').clearValidators();
+      this.formulario.get('numeroPolizaSeguro').disable();
+      this.formulario.get('numeroPolizaSeguro').clearValidators();
+      this.formulario.get('vencimientoPolizaSeguro').disable();
+      this.formulario.get('vencimientoPolizaSeguro').clearValidators();
+    }
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

@@ -230,10 +230,12 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCondicionVenta" class="tamanio-label">Condición de Venta *</label>
-                        <mat-select id="idCondicionVenta" class="form-control form-control-sm" formControlName="condicionVenta"
-                          [compareWith]="compareFn">
-                          <mat-option *ngFor="let itemCondicionVenta of condicionesVentas" [value]="itemCondicionVenta">
-                            {{itemCondicionVenta.nombre}}
+                        <mat-select id="idCondicionVenta" class="form-control form-control-sm" 
+                          formControlName="condicionVenta" [compareWith]="compareFn"
+                          (selectionChange)="cambioCondicionVenta()">
+                          <mat-option *ngFor="let itemCondicionVenta of condicionesVentas" 
+                            [value]="itemCondicionVenta">
+                              {{itemCondicionVenta.nombre}}
                           </mat-option>
                         </mat-select>
                       </div>
@@ -282,8 +284,7 @@
                         <label for="idLimiteCredito" class="tamanio-label">Límite de Crédito</label>
                         <input id="idLimiteCredito" type="number" formControlName="creditoLimite"
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
-                          [disabled]="formulario.get('esCuentaCorriente') ? false : true"
-                          [required]="formulario.get('esCuentaCorriente') ? true : false">
+                          (blur)="setDecimales($event, 2)">
                       </div>
                     </div>
                   </div>
@@ -327,8 +328,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idEsSeguroPropio" class="tamanio-label">Tipo de Seguro *</label>
-                        <mat-select id="idEsSeguroPropio" class="form-control form-control-sm" formControlName="esSeguroPropio"
-                          [compareWith]="compareFn">
+                        <mat-select id="idEsSeguroPropio" class="form-control form-control-sm" 
+                          formControlName="esSeguroPropio" (selectionChange)="cambioTipoSeguro()">
                           <mat-option [value]="false">Sin Seguro Propio</mat-option>
                           <mat-option [value]="true">Con Seguro Propio</mat-option>
                         </mat-select>
