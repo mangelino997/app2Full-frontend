@@ -112,6 +112,7 @@ import { ViajeRemito } from './modelos/viajeRemito';
 import { ViajePropioGasto } from './modelos/viajePropioGasto';
 import { ViajePropioPeaje } from './modelos/viajePropioPeaje';
 import { NotaCredito } from './modelos/notaCredito';
+import { NotaDebito } from './modelos/notaDebito';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -186,10 +187,11 @@ import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticip
 import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
 import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-factura.component';
 import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/emitir-nota-credito.component';
+import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: EmitirNotaCreditoComponent},
+  {path: '', component: EmitirNotaDebitoComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -340,7 +342,8 @@ const stompConfig: StompConfig = {
     CaeAnticipadoComponent,
     EstadoServicioAfipComponent,
     EmitirFacturaComponent,
-    EmitirNotaCreditoComponent
+    EmitirNotaCreditoComponent,
+    EmitirNotaDebitoComponent
   ],
   imports: [
     BrowserModule,
@@ -483,6 +486,7 @@ const stompConfig: StompConfig = {
     ViajePropioInsumo,
     ViajeRemito,
     NotaCredito,
+    NotaDebito,
     ViajePropioGasto,
     ViajePropioPeaje,
     StompService,

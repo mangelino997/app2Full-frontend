@@ -17,15 +17,12 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public checkboxCuenta: boolean=null;
   public tablaVisible: boolean=null;
   public formulario: FormGroup;
-  public formulario2: FormGroup;
-  public formulario3: FormGroup;
 
 
   constructor(private notaCredito: NotaCredito) { }
 
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({});
     this.tablaVisible=true;
     this.checkboxComp=true;
     console.log(this.tablaVisible+"///");
