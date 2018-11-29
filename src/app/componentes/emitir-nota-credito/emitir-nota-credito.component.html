@@ -1,0 +1,356 @@
+<div class="row justify-content-center container-fluid">
+  <form [formGroup]="formulario" class="">
+  <div class="col-md-12 text-center">
+    <h5>Emitir Nota de Crédito </h5>
+      <div class="row ">
+        <div class="col-md-2">
+            <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Fecha</label>
+                <input id="idCodigo" type="date" formControlName="fecha" class="form-control form-control-sm" >
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Punto de venta</label>
+                <input id="idCodigo" type="number" formControlName="puntoVenta" class="form-control form-control-sm" >
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Letra</label>
+                <input id="idCodigo" type="text" formControlName="letra" class="form-control form-control-sm" >
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Número</label>
+                <input id="idCodigo" type="number" formControlName="numero" class="form-control form-control-sm" >
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Código Afip</label>
+                <input id="idCodigo" type="text" formControlName="codigoAfip" class="form-control form-control-sm" >
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Tipo de Comprobante</label>
+                <input id="idCodigo" type="text" formControlName="tipoComprobante" class="form-control form-control-sm" >
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Jurisdicción</label>
+                <input id="idCodigo" type="text" formControlName="jurisdiccion" class="form-control form-control-sm" >
+            </div>
+        </div>
+      </div>
+    <hr>
+    </div>
+    <!--Segunda Fila-->
+    <div class="col-md-12 text-center">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                  <label for="idCodigo" class="tamanio-label">Cuenta</label>
+                  <input id="idCodigo" type="text" formControlName="cuenta" class="form-control form-control-sm" >
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="form-group has-float-label">
+                  <label for="idCodigo" class="tamanio-label">Cliente</label>
+                  <input id="idCodigo" type="text" formControlName="cliente" class="form-control form-control-sm" >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Domicilio</label>
+                <input id="idCodigo" type="text" formControlName="domicilio" class="form-control form-control-sm" >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Localidad</label>
+                <input id="idCodigo" type="text" formControlName="localidad" class="form-control form-control-sm" >
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idCodigo" class="tamanio-label">Tipo Documento</label>
+                    <input id="idCodigo" type="text" formControlName="tipoDocumento" class="form-control form-control-sm" >
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group has-float-label">
+                    <label for="idCodigo" class="tamanio-label">N° Documento</label>
+                    <input id="idCodigo" type="number" formControlName="numeroDocumento" class="form-control form-control-sm" >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group has-float-label ">
+                    <label for="idCodigo" class="tamanio-label">Condición de IVA</label>
+                    <input id="idCodigo" type="text" formControlName="condicionIVA" class="form-control form-control-sm" >
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group has-float-label">
+                    <label for="idCodigo" class="tamanio-label">Condiciones de Venta</label>
+                    <input id="idCodigo" type="text" formControlName="condicionesVenta" class="form-control form-control-sm" >
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4">
+              <div class="row">
+              </div>
+          </div>
+      </div>
+      <hr>
+    </div>
+    <!--Tercera Fila -->
+    <div class="col-md-12 text-center">
+      <div class="row">
+          <div class="col-md-4 text-left">
+            <input type="radio" name="opcion"  (click)="cambiarTablaComp()" checked>Aplica a Comprobante
+          </div>
+          <div class="col-md-4 text-left">
+              <input type="radio" name="opcion"  (click)="cambiarTablaCuenta()" >Aplica a la Cuenta
+          </div>
+          <div class="col-md-4">
+          </div>
+      </div><br>
+      <div class="row">
+          <div class="col-md-12" style=" height: 200px; overflow-y: scroll;" *ngIf="tablaVisible" >
+              <!--TABLA PARA COMPROBANTE-->
+              <table class="table table-bordered table-striped table-sm" id="tablaComprobante" >
+                <thead >
+                  <tr >
+                    <th class="text-center" style="width:10%;" scope="col" >Tipo Abrev.</th>
+                    <th class="text-center" style="width:10%" scope="col">N° de Comprobante</th>
+                    <th class="text-center" style="width:5%" scope="col">Fecha</th>
+                    <th class="text-center" style="width:5%" scope="col">Importe</th>
+                    <th class="text-center" style="width:5%" scope="col">Saldo</th>
+                    <th class="text-center" style="width:10%" scope="col">Seleccionar</th>
+                    <th class="text-center" style="width:10%" scope="col">Concepto</th>
+                    <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
+                    <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                    <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr >
+                    <td>1</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr >
+                    <td>2</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr >
+                    <td>3</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr >
+                    <td>3</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr >
+                    <td>4</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr >
+                    <td>5</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  <tr >
+                    <td>6</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                </tbody>
+              </table>
+          </div><br>
+              <!--TABLA PARA CUENTA-->
+            <div class="col-md-12" style=" height: 200px; overflow-y: scroll;" *ngIf="!tablaVisible" >
+              <table class="table table-bordered table-striped table-sm" id="tablaCuenta" >
+                  <thead >
+                    <tr >
+                      <th class="text-center" style="width:10%" scope="col">Concepto</th>
+                      <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
+                      <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                      <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr >
+                      <td>1</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr >
+                      <td>2</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr >
+                      <td>3</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr >
+                      <td>3</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr >
+                      <td>4</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr >
+                      <td>5</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                    <tr >
+                      <td>6</td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+            </div>
+      </div><br>
+      <div class="row">
+        <div class="col-md-8">
+          <div class="form-group has-float-label ">
+            <textarea name="" rows="5" formControlName="observaciones" placeholder="Observaciones"></textarea>
+          </div>
+        </div>
+        <div class="col-md-2">
+          
+        </div>
+        <div class="col-md-2">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group has-float-label ">
+                <label for="idCodigo" class="tamanio-label">Importe No Grav/Exento</label>
+                <input id="idCodigo" type="text" formControlName="importeExento" class="form-control form-control-sm" >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Importe Neto Gravado</label>
+                <input id="idCodigo" type="text" formControlName="importeGravado" class="form-control form-control-sm" >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Importe IVA</label>
+                <input id="idCodigo" type="text" formControlName="importeIVA" class="form-control form-control-sm" >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group has-float-label">
+                <label for="idCodigo" class="tamanio-label">Importe Total</label>
+                <input id="idCodigo" type="text" formControlName="importeTotal" class="form-control form-control-sm" >
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-5">
+        </div>
+        <div class="col-md-5">
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary btn-lg btn-block" type="button">Emitir</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
