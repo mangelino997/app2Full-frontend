@@ -1,545 +1,377 @@
 <div class="row justify-content-center container-fluid">
   <div class="col-md-12 text-center">
     <h5>Emitir Factura</h5>
-    <form [formGroup]="formulario" class="">
-      <div class="row ">
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Fecha</label>
-                <input id="idCodigo" type="date" formControlName="companiaSeguro" class="form-control form-control-sm" >
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Punto de venta</label>
-                <input id="idCodigo" type="number" formControlName="companiaSeguro" class="form-control form-control-sm" >
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Letra</label>
-                <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Número</label>
-                <input id="idCodigo" type="number" formControlName="companiaSeguro" class="form-control form-control-sm" >
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Código Afip</label>
-                <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Tipo de Comprobante</label>
-                <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-            </div>
-        </div>
+    <div class="row">
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Fecha</label>
+        <input id="idCodigo" type="date" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 130px;">
       </div>
-    </form>
-    <hr>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Punto de venta</label>
+        <input id="idCodigo" type="number" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 130px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Letra</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 60px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Número</label>
+        <input id="idCodigo" type="number" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Código Afip</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 105px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Tipo de Comprobante</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 175px;">
+      </div>
     </div>
-    <!--Segunda Fila-->
-    <div class="col-md-12 text-center">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                  <label for="idCodigo" class="tamanio-label">Cuenta</label>
-                  <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-              </div>
-            </div>
-            <div class="col-md-8">
-              <div class="form-group has-float-label">
-                  <label for="idCodigo" class="tamanio-label">Reminente</label>
-                  <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Domicilio</label>
-                <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Localidad</label>
-                <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">Tipo Documento</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">N° Documento</label>
-                    <input id="idCodigo" type="number" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group has-float-label ">
-                    <label for="idCodigo" class="tamanio-label">Condición de IVA</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">Condiciones de Venta</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-md-3">
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Cuenta</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-                <div class="col-md-8">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Destinatario</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Domicilio</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">Localidad</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-3">
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group has-float-label">
-                        <label for="idCodigo" class="tamanio-label">Tipo Documento</label>
-                        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="form-group has-float-label">
-                        <label for="idCodigo" class="tamanio-label">N° Documento</label>
-                        <input id="idCodigo" type="number" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-7">
-                    <div class="form-group has-float-label ">
-                        <label for="idCodigo" class="tamanio-label">Condición de IVA</label>
-                        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                    </div>
-                  </div>
-                  <div class="col-md-5">
-                    <div class="form-group has-float-label">
-                        <label for="idCodigo" class="tamanio-label">Suc. Entrega</label>
-                        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-7">
-                    <div class="form-group has-float-label">
-                        <label for="idCodigo" class="tamanio-label">Condición de Venta</label>
-                        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                    </div>
-                  </div>
-                  <div class="col-md-5">
-                    <div class="form-group has-float-label">
-                        <label for="idCodigo" class="tamanio-label">Suc. Domicilio</label>
-                        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                    </div>
-                  </div>
-                </div>
-            </div>
-      </div>
-      <hr>
-    </div>
-    <!--Tercera Fila -->
-    <div class="col-md-12 text-center">
-      <div class="row">
-          <div class="col-md-2">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label ">
-                      <label for="idCodigo" class="tamanio-label">Concepto</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">m3</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">% dto.</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div class="col-md-2">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Número de viaje</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label ">
-                      <label for="idCodigo" class="tamanio-label">Tarifa O. Vta.</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">Retiro</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div class="col-md-2">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label ">
-                      <label for="idCodigo" class="tamanio-label">Número de Remito</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Descripción Carga</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">Entrega</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div class="col-md-2">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Bultos</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Valor Declarado</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">Subtotal</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div class="col-md-2">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Kg Efectivo</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">% Seguro</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">Alicuota IVA</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-          </div>
-          <div class="col-md-2">
-              <div class="row">
-                <div class="col-md-8 sinMargen">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Kg Aforado</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-                <div class="col-md-4 sinMargen sinPadding ">
-                    <button class="btn btn-primary btn-sm " type="button ">Aforar</button>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">Flete</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-              </div>
-          </div>
-      </div>
-      <div class="row">
-          <div class="col-md-12">
-              <table class="table table-bordered table-striped table-sm">
-                <thead>
-                  <tr>
-                    <th class="text-center" style="width:10%" scope="col">N° de Viaje</th>
-                    <th class="text-center" style="width:15%" scope="col">N° de Remito</th>
-                    <th class="text-center" style="width:30%" scope="col">Bultos</th>
-                    <th class="text-center" style="width:15%" scope="col">Kg. Efectivo</th>
-                    <th class="text-center" style="width:10%" scope="col">valor Declarado</th>
-                    <th class="text-center" style="width:20%" scope="col">Flete</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr >
-                    <td>1</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr >
-                    <td>2</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr >
-                    <td>3</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-      </div>
-      <div class="row">
-        <div class="col-md-2">
+    <hr style="margin-top: 0px; margin-bottom: 6px;">
+    <div class="row">
+      <div class="border">
+        <div class="row">
           <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Total items</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
+            <label for="idCodigo" class="tamanio-label">Buscar Remitente</label>
+            <input id="idCodigo" type="text" formControlName="buscador" class="form-control form-control-sm" style="width: 405px;">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Domicilio</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 150px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Localidad</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 250px;">
+          </div>
+        </div>
+        <div class="row">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Condición de IVA</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 150px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Condiciones de Venta</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 170px;">
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-5">
-          <h5>Totales de Carga</h5>
-              <table class="table table-bordered table-striped table-sm">
-                <thead>
-                  <tr>
-                    <th class="text-center" style="width:10%" scope="col">Item</th>
-                    <th class="text-center" style="width:20%" scope="col">Total Bultos</th>
-                    <th class="text-center" style="width:20%" scope="col">Total Kg. Efectivo</th>
-                    <th class="text-center" style="width:20%" scope="col">Total Kg. Aforado</th>
-                    <th class="text-center" style="width:30%" scope="col">Tot. Val. Declarado</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr >
-                    <td>1</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr >
-                    <td>2</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                  <tr >
-                    <td>3</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                  </tr>
-                </tbody>
-              </table>
-        </div>
-        <div class="col-md-5">
-            <h5>Totales por Concepto</h5>
-                <table class="table table-bordered table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <th class="text-center" style="width:10%" scope="col">Item</th>
-                      <th class="text-center" style="width:20%" scope="col">Total Seguro</th>
-                      <th class="text-center" style="width:20%" scope="col">Total Flete</th>
-                      <th class="text-center" style="width:20%" scope="col">Total Retiro</th>
-                      <th class="text-center" style="width:30%" scope="col">Total Entrega</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr >
-                      <td>1</td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr >
-                      <td>2</td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr >
-                      <td>3</td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-        </div>
-        <div class="col-md-2">
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group has-float-label ">
-                <label for="idCodigo" class="tamanio-label">Importe No Grav/Exento</label>
-                <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Importe Neto Gravado</label>
-                <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Importe IVA</label>
-                <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Importe Total</label>
-                <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-              </div>
-            </div>
+      <div class="border" style="margin-left: 20px">
+        <div class="row">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Buscar Destinatario</label>
+            <input id="idCodigo" type="text" formControlName="buscador" class="form-control form-control-sm" style="width: 405px;">
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-md-5">
-          <div class="row">
-              <div class="col-md-4">
-                  <div class="form-group has-float-label ">
-                    <label for="idCodigo" class="tamanio-label">Contra Reembolso</label>
-                    <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                  </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group has-float-label">
-                      <label for="idCodigo" class="tamanio-label">% C.C</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group has-float-label ">
-                      <label for="idCodigo" class="tamanio-label">Comisión</label>
-                      <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" >
-                    </div>
-                </div>
+        <div class="row">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Domicilio</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 150px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Localidad</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 250px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Suc. Domicilio</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 120px;">
           </div>
         </div>
-        <div class="col-md-5">
-          <section class="example-section">
-              <mat-radio-group >
-                <mat-radio-button class="example-margin" value="Observacion1">Observación 1</mat-radio-button>
-                <mat-radio-button class="example-margin" value="Observacion2">Observación 2</mat-radio-button>
-                <mat-radio-button class="example-margin" value="Observacion3">Observación 3</mat-radio-button>
-              </mat-radio-group>
-          </section>
-        </div>
-        <div class="col-md-2">
-            <button class="btn btn-primary btn-lg btn-block" type="button">Emitir</button>
+        <div class="row">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Condición de IVA</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 150px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Condiciones de Venta</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 170px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Suc. Entrega</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
+              style="width: 120px;">
+          </div>
         </div>
       </div>
     </div>
+    <hr style="margin-top: 8px; margin-bottom: 12px;">
+    <div class="row">
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Concepto</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 85px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">m3</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 45px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">% dto.</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 60px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">N° de Viaje</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 90px;">
+      </div>
+      <div class="form-group has-float-label ">
+        <label for="idCodigo" class="tamanio-label">Tarifa O. Vta.</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 100px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Retiro</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 55px;">
+      </div>
+      <div class="form-group has-float-label ">
+        <label for="idCodigo" class="tamanio-label">N° de Remito</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 105px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Descripción Carga</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 140px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Entrega</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 68px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Bultos</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 58px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Valor Declarado</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 125px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Subtotal</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 172px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Kg Efectivo</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 92px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">% Seguro</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Alicuota IVA</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 98px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Kg Aforado</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 91px;">
+      </div>
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Flete</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 116px;">
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div class="col-md-12 text-center">
+  <div class="row">
+    <div class="col-md-12">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:10%" scope="col">N° de Viaje</th>
+            <th class="text-center" style="width:15%" scope="col">N° de Remito</th>
+            <th class="text-center" style="width:30%" scope="col">Bultos</th>
+            <th class="text-center" style="width:15%" scope="col">Kg. Efectivo</th>
+            <th class="text-center" style="width:10%" scope="col">valor Declarado</th>
+            <th class="text-center" style="width:20%" scope="col">Flete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+      <div class="form-group has-float-label">
+        <label for="idCodigo" class="tamanio-label">Total items</label>
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5">
+      <h5>Totales de Carga</h5>
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:10%" scope="col">Item</th>
+            <th class="text-center" style="width:20%" scope="col">Total Bultos</th>
+            <th class="text-center" style="width:20%" scope="col">Total Kg. Efectivo</th>
+            <th class="text-center" style="width:20%" scope="col">Total Kg. Aforado</th>
+            <th class="text-center" style="width:30%" scope="col">Tot. Val. Declarado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-5">
+      <h5>Totales por Concepto</h5>
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:10%" scope="col">Item</th>
+            <th class="text-center" style="width:20%" scope="col">Total Seguro</th>
+            <th class="text-center" style="width:20%" scope="col">Total Flete</th>
+            <th class="text-center" style="width:20%" scope="col">Total Retiro</th>
+            <th class="text-center" style="width:30%" scope="col">Total Entrega</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-2">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-float-label ">
+            <label for="idCodigo" class="tamanio-label">Importe No Grav/Exento</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Importe Neto Gravado</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Importe IVA</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Importe Total</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-5">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group has-float-label ">
+            <label for="idCodigo" class="tamanio-label">Contra Reembolso</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">% C.C</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group has-float-label ">
+            <label for="idCodigo" class="tamanio-label">Comisión</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-5">
+      <section class="example-section">
+        <mat-radio-group>
+          <mat-radio-button class="example-margin" value="Observacion1">Observación 1</mat-radio-button>
+          <mat-radio-button class="example-margin" value="Observacion2">Observación 2</mat-radio-button>
+          <mat-radio-button class="example-margin" value="Observacion3">Observación 3</mat-radio-button>
+        </mat-radio-group>
+      </section>
+    </div>
+    <div class="col-md-2">
+      <button class="btn btn-primary btn-lg btn-block" type="button">Emitir</button>
+    </div>
+  </div>
+</div> -->
