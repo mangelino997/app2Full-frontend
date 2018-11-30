@@ -191,7 +191,7 @@ import { MonedaComponent } from './componentes/moneda/moneda.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: MonedaComponent},
+  {path: '', component: LoginComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},

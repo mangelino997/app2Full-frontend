@@ -1,10 +1,10 @@
-<div class="row justify-content-center container-fluid">
+<div class="row">
   <div class="col-md-12 text-center">
     <h5>Emitir Factura</h5>
     <div class="row">
       <div class="form-group has-float-label">
         <label for="idCodigo" class="tamanio-label">Fecha</label>
-        <input id="idCodigo" type="date" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 130px;">
+        <input id="idCodigo" type="date" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 135px;">
       </div>
       <div class="form-group has-float-label">
         <label for="idCodigo" class="tamanio-label">Punto de venta</label>
@@ -27,9 +27,10 @@
         <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 175px;">
       </div>
     </div>
-    <hr style="margin-top: 0px; margin-bottom: 6px;">
+    <hr style="margin-top: 0px; margin-bottom: 10px;">
     <div class="row">
-      <div class="border">
+      <div class="border has-float-label">
+        <label style="font-size: 16px;">Remitente</label>
         <div class="row">
           <div class="form-group has-float-label">
             <label for="idCodigo" class="tamanio-label">Buscar Remitente</label>
@@ -61,7 +62,8 @@
           </div>
         </div>
       </div>
-      <div class="border" style="margin-left: 20px">
+      <div class="border has-float-label" style="margin-left: 20px">
+        <label style="font-size: 16px;">Destinatario</label>
         <div class="row">
           <div class="form-group has-float-label">
             <label for="idCodigo" class="tamanio-label">Buscar Destinatario</label>
@@ -152,12 +154,13 @@
       </div>
       <div class="form-group has-float-label">
         <label for="idCodigo" class="tamanio-label">Subtotal</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 172px;">
+        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 75px;">
       </div>
       <div class="form-group has-float-label">
         <label for="idCodigo" class="tamanio-label">Kg Efectivo</label>
         <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 92px;">
       </div>
+      <button class="btn btn-secondary btn-custom">Aforar</button>
       <div class="form-group has-float-label">
         <label for="idCodigo" class="tamanio-label">% Seguro</label>
         <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
@@ -174,204 +177,219 @@
         <label for="idCodigo" class="tamanio-label">Flete</label>
         <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 116px;">
       </div>
+      <button class="btn btn-primary btn-custom margin-left-button">Agregar</button>
+    </div>
+    <div class="row">
+      <div class="col-md-12" style="height: 190px; overflow-y: scroll;">
+        <table class="table table-bordered table-striped table-condensed">
+          <thead>
+            <tr>
+              <th class="text-center" style="width:10%" scope="col">N° de Viaje</th>
+              <th class="text-center" style="width:15%" scope="col">N° de Remito</th>
+              <th class="text-center" style="width:30%" scope="col">Bultos</th>
+              <th class="text-center" style="width:15%" scope="col">Kg. Efectivo</th>
+              <th class="text-center" style="width:10%" scope="col">valor Declarado</th>
+              <th class="text-center" style="width:20%" scope="col">Flete</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>4</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>5</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>6</td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-2">
+        <div class="form-group has-float-label">
+          <label for="idTotalItems" class="tamanio-label">Total Items</label>
+          <input id="idTotalItems" type="text" formControlName="totalItems" class="form-control form-control-sm" style="width: 96px;">
+        </div>
+      </div>
+      <div class="col-md-10">
+        <div class="row justify-content-end">
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Importe No Grav/Exento</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 175px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Importe Neto Gravado</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 175px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Importe IVA</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 175px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">Importe Total</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 175px;">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h5>Totales de Carga</h5>
+        <div style="height: 120px; overflow-y: scroll;">
+          <table class="table table-bordered table-striped table-condensed">
+            <thead>
+              <tr>
+                <th class="text-center" style="width:10%" scope="col">Item</th>
+                <th class="text-center" style="width:20%" scope="col">Total Bultos</th>
+                <th class="text-center" style="width:20%" scope="col">Total Kg. Efectivo</th>
+                <th class="text-center" style="width:20%" scope="col">Total Kg. Aforado</th>
+                <th class="text-center" style="width:30%" scope="col">Tot. Val. Declarado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="row" style="margin-top: 15px;">
+          <div class="form-group has-float-label ">
+            <label for="idCodigo" class="tamanio-label">Contra Reembolso</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 140px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idCodigo" class="tamanio-label">% C.C</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 96px;">
+          </div>
+          <div class="form-group has-float-label ">
+            <label for="idCodigo" class="tamanio-label">Comisión</label>
+            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 96px;">
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <h5>Totales por Concepto</h5>
+        <div style="height: 120px; overflow-y: scroll;">
+          <table class="table table-bordered table-striped table-condensed">
+            <thead>
+              <tr>
+                <th class="text-center" style="width:10%" scope="col">Item</th>
+                <th class="text-center" style="width:20%" scope="col">Total Seguro</th>
+                <th class="text-center" style="width:20%" scope="col">Total Flete</th>
+                <th class="text-center" style="width:20%" scope="col">Total Retiro</th>
+                <th class="text-center" style="width:30%" scope="col">Total Entrega</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <section class="example-section" style="margin-top: 15px;">
+          <mat-radio-group>
+            <mat-radio-button class="example-margin" value="Observacion1">Observación 1</mat-radio-button>
+            <mat-radio-button class="example-margin" value="Observacion2">Observación 2</mat-radio-button>
+            <mat-radio-button class="example-margin" value="Observacion3">Observación 3</mat-radio-button>
+          </mat-radio-group>
+        </section>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <button class="btn btn-primary" type="button">Emitir</button>
     </div>
   </div>
 </div>
-<!-- <div class="col-md-12 text-center">
-  <div class="row">
-    <div class="col-md-12">
-      <table class="table table-bordered table-striped table-sm">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:10%" scope="col">N° de Viaje</th>
-            <th class="text-center" style="width:15%" scope="col">N° de Remito</th>
-            <th class="text-center" style="width:30%" scope="col">Bultos</th>
-            <th class="text-center" style="width:15%" scope="col">Kg. Efectivo</th>
-            <th class="text-center" style="width:10%" scope="col">valor Declarado</th>
-            <th class="text-center" style="width:20%" scope="col">Flete</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-2">
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Total items</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-5">
-      <h5>Totales de Carga</h5>
-      <table class="table table-bordered table-striped table-sm">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:10%" scope="col">Item</th>
-            <th class="text-center" style="width:20%" scope="col">Total Bultos</th>
-            <th class="text-center" style="width:20%" scope="col">Total Kg. Efectivo</th>
-            <th class="text-center" style="width:20%" scope="col">Total Kg. Aforado</th>
-            <th class="text-center" style="width:30%" scope="col">Tot. Val. Declarado</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="col-md-5">
-      <h5>Totales por Concepto</h5>
-      <table class="table table-bordered table-striped table-sm">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:10%" scope="col">Item</th>
-            <th class="text-center" style="width:20%" scope="col">Total Seguro</th>
-            <th class="text-center" style="width:20%" scope="col">Total Flete</th>
-            <th class="text-center" style="width:20%" scope="col">Total Retiro</th>
-            <th class="text-center" style="width:30%" scope="col">Total Entrega</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>1</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>2</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>3</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="col-md-2">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group has-float-label ">
-            <label for="idCodigo" class="tamanio-label">Importe No Grav/Exento</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Importe Neto Gravado</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Importe IVA</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Importe Total</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-5">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="form-group has-float-label ">
-            <label for="idCodigo" class="tamanio-label">Contra Reembolso</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">% C.C</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-group has-float-label ">
-            <label for="idCodigo" class="tamanio-label">Comisión</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm">
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-5">
-      <section class="example-section">
-        <mat-radio-group>
-          <mat-radio-button class="example-margin" value="Observacion1">Observación 1</mat-radio-button>
-          <mat-radio-button class="example-margin" value="Observacion2">Observación 2</mat-radio-button>
-          <mat-radio-button class="example-margin" value="Observacion3">Observación 3</mat-radio-button>
-        </mat-radio-group>
-      </section>
-    </div>
-    <div class="col-md-2">
-      <button class="btn btn-primary btn-lg btn-block" type="button">Emitir</button>
-    </div>
-  </div>
-</div> -->
