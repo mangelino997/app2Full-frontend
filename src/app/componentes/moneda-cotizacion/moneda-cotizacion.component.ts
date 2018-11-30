@@ -1,15 +1,17 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
+import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
+import { EmpresaService } from '../../servicios/empresa.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-
 @Component({
-  selector: 'app-moneda',
-  templateUrl: './moneda.component.html',
-  styleUrls: ['./moneda.component.css']
+  selector: 'app-moneda-cotizacion',
+  templateUrl: './moneda-cotizacion.component.html',
+  styleUrls: ['./moneda-cotizacion.component.css']
 })
-export class MonedaComponent implements OnInit {
+export class MonedaCotizacionComponent implements OnInit {
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -40,9 +42,10 @@ export class MonedaComponent implements OnInit {
   public empresas:Array<any> = [];
   // public compereFn:any;
   //Constructor
+
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(1, 19)
+    this.subopcionPestaniaService.listarPorRolSubopcion(1, 205)
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -53,23 +56,26 @@ export class MonedaComponent implements OnInit {
         console.log(err);
       }
     );
-    
+
+    console.log(this.pestaniaActual)
    }
 
   ngOnInit() {
     //Define el formulario y validaciones
     this.formulario = new FormGroup({
-    id: new FormControl(),
-    version: new FormControl(),
-    codigo: new FormControl('', ),
-    nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-    estaActivo: new FormControl('', [Validators.required, Validators.maxLength(45)])
-    });
+      id: new FormControl(),
+      version: new FormControl(),
+      moneda: new FormControl('', ),
+      fechaCotizacion: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      valor: new FormControl('', Validators.maxLength(45)),
+      cotizaciones: new FormControl('', Validators.maxLength(45)),
+      fechaCotizacionActualizacion: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      valorActualizacion: new FormControl('', Validators.maxLength(45))
 
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
-    //El campo codigo del formulario siempre se mantiene deshabilitado
-    this.formulario.get('codigo').disable();
+      });
+  
+      //Establece los valores de la primera pestania activa
+      this.seleccionarPestania(1, 'Agregar', 0);
   }
 
   //Funcion para establecer los valores de las pestañas
@@ -98,7 +104,6 @@ export class MonedaComponent implements OnInit {
     switch (id) {
       case 1:
         // this.obtenerSiguienteId();
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
@@ -120,11 +125,11 @@ export class MonedaComponent implements OnInit {
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('nombre').enable();
-      this.formulario.get('estaActivo').enable();
+      this.formulario.get('fechaCotizacionActualizacion').enable();
+      this.formulario.get('valorActualizacion').enable();
     } else {
-      this.formulario.get('nombre').disable();
-      this.formulario.get('estaActivo').disable();
+      this.formulario.get('fechaCotizacionActualizacion').disable();
+      this.formulario.get('valorActualizacion').disable();
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)

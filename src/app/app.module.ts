@@ -188,6 +188,7 @@ import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-fact
 import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/emitir-nota-credito.component';
 import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
 import { MonedaComponent } from './componentes/moneda/moneda.component';
+import { MonedaCotizacionComponent } from './componentes/moneda-cotizacion/moneda-cotizacion.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -350,7 +351,8 @@ const stompConfig: StompConfig = {
     EmitirFacturaComponent,
     EmitirNotaCreditoComponent,
     EmitirNotaDebitoComponent,
-    MonedaComponent
+    MonedaComponent,
+    MonedaCotizacionComponent
   ],
   imports: [
     BrowserModule,
