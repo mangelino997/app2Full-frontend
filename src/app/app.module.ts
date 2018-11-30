@@ -189,10 +189,11 @@ import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/em
 import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
 import { MonedaComponent } from './componentes/moneda/moneda.component';
 import { MonedaCotizacionComponent } from './componentes/moneda-cotizacion/moneda-cotizacion.component';
+import { MonedaCuentaContableComponent } from './componentes/moneda-cuenta-contable/moneda-cuenta-contable.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: LoginComponent},
+  {path: '', component: MonedaCuentaContableComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -352,7 +353,8 @@ const stompConfig: StompConfig = {
     EmitirNotaCreditoComponent,
     EmitirNotaDebitoComponent,
     MonedaComponent,
-    MonedaCotizacionComponent
+    MonedaCotizacionComponent,
+    MonedaCuentaContableComponent
   ],
   imports: [
     BrowserModule,
