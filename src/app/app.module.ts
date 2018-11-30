@@ -187,10 +187,11 @@ import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/
 import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-factura.component';
 import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/emitir-nota-credito.component';
 import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
+import { MonedaComponent } from './componentes/moneda/moneda.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: LoginComponent},
+  {path: '', component: MonedaComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -348,7 +349,8 @@ const stompConfig: StompConfig = {
     EstadoServicioAfipComponent,
     EmitirFacturaComponent,
     EmitirNotaCreditoComponent,
-    EmitirNotaDebitoComponent
+    EmitirNotaDebitoComponent,
+    MonedaComponent
   ],
   imports: [
     BrowserModule,
