@@ -1,97 +1,92 @@
 <div id="companiaseguropoliza" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
-    <div class="row">
-      <div class="centrar">
-        <nav mat-tab-nav-bar>
-          <a mat-tab-link disabled>MONEDA</a>
-          <a mat-tab-link (click)="indiceSeleccionado=1" [active]="pestaniaActiva == 1">Agregar</a>
-          <a mat-tab-link (click)="indiceSeleccionado=2" [active]="pestaniaActiva == 2">Consultar</a>
-          <a mat-tab-link (click)="indiceSeleccionado=3" [active]="pestaniaActiva == 3">Actualizar</a>
-          <a mat-tab-link (click)="indiceSeleccionado=3" [active]="pestaniaActiva == 4">Eliminar</a>
-          <a mat-tab-link (click)="indiceSeleccionado=3" [active]="pestaniaActiva == 5">Listar</a>
-        </nav>
-      </div>
-    </div>
-    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado ==1">
-      <div class="col-md-4 text-center">
-        <h5>AGREGAR MONEDA</h5>
-        <form [formGroup]="formulario" class="contenedor">
-         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-            <label for="idAutocompletado" class="tamanio-label">Buscar</label>
-            <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="formulario.setValue(item)">
-                  {{item.nombre}}
-                </mat-option>
-              </mat-autocomplete>
-          </div>
-          <div class="row justify-content-center">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idCodigo" class="tamanio-label">Código</label>
-                <input id="idCodigo" type="number" formControlName="codigo"
-                  class="form-control form-control-sm" [readonly]="soloLectura">
-              </div>
-            </div>
-          </div>
-          <div class="row justify-content-center">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre*</label>
-                <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                  class="form-control form-control-sm" [readonly]="soloLectura">
-              </div>
-            </div>
-          </div>
-          <div class="row justify-content-center">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label id="labelEstaActiva" for="idEstaActiva" class="tamanio-label">Está Activa*</label>
-                <mat-form-field>
-                  <mat-select id="idEstaActiva" placeholder="" formControlName="estaActiva" [readonly]="soloLectura">
-                    <mat-option  [value]="Si">Si</mat-option>
-                    <mat-option  [value]="No">No</mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-          <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
-            formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
-            {{pestaniaActual}}
-          </button>
-        </form>
-      </div>
-    </div>
-    <div class="row contenedor" *ngIf="indiceSeleccionado == 5">
-      <div class="col-md-12">
-          <table class="table table-bordered table-striped table-sm">
-            <thead>
-              <tr>
-                <th class="text-center" style="width:20%" scope="col">#</th>
-                <th class="text-center" style="width:30%" scope="col">Nombre</th>
-                <th class="text-center" style="width:30%" scope="col">Está Activa</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr >
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr >
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr >
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+  <div class="row">
+    <div class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>MONEDA</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+      </nav>
     </div>
   </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-4 text-center">
+      <h5>{{pestaniaActual}} Moneda</h5>
+      <form [formGroup]="formulario" class="contenedor">
+       <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
+          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+              type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+            <!-- <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+              <mat-option *ngFor="let item of resultados" [value]="item"
+                (onSelectionChange)="formulario.setValue(item)">
+                {{item.nombre}}
+              </mat-option>
+            </mat-autocomplete> -->
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Código</label>
+              <input id="idCodigo" type="number" formControlName="codigo"
+                class="form-control form-control-sm" >
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre*</label>
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label for="idEstaActivo" class="tamanio-label">Está Activa *</label>
+              <select id="idEstaActivo" class="form-control form-control-sm" formControlName="estaActivo">
+                <option [value]="false">No</option>
+                <option [value]="true">Si</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+          {{pestaniaActual}}
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="row contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-12">
+        <table class="table table-bordered table-striped table-sm">
+          <thead>
+            <tr>
+              <th class="text-center" style="width:20%" scope="col">#</th>
+              <th class="text-center" style="width:30%" scope="col">Nombre</th>
+              <th class="text-center" style="width:30%" scope="col">Está Activa</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr >
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr >
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr >
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
+</div>
