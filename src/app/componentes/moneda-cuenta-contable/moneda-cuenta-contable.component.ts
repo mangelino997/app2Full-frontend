@@ -61,9 +61,9 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      codigo: new FormControl('', ),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      estaActivo: new FormControl('', [Validators.required, Validators.maxLength(45)])
+      moneda: new FormControl('', ),
+      empresa: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      cuentaContable: new FormControl('', [Validators.required, Validators.maxLength(45)])
       });
       //Establece los valores de la primera pestania activa
       this.seleccionarPestania(1, 'Agregar', 0);
