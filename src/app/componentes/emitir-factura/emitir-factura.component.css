@@ -9,7 +9,7 @@ input {
 }
 .border {
     border-radius: 8px;
-    padding: 18px 20px 0px 15px;
+    padding: 18px 15px 0px 5px;
 }
 .btn-custom {
     height: 30px;
@@ -33,12 +33,19 @@ th {
     top: 0; 
     background-color: #FFF;
 }
-.col-md-12 .col-md-6 {
+.col-md-12 {
     position: relative;
     width: 100%;
     min-height: 1px;
-    padding-right: 8px;
-    padding-left: 8px;
+    padding-right: 6px;
+    padding-left: 6px;
+}
+.col-md-8, .col-md-7, .col-md-5, .col-md-6, .col-md-4, .col-md-2 {
+    position: relative;
+    width: 100%;
+    min-height: 1px;
+    padding-right: 0px;
+    padding-left: 0px;
 }
 .has-float-label {
     position:relative
@@ -58,4 +65,7 @@ th {
 }
 .btn {
     font-size: 15px !important;
+}
+.inline {
+    display: flex;
 }
