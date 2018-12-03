@@ -7,7 +7,7 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class AppService {
   //Define la url base
-  private URL_BASE = 'http://192.168.0.99:8080/jitws/auth'; //192.168.0.99
+  private URL_BASE = 'http://localhost:8080/jitws/auth'; //192.168.0.99
   //Define la url de subcripcion a socket
   private URL_TOPIC = '/jitws/auth/topic';
   //Define el headers y token de autenticacion
