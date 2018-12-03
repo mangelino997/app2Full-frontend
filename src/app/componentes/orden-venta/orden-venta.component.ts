@@ -273,13 +273,13 @@ export class OrdenVentaComponent implements OnInit {
         this.establecerValoresPestania(nombre, false, false, true, 'idTipoOrdenVenta');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idTipoOrdenVenta');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idTipoOrdenVenta');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idTipoOrdenVenta');
         break;
       default:
         break;

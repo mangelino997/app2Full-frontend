@@ -2,7 +2,6 @@
     margin-left: 5px;
 }
 input {
-    height: 25px;
     margin-left: 5px;
 }
 .form-group {
@@ -13,7 +12,7 @@ input {
     padding: 18px 20px 0px 15px;
 }
 .btn-custom {
-    height: 25px;
+    height: 30px;
     padding: 0px 4px 0px 4px;
 }
 hr {
@@ -56,4 +55,7 @@ th {
     z-index:3;
     line-height:1;
     padding:0 1px
+}
+.btn {
+    font-size: 15px !important;
 }
