@@ -222,7 +222,7 @@ button.toast-close-button {
   padding-top: 8px;
 }
 /* Define el espacio entre componentes */
-.example-spacer {
+.spacer {
   flex: 1 1 auto;
 }
 /* Define el tamaño de los floating labels */
@@ -326,4 +326,7 @@ input {
   padding-right: 15px;
   margin-right: auto;
   margin-left: auto;
+}
+.tamanio-pantalla {
+  width: 1280px;
 }
