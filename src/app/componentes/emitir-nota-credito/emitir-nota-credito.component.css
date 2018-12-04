@@ -1,13 +1,25 @@
-.text-left{
-    text-align: left;
-  }
-  textarea {
-    width: 100%;
-  }
-  th {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0; 
-    background-color: #FFF;
-  }
+.text-left {
+  text-align: left;
+}
+textarea {
+  width: 100%;
+}
+th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0; 
+  background-color: #FFF;
+}
+input {
+  margin-left: 5px;
+}
+.form-group {
+  margin-bottom: 10px !important;
+}
+.table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
+  padding: 0px;
+}
+.table {
+  width: 1860px;
+}
   

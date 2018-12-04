@@ -330,3 +330,6 @@ input {
 .tamanio-pantalla {
   width: 1280px;
 }
+.inline {
+  display: flex;
+}

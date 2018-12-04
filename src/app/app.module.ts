@@ -194,8 +194,8 @@ import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autor
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: EmitirFacturaComponent},
-  {path: 'login', component: LoginComponent},
+  {path: '', component: EmitirNotaDebitoComponent},
+  {path: 'login', component: EmitirNotaDebitoComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
   {path: 'generalesagendatelefonica', component: AgendaTelefonicaComponent, canActivate: [GuardiaService]},
