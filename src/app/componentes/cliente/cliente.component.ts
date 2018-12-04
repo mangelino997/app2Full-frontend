@@ -339,6 +339,7 @@ export class ClienteComponent implements OnInit {
     this.situacionClienteServicio.listar().subscribe(
       res => {
         this.situacionesClientes = res.json();
+        this.formulario.get('situacionCliente').setValue(this.situacionesClientes[0]);
       },
       err => {
         console.log(err);

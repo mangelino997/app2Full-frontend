@@ -1,9 +1,9 @@
 <mat-toolbar class="alto-primer-toolbar" color="primary" *ngIf="visible">
   <mat-toolbar-row>
     <span>JIT Logistica</span>
-    <span class="example-spacer"></span>
+    <span class="spacer"></span>
     <span>{{empresa.razonSocial}}</span>
-    <span class="example-spacer"></span>
+    <span class="spacer"></span>
     <div>
       <button mat-raised-button [matMenuTriggerFor]="lusuario">{{usuario.nombre}}</button>
       <mat-menu #lusuario="matMenu">

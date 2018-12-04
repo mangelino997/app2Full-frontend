@@ -3,173 +3,157 @@
     <div class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>MONEDA COTIZACIÓN</a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
           (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
   <form [formGroup]="formulario" class="">
-  <div class="row">
-    <div class="col-md-12 text-center" *ngIf="indiceSeleccionado == 1">
-      <h5>{{pestaniaActual}} Moneda Cotización</h5>
-      
+    <div class="row justify-content-center">
+      <div class="col-md-8 text-center" *ngIf="indiceSeleccionado == 1">
+        <h5>{{pestaniaActual}} Moneda Cotización</h5>
         <div class="row">
           <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idMoneda" class="tamanio-label">Moneda</label>
-                <input id="idMoneda" type="text" formControlName="moneda"
-                  class="form-control form-control-sm" >
-              </div>
+            <div class="form-group has-float-label">
+              <label for="idMoneda" class="tamanio-label">Moneda</label>
+              <input id="idMoneda" type="text" formControlName="moneda" class="form-control form-control-sm">
+            </div>
           </div>
           <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idFechaCotizacion" class="tamanio-label">Fecha de Cotización</label>
-                <input id="idFechaCotizacion" type="date" formControlName="fechaCotizacion"
-                  class="form-control form-control-sm" >
-              </div>
+            <div class="form-group has-float-label">
+              <label for="idFechaCotizacion" class="tamanio-label">Fecha de Cotización</label>
+              <input id="idFechaCotizacion" type="date" formControlName="fechaCotizacion" class="form-control form-control-sm">
+            </div>
           </div>
           <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idValor" class="tamanio-label">Valor</label>
-                <input id="idValor" type="text" formControlName="valor"
-                  class="form-control form-control-sm" >
-              </div>
+            <div class="form-group has-float-label">
+              <label for="idValor" class="tamanio-label">Valor</label>
+              <input id="idValor" type="text" formControlName="valor" class="form-control form-control-sm">
+            </div>
           </div>
           <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <button id="idBoton" class="btn btn-primary btn-sm " type="button">
-                  Agregar
-                </button>
-              </div>
+            <div class="form-group has-float-label">
+              <button id="idBoton" class="btn btn-primary btn-sm " type="button">
+                Agregar
+              </button>
+            </div>
           </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
-                <table class="table table-bordered table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <th class="text-center" style="width:20%" scope="col">Moneda</th>
-                      <th class="text-center" style="width:30%" scope="col">Fecha de Cotización</th>
-                      <th class="text-center" style="width:30%" scope="col">Valor</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr >
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr >
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                    <tr >
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          <div class="col-md-12">
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:20%" scope="col">Moneda</th>
+                  <th class="text-center" style="width:30%" scope="col">Fecha de Cotización</th>
+                  <th class="text-center" style="width:30%" scope="col">Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
     </div>
-  </div>
-  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado ==2 || indiceSeleccionado == 3 || indiceSeleccionado == 4 ">
-    <div class="col-md-12 text-center">
-      <h5>{{pestaniaActual}} Moneda Cotización</h5>
-      <div class="row ">
-        <div class="col-md-4">
-          <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 2 || indiceSeleccionado == 3 || indiceSeleccionado == 4">
+      <div class="col-md-4 text-center">
+        <h5>{{pestaniaActual}} Moneda Cotización</h5>
+        <div class="row ">
+          <div class="col-md-6">
+            <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Buscar</label>
-              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-                  type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-                <!-- <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let item of resultados" [value]="item"
-                    (onSelectionChange)="formulario.setValue(item)">
-                    {{item.nombre}}
-                  </mat-option>
-                </mat-autocomplete> -->
+              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
             </div>
           </div>
         </div>
         <div class="row ">
-          <div class="col-md-8">
+          <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idCotizaciones" class="tamanio-label">Cotizaciones</label>
-              <input id="idCotizaciones" type="number" formControlName="cotizaciones"
-                class="form-control form-control-sm" >
+              <input id="idCotizaciones" type="number" formControlName="cotizaciones" class="form-control form-control-sm">
             </div>
           </div>
         </div>
         <div class="row ">
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group has-float-label">
-              <label id="labelFechaCotizacion" for="idFechaCotizacionActualizacion" class="tamanio-label">Fecha de Cotización</label>
+              <label id="labelFechaCotizacion" for="idFechaCotizacionActualizacion" class="tamanio-label">Fecha de
+                Cotización</label>
               <input id="idFechaCotizacion" type="text" formControlName="fechaCotizacionActualizacion" autocomplete="off"
-                class="form-control form-control-sm" >
+                class="form-control form-control-sm">
             </div>
           </div>
-          <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label id="labelNombre" for="idNombre" class="tamanio-label">Valor</label>
-                <input id="idNombre" type="text" formControlName="valorActualizacion" autocomplete="off"
-                  class="form-control form-control-sm" >
-              </div>
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Valor</label>
+              <input id="idNombre" type="text" formControlName="valorActualizacion" autocomplete="off" class="form-control form-control-sm">
+            </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate (click)="accion(indiceSeleccionado)"
+          [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
+      </div>
     </div>
-  </div>
-  <div class="row contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-12">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+      <div class="col-md-8">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Moneda</label>
-              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-                  type="text" matInput [formControl]="autocompletadoMoneda" [matAutocomplete]="auto" autocomplete="off">
-                <!-- <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let item of resultados" [value]="item"
-                    (onSelectionChange)="formulario.setValue(item)">
-                    {{item.nombre}}
-                  </mat-option>
-                </mat-autocomplete> -->
+              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:20%" scope="col">Moneda</th>
+                  <th class="text-center" style="width:30%" scope="col">Cotización</th>
+                  <th class="text-center" style="width:30%" scope="col">Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-md-12">
-        <table class="table table-bordered table-striped table-sm">
-          <thead>
-            <tr>
-              <th class="text-center" style="width:20%" scope="col">Moneda</th>
-              <th class="text-center" style="width:30%" scope="col">Cotización</th>
-              <th class="text-center" style="width:30%" scope="col">Valor</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr >
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-  </div>
-</form>
+  </form>
 </div>

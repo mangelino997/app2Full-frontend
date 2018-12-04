@@ -1,108 +1,98 @@
-<div id="companiaseguropoliza" class="container-fluid" >
-  <form [formGroup]="formulario" class="">
-  <div class="row">
-    <div class="col-md-12 " >
+<div id="companiaseguropoliza" class="row justify-content-center container-fluid">
+  <div class="col-md-10">
+    <form [formGroup]="formulario" class="">
       <h5 class="text-center">Puntos de Ventas Autorizados</h5>
-        <div class="row ">
-            <div class="col-md-4">
-              <div class="form-group has-float-label" >
-                  <label for="idAutocompletado" class="tamanio-label">Empresa</label>
-                  <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-                      type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-                    <!-- <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                      <mat-option *ngFor="let item of resultados" [value]="item"
-                        (onSelectionChange)="formulario.setValue(item)">
-                        {{item.nombre}}
-                      </mat-option>
-                    </mat-autocomplete> -->
-                </div>
-              </div>
-              <div class="col-md-4">
-                <button id="idBoton"  class="btn btn-primary btn-sm" type="button">
-                  Obtener Puntos de Venta
-                </button>
-              </div>
-              <div class="col-md-4">
-              </div>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label for="idAutocompletado" class="tamanio-label">Empresa</label>
+            <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" autocomplete="off">
           </div>
-          <br>
+        </div>
+        <div class="col-md-4">
+          <button id="idBoton" class="btn btn-primary btn-sm" type="button">
+            Obtener Puntos de Venta
+          </button>
+        </div>
+        <div class="col-md-4">
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <table class="table table-bordered table-striped table-sm">
-          <thead>
-            <tr>
-              <th class="text-center" style="width:20%" scope="col">Punto de Venta</th>
-              <th class="text-center" style="width:30%" scope="col">Tipo</th>
-              <th class="text-center" style="width:30%" scope="col">Bloqueado</th>
-              <th class="text-center" style="width:30%" scope="col">Fecha de Baja</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr >
-              <td>1</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td>2</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td>3</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td>4</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td>5</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td>6</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td>7</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td>8</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td>9</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td>10</td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>     
-          </tbody>
-        </table>
+      <div class="row">
+        <div class="col-md-12">
+          <table class="table table-bordered table-striped table-sm">
+            <thead>
+              <tr>
+                <th class="text-center" style="width:20%" scope="col">Punto de Venta</th>
+                <th class="text-center" style="width:30%" scope="col">Tipo</th>
+                <th class="text-center" style="width:30%" scope="col">Bloqueado</th>
+                <th class="text-center" style="width:30%" scope="col">Fecha de Baja</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </div>

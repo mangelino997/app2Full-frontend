@@ -13,71 +13,66 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class MonedaCotizacionComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta: Array<any> = [];
   //Define el autocompletado
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define empresa para las busquedas
-  public empresaBusqueda:FormControl = new FormControl();
+  public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda companias seguros
-  public resultadosCompaniasSeguros:Array<any> = [];
+  public resultadosCompaniasSeguros: Array<any> = [];
   //Defien la lista de empresas
-  public empresas:Array<any> = [];
+  public empresas: Array<any> = [];
   // public compereFn:any;
   //Constructor
-
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(1, 205)
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-        console.log(res.json());
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+          console.log(res.json());
+        },
+        err => {
+          console.log(err);
+        }
+      );
 
     console.log(this.pestaniaActual)
-   }
-
+  }
   ngOnInit() {
     //Define el formulario y validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      moneda: new FormControl('', ),
+      moneda: new FormControl(''),
       fechaCotizacion: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       valor: new FormControl('', Validators.maxLength(45)),
       cotizaciones: new FormControl('', Validators.maxLength(45)),
       fechaCotizacionActualizacion: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       valorActualizacion: new FormControl('', Validators.maxLength(45))
-
-      });
-  
-      //Establece los valores de la primera pestania activa
-      this.seleccionarPestania(1, 'Agregar', 0);
+    });
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
   }
-
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -97,7 +92,7 @@ export class MonedaCotizacionComponent implements OnInit {
     * Se vacia el formulario solo cuando se cambia de pestania, no cuando
     * cuando se hace click en ver o mod de la pestania lista
     */
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -124,7 +119,7 @@ export class MonedaCotizacionComponent implements OnInit {
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('fechaCotizacionActualizacion').enable();
       this.formulario.get('valorActualizacion').enable();
     } else {
@@ -175,13 +170,12 @@ export class MonedaCotizacionComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
   }
-
 }

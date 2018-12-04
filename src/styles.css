@@ -333,3 +333,12 @@ input {
 .inline {
   display: flex;
 }
+.mat-menu-panel {
+  min-width: 112px;
+  max-width: none !important;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  max-height: calc(100vh - 48px);
+  border-radius: 2px;
+  outline: 0;
+}

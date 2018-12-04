@@ -3,7 +3,7 @@
     <div class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>Moneda Cuenta Contable</a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
           (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
@@ -12,23 +12,15 @@
     <div class="col-md-4 text-center">
       <h5>{{pestaniaActual}} Moneda Cuenta Contable</h5>
       <form [formGroup]="formulario" class="contenedor">
-       <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+        <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar</label>
-          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-              type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-            <!-- <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-              <mat-option *ngFor="let item of resultados" [value]="item"
-                (onSelectionChange)="formulario.setValue(item)">
-                {{item.nombre}}
-              </mat-option>
-            </mat-autocomplete> -->
+          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" autocomplete="off">
         </div>
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idMoneda" class="tamanio-label">Moneda*</label>
-              <input id="idMoneda" type="number" formControlName="moneda"
-                class="form-control form-control-sm" >
+              <input id="idMoneda" type="number" formControlName="moneda" class="form-control form-control-sm">
             </div>
           </div>
         </div>
@@ -36,8 +28,7 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label id="labelEmpresa" for="idEmpresa" class="tamanio-label">Empresa*</label>
-              <input id="idEmpresa" type="text" formControlName="empresa" autocomplete="off"
-                class="form-control form-control-sm">
+              <input id="idEmpresa" type="text" formControlName="empresa" autocomplete="off" class="form-control form-control-sm">
             </div>
           </div>
         </div>
@@ -45,46 +36,45 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idCuentaContable" class="tamanio-label">Cuenta Contable*</label>
-              <input id="idEmpresa" type="text" formControlName="cuentaContable" autocomplete="off"
-                class="form-control form-control-sm">
+              <input id="idEmpresa" type="text" formControlName="cuentaContable" autocomplete="off" class="form-control form-control-sm">
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate (click)="accion(indiceSeleccionado)"
+          [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
       </form>
     </div>
   </div>
-  <div class="row contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-12">
-        <table class="table table-bordered table-striped table-sm">
-          <thead>
-            <tr>
-              <th class="text-center" style="width:20%" scope="col">Moneda</th>
-              <th class="text-center" style="width:30%" scope="col">Empresa</th>
-              <th class="text-center" style="width:30%" scope="col">Cuenta Contable</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr >
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr >
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-8">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:20%" scope="col">Moneda</th>
+            <th class="text-center" style="width:30%" scope="col">Empresa</th>
+            <th class="text-center" style="width:30%" scope="col">Cuenta Contable</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

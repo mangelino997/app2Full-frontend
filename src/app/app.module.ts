@@ -194,7 +194,7 @@ import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autor
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: EmitirNotaDebitoComponent},
+  {path: '', component: LoginComponent},
   {path: 'login', component: EmitirNotaDebitoComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -263,7 +263,11 @@ const appRoutes: Routes = [
   {path: 'webservicesafipconsultarestadodelservicio', component: EstadoServicioAfipComponent, canActivate: [GuardiaService]},
   {path: 'facturacionfacturas', component: EmitirFacturaComponent, canActivate: [GuardiaService]},
   {path: 'facturacionnotasdecredito', component: EmitirNotaCreditoComponent, canActivate: [GuardiaService]},
-  {path: 'facturacionnotasdedebito', component: EmitirNotaDebitoComponent, canActivate: [GuardiaService]}
+  {path: 'facturacionnotasdedebito', component: EmitirNotaDebitoComponent, canActivate: [GuardiaService]},
+  {path: 'contablemonedas', component: MonedaComponent, canActivate: [GuardiaService]},
+  {path: 'contablemonedascotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService]},
+  {path: 'contablemonedasplandecuentas', component: MonedaCuentaContableComponent, canActivate: [GuardiaService]},
+  {path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
