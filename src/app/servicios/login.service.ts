@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers } from '@angular/http';
+import { AppService } from './app.service';
 
 @Injectable()
 export class LoginService {
-  URL:string = 'http://localhost:8080';
-  logueado:boolean = false;
-  constructor(private http: Http){}
+  private URL:string;
+  public logueado:boolean = false;
+  constructor(private http: Http, private appServicio: AppService){
+    this.URL = this.appServicio.getIP();
+  }
   public getLogueado(): boolean {
     return this.logueado;
   }

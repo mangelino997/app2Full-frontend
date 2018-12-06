@@ -6,8 +6,10 @@ import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
 export class AppService {
+  //Define la IP
+  private IP = 'http://localhost:8080';
   //Define la url base
-  private URL_BASE = 'http://localhost:8080/jitws/auth'; //192.168.0.99
+  private URL_BASE = this.IP + '/jitws/auth'; //192.168.0.99
   //Define la url de subcripcion a socket
   private URL_TOPIC = '/jitws/auth/topic';
   //Define el headers y token de autenticacion
@@ -35,6 +37,10 @@ export class AppService {
   //Obtiene el menu
   public obtenerMenu() {
     return this.http.get(this.URL_BASE + '/menu/1', this.options);
+  }
+  //Obtiene la IP
+  public getIP() {
+    return this.IP;
   }
   //Obtiene la url base
   public getUrlBase() {

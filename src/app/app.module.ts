@@ -191,6 +191,7 @@ import { MonedaComponent } from './componentes/moneda/moneda.component';
 import { MonedaCotizacionComponent } from './componentes/moneda-cotizacion/moneda-cotizacion.component';
 import { MonedaCuentaContableComponent } from './componentes/moneda-cuenta-contable/moneda-cuenta-contable.component';
 import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autorizado/puntos-venta-autorizado.component';
+import { RepartoPropioComponent } from './componentes/reparto-propio/reparto-propio.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -267,11 +268,12 @@ const appRoutes: Routes = [
   {path: 'contablemonedas', component: MonedaComponent, canActivate: [GuardiaService]},
   {path: 'contablemonedascotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService]},
   {path: 'contablemonedasplandecuentas', component: MonedaCuentaContableComponent, canActivate: [GuardiaService]},
-  {path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService]}
+  {path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService]},
+  {path: 'repartosplanillassalientes', component: RepartoPropioComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://127.0.0.1:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -360,7 +362,8 @@ const stompConfig: StompConfig = {
     MonedaComponent,
     MonedaCotizacionComponent,
     MonedaCuentaContableComponent,
-    PuntosVentaAutorizadoComponent
+    PuntosVentaAutorizadoComponent,
+    RepartoPropioComponent
   ],
   imports: [
     BrowserModule,

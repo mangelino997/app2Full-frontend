@@ -1,0 +1,22 @@
+input {
+    margin-left: 5px;
+}
+.table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
+    padding: 0px;
+}
+.table {
+    width: 1800px;
+}
+th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0; 
+    background-color: #FFF;
+}
+.container-fluid {
+    width: 100%;
+    padding-right: 0px;
+    padding-left: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+}
