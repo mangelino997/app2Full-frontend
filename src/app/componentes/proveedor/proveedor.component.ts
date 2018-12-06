@@ -182,6 +182,8 @@ export class ProveedorComponent implements OnInit {
     this.listarCondicionesCompras();
     //Obtiene la lista de tipos de cuentas bancarias
     this.listarTiposCuentasBancarias();
+    //Establece valores por defecto
+    this.establecerValoresPorDefecto();
   }
   //Obtiene el listado de tipos de proveedores
   private listarTiposProveedores() {
@@ -221,6 +223,7 @@ export class ProveedorComponent implements OnInit {
     this.condicionCompraServicio.listar().subscribe(
       res => {
         this.condicionesCompras = res.json();
+        this.formulario.get('condicionCompra').setValue(this.condicionesCompras[0]);
       },
       err => {
         console.log(err);
@@ -237,6 +240,10 @@ export class ProveedorComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+  //Establece valores por defecto
+  private establecerValoresPorDefecto() {
+    this.formulario.get('estaActivo').setValue(true);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
