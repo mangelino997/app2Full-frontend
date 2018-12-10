@@ -2,7 +2,7 @@
   <div class="row">
     <div class="centrar">
       <nav mat-tab-nav-bar>
-        <a mat-tab-link disabled>CONDICIÓN COMPRA</a>
+        <a mat-tab-link disabled>CONDICIÓN VENTA</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
           (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
@@ -10,7 +10,7 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-4 text-center">
-      <h5>{{pestaniaActual}} Condición Compra</h5>
+      <h5>{{pestaniaActual}} Condición de Venta</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar</label>
@@ -35,7 +35,7 @@
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label id="labelEstaActivo" for="idEstaActivo" class="tamanio-label">Está Activo</label>
+              <label id="labelEstaActivo" for="idEstaActivo" class="tamanio-label">Es Contado*</label>
               <mat-select class="form-control" placeholder="---" formControlName="estaActivo" >
                   <mat-option [value]="0"> Sí</mat-option>
                   <mat-option [value]="1"> No</mat-option>
@@ -57,7 +57,7 @@
           <tr>
             <th class="text-center" style="width:20%" scope="col">#</th>
             <th class="text-center" style="width:30%" scope="col">Nombre</th>
-            <th class="text-center" style="width:30%" scope="col">Está Activa</th>
+            <th class="text-center" style="width:30%" scope="col">Es Contado</th>
           </tr>
         </thead>
         <tbody>
