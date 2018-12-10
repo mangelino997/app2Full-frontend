@@ -192,6 +192,7 @@ import { MonedaCotizacionComponent } from './componentes/moneda-cotizacion/moned
 import { MonedaCuentaContableComponent } from './componentes/moneda-cuenta-contable/moneda-cuenta-contable.component';
 import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autorizado/puntos-venta-autorizado.component';
 import { RepartoPropioComponent } from './componentes/reparto-propio/reparto-propio.component';
+import { CondicionVentaComponent } from './componentes/condicion-venta/condicion-venta.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -363,7 +364,8 @@ const stompConfig: StompConfig = {
     MonedaCotizacionComponent,
     MonedaCuentaContableComponent,
     PuntosVentaAutorizadoComponent,
-    RepartoPropioComponent
+    RepartoPropioComponent,
+    CondicionVentaComponent
   ],
   imports: [
     BrowserModule,
