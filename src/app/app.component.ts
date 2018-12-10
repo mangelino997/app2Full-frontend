@@ -14,6 +14,7 @@ export class AppComponent {
   public empresa = {};
   public subopcion = null;
   public rol:number = null;
+  public tema:string;
   constructor(private appService: AppService, private router: Router) {
     //Se subscribe al servicio de lista de registros
     this.appService.listaCompleta.subscribe(res => {
@@ -50,6 +51,10 @@ export class AppComponent {
   //Establece la subopcion
   public setSubopcion(subopcion) {
     this.subopcion = subopcion;
+  }
+  //Establece el tema
+  public setTema(tema) {
+    this.tema = tema;
   }
   //Obtiene la lista de modulos para armar el menu
   public obtenerMenu() {

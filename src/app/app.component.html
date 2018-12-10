@@ -1,34 +1,36 @@
-<mat-toolbar class="alto-primer-toolbar" color="primary" *ngIf="visible">
-  <mat-toolbar-row>
-    <span>JIT Logistica</span>
-    <span class="spacer"></span>
-    <span>{{empresa.razonSocial}}</span>
-    <span class="spacer"></span>
-    <div>
-      <button mat-raised-button [matMenuTriggerFor]="lusuario">{{usuario.nombre}}</button>
-      <mat-menu #lusuario="matMenu">
-        <div class="container text-center titulo-menu">{{usuario.nombre}}</div>
-        <mat-divider></mat-divider>
-        <a href="http://localhost:4200/login" target="_blank"><button mat-menu-item>Nuevo Ingreso</button></a>
-        <button mat-menu-item>Salir</button>
-      </mat-menu>
-    </div>
-  </mat-toolbar-row>
-</mat-toolbar>
-<mat-toolbar class="alto-segundo-toolbar" *ngIf="visible">
-  <div class="centrar" *ngFor="let modulo of modulos">
-    <button mat-menu-item [matMenuTriggerFor]="lmodulo">{{modulo.modulo}}</button>
-    <mat-menu #lmodulo="matMenu">
-      <div class="container text-center titulo-menu">{{modulo.modulo}}</div>
-      <mat-divider></mat-divider>
-      <div *ngFor="let submodulo of modulo.submodulos">
-        <button mat-menu-item [matMenuTriggerFor]="lsubmodulo">{{submodulo.submodulo}}</button>
-        <mat-menu #lsubmodulo="matMenu">
-          <button *ngFor="let subopcion of submodulo.subopciones" mat-menu-item
-            (click)="navegar(submodulo.submodulo, subopcion.subopcion, subopcion.id)">{{subopcion.subopcion}}</button>
+<div class="{{tema}}">
+  <mat-toolbar class="alto-primer-toolbar" color="primary" *ngIf="visible">
+    <mat-toolbar-row>
+      <span>JIT Logistica</span>
+      <span class="spacer"></span>
+      <span>{{empresa.razonSocial}}</span>
+      <span class="spacer"></span>
+      <div>
+        <button mat-raised-button [matMenuTriggerFor]="lusuario">{{usuario.nombre}}</button>
+        <mat-menu #lusuario="matMenu">
+          <div class="container text-center titulo-menu">{{usuario.nombre}}</div>
+          <mat-divider></mat-divider>
+          <a href="http://localhost:4200/login" target="_blank"><button mat-menu-item>Nuevo Ingreso</button></a>
+          <button mat-menu-item>Salir</button>
         </mat-menu>
       </div>
-    </mat-menu>
-  </div>
-</mat-toolbar>
-<router-outlet></router-outlet>
+    </mat-toolbar-row>
+  </mat-toolbar>
+  <mat-toolbar class="alto-segundo-toolbar" *ngIf="visible">
+    <div class="centrar" *ngFor="let modulo of modulos">
+      <button mat-menu-item [matMenuTriggerFor]="lmodulo">{{modulo.modulo}}</button>
+      <mat-menu #lmodulo="matMenu">
+        <div class="container text-center titulo-menu">{{modulo.modulo}}</div>
+        <mat-divider></mat-divider>
+        <div *ngFor="let submodulo of modulo.submodulos">
+          <button mat-menu-item [matMenuTriggerFor]="lsubmodulo">{{submodulo.submodulo}}</button>
+          <mat-menu #lsubmodulo="matMenu">
+            <button *ngFor="let subopcion of submodulo.subopciones" mat-menu-item
+              (click)="navegar(submodulo.submodulo, subopcion.subopcion, subopcion.id)">{{subopcion.subopcion}}</button>
+          </mat-menu>
+        </div>
+      </mat-menu>
+    </div>
+  </mat-toolbar>
+  <router-outlet></router-outlet>
+</div>

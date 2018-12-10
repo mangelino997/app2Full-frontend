@@ -69,8 +69,24 @@ export class LoginComponent {
     if(this.estaAutenticado === true) {
       //Establece la empresa
       this.appComponent.setEmpresa(this.elemento.empresa);
+      //Establece el tema
+      this.appComponent.setTema(this.establecerTema(this.elemento.empresa));
       //Navega a la pagina principal (home)
       this.router.navigate(['/home']);
+    }
+  }
+  private establecerTema(empresa):string {
+    switch(empresa.id) {
+      case 1:
+        return 'blue-theme';
+      case 2:
+        return 'red-theme';
+      case 3:
+        return 'orange-theme';
+      case 4:
+        return 'purple-theme';
+      case 5:
+        return 'green-theme';
     }
   }
 }

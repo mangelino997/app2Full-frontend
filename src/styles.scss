@@ -1,4 +1,46 @@
-@import "~@angular/material/prebuilt-themes/indigo-pink.css";
+/* @import "~@angular/material/prebuilt-themes/indigo-pink.css"; */
+@import '~@angular/material/theming';
+@include mat-core();
+/* Temas Azul */
+$blue-theme-primary: mat-palette($mat-blue);
+$blue-theme-accent:  mat-palette($mat-grey, A200, A100, A400);
+$blue-theme-theme:   mat-light-theme($blue-theme-primary, $blue-theme-accent);
+@include angular-material-theme($blue-theme-theme);
+.blue-theme {
+  @include angular-material-theme($blue-theme-theme);
+}
+/* Tema Rojo */
+$red-theme-primary: mat-palette($mat-red);
+$red-theme-accent:  mat-palette($mat-grey, A200, A100, A400);
+$red-theme-theme:   mat-light-theme($red-theme-primary, $red-theme-accent);
+@include angular-material-theme($red-theme-theme);
+.red-theme {
+  @include angular-material-theme($red-theme-theme);
+}
+/* Tema Naranja */
+$orange-theme-primary: mat-palette($mat-deep-orange);
+$orange-theme-accent:  mat-palette($mat-grey, A200, A100, A400);
+$orange-theme-theme:   mat-light-theme($orange-theme-primary, $orange-theme-accent);
+@include angular-material-theme($orange-theme-theme);
+.orange-theme {
+  @include angular-material-theme($orange-theme-theme);
+}
+/* Tema Violeta */
+$purple-theme-primary: mat-palette($mat-deep-purple);
+$purple-theme-accent:  mat-palette($mat-grey, A200, A100, A400);
+$purple-theme-theme:   mat-light-theme($purple-theme-primary, $purple-theme-accent);
+@include angular-material-theme($purple-theme-theme);
+.purple-theme {
+  @include angular-material-theme($purple-theme-theme);
+}
+/* Tema Verde */
+$green-theme-primary: mat-palette($mat-green);
+$green-theme-accent:  mat-palette($mat-grey, A200, A100, A400);
+$green-theme-theme:   mat-light-theme($green-theme-primary, $green-theme-accent);
+@include angular-material-theme($green-theme-theme);
+.green-theme {
+  @include angular-material-theme($green-theme-theme);
+}
 @import url( 'https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons');
 /* Style de toastr */
 /* position */

@@ -9,7 +9,7 @@ export class AppService {
   //Define la IP
   private IP = 'http://localhost:8080';
   //Define la url base
-  private URL_BASE = this.IP + '/jitws/auth'; //192.168.0.99
+  private URL_BASE = this.IP + '/jitws/auth';
   //Define la url de subcripcion a socket
   private URL_TOPIC = '/jitws/auth/topic';
   //Define el headers y token de autenticacion
