@@ -278,7 +278,7 @@ export class SubopcionComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ' - ' + elemento.modulo.nombre : elemento;
+      return elemento.nombre ? elemento.modulo.nombre + ' - ' + elemento.nombre : elemento;
     } else {
       return elemento;
     }

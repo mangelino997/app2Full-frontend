@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RepartoPropioComponent } from './reparto-propio.component';
+import { RepartoComponent } from './reparto.component';
 
-describe('RepartoPropioComponent', () => {
-  let component: RepartoPropioComponent;
-  let fixture: ComponentFixture<RepartoPropioComponent>;
+describe('RepartoComponent', () => {
+  let component: RepartoComponent;
+  let fixture: ComponentFixture<RepartoComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ RepartoPropioComponent ]
+      declarations: [ RepartoComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RepartoPropioComponent);
+    fixture = TestBed.createComponent(RepartoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

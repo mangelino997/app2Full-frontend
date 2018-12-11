@@ -1,41 +1,63 @@
 <div class="row container-fluid">
     <div class="col-md-12">
-        <h5 class="text-center">Reparto Propio</h5>
+        <h5 class="text-center">Reparto</h5>
         <div class="tamanio-pantalla">
-            <div class="inline">
-                <div class="form-group has-float-label">
-                    <label for="idZona">Zona</label>
-                    <input id="idZona" type="text" class="form-control form-control-sm" style="width: 219px;">
+            <form [formGroup]="formulario">
+                <div class="inline">
+                    <div class="form-group has-float-label">
+                        <label for="idTipoViaje" class="tamanio-label">Tipo de Viaje *</label>
+                        <mat-select id="idTipoViaje" class="form-control form-control-sm" formControlName="tipoViaje" style="width: 150px;">
+                            <mat-option [value]="1">Propio</mat-option>
+                            <mat-option [value]="2">Tercero</mat-option>
+                            <mat-option [value]="3">Retiro Depósito</mat-option>
+                        </mat-select>
+                    </div>
+                    <div class="inline" *ngIf="formulario.get('tipoViaje').value == 1 || formulario.get('tipoViaje').value == 2">
+                        <div class="form-group has-float-label">
+                            <label for="idZona">Zona</label>
+                            <input id="idZona" type="text" class="form-control form-control-sm" style="width: 219px;">
+                        </div>
+                        <div class="form-group has-float-label">
+                            <label for="idVehiculo">Vehículo</label>
+                            <input id="idVehiculo" type="text" class="form-control form-control-sm" style="width: 295px;">
+                        </div>
+                        <div class="form-group has-float-label">
+                            <label for="idRemolque">Remolque</label>
+                            <input id="idRemolque" type="text" class="form-control form-control-sm" style="width: 295px;">
+                        </div>
+                        <div class="form-group has-float-label">
+                            <label for="idChofer">Chofer</label>
+                            <input id="idChofer" type="text" class="form-control form-control-sm" style="width: 295px;">
+                        </div>
+                        <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;" *ngIf="formulario.get('tipoViaje').value == 1">Acompañantes</button>
+                    </div>
+                    <div class="inline" *ngIf="formulario.get('tipoViaje').value == 3">
+                        <div class="form-group has-float-label">
+                            <label for="idTipoDocumento">Tipo de Documento</label>
+                            <input id="idTipoDocumento" type="text" class="form-control form-control-sm" style="width: 220px;">
+                        </div>
+                        <div class="form-group has-float-label">
+                            <label for="idNumeroDocumento">N° de Documento</label>
+                            <input id="idNumeroDocumento" type="text" class="form-control form-control-sm" style="width: 220px;">
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group has-float-label">
-                    <label for="idVehiculo">Vehículo</label>
-                    <input id="idVehiculo" type="text" class="form-control form-control-sm" style="width: 295px;">
+                <div class="inline">
+                    <div class="form-group has-float-label">
+                        <label for="idFechaSalida">Fecha Salida</label>
+                        <input id="idFechaSalida" type="text" class="form-control form-control-sm" style="width: 120px;">
+                    </div>
+                    <div class="form-group has-float-label">
+                        <label for="idHoraSalida">Hora Salida</label>
+                        <input id="idHoraSalida" type="text" class="form-control form-control-sm" style="width: 94px;">
+                    </div>
+                    <div class="form-group has-float-label">
+                        <label for="idObservaciones">Observaciones</label>
+                        <textarea type="text" class="form-control form-control-sm" rows="2" style="width: 523px; margin-left: 5px;"></textarea>
+                    </div>
+                    <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;">Agregar</button>
                 </div>
-                <div class="form-group has-float-label">
-                    <label for="idRemolque">Remolque</label>
-                    <input id="idRemolque" type="text" class="form-control form-control-sm" style="width: 295px;">
-                </div>
-                <div class="form-group has-float-label">
-                    <label for="idChofer">Chofer</label>
-                    <input id="idChofer" type="text" class="form-control form-control-sm" style="width: 295px;">
-                </div>
-                <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;">Acompañantes</button>
-            </div>
-            <div class="inline">
-                <div class="form-group has-float-label">
-                    <label for="idFechaSalida">Fecha Salida</label>
-                    <input id="idFechaSalida" type="text" class="form-control form-control-sm" style="width: 120px;">
-                </div>
-                <div class="form-group has-float-label">
-                    <label for="idHoraSalida">Hora Salida</label>
-                    <input id="idHoraSalida" type="text" class="form-control form-control-sm" style="width: 94px;">
-                </div>
-                <div class="form-group has-float-label">
-                    <label for="idObservaciones">Observaciones</label>
-                    <textarea type="text" class="form-control form-control-sm" rows="2" style="width: 523px; margin-left: 5px;"></textarea>
-                </div>
-                <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;">Agregar</button>
-            </div>
+            </form>
         </div>
         <div style="height: 200px; overflow-y: scroll;">
             <table class="table table-bordered table-striped table-sm table-condensed">

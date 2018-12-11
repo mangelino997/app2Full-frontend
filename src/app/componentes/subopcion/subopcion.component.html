@@ -43,7 +43,7 @@
           <label for="idSubmodulo" class="tamanio-label">Submódulo *</label>
           <mat-select id="idSubmodulo" class="form-control form-control-sm" formControlName="submodulo" [compareWith]="compareFn">
             <mat-option *ngFor="let itemSubmodulo of submodulos" [value]="itemSubmodulo">
-              {{itemSubmodulo.nombre}} - {{itemSubmodulo.modulo.nombre}}
+              {{itemSubmodulo.modulo.nombre}} - {{itemSubmodulo.nombre}}
             </mat-option>
           </mat-select>
         </div>

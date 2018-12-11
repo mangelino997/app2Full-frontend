@@ -112,6 +112,7 @@ import { ViajePropioGasto } from './modelos/viajePropioGasto';
 import { ViajePropioPeaje } from './modelos/viajePropioPeaje';
 import { NotaCredito } from './modelos/notaCredito';
 import { NotaDebito } from './modelos/notaDebito';
+import { Reparto } from './modelos/reparto';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -191,7 +192,7 @@ import { MonedaComponent } from './componentes/moneda/moneda.component';
 import { MonedaCotizacionComponent } from './componentes/moneda-cotizacion/moneda-cotizacion.component';
 import { MonedaCuentaContableComponent } from './componentes/moneda-cuenta-contable/moneda-cuenta-contable.component';
 import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autorizado/puntos-venta-autorizado.component';
-import { RepartoPropioComponent } from './componentes/reparto-propio/reparto-propio.component';
+import { RepartoComponent } from './componentes/reparto/reparto.component';
 import { CondicionVentaComponent } from './componentes/condicion-venta/condicion-venta.component';
 
 //Rutas
@@ -270,7 +271,7 @@ const appRoutes: Routes = [
   {path: 'contablemonedascotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService]},
   {path: 'contablemonedasplandecuentas', component: MonedaCuentaContableComponent, canActivate: [GuardiaService]},
   {path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService]},
-  {path: 'repartosplanillassalientes', component: RepartoPropioComponent, canActivate: [GuardiaService]}
+  {path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -364,7 +365,7 @@ const stompConfig: StompConfig = {
     MonedaCotizacionComponent,
     MonedaCuentaContableComponent,
     PuntosVentaAutorizadoComponent,
-    RepartoPropioComponent,
+    RepartoComponent,
     CondicionVentaComponent
   ],
   imports: [
@@ -511,6 +512,7 @@ const stompConfig: StompConfig = {
     NotaDebito,
     ViajePropioGasto,
     ViajePropioPeaje,
+    Reparto,
     StompService,
     {
       provide: StompConfig,

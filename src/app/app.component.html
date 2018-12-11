@@ -3,7 +3,10 @@
     <mat-toolbar-row>
       <span>JIT Logistica</span>
       <span class="spacer"></span>
-      <span>{{empresa.razonSocial}}</span>
+      <div class="text-center">
+        <span style="float:left;clear:left;font-size:25px;font-weight: bold;">{{empresa.razonSocial}}</span>
+        <div><span style="float:right;clear:right;font-size:16px;margin-top:-10px;">Sucursal: {{usuario.sucursal.nombre}}</span></div>
+      </div>
       <span class="spacer"></span>
       <div>
         <button mat-raised-button [matMenuTriggerFor]="lusuario">{{usuario.nombre}}</button>
@@ -11,7 +14,7 @@
           <div class="container text-center titulo-menu">{{usuario.nombre}}</div>
           <mat-divider></mat-divider>
           <a href="http://localhost:4200/login" target="_blank"><button mat-menu-item>Nuevo Ingreso</button></a>
-          <button mat-menu-item>Salir</button>
+          <a href="http://localhost:4200/login"><button mat-menu-item>Salir</button></a>
         </mat-menu>
       </div>
     </mat-toolbar-row>
