@@ -41,7 +41,7 @@ export class CondicionCompraComponent implements OnInit {
    //Constructor
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(1, 19)
+    this.subopcionPestaniaService.listarPorRolSubopcion(1, 5)
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -59,9 +59,9 @@ export class CondicionCompraComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      moneda: new FormControl('', ),
-      empresa: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      cuentaContable: new FormControl('', [Validators.required, Validators.maxLength(45)])
+      codigo: new FormControl(),
+      nombre: new FormControl( ),
+      estaActivo: new FormControl()
       });
       //Establece los valores de la primera pestania activa
       this.seleccionarPestania(1, 'Agregar', 0);
@@ -115,13 +115,13 @@ export class CondicionCompraComponent implements OnInit {
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('moneda').enable();
-      this.formulario.get('empresa').enable();
-      this.formulario.get('cuentaContable').enable();
+      this.formulario.get('codigo').enable();
+      this.formulario.get('nombre').enable();
+      this.formulario.get('estaActivo').enable();
     } else {
-      this.formulario.get('moneda').disable();
-      this.formulario.get('empresa').disable();
-      this.formulario.get('cuentaContable').enable();
+      this.formulario.get('codigo').disable();
+      this.formulario.get('nombre').disable();
+      this.formulario.get('estaActivo').disable();
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)

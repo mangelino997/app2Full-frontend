@@ -194,10 +194,11 @@ import { MonedaCuentaContableComponent } from './componentes/moneda-cuenta-conta
 import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autorizado/puntos-venta-autorizado.component';
 import { RepartoComponent } from './componentes/reparto/reparto.component';
 import { CondicionVentaComponent } from './componentes/condicion-venta/condicion-venta.component';
+import { ProductoComponent } from './componentes/producto/producto.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: LoginComponent},
+  {path: '', component: ProductoComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -366,7 +367,8 @@ const stompConfig: StompConfig = {
     MonedaCuentaContableComponent,
     PuntosVentaAutorizadoComponent,
     RepartoComponent,
-    CondicionVentaComponent
+    CondicionVentaComponent,
+    ProductoComponent
   ],
   imports: [
     BrowserModule,

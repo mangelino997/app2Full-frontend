@@ -1,0 +1,151 @@
+<div id="companiaseguropoliza" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+  <div class="row">
+    <div class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>PRODUCTO</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-12 text-center">
+      <h5>{{pestaniaActual}} Producto</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+              <label for="idAutocompletado" class="tamanio-label">Buscar</label>
+              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" autocomplete="off">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idMoneda" class="tamanio-label">Código</label>
+              <input id="idMoneda" type="number" formControlName="codigo" class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idMoneda" class="tamanio-label">Marca</label>
+              <input id="idMoneda" type="number" formControlName="marca" class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Modelo</label>
+              <input id="idNombre" type="text" formControlName="modelo" autocomplete="off" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Rubro del producto</label>
+              <input id="idNombre" type="text" formControlName="rubro" autocomplete="off" class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+    
+        <div class="row">
+          <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label id="labelEstaActivo" for="idEstaActivo" class="tamanio-label">Es Asignable</label>
+                <mat-select class="form-control" placeholder="---" formControlName="esAsignable" >
+                    <mat-option [value]="0"> Sí</mat-option>
+                    <mat-option [value]="1"> No</mat-option>
+                  </mat-select>
+              </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label id="labelEstaActivo" for="idEstaActivo" class="tamanio-label">Es Serializable</label>
+              <mat-select class="form-control" placeholder="---" formControlName="esSerializable" >
+                  <mat-option [value]="0"> Sí</mat-option>
+                  <mat-option [value]="1"> No</mat-option>
+                </mat-select>
+            </div>
+          </div>
+          <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label id="labelEstaActivo" for="idEstaActivo" class="tamanio-label">Es Crítico</label>
+                <mat-select class="form-control" placeholder="---" formControlName="esCritico" >
+                    <mat-option [value]="0"> Sí</mat-option>
+                    <mat-option [value]="1"> No</mat-option>
+                  </mat-select>
+              </div>
+            </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idMoneda" class="tamanio-label">Reposición</label>
+              <input id="idMoneda" type="number" formControlName="reposicion" class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+        </div>    
+
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate (click)="accion(indiceSeleccionado)"
+          [disabled]="!formulario.valid">
+          {{pestaniaActual}}
+        </button>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-12">
+      <table class="table table-bordered table-striped table-sm">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:10%" scope="col">Nombre</th>
+            <th class="text-center" style="width:10%" scope="col">Marca</th>
+            <th class="text-center" style="width:10%" scope="col">Modelo</th>
+            <th class="text-center" style="width:10%" scope="col">Rubro</th>
+            <th class="text-center" style="width:10%" scope="col">Es Asignable</th>
+            <th class="text-center" style="width:20%" scope="col">Es Serializable</th>
+            <th class="text-center" style="width:10%" scope="col">Es Crítico</th>
+            <th class="text-center" style="width:20%" scope="col">Reposición</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>

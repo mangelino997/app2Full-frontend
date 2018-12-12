@@ -5,12 +5,12 @@ import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-condicion-venta',
-  templateUrl: './condicion-venta.component.html',
-  styleUrls: ['./condicion-venta.component.css']
+  selector: 'app-producto',
+  templateUrl: './producto.component.html',
+  styleUrls: ['./producto.component.css']
 })
-export class CondicionVentaComponent implements OnInit {
-//Define la pestania activa
+export class ProductoComponent implements OnInit {
+  //Define la pestania activa
 public activeLink:any = null;
 //Define el indice seleccionado de pestania
 public indiceSeleccionado:number = null;
@@ -40,6 +40,7 @@ public resultadosCompaniasSeguros:Array<any> = [];
 public empresas:Array<any> = [];
 // public compereFn:any;
 //Constructor
+
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(1, 4)
@@ -62,12 +63,19 @@ public empresas:Array<any> = [];
       version: new FormControl(),
       codigo: new FormControl(),
       nombre: new FormControl(),
-      esContado: new FormControl()
+      marca: new FormControl(),
+      modelo: new FormControl(),
+      rubro: new FormControl(),
+      esAsignable: new FormControl(),
+      esSerializable: new FormControl(),
+      esCritico: new FormControl(),
+      reposicion: new FormControl()
       });
       //Establece los valores de la primera pestania activa
       this.seleccionarPestania(1, 'Agregar', 0);
   }
-//Funcion para establecer los valores de las pestañas
+
+  //Funcion para establecer los valores de las pestañas
 private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
   this.pestaniaActual = nombrePestania;
   this.mostrarAutocompletado = autocompletado;
@@ -114,15 +122,15 @@ public seleccionarPestania(id, nombre, opcion) {
 }
 //Habilita o deshabilita los campos dependiendo de la pestaña
 private establecerEstadoCampos(estado) {
-  if(estado) {
-    this.formulario.get('codigo').enable();
-    this.formulario.get('nombre').enable();
-    this.formulario.get('esContado').enable();
-  } else {
-    this.formulario.get('codigo').disable();
-    this.formulario.get('nombre').disable();
-    this.formulario.get('esContado').disable();
-  }
+  // if(estado) {
+  //   this.formulario.get('codigo').enable();
+  //   this.formulario.get('nombre').enable();
+  //   this.formulario.get('esContado').enable();
+  // } else {
+  //   this.formulario.get('codigo').disable();
+  //   this.formulario.get('nombre').disable();
+  //   this.formulario.get('esContado').disable();
+  // }
 }
 //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
 // public accion(indice) {
@@ -175,4 +183,5 @@ public manejarEvento(keycode) {
     }
   }
 }
+
 }
