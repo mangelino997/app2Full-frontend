@@ -1,0 +1,72 @@
+<div class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+  <div class="row justify-content-center">
+    <nav mat-tab-nav-bar>
+      <a mat-tab-link disabled>USUARIO EMPRESAS</a>
+      <a mat-tab-link [active]="pestaniaActiva == 'Actualizar'" (click)="seleccionarPestania(1, 'Actualizar')">Actualizar</a>
+      <a mat-tab-link [active]="pestaniaActiva == 'Listar'" (click)="seleccionarPestania(2, 'Listar')">Lista</a>
+    </nav>
+  </div><br>
+  <div class="row justify-content-center" *ngIf="indiceSeleccionado == 1">
+    <div class="col-md-10">
+      <form [formGroup]="formulario">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idUsuario" class="tamanio-label">Usuario</label>
+              <input id="idUsuario" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('usuario')" [matAutocomplete]="autoUsuario" autocomplete="off">
+              <mat-autocomplete #autoUsuario="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let itemUsuario of resultadosUsuarios" [value]="itemUsuario">
+                  {{itemUsuario.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-primary btn-sm" (click)="obtenerEmpresas()">Obtener Empresas</button>
+          </div>
+        </div>
+        <div formArrayName="empresas" class="row">
+          <div class="col-md-12">
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:5%" scope="col">#</th>
+                  <th class="text-center" style="width:40%" scope="col">Razón Social</th>
+                  <th class="text-center" style="width:35%" scope="col">Abreviatura</th>
+                  <th class="text-center" style="width:20%" scope="col">Habilitado/a</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let a of formulario.get('empresas').controls; let i = index" [formGroupName]="i">
+                  <td align="center">
+                    <span>{{i+1}}</span>
+                  </td>
+                  <td align="center">
+                    <span>{{a.value.razonSocial}}</span>
+                  </td>
+                  <td align="center">
+                    <span>{{a.value.abreviatura}}</span>
+                  </td>
+                  <td align="center">
+                    <mat-checkbox formControlName="mostrar" color="primary"></mat-checkbox>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <button class="btn btn-primary" (click)="actualizar()">Actualizar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row" *ngIf="indiceSeleccionado == 2">
+    <div class="col-md-10">
+
+    </div>
+  </div>
+</div>

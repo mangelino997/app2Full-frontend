@@ -113,6 +113,7 @@ import { ViajePropioPeaje } from './modelos/viajePropioPeaje';
 import { NotaCredito } from './modelos/notaCredito';
 import { NotaDebito } from './modelos/notaDebito';
 import { Reparto } from './modelos/reparto';
+import { UsuarioEmpresa } from './modelos/usuarioEmpresa';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -195,6 +196,7 @@ import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autor
 import { RepartoComponent } from './componentes/reparto/reparto.component';
 import { CondicionVentaComponent } from './componentes/condicion-venta/condicion-venta.component';
 import { ProductoComponent } from './componentes/producto/producto.component';
+import { UsuarioEmpresasComponent } from './componentes/usuario-empresas/usuario-empresas.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -272,7 +274,8 @@ const appRoutes: Routes = [
   {path: 'contablemonedascotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService]},
   {path: 'contablemonedasplandecuentas', component: MonedaCuentaContableComponent, canActivate: [GuardiaService]},
   {path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService]},
-  {path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService]}
+  {path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService]},
+  {path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -368,7 +371,8 @@ const stompConfig: StompConfig = {
     PuntosVentaAutorizadoComponent,
     RepartoComponent,
     CondicionVentaComponent,
-    ProductoComponent
+    ProductoComponent,
+    UsuarioEmpresasComponent
   ],
   imports: [
     BrowserModule,
@@ -515,6 +519,7 @@ const stompConfig: StompConfig = {
     ViajePropioGasto,
     ViajePropioPeaje,
     Reparto,
+    UsuarioEmpresa,
     StompService,
     {
       provide: StompConfig,

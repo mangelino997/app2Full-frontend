@@ -44,9 +44,17 @@ export class UsuarioEmpresaService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene una lista por usuario
+  public listarPorUsuario(idUsuario) {
+    return this.http.get(this.url + '/listarPorUsuario/' + idUsuario, this.options);
+  }
   //Obtiene un listado de empresas activas del usuario
   public listarEmpresasActivasDeUsuario(idUsuario) {
     return this.http.get(this.url + '/listarEmpresasActivasDeUsuario/' + idUsuario, this.options);
+  }
+  //Actualiza una lista de registros
+  public actualizar(elemento) {
+    return this.http.put(this.url, elemento, this.options);
   }
   /*
   * Asigna todas las empresas a cada uno de los usuarios, eliminando todo los
