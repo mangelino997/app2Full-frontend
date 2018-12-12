@@ -198,7 +198,7 @@ import { ProductoComponent } from './componentes/producto/producto.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: ProductoComponent},
+  {path: '', component: LoginComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
