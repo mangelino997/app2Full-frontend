@@ -201,7 +201,7 @@ import { RolSubopcionMenuComponent } from './componentes/rol-subopcion-menu/rol-
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: RolSubopcionMenuComponent},
+  {path: '', component: LoginComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -276,7 +276,8 @@ const appRoutes: Routes = [
   {path: 'contablemonedasplandecuentas', component: MonedaCuentaContableComponent, canActivate: [GuardiaService]},
   {path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService]},
   {path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService]},
-  {path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService]}
+  {path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService]},
+  {path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {

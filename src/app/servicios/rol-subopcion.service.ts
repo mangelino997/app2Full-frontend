@@ -50,6 +50,10 @@ export class RolSubopcionService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene una lista por rol y subopcion
+  public listarPorRolYSubopcion(idRol, idSubopcion) {
+    return this.http.get(this.url + '/listarPorRolYSubmodulo/' + idRol + '/' + idSubopcion, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

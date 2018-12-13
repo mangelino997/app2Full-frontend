@@ -4,59 +4,90 @@
       <h5>Construcción de Menu por Rol</h5>
     </div>
   </div>
-  <div class="row justify-content-center">
-    <div class="col-md-3">
-      <div class="form-group has-float-label">
-        <label for="idRol" class="tamanio-label">Rol</label>
-        <mat-select id="idRol" class="form-control form-control-sm" formControlName="rol" [compareWith]="compareFn">
-          <mat-option *ngFor="let itemRol of roles" [value]="itemRol">
-            {{itemRol.nombre}}
-          </mat-option>
-        </mat-select>
+  <form [formGroup]="formulario">
+    <div class="row justify-content-center">
+      <div class="col-md-3">
+        <div class="form-group has-float-label">
+          <label for="idRol" class="tamanio-label">Rol</label>
+          <mat-select id="idRol" class="form-control form-control-sm" formControlName="rol" [compareWith]="compareFn">
+            <mat-option *ngFor="let itemRol of roles" [value]="itemRol" (onSelectionChange)="activarBotones()">
+              {{itemRol.nombre}}
+            </mat-option>
+          </mat-select>
+        </div>
+      </div>
+      <div class="col-md-2">
+        <div class="inline">
+          <button class="btn btn-primary btn-sm">Usuario</button>
+          <button class="btn btn-primary btn-sm" style="margin-left: 5px;">Vista Previa</button>
+        </div>
       </div>
     </div>
-    <div class="col-md-2">
-      <div class="inline">
-        <button class="btn btn-primary btn-sm">Usuario</button>
-        <button class="btn btn-primary btn-sm" style="margin-left: 5px;">Vista Previa</button>
-      </div>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <mat-sidenav-container>
-        <mat-sidenav #sidenav mode="side" opened class="sidenav" [fixedInViewport]="true" [fixedTopGap]="100"
-          [fixedBottomGap]="0">
-          <div class="container-fluid">
-            <div class="row justify-content-center">
-              <mat-icon *ngIf="estadoSidenav == 2" class="cursor-color" (click)="atras()">navigate_before</mat-icon>
-              <span style="font-weight: bold; font-size: 15px;">{{nombreTitulo}}</span>
-            </div>
-            <hr style="margin: 0; padding: 0px;">
-            <div *ngIf="estadoSidenav == 1">
-              <div class="row contenedor" *ngFor="let modulo of modulos; let idx = index">
-                <div class="col">
-                  <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" type="button" 
-                    class="btn btn-outline-primary btn-sm btn-block" (click)="seleccionarModulo(modulo.id, idx)">
-                    {{modulo.nombre}}</button>
+    <div class="row">
+      <div class="col-md-12">
+        <mat-sidenav-container>
+          <mat-sidenav #sidenav mode="side" opened class="sidenav" [fixedInViewport]="true" [fixedTopGap]="140"
+            [fixedBottomGap]="0">
+            <div class="container-fluid">
+              <div class="row justify-content-center">
+                <mat-icon *ngIf="estadoSidenav == 2" class="cursor-color" (click)="atras()">navigate_before</mat-icon>
+                <span style="font-weight: bold; font-size: 15px;">{{nombreTitulo}}</span>
+              </div>
+              <hr style="margin: 0; padding: 0px;">
+              <div *ngIf="estadoSidenav == 1">
+                <div class="row contenedor" *ngFor="let modulo of modulos; let idx = index">
+                  <div class="col">
+                    <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" type="button" class="btn btn-outline-primary btn-sm btn-block"
+                      (click)="seleccionarModulo(modulo.id, idx)" [disabled]="!botonActivo">
+                      {{modulo.nombre}}</button>
+                  </div>
+                </div>
+              </div>
+              <div *ngIf="estadoSidenav == 2">
+                <div class="row contenedor" *ngFor="let submodulo of submodulos; let idx = index">
+                  <div class="col">
+                    <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" type="button" class="btn btn-outline-primary btn-sm btn-block"
+                      (click)="listarPorRolYSubmodulo(submodulo, idx)">
+                      {{submodulo.nombre}}</button>
+                  </div>
                 </div>
               </div>
             </div>
-            <div *ngIf="estadoSidenav == 2">
-              <div class="row contenedor" *ngFor="let submodulo of submodulos; let idx = index">
-                <div class="col">
-                  <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" type="button" 
-                    class="btn btn-outline-primary btn-sm btn-block" (click)="seleccionarSubmodulo(submodulo.id, idx)">
-                    {{submodulo.nombre}}</button>
-                </div>
+          </mat-sidenav>
+          <mat-sidenav-content class="sidenav-content">
+            <div formArrayName="subopciones" class="row container-fluid">
+              <div class="col-md-12" style="height: 500px; overflow-y: scroll;">
+                <table class="table table-bordered table-striped table-sm">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width:5%" scope="col">#</th>
+                      <th class="text-center" style="width:65%" scope="col">Subopcion</th>
+                      <th class="text-center" style="width:30%" scope="col">Mostrar</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let a of formulario.get('subopciones').controls; let i = index" [formGroupName]="i">
+                      <td align="center">
+                        <span>{{i+1}}</span>
+                      </td>
+                      <td align="center">
+                        <span>{{a.value.nombre}}</span>
+                      </td>
+                      <td align="center">
+                        <mat-checkbox formControlName="mostrar" color="primary"></mat-checkbox>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-          </div>
-        </mat-sidenav>
-        <mat-sidenav-content class="sidenav-content">
-          
-        </mat-sidenav-content>
-      </mat-sidenav-container>
+            <br>
+            <div class="row justify-content-center container-fluid">
+              <button class="btn btn-primary btn-sm" (click)="actualizar()" [disabled]="!btnActualizarActivo">Actualizar</button>
+            </div>
+          </mat-sidenav-content>
+        </mat-sidenav-container>
+      </div>
     </div>
-  </div>
+  </form>
 </div>
