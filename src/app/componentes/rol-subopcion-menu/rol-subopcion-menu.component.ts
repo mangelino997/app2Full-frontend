@@ -61,6 +61,10 @@ export class RolSubopcionMenuComponent implements OnInit {
       this.nombreTitulo = "SUBMODULOS";
     })
   }
+  //Obtiene una lista por rol y submodulo
+  public listarPorRolYSubmodulo(): void {
+    
+  }
   //Vuelve a modulos
   public atras(): void {
     this.estadoSidenav = 1;
