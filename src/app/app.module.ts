@@ -200,10 +200,11 @@ import { UsuarioEmpresasComponent } from './componentes/usuario-empresas/usuario
 import { RolSubopcionMenuComponent } from './componentes/rol-subopcion-menu/rol-subopcion-menu.component';
 import { ConceptoAfipComponent } from './componentes/concepto-afip/concepto-afip.component';
 import { RepartoEntranteComponent } from './componentes/reparto-entrante/reparto-entrante.component';
+import { VentaConceptoComponent } from './componentes/venta-concepto/venta-concepto.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: RepartoEntranteComponent},
+  {path: '', component: VentaConceptoComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -381,7 +382,8 @@ const stompConfig: StompConfig = {
     UsuarioEmpresasComponent,
     RolSubopcionMenuComponent,
     ConceptoAfipComponent,
-    RepartoEntranteComponent
+    RepartoEntranteComponent,
+    VentaConceptoComponent
   ],
   imports: [
     BrowserModule,
