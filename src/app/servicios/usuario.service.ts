@@ -62,6 +62,10 @@ export class UsuarioService {
       })
     })
   }
+  //Obtiene una lista por rol
+  public listarPorRol(idRol) {
+    return this.http.get(this.url + '/listarPorRol/' + idRol, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

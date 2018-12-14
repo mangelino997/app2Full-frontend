@@ -1,0 +1,24 @@
+<div class="row justify-content-center">
+    <h4>Menú de Rol {{nombreRol}}</h4>
+</div>
+<mat-toolbar>
+    <div class="centrar" *ngFor="let modulo of modulos">
+        <button mat-menu-item [matMenuTriggerFor]="lmodulo">{{modulo.modulo}}</button>
+        <mat-menu #lmodulo="matMenu">
+            <div class="container text-center titulo-menu">{{modulo.modulo}}</div>
+            <mat-divider></mat-divider>
+            <div *ngFor="let submodulo of modulo.submodulos">
+                <button mat-menu-item [matMenuTriggerFor]="lsubmodulo">{{submodulo.submodulo}}</button>
+                <mat-menu #lsubmodulo="matMenu">
+                    <button *ngFor="let subopcion of submodulo.subopciones" mat-menu-item (click)="obtenerPestanias(subopcion)">{{subopcion.subopcion}}</button>
+                </mat-menu>
+            </div>
+        </mat-menu>
+    </div>
+</mat-toolbar>
+<div class="row justify-content-center">
+    <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>{{nombreSubopcion}}</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias">{{pestania.nombre}}</a>
+    </nav>
+</div>

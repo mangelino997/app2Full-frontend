@@ -197,7 +197,7 @@ import { RepartoComponent } from './componentes/reparto/reparto.component';
 import { CondicionVentaComponent } from './componentes/condicion-venta/condicion-venta.component';
 import { ProductoComponent } from './componentes/producto/producto.component';
 import { UsuarioEmpresasComponent } from './componentes/usuario-empresas/usuario-empresas.component';
-import { RolSubopcionMenuComponent } from './componentes/rol-subopcion-menu/rol-subopcion-menu.component';
+import { RolSubopcionMenuComponent, UsuarioDialogo, VistaPreviaDialogo } from './componentes/rol-subopcion-menu/rol-subopcion-menu.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -377,7 +377,9 @@ const stompConfig: StompConfig = {
     CondicionVentaComponent,
     ProductoComponent,
     UsuarioEmpresasComponent,
-    RolSubopcionMenuComponent
+    RolSubopcionMenuComponent,
+    UsuarioDialogo,
+    VistaPreviaDialogo
   ],
   imports: [
     BrowserModule,
@@ -532,6 +534,6 @@ const stompConfig: StompConfig = {
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [RolSubopcionDialog, SubopcionPestaniaDialog, UsuarioEmpresaDialog]
+  entryComponents: [RolSubopcionDialog, SubopcionPestaniaDialog, UsuarioEmpresaDialog, UsuarioDialogo, VistaPreviaDialogo]
 })
 export class AppModule { }

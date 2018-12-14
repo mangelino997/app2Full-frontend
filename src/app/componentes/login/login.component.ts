@@ -31,8 +31,6 @@ export class LoginComponent {
     this.loginService.login(this.elemento.username, this.elemento.password)
     .subscribe(res => {
       if(res.headers.get('authorization')) {
-        //Obtiene el menu
-        this.appComponent.obtenerMenu();
         //Almacena el token en el local storage
         localStorage.setItem('token', res.headers.get('authorization'));
         //Establece logueado en true
@@ -41,7 +39,11 @@ export class LoginComponent {
         //Obtiene el usuario por username
         this.usuarioService.obtenerPorUsername(this.elemento.username).subscribe(
           res => {
-            this.appComponent.setUsuario(res.json());
+            let usuario = res.json();
+            console.log(usuario);
+            this.appComponent.setUsuario(usuario);
+            //Obtiene el menu
+            this.appComponent.obtenerMenu(usuario.rol.id);
             //Obtiene el listado de empresas activas por usuario
             this.usuarioEmpresaService.listarEmpresasActivasDeUsuario(res.json().id).subscribe(
               res => {

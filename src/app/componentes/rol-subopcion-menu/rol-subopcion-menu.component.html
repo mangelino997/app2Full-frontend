@@ -1,7 +1,7 @@
-<div class="container-fluid">
+<div class="container-fluid" style="margin-top: 10px;">
   <div class="row">
     <div class="col-md-12 text-center">
-      <h5>Construcción de Menu por Rol</h5>
+      <h5>Construcción de Menú por Rol</h5>
     </div>
   </div>
   <form [formGroup]="formulario">
@@ -18,8 +18,8 @@
       </div>
       <div class="col-md-2">
         <div class="inline">
-          <button class="btn btn-primary btn-sm">Usuario</button>
-          <button class="btn btn-primary btn-sm" style="margin-left: 5px;">Vista Previa</button>
+          <button class="btn btn-primary btn-sm" (click)="verUsuariosDeRol()" [disabled]="!botonActivo">Usuario</button>
+          <button class="btn btn-primary btn-sm" style="margin-left: 5px;" (click)="verVistaPrevia()" [disabled]="!botonActivo">Vista Previa</button>
         </div>
       </div>
     </div>
@@ -61,8 +61,9 @@
                   <thead>
                     <tr>
                       <th class="text-center" style="width:5%" scope="col">#</th>
-                      <th class="text-center" style="width:65%" scope="col">Subopcion</th>
-                      <th class="text-center" style="width:30%" scope="col">Mostrar</th>
+                      <th class="text-center" style="width:60%" scope="col">Subopción</th>
+                      <th class="text-center" style="width:25%" scope="col">Mostrar</th>
+                      <th class="text-center" style="width:10%" scope="col">Pestañas</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -76,6 +77,9 @@
                       <td align="center">
                         <mat-checkbox formControlName="mostrar" color="primary"></mat-checkbox>
                       </td>
+                      <td align="center">
+                        <span class="cursor-color">ver</span>
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -83,7 +87,7 @@
             </div>
             <br>
             <div class="row justify-content-center container-fluid">
-              <button class="btn btn-primary btn-sm" (click)="actualizar()" [disabled]="!btnActualizarActivo">Actualizar</button>
+              <button class="btn btn-primary" (click)="actualizar()" [disabled]="!btnActualizarActivo">Actualizar</button>
             </div>
           </mat-sidenav-content>
         </mat-sidenav-container>

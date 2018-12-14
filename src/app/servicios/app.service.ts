@@ -35,8 +35,8 @@ export class AppService {
     this.listaCompleta.next(JSON.parse(m.body));
   }
   //Obtiene el menu
-  public obtenerMenu() {
-    return this.http.get(this.URL_BASE + '/menu/1', this.options);
+  public obtenerMenu(id) {
+    return this.http.get(this.URL_BASE + '/menu/' + id, this.options);
   }
   //Obtiene la IP
   public getIP() {

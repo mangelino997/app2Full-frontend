@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, Validators, FormArray } from '@angular/forms';
 import { RolSubopcionService } from 'src/app/servicios/rol-subopcion.service';
 import { RolService } from 'src/app/servicios/rol.service';
 import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubmoduloService } from 'src/app/servicios/submodulo.service';
 import { ToastrService } from 'ngx-toastr';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { UsuarioService } from 'src/app/servicios/usuario.service';
+import { AppService } from 'src/app/servicios/app.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @Component({
   selector: 'app-rol-subopcion-menu',
@@ -35,7 +39,8 @@ export class RolSubopcionMenuComponent implements OnInit {
   //Constructor
   constructor(private servicio: RolSubopcionService, private fb: FormBuilder,
     private rolServicio: RolService, private moduloServicio: ModuloService,
-    private submoduloServicio: SubmoduloService, private toastr: ToastrService) { }
+    private submoduloServicio: SubmoduloService, private toastr: ToastrService,
+    public dialog: MatDialog) { }
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.fb.group({
@@ -138,11 +143,95 @@ export class RolSubopcionMenuComponent implements OnInit {
   public activarBotones(): void {
     this.botonActivo = true;
   }
+  //Abre el dialogo usuario para ver los usuarios de un determinado rol
+  public verUsuariosDeRol(): void {
+    const dialogRef = this.dialog.open(UsuarioDialogo, {
+      width: '800px',
+      data: { rol: this.formulario.get('rol') }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Diálogo Usuarios Cerrado!');
+    });
+  }
+  //Abre el dialogo vista previa para visualizar el menu del rol
+  public verVistaPrevia(): void {
+    const dialogRef = this.dialog.open(VistaPreviaDialogo, {
+      width: '1200px',
+      data: { rol: this.formulario.get('rol') }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Diálogo Usuarios Cerrado!');
+    });
+  }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
     if (a != null && b != null) {
       return a.id === b.id;
     }
+  }
+}
+//Componente Usuarios
+@Component({
+  selector: 'usuario-dialogo',
+  templateUrl: 'usuario-dialogo.html'
+})
+export class UsuarioDialogo {
+  //Define el nombre del rol
+  public nombreRol:string;
+  //Define la lista de usuario del rol
+  public listaUsuarios:Array<any> = [];
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<UsuarioDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private usuarioServicio: UsuarioService) { }
+  ngOnInit() {
+    let rol = this.data.rol.value;
+    //Establece el nombre del rol
+    this.nombreRol = rol.nombre;
+    //Obtiene la lista de usuario por rol
+    this.usuarioServicio.listarPorRol(rol.id).subscribe(res => {
+      this.listaUsuarios = res.json();
+    })
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+//Componente Vista Previa
+@Component({
+  selector: 'vista-previa-dialogo',
+  templateUrl: 'vista-previa-dialogo.html'
+})
+export class VistaPreviaDialogo {
+  //Define el rol
+  public rol:any;
+  //Define la lista de pestanias
+  public pestanias:Array<any> = [];
+  //Define la lista de modulos del rol
+  public modulos:Array<any> = [];
+  //Define el nombre de la subopcion
+  public nombreSubopcion:string;
+  //Define el nombre del rol
+  public nombreRol:string;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<VistaPreviaDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private appServicio: AppService, private subopcionPestaniaService: SubopcionPestaniaService) { }
+  ngOnInit() {
+    this.rol = this.data.rol.value;
+    this.nombreRol = this.rol.nombre;
+    this.appServicio.obtenerMenu(this.rol.id).subscribe(res => {
+      this.modulos = res.json().modulos;
+    })
+  }
+  public obtenerPestanias(subopcion): void {
+    console.log(subopcion);
+    this.nombreSubopcion = subopcion.subopcion;
+    //Obtiene la lista de pestania por rol y subopcion
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.rol.id, subopcion.id).subscribe(res => {
+      this.pestanias = res.json();
+    })
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }

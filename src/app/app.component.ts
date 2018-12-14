@@ -18,7 +18,7 @@ export class AppComponent {
   constructor(private appService: AppService, private router: Router) {
     //Se subscribe al servicio de lista de registros
     this.appService.listaCompleta.subscribe(res => {
-      this.obtenerMenu();
+      this.obtenerMenu(this.getRol());
     });
   }
   public setVisible(valor) {
@@ -57,8 +57,8 @@ export class AppComponent {
     this.tema = tema;
   }
   //Obtiene la lista de modulos para armar el menu
-  public obtenerMenu() {
-    this.appService.obtenerMenu().subscribe(
+  public obtenerMenu(id) {
+    this.appService.obtenerMenu(id).subscribe(
       res => {
         this.modulos = res.json().modulos;
       },
