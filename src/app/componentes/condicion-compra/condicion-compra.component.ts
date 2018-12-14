@@ -6,7 +6,8 @@ import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-condicion-compra',
-  templateUrl: './condicion-compra.component.html'
+  templateUrl: './condicion-compra.component.html',
+  styleUrls: ['./condicion-compra.component.css']
 })
 export class CondicionCompraComponent implements OnInit {
    //Define la pestania activa

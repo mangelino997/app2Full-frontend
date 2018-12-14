@@ -246,7 +246,8 @@ const appRoutes: Routes = [
   {path: 'generalesclientes', component: ClienteComponent, canActivate: [GuardiaService]},
   {path: 'listasdepreciosordenesdeventa', component: OrdenVentaComponent, canActivate: [GuardiaService]},//Revisar
   {path: 'generalesproveedores', component: ProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'condicioncompra', component: CondicionCompraComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'contablecondicionesdecompra', component: CondicionCompraComponent, canActivate: [GuardiaService]},//Revisar
+  {path: 'contablecondicionesdeventa', component: CondicionVentaComponent, canActivate: [GuardiaService]},
   {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]},
   {path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService]},
   {path: 'logisticaproveedoreschoferes', component: ChoferProveedorComponent, canActivate: [GuardiaService]},
@@ -277,7 +278,8 @@ const appRoutes: Routes = [
   {path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService]},
   {path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService]},
   {path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService]},
-  {path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService]}
+  {path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService]},
+  {path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
