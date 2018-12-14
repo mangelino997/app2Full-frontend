@@ -198,10 +198,11 @@ import { CondicionVentaComponent } from './componentes/condicion-venta/condicion
 import { ProductoComponent } from './componentes/producto/producto.component';
 import { UsuarioEmpresasComponent } from './componentes/usuario-empresas/usuario-empresas.component';
 import { RolSubopcionMenuComponent } from './componentes/rol-subopcion-menu/rol-subopcion-menu.component';
+import { ConceptoAfipComponent } from './componentes/concepto-afip/concepto-afip.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: LoginComponent},
+  {path: '', component: ConceptoAfipComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -377,7 +378,8 @@ const stompConfig: StompConfig = {
     CondicionVentaComponent,
     ProductoComponent,
     UsuarioEmpresasComponent,
-    RolSubopcionMenuComponent
+    RolSubopcionMenuComponent,
+    ConceptoAfipComponent
   ],
   imports: [
     BrowserModule,
