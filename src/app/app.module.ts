@@ -198,10 +198,14 @@ import { CondicionVentaComponent } from './componentes/condicion-venta/condicion
 import { ProductoComponent } from './componentes/producto/producto.component';
 import { UsuarioEmpresasComponent } from './componentes/usuario-empresas/usuario-empresas.component';
 import { RolSubopcionMenuComponent, UsuarioDialogo, VistaPreviaDialogo } from './componentes/rol-subopcion-menu/rol-subopcion-menu.component';
+import { ConceptoAfipComponent } from './componentes/concepto-afip/concepto-afip.component';
+import { RepartoEntranteComponent } from './componentes/reparto-entrante/reparto-entrante.component';
+import { VentaConceptoComponent } from './componentes/venta-concepto/venta-concepto.component';
+import { ViajeUnidadNegocioComponent } from './componentes/viaje-unidad-negocio/viaje-unidad-negocio.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: LoginComponent},
+  {path: '', component: ViajeUnidadNegocioComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -379,7 +383,11 @@ const stompConfig: StompConfig = {
     UsuarioEmpresasComponent,
     RolSubopcionMenuComponent,
     UsuarioDialogo,
-    VistaPreviaDialogo
+    VistaPreviaDialogo,
+    ConceptoAfipComponent,
+    RepartoEntranteComponent,
+    VentaConceptoComponent,
+    ViajeUnidadNegocioComponent
   ],
   imports: [
     BrowserModule,
