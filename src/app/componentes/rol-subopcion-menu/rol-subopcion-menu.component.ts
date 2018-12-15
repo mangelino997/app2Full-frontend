@@ -36,11 +36,13 @@ export class RolSubopcionMenuComponent implements OnInit {
   public botonActivo:boolean;
   //Define el estado del boton actualizar
   public btnActualizarActivo:boolean;
+  //Define la lista de pestanias
+  public pestanias:Array<any> = [];
   //Constructor
   constructor(private servicio: RolSubopcionService, private fb: FormBuilder,
     private rolServicio: RolService, private moduloServicio: ModuloService,
     private submoduloServicio: SubmoduloService, private toastr: ToastrService,
-    public dialog: MatDialog) { }
+    public dialog: MatDialog, private subopcionPestaniaServicio: SubopcionPestaniaService) { }
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.fb.group({
@@ -163,6 +165,28 @@ export class RolSubopcionMenuComponent implements OnInit {
       console.log('Diálogo Usuarios Cerrado!');
     });
   }
+  //Abre el dialogo vista previa para visualizar el menu del rol
+  public verPestaniasDialogo(subopcion, pestanias): void {
+    const dialogRef = this.dialog.open(PestaniaDialogo, {
+      width: '1200px',
+      data: { 
+        rol: this.formulario.get('rol'),
+        subopcion: subopcion,
+        pestanias: pestanias
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Diálogo Usuarios Cerrado!');
+    });
+  }
+  //Visualiza las pestanias de una subopcion para actualizar estado
+  public verPestanias(subopcion): void {
+    let rol = this.formulario.get('rol').value;
+    this.subopcionPestaniaServicio.obtenerPestaniasPorRolYSubopcion(rol.id, subopcion.id).subscribe(res => {
+      this.pestanias = res.json();
+      this.verPestaniasDialogo(subopcion, this.pestanias);
+    })
+  }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
@@ -224,7 +248,6 @@ export class VistaPreviaDialogo {
     })
   }
   public obtenerPestanias(subopcion): void {
-    console.log(subopcion);
     this.nombreSubopcion = subopcion.subopcion;
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.rol.id, subopcion.id).subscribe(res => {
@@ -233,5 +256,53 @@ export class VistaPreviaDialogo {
   }
   onNoClick(): void {
     this.dialogRef.close();
+  }
+}
+//Componente Pestañas
+@Component({
+  selector: 'pestania-dialogo',
+  templateUrl: 'pestania-dialogo.html'
+})
+export class PestaniaDialogo {
+  //Define el formulario
+  public formulario:FormGroup;
+  //Define la lista de pestanias
+  public pestanias:FormArray;
+  //Define el nombre de la subopcion
+  public nombreSubopcion:string;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<PestaniaDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private fb: FormBuilder) { }
+  ngOnInit() {
+    //Define datos pasado por parametro al dialogo
+    let pestanias = this.data.pestanias.pestanias
+    let rol = this.data.rol.value;
+    let subopcion = this.data.subopcion;
+    //Establece el nombre de la subopcion
+    this.nombreSubopcion = subopcion.nombre;
+    //Establece el formulario
+    this.formulario = this.fb.group({
+      rol: new FormControl,
+      subopcion: new FormControl,
+      pestanias: this.fb.array([])
+    })
+    this.formulario.get('rol').setValue(rol);
+    this.formulario.get('subopcion').setValue(subopcion);
+    for (var i = 0; i < pestanias.length; i++) {
+      this.pestanias = this.formulario.get('pestanias') as FormArray;
+      this.pestanias.push(this.crearPestanias(pestanias[i]));
+    }
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+  //Crea el array de pestanias
+  private crearPestanias(elemento): FormGroup {
+    return this.fb.group({
+      id: elemento.id,
+      version: elemento.version,
+      nombre: elemento.nombre,
+      mostrar: elemento.mostrar
+    })
   }
 }

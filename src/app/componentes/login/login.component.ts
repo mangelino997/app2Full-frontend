@@ -40,7 +40,6 @@ export class LoginComponent {
         this.usuarioService.obtenerPorUsername(this.elemento.username).subscribe(
           res => {
             let usuario = res.json();
-            console.log(usuario);
             this.appComponent.setUsuario(usuario);
             //Obtiene el menu
             this.appComponent.obtenerMenu(usuario.rol.id);

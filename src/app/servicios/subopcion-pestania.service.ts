@@ -24,6 +24,14 @@ export class SubopcionPestaniaService {
   public listarPorRolSubopcion(idRol, idSubopcion) {
     return this.http.get(this.url + '/listarPorRolSubopcion/' + idRol + '/' + idSubopcion, this.options);
   }
+  //Obtiene las pestanias por rol y subopcion para actualizar estado mostrar
+  public obtenerPestaniasPorRolYSubopcion(idRol, idSubopcion) {
+    return this.http.get(this.url + '/obtenerPestaniasPorRolYSubopcion/' + idRol + '/' + idSubopcion, this.options);
+  }
+  //Actualiza un registro
+  public actualizar(elemento) {
+    return this.http.put(this.url, elemento, this.options);
+  }
   /*
   * Asigna todas las pestanias a cada una de las subopciones, eliminando todo los
   * datos y reestableciendo desde cero

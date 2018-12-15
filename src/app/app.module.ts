@@ -197,7 +197,7 @@ import { RepartoComponent } from './componentes/reparto/reparto.component';
 import { CondicionVentaComponent } from './componentes/condicion-venta/condicion-venta.component';
 import { ProductoComponent } from './componentes/producto/producto.component';
 import { UsuarioEmpresasComponent } from './componentes/usuario-empresas/usuario-empresas.component';
-import { RolSubopcionMenuComponent, UsuarioDialogo, VistaPreviaDialogo } from './componentes/rol-subopcion-menu/rol-subopcion-menu.component';
+import { RolSubopcionMenuComponent, UsuarioDialogo, VistaPreviaDialogo, PestaniaDialogo } from './componentes/rol-subopcion-menu/rol-subopcion-menu.component';
 import { ConceptoAfipComponent } from './componentes/concepto-afip/concepto-afip.component';
 import { RepartoEntranteComponent } from './componentes/reparto-entrante/reparto-entrante.component';
 import { VentaConceptoComponent } from './componentes/venta-concepto/venta-concepto.component';
@@ -205,7 +205,7 @@ import { ViajeUnidadNegocioComponent } from './componentes/viaje-unidad-negocio/
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: ViajeUnidadNegocioComponent},
+  {path: '', component: LoginComponent},
   {path: 'login', component: LoginComponent},
   {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
   {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
@@ -384,6 +384,7 @@ const stompConfig: StompConfig = {
     RolSubopcionMenuComponent,
     UsuarioDialogo,
     VistaPreviaDialogo,
+    PestaniaDialogo,
     ConceptoAfipComponent,
     RepartoEntranteComponent,
     VentaConceptoComponent,
@@ -542,6 +543,6 @@ const stompConfig: StompConfig = {
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [RolSubopcionDialog, SubopcionPestaniaDialog, UsuarioEmpresaDialog, UsuarioDialogo, VistaPreviaDialogo]
+  entryComponents: [RolSubopcionDialog, SubopcionPestaniaDialog, UsuarioEmpresaDialog, UsuarioDialogo, VistaPreviaDialogo, PestaniaDialogo]
 })
 export class AppModule { }
