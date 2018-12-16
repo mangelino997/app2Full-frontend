@@ -44,6 +44,8 @@ export class BarrioComponent implements OnInit {
       res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
+        //Establece los valores de la primera pestania activa
+        this.seleccionarPestania(this.pestanias[0].id, this.pestanias[0].nombre, 0);
       },
       err => {
         console.log(err);
@@ -70,8 +72,6 @@ export class BarrioComponent implements OnInit {
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
     });
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
   }

@@ -272,7 +272,7 @@ export class PestaniaDialogo {
   public nombreSubopcion:string;
   //Constructor
   constructor(public dialogRef: MatDialogRef<PestaniaDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder, private servicio: SubopcionPestaniaService, private toastr: ToastrService) { }
   ngOnInit() {
     //Define datos pasado por parametro al dialogo
     let pestanias = this.data.pestanias.pestanias
@@ -304,5 +304,20 @@ export class PestaniaDialogo {
       nombre: elemento.nombre,
       mostrar: elemento.mostrar
     })
+  }
+  //Actualiza la lista de pestanias de la subopcion
+  public actualizar(): void {
+    this.servicio.actualizar(this.formulario.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        let respuesta = err.json();
+        this.toastr.error(respuesta.mensaje);
+      }
+    )
   }
 }
