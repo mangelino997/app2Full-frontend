@@ -99,6 +99,7 @@ import { ViajeTipoService } from './servicios/viaje-tipo.service';
 import { ViajeTramoClienteService } from './servicios/viaje-tramo-cliente.service';
 import { ViajeTramoService } from './servicios/viaje-tramo.service';
 import { ViajeUnidadNegocioService } from './servicios/viaje-unidad-negocio.service';
+import { OpcionService } from './servicios/opcion.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -202,6 +203,7 @@ import { ConceptoAfipComponent } from './componentes/concepto-afip/concepto-afip
 import { RepartoEntranteComponent } from './componentes/reparto-entrante/reparto-entrante.component';
 import { VentaConceptoComponent } from './componentes/venta-concepto/venta-concepto.component';
 import { ViajeUnidadNegocioComponent } from './componentes/viaje-unidad-negocio/viaje-unidad-negocio.component';
+import { OpcionComponent } from './componentes/opcion/opcion.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -283,7 +285,8 @@ const appRoutes: Routes = [
   {path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService]},
   {path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService]},
   {path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService]},
-  {path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService]}
+  {path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService]},
+  {path: 'menuopciones', component: OpcionComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
@@ -388,7 +391,8 @@ const stompConfig: StompConfig = {
     ConceptoAfipComponent,
     RepartoEntranteComponent,
     VentaConceptoComponent,
-    ViajeUnidadNegocioComponent
+    ViajeUnidadNegocioComponent,
+    OpcionComponent
   ],
   imports: [
     BrowserModule,
@@ -536,6 +540,7 @@ const stompConfig: StompConfig = {
     ViajePropioPeaje,
     Reparto,
     UsuarioEmpresa,
+    OpcionService,
     StompService,
     {
       provide: StompConfig,
