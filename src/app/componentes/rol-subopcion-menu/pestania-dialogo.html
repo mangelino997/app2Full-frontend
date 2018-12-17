@@ -1,7 +1,7 @@
 <div class="{{tema}}">
     <form [formGroup]="formulario">
         <div class="row">
-            <div class="col-md-12" formArrayName="pestanias">
+            <div class="col-md-12 text-center" formArrayName="pestanias">
                 <h5 class="text-center">Pestañas de {{nombreSubopcion}}</h5>
                 <table class="table table-bordered table-striped table-sm">
                     <thead>
@@ -25,6 +25,7 @@
                         </tr>
                     </tbody>
                 </table>
+                <button class="btn btn-primary" (click)="actualizar()">Actualizar</button>
             </div>
         </div>
     </form>
