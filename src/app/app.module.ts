@@ -283,10 +283,11 @@ const appRoutes: Routes = [
   {path: 'contablemonedasplandecuentas', component: MonedaCuentaContableComponent, canActivate: [GuardiaService]},
   {path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService]},
   {path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService]},
+  {path: 'repartosplanillasentrantes', component: RepartoEntranteComponent, canActivate: [GuardiaService]},
   {path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService]},
   {path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService]},
   {path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService]},
-  {path: 'menuopciones', component: OpcionComponent, canActivate: [GuardiaService]}
+  {path: 'menuopciones', component: RepartoEntranteComponent, canActivate: [GuardiaService]}
 ]
 
 const stompConfig: StompConfig = {
