@@ -179,7 +179,7 @@ import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursa
 import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component'; //Probado
 import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component'; //Probado
 import { CompaniaSeguroPolizaComponent } from './componentes/compania-seguro-poliza/compania-seguro-poliza.component';
-import { ViajeRemitoComponent } from './componentes/viaje-remito/viaje-remito.component';
+import { ViajeRemitoComponent, ClienteEventualDialogo } from './componentes/viaje-remito/viaje-remito.component';
 import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-subopcion/rol-subopcion.component'; //Probado
 import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component'; //Probado
 import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
@@ -393,7 +393,8 @@ const stompConfig: StompConfig = {
     RepartoEntranteComponent,
     VentaConceptoComponent,
     ViajeUnidadNegocioComponent,
-    OpcionComponent
+    OpcionComponent,
+    ClienteEventualDialogo
   ],
   imports: [
     BrowserModule,
@@ -549,6 +550,6 @@ const stompConfig: StompConfig = {
     }
   ],
   bootstrap: [AppComponent],
-  entryComponents: [RolSubopcionDialog, SubopcionPestaniaDialog, UsuarioEmpresaDialog, UsuarioDialogo, VistaPreviaDialogo, PestaniaDialogo]
+  entryComponents: [RolSubopcionDialog, SubopcionPestaniaDialog, UsuarioEmpresaDialog, UsuarioDialogo, VistaPreviaDialogo, PestaniaDialogo, ClienteEventualDialogo]
 })
 export class AppModule { }

@@ -64,7 +64,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
               <mat-select id="idTipoComprobante" class="form-control form-control-sm" 
-                formControlName="tipoComprobante" [compareWith]="compareFn"> 
+                formControlName="tipoComprobante" [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()"> 
                 <mat-option *ngFor="let itemTipoComprobante of tiposComprobantes" 
                   [value]="itemTipoComprobante">
                   {{itemTipoComprobante.nombre}}</mat-option>
@@ -80,8 +80,14 @@
             </div>
           </div>
           <div class="col-md-3">
-            <!-- Letra -->
-            <div class="form-group has-float-label">
+            <!-- Letra (Remito) -->
+            <div class="form-group has-float-label" *ngIf="!estadoLetra">
+              <label for="idLetra" class="tamanio-label">Letra *</label>
+              <input id="idLetra" type="text" formControlName="letra" 
+                autocomplete="off" class="form-control form-control-sm" [readonly]="true">
+            </div>
+            <!-- Letra (Factura) -->
+            <div class="form-group has-float-label" *ngIf="estadoLetra">
               <label for="idLetra" class="tamanio-label">Letra *</label>
               <mat-select id="idLetra" class="form-control form-control-sm" 
                 formControlName="letra">
@@ -101,7 +107,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3 input-button">
+          <div class="col-md-5 input-button">
             <!-- Remitente -->
             <div class="form-group has-float-label">
               <label for="idClienteRemitente" class="tamanio-label">Remitente *</label>
@@ -115,9 +121,9 @@
             </div>
           </div>
           <div class="col-md-1 button-input">
-            <button class="btn btn-primary btn-size" type="button">Agregar</button>
+            <button class="btn btn-primary btn-size" type="button" (click)="agregarCliente(1)">Agregar</button>
           </div>
-          <div class="col-md-3 input-button">
+          <div class="col-md-5 input-button">
             <!-- Destinatario -->
             <div class="form-group has-float-label">
               <label for="idClienteDestinatario" class="tamanio-label">Destinatario *</label>
@@ -131,7 +137,7 @@
             </div>
           </div>
           <div class="col-md-1 button-input">
-            <button class="btn btn-primary btn-size" type="button">Agregar</button>
+            <button class="btn btn-primary btn-size" type="button" (click)="agregarCliente(2)">Agregar</button>
           </div>
         </div>
         <div class="row">
@@ -225,7 +231,7 @@
             <th class="text-center" style="width:10%" scope="col">Fecha</th>
             <th class="text-center" style="width:15%" scope="col">Tipo Comprobante</th>
             <th class="text-center" style="width:10%" scope="col">Punto Venta</th>
-            <th class="text-center" style="width:10%" scope="col">N° Comprobante</th>
+            <th class="text-center" style="width:10%" scope="col">N° Comprob.</th>
             <th class="text-center" style="width:10%" scope="col">Bultos</th>
             <th class="text-center" style="width:20%" scope="col">Observaciones</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
@@ -244,10 +250,10 @@
               <span>{{l.tipoComprobante.nombre}}</span>
             </td>
             <td align="center">
-              <span>{{displayCeros(l)}}</span>
+              <span>{{displayCeros(l.puntoVenta, '0000', -5)}}</span>
             </td>
             <td align="center">
-              <span>{{l.numero}}</span>
+              <span>{{displayCeros(l.numero, '0000000', -8)}}</span>
             </td>
             <td align="center">
               <span>{{l.bultos}}</span>

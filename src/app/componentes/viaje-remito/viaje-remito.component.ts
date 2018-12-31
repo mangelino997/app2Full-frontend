@@ -1,13 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ViajeRemitoService } from '../../servicios/viaje-remito.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ClienteService } from '../../servicios/cliente.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { TipoComprobanteService } from '../../servicios/tipo-comprobante.service';
+import { CondicionIvaService } from '../../servicios/condicion-iva.service';
+import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
+import { BarrioService } from '../../servicios/barrio.service';
+import { LocalidadService } from '../../servicios/localidad.service';
+import { CobradorService } from '../../servicios/cobrador.service';
+import { ZonaService } from '../../servicios/zona.service';
+import { RubroService } from '../../servicios/rubro.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-viaje-remito',
@@ -47,11 +55,13 @@ export class ViajeRemitoComponent implements OnInit {
   public tiposComprobantes:Array<any> = [];
   //Define la lista de letras
   public letras:Array<any> = [];
+  //Define el estado de la letra
+  public estadoLetra:boolean = false;
   //Constructor
   constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private sucursalServicio: SucursalService, private clienteServicio: ClienteService,
-    private tipoComprobanteServicio: TipoComprobanteService) {
+    private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -138,12 +148,12 @@ export class ViajeRemitoComponent implements OnInit {
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
     //Crea la lista de letras
-    this.letras = ['A', 'B', 'C', 'R'];
+    this.letras = ['A', 'B', 'C'];
   }
   //Establece el formulario al seleccionar elemento de autocompletado
   public establecerFormulario(elemento) {
     this.formulario.patchValue(elemento);
-    this.formulario.get('puntoVenta').setValue(this.displayCeros(elemento));
+    this.formulario.get('puntoVenta').setValue(this.displayCeros(elemento.puntoVenta, '0000', -5));
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
@@ -181,6 +191,7 @@ export class ViajeRemitoComponent implements OnInit {
   //Establece el tipo comprobante por defecto
   private establecerTipoComprobantePorDefecto() {
     this.formulario.get('tipoComprobante').setValue(this.tiposComprobantes[1]);
+    this.formulario.get('letra').setValue('R');
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -286,6 +297,7 @@ export class ViajeRemitoComponent implements OnInit {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
+          this.establecerValoresPorDefecto();
           this.establecerTipoComprobantePorDefecto();
           setTimeout(function() {
             document.getElementById('idFecha').focus();
@@ -339,6 +351,17 @@ export class ViajeRemitoComponent implements OnInit {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   }
+  //Establece la letra al cambiar el tipo de comprobante
+  public cambioTipoComprobante(): void {
+    let id = this.formulario.get('tipoComprobante').value.id;
+    if(id == 5) {
+      this.formulario.get('letra').setValue('R');
+      this.estadoLetra = false;
+    } else {
+      this.estadoLetra = true;
+      this.formulario.get('letra').setValue(this.letras[0]);
+    }
+  }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
@@ -356,6 +379,26 @@ export class ViajeRemitoComponent implements OnInit {
     this.establecerEstadoCampos(true);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario(elemento);
+  }
+  //Abre el dialogo para agregar un cliente eventual
+  public agregarCliente(tipo): void {
+    const dialogRef = this.dialog.open(ClienteEventualDialogo, {
+      width: '1200px',
+      data: {
+        formulario: null,
+        usuario: this.appComponent.getUsuario()
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
+        var cliente = res.json();
+        if(tipo == 1) {
+          this.formulario.get('clienteRemitente').setValue(cliente);
+        } else {
+          this.formulario.get('clienteDestinatario').setValue(cliente);
+        }
+      })
+    });
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
@@ -381,9 +424,9 @@ export class ViajeRemitoComponent implements OnInit {
     }
   }
   //Define como se muestra los datos con ceros a la izquierda
-  public displayCeros(elemento) {
+  public displayCeros(elemento, string, cantidad) {
     if(elemento != undefined) {
-      return elemento.puntoVenta ? ("00000" + elemento.puntoVenta).slice(-5) : elemento;
+      return elemento ? (string + elemento).slice(cantidad) : elemento;
     } else {
       return elemento;
     }
@@ -397,6 +440,250 @@ export class ViajeRemitoComponent implements OnInit {
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
+    }
+  }
+}
+//Componente Cliente Eventual
+@Component({
+  selector: 'cliente-eventual-dialogo',
+  templateUrl: '../cliente/cliente-eventual.component.html'
+})
+export class ClienteEventualDialogo {
+  //Define un formulario para validaciones de campos
+  public formulario:FormGroup;
+  //Define la lista de condiciones de iva
+  public condicionesIva:Array<any> = [];
+  //Define la lista de tipos de documentos
+  public tiposDocumentos:Array<any> = [];
+  //Define la lista de resultados de busqueda de barrio
+  public resultadosBarrios:Array<any> = [];
+  //Define la lista de resultados de busqueda de barrio
+  public resultadosLocalidades:Array<any> = [];
+  //Define la lista de resultados de busqueda de cobrador
+  public resultadosCobradores:Array<any> = [];
+  //Define la lista de resultados de busqueda de zona
+  public resultadosZonas:Array<any> = [];
+  //Define la lista de resultados de busqueda de rubro
+  public resultadosRubros:Array<any> = [];
+  //Define la lista de resultados de busqueda de sucursal lugar pago
+  public resultadosSucursalesPago:Array<any> = [];
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<ClienteEventualDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+  private condicionIvaServicio: CondicionIvaService, private tipoDocumentoServicio: TipoDocumentoService, 
+  private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
+  private cobradorServicio: CobradorService, private zonaServicio: ZonaService,
+  private rubroServicio: RubroService, private sucursalServicio: SucursalService,
+  private clienteServicio: ClienteService, private toastr: ToastrService) { }
+  ngOnInit() {
+    //Define los campos para validaciones
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      razonSocial: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      nombreFantasia: new FormControl('', Validators.maxLength(45)),
+      domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
+      localidad: new FormControl('', [Validators.required]),
+      barrio: new FormControl(),
+      telefono: new FormControl('', [Validators.maxLength(45)]),
+      zona: new FormControl(),
+      rubro: new FormControl(),
+      cobrador: new FormControl(),
+      condicionIva: new FormControl(),
+      tipoDocumento: new FormControl(),
+      numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(15)]),
+      numeroIIBB: new FormControl('', Validators.maxLength(15)),
+      sucursalLugarPago: new FormControl(),
+      usuarioAlta: new FormControl()
+    });
+    //Autocompletado Barrio - Buscar por nombre
+    this.formulario.get('barrio').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.barrioServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosBarrios = response;
+        })
+      }
+    })
+    //Autocompletado Localidad - Buscar por nombre
+    this.formulario.get('localidad').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.localidadServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosLocalidades = response;
+        })
+      }
+    })
+    //Autocompletado Cobrador - Buscar por nombre
+    this.formulario.get('cobrador').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.cobradorServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosCobradores = response;
+        })
+      }
+    })
+    //Autocompletado Zona - Buscar por nombre
+    this.formulario.get('zona').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.zonaServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosZonas = response;
+        })
+      }
+    })
+    //Autocompletado Rubro - Buscar por nombre
+    this.formulario.get('rubro').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.rubroServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosRubros = response;
+        })
+      }
+    })
+    //Autocompletado Sucursal Lugar Pago - Buscar por nombre
+    this.formulario.get('sucursalLugarPago').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.sucursalServicio.listarPorNombre(data).subscribe(response => {
+          this.resultadosSucursalesPago = response;
+        })
+      }
+    })
+    //Obtiene la lista de condiciones de iva
+    this.listarCondicionesIva();
+    //Obtiene la lista de tipos de documentos
+    this.listarTiposDocumentos();
+    //Obtiene el siguiente id
+    this.obtenerSiguienteId();
+    //Establece el foco en condicion de iva
+    setTimeout(function() {
+      document.getElementById('idCondicionIva').focus();
+    }, 20);
+  }
+  //Obtiene el listado de condiciones de iva
+  private listarCondicionesIva() {
+    this.condicionIvaServicio.listar().subscribe(
+      res => {
+        this.condicionesIva = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de tipos de documentos
+  private listarTiposDocumentos() {
+    this.tipoDocumentoServicio.listar().subscribe(
+      res => {
+        this.tiposDocumentos = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  onNoClick(): void {
+    this.data.formulario = this.formulario;
+    console.log(this.data.formulario);
+    this.dialogRef.close();
+  }
+  public cerrar(): void {
+    this.data.formulario = this.formulario;
+    console.log(this.data.formulario);
+  }
+  //Obtiene el siguiente id
+  private obtenerSiguienteId() {
+    this.clienteServicio.obtenerSiguienteId().subscribe(
+      res => {
+        this.formulario.get('id').setValue(res.json());
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Agrega un cliente eventual
+  public agregarClienteEventual(): void {
+    this.formulario.get('usuarioAlta').setValue(this.data.usuario);
+    this.clienteServicio.agregarClienteEventual(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 201) {
+          this.reestablecerFormulario(respuesta.id);
+          setTimeout(function() {
+            document.getElementById('idCondicionIva').focus();
+          }, 20);
+          this.data.formulario = respuesta.id-1;
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        this.lanzarError(err);
+      }
+    )
+  }
+  //Reestablece el formulario
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
+    this.vaciarListas();
+  }
+  //Vacia la lista de resultados de autocompletados
+  private vaciarListas() {
+    this.resultadosBarrios = [];
+    this.resultadosLocalidades = [];
+    this.resultadosCobradores = [];
+    this.resultadosZonas = [];
+    this.resultadosRubros = [];
+    this.resultadosSucursalesPago = [];
+  }
+  //Manejo de colores de campos y labels
+  public cambioCampo(id, label) {
+    document.getElementById(id).classList.remove('is-invalid');
+    document.getElementById(label).classList.remove('label-error');
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    var respuesta = err.json();
+    if(respuesta.codigo == 11006) {
+      document.getElementById("labelRazonSocial").classList.add('label-error');
+      document.getElementById("idRazonSocial").classList.add('is-invalid');
+      document.getElementById("idRazonSocial").focus();
+    } else if(respuesta.codigo == 11009) {
+      document.getElementById("labelTelefono").classList.add('label-error');
+      document.getElementById("idTelefono").classList.add('is-invalid');
+      document.getElementById("idTelefono").focus();
+    } else if(respuesta.codigo == 11010) {
+      document.getElementById("labelNumeroDocumento").classList.add('label-error');
+      document.getElementById("idNumeroDocumento").classList.add('is-invalid');
+      document.getElementById("idNumeroDocumento").focus();
+    }
+    this.toastr.error(respuesta.mensaje);
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
+        + ', ' + elemento.provincia.pais.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado c
+  public displayFc(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
+    } else {
+      return elemento;
     }
   }
 }
