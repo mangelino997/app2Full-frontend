@@ -60,6 +60,14 @@ export class CompaniaSeguroPolizaService {
   public obtenerPorCompaniaSeguroYEmpresa(idCompaniaSeguro, idEmpresa) {
     return this.http.get(this.url + '/obtenerPorCompaniaSeguroYEmpresa/' + idCompaniaSeguro + '/' + idEmpresa, this.options);
   }
+  //Obtiene por nombre de compania de seguro
+  public listarPorCompaniaSeguroNombre(nombre) {
+    return this.http.get(this.url + '/listarPorCompaniaSeguroNombre/' + nombre, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

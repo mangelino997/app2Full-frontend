@@ -12,6 +12,7 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatAutocompleteTrigger } from '@angular/material';
+import { Vehiculo } from 'src/app/modelos/vehiculo';
 
 @Component({
   selector: 'app-vehiculo',
@@ -60,7 +61,7 @@ export class VehiculoComponent implements OnInit {
   //Define la lista de resultados de busqueda localidad
   public resultadosLocalidades = [];
   //Define la lista de resultados de busqueda compania seguro
-  public resultadosCompaniasSeguros = [];
+  public resultadosCompaniasSegurosPolizas = [];
   //Define la lista de resultados de busqueda personal
   public resultadosPersonales = [];
   //Define el campo de control configuracion
@@ -74,7 +75,7 @@ export class VehiculoComponent implements OnInit {
     private localidadServicio: LocalidadService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService,
-    private personalServicio: PersonalService) {
+    private personalServicio: PersonalService, private vehiculoModelo: Vehiculo) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -102,33 +103,7 @@ export class VehiculoComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      configuracionVehiculo: new FormControl('', Validators.required),
-      dominio: new FormControl('', [Validators.required, Validators.maxLength(10)]),
-      numeroInterno: new FormControl('', Validators.maxLength(5)),
-      localidad: new FormControl('', Validators.required),
-      anioFabricacion: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(4)]),
-      numeroMotor: new FormControl('', [Validators.min(5), Validators.maxLength(25)]),
-      numeroChasis: new FormControl('', [Validators.min(5), Validators.maxLength(25)]),
-      empresa: new FormControl('', Validators.required),
-      personal: new FormControl(),
-      vehiculoRemolque: new FormControl(),
-      companiaSeguroPoliza: new FormControl(),
-      vtoRTO: new FormControl('', Validators.required),
-      numeroRuta: new FormControl('', [Validators.required, Validators.min(5), Validators.maxLength(25)]),
-      vtoRuta: new FormControl('', Validators.required),
-      vtoSenasa: new FormControl(),
-      vtoHabBromatologica: new FormControl(),
-      usuarioAlta: new FormControl(),
-      fechaAlta: new FormControl(),
-      usuarioBaja: new FormControl(),
-      fechaBaja: new FormControl(),
-      usuarioMod: new FormControl(),
-      fechaUltimaMod: new FormControl(),
-      alias: new FormControl('', Validators.maxLength(100))
-    });
+    this.formulario = this.vehiculoModelo.formulario;
     //Autocompletado - Buscar por alias filtro remolque
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -150,6 +125,14 @@ export class VehiculoComponent implements OnInit {
       if (typeof data == 'string') {
         this.personalServicio.listarChoferPorAlias(data).subscribe(response => {
           this.resultadosPersonales = response;
+        })
+      }
+    })
+    //Autocompletado Compania de Seguro - Buscar por nombre
+    this.formulario.get('companiaSeguroPoliza').valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        this.companiaSeguroPolizaServicio.listarPorCompaniaSeguroNombre(data).subscribe(response => {
+          this.resultadosCompaniasSegurosPolizas = response;
         })
       }
     })
@@ -200,7 +183,7 @@ export class VehiculoComponent implements OnInit {
     this.resultados = [];
     this.resultadosVehiculosRemolques = [];
     this.resultadosLocalidades = [];
-    this.resultadosCompaniasSeguros = [];
+    this.resultadosCompaniasSegurosPolizas = [];
     this.resultadosPersonales = [];
   }
   //Funcion para establecer los valores de las pestañas
@@ -283,20 +266,12 @@ export class VehiculoComponent implements OnInit {
       }
     );
   }
-  //Establece el tipo de vehiculo seleccionado de lista tipo vehiculos
-  public establecerTipoVehiculo(elemento) {
-    this.tipoVehiculo.setValue(elemento);
-    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
-  }
-  //Establece la marca de vehiculo seleccionado de lista marca vehiculos
-  public establecerMarcaVehiculo(elemento) {
-    this.marcaVehiculo.setValue(elemento);
-    this.listarConfiguracionesPorTipoVehiculoMarcaVehiculo();
-  }
   //Obtiene la lista de configuraciones de vehiculos por tipoVehiculo y marcaVehiculo
-  private listarConfiguracionesPorTipoVehiculoMarcaVehiculo() {
-    if(this.tipoVehiculo.value != null && this.marcaVehiculo.value != null) {
-      this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(this.tipoVehiculo.value.id, this.marcaVehiculo.value.id)
+  public listarConfiguracionesPorTipoVehiculoMarcaVehiculo() {
+    let tipoVehiculo = this.tipoVehiculo.value;
+    let marcaVehiculo = this.marcaVehiculo.value;
+    if(tipoVehiculo != null && marcaVehiculo != null) {
+      this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id)
         .subscribe(
           res => {
             this.configuracionesVehiculos = res.json();
@@ -468,8 +443,8 @@ export class VehiculoComponent implements OnInit {
   //Muestra el valor en los autocompletados e
   public displayFe(elemento) {
     if(elemento != undefined) {
-      return elemento.companiaSeguro ? elemento.companiaSeguro.nombre + ' - N° Póliza: ' + elemento.numeroPoliza +
-        ' - Vto. Póliza: ' + elemento.vtoPoliza : elemento;
+      return elemento.companiaSeguro ? elemento.companiaSeguro.nombre + ' - Empresa: ' + elemento.empresa.razonSocial + 
+        ' - N° Póliza: ' + elemento.numeroPoliza + ' - Vto. Póliza: ' + elemento.vtoPoliza : elemento;
     } else {
       return elemento;
     }

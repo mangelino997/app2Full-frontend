@@ -31,9 +31,9 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
-              <mat-select id="idTipoVehiculo" class="form-control form-control-sm" formControlName="tipoVehiculo" [compareWith]="compareFn">
-                <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo"
-                  (onSelectionChange)="establecerTipoVehiculo(itemTipoVehiculo)">
+              <mat-select id="idTipoVehiculo" class="form-control form-control-sm" [formControl]="tipoVehiculo" [compareWith]="compareFn"
+                (selectionChange)="listarConfiguracionesPorTipoVehiculoMarcaVehiculo()">
+                <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
                   {{itemTipoVehiculo.nombre}}
                 </mat-option>
               </mat-select>
@@ -42,9 +42,9 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
-              <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo" [compareWith]="compareFn">
-                <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo"
-                  (onSelectionChange)="establecerMarcaVehiculo(itemMarcaVehiculo)">
+              <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" [formControl]="marcaVehiculo" [compareWith]="compareFn"
+                (selectionChange)="listarConfiguracionesPorTipoVehiculoMarcaVehiculo()">
+                <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                   {{itemMarcaVehiculo.nombre}}
                 </mat-option>
               </mat-select>
@@ -176,8 +176,9 @@
                 [formControl]="formulario.get('companiaSeguroPoliza')" [matAutocomplete]="autoCompaniaSeguro"
                 autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFe.bind(this)">
-                <mat-option *ngFor="let itemCompaniaSeguro of companiasSegurosPolizas" [value]="itemCompaniaSeguro">
-                  {{itemCompaniaSeguro.companiaSeguro.nombre}} - N° Póliza: {{itemCompaniaSeguro.numeroPoliza}}
+                <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSegurosPolizas" [value]="itemCompaniaSeguro">
+                  {{itemCompaniaSeguro.companiaSeguro.nombre}} - Empresa: {{itemCompaniaSeguro.empresa.razonSocial}} 
+                  - N° Póliza: {{itemCompaniaSeguro.numeroPoliza}}
                   - Vto. Póliza: {{itemCompaniaSeguro.vtoPoliza}}
                 </mat-option>
               </mat-autocomplete>
