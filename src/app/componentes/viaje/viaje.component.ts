@@ -84,6 +84,16 @@ export class ViajeComponent implements OnInit {
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
+  //Define la lista de resultados de vehiculos
+  public resultadosVehiculos:Array<any> = [];
+  //Define la lista de resultados de vehiculos remolques
+  public resultadosVehiculosRemolques:Array<any> = [];
+  //Define la lista de resultados de choferes
+  public resultadosChoferes:Array<any> = [];
+  //Define la lista de resultados de tramos
+  public resultadosTramos:Array<any> = [];
+  //Define la lista de resultados de clientes
+  public resultadosClientes:Array<any> = [];
   //Define la lista de resultados proveedores de busqueda
   public resultadosProveedores:Array<any> = [];
   //Define la lista de resultados rubro producto de busqueda
@@ -98,6 +108,16 @@ export class ViajeComponent implements OnInit {
   public insumos:Array<any> = [];
   //Define la lista de empresas
   public empresas:Array<any> = [];
+  //Define la lista de unidades de negocios
+  public unidadesNegocios:Array<any> = [];
+  //Define la lista de viajes tipos cargas
+  public viajesTiposCargas:Array<any> = [];
+  //Define la lista de viajes tipos
+  public viajesTipos:Array<any> = [];
+  //Define la lista de viajes tarifas
+  public viajesTarifas:Array<any> = [];
+  //Define la lista de dedor-destinatario
+  public listaDadorDestinatario:Array<any> = [];
   //Constructor
   constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -181,8 +201,64 @@ export class ViajeComponent implements OnInit {
     this.listarInsumos();
     //Obtiene la lista de empresas
     this.listarEmpresas();
+    //Obtiene la lista de unidades de negocios
+    this.listarUnidadesNegocios();
+    //Obtiene la lista de viajes tipos cargas
+    this.listarViajesTiposCargas();
+    //Obtiene la lista de viajes tipos
+    this.listarViajesTipos();
+    //Obtiene la lista de viajes tarifas
+    this.listarViajesTarifas();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
+    //Autocompletado Vehiculo - Buscar por alias
+    this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.vehiculoServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosVehiculos = response;
+        })
+      }
+    })
+    //Autocompletado Vehiculo Remolque - Buscar por alias
+    this.formularioViajePropio.get('vehiculoRemolque').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.vehiculoServicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
+          this.resultadosVehiculosRemolques = response;
+        })
+      }
+    })
+    //Autocompletado Personal - Buscar por alias
+    this.formularioViajePropio.get('personal').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.personalServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosChoferes = response;
+        })
+      }
+    })
+    //Autocompletado Tramo - Buscar por alias
+    this.formularioViajePropioTramo.get('tramo').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.tramoServicio.listarPorOrigen(data).subscribe(response => {
+          this.resultadosTramos = response;
+        })
+      }
+    })
+    //Autocompletado Cliente Dador - Buscar por alias
+    this.formularioViajePropioTramoCliente.get('clienteDador').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosClientes = response;
+        })
+      }
+    })
+    //Autocompletado Cliente Destinatario - Buscar por alias
+    this.formularioViajePropioTramoCliente.get('clienteDestinatario').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosClientes = response;
+        })
+      }
+    })
     //Autocompletado Proveedor - Buscar por alias
     this.formularioViajePropioInsumo.get('proveedor').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -202,11 +278,18 @@ export class ViajeComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
+    let valor = 0;
+    let fecha = new Date().toISOString().substring(0,10);
     let usuario = this.appComponent.getUsuario();
     this.formularioViajePropio.get('usuario').setValue(usuario);
     this.usuarioNombre.setValue(usuario.nombre);
     this.tipoViaje.setValue(true);
     this.formularioViajePropio.get('esRemolquePropio').setValue(true);
+    this.formularioViajePropio.get('fecha').setValue(fecha);
+    this.formularioViajePropioTramo.get('fechaTramo').setValue(fecha);
+    this.formularioViajePropioTramo.get('cantidad').setValue(valor);
+    this.formularioViajePropioTramo.get('precioUnitario').setValue(valor.toFixed(2));
+    this.formularioViajePropioTramo.get('importe').setValue(valor.toFixed(2));
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -240,6 +323,50 @@ export class ViajeComponent implements OnInit {
     this.empresaServicio.listar().subscribe(
       res => {
         this.empresas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de unidades de negocio
+  private listarUnidadesNegocios() {
+    this.viajeUnidadNegocioServicio.listar().subscribe(
+      res => {
+        this.unidadesNegocios = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de viaje tipo carga
+  private listarViajesTiposCargas() {
+    this.viajeTipoCargaServicio.listar().subscribe(
+      res => {
+        this.viajesTiposCargas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de viajes tipos
+  private listarViajesTipos() {
+    this.viajeTipoServicio.listar().subscribe(
+      res => {
+        this.viajesTipos = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de viajes tarifas
+  private listarViajesTarifas() {
+    this.viajeTarifaServicio.listar().subscribe(
+      res => {
+        this.viajesTarifas = res.json();
       },
       err => {
         console.log(err);
@@ -406,6 +533,27 @@ export class ViajeComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     console.log();
+  }
+  //Calcula el importe a partir de cantidad/km y precio unitario
+  public calcularImporte(): void {
+    let cantidad = this.formularioViajePropioTramo.get('cantidad').value;
+    let precioUnitario = this.formularioViajePropioTramo.get('precioUnitario').value;
+    this.formularioViajePropioTramo.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(2));
+    if(cantidad != null && precioUnitario != null) {
+      let importe = cantidad * precioUnitario;
+      this.formularioViajePropioTramo.get('importe').setValue(importe.toFixed(2));
+    }
+  }
+  //Agrega el dador y el destinatario a la tabla
+  public agregarDadorDestinatario(): void {
+    this.listaDadorDestinatario.push(this.formularioViajePropioTramoCliente.value);
+    this.formularioViajePropioTramoCliente.reset();
+    document.getElementById('idTramoDadorCarga').focus();
+  }
+  //Elimina un dador-destinatario de la tabla
+  public eliminarDadorDestinatario(indice): void {
+    this.listaDadorDestinatario.splice(indice, 1);
+    document.getElementById('idTramoDadorCarga').focus();
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
