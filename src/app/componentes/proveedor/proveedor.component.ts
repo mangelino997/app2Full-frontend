@@ -114,7 +114,7 @@ export class ProveedorComponent implements OnInit {
       id: new FormControl(),
       version: new FormControl(),
       razonSocial: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      nombreFantasia: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      nombreFantasia: new FormControl('', [Validators.maxLength(45)]),
       domicilio: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       barrio: new FormControl(),
       localidad: new FormControl('', Validators.required),

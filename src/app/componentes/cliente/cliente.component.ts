@@ -495,21 +495,25 @@ export class ClienteComponent implements OnInit {
   private agregar() {
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    this.servicio.agregar(this.formulario.value).subscribe(
-      res => {
-        var respuesta = res.json();
-        if(respuesta.codigo == 201) {
-          this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
-            document.getElementById('idRazonSocial').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-        }
-      },
-      err => {
-        this.lanzarError(err);
-      }
-    );
+    if(this.formulario.get('barrio').value == '') {
+      this.formulario.get('barrio').setValue(null);
+    }
+    console.log(this.formulario.value);
+    // this.servicio.agregar(this.formulario.value).subscribe(
+    //   res => {
+    //     var respuesta = res.json();
+    //     if(respuesta.codigo == 201) {
+    //       this.reestablecerFormulario(respuesta.id);
+    //       setTimeout(function() {
+    //         document.getElementById('idRazonSocial').focus();
+    //       }, 20);
+    //       this.toastr.success(respuesta.mensaje);
+    //     }
+    //   },
+    //   err => {
+    //     this.lanzarError(err);
+    //   }
+    // );
   }
   //Actualiza un registro
   private actualizar() {
@@ -585,6 +589,14 @@ export class ClienteComponent implements OnInit {
           this.toastr.error('Sitio Web Incorrecto');
         }
       }
+    }
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor == 'object') {
+      console.log('ES JSON');
+    } else {
+      console.log('NO ES JSON');
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
