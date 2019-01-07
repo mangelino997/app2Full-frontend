@@ -91,7 +91,7 @@ import { CondicionVentaService } from './servicios/condicion-venta.service';
 import { RolSubopcionService } from './servicios/rol-subopcion.service';
 import { UsuarioEmpresaService } from './servicios/usuario-empresa.service';
 import { ViajeRemitoService } from './servicios/viaje-remito.service';
-import { InsumoService } from './servicios/insumo.service';
+import { InsumoProductoService } from './servicios/insumo-producto.service';
 import { ViajePrecioService } from './servicios/viaje-precio.service';
 import { ViajeTarifaService } from './servicios/viaje-tarifa.service';
 import { ViajeTipoCargaService } from './servicios/viaje-tipo-carga.service';
@@ -521,7 +521,7 @@ const stompConfig: StompConfig = {
     RolSubopcionService,
     UsuarioEmpresaService,
     ViajeRemitoService,
-    InsumoService,
+    InsumoProductoService,
     ViajePrecioService,
     ViajeTarifaService,
     ViajeTipoCargaService,

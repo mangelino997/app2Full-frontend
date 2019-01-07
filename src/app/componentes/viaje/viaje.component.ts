@@ -16,7 +16,7 @@ import { ViajeTarifaService } from '../../servicios/viaje-tarifa.service';
 import { ViajePrecioService } from '../../servicios/viaje-precio.service';
 import { ClienteService } from '../../servicios/cliente.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
-import { InsumoService } from '../../servicios/insumo.service';
+import { InsumoProductoService } from '../../servicios/insumo-producto.service';
 import { RubroProductoService } from '../../servicios/rubro-producto.service';
 import { ViajeRemitoService } from '../../servicios/viaje-remito.service';
 import { ChoferProveedorService } from '../../servicios/chofer-proveedor.service';
@@ -108,7 +108,7 @@ export class ViajeComponent implements OnInit {
     private viajeUnidadNegocioServicio: ViajeUnidadNegocioService, private viajeTipoCargaServicio: ViajeTipoCargaService,
     private viajeTipoServicio: ViajeTipoService, private viajeTarifaServicio: ViajeTarifaService,
     private viajaPrecioServicio: ViajePrecioService, private clienteServicio: ClienteService,
-    private proveedorServicio: ProveedorService, private insumoServicio: InsumoService,
+    private proveedorServicio: ProveedorService, private insumoProductoServicio: InsumoProductoService,
     private rubroProductoServicio: RubroProductoService, private viajeRemitoServicio: ViajeRemitoService,
     private choferProveedorServicio: ChoferProveedorService, private viajePropioModelo: ViajePropio,
     private viajePropioTramoModelo: ViajePropioTramo, private viajePropioTramoClienteModelo: ViajePropioTramoCliente,
@@ -226,7 +226,7 @@ export class ViajeComponent implements OnInit {
   }
   //Obtiene el listado de insumos
   private listarInsumos() {
-    this.insumoServicio.listar().subscribe(
+    this.insumoProductoServicio.listar().subscribe(
       res => {
         this.insumos = res.json();
       },
