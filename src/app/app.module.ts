@@ -115,6 +115,7 @@ import { NotaCredito } from './modelos/notaCredito';
 import { NotaDebito } from './modelos/notaDebito';
 import { Reparto } from './modelos/reparto';
 import { UsuarioEmpresa } from './modelos/usuarioEmpresa';
+import { CompaniaSeguroPoliza } from './modelos/companiaSeguroPoliza';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -517,6 +518,7 @@ const stompConfig: StompConfig = {
     VehiculoService,
     VehiculoProveedorService,
     CompaniaSeguroPolizaService,
+    CompaniaSeguroPoliza,
     CondicionVentaService,
     RolSubopcionService,
     UsuarioEmpresaService,

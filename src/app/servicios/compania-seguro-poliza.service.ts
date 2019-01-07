@@ -15,8 +15,6 @@ export class CompaniaSeguroPolizaService {
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -53,6 +51,14 @@ export class CompaniaSeguroPolizaService {
   //Obtiene un listado por empresa
   public listarPorEmpresa(id) {
     return this.http.get(this.url + '/listarPorEmpresa/' + id, this.options);
+  }
+  //Obtiene un listado por compania de seguro
+  public listarPorCompaniaSeguro(id) {
+    return this.http.get(this.url + '/listarPorCompaniaSeguro/' + id, this.options);
+  }
+  //Obtiene por compania de seguro y empresa
+  public obtenerPorCompaniaSeguroYEmpresa(idCompaniaSeguro, idEmpresa) {
+    return this.http.get(this.url + '/obtenerPorCompaniaSeguroYEmpresa/' + idCompaniaSeguro + '/' + idEmpresa, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

@@ -6,6 +6,7 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { CompaniaSeguroPoliza } from 'src/app/modelos/companiaSeguroPoliza';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -45,14 +46,14 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Constructor
   constructor(private servicio: CompaniaSeguroPolizaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
-    private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService) {
+    private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
+    private companiaSeguroPolizaModelo: CompaniaSeguroPoliza) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(1, 195)
     .subscribe(
       res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
-        console.log(res.json());
       },
       err => {
         console.log(err);
@@ -66,17 +67,10 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      companiaSeguro: new FormControl('', Validators.required),
-      empresa: new FormControl('', Validators.required),
-      numeroPoliza: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      vtoPoliza: new FormControl('', Validators.required)
-    });
+    this.formulario = this.companiaSeguroPolizaModelo.formulario;
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string' && data != '') {
         this.companiaSeguroServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosCompaniasSeguros = res;
         })
@@ -84,8 +78,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    this.listar();
     //Obtiene la lista de empresas
     this.listarEmpresas();
   }
@@ -97,6 +89,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Vacia la listas de resultados autocompletados
   private vaciarListas() {
+    this.listaCompleta = [];
     this.resultadosCompaniasSeguros = [];
   }
   //Funcion para establecer los valores de las pestañas
@@ -131,20 +124,24 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       case 1:
         this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, false, false, true, 'idEmpresa');
+        this.establecerValoresPestania(nombre, false, false, true, 'idCompaniaSeguro');
         break;
       case 2:
         this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, false, 'idEmpresaBusqueda');
+        this.establecerValoresPestania(nombre, true, true, false, 'idCompaniaSeguro');
         break;
       case 3:
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, true, false, true, 'idEmpresaBusqueda');
+        this.establecerValoresPestania(nombre, true, false, true, 'idCompaniaSeguro');
         break;
       case 4:
         this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, true, 'idEmpresaBusqueda');
+        this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
         break;
+      case 5:
+        setTimeout(function() {
+          document.getElementById('idCompaniaSeguro').focus();
+        }, 20);
       default:
         break;
     }
@@ -176,17 +173,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.servicio.agregar(this.formulario.value).subscribe(
@@ -195,19 +181,14 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idEmpresa').focus();
+            document.getElementById('idCompaniaSeguro').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.toastr.error(respuesta.mensaje);
       }
     );
   }
@@ -219,19 +200,14 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           setTimeout(function() {
-            document.getElementById('idEmpresaBusqueda').focus();
+            document.getElementById('idCompaniaSeguro').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.toastr.error(respuesta.mensaje);
       }
     );
   }
@@ -245,6 +221,28 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorEmpresa(elemento.id).subscribe(res => {
         this.resultados = res.json();
+      })
+    }
+  }
+  //Obtiene un listado por compania de seguro
+  public listarPorCompaniaSeguro() {
+    let companiaSeguro = this.formulario.get('companiaSeguro').value;
+    this.servicio.listarPorCompaniaSeguro(companiaSeguro.id).subscribe(res => {
+      this.listaCompleta = res.json();
+    })
+  }
+  //Obtiene un listado por compania de seguro
+  public obtenerPorCompaniaSeguroYEmpresa() {
+    let companiaSeguro = this.formulario.get('companiaSeguro').value;
+    let empresa = this.formulario.get('empresa').value;
+    if(companiaSeguro != null && empresa != null) {
+      this.servicio.obtenerPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
+        try {
+          this.formulario.patchValue(res.json());
+        } catch(e) {
+          this.formulario.get('numeroPoliza').reset();
+          this.formulario.get('vtoPoliza').reset();
+        }
       })
     }
   }
