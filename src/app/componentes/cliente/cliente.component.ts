@@ -20,6 +20,7 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { Cliente } from 'src/app/modelos/cliente';
 
 @Component({
   selector: 'app-cliente',
@@ -95,7 +96,7 @@ export class ClienteComponent implements OnInit {
     private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
     private companiaSeguroServicio: CompaniaSeguroService, private ordenVentaServicio: OrdenVentaService,
-    private condicionVentaServicio: CondicionVentaService) {
+    private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -133,50 +134,7 @@ export class ClienteComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      razonSocial: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      nombreFantasia: new FormControl('', Validators.maxLength(45)),
-      cuentaGrupo: new FormControl(),
-      domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
-      localidad: new FormControl('', [Validators.required]),
-      barrio: new FormControl(),
-      telefono: new FormControl('', [Validators.maxLength(45)]),
-      sitioWeb: new FormControl('', [Validators.maxLength(60)]),
-      zona: new FormControl(),
-      rubro: new FormControl(),
-      cobrador: new FormControl(),
-      vendedor: new FormControl(),
-      condicionIva: new FormControl(),
-      tipoDocumento: new FormControl(),
-      numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(15)]),
-      numeroIIBB: new FormControl('', Validators.maxLength(15)),
-      esCuentaCorriente: new FormControl(),
-      condicionVenta: new FormControl('', Validators.required),
-      resumenCliente: new FormControl(),
-      situacionCliente: new FormControl(),
-      ordenVenta: new FormControl(),
-      sucursalLugarPago: new FormControl(),
-      creditoLimite: new FormControl('', [Validators.min(0), Validators.maxLength(12)]),
-      descuentoFlete: new FormControl('', [Validators.min(0), Validators.maxLength(4)]),
-      descuentoSubtotal: new FormControl('', [Validators.min(0), Validators.maxLength(4)]),
-      esSeguroPropio: new FormControl(),
-      companiaSeguro: new FormControl(),
-      numeroPolizaSeguro: new FormControl('', Validators.maxLength(20)),
-      vencimientoPolizaSeguro: new FormControl(),
-      observaciones: new FormControl('', Validators.maxLength(400)),
-      notaEmisionComprobante: new FormControl('', Validators.maxLength(200)),
-      notaImpresionComprobante: new FormControl('', Validators.maxLength(200)),
-      notaImpresionRemito: new FormControl('', Validators.maxLength(200)),
-      imprimirControlDeuda: new FormControl('', Validators.required),
-      usuarioAlta: new FormControl(),
-      usuarioBaja: new FormControl(),
-      fechaBaja: new FormControl(),
-      usuarioMod: new FormControl(),
-      fechaUltimaMod: new FormControl(),
-      alias: new FormControl()
-    });
+    this.formulario = this.clienteModelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la primera opcion seleccionada
@@ -373,7 +331,7 @@ export class ClienteComponent implements OnInit {
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('condicionIva').enable();
+      this.formulario.get('afipCondicionIva').enable();
       this.formulario.get('tipoDocumento').enable();
       this.formulario.get('condicionVenta').enable();
       this.formulario.get('resumenCliente').enable();
@@ -381,7 +339,7 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('esSeguroPropio').enable();
       this.formulario.get('imprimirControlDeuda').enable();
     } else {
-      this.formulario.get('condicionIva').disable();
+      this.formulario.get('afipCondicionIva').disable();
       this.formulario.get('tipoDocumento').disable();
       this.formulario.get('condicionVenta').disable();
       this.formulario.get('resumenCliente').disable();

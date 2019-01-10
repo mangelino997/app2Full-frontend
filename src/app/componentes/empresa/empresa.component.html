@@ -87,7 +87,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCondicionIva" class="tamanio-label">Condición de Iva *</label>
-              <mat-select id="idCondicionIva" class="form-control form-control-sm" formControlName="condicionIva" [compareWith]="compareFn">
+              <mat-select id="idCondicionIva" class="form-control form-control-sm" formControlName="afipCondicionIva" [compareWith]="compareFn">
                 <mat-option *ngFor="let itemCondicionIva of condicionesIva" [value]="itemCondicionIva">
                   {{itemCondicionIva.nombre}}
                 </mat-option>

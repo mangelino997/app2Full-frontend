@@ -14,6 +14,7 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { Proveedor } from 'src/app/modelos/proveedor';
 
 @Component({
   selector: 'app-proveedor',
@@ -72,7 +73,7 @@ export class ProveedorComponent implements OnInit {
     private localidadServicio: LocalidadService, private afipCondicionIvaServicio: AfipCondicionIvaService,
     private tipoDocumentoServicio: TipoDocumentoService, private tipoProveedorServicio: TipoProveedorService,
     private condicionCompraServicio: CondicionCompraService, private bancoServicio: BancoService,
-    private tipoCuentaBancariaServicio: TipoCuentaBancariaService) {
+    private tipoCuentaBancariaServicio: TipoCuentaBancariaService, private proveedorModelo: Proveedor) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -110,38 +111,7 @@ export class ProveedorComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      razonSocial: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      nombreFantasia: new FormControl('', [Validators.maxLength(45)]),
-      domicilio: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      barrio: new FormControl(),
-      localidad: new FormControl('', Validators.required),
-      tipoDocumento: new FormControl('', Validators.required),
-      numeroDocumento: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(15)]),
-      numeroIIBB: new FormControl('', [Validators.min(1), Validators.maxLength(15)]),
-      sitioWeb: new FormControl('', Validators.maxLength(60)),
-      telefono: new FormControl('', Validators.maxLength(45)),
-      condicionIva: new FormControl('', Validators.required),
-      condicionCompra: new FormControl(),
-      usuarioAlta: new FormControl(),
-      usuarioBaja: new FormControl(),
-      usuarioMod: new FormControl(),
-      fechaUltimaMod: new FormControl(),
-      observaciones: new FormControl('', Validators.maxLength(400)),
-      notaIngresarComprobante: new FormControl('', Validators.maxLength(200)),
-      notaImpresionOrdenPago: new FormControl('', Validators.maxLength(200)),
-      banco: new FormControl(),
-      tipoCuentaBancaria: new FormControl(),
-      numeroCuenta: new FormControl('', [Validators.min(1), Validators.maxLength(20)]),
-      titular: new FormControl('', Validators.maxLength(45)),
-      numeroCBU: new FormControl('', [Validators.min(1), Validators.minLength(22), Validators.maxLength(22)]),
-      aliasCBU: new FormControl('', Validators.maxLength(45)),
-      tipoProveedor: new FormControl('', Validators.required),
-      estaActivo: new FormControl(),
-      alias: new FormControl('', Validators.maxLength(100))
-    });
+    this.formulario = this.proveedorModelo.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -256,14 +226,14 @@ export class ProveedorComponent implements OnInit {
   private establecerEstadoCampos(estado) {
     if(estado) {
       this.formulario.get('tipoProveedor').enabled;
-      this.formulario.get('condicionIva').enabled;
+      this.formulario.get('afipCondicionIva').enabled;
       this.formulario.get('tipoDocumento').enabled;
       this.formulario.get('condicionCompra').enabled;
       this.formulario.get('estaActivo').enabled;
       this.formulario.get('tipoCuentaBancaria').enabled;
     } else {
       this.formulario.get('tipoProveedor').disabled;
-      this.formulario.get('condicionIva').disabled;
+      this.formulario.get('afipCondicionIva').disabled;
       this.formulario.get('tipoDocumento').disabled;
       this.formulario.get('condicionCompra').disabled;
       this.formulario.get('estaActivo').disabled;

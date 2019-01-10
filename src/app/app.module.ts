@@ -117,6 +117,9 @@ import { Reparto } from './modelos/reparto';
 import { UsuarioEmpresa } from './modelos/usuarioEmpresa';
 import { CompaniaSeguroPoliza } from './modelos/companiaSeguroPoliza';
 import { Vehiculo } from './modelos/vehiculo';
+import { Cliente } from './modelos/cliente';
+import { Empresa } from './modelos/empresa';
+import { Proveedor } from './modelos/proveedor';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -453,6 +456,7 @@ const stompConfig: StompConfig = {
     ProvinciaService,
     LocalidadService,
     EmpresaService,
+    Empresa,
     SubopcionPestaniaService,
     AgendaTelefonicaService,
     AreaService,
@@ -490,11 +494,13 @@ const stompConfig: StompConfig = {
     VendedorService,
     ZonaService,
     ClienteService,
+    Cliente,
     RolOpcionService,
     AfipCondicionIvaService,
     ResumenClienteService,
     OrdenVentaService,
     ProveedorService,
+    Proveedor,
     CondicionCompraService,
     PersonalService,
     EstadoCivilService,

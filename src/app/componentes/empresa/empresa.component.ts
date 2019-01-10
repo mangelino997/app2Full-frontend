@@ -8,6 +8,7 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { Empresa } from 'src/app/modelos/empresa';
 
 @Component({
   selector: 'app-empresa',
@@ -47,7 +48,7 @@ export class EmpresaComponent implements OnInit {
   constructor(private servicio: EmpresaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService, 
-    private afipCondicionIvaServicio: AfipCondicionIvaService) {
+    private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -76,25 +77,7 @@ export class EmpresaComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      razonSocial: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
-      barrio: new FormControl(),
-      localidad: new FormControl('', Validators.required),
-      condicionIva: new FormControl('', Validators.required),
-      cuit: new FormControl('', [Validators.required, Validators.maxLength(11)]),
-      numeroIIBB: new FormControl('', Validators.maxLength(15)),
-      abreviatura: new FormControl('', [Validators.required, Validators.maxLength(15)]),
-      logoBin: new FormControl(),
-      estaActiva: new FormControl('', Validators.required),
-      inicioActividad: new FormControl(),
-      // feCaea: new FormControl(),
-      // feModo: new FormControl(),
-      // certificadoReal: new FormControl(),
-      // certificadoPrueba: new FormControl()
-    });
+    this.formulario = this.empresaModelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Barrio - Buscar por nombre
@@ -156,10 +139,10 @@ export class EmpresaComponent implements OnInit {
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('condicionIva').enable();
+      this.formulario.get('afipCondicionIva').enable();
       this.formulario.get('estaActiva').enable();
     } else {
-      this.formulario.get('condicionIva').disable();
+      this.formulario.get('afipCondicionIva').disable();
       this.formulario.get('estaActiva').disable();
     }
   }
