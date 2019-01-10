@@ -241,7 +241,7 @@
                                             <div class="form-group has-float-label">
                                                 <label for="idTramoCantidad" class="tamanio-label">Cantidad/km *</label>
                                                 <input id="idTramoCantidad" type="number" formControlName="cantidad" autocomplete="off" class="form-control form-control-sm"
-                                                    [readonly]="soloLectura || formularioViajePropioTramo.get('viajeTarifa').value.id == 2 || formularioViajePropioTramo.get('viajeTarifa').value.id == 5"
+                                                    [readonly]="soloLectura || estadoTarifa()"
                                                     (blur)="calcularImporte()">
                                             </div>
                                         </div>
@@ -249,7 +249,7 @@
                                             <div class="form-group has-float-label">
                                                 <label for="idTramoPrecioUnitario" class="tamanio-label">Precio Unitario($)*</label>
                                                 <input id="idTramoPrecioUnitario" type="number" formControlName="precioUnitario" autocomplete="off"
-                                                    class="form-control form-control-sm" [readonly]="soloLectura || formularioViajePropioTramo.get('viajeTarifa').value.id == 2 || formularioViajePropioTramo.get('viajeTarifa').value.id == 5"
+                                                    class="form-control form-control-sm" [readonly]="soloLectura || estadoTarifa()"
                                                     (blur)="calcularImporte()">
                                             </div>
                                         </div>

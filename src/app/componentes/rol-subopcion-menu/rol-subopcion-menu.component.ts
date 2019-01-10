@@ -162,7 +162,7 @@ export class RolSubopcionMenuComponent implements OnInit {
       data: { rol: this.formulario.get('rol') }
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Diálogo Usuarios Cerrado!');
+      console.log('Diálogo Vista Previa Cerrado!');
     });
   }
   //Abre el dialogo vista previa para visualizar el menu del rol
@@ -176,7 +176,7 @@ export class RolSubopcionMenuComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log('Diálogo Usuarios Cerrado!');
+      console.log('Diálogo Pestanias Cerrado!');
     });
   }
   //Visualiza las pestanias de una subopcion para actualizar estado

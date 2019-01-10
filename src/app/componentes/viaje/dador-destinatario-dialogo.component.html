@@ -1,7 +1,8 @@
-<div class="container-fluid">
+<div class="{{tema}}">
+    <h4 class="text-center">Dador - Destinatario</h4>
+    <br>
     <div class="row">
-        <div class="col-md-12">
-            <h4 class="text-center">Dador - Destinatario</h4>
+        <div class="col">
             <form [formGroup]="formulario">
                 <div class="row">
                     <div class="col-md-4">
@@ -21,8 +22,8 @@
                         <div class="form-group has-float-label">
                             <label for="idTramoDestinatario" class="tamanio-label">Destinatario *</label>
                             <input id="idTramoDestinatario" class="form-control form-control-sm" type="text" matInput
-                                [formControl]="formulario.get('clienteDestinatario')"
-                                [matAutocomplete]="autoDestinatario" autocomplete="off" [readonly]="soloLectura">
+                                [formControl]="formulario.get('clienteDestinatario')" [matAutocomplete]="autoDestinatario"
+                                autocomplete="off" [readonly]="soloLectura">
                             <mat-autocomplete #autoDestinatario="matAutocomplete" [displayWith]="displayFb.bind(this)">
                                 <mat-option *ngFor="let itemDestinatario of resultadosClientes" [value]="itemDestinatario">
                                     {{itemDestinatario.alias}}
@@ -31,11 +32,11 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <button class="btn btn-primary btn-size" type="button" (click)="agregarDadorDestinatario()">Agregar</button>
+                        <button mat-raised-button color="primary" (click)="agregarDadorDestinatario()">Agregar</button>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+                    <div class="col-md-12">
                         <table class="table table-bordered table-striped table-sm">
                             <thead>
                                 <tr>
@@ -61,6 +62,12 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <button mat-raised-button (click)="onNoClick()">Cerrar</button>
+            <button mat-raised-button color="primary" [mat-dialog-close]="listaDadorDestinatario">Aceptar</button>
         </div>
     </div>
 </div>

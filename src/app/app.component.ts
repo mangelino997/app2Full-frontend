@@ -52,6 +52,10 @@ export class AppComponent {
   public setSubopcion(subopcion) {
     this.subopcion = subopcion;
   }
+  //Obtiene el tema
+  public getTema() {
+    return this.tema;
+  }
   //Establece el tema
   public setTema(tema) {
     this.tema = tema;

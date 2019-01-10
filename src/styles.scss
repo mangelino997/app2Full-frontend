@@ -13,7 +13,7 @@ $blue-theme-theme:   mat-light-theme($blue-theme-primary, $blue-theme-accent);
 $red-theme-primary: mat-palette($mat-red);
 $red-theme-accent:  mat-palette($mat-grey, A200, A100, A400);
 $red-theme-theme:   mat-light-theme($red-theme-primary, $red-theme-accent);
-@include angular-material-theme($red-theme-theme);
+// @include angular-material-theme($red-theme-theme);
 .red-theme {
   @include angular-material-theme($red-theme-theme);
 }
@@ -21,7 +21,7 @@ $red-theme-theme:   mat-light-theme($red-theme-primary, $red-theme-accent);
 $orange-theme-primary: mat-palette($mat-deep-orange);
 $orange-theme-accent:  mat-palette($mat-grey, A200, A100, A400);
 $orange-theme-theme:   mat-light-theme($orange-theme-primary, $orange-theme-accent);
-@include angular-material-theme($orange-theme-theme);
+// @include angular-material-theme($orange-theme-theme);
 .orange-theme {
   @include angular-material-theme($orange-theme-theme);
 }
@@ -29,7 +29,7 @@ $orange-theme-theme:   mat-light-theme($orange-theme-primary, $orange-theme-acce
 $purple-theme-primary: mat-palette($mat-deep-purple);
 $purple-theme-accent:  mat-palette($mat-grey, A200, A100, A400);
 $purple-theme-theme:   mat-light-theme($purple-theme-primary, $purple-theme-accent);
-@include angular-material-theme($purple-theme-theme);
+// @include angular-material-theme($purple-theme-theme);
 .purple-theme {
   @include angular-material-theme($purple-theme-theme);
 }
@@ -37,7 +37,7 @@ $purple-theme-theme:   mat-light-theme($purple-theme-primary, $purple-theme-acce
 $green-theme-primary: mat-palette($mat-green);
 $green-theme-accent:  mat-palette($mat-grey, A200, A100, A400);
 $green-theme-theme:   mat-light-theme($green-theme-primary, $green-theme-accent);
-@include angular-material-theme($green-theme-theme);
+// @include angular-material-theme($green-theme-theme);
 .green-theme {
   @include angular-material-theme($green-theme-theme);
 }

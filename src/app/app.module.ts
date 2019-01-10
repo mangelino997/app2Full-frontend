@@ -2,13 +2,15 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
+import {
+  MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
   MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
-  MatProgressBarModule } from '@angular/material';
+  MatProgressBarModule
+} from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
-import { ToastrModule } from 'ngx-toastr';
+import { ToastrModule, OverlayContainer } from 'ngx-toastr';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
 
@@ -212,87 +214,87 @@ import { OpcionComponent } from './componentes/opcion/opcion.component';
 
 //Rutas
 const appRoutes: Routes = [
-  {path: '', component: LoginComponent},
-  {path: 'login', component: LoginComponent},
-  {path: 'home', component: HomeComponent, canActivate: [GuardiaService]},
-  {path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService]},
-  {path: 'generalesagendatelefonica', component: AgendaTelefonicaComponent, canActivate: [GuardiaService]},
-  {path: 'area', component: AreaComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'contablebancos', component: BancoComponent, canActivate: [GuardiaService]},
-  {path: 'generalesbarrios', component: BarrioComponent, canActivate: [GuardiaService]},
-  {path: 'categoriasadministrar', component: CategoriaComponent, canActivate: [GuardiaService]},
-  {path: 'generalescobradores', component: CobradorComponent, canActivate: [GuardiaService]},
-  {path: 'generalescompaniadeseguro', component: CompaniaSeguroComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'generaleslocalidades', component: LocalidadComponent, canActivate: [GuardiaService]},
-  {path: 'logisticamarcasproductos', component: MarcaProductoComponent, canActivate: [GuardiaService]},
-  {path: 'logisticamarcasvehiculos', component: MarcaVehiculoComponent, canActivate: [GuardiaService]},
-  {path: 'menumodulos', component: ModuloComponent, canActivate: [GuardiaService]},
-  {path: 'obrassocialesadministrar', component: ObraSocialComponent, canActivate: [GuardiaService]},
-  {path: 'origenesdestinosadministrar', component: OrigenDestinoComponent, canActivate: [GuardiaService]},
-  {path: 'generalesprovincias', component: ProvinciaComponent, canActivate: [GuardiaService]},
-  {path: 'rolesadministrar', component: RolComponent, canActivate: [GuardiaService]},
-  {path: 'generalesrubros', component: RubroComponent, canActivate: [GuardiaService]},
-  {path: 'logisticarubrosproductos', component: RubroProductoComponent, canActivate: [GuardiaService]},
-  {path: 'orgprevisionalesadministrar', component: SeguridadSocialComponent, canActivate: [GuardiaService]},
-  {path: 'sexo', component: SexoComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'sindicatosadministrar', component: SindicatoComponent, canActivate: [GuardiaService]},
-  {path: 'situacioncliente', component: SituacionClienteComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'menusubmodulos', component: SubmoduloComponent, canActivate: [GuardiaService]},
-  {path: 'menusubopciones', component: SubopcionComponent, canActivate: [GuardiaService]},
-  {path: 'organizacionsucursales', component: SucursalComponent, canActivate: [GuardiaService]},
-  {path: 'contablebancossucursales', component: SucursalBancoComponent, canActivate: [GuardiaService]},
-  {path: 'generalesclientessucursales', component: SucursalClienteComponent, canActivate: [GuardiaService]},
-  {path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'tipocuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'tipodocumento', component: TipoDocumentoComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'tipoproveedor', component: TipoProveedorComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'tipotarifa', component: TipoProveedorComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'logisticatiposdevehiculos', component: TipoVehiculoComponent, canActivate: [GuardiaService]},
-  {path: 'origenesdestinostramos', component: TramoComponent, canActivate: [GuardiaService]},
-  {path: 'unidadmedida', component: UnidadMedidaComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'usuariosadministrar', component: UsuarioComponent, canActivate: [GuardiaService]},
-  {path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService]},//revisar
-  {path: 'generaleszonas', component: ZonaComponent, canActivate: [GuardiaService]},
-  {path: 'generalesclientes', component: ClienteComponent, canActivate: [GuardiaService]},
-  {path: 'listasdepreciosordenesdeventa', component: OrdenVentaComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'generalesproveedores', component: ProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'contablecondicionesdecompra', component: CondicionCompraComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'contablecondicionesdeventa', component: CondicionVentaComponent, canActivate: [GuardiaService]},
-  {path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService]},
-  {path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService]},
-  {path: 'logisticaproveedoreschoferes', component: ChoferProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'logisticavehiculospropiosconfiguracion', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService]},
-  {path: 'contablebancoscontactos', component: ContactoBancoComponent, canActivate: [GuardiaService]},
-  {path: 'generalesclientescontactos', component: ContactoClienteComponent, canActivate: [GuardiaService]},
-  {path: 'generalescompaniadesegurocontactos', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService]},//Revisar
-  {path: 'generalesproveedorescontactos', component: ContactoProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'puntosdeventaadministrar', component: PuntoVentaComponent, canActivate: [GuardiaService]},
-  {path: 'logisticavehiculospropios', component: VehiculoComponent, canActivate: [GuardiaService]},
-  {path: 'logisticaproveedoresvehiculos', component: VehiculoProveedorComponent, canActivate: [GuardiaService]},
-  {path: 'generalescompaniadeseguropolizas', component: CompaniaSeguroPolizaComponent, canActivate: [GuardiaService]},
-  {path: 'reestablecertablastablarolsubopcion', component: RolSubopcionComponent, canActivate: [GuardiaService]},
-  {path: 'reestablecertablastablasubopcionpestania', component: SubopcionPestaniaComponent, canActivate: [GuardiaService]},
-  {path: 'reestablecertablastablausuarioempresa', component: UsuarioEmpresaComponent, canActivate: [GuardiaService]},
-  {path: 'organizacionempresas', component: EmpresaComponent, canActivate: [GuardiaService]},
-  {path: 'guiasdeserviciosremitosgs', component: ViajeRemitoComponent, canActivate: [GuardiaService]},
-  {path: 'guiasdeserviciosemisiongs', component: ViajeComponent, canActivate: [GuardiaService]},
-  {path: 'listasdepreciosactualizaciondeprecios', component: ActualizacionPreciosComponent, canActivate: [GuardiaService]},
-  {path: 'webservicesafipsolicitarcaeanticipado', component: CaeAnticipadoComponent, canActivate: [GuardiaService]},
-  {path: 'webservicesafipconsultarestadodelservicio', component: EstadoServicioAfipComponent, canActivate: [GuardiaService]},
-  {path: 'facturacionfacturas', component: EmitirFacturaComponent, canActivate: [GuardiaService]},
-  {path: 'facturacionnotasdecredito', component: EmitirNotaCreditoComponent, canActivate: [GuardiaService]},
-  {path: 'facturacionnotasdedebito', component: EmitirNotaDebitoComponent, canActivate: [GuardiaService]},
-  {path: 'contablemonedas', component: MonedaComponent, canActivate: [GuardiaService]},
-  {path: 'contablemonedascotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService]},
-  {path: 'contablemonedasplandecuentas', component: MonedaCuentaContableComponent, canActivate: [GuardiaService]},
-  {path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService]},
-  {path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService]},
-  {path: 'repartosplanillasentrantes', component: RepartoEntranteComponent, canActivate: [GuardiaService]},
-  {path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService]},
-  {path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService]},
-  {path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService]},
-  {path: 'menuopciones', component: RepartoEntranteComponent, canActivate: [GuardiaService]}
+  { path: '', component: LoginComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'home', component: HomeComponent, canActivate: [GuardiaService] },
+  { path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService] },
+  { path: 'generalesagendatelefonica', component: AgendaTelefonicaComponent, canActivate: [GuardiaService] },
+  { path: 'area', component: AreaComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'contablebancos', component: BancoComponent, canActivate: [GuardiaService] },
+  { path: 'generalesbarrios', component: BarrioComponent, canActivate: [GuardiaService] },
+  { path: 'categoriasadministrar', component: CategoriaComponent, canActivate: [GuardiaService] },
+  { path: 'generalescobradores', component: CobradorComponent, canActivate: [GuardiaService] },
+  { path: 'generalescompaniadeseguro', component: CompaniaSeguroComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'generaleslocalidades', component: LocalidadComponent, canActivate: [GuardiaService] },
+  { path: 'logisticamarcasproductos', component: MarcaProductoComponent, canActivate: [GuardiaService] },
+  { path: 'logisticamarcasvehiculos', component: MarcaVehiculoComponent, canActivate: [GuardiaService] },
+  { path: 'menumodulos', component: ModuloComponent, canActivate: [GuardiaService] },
+  { path: 'obrassocialesadministrar', component: ObraSocialComponent, canActivate: [GuardiaService] },
+  { path: 'origenesdestinosadministrar', component: OrigenDestinoComponent, canActivate: [GuardiaService] },
+  { path: 'generalesprovincias', component: ProvinciaComponent, canActivate: [GuardiaService] },
+  { path: 'rolesadministrar', component: RolComponent, canActivate: [GuardiaService] },
+  { path: 'generalesrubros', component: RubroComponent, canActivate: [GuardiaService] },
+  { path: 'logisticarubrosproductos', component: RubroProductoComponent, canActivate: [GuardiaService] },
+  { path: 'orgprevisionalesadministrar', component: SeguridadSocialComponent, canActivate: [GuardiaService] },
+  { path: 'sexo', component: SexoComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'sindicatosadministrar', component: SindicatoComponent, canActivate: [GuardiaService] },
+  { path: 'situacioncliente', component: SituacionClienteComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'menusubmodulos', component: SubmoduloComponent, canActivate: [GuardiaService] },
+  { path: 'menusubopciones', component: SubopcionComponent, canActivate: [GuardiaService] },
+  { path: 'organizacionsucursales', component: SucursalComponent, canActivate: [GuardiaService] },
+  { path: 'contablebancossucursales', component: SucursalBancoComponent, canActivate: [GuardiaService] },
+  { path: 'generalesclientessucursales', component: SucursalClienteComponent, canActivate: [GuardiaService] },
+  { path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'tipocuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'tipodocumento', component: TipoDocumentoComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'tipoproveedor', component: TipoProveedorComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'tipotarifa', component: TipoProveedorComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'logisticatiposdevehiculos', component: TipoVehiculoComponent, canActivate: [GuardiaService] },
+  { path: 'origenesdestinostramos', component: TramoComponent, canActivate: [GuardiaService] },
+  { path: 'unidadmedida', component: UnidadMedidaComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'usuariosadministrar', component: UsuarioComponent, canActivate: [GuardiaService] },
+  { path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService] },//revisar
+  { path: 'generaleszonas', component: ZonaComponent, canActivate: [GuardiaService] },
+  { path: 'generalesclientes', component: ClienteComponent, canActivate: [GuardiaService] },
+  { path: 'listasdepreciosordenesdeventa', component: OrdenVentaComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'generalesproveedores', component: ProveedorComponent, canActivate: [GuardiaService] },
+  { path: 'contablecondicionesdecompra', component: CondicionCompraComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'contablecondicionesdeventa', component: CondicionVentaComponent, canActivate: [GuardiaService] },
+  { path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService] },
+  { path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService] },
+  { path: 'logisticaproveedoreschoferes', component: ChoferProveedorComponent, canActivate: [GuardiaService] },
+  { path: 'logisticavehiculospropiosconfiguracion', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService] },
+  { path: 'contablebancoscontactos', component: ContactoBancoComponent, canActivate: [GuardiaService] },
+  { path: 'generalesclientescontactos', component: ContactoClienteComponent, canActivate: [GuardiaService] },
+  { path: 'generalescompaniadesegurocontactos', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'generalesproveedorescontactos', component: ContactoProveedorComponent, canActivate: [GuardiaService] },
+  { path: 'puntosdeventaadministrar', component: PuntoVentaComponent, canActivate: [GuardiaService] },
+  { path: 'logisticavehiculospropios', component: VehiculoComponent, canActivate: [GuardiaService] },
+  { path: 'logisticaproveedoresvehiculos', component: VehiculoProveedorComponent, canActivate: [GuardiaService] },
+  { path: 'generalescompaniadeseguropolizas', component: CompaniaSeguroPolizaComponent, canActivate: [GuardiaService] },
+  { path: 'reestablecertablastablarolsubopcion', component: RolSubopcionComponent, canActivate: [GuardiaService] },
+  { path: 'reestablecertablastablasubopcionpestania', component: SubopcionPestaniaComponent, canActivate: [GuardiaService] },
+  { path: 'reestablecertablastablausuarioempresa', component: UsuarioEmpresaComponent, canActivate: [GuardiaService] },
+  { path: 'organizacionempresas', component: EmpresaComponent, canActivate: [GuardiaService] },
+  { path: 'guiasdeserviciosremitosgs', component: ViajeRemitoComponent, canActivate: [GuardiaService] },
+  { path: 'guiasdeserviciosemisiongs', component: ViajeComponent, canActivate: [GuardiaService] },
+  { path: 'listasdepreciosactualizaciondeprecios', component: ActualizacionPreciosComponent, canActivate: [GuardiaService] },
+  { path: 'webservicesafipsolicitarcaeanticipado', component: CaeAnticipadoComponent, canActivate: [GuardiaService] },
+  { path: 'webservicesafipconsultarestadodelservicio', component: EstadoServicioAfipComponent, canActivate: [GuardiaService] },
+  { path: 'facturacionfacturas', component: EmitirFacturaComponent, canActivate: [GuardiaService] },
+  { path: 'facturacionnotasdecredito', component: EmitirNotaCreditoComponent, canActivate: [GuardiaService] },
+  { path: 'facturacionnotasdedebito', component: EmitirNotaDebitoComponent, canActivate: [GuardiaService] },
+  { path: 'contablemonedas', component: MonedaComponent, canActivate: [GuardiaService] },
+  { path: 'contablemonedascotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService] },
+  { path: 'contablemonedasplandecuentas', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] },
+  { path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService] },
+  { path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService] },
+  { path: 'repartosplanillasentrantes', component: RepartoEntranteComponent, canActivate: [GuardiaService] },
+  { path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService] },
+  { path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService] },
+  { path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService] },
+  { path: 'menuopciones', component: RepartoEntranteComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
@@ -423,7 +425,7 @@ const stompConfig: StompConfig = {
     MatTableModule,
     MatDialogModule,
     MatProgressBarModule,
-    ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+    ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
     NgbModule,
     ToastrModule.forRoot({
       timeOut: 3000,
@@ -562,12 +564,12 @@ const stompConfig: StompConfig = {
   ],
   bootstrap: [AppComponent],
   entryComponents: [
-    RolSubopcionDialog, 
-    SubopcionPestaniaDialog, 
-    UsuarioEmpresaDialog, 
-    UsuarioDialogo, 
-    VistaPreviaDialogo, 
-    PestaniaDialogo, 
+    RolSubopcionDialog,
+    SubopcionPestaniaDialog,
+    UsuarioEmpresaDialog,
+    UsuarioDialogo,
+    VistaPreviaDialogo,
+    PestaniaDialogo,
     ClienteEventualDialogo,
     DadorDestinatarioDialogo
   ]

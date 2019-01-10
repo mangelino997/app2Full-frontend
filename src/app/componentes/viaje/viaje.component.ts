@@ -121,6 +121,8 @@ export class ViajeComponent implements OnInit {
   public listaDadorDestinatario:Array<any> = [];
   //Define la lista de tramos (tabla)
   public listaTramos:Array<any> = [];
+  //Define la fecha actual
+  public fechaActual:string;
   //Constructor
   constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -175,6 +177,8 @@ export class ViajeComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la fecha actual
+    this.fechaActual = new Date().toISOString().substring(0,10);
     //Establece el formulario viaje propio
     this.formularioViajePropio = this.viajePropioModelo.formulario;
     //Establece el formulario viaje propio tramo
@@ -215,6 +219,8 @@ export class ViajeComponent implements OnInit {
     this.listarViajesTarifas();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
+    //Establece los valores por defecto del formulario viaje tramo
+    this.establecerValoresPorDefectoViajeTramo();
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -265,16 +271,18 @@ export class ViajeComponent implements OnInit {
     })
   }
   //Establece los valores por defecto
-  private establecerValoresPorDefecto() {
-    let valor = 0;
-    let fecha = new Date().toISOString().substring(0,10);
+  private establecerValoresPorDefecto(): void {
     let usuario = this.appComponent.getUsuario();
     this.formularioViajePropio.get('usuario').setValue(usuario);
     this.usuarioNombre.setValue(usuario.nombre);
     this.tipoViaje.setValue(true);
     this.formularioViajePropio.get('esRemolquePropio').setValue(true);
-    this.formularioViajePropio.get('fecha').setValue(fecha);
-    this.formularioViajePropioTramo.get('fechaTramo').setValue(fecha);
+    this.formularioViajePropio.get('fecha').setValue(this.fechaActual);
+  }
+  //Establece los valores por defecto del formulario viaje propio tramo
+  public establecerValoresPorDefectoViajeTramo(): void {
+    let valor = 0;
+    this.formularioViajePropioTramo.get('fechaTramo').setValue(this.fechaActual);
     this.formularioViajePropioTramo.get('cantidad').setValue(valor);
     this.formularioViajePropioTramo.get('precioUnitario').setValue(valor.toFixed(2));
     this.formularioViajePropioTramo.get('importe').setValue(valor.toFixed(2));
@@ -536,16 +544,28 @@ export class ViajeComponent implements OnInit {
   public verDadorDestinatarioDialogo(): void {
     const dialogRef = this.dialog.open(DadorDestinatarioDialogo, {
       width: '1200px',
-      data: {}
+      data: {
+        tema: this.appComponent.getTema()
+      }
     });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Diálogo Dador-Destinatario Cerrado!');
+    dialogRef.afterClosed().subscribe(listaViajePropioTramoCliente => {
+      this.formularioViajePropioTramo.get('listaViajePropioTramoCliente').setValue(listaViajePropioTramoCliente);
     });
   }
   //Agrega datos a la tabla de tramos
   public agregarTramo(): void {
-    console.log(this.formularioViajePropioTramo.value);
     this.listaTramos.push(this.formularioViajePropioTramo.value);
+    this.formularioViajePropioTramo.reset();
+    this.establecerValoresPorDefectoViajeTramo();
+  }
+  //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
+  public estadoTarifa(): boolean {
+    try {
+      let viajeTarifa = this.formularioViajePropioTramo.get('viajeTarifa').value.id;
+      return viajeTarifa == 2 || viajeTarifa == 5;
+    } catch(e) {
+      return false;
+    }
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -676,6 +696,8 @@ export class ViajeComponent implements OnInit {
   templateUrl: 'dador-destinatario-dialogo.component.html'
 })
 export class DadorDestinatarioDialogo {
+  //Define el tema
+  public tema:string;
   //Define el formulario
   public formulario: FormGroup;
   //Define la lista de dador-destinatario
@@ -686,6 +708,8 @@ export class DadorDestinatarioDialogo {
   constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private viajePropioTramoClienteModelo: ViajePropioTramoCliente, private clienteServicio: ClienteService) { }
   ngOnInit() {
+    //Establece el tema
+    this.tema = this.data.tema;
     //Establece el formulario
     this.formulario = this.viajePropioTramoClienteModelo.formulario;
     //Autocompletado Cliente Dador - Buscar por alias
