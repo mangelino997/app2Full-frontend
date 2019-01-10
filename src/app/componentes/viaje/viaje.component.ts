@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { ViajePropioService } from '../../servicios/viaje-propio.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
@@ -33,6 +33,7 @@ import { ViajePropioInsumo } from 'src/app/modelos/viajePropioInsumo';
 import { ViajeRemito } from 'src/app/modelos/viajeRemito';
 import { ViajePropioGasto } from 'src/app/modelos/viajePropioGasto';
 import { ViajePropioPeaje } from 'src/app/modelos/viajePropioPeaje';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-viaje',
@@ -118,6 +119,8 @@ export class ViajeComponent implements OnInit {
   public viajesTarifas:Array<any> = [];
   //Define la lista de dedor-destinatario
   public listaDadorDestinatario:Array<any> = [];
+  //Define la lista de tramos (tabla)
+  public listaTramos:Array<any> = [];
   //Constructor
   constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -134,7 +137,8 @@ export class ViajeComponent implements OnInit {
     private viajePropioTramoModelo: ViajePropioTramo, private viajePropioTramoClienteModelo: ViajePropioTramoCliente,
     private viajePropioCombustibleModelo: ViajePropioCombustible, private viajePropioEfectivoModelo: ViajePropioEfectivo,
     private viajePropioInsumoModelo: ViajePropioInsumo, private viajeRemitoModelo: ViajeRemito,
-    private viajePropioGastoModelo: ViajePropioGasto, private viajePropioPeajeModelo: ViajePropioPeaje) {
+    private viajePropioGastoModelo: ViajePropioGasto, private viajePropioPeajeModelo: ViajePropioPeaje,
+    public dialog: MatDialog) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -240,22 +244,6 @@ export class ViajeComponent implements OnInit {
       if(typeof data == 'string') {
         this.tramoServicio.listarPorOrigen(data).subscribe(response => {
           this.resultadosTramos = response;
-        })
-      }
-    })
-    //Autocompletado Cliente Dador - Buscar por alias
-    this.formularioViajePropioTramoCliente.get('clienteDador').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
-        })
-      }
-    })
-    //Autocompletado Cliente Destinatario - Buscar por alias
-    this.formularioViajePropioTramoCliente.get('clienteDestinatario').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
         })
       }
     })
@@ -544,20 +532,20 @@ export class ViajeComponent implements OnInit {
       this.formularioViajePropioTramo.get('importe').setValue(importe.toFixed(2));
     }
   }
-  //Agrega el dador y el destinatario a la tabla
-  public agregarDadorDestinatario(): void {
-    this.listaDadorDestinatario.push(this.formularioViajePropioTramoCliente.value);
-    this.formularioViajePropioTramoCliente.reset();
-    document.getElementById('idTramoDadorCarga').focus();
-  }
-  //Elimina un dador-destinatario de la tabla
-  public eliminarDadorDestinatario(indice): void {
-    this.listaDadorDestinatario.splice(indice, 1);
-    document.getElementById('idTramoDadorCarga').focus();
+  //Abre el dialogo vista previa para visualizar el menu del rol
+  public verDadorDestinatarioDialogo(): void {
+    const dialogRef = this.dialog.open(DadorDestinatarioDialogo, {
+      width: '1200px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Diálogo Dador-Destinatario Cerrado!');
+    });
   }
   //Agrega datos a la tabla de tramos
   public agregarTramo(): void {
     console.log(this.formularioViajePropioTramo.value);
+    this.listaTramos.push(this.formularioViajePropioTramo.value);
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -679,6 +667,64 @@ export class ViajeComponent implements OnInit {
       } else {
         this.seleccionarOpcion(1, 0);
       }
+    }
+  }
+}
+//Componente DadorDestinatarioDialogo
+@Component({
+  selector: 'dador-destinatario-dialogo',
+  templateUrl: 'dador-destinatario-dialogo.component.html'
+})
+export class DadorDestinatarioDialogo {
+  //Define el formulario
+  public formulario: FormGroup;
+  //Define la lista de dador-destinatario
+  public listaDadorDestinatario:Array<any> = [];
+  //Define la lista de clientes
+  public resultadosClientes:Array<any> = [];
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private viajePropioTramoClienteModelo: ViajePropioTramoCliente, private clienteServicio: ClienteService) { }
+  ngOnInit() {
+    //Establece el formulario
+    this.formulario = this.viajePropioTramoClienteModelo.formulario;
+    //Autocompletado Cliente Dador - Buscar por alias
+    this.formulario.get('clienteDador').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosClientes = response;
+        })
+      }
+    })
+    //Autocompletado Cliente Destinatario - Buscar por alias
+    this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosClientes = response;
+        })
+      }
+    })
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+  //Agrega el dador y el destinatario a la tabla
+  public agregarDadorDestinatario(): void {
+    this.listaDadorDestinatario.push(this.formulario.value);
+    this.formulario.reset();
+    document.getElementById('idTramoDadorCarga').focus();
+  }
+  //Elimina un dador-destinatario de la tabla
+  public eliminarDadorDestinatario(indice): void {
+    this.listaDadorDestinatario.splice(indice, 1);
+    document.getElementById('idTramoDadorCarga').focus();
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFb(elemento) {
+    if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
     }
   }
 }

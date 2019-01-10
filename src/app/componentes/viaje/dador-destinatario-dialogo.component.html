@@ -1,0 +1,66 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h4 class="text-center">Dador - Destinatario</h4>
+            <form [formGroup]="formulario">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group has-float-label">
+                            <label for="idTramoDadorCarga" class="tamanio-label">Dador de Carga *</label>
+                            <input id="idTramoDadorCarga" class="form-control form-control-sm" type="text" matInput
+                                [formControl]="formulario.get('clienteDador')" [matAutocomplete]="autoDadorCarga"
+                                autocomplete="off" [readonly]="soloLectura">
+                            <mat-autocomplete #autoDadorCarga="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                                <mat-option *ngFor="let itemDadorCarga of resultadosClientes" [value]="itemDadorCarga">
+                                    {{itemDadorCarga.alias}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group has-float-label">
+                            <label for="idTramoDestinatario" class="tamanio-label">Destinatario *</label>
+                            <input id="idTramoDestinatario" class="form-control form-control-sm" type="text" matInput
+                                [formControl]="formulario.get('clienteDestinatario')"
+                                [matAutocomplete]="autoDestinatario" autocomplete="off" [readonly]="soloLectura">
+                            <mat-autocomplete #autoDestinatario="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                                <mat-option *ngFor="let itemDestinatario of resultadosClientes" [value]="itemDestinatario">
+                                    {{itemDestinatario.alias}}
+                                </mat-option>
+                            </mat-autocomplete>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-primary btn-size" type="button" (click)="agregarDadorDestinatario()">Agregar</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width:45%" scope="col">Dador Carga</th>
+                                    <th class="text-center" style="width:45%" scope="col">Destinatario</th>
+                                    <th class="text-center" style="width:10%" scope="col">-</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let l of listaDadorDestinatario ; let i = index">
+                                    <td align="center">
+                                        <span>{{l.clienteDador.razonSocial}}</span>
+                                    </td>
+                                    <td align="center">
+                                        <span>{{l.clienteDestinatario.razonSocial}}</span>
+                                    </td>
+                                    <td align="center">
+                                        <span class="cursor-color-rojo" (click)="eliminarDadorDestinatario(i)">X</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
