@@ -555,6 +555,10 @@ export class ViajeComponent implements OnInit {
     this.listaDadorDestinatario.splice(indice, 1);
     document.getElementById('idTramoDadorCarga').focus();
   }
+  //Agrega datos a la tabla de tramos
+  public agregarTramo(): void {
+    console.log(this.formularioViajePropioTramo.value);
+  }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formularioViajePropio.reset();

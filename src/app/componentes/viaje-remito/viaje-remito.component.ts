@@ -4,7 +4,7 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { ClienteService } from '../../servicios/cliente.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { TipoComprobanteService } from '../../servicios/tipo-comprobante.service';
-import { CondicionIvaService } from '../../servicios/condicion-iva.service';
+import { AfipCondicionIvaService } from '../../servicios/afip-condicion-iva.service';
 import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
@@ -469,7 +469,7 @@ export class ClienteEventualDialogo {
   public resultadosSucursalesPago:Array<any> = [];
   //Constructor
   constructor(public dialogRef: MatDialogRef<ClienteEventualDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-  private condicionIvaServicio: CondicionIvaService, private tipoDocumentoServicio: TipoDocumentoService, 
+  private afipCondicionIvaServicio: AfipCondicionIvaService, private tipoDocumentoServicio: TipoDocumentoService, 
   private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
   private cobradorServicio: CobradorService, private zonaServicio: ZonaService,
   private rubroServicio: RubroService, private sucursalServicio: SucursalService,
@@ -556,7 +556,7 @@ export class ClienteEventualDialogo {
   }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {
-    this.condicionIvaServicio.listar().subscribe(
+    this.afipCondicionIvaServicio.listar().subscribe(
       res => {
         this.condicionesIva = res.json();
       },

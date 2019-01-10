@@ -59,7 +59,7 @@ import { VendedorService } from './servicios/vendedor.service';
 import { ZonaService } from './servicios/zona.service';
 import { ClienteService } from './servicios/cliente.service';
 import { RolOpcionService } from './servicios/rol-opcion.service';
-import { CondicionIvaService } from './servicios/condicion-iva.service';
+import { AfipCondicionIvaService } from './servicios/afip-condicion-iva.service';
 import { ResumenClienteService } from './servicios/resumen-cliente.service';
 import { OrdenVentaService } from './servicios/orden-venta.service';
 import { ProveedorService } from './servicios/proveedor.service';
@@ -491,7 +491,7 @@ const stompConfig: StompConfig = {
     ZonaService,
     ClienteService,
     RolOpcionService,
-    CondicionIvaService,
+    AfipCondicionIvaService,
     ResumenClienteService,
     OrdenVentaService,
     ProveedorService,

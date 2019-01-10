@@ -4,7 +4,7 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
-import { CondicionIvaService } from '../../servicios/condicion-iva.service';
+import { AfipCondicionIvaService } from '../../servicios/afip-condicion-iva.service';
 import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
 import { TipoProveedorService } from '../../servicios/tipo-proveedor.service';
 import { CondicionCompraService } from '../../servicios/condicion-compra.service';
@@ -69,7 +69,7 @@ export class ProveedorComponent implements OnInit {
   constructor(private servicio: ProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
-    private localidadServicio: LocalidadService, private condicionIvaServicio: CondicionIvaService,
+    private localidadServicio: LocalidadService, private afipCondicionIvaServicio: AfipCondicionIvaService,
     private tipoDocumentoServicio: TipoDocumentoService, private tipoProveedorServicio: TipoProveedorService,
     private condicionCompraServicio: CondicionCompraService, private bancoServicio: BancoService,
     private tipoCuentaBancariaServicio: TipoCuentaBancariaService) {
@@ -198,7 +198,7 @@ export class ProveedorComponent implements OnInit {
   }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {
-    this.condicionIvaServicio.listar().subscribe(
+    this.afipCondicionIvaServicio.listar().subscribe(
       res => {
         this.condicionesIva = res.json();
       },

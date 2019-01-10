@@ -8,7 +8,7 @@ import { CobradorService } from '../../servicios/cobrador.service';
 import { VendedorService } from '../../servicios/vendedor.service';
 import { ZonaService } from '../../servicios/zona.service';
 import { RubroService } from '../../servicios/rubro.service';
-import { CondicionIvaService } from '../../servicios/condicion-iva.service';
+import { AfipCondicionIvaService } from '../../servicios/afip-condicion-iva.service';
 import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
 import { ResumenClienteService } from '../../servicios/resumen-cliente.service';
 import { SucursalService } from '../../servicios/sucursal.service';
@@ -91,7 +91,7 @@ export class ClienteComponent implements OnInit {
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private cobradorServicio: CobradorService,
     private vendedorServicio: VendedorService, private zonaServicio: ZonaService,
-    private rubroServicio: RubroService, private condicionIvaServicio: CondicionIvaService,
+    private rubroServicio: RubroService, private afipCondicionIvaServicio: AfipCondicionIvaService,
     private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
     private companiaSeguroServicio: CompaniaSeguroService, private ordenVentaServicio: OrdenVentaService,
@@ -303,7 +303,7 @@ export class ClienteComponent implements OnInit {
   }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {
-    this.condicionIvaServicio.listar().subscribe(
+    this.afipCondicionIvaServicio.listar().subscribe(
       res => {
         this.condicionesIva = res.json();
       },

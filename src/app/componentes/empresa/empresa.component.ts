@@ -3,7 +3,7 @@ import { EmpresaService } from '../../servicios/empresa.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
-import { CondicionIvaService } from '../../servicios/condicion-iva.service';
+import { AfipCondicionIvaService } from '../../servicios/afip-condicion-iva.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -47,7 +47,7 @@ export class EmpresaComponent implements OnInit {
   constructor(private servicio: EmpresaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService, 
-    private condicionIvaServicio: CondicionIvaService) {
+    private afipCondicionIvaServicio: AfipCondicionIvaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -132,7 +132,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {
-    this.condicionIvaServicio.listar().subscribe(
+    this.afipCondicionIvaServicio.listar().subscribe(
       res => {
         this.condicionesIva = res.json();
       },
