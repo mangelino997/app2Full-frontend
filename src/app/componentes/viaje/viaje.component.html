@@ -55,21 +55,21 @@
                                         </div> -->
                                         <div class="col-md-2">
                                             <div class="form-group has-float-label">
-                                                <label for="idCodigo" class="tamanio-label-titulo">N° Guía Servicio</label>
+                                                <label for="idCodigo" class="tamanio-label-titulo">N° Guía Serv.</label>
                                                 <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
                                                     readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group has-float-label">
-                                                <label for="idFecha" class="tamanio-label">Fecha</label>
+                                                <label for="idFecha" class="tamanio-label-titulo">Fecha</label>
                                                 <input id="idFecha" type="date" formControlName="fecha" autocomplete="off"
                                                     class="form-control form-control-sm" [readonly]="soloLectura">
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group has-float-label">
-                                                <label for="idEsPropio" class="tamanio-label">Tipo de Viaje *</label>
+                                                <label for="idEsPropio" class="tamanio-label-titulo">Tipo de Viaje *</label>
                                                 <mat-select id="idEsPropio" class="form-control form-control-sm"
                                                     [formControl]="tipoViaje">
                                                     <mat-option [value]="false">Tercerizado</mat-option>
@@ -79,8 +79,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group has-float-label">
-                                                <label for="idEsRemolquePropio" class="tamanio-label">Tipo de Remolque
-                                                    *</label>
+                                                <label for="idEsRemolquePropio" class="tamanio-label-titulo">Tipo de Remol. *</label>
                                                 <mat-select id="idEsRemolquePropio" class="form-control form-control-sm"
                                                     formControlName="esRemolquePropio">
                                                     <mat-option [value]="false">Tercerizado</mat-option>
@@ -90,7 +89,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group has-float-label">
-                                                <label for="idSucursal" class="tamanio-label">Sucursal *</label>
+                                                <label for="idSucursal" class="tamanio-label-titulo">Sucursal *</label>
                                                 <mat-select id="idSucursal" class="form-control form-control-sm"
                                                     formControlName="sucursal" [compareWith]="compareFn">
                                                     <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal">
@@ -110,7 +109,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group has-float-label">
-                                                <label for="idVehiculo" class="tamanio-label">Vehículo *</label>
+                                                <label for="idVehiculo" class="tamanio-label-titulo">Vehículo *</label>
                                                 <input id="idVehiculo" class="form-control form-control-sm" type="text" matInput [formControl]="tipoViaje.value ? formularioViajePropio.get('vehiculo') : formularioViajePropio.get('vehiculoProveedor')"
                                                     [matAutocomplete]="autoVehiculo" autocomplete="off" [readonly]="soloLectura">
                                                 <mat-autocomplete #autoVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)">
@@ -122,7 +121,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group has-float-label">
-                                                <label for="idVehiculoRemolque" class="tamanio-label">Vehículo Remolque*</label>
+                                                <label for="idVehiculoRemolque" class="tamanio-label-titulo">Vehículo Remolque *</label>
                                                 <input id="idVehiculoRemolque" class="form-control form-control-sm"
                                                     type="text" matInput [formControl]="formularioViajePropio.get('esRemolquePropio').value ? formularioViajePropio.get('vehiculoRemolque') : formularioViajePropio.get('vehiculoProveedorRemolque')"
                                                     [matAutocomplete]="autoVehiculoRemolque" autocomplete="off"
@@ -137,7 +136,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group has-float-label">
-                                                <label for="idPersonal" class="tamanio-label">Chofer *</label>
+                                                <label for="idPersonal" class="tamanio-label-titulo">Chofer *</label>
                                                 <input id="idPersonal" class="form-control form-control-sm" type="text"
                                                     matInput [formControl]="tipoViaje.value ? formularioViajePropio.get('personal') : formularioViajePropio.get('choferProveedor')"
                                                     [matAutocomplete]="autoChofer" autocomplete="off" [readonly]="soloLectura">
@@ -343,7 +342,7 @@
                             <div class="contenedor-top" *ngIf="opcionSeleccionada == 23">
                                 <form [formGroup]="formularioViajePropioCombustible">
                                     <div class="row">
-                                        <div class="col-md-4">
+                                        <div class="col-md-6">
                                             <div class="form-group has-float-label">
                                                 <label for="idProveedorOC" class="tamanio-label">Proveedor Combustible</label>
                                                 <input id="idProveedorOC" class="form-control form-control-sm" type="text"
@@ -356,65 +355,70 @@
                                                 </mat-autocomplete>
                                             </div>
                                         </div>
-                                        <div class="col-md-6"></div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3"></div>
+                                        <div class="col-md-3">
                                             <button mat-raised-button>Consultar Ultimas Cargas</button>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group has-float-label">
+                                        <div class="col-md-3">
+                                            <div class="form-group has-float-label-icon">
                                                 <label for="idFechaOC" class="tamanio-label">Fecha</label>
-                                                <input id="idFechaOC" type="date" formControlName="fecha" autocomplete="off"
-                                                    class="form-control form-control-sm" [readonly]="soloLectura">
+                                                <div class="input-group input-group-sm mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><mat-icon>date_range</mat-icon></span>
+                                                    </div>
+                                                    <input id="idFechaOC" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
+                                                        [readonly]="soloLectura">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group has-float-label">
                                                 <label for="idInsumoOC" class="tamanio-label">Insumo Combustible *</label>
                                                 <mat-select id="idInsumoOC" class="form-control form-control-sm"
-                                                    formControlName="insumoProducto" [compareWith]="compareFn" (selectionChange)="establecerPrecioUnitarioOC()">
+                                                    formControlName="insumoProducto" [compareWith]="compareFn" (selectionChange)="establecerPrecioUnitario(formularioViajePropioCombustible, 'insumoProducto')">
                                                     <mat-option *ngFor="let itemInsumos of insumos" [value]="itemInsumos">
                                                         {{itemInsumos.nombre}}
                                                     </mat-option>
                                                 </mat-select>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group has-float-label-icon">
                                                 <label for="idCantidadOC" class="tamanio-label">Cantidad *</label>
                                                 <div class="input-group input-group-sm mb-3">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="idSignoLitros">lt.</span>
+                                                        <span class="input-group-text">lt.</span>
                                                     </div>
                                                     <input id="idCantidadOC" type="number" formControlName="cantidad" autocomplete="off" class="form-control"
-                                                        [readonly]="soloLectura" aria-describedby="idSignoLitros" (blur)="calcularImporte(formularioViajePropioCombustible)">
+                                                        [readonly]="soloLectura" (blur)="calcularImporte(formularioViajePropioCombustible)">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group has-float-label-icon">
                                                 <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
                                                 <div class="input-group input-group-sm mb-3">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="idSignoPeso">$</span>
+                                                        <span class="input-group-text">$</span>
                                                     </div>
                                                     <input id="idPrecioUnitarioOC" type="number" formControlName="precioUnitario" autocomplete="off" class="form-control"
-                                                        [readonly]="true" aria-describedby="idSignoPeso">
+                                                        [readonly]="true">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group has-float-label-icon">
                                                 <label for="idImporteOC" class="tamanio-label">Importe *</label>
                                                 <div class="input-group input-group-sm mb-3">
                                                     <div class="input-group-prepend">
-                                                        <span class="input-group-text" id="idSignoPeso">$</span>
+                                                        <span class="input-group-text">$</span>
                                                     </div>
                                                     <input id="idImporteOC" type="number" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
-                                                        [readonly]="true" aria-describedby="idSignoPeso">
+                                                        [readonly]="true">
                                                 </div>
                                             </div>
                                         </div>
@@ -491,8 +495,8 @@
                                     </div>
                                     <br>
                                     <div class="row justify-content-end">
-                                        <div class="col-md-2">
-                                            <div class="form-group has-float-label">
+                                        <div class="col-md-3">
+                                            <div class="form-group has-float-label-icon">
                                                 <label for="idTotalCombustibleOC" class="tamanio-label">Total Gasoil</label>
                                                 <div class="input-group input-group-sm mb-3">
                                                     <div class="input-group-prepend">
@@ -503,8 +507,8 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group has-float-label">
+                                        <div class="col-md-3">
+                                            <div class="form-group has-float-label-icon">
                                                 <label for="idTotalUreaOC" class="tamanio-label">Total Urea</label>
                                                 <div class="input-group input-group-sm mb-3">
                                                     <div class="input-group-prepend">
@@ -647,65 +651,80 @@
                             <div class="contenedor-top" *ngIf="opcionSeleccionada == 25">
                                 <form [formGroup]="formularioViajePropioInsumo">
                                     <div class="row">
-                                        <div class="col-md-2">
+                                        <div class="col-md-6">
                                             <div class="form-group has-float-label">
                                                 <label for="idProveedor" class="tamanio-label">Proveedor *</label>
                                                 <input id="idProveedor" class="form-control form-control-sm" type="text"
                                                     matInput [formControl]="formularioViajePropioInsumo.get('proveedor')"
                                                     [matAutocomplete]="autoProveedor" autocomplete="off" [readonly]="soloLectura">
-                                                <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                                                <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)">
                                                     <mat-option *ngFor="let itemProveedor of resultadosProveedores"
                                                         [value]="itemProveedor">
-                                                        {{itemProveedor.nombre}}
+                                                        {{itemProveedor.alias}}
                                                     </mat-option>
                                                 </mat-autocomplete>
                                             </div>
                                         </div>
-                                        <div class="col-md-8"></div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-2"></div>
+                                        <div class="col-md-4">
                                             <button class="btn btn-primary" type="button">Consultar Ultimas Cargas</button>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group has-float-label">
-                                                <label for="idFechaAV" class="tamanio-label">Fecha</label>
-                                                <input id="idFechaAV" type="date" formControlName="fecha" autocomplete="off"
-                                                    class="form-control form-control-sm" [readonly]="soloLectura">
+                                        <div class="col-md-3">
+                                            <div class="form-group has-float-label-icon">
+                                                <label for="idFecha" class="tamanio-label">Fecha</label>
+                                                <div class="input-group input-group-sm mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text"><mat-icon>date_range</mat-icon></span>
+                                                    </div>
+                                                    <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
+                                                        [readonly]="soloLectura">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group has-float-label">
                                                 <label for="idInsumo" class="tamanio-label">Insumo *</label>
-                                                <mat-select id="idInsumo" class="form-control form-control-sm"
-                                                    formControlName="insumo" [compareWith]="compareFn">
+                                                <mat-select id="idInsumo" class="form-control form-control-sm" formControlName="insumo" [compareWith]="compareFn"
+                                                    (selectionChange)="establecerPrecioUnitario(formularioViajePropioInsumo, 'insumo')">
                                                     <mat-option *ngFor="let itemInsumo of insumos" [value]="itemInsumo">
                                                         {{itemInsumo.nombre}}
                                                     </mat-option>
                                                 </mat-select>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group has-float-label">
                                                 <label for="idCantidadAV" class="tamanio-label">Cantidad *</label>
                                                 <input id="idCantidadAV" type="number" formControlName="cantidad"
-                                                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                                                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" (blur)="calcularImporte(formularioViajePropioInsumo)">
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group has-float-label">
+                                        <div class="col-md-3">
+                                            <div class="form-group has-float-label-icon">
                                                 <label for="idPrecioUnitarioAV" class="tamanio-label">Precio Unitario *</label>
-                                                <input id="idPrecioUnitarioAV" type="number" formControlName="precioUnitario"
-                                                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                                                <div class="input-group input-group-sm mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input id="idPrecioUnitarioAV" type="number" formControlName="precioUnitario" autocomplete="off" class="form-control form-control-sm"
+                                                        [readonly]="true">
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group has-float-label">
+                                        <div class="col-md-3">
+                                            <div class="form-group has-float-label-icon">
                                                 <label for="idImporteAV" class="tamanio-label">Importe *</label>
-                                                <input id="idImporteAV" type="number" formControlName="importe"
-                                                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                                                <div class="input-group input-group-sm mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input id="idImporteAV" type="number" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
+                                                        [readonly]="true">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -718,12 +737,12 @@
                                             </div>
                                         </div>
                                         <div class="col-md-1">
-                                            <button class="btn btn-primary" type="button">Agregar Orden</button>
+                                            <button mat-raised-button color="primary" (click)="agregarOrdenInsumo()">Agregar Orden</button>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <table class="table table-bordered table-striped table-sm">
+                                        <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+                                            <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje-efectivo">
                                                 <thead>
                                                     <tr>
                                                         <th class="text-center" style="width:10%" scope="col">Sucursal</th>
@@ -731,60 +750,70 @@
                                                         <th class="text-center" style="width:10%" scope="col">Usuario</th>
                                                         <th class="text-center" style="width:10%" scope="col">Proveedor</th>
                                                         <th class="text-center" style="width:10%" scope="col">Insumo</th>
-                                                        <th class="text-center" style="width:10%" scope="col">Cantidad</th>
-                                                        <th class="text-center" style="width:15%" scope="col">Precio
-                                                            Unitario</th>
-                                                        <th class="text-center" style="width:10%" scope="col">Importe</th>
-                                                        <th class="text-center" style="width:15%" scope="col">Observaciones</th>
-                                                        <th class="text-center" style="width:15%" scope="col">Anulado</th>
-                                                        <th class="text-center" style="width:15%" scope="col">Observaciones
-                                                            Anulado</th>
+                                                        <th class="text-center" style="width:5%" scope="col">Cantidad</th>
+                                                        <th class="text-center" style="width:10%" scope="col">Precio Unitario</th>
+                                                        <th class="text-center" style="width:5%" scope="col">Importe</th>
+                                                        <th class="text-center" style="width:10%" scope="col">Observaciones</th>
+                                                        <th class="text-center" style="width:5%" scope="col">Anulado</th>
+                                                        <th class="text-center" style="width:15%" scope="col">Observaciones Anulado</th>
                                                         <th class="text-center" style="width:5%" scope="col">-</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr *ngFor="let l of listaCompleta; let i = index">
+                                                    <tr *ngFor="let l of listaOrdenesInsumos; let i = index">
                                                         <td align="center">
-                                                            <span>{{l.sucursal}}</span>
+                                                            <span>{{l.sucursal.nombre}}</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span>{{i}}</span>
+                                                            <span>{{i + 1}}</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span>{{l.usuario}}</span>
+                                                            <span>{{l.usuario.nombre}}</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span>{{l.empresa}}</span>
+                                                            <span>{{l.proveedor.razonSocial}}</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span>{{l.fecha}}</span>
+                                                            <span>{{l.insumo.nombre}}</span>
+                                                        </td>
+                                                        <td align="center">
+                                                            <span>{{l.cantidad}}</span>
+                                                        </td>
+                                                        <td align="center">
+                                                            <span>{{l.precioUnitario}}</span>
                                                         </td>
                                                         <td align="center">
                                                             <span>{{l.importe}}</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span>{{l.observaciones}}</span>
+                                                            <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
                                                         </td>
                                                         <td align="center">
                                                             <span>{{l.anulado}}</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span>{{l.observacionesAnulado}}</span>
+                                                            <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span class="cursor-color-rojo">X</span>
+                                                            <span class="cursor-color-rojo" (click)="eliminarOrdenInsumo(i, l)">X</span>
                                                         </td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
+                                    <br>
                                     <div class="row justify-content-end">
                                         <div class="col-md-2">
-                                            <div class="form-group has-float-label">
-                                                <label for="idImporteTotalOI" class="tamanio-label">Importe Total($) *</label>
-                                                <input id="idImporteTotalOI" type="number" formControlName="importeTotal"
-                                                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                                            <div class="form-group has-float-label-icon">
+                                                <label for="idImporteTotalOI" class="tamanio-label">Importe Total *</label>
+                                                <div class="input-group input-group-sm mb-3">
+                                                    <div class="input-group-prepend">
+                                                        <span class="input-group-text">$</span>
+                                                    </div>
+                                                    <input id="idImporteTotalOI" type="number" formControlName="importeTotal" autocomplete="off" class="form-control form-control-sm"
+                                                        [readonly]="true">
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

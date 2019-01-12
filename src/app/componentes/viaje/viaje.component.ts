@@ -125,6 +125,8 @@ export class ViajeComponent implements OnInit {
   public listaCombustibles:Array<any> = [];
   //Define la lista de adelantos de efectivo (tabla)
   public listaAdelantosEfectivos:Array<any> = [];
+  //Define la lista de ordenes de insumos (tabla)
+  public listaOrdenesInsumos:Array<any> = [];
   //Define la fecha actual
   public fechaActual:string;
   //Constructor
@@ -229,6 +231,8 @@ export class ViajeComponent implements OnInit {
     this.establecerValoresPorDefectoViajeCombustible(1);
     //Establece los valores por defecto del formulario viaje efectivo
     this.establecerValoresPorDefectoViajeEfectivo(1);
+    //Establece los valores por defecto del formulario viaje insumo
+    this.establecerValoresPorDefectoViajeInsumo(1);
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -322,6 +326,17 @@ export class ViajeComponent implements OnInit {
     this.formularioViajePropioEfectivo.get('importe').setValue(this.appComponent.establecerCeros(valor));
     if(opcion == 1) {
       this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
+    }
+  }
+  //Establece los valores por defecto del formulario viaje insumo
+  public establecerValoresPorDefectoViajeInsumo(opcion): void {
+    let valor = 0;
+    this.formularioViajePropioInsumo.get('fecha').setValue(this.fechaActual);
+    this.formularioViajePropioInsumo.get('cantidad').setValue(valor);
+    this.formularioViajePropioInsumo.get('precioUnitario').setValue(valor.toFixed(2));
+    this.formularioViajePropioInsumo.get('importe').setValue(valor.toFixed(2));
+    if(opcion == 1) {
+      this.formularioViajePropioInsumo.get('importeTotal').setValue(valor.toFixed(2));
     }
   }
   //Vacia la lista de resultados de autocompletados
@@ -689,6 +704,28 @@ export class ViajeComponent implements OnInit {
     this.listaAdelantosEfectivos.splice(indice, 1);
     document.getElementById('idFechaCajaAE').focus();
   }
+  //Agrega datos a la tabla de orden insumo
+  public agregarOrdenInsumo(): void {
+    this.formularioViajePropioInsumo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formularioViajePropioInsumo.get('usuario').setValue(this.appComponent.getUsuario());
+    this.listaOrdenesInsumos.push(this.formularioViajePropioInsumo.value);
+    let importe = this.formularioViajePropioInsumo.get('importe').value;
+    let importeTotal = this.formularioViajePropioInsumo.get('importeTotal').value;
+    let total = parseFloat(importeTotal) + parseFloat(importe);
+    this.formularioViajePropioInsumo.reset();
+    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.establecerValoresPorDefectoViajeInsumo(0);
+    document.getElementById('idProveedor').focus();
+  }
+  //Elimina una orden insumo de la tabla por indice
+  public eliminarOrdenInsumo(indice, elemento): void {
+    this.listaOrdenesInsumos.splice(indice, 1);
+    let importe = elemento.importe;
+    let importeTotal = this.formularioViajePropioInsumo.get('importeTotal').value;
+    let total = parseFloat(importeTotal) - parseFloat(importe);
+    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    document.getElementById('idProveedor').focus();
+  }
   //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
   public estadoTarifa(): boolean {
     try {
@@ -698,9 +735,9 @@ export class ViajeComponent implements OnInit {
       return false;
     }
   }
-  //EStablece el precio unitario en orden combustible
-  public establecerPrecioUnitarioOC(): void {
-    this.formularioViajePropioCombustible.get('precioUnitario').setValue((this.formularioViajePropioCombustible.get('insumoProducto').value.precioUnitarioVenta).toFixed(2));
+  //Establece el precio unitario en orden combustible
+  public establecerPrecioUnitario(formulario, elemento): void {
+    formulario.get('precioUnitario').setValue((formulario.get(elemento).value.precioUnitarioVenta).toFixed(2));
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
