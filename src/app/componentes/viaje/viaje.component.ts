@@ -129,6 +129,8 @@ export class ViajeComponent implements OnInit {
   public listaOrdenesInsumos:Array<any> = [];
   //Define la lista de ordenes de gastos (tabla)
   public listaGastos:Array<any> = [];
+  //Define la lista de ordenes de peajes (tabla)
+  public listaPeajes:Array<any> = [];
   //Define la fecha actual
   public fechaActual:string;
   //Constructor
@@ -237,6 +239,8 @@ export class ViajeComponent implements OnInit {
     this.establecerValoresPorDefectoViajeInsumo(1);
     //Establece los valores por defecto del formulario viaje gasto
     this.establecerValoresPorDefectoViajeGasto(1);
+    //Establece los valores por defecto del formulario viaje peaje
+    this.establecerValoresPorDefectoViajePeaje(1);
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -290,6 +294,14 @@ export class ViajeComponent implements OnInit {
       if(typeof data == 'string') {
         this.rubroProductoServicio.listarPorNombre(data).subscribe(response =>{
           this.resultadosRubrosProductos = response;
+        })
+      }
+    })
+    //Autocompletado Proveedor (Peaje) - Buscar por alias
+    this.formularioViajePropioPeaje.get('proveedor').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
+          this.resultadosProveedores = response;
         })
       }
     })
@@ -352,6 +364,15 @@ export class ViajeComponent implements OnInit {
     this.formularioViajePropioGasto.get('importe').setValue(this.appComponent.establecerCeros(valor));
     if(opcion == 1) {
       this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
+    }
+  }
+  //Establece los valores por defecto del formulario viaje gasto
+  public establecerValoresPorDefectoViajePeaje(opcion): void {
+    let valor = 0;
+    this.formularioViajePropioPeaje.get('fecha').setValue(this.fechaActual);
+    this.formularioViajePropioPeaje.get('importe').setValue(this.appComponent.establecerCeros(valor));
+    if(opcion == 1) {
+      this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
     }
   }
   //Vacia la lista de resultados de autocompletados
@@ -761,6 +782,26 @@ export class ViajeComponent implements OnInit {
     this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     document.getElementById('idFechaG').focus();
   }
+  //Agrega datos a la tabla de peajes
+  public agregarPeaje(): void {
+    this.listaPeajes.push(this.formularioViajePropioPeaje.value);
+    let importe = this.formularioViajePropioPeaje.get('importe').value;
+    let importeTotal = this.formularioViajePropioPeaje.get('importeTotal').value;
+    let total = parseFloat(importeTotal) + parseFloat(importe);
+    this.formularioViajePropioPeaje.reset();
+    this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.establecerValoresPorDefectoViajePeaje(0);
+    document.getElementById('idProveedorP').focus();
+  }
+  //Elimina un peaje de la tabla por indice
+  public eliminarPeaje(indice, elemento): void {
+    this.listaPeajes.splice(indice, 1);
+    let importe = elemento.importe;
+    let importeTotal = this.formularioViajePropioPeaje.get('importeTotal').value;
+    let total = parseFloat(importeTotal) - parseFloat(importe);
+    this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    document.getElementById('idProveedorP').focus();
+  }
   //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
   public estadoTarifa(): boolean {
     try {
@@ -881,6 +922,10 @@ export class ViajeComponent implements OnInit {
     } else {
       return elemento;
     }
+  }
+  //Establece la cantidad de ceros correspondientes a la izquierda del numero
+  public establecerCerosIzq(elemento, string, cantidad) {
+    elemento.setValue((string + elemento.value).slice(cantidad));
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
