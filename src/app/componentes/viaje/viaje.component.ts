@@ -121,6 +121,8 @@ export class ViajeComponent implements OnInit {
   public listaDadorDestinatario:Array<any> = [];
   //Define la lista de tramos (tabla)
   public listaTramos:Array<any> = [];
+  //Define la lista de combustibles (tabla)
+  public listaCombustibles:Array<any> = [];
   //Define la fecha actual
   public fechaActual:string;
   //Constructor
@@ -221,6 +223,8 @@ export class ViajeComponent implements OnInit {
     this.establecerValoresPorDefecto();
     //Establece los valores por defecto del formulario viaje tramo
     this.establecerValoresPorDefectoViajeTramo();
+    //Establece los valores por defecto del formulario viaje combustible
+    this.establecerValoresPorDefectoViajeCombustible(1);
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -253,7 +257,15 @@ export class ViajeComponent implements OnInit {
         })
       }
     })
-    //Autocompletado Proveedor - Buscar por alias
+    //Autocompletado Proveedor (Combustible) - Buscar por alias
+    this.formularioViajePropioCombustible.get('proveedor').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
+          this.resultadosProveedores = response;
+        })
+      }
+    })
+    //Autocompletado Proveedor (Insumo) - Buscar por alias
     this.formularioViajePropioInsumo.get('proveedor').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
@@ -279,13 +291,25 @@ export class ViajeComponent implements OnInit {
     this.formularioViajePropio.get('esRemolquePropio').setValue(true);
     this.formularioViajePropio.get('fecha').setValue(this.fechaActual);
   }
-  //Establece los valores por defecto del formulario viaje propio tramo
+  //Establece los valores por defecto del formulario viaje tramo
   public establecerValoresPorDefectoViajeTramo(): void {
     let valor = 0;
     this.formularioViajePropioTramo.get('fechaTramo').setValue(this.fechaActual);
     this.formularioViajePropioTramo.get('cantidad').setValue(valor);
     this.formularioViajePropioTramo.get('precioUnitario').setValue(valor.toFixed(2));
     this.formularioViajePropioTramo.get('importe').setValue(valor.toFixed(2));
+  }
+  //Establece los valores por defecto del formulario viaje combustible
+  public establecerValoresPorDefectoViajeCombustible(opcion): void {
+    let valor = 0;
+    this.formularioViajePropioCombustible.get('fecha').setValue(this.fechaActual);
+    this.formularioViajePropioCombustible.get('cantidad').setValue(valor);
+    this.formularioViajePropioCombustible.get('precioUnitario').setValue(valor.toFixed(2));
+    this.formularioViajePropioCombustible.get('importe').setValue(valor.toFixed(2));
+    if(opcion == 1) {
+      this.formularioViajePropioCombustible.get('totalCombustible').setValue(valor.toFixed(2));
+      this.formularioViajePropioCombustible.get('totalUrea').setValue(valor.toFixed(2));
+    }
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -531,16 +555,16 @@ export class ViajeComponent implements OnInit {
     console.log();
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
-  public calcularImporte(): void {
-    let cantidad = this.formularioViajePropioTramo.get('cantidad').value;
-    let precioUnitario = this.formularioViajePropioTramo.get('precioUnitario').value;
-    this.formularioViajePropioTramo.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(2));
+  public calcularImporte(formulario): void {
+    let cantidad = formulario.get('cantidad').value;
+    let precioUnitario = formulario.get('precioUnitario').value;
+    formulario.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(2));
     if(cantidad != null && precioUnitario != null) {
       let importe = cantidad * precioUnitario;
-      this.formularioViajePropioTramo.get('importe').setValue(importe.toFixed(2));
+      formulario.get('importe').setValue(importe.toFixed(2));
     }
   }
-  //Abre el dialogo vista previa para visualizar el menu del rol
+  //Abre un dialogo para agregar dadores y destinatarios
   public verDadorDestinatarioDialogo(): void {
     const dialogRef = this.dialog.open(DadorDestinatarioDialogo, {
       width: '1200px',
@@ -552,11 +576,83 @@ export class ViajeComponent implements OnInit {
       this.formularioViajePropioTramo.get('listaViajePropioTramoCliente').setValue(listaViajePropioTramoCliente);
     });
   }
+  //Abre un dialogo para ver la lista de dadores y destinatarios
+  public verDadorDestTablaDialogo(elemento): void {
+    const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
+      width: '1200px',
+      data: {
+        tema: this.appComponent.getTema(),
+        elemento: elemento
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      
+    });
+  }
+  //Abre un dialogo para ver las observaciones
+  public verObservacionesDialogo(elemento): void {
+    const dialogRef = this.dialog.open(ObservacionesDialogo, {
+      width: '1200px',
+      data: {
+        tema: this.appComponent.getTema(),
+        elemento: elemento
+      }
+    });
+    dialogRef.afterClosed().subscribe(listaViajePropioTramoCliente => {
+      this.formularioViajePropioTramo.get('listaViajePropioTramoCliente').setValue(listaViajePropioTramoCliente);
+    });
+  }
   //Agrega datos a la tabla de tramos
   public agregarTramo(): void {
     this.listaTramos.push(this.formularioViajePropioTramo.value);
     this.formularioViajePropioTramo.reset();
     this.establecerValoresPorDefectoViajeTramo();
+    document.getElementById('idFechaTramo').focus();
+  }
+  //Elimina un tramo de la tabla por indice
+  public eliminarTramo(indice): void {
+    this.listaTramos.splice(indice, 1);
+    document.getElementById('idTramoFecha').focus();
+  }
+  //Agrega datos a la tabla de combustibles
+  public agregarCombustible(): void {
+    this.formularioViajePropioCombustible.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formularioViajePropioCombustible.get('usuario').setValue(this.appComponent.getUsuario());
+    this.listaCombustibles.push(this.formularioViajePropioCombustible.value);
+    let insumo = this.formularioViajePropioCombustible.get('insumoProducto').value.id;
+    let cantidad = this.formularioViajePropioCombustible.get('cantidad').value;
+    let totalCombustible = this.formularioViajePropioCombustible.get('totalCombustible').value;
+    let totalUrea = this.formularioViajePropioCombustible.get('totalUrea').value;
+    let total = 0;
+    this.formularioViajePropioCombustible.reset();
+    if(insumo == 1) {
+      total = parseFloat(totalCombustible) + parseFloat(cantidad);
+      this.formularioViajePropioCombustible.get('totalCombustible').setValue(total.toFixed(2));
+      this.formularioViajePropioCombustible.get('totalUrea').setValue(totalUrea);
+    } else if(insumo == 3) {
+      total = parseFloat(totalUrea) + parseFloat(cantidad);
+      this.formularioViajePropioCombustible.get('totalUrea').setValue(total.toFixed(2));
+      this.formularioViajePropioCombustible.get('totalCombustible').setValue(totalCombustible);
+    }
+    this.establecerValoresPorDefectoViajeCombustible(0);
+    document.getElementById('idProveedorOC').focus();
+  }
+  //Elimina un combustible de la tabla por indice
+  public eliminarCombustible(indice, elemento): void {
+    this.listaCombustibles.splice(indice, 1);
+    let insumo = elemento.insumoProducto.id;
+    let cantidad = elemento.cantidad;
+    let totalCombustible = this.formularioViajePropioCombustible.get('totalCombustible').value;
+    let totalUrea = this.formularioViajePropioCombustible.get('totalUrea').value;
+    let total = 0;
+    if(insumo == 1) {
+      total = parseFloat(totalCombustible) - parseFloat(cantidad);
+      this.formularioViajePropioCombustible.get('totalCombustible').setValue(total.toFixed(2));
+    } else if(insumo == 3) {
+      total = parseFloat(totalUrea) - parseFloat(cantidad);
+      this.formularioViajePropioCombustible.get('totalUrea').setValue(total.toFixed(2));
+    }
+    document.getElementById('idProveedorOC').focus();
   }
   //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
   public estadoTarifa(): boolean {
@@ -566,6 +662,10 @@ export class ViajeComponent implements OnInit {
     } catch(e) {
       return false;
     }
+  }
+  //EStablece el precio unitario en orden combustible
+  public establecerPrecioUnitarioOC(): void {
+    this.formularioViajePropioCombustible.get('precioUnitario').setValue((this.formularioViajePropioCombustible.get('insumoProducto').value.precioUnitarioVenta).toFixed(2));
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -750,5 +850,55 @@ export class DadorDestinatarioDialogo {
     } else {
       return elemento;
     }
+  }
+}
+//Componente DadorDestTablaDialogo
+@Component({
+  selector: 'dador-dest-tabla-dialogo',
+  templateUrl: 'dador-dest-tabla-dialogo.component.html'
+})
+export class DadorDestTablaDialogo {
+  //Define el tema
+  public tema:string;
+  //Define la observacion
+  public listaDadorDestinatario:Array<any> = [];
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<DadorDestTablaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  ngOnInit() {
+    //Establece el tema
+    this.tema = this.data.tema;
+    //Establece la lista de dadores-destinatarios
+    this.listaDadorDestinatario = this.data.elemento.listaViajePropioTramoCliente;
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+//Componente ObservacionesDialogo
+@Component({
+  selector: 'observaciones-dialogo',
+  templateUrl: 'observaciones-dialogo.component.html'
+})
+export class ObservacionesDialogo {
+  //Define el tema
+  public tema:string;
+  //Define el formulario
+  public formulario:FormGroup;
+  //Define la observacion
+  public observaciones:string;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<ObservacionesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  ngOnInit() {
+    //Establece el tema
+    this.tema = this.data.tema;
+    //Establece el formulario
+    this.formulario = new FormGroup({
+      observaciones: new FormControl()
+    });
+    //Establece las observaciones
+    this.formulario.get('observaciones').setValue(this.data.elemento);
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }

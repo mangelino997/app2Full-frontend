@@ -1,0 +1,19 @@
+<div class="{{tema}}">
+    <h4 class="text-center">Observaciones</h4>
+    <form [formGroup]="formulario">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="idTramoObservaciones" class="tamanio-label">Observaciones</label>
+                    <textarea id="idTramoObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="4"
+                        [readonly]="true"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col text-center">
+            <button mat-raised-button (click)="onNoClick()">Cerrar</button>
+        </div>
+    </div>
+</div>

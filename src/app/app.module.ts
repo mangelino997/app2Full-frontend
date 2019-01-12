@@ -190,7 +190,7 @@ import { ViajeRemitoComponent, ClienteEventualDialogo } from './componentes/viaj
 import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-subopcion/rol-subopcion.component'; //Probado
 import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component'; //Probado
 import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
-import { ViajeComponent, DadorDestinatarioDialogo } from './componentes/viaje/viaje.component';
+import { ViajeComponent, DadorDestinatarioDialogo, DadorDestTablaDialogo, ObservacionesDialogo } from './componentes/viaje/viaje.component';
 import { ActualizacionPreciosComponent } from './componentes/actualizacion-precios/actualizacion-precios.component';
 import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
 import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
@@ -402,7 +402,9 @@ const stompConfig: StompConfig = {
     ViajeUnidadNegocioComponent,
     OpcionComponent,
     ClienteEventualDialogo,
-    DadorDestinatarioDialogo
+    DadorDestinatarioDialogo,
+    DadorDestTablaDialogo,
+    ObservacionesDialogo
   ],
   imports: [
     BrowserModule,
@@ -571,7 +573,9 @@ const stompConfig: StompConfig = {
     VistaPreviaDialogo,
     PestaniaDialogo,
     ClienteEventualDialogo,
-    DadorDestinatarioDialogo
+    DadorDestinatarioDialogo,
+    DadorDestTablaDialogo,
+    ObservacionesDialogo
   ]
 })
 export class AppModule { }

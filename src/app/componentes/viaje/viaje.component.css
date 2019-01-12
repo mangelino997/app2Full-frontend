@@ -23,6 +23,17 @@ th {
 .table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
     padding: 0px;
 }
-.tabla-tramos {
+.tabla-viaje {
     width: 2200px !important;
+}
+.left-inner-addon {
+    position: relative;
+}
+.left-inner-addon input {
+    padding-left: 22px;    
+}
+.left-inner-addon span {
+    position: absolute;
+    padding: 7px 12px;
+    pointer-events: none;
 }

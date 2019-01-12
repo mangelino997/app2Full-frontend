@@ -20,7 +20,7 @@ export class Proveedor {
             sitioWeb: new FormControl('', Validators.maxLength(60)),
             telefono: new FormControl('', Validators.maxLength(45)),
             afipCondicionIva: new FormControl('', Validators.required),
-            condicionCompra: new FormControl(),
+            condicionCompra: new FormControl('', Validators.required),
             usuarioAlta: new FormControl(),
             usuarioBaja: new FormControl(),
             usuarioMod: new FormControl(),
@@ -35,7 +35,7 @@ export class Proveedor {
             numeroCBU: new FormControl('', [Validators.min(1), Validators.minLength(22), Validators.maxLength(22)]),
             aliasCBU: new FormControl('', Validators.maxLength(45)),
             tipoProveedor: new FormControl('', Validators.required),
-            estaActivo: new FormControl(),
+            estaActivo: new FormControl('', Validators.required),
             alias: new FormControl('', Validators.maxLength(100))
         })
     }
