@@ -21,7 +21,8 @@ export class ViajePropioGasto {
             observaciones: new FormControl('', Validators.maxLength(60)),
             estaAnulado: new FormControl(),
             observacionesAnulado: new FormControl('', Validators.maxLength(60)),
-            importe: new FormControl()
+            importe: new FormControl(),
+            importeTotal: new FormControl()
         })
     }
 }

@@ -127,6 +127,8 @@ export class ViajeComponent implements OnInit {
   public listaAdelantosEfectivos:Array<any> = [];
   //Define la lista de ordenes de insumos (tabla)
   public listaOrdenesInsumos:Array<any> = [];
+  //Define la lista de ordenes de gastos (tabla)
+  public listaGastos:Array<any> = [];
   //Define la fecha actual
   public fechaActual:string;
   //Constructor
@@ -233,6 +235,8 @@ export class ViajeComponent implements OnInit {
     this.establecerValoresPorDefectoViajeEfectivo(1);
     //Establece los valores por defecto del formulario viaje insumo
     this.establecerValoresPorDefectoViajeInsumo(1);
+    //Establece los valores por defecto del formulario viaje gasto
+    this.establecerValoresPorDefectoViajeGasto(1);
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -304,19 +308,19 @@ export class ViajeComponent implements OnInit {
     let valor = 0;
     this.formularioViajePropioTramo.get('fechaTramo').setValue(this.fechaActual);
     this.formularioViajePropioTramo.get('cantidad').setValue(valor);
-    this.formularioViajePropioTramo.get('precioUnitario').setValue(valor.toFixed(2));
-    this.formularioViajePropioTramo.get('importe').setValue(valor.toFixed(2));
+    this.formularioViajePropioTramo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
+    this.formularioViajePropioTramo.get('importe').setValue(this.appComponent.establecerCeros(valor));
   }
   //Establece los valores por defecto del formulario viaje combustible
   public establecerValoresPorDefectoViajeCombustible(opcion): void {
     let valor = 0;
     this.formularioViajePropioCombustible.get('fecha').setValue(this.fechaActual);
     this.formularioViajePropioCombustible.get('cantidad').setValue(valor);
-    this.formularioViajePropioCombustible.get('precioUnitario').setValue(valor.toFixed(2));
-    this.formularioViajePropioCombustible.get('importe').setValue(valor.toFixed(2));
+    this.formularioViajePropioCombustible.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
+    this.formularioViajePropioCombustible.get('importe').setValue(this.appComponent.establecerCeros(valor));
     if(opcion == 1) {
-      this.formularioViajePropioCombustible.get('totalCombustible').setValue(valor.toFixed(2));
-      this.formularioViajePropioCombustible.get('totalUrea').setValue(valor.toFixed(2));
+      this.formularioViajePropioCombustible.get('totalCombustible').setValue(this.appComponent.establecerCeros(valor));
+      this.formularioViajePropioCombustible.get('totalUrea').setValue(this.appComponent.establecerCeros(valor));
     }
   }
   //Establece los valores por defecto del formulario viaje adelanto efectivo
@@ -333,10 +337,21 @@ export class ViajeComponent implements OnInit {
     let valor = 0;
     this.formularioViajePropioInsumo.get('fecha').setValue(this.fechaActual);
     this.formularioViajePropioInsumo.get('cantidad').setValue(valor);
-    this.formularioViajePropioInsumo.get('precioUnitario').setValue(valor.toFixed(2));
-    this.formularioViajePropioInsumo.get('importe').setValue(valor.toFixed(2));
+    this.formularioViajePropioInsumo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
+    this.formularioViajePropioInsumo.get('importe').setValue(this.appComponent.establecerCeros(valor));
     if(opcion == 1) {
-      this.formularioViajePropioInsumo.get('importeTotal').setValue(valor.toFixed(2));
+      this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
+    }
+  }
+  //Establece los valores por defecto del formulario viaje gasto
+  public establecerValoresPorDefectoViajeGasto(opcion): void {
+    let valor = 0;
+    this.formularioViajePropioGasto.get('fecha').setValue(this.fechaActual);
+    this.formularioViajePropioGasto.get('cantidad').setValue(valor);
+    this.formularioViajePropioGasto.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
+    this.formularioViajePropioGasto.get('importe').setValue(this.appComponent.establecerCeros(valor));
+    if(opcion == 1) {
+      this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
     }
   }
   //Vacia la lista de resultados de autocompletados
@@ -726,6 +741,26 @@ export class ViajeComponent implements OnInit {
     this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     document.getElementById('idProveedor').focus();
   }
+  //Agrega datos a la tabla de gastos
+  public agregarGasto(): void {
+    this.listaGastos.push(this.formularioViajePropioGasto.value);
+    let importe = this.formularioViajePropioGasto.get('importe').value;
+    let importeTotal = this.formularioViajePropioGasto.get('importeTotal').value;
+    let total = parseFloat(importeTotal) + parseFloat(importe);
+    this.formularioViajePropioGasto.reset();
+    this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.establecerValoresPorDefectoViajeGasto(0);
+    document.getElementById('idFechaG').focus();
+  }
+  //Elimina un gasto de la tabla por indice
+  public eliminarGasto(indice, elemento): void {
+    this.listaGastos.splice(indice, 1);
+    let importe = elemento.importe;
+    let importeTotal = this.formularioViajePropioGasto.get('importeTotal').value;
+    let total = parseFloat(importeTotal) - parseFloat(importe);
+    this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    document.getElementById('idFechaG').focus();
+  }
   //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
   public estadoTarifa(): boolean {
     try {
@@ -833,7 +868,7 @@ export class ViajeComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
     if(elemento != undefined) {
-      return elemento.alias ? elemento.alias : elemento;
+      return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
     }
