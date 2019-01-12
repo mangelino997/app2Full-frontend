@@ -41,7 +41,6 @@ $green-theme-theme:   mat-light-theme($green-theme-primary, $green-theme-accent)
 .green-theme {
   @include angular-material-theme($green-theme-theme);
 }
-@import url( 'https://fonts.googleapis.com/css?family=Roboto:400,700|Material+Icons');
 /* Style de toastr */
 /* position */
 .toast-center-center {
@@ -393,4 +392,14 @@ input {
   max-height: calc(100vh - 48px);
   border-radius: 2px;
   outline: 0;
+}
+.mat-icon {
+  background-repeat: no-repeat;
+  display: inline-block;
+  fill: currentColor;
+  height: 24px;
+  width: 19px !important;
+  font-size: 20px !important;
+  padding: 0px !important;
+  margin: -4px !important;
 }

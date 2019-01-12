@@ -89,4 +89,8 @@ export class AppComponent {
     pagina = pagina.replace(new RegExp(/[/]/g), "");
     this.router.navigate([pagina]);
   }
+  //Establece los ceros en los numero flotantes
+  public establecerCeros(valor) {
+    return parseFloat(valor).toFixed(2);
+  }
 }

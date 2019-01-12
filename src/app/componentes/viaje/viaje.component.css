@@ -26,6 +26,9 @@ th {
 .tabla-viaje {
     width: 2200px !important;
 }
+.tabla-viaje-efectivo {
+    width: 1920px !important;
+}
 .left-inner-addon {
     position: relative;
 }

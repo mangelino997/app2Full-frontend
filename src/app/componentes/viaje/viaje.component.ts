@@ -123,6 +123,8 @@ export class ViajeComponent implements OnInit {
   public listaTramos:Array<any> = [];
   //Define la lista de combustibles (tabla)
   public listaCombustibles:Array<any> = [];
+  //Define la lista de adelantos de efectivo (tabla)
+  public listaAdelantosEfectivos:Array<any> = [];
   //Define la fecha actual
   public fechaActual:string;
   //Constructor
@@ -225,6 +227,8 @@ export class ViajeComponent implements OnInit {
     this.establecerValoresPorDefectoViajeTramo();
     //Establece los valores por defecto del formulario viaje combustible
     this.establecerValoresPorDefectoViajeCombustible(1);
+    //Establece los valores por defecto del formulario viaje efectivo
+    this.establecerValoresPorDefectoViajeEfectivo(1);
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -309,6 +313,15 @@ export class ViajeComponent implements OnInit {
     if(opcion == 1) {
       this.formularioViajePropioCombustible.get('totalCombustible').setValue(valor.toFixed(2));
       this.formularioViajePropioCombustible.get('totalUrea').setValue(valor.toFixed(2));
+    }
+  }
+  //Establece los valores por defecto del formulario viaje adelanto efectivo
+  public establecerValoresPorDefectoViajeEfectivo(opcion): void {
+    let valor = 0;
+    this.formularioViajePropioEfectivo.get('fechaCaja').setValue(this.fechaActual);
+    this.formularioViajePropioEfectivo.get('importe').setValue(this.appComponent.establecerCeros(valor));
+    if(opcion == 1) {
+      this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
     }
   }
   //Vacia la lista de resultados de autocompletados
@@ -654,6 +667,28 @@ export class ViajeComponent implements OnInit {
     }
     document.getElementById('idProveedorOC').focus();
   }
+  //Agrega datos a la tabla de adelanto efectivo
+  public agregarAdelantoEfectivo(): void {
+    this.formularioViajePropioEfectivo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formularioViajePropioEfectivo.get('usuario').setValue(this.appComponent.getUsuario());
+    this.listaAdelantosEfectivos.push(this.formularioViajePropioEfectivo.value);
+    let importeTotal = this.formularioViajePropioEfectivo.get('importeTotal').value;
+    let importe = this.formularioViajePropioEfectivo.get('importe').value;
+    let total = parseFloat(importeTotal) + parseFloat(importe);
+    this.formularioViajePropioEfectivo.reset();
+    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.establecerValoresPorDefectoViajeEfectivo(0);
+    document.getElementById('idFechaCajaAE').focus();
+  }
+  //Elimina un adelanto efectivo de la tabla por indice
+  public eliminarAdelantoEfectivo(indice, elemento): void {
+    let importe = elemento.importe;
+    let importeTotal = this.formularioViajePropioEfectivo.get('importeTotal').value;
+    let total = parseFloat(importeTotal) - parseFloat(importe);
+    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.listaAdelantosEfectivos.splice(indice, 1);
+    document.getElementById('idFechaCajaAE').focus();
+  }
   //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
   public estadoTarifa(): boolean {
     try {
@@ -666,6 +701,10 @@ export class ViajeComponent implements OnInit {
   //EStablece el precio unitario en orden combustible
   public establecerPrecioUnitarioOC(): void {
     this.formularioViajePropioCombustible.get('precioUnitario').setValue((this.formularioViajePropioCombustible.get('insumoProducto').value.precioUnitarioVenta).toFixed(2));
+  }
+  //Establece los ceros en los numeros flotantes
+  public establecerCeros(elemento): void {
+    elemento.setValue(this.appComponent.establecerCeros(elemento.value));
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
