@@ -871,8 +871,8 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <table class="table table-bordered table-striped table-sm">
+                                        <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+                                            <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje-efectivo">
                                                 <thead>
                                                     <tr>
                                                         <th class="text-center" style="width:10%" scope="col">Fecha</th>
@@ -885,18 +885,18 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr *ngFor="let l of listaCompleta; let i = index">
+                                                    <tr *ngFor="let l of listaRemitosPendientes; let i = index">
                                                         <td align="center">
-                                                            <span>{{l.fecha}}</span>
+                                                            <span>{{l.fecha | date: 'dd/MM/yyyy'}}</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span>{{l.tipoComprobante}}</span>
+                                                            <span>{{l.tipoComprobante.nombre}}</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span>{{l.puntoVenta}}</span>
+                                                            <span>{{displayCeros(l.puntoVenta, '000', -4)}}</span>
                                                         </td>
                                                         <td align="center">
-                                                            <span>{{l.nuermo}}</span>
+                                                            <span>{{displayCeros(l.numero, '0000000', -8)}}</span>
                                                         </td>
                                                         <td align="center">
                                                             <span>{{l.clienteRemitente.razonSocial}}</span>
@@ -913,9 +913,7 @@
                                         </div>
                                     </div>
                                     <div class="row justify-content-end">
-                                        <div class="col-md-2">
-                                            <button class="btn btn-primary" type="button">Asignar/Quitar</button>
-                                        </div>
+                                        <button mat-raised-button color="primary">Asignar/Quitar</button>
                                     </div>
                                 </form>
                             </div>
@@ -1191,7 +1189,7 @@
                             </div>
                             <div class="row">
                                 <div class="centrar">
-                                    <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+                                    <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary"
                                         formnovalidate (click)="accion(indiceSeleccionado)">
                                         {{pestaniaActual}}
                                     </button>

@@ -131,6 +131,8 @@ export class ViajeComponent implements OnInit {
   public listaGastos:Array<any> = [];
   //Define la lista de ordenes de peajes (tabla)
   public listaPeajes:Array<any> = [];
+  //Define la lista de remitos pendientes
+  public listaRemitosPendientes:Array<any> = [];
   //Define la fecha actual
   public fechaActual:string;
   //Constructor
@@ -821,7 +823,7 @@ export class ViajeComponent implements OnInit {
     let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
     let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
     this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
-      console.log(res);
+      this.listaRemitosPendientes = res.json();
     });
   }
   //Establece los ceros en los numeros flotantes
@@ -928,6 +930,14 @@ export class ViajeComponent implements OnInit {
     if(elemento != undefined) {
       return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre +
         ' ---> ' + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre + ' (' + elemento.km + 'km)' : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayCeros(elemento, string, cantidad) {
+    if(elemento != undefined) {
+      return elemento ? (string + elemento).slice(cantidad) : elemento;
     } else {
       return elemento;
     }
