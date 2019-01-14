@@ -671,7 +671,7 @@ export class ViajeComponent implements OnInit {
     this.listaTramos.push(this.formularioViajePropioTramo.value);
     this.formularioViajePropioTramo.reset();
     this.establecerValoresPorDefectoViajeTramo();
-    document.getElementById('idFechaTramo').focus();
+    document.getElementById('idTramoFecha').focus();
   }
   //Elimina un tramo de la tabla por indice
   public eliminarTramo(indice): void {
@@ -814,6 +814,15 @@ export class ViajeComponent implements OnInit {
   //Establece el precio unitario en orden combustible
   public establecerPrecioUnitario(formulario, elemento): void {
     formulario.get('precioUnitario').setValue((formulario.get(elemento).value.precioUnitarioVenta).toFixed(2));
+  }
+  //Obtiene la lista de remitos pendiente por filtro (sucursal, sucursal destino y numero de camion)
+  public listarRemitosPendientesPorFiltro(): void {
+    let sucursal = this.appComponent.getUsuario().sucursal;
+    let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
+    let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
+    this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
+      console.log(res);
+    });
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {

@@ -37,7 +37,8 @@ export class ViajeRemito {
             seguimiento: new FormControl(''),
             estaEnReparto: new FormControl(),
             alias: new FormControl(),
-            tipoRemito: new FormControl()
+            tipoRemito: new FormControl(),
+            tramo: new FormControl()
         })
     }
 }

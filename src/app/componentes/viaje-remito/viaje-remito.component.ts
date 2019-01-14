@@ -431,6 +431,10 @@ export class ViajeRemitoComponent implements OnInit {
       return elemento;
     }
   }
+  //Establece la cantidad de ceros correspondientes a la izquierda del numero
+  public establecerCerosIzq(elemento, string, cantidad) {
+    elemento.setValue((string + elemento.value).slice(cantidad));
+  }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
