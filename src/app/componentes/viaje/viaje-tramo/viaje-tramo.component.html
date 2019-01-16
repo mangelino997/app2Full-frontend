@@ -1,0 +1,204 @@
+<form [formGroup]="formularioViajePropioTramo">
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoFecha" class="tamanio-label">Fecha</label>
+                <input id="idTramoFecha" type="date" formControlName="fechaTramo"
+                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group has-float-label">
+                <label for="idTramo" class="tamanio-label">Tramo *</label>
+                <input id="idTramo" class="form-control form-control-sm" type="text"
+                    matInput [formControl]="formularioViajePropioTramo.get('tramo')"
+                    [matAutocomplete]="autoTramo" autocomplete="off" [readonly]="soloLectura">
+                <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                    <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">
+                        {{itemTramo.origen.nombre}},
+                        {{itemTramo.origen.provincia.nombre}} ->
+                        {{itemTramo.destino.nombre}},
+                        {{itemTramo.destino.provincia.nombre}}
+                        ({{itemTramo.km}}km)
+                    </mat-option>
+                </mat-autocomplete>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoEmpresa" class="tamanio-label">Empresa *</label>
+                <mat-select id="idTramoEmpresa" class="form-control form-control-sm"
+                    formControlName="empresa" [compareWith]="compareFn">
+                    <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
+                        {{itemEmpresa.razonSocial}}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoUnidadNegocio" class="tamanio-label">Unidad de
+                    Negocio *</label>
+                <mat-select id="idTramoUnidadNegocio" class="form-control form-control-sm"
+                    formControlName="viajeUnidadNegocio" [compareWith]="compareFn">
+                    <mat-option *ngFor="let itemUnidadNegocio of unidadesNegocios"
+                        [value]="itemUnidadNegocio">
+                        {{itemUnidadNegocio.nombre}}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoViajeTipoCarga" class="tamanio-label">Tipo de Carga
+                    *</label>
+                <mat-select id="idTramoViajeTipoCarga" class="form-control form-control-sm"
+                    formControlName="viajeTipoCarga" [compareWith]="compareFn">
+                    <mat-option *ngFor="let itemViajeTipoCarga of viajesTiposCargas"
+                        [value]="itemViajeTipoCarga">
+                        {{itemViajeTipoCarga.nombre}}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoTipoViaje" class="tamanio-label">Tipo de Viaje *</label>
+                <mat-select id="idTramoTipoViaje" class="form-control form-control-sm"
+                    formControlName="viajeTipo" [compareWith]="compareFn">
+                    <mat-option *ngFor="let itemViajeTipo of viajesTipos" [value]="itemViajeTipo">
+                        {{itemViajeTipo.nombre}}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoViajeTarifa" class="tamanio-label">Tarifa *</label>
+                <mat-select id="idTramoViajeTarifa" class="form-control form-control-sm"
+                    formControlName="viajeTarifa" [compareWith]="compareFn">
+                    <mat-option *ngFor="let itemViajeTarifa of viajesTarifas" [value]="itemViajeTarifa">
+                        {{itemViajeTarifa.nombre}}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoCantidad" class="tamanio-label">Cantidad/km *</label>
+                <input id="idTramoCantidad" type="number" formControlName="cantidad"
+                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura || estadoTarifa()"
+                    (blur)="calcularImporte(formularioViajePropioTramo)">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoPrecioUnitario" class="tamanio-label">Precio
+                    Unitario($)*</label>
+                <input id="idTramoPrecioUnitario" type="number" formControlName="precioUnitario"
+                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura || estadoTarifa()"
+                    (blur)="calcularImporte(formularioViajePropioTramo)">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoImporte" class="tamanio-label">Importe($)*</label>
+                <input id="idTramoImporte" type="number" formControlName="importe"
+                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+        </div>
+        <div class="col md 3">
+            <button mat-raised-button (click)="verDadorDestinatarioDialogo()">Dador-Destinatario</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group has-float-label">
+                <label for="idTramoObservaciones" class="tamanio-label">Observaciones</label>
+                <textarea id="idTramoObservaciones" class="form-control form-control-sm"
+                    formControlName="observaciones" rows="2" [readonly]="soloLectura"></textarea>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <button mat-raised-button color="primary" (click)="agregarTramo()">Agregar
+                Tramo</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
+                <thead>
+                    <tr>
+                        <th class="text-center" style="width:2%" scope="col">#</th>
+                        <th class="text-center" style="width:5%" scope="col">Fecha</th>
+                        <th class="text-center" style="width:20%" scope="col">Tramo</th>
+                        <th class="text-center" style="width:3%" scope="col">Km</th>
+                        <th class="text-center" style="width:10%" scope="col">Empresa</th>
+                        <th class="text-center" style="width:10%" scope="col">Tipo
+                            Carga</th>
+                        <th class="text-center" style="width:10%" scope="col">Tipo
+                            Viaje</th>
+                        <th class="text-center" style="width:10%" scope="col">Tarifa</th>
+                        <th class="text-center" style="width:10%" scope="col">Dador-Destinatario</th>
+                        <th class="text-center" style="width:10%" scope="col">Unidad
+                            Negocio</th>
+                        <th class="text-center" style="width:5%" scope="col">Obs.</th>
+                        <th class="text-center" style="width:2%" scope="col">-</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let l of listaTramos; let i = index">
+                        <td align="center">
+                            <span>{{i + 1}}</span>
+                        </td>
+                        <td align="center">
+                            <span>{{l.fechaTramo| date: 'dd/MM/yyyy'}}</span>
+                        </td>
+                        <td align="center">
+                            <span>{{l.tramo.origen.nombre}} ->
+                                {{l.tramo.destino.nombre}}</span>
+                        </td>
+                        <td align="center">
+                            <span>{{l.tramo.km}}</span>
+                        </td>
+                        <td align="center">
+                            <span>{{l.empresa.razonSocial}}</span>
+                        </td>
+                        <td align="center">
+                            <span>{{l.viajeTipoCarga.nombre}}</span>
+                        </td>
+                        <td align="center">
+                            <span>{{l.viajeTipo.nombre}}</span>
+                        </td>
+                        <td align="center">
+                            <span>{{l.viajeTarifa.nombre}}</span>
+                        </td>
+                        <td align="center">
+                            <span class="cursor-color" (click)="verDadorDestTablaDialogo(l)">ver</span>
+                        </td>
+                        <td align="center">
+                            <span>{{l.viajeUnidadNegocio.nombre}}</span>
+                        </td>
+                        <td align="center">
+                            <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
+                        </td>
+                        <td align="center">
+                            <span class="cursor-color-rojo" (click)="eliminarTramo(i)">X</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="centrar">
+            <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="enviarDatos()">
+                Agregar
+            </button>
+        </div>
+    </div>
+</form>

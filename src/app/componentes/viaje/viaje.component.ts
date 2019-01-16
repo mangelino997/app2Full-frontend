@@ -7,33 +7,22 @@ import { SucursalService } from '../../servicios/sucursal.service';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { VehiculoProveedorService } from '../../servicios/vehiculo-proveedor.service';
 import { PersonalService } from '../../servicios/personal.service';
-import { TramoService } from '../../servicios/tramo.service';
-import { EmpresaService } from '../../servicios/empresa.service';
-import { ViajeUnidadNegocioService } from '../../servicios/viaje-unidad-negocio.service';
-import { ViajeTipoCargaService } from '../../servicios/viaje-tipo-carga.service';
-import { ViajeTipoService } from '../../servicios/viaje-tipo.service';
-import { ViajeTarifaService } from '../../servicios/viaje-tarifa.service';
-import { ViajePrecioService } from '../../servicios/viaje-precio.service';
-import { ClienteService } from '../../servicios/cliente.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
 import { InsumoProductoService } from '../../servicios/insumo-producto.service';
 import { RubroProductoService } from '../../servicios/rubro-producto.service';
 import { ViajeRemitoService } from '../../servicios/viaje-remito.service';
 import { ChoferProveedorService } from '../../servicios/chofer-proveedor.service';
-import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ViajePropio } from 'src/app/modelos/viajePropio';
 import { ViajePropioTramo } from 'src/app/modelos/viajePropioTramo';
-import { ViajePropioTramoCliente } from 'src/app/modelos/viajePropioTramoCliente';
 import { ViajePropioCombustible } from 'src/app/modelos/viajePropioCombustible';
 import { ViajePropioEfectivo } from 'src/app/modelos/viajePropioEfectivo';
 import { ViajePropioInsumo } from 'src/app/modelos/viajePropioInsumo';
 import { ViajeRemito } from 'src/app/modelos/viajeRemito';
 import { ViajePropioGasto } from 'src/app/modelos/viajePropioGasto';
 import { ViajePropioPeaje } from 'src/app/modelos/viajePropioPeaje';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-viaje',
@@ -59,10 +48,6 @@ export class ViajeComponent implements OnInit {
   public opciones:Array<any> = [];
   //Define un formulario viaje propio para validaciones de campos
   public formularioViajePropio:FormGroup;
-  //Define un formulario viaje propio tramo para validaciones de campos
-  public formularioViajePropioTramo:FormGroup;
-  //Define un formulario viaje propio tramo cliente para validaciones de campos
-  public formularioViajePropioTramoCliente:FormGroup;
   //Define un formulario viaje propio combustible para validaciones de campos
   public formularioViajePropioCombustible:FormGroup;
   //Define un formulario viaje propio efectivo para validaciones de campos
@@ -91,8 +76,6 @@ export class ViajeComponent implements OnInit {
   public resultadosVehiculosRemolques:Array<any> = [];
   //Define la lista de resultados de choferes
   public resultadosChoferes:Array<any> = [];
-  //Define la lista de resultados de tramos
-  public resultadosTramos:Array<any> = [];
   //Define la lista de resultados de clientes
   public resultadosClientes:Array<any> = [];
   //Define la lista de resultados proveedores de busqueda
@@ -105,24 +88,6 @@ export class ViajeComponent implements OnInit {
   public usuarioNombre:FormControl = new FormControl();
   //Define la lista de sucursales
   public sucursales:Array<any> = [];
-  //Define la lista de insumos
-  public insumos:Array<any> = [];
-  //Define la lista de empresas
-  public empresas:Array<any> = [];
-  //Define la lista de unidades de negocios
-  public unidadesNegocios:Array<any> = [];
-  //Define la lista de viajes tipos cargas
-  public viajesTiposCargas:Array<any> = [];
-  //Define la lista de viajes tipos
-  public viajesTipos:Array<any> = [];
-  //Define la lista de viajes tarifas
-  public viajesTarifas:Array<any> = [];
-  //Define la lista de dedor-destinatario
-  public listaDadorDestinatario:Array<any> = [];
-  //Define la lista de tramos (tabla)
-  public listaTramos:Array<any> = [];
-  //Define la lista de combustibles (tabla)
-  public listaCombustibles:Array<any> = [];
   //Define la lista de adelantos de efectivo (tabla)
   public listaAdelantosEfectivos:Array<any> = [];
   //Define la lista de ordenes de insumos (tabla)
@@ -133,26 +98,23 @@ export class ViajeComponent implements OnInit {
   public listaPeajes:Array<any> = [];
   //Define la lista de remitos pendientes
   public listaRemitosPendientes:Array<any> = [];
+  //Define una lista de remitos
+  public remitos:FormArray;
   //Define la fecha actual
   public fechaActual:string;
   //Constructor
   constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
+    private appComponent: AppComponent, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private fechaServicio: FechaService,
     private sucursalServicio: SucursalService, private vehiculoServicio: VehiculoService,
     private vehiculoProveedorServicio: VehiculoProveedorService, private personalServicio: PersonalService,
-    private tramoServicio: TramoService, private empresaServicio: EmpresaService,
-    private viajeUnidadNegocioServicio: ViajeUnidadNegocioService, private viajeTipoCargaServicio: ViajeTipoCargaService,
-    private viajeTipoServicio: ViajeTipoService, private viajeTarifaServicio: ViajeTarifaService,
-    private viajaPrecioServicio: ViajePrecioService, private clienteServicio: ClienteService,
     private proveedorServicio: ProveedorService, private insumoProductoServicio: InsumoProductoService,
     private rubroProductoServicio: RubroProductoService, private viajeRemitoServicio: ViajeRemitoService,
     private choferProveedorServicio: ChoferProveedorService, private viajePropioModelo: ViajePropio,
-    private viajePropioTramoModelo: ViajePropioTramo, private viajePropioTramoClienteModelo: ViajePropioTramoCliente,
+    private viajePropioTramoModelo: ViajePropioTramo,
     private viajePropioCombustibleModelo: ViajePropioCombustible, private viajePropioEfectivoModelo: ViajePropioEfectivo,
     private viajePropioInsumoModelo: ViajePropioInsumo, private viajeRemitoModelo: ViajeRemito,
-    private viajePropioGastoModelo: ViajePropioGasto, private viajePropioPeajeModelo: ViajePropioPeaje,
-    public dialog: MatDialog) {
+    private viajePropioGastoModelo: ViajePropioGasto, private viajePropioPeajeModelo: ViajePropioPeaje, private fb: FormBuilder) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -189,22 +151,20 @@ export class ViajeComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-    //Establece la fecha actual
-    this.fechaActual = new Date().toISOString().substring(0,10);
     //Establece el formulario viaje propio
     this.formularioViajePropio = this.viajePropioModelo.formulario;
-    //Establece el formulario viaje propio tramo
-    this.formularioViajePropioTramo = this.viajePropioTramoModelo.formulario;
-    //Establece el formulario viaje propio tramo cliente
-    this.formularioViajePropioTramoCliente = this.viajePropioTramoClienteModelo.formulario;
-    //Establece el formulario viaje propio combustible
-    this.formularioViajePropioCombustible = this.viajePropioCombustibleModelo.formulario;
     //Establece el formulario viaje propio efectivo
     this.formularioViajePropioEfectivo = this.viajePropioEfectivoModelo.formulario;
     //Establece el formulario viaje propio insumo
     this.formularioViajePropioInsumo = this.viajePropioInsumoModelo.formulario;
     //Establece el formulario viaje remito
-    this.formularioViajeRemito = this.viajeRemitoModelo.formulario;
+    this.formularioViajeRemito = this.fb.group({
+      tipoRemito: new FormControl,
+      tramo: new FormControl(),
+      numeroCamion: new FormControl(),
+      sucursalDestino: new FormControl(),
+      remitos: this.fb.array([])
+    })
     //Establece el formulario viaje propio gasto
     this.formularioViajePropioGasto = this.viajePropioGastoModelo.formulario;
     //Establece el formulario viaje propio peaje
@@ -217,24 +177,8 @@ export class ViajeComponent implements OnInit {
     this.listar();
     //Obtiene la lista de sucursales
     this.listarSucursales();
-    //Obtiene la lista de insumos
-    this.listarInsumos();
-    //Obtiene la lista de empresas
-    this.listarEmpresas();
-    //Obtiene la lista de unidades de negocios
-    this.listarUnidadesNegocios();
-    //Obtiene la lista de viajes tipos cargas
-    this.listarViajesTiposCargas();
-    //Obtiene la lista de viajes tipos
-    this.listarViajesTipos();
-    //Obtiene la lista de viajes tarifas
-    this.listarViajesTarifas();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
-    //Establece los valores por defecto del formulario viaje tramo
-    this.establecerValoresPorDefectoViajeTramo();
-    //Establece los valores por defecto del formulario viaje combustible
-    this.establecerValoresPorDefectoViajeCombustible(1);
     //Establece los valores por defecto del formulario viaje efectivo
     this.establecerValoresPorDefectoViajeEfectivo(1);
     //Establece los valores por defecto del formulario viaje insumo
@@ -264,22 +208,6 @@ export class ViajeComponent implements OnInit {
       if(typeof data == 'string') {
         this.personalServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosChoferes = response;
-        })
-      }
-    })
-    //Autocompletado Tramo - Buscar por alias
-    this.formularioViajePropioTramo.get('tramo').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.tramoServicio.listarPorOrigen(data).subscribe(response => {
-          this.resultadosTramos = response;
-        })
-      }
-    })
-    //Autocompletado Proveedor (Combustible) - Buscar por alias
-    this.formularioViajePropioCombustible.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
-          this.resultadosProveedores = response;
         })
       }
     })
@@ -315,27 +243,10 @@ export class ViajeComponent implements OnInit {
     this.usuarioNombre.setValue(usuario.nombre);
     this.tipoViaje.setValue(true);
     this.formularioViajePropio.get('esRemolquePropio').setValue(true);
-    this.formularioViajePropio.get('fecha').setValue(this.fechaActual);
-  }
-  //Establece los valores por defecto del formulario viaje tramo
-  public establecerValoresPorDefectoViajeTramo(): void {
-    let valor = 0;
-    this.formularioViajePropioTramo.get('fechaTramo').setValue(this.fechaActual);
-    this.formularioViajePropioTramo.get('cantidad').setValue(valor);
-    this.formularioViajePropioTramo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
-    this.formularioViajePropioTramo.get('importe').setValue(this.appComponent.establecerCeros(valor));
-  }
-  //Establece los valores por defecto del formulario viaje combustible
-  public establecerValoresPorDefectoViajeCombustible(opcion): void {
-    let valor = 0;
-    this.formularioViajePropioCombustible.get('fecha').setValue(this.fechaActual);
-    this.formularioViajePropioCombustible.get('cantidad').setValue(valor);
-    this.formularioViajePropioCombustible.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
-    this.formularioViajePropioCombustible.get('importe').setValue(this.appComponent.establecerCeros(valor));
-    if(opcion == 1) {
-      this.formularioViajePropioCombustible.get('totalCombustible').setValue(this.appComponent.establecerCeros(valor));
-      this.formularioViajePropioCombustible.get('totalUrea').setValue(this.appComponent.establecerCeros(valor));
-    }
+    //Establece la fecha actual
+    this.fechaServicio.obtenerFecha().subscribe(res => {
+      this.formularioViajePropio.get('fecha').setValue(res.json());
+    })
   }
   //Establece los valores por defecto del formulario viaje adelanto efectivo
   public establecerValoresPorDefectoViajeEfectivo(opcion): void {
@@ -393,72 +304,6 @@ export class ViajeComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de insumos
-  private listarInsumos() {
-    this.insumoProductoServicio.listar().subscribe(
-      res => {
-        this.insumos = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de empresas
-  private listarEmpresas() {
-    this.empresaServicio.listar().subscribe(
-      res => {
-        this.empresas = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de unidades de negocio
-  private listarUnidadesNegocios() {
-    this.viajeUnidadNegocioServicio.listar().subscribe(
-      res => {
-        this.unidadesNegocios = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de viaje tipo carga
-  private listarViajesTiposCargas() {
-    this.viajeTipoCargaServicio.listar().subscribe(
-      res => {
-        this.viajesTiposCargas = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de viajes tipos
-  private listarViajesTipos() {
-    this.viajeTipoServicio.listar().subscribe(
-      res => {
-        this.viajesTipos = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de viajes tarifas
-  private listarViajesTarifas() {
-    this.viajeTarifaServicio.listar().subscribe(
-      res => {
-        this.viajesTarifas = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -470,14 +315,6 @@ export class ViajeComponent implements OnInit {
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
-  }
-  //Habilita o deshabilita los campos dependiendo de la pestaña
-  private establecerEstadoCampos(estado) {
-    if(estado) {
-      
-    } else {
-      
-    }
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -491,19 +328,15 @@ export class ViajeComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idFecha');
         break;
       case 2:
-        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
@@ -620,105 +453,14 @@ export class ViajeComponent implements OnInit {
   private eliminar() {
     console.log();
   }
-  //Calcula el importe a partir de cantidad/km y precio unitario
-  public calcularImporte(formulario): void {
-    let cantidad = formulario.get('cantidad').value;
-    let precioUnitario = formulario.get('precioUnitario').value;
-    formulario.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(2));
-    if(cantidad != null && precioUnitario != null) {
-      let importe = cantidad * precioUnitario;
-      formulario.get('importe').setValue(importe.toFixed(2));
-    }
+  //Recibe la lista de tramos de Viaje Tramos
+  public recibirTramos($event) {
+    this.formularioViajePropio.get('listaViajePropioTramo').setValue($event);
+    console.log(this.formularioViajePropio.value);
   }
-  //Abre un dialogo para agregar dadores y destinatarios
-  public verDadorDestinatarioDialogo(): void {
-    const dialogRef = this.dialog.open(DadorDestinatarioDialogo, {
-      width: '1200px',
-      data: {
-        tema: this.appComponent.getTema()
-      }
-    });
-    dialogRef.afterClosed().subscribe(listaViajePropioTramoCliente => {
-      this.formularioViajePropioTramo.get('listaViajePropioTramoCliente').setValue(listaViajePropioTramoCliente);
-    });
-  }
-  //Abre un dialogo para ver la lista de dadores y destinatarios
-  public verDadorDestTablaDialogo(elemento): void {
-    const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
-      width: '1200px',
-      data: {
-        tema: this.appComponent.getTema(),
-        elemento: elemento
-      }
-    });
-    dialogRef.afterClosed().subscribe(resultado => {
-      
-    });
-  }
-  //Abre un dialogo para ver las observaciones
-  public verObservacionesDialogo(elemento): void {
-    const dialogRef = this.dialog.open(ObservacionesDialogo, {
-      width: '1200px',
-      data: {
-        tema: this.appComponent.getTema(),
-        elemento: elemento
-      }
-    });
-    dialogRef.afterClosed().subscribe(listaViajePropioTramoCliente => {
-      this.formularioViajePropioTramo.get('listaViajePropioTramoCliente').setValue(listaViajePropioTramoCliente);
-    });
-  }
-  //Agrega datos a la tabla de tramos
-  public agregarTramo(): void {
-    this.listaTramos.push(this.formularioViajePropioTramo.value);
-    this.formularioViajePropioTramo.reset();
-    this.establecerValoresPorDefectoViajeTramo();
-    document.getElementById('idTramoFecha').focus();
-  }
-  //Elimina un tramo de la tabla por indice
-  public eliminarTramo(indice): void {
-    this.listaTramos.splice(indice, 1);
-    document.getElementById('idTramoFecha').focus();
-  }
-  //Agrega datos a la tabla de combustibles
-  public agregarCombustible(): void {
-    this.formularioViajePropioCombustible.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formularioViajePropioCombustible.get('usuario').setValue(this.appComponent.getUsuario());
-    this.listaCombustibles.push(this.formularioViajePropioCombustible.value);
-    let insumo = this.formularioViajePropioCombustible.get('insumoProducto').value.id;
-    let cantidad = this.formularioViajePropioCombustible.get('cantidad').value;
-    let totalCombustible = this.formularioViajePropioCombustible.get('totalCombustible').value;
-    let totalUrea = this.formularioViajePropioCombustible.get('totalUrea').value;
-    let total = 0;
-    this.formularioViajePropioCombustible.reset();
-    if(insumo == 1) {
-      total = parseFloat(totalCombustible) + parseFloat(cantidad);
-      this.formularioViajePropioCombustible.get('totalCombustible').setValue(total.toFixed(2));
-      this.formularioViajePropioCombustible.get('totalUrea').setValue(totalUrea);
-    } else if(insumo == 3) {
-      total = parseFloat(totalUrea) + parseFloat(cantidad);
-      this.formularioViajePropioCombustible.get('totalUrea').setValue(total.toFixed(2));
-      this.formularioViajePropioCombustible.get('totalCombustible').setValue(totalCombustible);
-    }
-    this.establecerValoresPorDefectoViajeCombustible(0);
-    document.getElementById('idProveedorOC').focus();
-  }
-  //Elimina un combustible de la tabla por indice
-  public eliminarCombustible(indice, elemento): void {
-    this.listaCombustibles.splice(indice, 1);
-    let insumo = elemento.insumoProducto.id;
-    let cantidad = elemento.cantidad;
-    let totalCombustible = this.formularioViajePropioCombustible.get('totalCombustible').value;
-    let totalUrea = this.formularioViajePropioCombustible.get('totalUrea').value;
-    let total = 0;
-    if(insumo == 1) {
-      total = parseFloat(totalCombustible) - parseFloat(cantidad);
-      this.formularioViajePropioCombustible.get('totalCombustible').setValue(total.toFixed(2));
-    } else if(insumo == 3) {
-      total = parseFloat(totalUrea) - parseFloat(cantidad);
-      this.formularioViajePropioCombustible.get('totalUrea').setValue(total.toFixed(2));
-    }
-    document.getElementById('idProveedorOC').focus();
+  //Recibe la lista de combustibles de Viaje Combustible
+  public recibirCombustibles($event) {
+    console.log($event);
   }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarAdelantoEfectivo(): void {
@@ -804,31 +546,62 @@ export class ViajeComponent implements OnInit {
     this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     document.getElementById('idProveedorP').focus();
   }
-  //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
-  public estadoTarifa(): boolean {
-    try {
-      let viajeTarifa = this.formularioViajePropioTramo.get('viajeTarifa').value.id;
-      return viajeTarifa == 2 || viajeTarifa == 5;
-    } catch(e) {
-      return false;
-    }
-  }
-  //Establece el precio unitario en orden combustible
-  public establecerPrecioUnitario(formulario, elemento): void {
-    formulario.get('precioUnitario').setValue((formulario.get(elemento).value.precioUnitarioVenta).toFixed(2));
+  //Crea el array de remitos
+  private crearRemitos(elemento): FormGroup {
+    return this.fb.group({
+      id: elemento.id,
+      version: elemento.version,
+      sucursalEmision: elemento.sucursalEmision,
+      empresaEmision: elemento.empresaEmision,
+      usuario: elemento.usuario,
+      fecha: elemento.fecha,
+      numeroCamion: elemento.numeroCamion,
+      sucursalDestino: elemento.sucursalDestino,
+      tipoComprobante: elemento.tipoComprobante,
+      puntoVenta: elemento.puntoVenta,
+      letra: elemento.letra,
+      numero: elemento.numero,
+      clienteRemitente: elemento.clienteRemitente,
+      clienteDestinatario: elemento.clienteDestinatario,
+      clienteDestinatarioSuc: elemento.clienteDestinatarioSuc,
+      bultos: elemento.bultos,
+      kilosEfectivo: elemento.kilosEfectivo,
+      kilosAforado: elemento.kilosAforado,
+      m3: elemento.m3,
+      valorDeclarado: elemento.valorDeclarado,
+      importeRetiro: elemento.importeRetiro,
+      importeEntrega: elemento.importeEntrega,
+      estaPendiente: elemento.estaPendiente,
+      viajePropioTramo: elemento.viajePropioTramo,
+      viajeTerceroTramo: elemento.viajeTerceroTramo,
+      observaciones: elemento.observacion,
+      estaFacturado: elemento.estaFacturado,
+      seguimiento: elemento.seguimiento,
+      estaEnReparto: elemento.estaEnReparto,
+      alias: elemento.alias
+    })
   }
   //Obtiene la lista de remitos pendiente por filtro (sucursal, sucursal destino y numero de camion)
-  public listarRemitosPendientesPorFiltro(): void {
+  public listarRemitosPorFiltro(): void {
+    let tipo = this.formularioViajeRemito.get('tipoRemito').value;
     let sucursal = this.appComponent.getUsuario().sucursal;
     let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
     let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
-    this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
-      this.listaRemitosPendientes = res.json();
-    });
+    if(tipo) {
+
+    } else {
+      this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
+        let listaRemitosPendientes = res.json();
+        for (var i = 0; i < listaRemitosPendientes.length; i++) {
+          this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
+          this.remitos.push(this.crearRemitos(listaRemitosPendientes[i]));
+        }
+      });
+    }
   }
-  //Establece los ceros en los numeros flotantes
-  public establecerCeros(elemento): void {
-    elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+  //Asigna los remitos a un tramo
+  public asignarRemitos(): void {
+    console.log(this.formularioViajeRemito.value.remitos);
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -863,10 +636,6 @@ export class ViajeComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  }
-  //Formatea el numero a x decimales
-  public setDecimales(valor, cantidad) {
-    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
   }
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
@@ -963,117 +732,5 @@ export class ViajeComponent implements OnInit {
         this.seleccionarOpcion(1, 0);
       }
     }
-  }
-}
-//Componente DadorDestinatarioDialogo
-@Component({
-  selector: 'dador-destinatario-dialogo',
-  templateUrl: 'dador-destinatario-dialogo.component.html'
-})
-export class DadorDestinatarioDialogo {
-  //Define el tema
-  public tema:string;
-  //Define el formulario
-  public formulario: FormGroup;
-  //Define la lista de dador-destinatario
-  public listaDadorDestinatario:Array<any> = [];
-  //Define la lista de clientes
-  public resultadosClientes:Array<any> = [];
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private viajePropioTramoClienteModelo: ViajePropioTramoCliente, private clienteServicio: ClienteService) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    //Establece el formulario
-    this.formulario = this.viajePropioTramoClienteModelo.formulario;
-    //Autocompletado Cliente Dador - Buscar por alias
-    this.formulario.get('clienteDador').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
-        })
-      }
-    })
-    //Autocompletado Cliente Destinatario - Buscar por alias
-    this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
-        })
-      }
-    })
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-  //Agrega el dador y el destinatario a la tabla
-  public agregarDadorDestinatario(): void {
-    this.listaDadorDestinatario.push(this.formulario.value);
-    this.formulario.reset();
-    document.getElementById('idTramoDadorCarga').focus();
-  }
-  //Elimina un dador-destinatario de la tabla
-  public eliminarDadorDestinatario(indice): void {
-    this.listaDadorDestinatario.splice(indice, 1);
-    document.getElementById('idTramoDadorCarga').focus();
-  }
-  //Define como se muestra los datos en el autcompletado b
-  public displayFb(elemento) {
-    if(elemento != undefined) {
-      return elemento.alias ? elemento.alias : elemento;
-    } else {
-      return elemento;
-    }
-  }
-}
-//Componente DadorDestTablaDialogo
-@Component({
-  selector: 'dador-dest-tabla-dialogo',
-  templateUrl: 'dador-dest-tabla-dialogo.component.html'
-})
-export class DadorDestTablaDialogo {
-  //Define el tema
-  public tema:string;
-  //Define la observacion
-  public listaDadorDestinatario:Array<any> = [];
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<DadorDestTablaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    //Establece la lista de dadores-destinatarios
-    this.listaDadorDestinatario = this.data.elemento.listaViajePropioTramoCliente;
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}
-//Componente ObservacionesDialogo
-@Component({
-  selector: 'observaciones-dialogo',
-  templateUrl: 'observaciones-dialogo.component.html'
-})
-export class ObservacionesDialogo {
-  //Define el tema
-  public tema:string;
-  //Define el formulario
-  public formulario:FormGroup;
-  //Define la observacion
-  public observaciones:string;
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<ObservacionesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    //Establece el formulario
-    this.formulario = new FormGroup({
-      observaciones: new FormControl()
-    });
-    //Establece las observaciones
-    this.formulario.get('observaciones').setValue(this.data.elemento);
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }

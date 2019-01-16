@@ -1,0 +1,191 @@
+<form [formGroup]="formularioViajePropioCombustible">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group has-float-label">
+        <label for="idProveedorOC" class="tamanio-label">Proveedor Combustible</label>
+        <input id="idProveedorOC" class="form-control form-control-sm" type="text" matInput [formControl]="formularioViajePropioCombustible.get('proveedor')"
+          [matAutocomplete]="autoProveedorOC" autocomplete="off" [readonly]="soloLectura">
+        <mat-autocomplete #autoProveedorOC="matAutocomplete" [displayWith]="displayFn.bind(this)">
+          <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">{{itemProveedor.alias}}
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+    </div>
+    <div class="col-md-3"></div>
+    <div class="col-md-3">
+      <button mat-raised-button>Consultar Ultimas Cargas</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group has-float-label-icon">
+        <label for="idFechaOC" class="tamanio-label">Fecha</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">
+              <mat-icon>date_range</mat-icon>
+            </span>
+          </div>
+          <input id="idFechaOC" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
+            [readonly]="soloLectura">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group has-float-label">
+        <label for="idInsumoOC" class="tamanio-label">Insumo Combustible *</label>
+        <mat-select id="idInsumoOC" class="form-control form-control-sm" formControlName="insumoProducto" [compareWith]="compareFn"
+          (selectionChange)="establecerPrecioUnitario(formularioViajePropioCombustible, 'insumoProducto')">
+          <mat-option *ngFor="let itemInsumos of insumos" [value]="itemInsumos">
+            {{itemInsumos.nombre}}
+          </mat-option>
+        </mat-select>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group has-float-label-icon">
+        <label for="idCantidadOC" class="tamanio-label">Cantidad *</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">lt.</span>
+          </div>
+          <input id="idCantidadOC" type="number" formControlName="cantidad" autocomplete="off" class="form-control"
+            [readonly]="soloLectura" (blur)="calcularImporte(formularioViajePropioCombustible)">
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group has-float-label-icon">
+        <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <input id="idPrecioUnitarioOC" type="number" formControlName="precioUnitario" autocomplete="off" class="form-control"
+            [readonly]="true">
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group has-float-label-icon">
+        <label for="idImporteOC" class="tamanio-label">Importe *</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <input id="idImporteOC" type="number" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
+            [readonly]="true">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group has-float-label">
+        <label for="idObservaciones" class="tamanio-label">Observaciones</label>
+        <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="2"
+          [readonly]="soloLectura"></textarea>
+      </div>
+    </div>
+    <div class="col-md-1">
+      <button mat-raised-button color="primary" (click)="agregarCombustible()">Agregar
+        Orden</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+      <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:10%" scope="col">Sucursal</th>
+            <th class="text-center" style="width:5%" scope="col">Orden</th>
+            <th class="text-center" style="width:10%" scope="col">Usuario</th>
+            <th class="text-center" style="width:10%" scope="col">Proveedor</th>
+            <th class="text-center" style="width:10%" scope="col">Insumo</th>
+            <th class="text-center" style="width:10%" scope="col">Gasoil/Urea(lt)</th>
+            <th class="text-center" style="width:10%" scope="col">Precio
+              Unitario($)</th>
+            <th class="text-center" style="width:10%" scope="col">Observaciones</th>
+            <th class="text-center" style="width:10%" scope="col">Anulado</th>
+            <th class="text-center" style="width:10%" scope="col">Observaciones
+              Anulado</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaCombustibles; let i = index">
+            <td align="center">
+              <span>{{l.sucursal.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{i+1}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.usuario.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.proveedor.razonSocial}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.insumoProducto.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.cantidad}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.precioUnitario}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
+            </td>
+            <td align="center">
+              <span>{{l.anulado}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color-rojo" (click)="eliminarCombustible(i, l)">X</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <br>
+  <div class="row justify-content-end">
+    <div class="col-md-3">
+      <div class="form-group has-float-label-icon">
+        <label for="idTotalCombustibleOC" class="tamanio-label">Total Gasoil</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="idSigno">lt.</span>
+          </div>
+          <input id="idTotalCombustibleOC" type="number" formControlName="totalCombustible" autocomplete="off" class="form-control form-control-sm"
+            [readonly]="true" aria-describedby="idSigno">
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group has-float-label-icon">
+        <label for="idTotalUreaOC" class="tamanio-label">Total Urea</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="idSigno">lt.</span>
+          </div>
+          <input id="idTotalUreaOC" type="number" formControlName="totalUrea" autocomplete="off" class="form-control form-control-sm"
+            [readonly]="true" aria-describedby="idSigno">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+      <div class="centrar">
+          <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="enviarDatos()">
+              Agregar
+          </button>
+      </div>
+  </div>
+</form>
