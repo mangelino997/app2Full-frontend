@@ -1,0 +1,136 @@
+<form [formGroup]="formularioViajePropioEfectivo">
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group has-float-label-icon">
+        <label for="idFechaCajaAE" class="tamanio-label">Fecha Caja</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="idSigno">
+              <mat-icon>date_range</mat-icon>
+            </span>
+          </div>
+          <input id="idFechaCajaAE" type="date" formControlName="fechaCaja" autocomplete="off" class="form-control form-control-sm"
+            [readonly]="soloLectura" aria-describedby="idSigno">
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group has-float-label-icon">
+        <label for="idEmpresaAE" class="tamanio-label">Caja Viajes *</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text" id="idSigno">
+              <mat-icon>business</mat-icon>
+            </span>
+          </div>
+          <mat-select id="idEmpresaAE" class="form-control form-control-sm" formControlName="empresa" [compareWith]="compareFn">
+            <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
+              {{itemEmpresa.razonSocial}}
+            </mat-option>
+          </mat-select>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group has-float-label-icon">
+        <label for="idImporteAE" class="tamanio-label">Importe*</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <input id="idImporteAE" type="number" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
+            [readonly]="soloLectura" (blur)="establecerCeros(formularioViajePropioEfectivo.get('importe'))">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-7">
+      <div class="form-group has-float-label">
+        <label for="idObservaciones" class="tamanio-label">Observaciones</label>
+        <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="2"
+          [readonly]="soloLectura"></textarea>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <button mat-raised-button color="primary" (click)="agregarEfectivo()">Agregar Adelanto</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+      <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje-efectivo">
+        <thead>
+          <tr>
+            <th class="text-center" style="width:10%" scope="col">Sucursal</th>
+            <th class="text-center" style="width:5%" scope="col">Adelanto</th>
+            <th class="text-center" style="width:10%" scope="col">Usuario</th>
+            <th class="text-center" style="width:20%" scope="col">Empresa</th>
+            <th class="text-center" style="width:7%" scope="col">Fecha</th>
+            <th class="text-center" style="width:10%" scope="col">Importe($)</th>
+            <th class="text-center" style="width:10%" scope="col">Observaciones</th>
+            <th class="text-center" style="width:8%" scope="col">Anulado</th>
+            <th class="text-center" style="width:15%" scope="col">Observaciones
+              Anulado</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let l of listaEfectivos; let i = index">
+            <td align="center">
+              <span>{{l.sucursal.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{i+1}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.usuario.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.empresa.razonSocial}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.fechaCaja | date: 'dd/MM/yyyy'}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.importe}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
+            </td>
+            <td align="center">
+              <span>{{l.anulado}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color-rojo" (click)="eliminarEfectivo(i, l)">X</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <br>
+  <div class="row justify-content-end">
+    <div class="col-md-2">
+      <div class="form-group has-float-label-icon">
+        <label for="idImporteAE" class="tamanio-label">Importe Total *</label>
+        <div class="input-group input-group-sm mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <input id="idImporteAE" type="number" formControlName="importeTotal" autocomplete="off" class="form-control form-control-sm"
+            [readonly]="true">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="centrar">
+      <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="enviarDatos()">
+        Agregar
+      </button>
+    </div>
+  </div>
+</form>

@@ -1,10 +1,11 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { ViajePropioCombustible } from 'src/app/modelos/viajePropioCombustible';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-viaje-combustible',
@@ -24,7 +25,8 @@ export class ViajeCombustibleComponent implements OnInit {
   public listaCombustibles:Array<any> = [];
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajePropioCombustibleModelo: ViajePropioCombustible,
-    private fechaServicio: FechaService, private appComponent: AppComponent, private insumoProductoServicio: InsumoProductoService) { }
+    private fechaServicio: FechaService, private appComponent: AppComponent, 
+    private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog) { }
   //Al inicilizarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio combustible
@@ -77,7 +79,6 @@ export class ViajeCombustibleComponent implements OnInit {
       let importe = cantidad * precioUnitario;
       formulario.get('importe').setValue(importe);
       this.establecerCeros(formulario.get('importe'));
-      // formulario.get('importe').setValue(importe.toFixed(2));
     }
   }
   //Establece el precio unitario
@@ -147,5 +148,44 @@ export class ViajeCombustibleComponent implements OnInit {
     } else {
       return elemento;
     }
+  }
+  //Abre un dialogo para ver las observaciones
+  public verObservacionesDialogo(elemento): void {
+    const dialogRef = this.dialog.open(ObservacionesDialogo, {
+      width: '1200px',
+      data: {
+        tema: this.appComponent.getTema(),
+        elemento: elemento
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {});
+  }
+}
+//Componente ObservacionesDialogo
+@Component({
+  selector: 'observaciones-dialogo',
+  templateUrl: '../observaciones-dialogo.component.html'
+})
+export class ObservacionesDialogo {
+  //Define el tema
+  public tema:string;
+  //Define el formulario
+  public formulario:FormGroup;
+  //Define la observacion
+  public observaciones:string;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<ObservacionesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  ngOnInit() {
+    //Establece el tema
+    this.tema = this.data.tema;
+    //Establece el formulario
+    this.formulario = new FormGroup({
+      observaciones: new FormControl()
+    });
+    //Establece las observaciones
+    this.formulario.get('observaciones').setValue(this.data.elemento);
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }

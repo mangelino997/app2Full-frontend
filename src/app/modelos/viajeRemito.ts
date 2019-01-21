@@ -1,42 +1,53 @@
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
+import { Injectable } from '@angular/core';
 //Define la entidad de la base de datos.
+@Injectable()
 export class ViajeRemito {
-    //define un formulario FormGroup
-    public formulario: FormGroup;
+    //Define un formulario
+    public formulario:FormGroup;
     //constructor
-    constructor() {
-        // crear el formulario para la seccion de modulos
-        this.formulario = new FormGroup({
-            id: new FormControl(),
-            version: new FormControl(),
-            sucursalEmision: new FormControl(),
-            empresaEmision: new FormControl(),
-            usuario: new FormControl(),
-            fecha: new FormControl('', Validators.required),
-            numeroCamion: new FormControl('', Validators.required),
-            sucursalDestino: new FormControl('', Validators.required),
-            tipoComprobante: new FormControl('', Validators.required),
-            puntoVenta: new FormControl('', [Validators.required, Validators.maxLength(5)]),
-            letra: new FormControl('', Validators.required),
-            numero: new FormControl('', [Validators.required, Validators.maxLength(8)]),
-            clienteRemitente: new FormControl('', Validators.required),
-            clienteDestinatario: new FormControl('', Validators.required),
-            clienteDestinatarioSuc: new FormControl(),
-            bultos: new FormControl('', Validators.required),
-            kilosEfectivo: new FormControl(),
-            kilosAforado: new FormControl(),
-            m3: new FormControl(),
-            valorDeclarado: new FormControl(),
-            importeRetiro: new FormControl(),
-            importeEntrega: new FormControl(),
-            estaPendiente: new FormControl(),
-            viajePropioTramo: new FormControl(),
-            viajeTerceroTramo: new FormControl(),
-            observaciones: new FormControl(),
-            estaFacturado: new FormControl(),
-            seguimiento: new FormControl(''),
-            estaEnReparto: new FormControl(),
-            alias: new FormControl()
+    constructor(private fb: FormBuilder) {
+        this.formulario = this.fb.group({
+            tipoRemito: new FormControl,
+            tramo: new FormControl(),
+            numeroCamion: new FormControl(),
+            sucursalDestino: new FormControl(),
+            remitos: this.fb.array([])
+        });
+    }
+    //Crea el array de remitos
+    public crearRemitos(elemento): FormGroup {
+        return this.fb.group({
+            id: elemento.id,
+            version: elemento.version,
+            sucursalEmision: elemento.sucursalEmision,
+            empresaEmision: elemento.empresaEmision,
+            usuario: elemento.usuario,
+            fecha: elemento.fecha,
+            numeroCamion: elemento.numeroCamion,
+            sucursalDestino: elemento.sucursalDestino,
+            tipoComprobante: elemento.tipoComprobante,
+            puntoVenta: elemento.puntoVenta,
+            letra: elemento.letra,
+            numero: elemento.numero,
+            clienteRemitente: elemento.clienteRemitente,
+            clienteDestinatario: elemento.clienteDestinatario,
+            clienteDestinatarioSuc: elemento.clienteDestinatarioSuc,
+            bultos: elemento.bultos,
+            kilosEfectivo: elemento.kilosEfectivo,
+            kilosAforado: elemento.kilosAforado,
+            m3: elemento.m3,
+            valorDeclarado: elemento.valorDeclarado,
+            importeRetiro: elemento.importeRetiro,
+            importeEntrega: elemento.importeEntrega,
+            estaPendiente: elemento.estaPendiente,
+            viajePropioTramo: elemento.viajePropioTramo,
+            viajeTerceroTramo: elemento.viajeTerceroTramo,
+            observaciones: elemento.observacion,
+            estaFacturado: elemento.estaFacturado,
+            seguimiento: elemento.seguimiento,
+            estaEnReparto: elemento.estaEnReparto,
+            alias: elemento.alias
         })
     }
 }

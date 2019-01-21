@@ -212,6 +212,11 @@ import { ViajeUnidadNegocioComponent } from './componentes/viaje-unidad-negocio/
 import { OpcionComponent } from './componentes/opcion/opcion.component';
 import { ViajeTramoComponent, DadorDestinatarioDialogo, DadorDestTablaDialogo, ObservacionesDialogo } from './componentes/viaje/viaje-tramo/viaje-tramo.component';
 import { ViajeCombustibleComponent } from './componentes/viaje/viaje-combustible/viaje-combustible.component';
+import { ViajeEfectivoComponent } from './componentes/viaje/viaje-efectivo/viaje-efectivo.component';
+import { ViajeInsumoComponent } from './componentes/viaje/viaje-insumo/viaje-insumo.component';
+import { ViajeGastoComponent } from './componentes/viaje/viaje-gasto/viaje-gasto.component';
+import { ViajePeajeComponent } from './componentes/viaje/viaje-peaje/viaje-peaje.component';
+import { ViajeRemitoGSComponent } from './componentes/viaje/viaje-remito-gs/viaje-remito-gs.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -407,7 +412,12 @@ const stompConfig: StompConfig = {
     DadorDestTablaDialogo,
     ObservacionesDialogo,
     ViajeTramoComponent,
-    ViajeCombustibleComponent
+    ViajeCombustibleComponent,
+    ViajeEfectivoComponent,
+    ViajeInsumoComponent,
+    ViajeGastoComponent,
+    ViajePeajeComponent,
+    ViajeRemitoGSComponent
   ],
   imports: [
     BrowserModule,

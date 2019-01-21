@@ -1,28 +1,15 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ViajePropioService } from '../../servicios/viaje-propio.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
 import { FechaService } from '../../servicios/fecha.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { VehiculoService } from '../../servicios/vehiculo.service';
-import { VehiculoProveedorService } from '../../servicios/vehiculo-proveedor.service';
 import { PersonalService } from '../../servicios/personal.service';
-import { ProveedorService } from '../../servicios/proveedor.service';
-import { InsumoProductoService } from '../../servicios/insumo-producto.service';
-import { RubroProductoService } from '../../servicios/rubro-producto.service';
-import { ViajeRemitoService } from '../../servicios/viaje-remito.service';
-import { ChoferProveedorService } from '../../servicios/chofer-proveedor.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, FormBuilder, FormArray } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ViajePropio } from 'src/app/modelos/viajePropio';
-import { ViajePropioTramo } from 'src/app/modelos/viajePropioTramo';
-import { ViajePropioCombustible } from 'src/app/modelos/viajePropioCombustible';
-import { ViajePropioEfectivo } from 'src/app/modelos/viajePropioEfectivo';
-import { ViajePropioInsumo } from 'src/app/modelos/viajePropioInsumo';
-import { ViajeRemito } from 'src/app/modelos/viajeRemito';
-import { ViajePropioGasto } from 'src/app/modelos/viajePropioGasto';
-import { ViajePropioPeaje } from 'src/app/modelos/viajePropioPeaje';
 
 @Component({
   selector: 'app-viaje',
@@ -48,18 +35,6 @@ export class ViajeComponent implements OnInit {
   public opciones:Array<any> = [];
   //Define un formulario viaje propio para validaciones de campos
   public formularioViajePropio:FormGroup;
-  //Define un formulario viaje propio combustible para validaciones de campos
-  public formularioViajePropioCombustible:FormGroup;
-  //Define un formulario viaje propio efectivo para validaciones de campos
-  public formularioViajePropioEfectivo:FormGroup;
-  //Define un formulario viaje propio insumo para validaciones de campos
-  public formularioViajePropioInsumo:FormGroup;
-  //Define un formulario viaje remito para validaciones de campos
-  public formularioViajeRemito:FormGroup;
-  //Define un formulario viaje propio gasto para validaciones de campos
-  public formularioViajePropioGasto:FormGroup;
-  //Define un formulario viaje propio peaje para validaciones de campos
-  public formularioViajePropioPeaje:FormGroup;
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
   //Define la opcion seleccionada
@@ -78,43 +53,18 @@ export class ViajeComponent implements OnInit {
   public resultadosChoferes:Array<any> = [];
   //Define la lista de resultados de clientes
   public resultadosClientes:Array<any> = [];
-  //Define la lista de resultados proveedores de busqueda
-  public resultadosProveedores:Array<any> = [];
-  //Define la lista de resultados rubro producto de busqueda
-  public resultadosRubrosProductos:Array<any> = [];
   //Define el tipo de viaje (Propio o Tercero)
   public tipoViaje:FormControl = new FormControl();
   //Define el nombre del usuario logueado
   public usuarioNombre:FormControl = new FormControl();
   //Define la lista de sucursales
   public sucursales:Array<any> = [];
-  //Define la lista de adelantos de efectivo (tabla)
-  public listaAdelantosEfectivos:Array<any> = [];
-  //Define la lista de ordenes de insumos (tabla)
-  public listaOrdenesInsumos:Array<any> = [];
-  //Define la lista de ordenes de gastos (tabla)
-  public listaGastos:Array<any> = [];
-  //Define la lista de ordenes de peajes (tabla)
-  public listaPeajes:Array<any> = [];
-  //Define la lista de remitos pendientes
-  public listaRemitosPendientes:Array<any> = [];
-  //Define una lista de remitos
-  public remitos:FormArray;
-  //Define la fecha actual
-  public fechaActual:string;
   //Constructor
   constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private fechaServicio: FechaService,
     private sucursalServicio: SucursalService, private vehiculoServicio: VehiculoService,
-    private vehiculoProveedorServicio: VehiculoProveedorService, private personalServicio: PersonalService,
-    private proveedorServicio: ProveedorService, private insumoProductoServicio: InsumoProductoService,
-    private rubroProductoServicio: RubroProductoService, private viajeRemitoServicio: ViajeRemitoService,
-    private choferProveedorServicio: ChoferProveedorService, private viajePropioModelo: ViajePropio,
-    private viajePropioTramoModelo: ViajePropioTramo,
-    private viajePropioCombustibleModelo: ViajePropioCombustible, private viajePropioEfectivoModelo: ViajePropioEfectivo,
-    private viajePropioInsumoModelo: ViajePropioInsumo, private viajeRemitoModelo: ViajeRemito,
-    private viajePropioGastoModelo: ViajePropioGasto, private viajePropioPeajeModelo: ViajePropioPeaje, private fb: FormBuilder) {
+    private personalServicio: PersonalService, private viajePropioModelo: ViajePropio) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -153,22 +103,6 @@ export class ViajeComponent implements OnInit {
   ngOnInit() {
     //Establece el formulario viaje propio
     this.formularioViajePropio = this.viajePropioModelo.formulario;
-    //Establece el formulario viaje propio efectivo
-    this.formularioViajePropioEfectivo = this.viajePropioEfectivoModelo.formulario;
-    //Establece el formulario viaje propio insumo
-    this.formularioViajePropioInsumo = this.viajePropioInsumoModelo.formulario;
-    //Establece el formulario viaje remito
-    this.formularioViajeRemito = this.fb.group({
-      tipoRemito: new FormControl,
-      tramo: new FormControl(),
-      numeroCamion: new FormControl(),
-      sucursalDestino: new FormControl(),
-      remitos: this.fb.array([])
-    })
-    //Establece el formulario viaje propio gasto
-    this.formularioViajePropioGasto = this.viajePropioGastoModelo.formulario;
-    //Establece el formulario viaje propio peaje
-    this.formularioViajePropioPeaje = this.viajePropioPeajeModelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la primera opcion seleccionada
@@ -179,14 +113,6 @@ export class ViajeComponent implements OnInit {
     this.listarSucursales();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
-    //Establece los valores por defecto del formulario viaje efectivo
-    this.establecerValoresPorDefectoViajeEfectivo(1);
-    //Establece los valores por defecto del formulario viaje insumo
-    this.establecerValoresPorDefectoViajeInsumo(1);
-    //Establece los valores por defecto del formulario viaje gasto
-    this.establecerValoresPorDefectoViajeGasto(1);
-    //Establece los valores por defecto del formulario viaje peaje
-    this.establecerValoresPorDefectoViajePeaje(1);
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -211,30 +137,6 @@ export class ViajeComponent implements OnInit {
         })
       }
     })
-    //Autocompletado Proveedor (Insumo) - Buscar por alias
-    this.formularioViajePropioInsumo.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
-          this.resultadosProveedores = response;
-        })
-      }
-    })
-    //Autocompletado Rubro Producto - Buscar por nombre
-    this.formularioViajePropioGasto.get('rubroProducto').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.rubroProductoServicio.listarPorNombre(data).subscribe(response =>{
-          this.resultadosRubrosProductos = response;
-        })
-      }
-    })
-    //Autocompletado Proveedor (Peaje) - Buscar por alias
-    this.formularioViajePropioPeaje.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
-          this.resultadosProveedores = response;
-        })
-      }
-    })
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
@@ -247,46 +149,6 @@ export class ViajeComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajePropio.get('fecha').setValue(res.json());
     })
-  }
-  //Establece los valores por defecto del formulario viaje adelanto efectivo
-  public establecerValoresPorDefectoViajeEfectivo(opcion): void {
-    let valor = 0;
-    this.formularioViajePropioEfectivo.get('fechaCaja').setValue(this.fechaActual);
-    this.formularioViajePropioEfectivo.get('importe').setValue(this.appComponent.establecerCeros(valor));
-    if(opcion == 1) {
-      this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
-    }
-  }
-  //Establece los valores por defecto del formulario viaje insumo
-  public establecerValoresPorDefectoViajeInsumo(opcion): void {
-    let valor = 0;
-    this.formularioViajePropioInsumo.get('fecha').setValue(this.fechaActual);
-    this.formularioViajePropioInsumo.get('cantidad').setValue(valor);
-    this.formularioViajePropioInsumo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
-    this.formularioViajePropioInsumo.get('importe').setValue(this.appComponent.establecerCeros(valor));
-    if(opcion == 1) {
-      this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
-    }
-  }
-  //Establece los valores por defecto del formulario viaje gasto
-  public establecerValoresPorDefectoViajeGasto(opcion): void {
-    let valor = 0;
-    this.formularioViajePropioGasto.get('fecha').setValue(this.fechaActual);
-    this.formularioViajePropioGasto.get('cantidad').setValue(valor);
-    this.formularioViajePropioGasto.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
-    this.formularioViajePropioGasto.get('importe').setValue(this.appComponent.establecerCeros(valor));
-    if(opcion == 1) {
-      this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
-    }
-  }
-  //Establece los valores por defecto del formulario viaje gasto
-  public establecerValoresPorDefectoViajePeaje(opcion): void {
-    let valor = 0;
-    this.formularioViajePropioPeaje.get('fecha').setValue(this.fechaActual);
-    this.formularioViajePropioPeaje.get('importe').setValue(this.appComponent.establecerCeros(valor));
-    if(opcion == 1) {
-      this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
-    }
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -462,146 +324,25 @@ export class ViajeComponent implements OnInit {
   public recibirCombustibles($event) {
     console.log($event);
   }
-  //Agrega datos a la tabla de adelanto efectivo
-  public agregarAdelantoEfectivo(): void {
-    this.formularioViajePropioEfectivo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formularioViajePropioEfectivo.get('usuario').setValue(this.appComponent.getUsuario());
-    this.listaAdelantosEfectivos.push(this.formularioViajePropioEfectivo.value);
-    let importeTotal = this.formularioViajePropioEfectivo.get('importeTotal').value;
-    let importe = this.formularioViajePropioEfectivo.get('importe').value;
-    let total = parseFloat(importeTotal) + parseFloat(importe);
-    this.formularioViajePropioEfectivo.reset();
-    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
-    this.establecerValoresPorDefectoViajeEfectivo(0);
-    document.getElementById('idFechaCajaAE').focus();
+  //Recibe la lista de adelantos de efectivo de Viaje Efectivo
+  public recibirEfectivos($event) {
+    console.log($event);
   }
-  //Elimina un adelanto efectivo de la tabla por indice
-  public eliminarAdelantoEfectivo(indice, elemento): void {
-    let importe = elemento.importe;
-    let importeTotal = this.formularioViajePropioEfectivo.get('importeTotal').value;
-    let total = parseFloat(importeTotal) - parseFloat(importe);
-    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
-    this.listaAdelantosEfectivos.splice(indice, 1);
-    document.getElementById('idFechaCajaAE').focus();
+  //Recibe la lista de ordenes de insumo de Viaje Insumo
+  public recibirInsumos($event) {
+    console.log($event);
   }
-  //Agrega datos a la tabla de orden insumo
-  public agregarOrdenInsumo(): void {
-    this.formularioViajePropioInsumo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formularioViajePropioInsumo.get('usuario').setValue(this.appComponent.getUsuario());
-    this.listaOrdenesInsumos.push(this.formularioViajePropioInsumo.value);
-    let importe = this.formularioViajePropioInsumo.get('importe').value;
-    let importeTotal = this.formularioViajePropioInsumo.get('importeTotal').value;
-    let total = parseFloat(importeTotal) + parseFloat(importe);
-    this.formularioViajePropioInsumo.reset();
-    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
-    this.establecerValoresPorDefectoViajeInsumo(0);
-    document.getElementById('idProveedor').focus();
+  //Recibe la lista de gastos de Viaje Gasto
+  public recibirGastos($event) {
+    console.log($event);
   }
-  //Elimina una orden insumo de la tabla por indice
-  public eliminarOrdenInsumo(indice, elemento): void {
-    this.listaOrdenesInsumos.splice(indice, 1);
-    let importe = elemento.importe;
-    let importeTotal = this.formularioViajePropioInsumo.get('importeTotal').value;
-    let total = parseFloat(importeTotal) - parseFloat(importe);
-    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
-    document.getElementById('idProveedor').focus();
+  //Recibe la lista de peajes de Viaje Peaje
+  public recibirPeaje($event) {
+    console.log($event);
   }
-  //Agrega datos a la tabla de gastos
-  public agregarGasto(): void {
-    this.listaGastos.push(this.formularioViajePropioGasto.value);
-    let importe = this.formularioViajePropioGasto.get('importe').value;
-    let importeTotal = this.formularioViajePropioGasto.get('importeTotal').value;
-    let total = parseFloat(importeTotal) + parseFloat(importe);
-    this.formularioViajePropioGasto.reset();
-    this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
-    this.establecerValoresPorDefectoViajeGasto(0);
-    document.getElementById('idFechaG').focus();
-  }
-  //Elimina un gasto de la tabla por indice
-  public eliminarGasto(indice, elemento): void {
-    this.listaGastos.splice(indice, 1);
-    let importe = elemento.importe;
-    let importeTotal = this.formularioViajePropioGasto.get('importeTotal').value;
-    let total = parseFloat(importeTotal) - parseFloat(importe);
-    this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
-    document.getElementById('idFechaG').focus();
-  }
-  //Agrega datos a la tabla de peajes
-  public agregarPeaje(): void {
-    this.listaPeajes.push(this.formularioViajePropioPeaje.value);
-    let importe = this.formularioViajePropioPeaje.get('importe').value;
-    let importeTotal = this.formularioViajePropioPeaje.get('importeTotal').value;
-    let total = parseFloat(importeTotal) + parseFloat(importe);
-    this.formularioViajePropioPeaje.reset();
-    this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
-    this.establecerValoresPorDefectoViajePeaje(0);
-    document.getElementById('idProveedorP').focus();
-  }
-  //Elimina un peaje de la tabla por indice
-  public eliminarPeaje(indice, elemento): void {
-    this.listaPeajes.splice(indice, 1);
-    let importe = elemento.importe;
-    let importeTotal = this.formularioViajePropioPeaje.get('importeTotal').value;
-    let total = parseFloat(importeTotal) - parseFloat(importe);
-    this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
-    document.getElementById('idProveedorP').focus();
-  }
-  //Crea el array de remitos
-  private crearRemitos(elemento): FormGroup {
-    return this.fb.group({
-      id: elemento.id,
-      version: elemento.version,
-      sucursalEmision: elemento.sucursalEmision,
-      empresaEmision: elemento.empresaEmision,
-      usuario: elemento.usuario,
-      fecha: elemento.fecha,
-      numeroCamion: elemento.numeroCamion,
-      sucursalDestino: elemento.sucursalDestino,
-      tipoComprobante: elemento.tipoComprobante,
-      puntoVenta: elemento.puntoVenta,
-      letra: elemento.letra,
-      numero: elemento.numero,
-      clienteRemitente: elemento.clienteRemitente,
-      clienteDestinatario: elemento.clienteDestinatario,
-      clienteDestinatarioSuc: elemento.clienteDestinatarioSuc,
-      bultos: elemento.bultos,
-      kilosEfectivo: elemento.kilosEfectivo,
-      kilosAforado: elemento.kilosAforado,
-      m3: elemento.m3,
-      valorDeclarado: elemento.valorDeclarado,
-      importeRetiro: elemento.importeRetiro,
-      importeEntrega: elemento.importeEntrega,
-      estaPendiente: elemento.estaPendiente,
-      viajePropioTramo: elemento.viajePropioTramo,
-      viajeTerceroTramo: elemento.viajeTerceroTramo,
-      observaciones: elemento.observacion,
-      estaFacturado: elemento.estaFacturado,
-      seguimiento: elemento.seguimiento,
-      estaEnReparto: elemento.estaEnReparto,
-      alias: elemento.alias
-    })
-  }
-  //Obtiene la lista de remitos pendiente por filtro (sucursal, sucursal destino y numero de camion)
-  public listarRemitosPorFiltro(): void {
-    let tipo = this.formularioViajeRemito.get('tipoRemito').value;
-    let sucursal = this.appComponent.getUsuario().sucursal;
-    let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
-    let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
-    if(tipo) {
-
-    } else {
-      this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
-        let listaRemitosPendientes = res.json();
-        for (var i = 0; i < listaRemitosPendientes.length; i++) {
-          this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
-          this.remitos.push(this.crearRemitos(listaRemitosPendientes[i]));
-        }
-      });
-    }
-  }
-  //Asigna los remitos a un tramo
-  public asignarRemitos(): void {
-    console.log(this.formularioViajeRemito.value.remitos);
+  //Recibe la lista de remitos de Viaje Remito
+  public recibirRemitos($event) {
+    console.log($event);
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -671,7 +412,7 @@ export class ViajeComponent implements OnInit {
     }
   }
   //Define como se muestra los datos en el autcompletado
-  public displayF(elemento) {
+  public displayFn(elemento) {
     if(elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
@@ -685,35 +426,6 @@ export class ViajeComponent implements OnInit {
     } else {
       return elemento;
     }
-  }
-  //Define como se muestra los datos en el autcompletado b
-  public displayFb(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado c
-  public displayFc(elemento) {
-    if(elemento != undefined) {
-      return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre +
-        ' ---> ' + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre + ' (' + elemento.km + 'km)' : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Define como se muestra los datos en el autcompletado b
-  public displayCeros(elemento, string, cantidad) {
-    if(elemento != undefined) {
-      return elemento ? (string + elemento).slice(cantidad) : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Establece la cantidad de ceros correspondientes a la izquierda del numero
-  public establecerCerosIzq(elemento, string, cantidad) {
-    elemento.setValue((string + elemento.value).slice(cantidad));
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
