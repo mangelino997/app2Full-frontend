@@ -49,6 +49,8 @@ export class ViajeTramoComponent implements OnInit {
   public listaDadorDestinatario: Array<any> = [];
   //Define la lista de tramos (tabla)
   public listaTramos: Array<any> = [];
+  //Define el numero de orden del tramo
+  public numeroOrden:number;
   //Constructor
   constructor(private appComponent: AppComponent, private viajePropioTramoModelo: ViajePropioTramo,
     private tramoServicio: TramoService,
@@ -67,6 +69,8 @@ export class ViajeTramoComponent implements OnInit {
         })
       }
     })
+    //Establece el numero de orden del tramo por defecto en cero
+    this.numeroOrden = 0;
     //Obtiene la lista de empresas
     this.listarEmpresas();
     //Obtiene la lista de unidades de negocios
@@ -169,6 +173,13 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Agrega datos a la tabla de tramos
   public agregarTramo(): void {
+    this.numeroOrden++;
+    this.formularioViajePropioTramo.get('numeroOrden').setValue(this.numeroOrden);
+    let fecha = this.formularioViajePropioTramo.get('fechaTramo').value;
+    this.formularioViajePropioTramo.get('fechaAlta').setValue(fecha);
+    let km = this.formularioViajePropioTramo.get('tramo').value.km;
+    this.formularioViajePropioTramo.get('km').setValue(km);
+    this.formularioViajePropioTramo.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaTramos.push(this.formularioViajePropioTramo.value);
     this.formularioViajePropioTramo.reset();
     this.establecerValoresPorDefecto();
@@ -211,8 +222,8 @@ export class ViajeTramoComponent implements OnInit {
         tema: this.appComponent.getTema()
       }
     });
-    dialogRef.afterClosed().subscribe(listaViajePropioTramoCliente => {
-      this.formularioViajePropioTramo.get('listaViajePropioTramoCliente').setValue(listaViajePropioTramoCliente);
+    dialogRef.afterClosed().subscribe(viajePropioTramoClientes => {
+      this.formularioViajePropioTramo.get('viajePropioTramoClientes').setValue(viajePropioTramoClientes);
     });
   }
   //Abre un dialogo para ver la lista de dadores y destinatarios
@@ -224,9 +235,7 @@ export class ViajeTramoComponent implements OnInit {
         elemento: elemento
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => {
-
-    });
+    dialogRef.afterClosed().subscribe(resultado => {});
   }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
@@ -237,9 +246,7 @@ export class ViajeTramoComponent implements OnInit {
         elemento: elemento
       }
     });
-    dialogRef.afterClosed().subscribe(listaViajePropioTramoCliente => {
-      this.formularioViajePropioTramo.get('listaViajePropioTramoCliente').setValue(listaViajePropioTramoCliente);
-    });
+    dialogRef.afterClosed().subscribe(resultado => {});
   }
 }
 //Componente DadorDestinatarioDialogo

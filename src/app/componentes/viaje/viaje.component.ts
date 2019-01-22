@@ -317,8 +317,8 @@ export class ViajeComponent implements OnInit {
   }
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
-    this.formularioViajePropio.get('listaViajePropioTramo').setValue($event);
-    console.log(this.formularioViajePropio.value);
+    this.formularioViajePropio.get('viajePropioTramos').setValue($event);
+    this.agregarViajePropio();
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {
@@ -343,6 +343,13 @@ export class ViajeComponent implements OnInit {
   //Recibe la lista de remitos de Viaje Remito
   public recibirRemitos($event) {
     console.log($event);
+  }
+  //Agregar el viaje propio
+  private agregarViajePropio(): void {
+    this.formularioViajePropio.get('condicionIva').setValue({id:1});
+    this.formularioViajePropio.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formularioViajePropio.get('empresaEmision').setValue(this.appComponent.getEmpresa());
+    console.log(this.formularioViajePropio.value);
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
