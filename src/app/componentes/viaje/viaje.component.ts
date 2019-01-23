@@ -35,6 +35,22 @@ export class ViajeComponent implements OnInit {
   public opciones:Array<any> = [];
   //Define un formulario viaje propio para validaciones de campos
   public formularioViajePropio:FormGroup;
+  //Define un formulario viaje propio tramo para validaciones de campos
+  public formularioViajePropioTramo: FormGroup = new FormGroup({});
+  //Define un formulario viaje propio combustible para validaciones de campos
+  public formularioViajePropioCombustible:FormGroup = new FormGroup({});
+  //Define un formulario viaje propio efectivo para validaciones de campos
+  public formularioViajePropioEfectivo:FormGroup = new FormGroup({});
+  //Define un formulario viaje propio insumo para validaciones de campos
+  public formularioViajePropioInsumo:FormGroup = new FormGroup({});
+  //Define un formulario viaje remitos dadores de carga para validaciones de campos
+  public formularioViajeRemitoDC:FormGroup = new FormGroup({});
+  //Define un formulario viaje remito para validaciones de campos
+  public formularioViajeRemito:FormGroup = new FormGroup({});
+  //Define un formulario viaje propio gasto para validaciones de campos
+  public formularioViajePropioGasto:FormGroup = new FormGroup({});
+  //Define un formulario viaje propio peaje para validaciones de campos
+  public formularioViajePropioPeaje:FormGroup = new FormGroup({});
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
   //Define la opcion seleccionada
@@ -277,7 +293,7 @@ export class ViajeComponent implements OnInit {
     this.formularioViajePropio.get('viajePropioGastos').setValue($event);
   }
   //Recibe la lista de peajes de Viaje Peaje
-  public recibirPeaje($event) {
+  public recibirPeajes($event) {
     this.formularioViajePropio.get('viajePropioPeajes').setValue($event);
   }
   //Recibe la lista de remitos de Viaje Remito

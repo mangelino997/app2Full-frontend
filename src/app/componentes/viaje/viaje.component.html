@@ -7,8 +7,184 @@
             </nav>
         </div>
     </div>
-    <div *ngIf="indiceSeleccionado < 5">
-        <mat-sidenav-container>
+    <div class="contenedor" *ngIf="indiceSeleccionado < 5">
+        <mat-card style="background-color: #f8f9fa">
+            <div class="row">
+                <div class="col">
+                    <form [formGroup]="formularioViajePropio">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+                                    <label for="idAutocompletado" class="tamanio-label">Buscar Guía de Servicio</label>
+                                    <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+                                        autocomplete="off" type="text" matInput [formControl]="autocompletado"
+                                        [matAutocomplete]="auto">
+                                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                                        <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
+                                            {{item.alias}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="idCodigo" class="tamanio-label-titulo">N° Guía Serv.</label>
+                                    <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
+                                        readonly>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="idFecha" class="tamanio-label-titulo">Fecha</label>
+                                    <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
+                                        [readonly]="soloLectura">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="idEsPropio" class="tamanio-label-titulo">Tipo de Viaje *</label>
+                                    <mat-select id="idEsPropio" class="form-control form-control-sm" [formControl]="tipoViaje">
+                                        <mat-option [value]="false">Tercerizado</mat-option>
+                                        <mat-option [value]="true">Propio</mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="idEsRemolquePropio" class="tamanio-label-titulo">Tipo de Remol. *</label>
+                                    <mat-select id="idEsRemolquePropio" class="form-control form-control-sm"
+                                        formControlName="esRemolquePropio">
+                                        <mat-option [value]="false">Tercerizado</mat-option>
+                                        <mat-option [value]="true">Propio</mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="idSucursal" class="tamanio-label-titulo">Sucursal *</label>
+                                    <mat-select id="idSucursal" class="form-control form-control-sm" formControlName="sucursal"
+                                        [compareWith]="compareFn">
+                                        <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal">
+                                            {{itemSucursal.nombre}}
+                                        </mat-option>
+                                    </mat-select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group has-float-label">
+                                    <label for="idUsuario" class="tamanio-label-titulo">Usuario</label>
+                                    <input id="idUsuario" type="text" class="form-control form-control-sm" readonly
+                                        [formControl]="usuarioNombre">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group has-float-label">
+                                    <label for="idVehiculo" class="tamanio-label-titulo">Vehículo *</label>
+                                    <input id="idVehiculo" class="form-control form-control-sm" type="text" matInput
+                                        [formControl]="tipoViaje.value ? formularioViajePropio.get('vehiculo') : formularioViajePropio.get('vehiculoProveedor')"
+                                        [matAutocomplete]="autoVehiculo" autocomplete="off" [readonly]="soloLectura">
+                                    <mat-autocomplete #autoVehiculo="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                                        <mat-option *ngFor="let itemVehiculo of resultadosVehiculos" [value]="itemVehiculo">
+                                            {{itemVehiculo.dominio}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group has-float-label">
+                                    <label for="idVehiculoRemolque" class="tamanio-label-titulo">Vehículo Remolque *</label>
+                                    <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text"
+                                        matInput [formControl]="formularioViajePropio.get('esRemolquePropio').value ? formularioViajePropio.get('vehiculoRemolque') : formularioViajePropio.get('vehiculoProveedorRemolque')"
+                                        [matAutocomplete]="autoVehiculoRemolque" autocomplete="off" [readonly]="soloLectura">
+                                    <mat-autocomplete #autoVehiculoRemolque="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                                        <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
+                                            [value]="itemVehiculoRemolque">
+                                            {{itemVehiculoRemolque.dominio}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group has-float-label">
+                                    <label for="idPersonal" class="tamanio-label-titulo">Chofer *</label>
+                                    <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
+                                        [formControl]="tipoViaje.value ? formularioViajePropio.get('personal') : formularioViajePropio.get('choferProveedor')"
+                                        [matAutocomplete]="autoChofer" autocomplete="off" [readonly]="soloLectura">
+                                    <mat-autocomplete #autoChofer="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                                        <mat-option *ngFor="let itemChofer of resultadosChoferes" [value]="itemChofer">
+                                            {{itemChofer.alias}}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </mat-card>
+        <br>
+        <mat-horizontal-stepper #stepper>
+            <mat-step [stepControl]="formularioViajePropioTramo">
+                <ng-template matStepLabel>Tramos</ng-template><br>
+                <form [formGroup]="formularioViajePropioTramo">
+                    <app-viaje-tramo (dataEvent)="recibirTramos($event)"></app-viaje-tramo>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="formularioViajePropioCombustible">
+                <ng-template matStepLabel>Ordenes Combustibles</ng-template><br>
+                <form [formGroup]="formularioViajePropioCombustible">
+                    <app-viaje-combustible (dataEvent)="recibirCombustibles($event)"></app-viaje-combustible>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="formularioViajePropioEfectivo">
+                <ng-template matStepLabel>Adelantos Efectivo</ng-template><br>
+                <form [formGroup]="formularioViajePropioEfectivo">
+                    <app-viaje-efectivo (dataEvent)="recibirEfectivos($event)"></app-viaje-efectivo>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="formularioViajePropioInsumo">
+                <ng-template matStepLabel>Ordenes Insumo</ng-template><br>
+                <form [formGroup]="formularioViajePropioInsumo">
+                    <app-viaje-insumo (dataEvent)="recibirInsumos($event)"></app-viaje-insumo>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="formularioViajeRemitoDC">
+                <ng-template matStepLabel>Remitos Dadores Carga</ng-template><br>
+                <form [formGroup]="formularioViajeRemitoDC">
+                    
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="formularioViajeRemito">
+                <ng-template matStepLabel>Remitos Generales</ng-template><br>
+                <form [formGroup]="formularioViajeRemito">
+                    <app-viaje-remito-gs (dataEvent)="recibirRemitos($event)"></app-viaje-remito-gs>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="formularioViajePropioGasto">
+                <ng-template matStepLabel>Gastos</ng-template><br>
+                <form [formGroup]="formularioViajePropioGasto">
+                    <app-viaje-gasto (dataEvent)="recibirGastos($event)"></app-viaje-gasto>
+                </form>
+            </mat-step>
+            <mat-step [stepControl]="formularioViajePropioPeaje">
+                <ng-template matStepLabel>Peaje</ng-template><br>
+                <form [formGroup]="formularioViajePropioPeaje">
+                    <app-viaje-peaje (dataEvent)="recibirPeajes($event)"></app-viaje-peaje>
+                </form>
+            </mat-step>
+        </mat-horizontal-stepper>
+        <div class="row">
+            <div class="centrar">
+                <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="agregar()" [disabled]="!formularioViajePropio.valid">
+                    Agregar
+                </button>
+            </div>
+        </div>
+        <!-- <mat-sidenav-container>
             <mat-sidenav #sidenav mode="side" opened class="sidenav" [fixedInViewport]="true" [fixedTopGap]="165"
                 [fixedBottomGap]="0">
                 <div class="container-fluid-custom">
@@ -25,9 +201,6 @@
                 <div class="container-fluid">
                     <div class="row contenedor">
                         <div class="col">
-                            <!-- <div class="row justify-content-center">
-                                <h5>{{pestaniaActual}} Cliente</h5>
-                            </div> -->
                             <div class="contenedor-top-titulo">
                                 <form [formGroup]="formularioViajePropio">
                                     <div class="row">
@@ -47,11 +220,6 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <!-- <div class="col-md-1">
-                                            <button mat-mini-fab color="primary" (click)="sidenav.toggle()">
-                                                <mat-icon>menu</mat-icon>
-                                            </button>
-                                        </div> -->
                                         <div class="col-md-2">
                                             <div class="form-group has-float-label">
                                                 <label for="idCodigo" class="tamanio-label-titulo">N° Guía Serv.</label>
@@ -187,7 +355,7 @@
                     </div>
                 </div>
             </mat-sidenav-content>
-        </mat-sidenav-container>
+        </mat-sidenav-container> -->
     </div>
     <div class="row justify-content-center" *ngIf="indiceSeleccionado == 5">
         <div class="col-md-12">

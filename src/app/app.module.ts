@@ -6,8 +6,7 @@ import {
   MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
   MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
-  MatProgressBarModule
-} from '@angular/material';
+  MatProgressBarModule, MatStepperModule} from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -440,6 +439,7 @@ const stompConfig: StompConfig = {
     MatTableModule,
     MatDialogModule,
     MatProgressBarModule,
+    MatStepperModule,
     ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
     ToastrModule.forRoot({
       timeOut: 3000,

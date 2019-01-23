@@ -43,3 +43,13 @@ th {
     padding: 7px 12px;
     pointer-events: none;
 }
+.mat-card {
+    transition: box-shadow 280ms cubic-bezier(.4,0,.2,1) !important;
+    display: block !important;
+    position: relative !important;
+    padding-top: 15px !important;
+    padding-bottom: 0px !important;
+    padding-left: 5px !important;
+    padding-right: 0px !important;
+    border-radius: 4px !important;
+}
