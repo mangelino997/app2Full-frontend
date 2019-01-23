@@ -9,7 +9,7 @@ export class ViajePropio {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            empresaEmision: new FormControl('', Validators.required),
+            empresaEmision: new FormControl(),
             sucursal: new FormControl('', Validators.required),
             usuario: new FormControl(),
             fecha: new FormControl('', Validators.required),
@@ -18,9 +18,9 @@ export class ViajePropio {
             esRemolquePropio: new FormControl('', Validators.required),
             vehiculoRemolque: new FormControl(),
             vehiculoProveedorRemolque: new FormControl(),
-            empresa: new FormControl('', Validators.required),
+            empresa: new FormControl(),
             empresaRemolque: new FormControl(),
-            condicionIva: new FormControl('', Validators.required),
+            condicionIva: new FormControl(),
             numeroDocumentacion: new FormControl(),
             fechaDocumentacion: new FormControl(),
             usuarioDocumentacion: new FormControl(),
@@ -34,7 +34,12 @@ export class ViajePropio {
             observacionVehiculoRemolque: new FormControl('', Validators.maxLength(100)),
             observacionChofer: new FormControl('', Validators.maxLength(100)),
             observaciones: new FormControl('', Validators.maxLength(100)),
-            viajePropioTramos: new FormControl()
+            viajePropioTramos: new FormControl('', Validators.required),
+            viajePropioCombustibles: new FormControl(),
+            viajePropioEfectivos: new FormControl(),
+            viajePropioInsumos: new FormControl(),
+            viajePropioGastos: new FormControl(),
+            viajePropioPeajes: new FormControl()
         })
     }
 }

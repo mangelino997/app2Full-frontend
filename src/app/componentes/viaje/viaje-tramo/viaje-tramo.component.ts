@@ -184,14 +184,16 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajePropioTramo.reset();
     this.establecerValoresPorDefecto();
     document.getElementById('idTramoFecha').focus();
+    this.enviarDatos();
   }
   //Elimina un tramo de la tabla por indice
   public eliminarTramo(indice): void {
     this.listaTramos.splice(indice, 1);
     document.getElementById('idTramoFecha').focus();
+    this.enviarDatos();
   }
   //Envia la lista de tramos a Viaje
-  public enviarDatos(): void {
+  private enviarDatos(): void {
     this.dataEvent.emit(this.listaTramos);
   }
   //Establece los ceros en los numeros flotantes

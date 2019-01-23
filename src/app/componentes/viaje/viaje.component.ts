@@ -51,8 +51,6 @@ export class ViajeComponent implements OnInit {
   public resultadosVehiculosRemolques:Array<any> = [];
   //Define la lista de resultados de choferes
   public resultadosChoferes:Array<any> = [];
-  //Define la lista de resultados de clientes
-  public resultadosClientes:Array<any> = [];
   //Define el tipo de viaje (Propio o Tercero)
   public tipoViaje:FormControl = new FormControl();
   //Define el nombre del usuario logueado
@@ -153,7 +151,6 @@ export class ViajeComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
     this.resultados = [];
-    
   }
   //Obtiene el listado de sucursales
   private listarSucursales() {
@@ -237,22 +234,6 @@ export class ViajeComponent implements OnInit {
         break;
     }
   }
-  //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice) {
-    switch (indice) {
-      case 1:
-        this.agregar();
-        break;
-      case 3:
-        this.actualizar();
-        break;
-      case 4:
-        this.eliminar();
-        break;
-      default:
-        break;
-    }
-  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
@@ -275,81 +256,54 @@ export class ViajeComponent implements OnInit {
       }
     );
   }
-  //Agrega un registro
-  private agregar() {
-    this.servicio.agregar(this.formularioViajePropio.value).subscribe(
-      res => {
-        var respuesta = res.json();
-        if(respuesta.codigo == 201) {
-          this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
-            document.getElementById('idRazonSocial').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-        }
-      },
-      err => {
-        this.lanzarError(err);
-      }
-    );
-  }
-  //Actualiza un registro
-  private actualizar() {
-    this.servicio.actualizar(this.formularioViajePropio.value).subscribe(
-      res => {
-        var respuesta = res.json();
-        if(respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
-          setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-        }
-      },
-      err => {
-        this.lanzarError(err);
-      }
-    );
-  }
-  //Elimina un registro
-  private eliminar() {
-    console.log();
-  }
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
     this.formularioViajePropio.get('viajePropioTramos').setValue($event);
-    this.agregarViajePropio();
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {
-    console.log($event);
+    this.formularioViajePropio.get('viajePropioCombustibles').setValue($event);
   }
   //Recibe la lista de adelantos de efectivo de Viaje Efectivo
   public recibirEfectivos($event) {
-    console.log($event);
+    this.formularioViajePropio.get('viajePropioEfectivos').setValue($event);
   }
   //Recibe la lista de ordenes de insumo de Viaje Insumo
   public recibirInsumos($event) {
-    console.log($event);
+    this.formularioViajePropio.get('viajePropioInsumos').setValue($event);
   }
   //Recibe la lista de gastos de Viaje Gasto
   public recibirGastos($event) {
-    console.log($event);
+    this.formularioViajePropio.get('viajePropioGastos').setValue($event);
   }
   //Recibe la lista de peajes de Viaje Peaje
   public recibirPeaje($event) {
-    console.log($event);
+    this.formularioViajePropio.get('viajePropioPeajes').setValue($event);
   }
   //Recibe la lista de remitos de Viaje Remito
   public recibirRemitos($event) {
     console.log($event);
   }
   //Agregar el viaje propio
-  private agregarViajePropio(): void {
-    this.formularioViajePropio.get('condicionIva').setValue({id:1});
-    this.formularioViajePropio.get('empresa').setValue(this.appComponent.getEmpresa());
+  public agregar(): void {
+    let vehiculo = this.formularioViajePropio.get('vehiculo').value;
+    this.formularioViajePropio.get('empresa').setValue(vehiculo.empresa);
     this.formularioViajePropio.get('empresaEmision').setValue(this.appComponent.getEmpresa());
+    let empresa = this.formularioViajePropio.get('empresa').value;
+    this.formularioViajePropio.get('condicionIva').setValue(empresa.afipCondicionIva);
     console.log(this.formularioViajePropio.value);
+    // this.servicio.agregar(this.formularioViajePropio.value).subscribe(
+    //   res => {
+    //     let resultado = res.json();
+    //     if(resultado.codigo == 201) {
+    //       this.toastr.success(resultado.mensaje);
+    //     }
+    //   },
+    //   err => {
+    //     let resultado = err.json();
+    //     this.toastr.error(resultado.mensaje);
+    //   }
+    // );
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {

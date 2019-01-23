@@ -174,6 +174,15 @@
                             <div class="contenedor-top" *ngIf="opcionSeleccionada == 29">
                                 <app-viaje-peaje (dataEvent)="recibirPeajes($event)"></app-viaje-peaje>
                             </div>
+                            <br>
+                            <div class="row">
+                                <div class="centrar">
+                                    <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="agregar()"
+                                        [disabled]="!formularioViajePropio.valid">
+                                        Agregar
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -185,39 +194,35 @@
             <table class="table table-bordered table-striped table-sm">
                 <thead>
                     <tr>
-                        <th class="text-center" style="width:5%" scope="col">id</th>
-                        <th class="text-center" style="width:15%" scope="col">Razon Social</th>
-                        <th class="text-center" style="width:15%" scope="col">Tipo Documento</th>
-                        <th class="text-center" style="width:15%" scope="col">N Documento</th>
-                        <th class="text-center" style="width:10%" scope="col">Telefono</th>
-                        <th class="text-center" style="width:15%" scope="col">Domicilio</th>
-                        <th class="text-center" style="width:15%" scope="col">Localidad</th>
+                        <th class="text-center" style="width:5%" scope="col">#</th>
+                        <th class="text-center" style="width:20%" scope="col">Empresa Emisión</th>
+                        <th class="text-center" style="width:15%" scope="col">Sucursal</th>
+                        <th class="text-center" style="width:15%" scope="col">Fecha</th>
+                        <th class="text-center" style="width:15%" scope="col">Vehículo</th>
+                        <th class="text-center" style="width:20%" scope="col">Chofer</th>
                         <th class="text-center" style="width:5%" scope="col">-</th>
                         <th class="text-center" style="width:5%" scope="col">-</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let l of listaCompleta">
+                    <tr *ngFor="let l of listaCompleta; let i = index">
                         <td align="center">
-                            <span>{{l.id}}</span>
+                            <span>{{i + 1}}</span>
                         </td>
                         <td align="center">
-                            <span>{{l.razonSocial}}</span>
+                            <span>{{l.empresaEmision.razonSocial}}</span>
                         </td>
                         <td align="center">
-                            <span>{{l.tipoDocumento.nombre}}</span>
+                            <span>{{l.sucursal.nombre}}</span>
                         </td>
                         <td align="center">
-                            <span>{{l.numeroDocumento}}</span>
+                            <span>{{l.fecha | date: 'dd/MM/yyyy'}}</span>
                         </td>
                         <td align="center">
-                            <span>{{l.telefono}}</span>
+                            <span>{{l.vehiculo.dominio}}</span>
                         </td>
                         <td align="center">
-                            <span>{{l.domicilio}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.localidad.nombre}}, {{l.localidad.provincia.nombre}}</span>
+                            <span>{{l.personal.nombreCompleto}}</span>
                         </td>
                         <td align="center">
                             <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
