@@ -62,6 +62,7 @@ export class ViajeGastoComponent implements OnInit {
     this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaG').focus();
+    this.enviarDatos();
   }
   //Elimina un gasto de la tabla por indice
   public eliminarGasto(indice, elemento): void {
@@ -71,6 +72,7 @@ export class ViajeGastoComponent implements OnInit {
     let total = parseFloat(importeTotal) - parseFloat(importe);
     this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     document.getElementById('idFechaG').focus();
+    this.enviarDatos();
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {

@@ -41,6 +41,8 @@ export class ViajeInsumoComponent implements OnInit {
     })
     //Obtiene la lista de insumos productos
     this.listarInsumos();
+    //Establece los valores por defecto
+    this.establecerValoresPorDefecto(1);
   }
   //Obtiene el listado de insumos
   private listarInsumos() {
@@ -54,7 +56,7 @@ export class ViajeInsumoComponent implements OnInit {
     );
   }
   //Establece los valores por defecto del formulario viaje insumo
-  public establecerValoresPorDefecto(opcion): void {
+  private establecerValoresPorDefecto(opcion): void {
     let valor = 0;
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
@@ -66,6 +68,11 @@ export class ViajeInsumoComponent implements OnInit {
     if(opcion == 1) {
       this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
     }
+  }
+  //Establece el precio unitario
+  public establecerPrecioUnitario(formulario, elemento): void {
+    formulario.get('precioUnitario').setValue((formulario.get(elemento).value.precioUnitarioVenta));
+    this.establecerCeros(formulario.get('precioUnitario'));
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
@@ -90,6 +97,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedor').focus();
+    this.enviarDatos();
   }
   //Elimina una orden insumo de la tabla por indice
   public eliminarInsumo(indice, elemento): void {
@@ -99,6 +107,7 @@ export class ViajeInsumoComponent implements OnInit {
     let total = parseFloat(importeTotal) - parseFloat(importe);
     this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     document.getElementById('idProveedor').focus();
+    this.enviarDatos();
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {

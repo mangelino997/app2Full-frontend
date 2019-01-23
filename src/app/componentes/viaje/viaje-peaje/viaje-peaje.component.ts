@@ -59,6 +59,7 @@ export class ViajePeajeComponent implements OnInit {
     this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorP').focus();
+    this.enviarDatos();
   }
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(indice, elemento): void {
@@ -68,6 +69,7 @@ export class ViajePeajeComponent implements OnInit {
     let total = parseFloat(importeTotal) - parseFloat(importe);
     this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     document.getElementById('idProveedorP').focus();
+    this.enviarDatos();
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {

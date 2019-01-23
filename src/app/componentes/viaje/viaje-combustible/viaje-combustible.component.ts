@@ -108,6 +108,7 @@ export class ViajeCombustibleComponent implements OnInit {
     }
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
+    this.enviarDatos();
   }
   //Elimina un combustible de la tabla por indice
   public eliminarCombustible(indice, elemento): void {
@@ -125,6 +126,7 @@ export class ViajeCombustibleComponent implements OnInit {
       this.formularioViajePropioCombustible.get('totalUrea').setValue(total.toFixed(2));
     }
     document.getElementById('idProveedorOC').focus();
+    this.enviarDatos();
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {

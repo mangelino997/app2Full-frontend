@@ -67,6 +67,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
+    this.enviarDatos();
   }
   //Elimina un  efectivo de la tabla por indice
   public eliminarEfectivo(indice, elemento): void {
@@ -76,6 +77,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
     this.listaEfectivos.splice(indice, 1);
     document.getElementById('idFechaCajaAE').focus();
+    this.enviarDatos();
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
