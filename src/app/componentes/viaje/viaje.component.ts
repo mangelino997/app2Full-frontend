@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ViajePropioService } from '../../servicios/viaje-propio.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
@@ -10,6 +10,12 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ViajePropio } from 'src/app/modelos/viajePropio';
+import { ViajeTramoComponent } from './viaje-tramo/viaje-tramo.component';
+import { ViajeCombustibleComponent } from './viaje-combustible/viaje-combustible.component';
+import { ViajeEfectivoComponent } from './viaje-efectivo/viaje-efectivo.component';
+import { ViajeGastoComponent } from './viaje-gasto/viaje-gasto.component';
+import { ViajeInsumoComponent } from './viaje-insumo/viaje-insumo.component';
+import { ViajePeajeComponent } from './viaje-peaje/viaje-peaje.component';
 
 @Component({
   selector: 'app-viaje',
@@ -17,6 +23,13 @@ import { ViajePropio } from 'src/app/modelos/viajePropio';
   styleUrls: ['./viaje.component.css']
 })
 export class ViajeComponent implements OnInit {
+  //Define los componentes hijos
+  @ViewChild(ViajeTramoComponent) viajeTramoComponente;
+  @ViewChild(ViajeCombustibleComponent) viajeCombustibleComponente;
+  @ViewChild(ViajeEfectivoComponent) viajeEfectivoComponente;
+  @ViewChild(ViajeGastoComponent) viajeGastoComponente;
+  @ViewChild(ViajeInsumoComponent) viajeInsumoComponente;
+  @ViewChild(ViajePeajeComponent) viajePeajeComponente;
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -167,6 +180,18 @@ export class ViajeComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
     this.resultados = [];
+    this.resultadosVehiculos = [];
+    this.resultadosVehiculosRemolques = [];
+    this.resultadosChoferes = [];
+  }
+  //Vacia la lista de componentes hijos
+  private vaciarListasHijos() {
+    this.viajeCombustibleComponente.vaciarListas();
+    this.viajeEfectivoComponente.vaciarListas();
+    this.viajeGastoComponente.vaciarListas();
+    this.viajeInsumoComponente.vaciarListas();
+    this.viajePeajeComponente.vaciarListas();
+    this.viajeTramoComponente.vaciarListas();
   }
   //Obtiene el listado de sucursales
   private listarSucursales() {
@@ -261,6 +286,12 @@ export class ViajeComponent implements OnInit {
       }
     );
   }
+  //Obtiene por id
+  public obtenerPorId(): void {
+    this.servicio.obtenerPorId(this.formularioViajePropio.get('id').value).subscribe(res => {
+      console.log(res.json());
+    });
+  }
   //Obtiene el listado de registros
   private listar() {
     this.servicio.listar().subscribe(
@@ -306,20 +337,23 @@ export class ViajeComponent implements OnInit {
     this.formularioViajePropio.get('empresa').setValue(vehiculo.empresa);
     this.formularioViajePropio.get('empresaEmision').setValue(this.appComponent.getEmpresa());
     let empresa = this.formularioViajePropio.get('empresa').value;
-    this.formularioViajePropio.get('condicionIva').setValue(empresa.afipCondicionIva);
-    console.log(this.formularioViajePropio.value);
-    // this.servicio.agregar(this.formularioViajePropio.value).subscribe(
-    //   res => {
-    //     let resultado = res.json();
-    //     if(resultado.codigo == 201) {
-    //       this.toastr.success(resultado.mensaje);
-    //     }
-    //   },
-    //   err => {
-    //     let resultado = err.json();
-    //     this.toastr.error(resultado.mensaje);
-    //   }
-    // );
+    this.formularioViajePropio.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
+    this.servicio.agregar(this.formularioViajePropio.value).subscribe(
+      res => {
+        let resultado = res.json();
+        if(resultado.codigo == 201) {
+          this.reestablecerFormulario(resultado.id);
+          this.vaciarListasHijos();
+          this.establecerValoresPorDefecto();
+          document.getElementById('idFecha').focus();
+          this.toastr.success(resultado.mensaje);
+        }
+      },
+      err => {
+        let resultado = err.json();
+        this.toastr.error(resultado.mensaje);
+      }
+    );
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {

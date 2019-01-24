@@ -36,9 +36,9 @@
   <div class="row">
     <div class="col-md-3">
       <div class="form-group has-float-label">
-        <label for="idInsumo" class="tamanio-label">Insumo *</label>
-        <mat-select id="idInsumo" class="form-control form-control-sm" formControlName="insumo" [compareWith]="compareFn"
-          (selectionChange)="establecerPrecioUnitario(formularioViajePropioInsumo, 'insumo')">
+        <label for="idInsumoProducto" class="tamanio-label">Insumo *</label>
+        <mat-select id="idInsumoProducto" class="form-control form-control-sm" formControlName="insumoProducto" [compareWith]="compareFn"
+          (selectionChange)="establecerPrecioUnitario(formularioViajePropioInsumo, 'insumoProducto')">
           <mat-option *ngFor="let itemInsumo of insumos" [value]="itemInsumo">
             {{itemInsumo.nombre}}
           </mat-option>
@@ -124,7 +124,7 @@
               <span>{{l.proveedor.razonSocial}}</span>
             </td>
             <td align="center">
-              <span>{{l.insumo.nombre}}</span>
+              <span>{{l.insumoProducto.nombre}}</span>
             </td>
             <td align="center">
               <span>{{l.cantidad}}</span>

@@ -88,10 +88,11 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Agrega datos a la tabla de combustibles
   public agregarCombustible(): void {
+    this.formularioViajePropioCombustible.get('tipoComprobante').setValue({id:15});
     this.formularioViajePropioCombustible.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajePropioCombustible.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaCombustibles.push(this.formularioViajePropioCombustible.value);
-    let insumo = this.formularioViajePropioCombustible.get('insumoProducto').value.id;
+    let insumo = this.formularioViajePropioCombustible.get('insumo').value.id;
     let cantidad = this.formularioViajePropioCombustible.get('cantidad').value;
     let totalCombustible = this.formularioViajePropioCombustible.get('totalCombustible').value;
     let totalUrea = this.formularioViajePropioCombustible.get('totalUrea').value;
@@ -135,6 +136,10 @@ export class ViajeCombustibleComponent implements OnInit {
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
     this.dataEvent.emit(this.listaCombustibles);
+  }
+  //Vacia la lista
+  public vaciarListas(): void {
+    this.listaCombustibles = [];
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

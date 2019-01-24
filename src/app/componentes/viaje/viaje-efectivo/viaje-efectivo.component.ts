@@ -20,6 +20,8 @@ export class ViajeEfectivoComponent implements OnInit {
   public listaEfectivos:Array<any> = [];
   //Define la lista de empresas
   public empresas:Array<any> = [];
+  //Define la fecha actual
+  public fechaActual:any;
   //Constructor
   constructor(private viajePropioEfectivoModelo: ViajePropioEfectivo, private empresaServicio: EmpresaService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog) { }
@@ -48,6 +50,7 @@ export class ViajeEfectivoComponent implements OnInit {
     let valor = 0;
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
+      this.fechaActual = res.json();
       this.formularioViajePropioEfectivo.get('fechaCaja').setValue(res.json());
     })
     this.formularioViajePropioEfectivo.get('importe').setValue(this.appComponent.establecerCeros(valor));
@@ -57,6 +60,8 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
+    this.formularioViajePropioEfectivo.get('fecha').setValue(this.fechaActual);
+    this.formularioViajePropioEfectivo.get('tipoComprobante').setValue({id:16});
     this.formularioViajePropioEfectivo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajePropioEfectivo.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaEfectivos.push(this.formularioViajePropioEfectivo.value);
@@ -86,6 +91,10 @@ export class ViajeEfectivoComponent implements OnInit {
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+  }
+  //Vacia la lista
+  public vaciarListas(): void {
+    this.listaEfectivos = [];
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

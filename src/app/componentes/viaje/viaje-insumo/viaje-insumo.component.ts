@@ -87,6 +87,7 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Agrega datos a la tabla de orden insumo
   public agregarInsumo(): void {
+    this.formularioViajePropioInsumo.get('tipoComprobante').setValue({id:18});
     this.formularioViajePropioInsumo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajePropioInsumo.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaInsumos.push(this.formularioViajePropioInsumo.value);
@@ -116,6 +117,10 @@ export class ViajeInsumoComponent implements OnInit {
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+  }
+  //Vacia la lista
+  public vaciarListas(): void {
+    this.listaInsumos = [];
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

@@ -51,6 +51,8 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Agrega datos a la tabla de peajes
   public agregarPeaje(): void {
+    this.formularioViajePropioPeaje.get('tipoComprobante').setValue({id:17});
+    this.formularioViajePropioPeaje.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaPeajes.push(this.formularioViajePropioPeaje.value);
     let importe = this.formularioViajePropioPeaje.get('importe').value;
     let importeTotal = this.formularioViajePropioPeaje.get('importeTotal').value;
@@ -86,6 +88,10 @@ export class ViajePeajeComponent implements OnInit {
   //Define como se muestran los ceros a la izquierda en tablas
   public mostrarCeros(elemento, string, cantidad) {
     return elemento ? (string + elemento).slice(cantidad) : elemento;
+  }
+  //Vacia la lista
+  public vaciarListas(): void {
+    this.listaPeajes = [];
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

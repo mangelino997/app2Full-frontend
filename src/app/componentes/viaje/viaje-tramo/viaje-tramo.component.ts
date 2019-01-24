@@ -200,6 +200,10 @@ export class ViajeTramoComponent implements OnInit {
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
   }
+  //Vacia la lista
+  public vaciarListas(): void {
+    this.listaTramos = [];
+  }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
@@ -329,7 +333,7 @@ export class DadorDestTablaDialogo {
     //Establece el tema
     this.tema = this.data.tema;
     //Establece la lista de dadores-destinatarios
-    this.listaDadorDestinatario = this.data.elemento.listaViajePropioTramoCliente;
+    this.listaDadorDestinatario = this.data.elemento.viajePropioTramoClientes;
   }
   onNoClick(): void {
     this.dialogRef.close();

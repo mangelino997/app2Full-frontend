@@ -20,7 +20,7 @@ export class ViajePropio {
             vehiculoProveedorRemolque: new FormControl(),
             empresa: new FormControl(),
             empresaRemolque: new FormControl(),
-            condicionIva: new FormControl(),
+            afipCondicionIva: new FormControl(),
             numeroDocumentacion: new FormControl(),
             fechaDocumentacion: new FormControl(),
             usuarioDocumentacion: new FormControl(),

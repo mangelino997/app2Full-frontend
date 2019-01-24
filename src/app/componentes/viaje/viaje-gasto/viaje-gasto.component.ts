@@ -54,6 +54,10 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Agrega datos a la tabla de gastos
   public agregarGasto(): void {
+    this.formularioViajePropioGasto.get('tipoComprobante').setValue({id:19});
+    let usuario = this.appComponent.getUsuario();
+    this.formularioViajePropioGasto.get('sucursal').setValue(usuario.sucursal);
+    this.formularioViajePropioGasto.get('usuario').setValue(usuario);
     this.listaGastos.push(this.formularioViajePropioGasto.value);
     let importe = this.formularioViajePropioGasto.get('importe').value;
     let importeTotal = this.formularioViajePropioGasto.get('importeTotal').value;
@@ -81,6 +85,10 @@ export class ViajeGastoComponent implements OnInit {
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+  }
+  //Vacia la lista
+  public vaciarListas(): void {
+    this.listaGastos = [];
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

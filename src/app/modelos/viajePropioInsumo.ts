@@ -16,7 +16,7 @@ export class ViajePropioInsumo {
             usuario: new FormControl(),
             tipoComprobante: new FormControl(),
             fecha: new FormControl('', Validators.required),
-            insumo: new FormControl('', Validators.required),
+            insumoProducto: new FormControl('', Validators.required),
             cantidad: new FormControl('', Validators.required),
             precioUnitario: new FormControl('', Validators.required),
             observaciones: new FormControl(),

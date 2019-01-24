@@ -8,14 +8,17 @@
         </div>
     </div>
     <div class="contenedor" *ngIf="indiceSeleccionado < 5">
-        <mat-card style="background-color: #f8f9fa">
+        <mat-card style="background-color: #F8F9FA">
             <div class="row">
                 <div class="col">
                     <form [formGroup]="formularioViajePropio">
-                        <div class="row">
+                        <div class="row" *ngIf="mostrarAutocompletado">
                             <div class="col-md-4">
-                                <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+                                <div class="form-group has-float-label">
                                     <label for="idAutocompletado" class="tamanio-label">Buscar Guía de Servicio</label>
+                                    <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+                                        autocomplete="off" type="number" matInput formControlName="id">
+                                    <!-- <label for="idAutocompletado" class="tamanio-label">Buscar Guía de Servicio</label>
                                     <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
                                         autocomplete="off" type="text" matInput [formControl]="autocompletado"
                                         [matAutocomplete]="auto">
@@ -23,8 +26,11 @@
                                         <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
                                             {{item.alias}}
                                         </mat-option>
-                                    </mat-autocomplete>
+                                    </mat-autocomplete> -->
                                 </div>
+                            </div>
+                            <div class="col-md-4">
+                                <button mat-raised-button color="primary" (click)="obtenerPorId()">Buscar</button>
                             </div>
                         </div>
                         <div class="row">
@@ -127,8 +133,8 @@
             </div>
         </mat-card>
         <br>
-        <mat-horizontal-stepper #stepper>
-            <mat-step [stepControl]="formularioViajePropioTramo">
+        <mat-horizontal-stepper [linear]="true" #stepper>
+            <mat-step [stepControl]="formularioViajePropio">
                 <ng-template matStepLabel>Tramos</ng-template><br>
                 <form [formGroup]="formularioViajePropioTramo">
                     <app-viaje-tramo (dataEvent)="recibirTramos($event)"></app-viaje-tramo>
