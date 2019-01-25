@@ -23,6 +23,8 @@ export class ViajeInsumoComponent implements OnInit {
   public listaInsumos:Array<any> = [];
   //Define la lista de insumos productos
   public insumos:Array<any> = [];
+  //Define si los campos son de solo lectura
+  public soloLectura:boolean = false;
   //Constructor
   constructor(private viajePropioInsumoModelo: ViajePropioInsumo, private proveedorServicio: ProveedorService,
     private fechaServicio: FechaService, private appComponent: AppComponent, 
@@ -114,10 +116,44 @@ export class ViajeInsumoComponent implements OnInit {
   public enviarDatos(): void {
     this.dataEvent.emit(this.listaInsumos);
   }
+  //Establece la lista de efectivos
+  public establecerLista(lista): void {
+    this.listaInsumos = lista;
+  }
+  //Establece los campos solo lectura
+  public establecerCamposSoloLectura(indice): void {
+    switch(indice) {
+      case 1:
+        this.soloLectura = false;
+        this.establecerCamposSelectSoloLectura(false);
+        break;
+      case 2:
+        this.soloLectura = true;
+        this.establecerCamposSelectSoloLectura(true);
+        break;
+      case 3:
+        this.soloLectura = false;
+        this.establecerCamposSelectSoloLectura(false);
+        break;
+      case 4:
+        this.soloLectura = true;
+        this.establecerCamposSelectSoloLectura(true);
+        break;
+    }
+  }
+  //Establece los campos select en solo lectura o no
+  private establecerCamposSelectSoloLectura(opcion): void {
+    if(opcion) {
+      this.formularioViajePropioInsumo.get('insumoProducto').disable();
+    } else {
+      this.formularioViajePropioInsumo.get('insumoProducto').enable();
+    }
+  }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
   }
+  
   //Vacia la lista
   public vaciarListas(): void {
     this.listaInsumos = [];

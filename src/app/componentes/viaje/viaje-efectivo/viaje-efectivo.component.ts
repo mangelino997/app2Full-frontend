@@ -22,6 +22,8 @@ export class ViajeEfectivoComponent implements OnInit {
   public empresas:Array<any> = [];
   //Define la fecha actual
   public fechaActual:any;
+  //Define si los campos son de solo lectura
+  public soloLectura:boolean = false;
   //Constructor
   constructor(private viajePropioEfectivoModelo: ViajePropioEfectivo, private empresaServicio: EmpresaService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog) { }
@@ -91,6 +93,39 @@ export class ViajeEfectivoComponent implements OnInit {
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+  }
+  //Establece la lista de efectivos
+  public establecerLista(lista): void {
+    this.listaEfectivos = lista;
+  }
+  //Establece los campos solo lectura
+  public establecerCamposSoloLectura(indice): void {
+    switch(indice) {
+      case 1:
+        this.soloLectura = false;
+        this.establecerCamposSelectSoloLectura(false);
+        break;
+      case 2:
+        this.soloLectura = true;
+        this.establecerCamposSelectSoloLectura(true);
+        break;
+      case 3:
+        this.soloLectura = false;
+        this.establecerCamposSelectSoloLectura(false);
+        break;
+      case 4:
+        this.soloLectura = true;
+        this.establecerCamposSelectSoloLectura(true);
+        break;
+    }
+  }
+  //Establece los campos select en solo lectura o no
+  private establecerCamposSelectSoloLectura(opcion): void {
+    if(opcion) {
+      this.formularioViajePropioEfectivo.get('empresa').disable();
+    } else {
+      this.formularioViajePropioEfectivo.get('empresa').enable();
+    }
   }
   //Vacia la lista
   public vaciarListas(): void {

@@ -53,7 +53,7 @@
       </div>
     </div>
     <div class="col-md-2">
-      <button mat-raised-button color="primary" (click)="agregarEfectivo()">Agregar Adelanto</button>
+      <button mat-raised-button color="primary" (click)="agregarEfectivo()" [disabled]="soloLectura">Agregar Adelanto</button>
     </div>
   </div>
   <div class="row">
@@ -71,7 +71,7 @@
             <th class="text-center" style="width:8%" scope="col">Anulado</th>
             <th class="text-center" style="width:15%" scope="col">Observaciones
               Anulado</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
         </thead>
         <tbody>
@@ -104,7 +104,7 @@
               <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
             </td>
             <td align="center">
-              <span class="cursor-color-rojo" (click)="eliminarEfectivo(i, l)">X</span>
+              <span class="cursor-color-rojo" (click)="eliminarEfectivo(i, l)" *ngIf="!soloLectura">X</span>
             </td>
           </tr>
         </tbody>

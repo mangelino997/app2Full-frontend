@@ -34,6 +34,7 @@ export class ViajePropio {
             observacionVehiculoRemolque: new FormControl('', Validators.maxLength(100)),
             observacionChofer: new FormControl('', Validators.maxLength(100)),
             observaciones: new FormControl('', Validators.maxLength(100)),
+            alias: new FormControl(),
             viajePropioTramos: new FormControl('', Validators.required),
             viajePropioCombustibles: new FormControl(),
             viajePropioEfectivos: new FormControl(),

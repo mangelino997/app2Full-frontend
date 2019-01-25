@@ -64,7 +64,7 @@
       </div>
     </div>
     <div class="col-md-2">
-      <button mat-raised-button color="primary" (click)="agregarPeaje()">Agregar Peaje</button>
+      <button mat-raised-button color="primary" (click)="agregarPeaje()" [disabled]="soloLectura">Agregar Peaje</button>
     </div>
   </div>
   <div class="row">
@@ -77,7 +77,7 @@
             <th class="text-center" style="width:10%" scope="col">Punto de Venta</th>
             <th class="text-center" style="width:15%" scope="col">Número de Tique</th>
             <th class="text-center" style="width:10%" scope="col">Importe($)</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
         </thead>
         <tbody>
@@ -98,7 +98,7 @@
               <span>{{l.importe}}</span>
             </td>
             <td align="center">
-              <span class="cursor-color-rojo" (click)="eliminarPeaje(i, l)">X</span>
+              <span class="cursor-color-rojo" (click)="eliminarPeaje(i, l)" *ngIf="!soloLectura">X</span>
             </td>
           </tr>
         </tbody>

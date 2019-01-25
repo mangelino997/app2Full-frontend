@@ -69,7 +69,7 @@
       </div>
     </div>
     <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="agregarGasto()">Agregar
+      <button mat-raised-button color="primary" (click)="agregarGasto()" [disabled]="soloLectura">Agregar
         Gasto</button>
     </div>
   </div>
@@ -86,7 +86,7 @@
             <th class="text-center" style="width:10%" scope="col">Observaciones</th>
             <th class="text-center" style="width:10%" scope="col">Anulado</th>
             <th class="text-center" style="width:15%" scope="col">Observaciones Anulado</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
         </thead>
         <tbody>
@@ -116,7 +116,7 @@
               <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
             </td>
             <td align="center">
-              <span class="cursor-color-rojo" (click)="eliminarGasto(i, l)">X</span>
+              <span class="cursor-color-rojo" (click)="eliminarGasto(i, l)" *ngIf="!soloLectura">X</span>
             </td>
           </tr>
         </tbody>

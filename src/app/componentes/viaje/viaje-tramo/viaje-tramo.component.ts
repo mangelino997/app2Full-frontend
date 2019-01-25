@@ -51,6 +51,8 @@ export class ViajeTramoComponent implements OnInit {
   public listaTramos: Array<any> = [];
   //Define el numero de orden del tramo
   public numeroOrden:number;
+  //Define si los campos son de solo lectura
+  public soloLectura:boolean = false;
   //Constructor
   constructor(private appComponent: AppComponent, private viajePropioTramoModelo: ViajePropioTramo,
     private tramoServicio: TramoService,
@@ -199,6 +201,47 @@ export class ViajeTramoComponent implements OnInit {
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+  }
+  //Establece la lista de tramos
+  public establecerLista(lista): void {
+    this.listaTramos = lista;
+  }
+  //Establece los campos solo lectura
+  public establecerCamposSoloLectura(indice): void {
+    switch(indice) {
+      case 1:
+        this.soloLectura = false;
+        this.establecerCamposSelectSoloLectura(false);
+        break;
+      case 2:
+        this.soloLectura = true;
+        this.establecerCamposSelectSoloLectura(true);
+        break;
+      case 3:
+        this.soloLectura = false;
+        this.establecerCamposSelectSoloLectura(false);
+        break;
+      case 4:
+        this.soloLectura = true;
+        this.establecerCamposSelectSoloLectura(true);
+        break;
+    }
+  }
+  //Establece los campos select en solo lectura o no
+  private establecerCamposSelectSoloLectura(opcion): void {
+    if(opcion) {
+      this.formularioViajePropioTramo.get('empresa').disable();
+      this.formularioViajePropioTramo.get('viajeUnidadNegocio').disable();
+      this.formularioViajePropioTramo.get('viajeTipoCarga').disable();
+      this.formularioViajePropioTramo.get('viajeTipo').disable();
+      this.formularioViajePropioTramo.get('viajeTarifa').disable();
+    } else {
+      this.formularioViajePropioTramo.get('empresa').enable();
+      this.formularioViajePropioTramo.get('viajeUnidadNegocio').enable();
+      this.formularioViajePropioTramo.get('viajeTipoCarga').enable();
+      this.formularioViajePropioTramo.get('viajeTipo').enable();
+      this.formularioViajePropioTramo.get('viajeTarifa').enable();
+    }
   }
   //Vacia la lista
   public vaciarListas(): void {

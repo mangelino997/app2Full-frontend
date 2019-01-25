@@ -112,7 +112,7 @@
             </div>
         </div>
         <div class="col md 3">
-            <button mat-raised-button (click)="verDadorDestinatarioDialogo()">Dador-Destinatario</button>
+            <button mat-raised-button (click)="verDadorDestinatarioDialogo()" [disabled]="soloLectura">Dador-Destinatario</button>
         </div>
     </div>
     <div class="row">
@@ -124,7 +124,7 @@
             </div>
         </div>
         <div class="col-md-1">
-            <button mat-raised-button color="primary" (click)="agregarTramo()">Agregar Tramo</button>
+            <button mat-raised-button color="primary" (click)="agregarTramo()" [disabled]="soloLectura">Agregar Tramo</button>
         </div>
     </div>
     <div class="row">
@@ -137,16 +137,13 @@
                         <th class="text-center" style="width:20%" scope="col">Tramo</th>
                         <th class="text-center" style="width:3%" scope="col">Km</th>
                         <th class="text-center" style="width:10%" scope="col">Empresa</th>
-                        <th class="text-center" style="width:10%" scope="col">Tipo
-                            Carga</th>
-                        <th class="text-center" style="width:10%" scope="col">Tipo
-                            Viaje</th>
+                        <th class="text-center" style="width:10%" scope="col">Tipo Carga</th>
+                        <th class="text-center" style="width:10%" scope="col">Tipo Viaje</th>
                         <th class="text-center" style="width:10%" scope="col">Tarifa</th>
                         <th class="text-center" style="width:10%" scope="col">Dador-Destinatario</th>
-                        <th class="text-center" style="width:10%" scope="col">Unidad
-                            Negocio</th>
+                        <th class="text-center" style="width:10%" scope="col">Unidad Negocio</th>
                         <th class="text-center" style="width:5%" scope="col">Obs.</th>
-                        <th class="text-center" style="width:2%" scope="col">-</th>
+                        <th class="text-center" style="width:2%" scope="col" *ngIf="!soloLectura">-</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -185,7 +182,7 @@
                         <td align="center">
                             <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
                         </td>
-                        <td align="center">
+                        <td align="center" *ngIf="!soloLectura">
                             <span class="cursor-color-rojo" (click)="eliminarTramo(i)">X</span>
                         </td>
                     </tr>

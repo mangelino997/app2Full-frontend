@@ -50,6 +50,14 @@ export class ViajePropioService {
   public obtenerPorId(id) {
     return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
   }
+  //Obtiene una lista de registros por alias
+  public listarPorAlias(alias) {
+    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);

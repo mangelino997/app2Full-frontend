@@ -20,6 +20,8 @@ export class ViajeGastoComponent implements OnInit {
   public listaGastos:Array<any> = [];
   //Define la lista de resultados rubro producto de busqueda
   public resultadosRubrosProductos:Array<any> = [];
+  //Define si los campos son de solo lectura
+  public soloLectura:boolean = false;
   //Constructor
   constructor(private viajePropioGastoModelo: ViajePropioGasto, private rubroProductoServicio: RubroProductoService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog) { }
@@ -81,6 +83,27 @@ export class ViajeGastoComponent implements OnInit {
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
     this.dataEvent.emit(this.listaGastos);
+  }
+  //Establece la lista de efectivos
+  public establecerLista(lista): void {
+    this.listaGastos = lista;
+  }
+  //Establece los campos solo lectura
+  public establecerCamposSoloLectura(indice): void {
+    switch(indice) {
+      case 1:
+        this.soloLectura = false;
+        break;
+      case 2:
+        this.soloLectura = true;
+        break;
+      case 3:
+        this.soloLectura = false;
+        break;
+      case 4:
+        this.soloLectura = true;
+        break;
+    }
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {

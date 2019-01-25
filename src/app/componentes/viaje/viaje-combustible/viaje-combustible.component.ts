@@ -23,6 +23,8 @@ export class ViajeCombustibleComponent implements OnInit {
   public insumos:Array<any> = [];
   //Define la lista de combustibles
   public listaCombustibles:Array<any> = [];
+  //Define si los campos son de solo lectura
+  public soloLectura:boolean = false;
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajePropioCombustibleModelo: ViajePropioCombustible,
     private fechaServicio: FechaService, private appComponent: AppComponent, 
@@ -136,6 +138,39 @@ export class ViajeCombustibleComponent implements OnInit {
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
     this.dataEvent.emit(this.listaCombustibles);
+  }
+  //Establece la lista de combustibles
+  public establecerLista(lista): void {
+    this.listaCombustibles = lista;
+  }
+  //Establece los campos solo lectura
+  public establecerCamposSoloLectura(indice): void {
+    switch(indice) {
+      case 1:
+        this.soloLectura = false;
+        this.establecerCamposSelectSoloLectura(false);
+        break;
+      case 2:
+        this.soloLectura = true;
+        this.establecerCamposSelectSoloLectura(true);
+        break;
+      case 3:
+        this.soloLectura = false;
+        this.establecerCamposSelectSoloLectura(false);
+        break;
+      case 4:
+        this.soloLectura = true;
+        this.establecerCamposSelectSoloLectura(true);
+        break;
+    }
+  }
+  //Establece los campos select en solo lectura o no
+  private establecerCamposSelectSoloLectura(opcion): void {
+    if(opcion) {
+      this.formularioViajePropioCombustible.get('insumo').disable();
+    } else {
+      this.formularioViajePropioCombustible.get('insumo').enable();
+    }
   }
   //Vacia la lista
   public vaciarListas(): void {

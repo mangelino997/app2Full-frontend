@@ -38,6 +38,8 @@ export class ViajeComponent implements OnInit {
   public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
   public mostrarAutocompletado:boolean = null;
+  //Define si los campos de la cebecera son de solo lectura
+  public soloLecturaCabecera:boolean = false;
   //Define si el campo es de solo lectura
   public soloLectura:boolean = false;
   //Define si mostrar el boton
@@ -118,13 +120,13 @@ export class ViajeComponent implements OnInit {
       this.listaCompleta = res;
     });
     //Autocompletado - Buscar por alias
-    // this.autocompletado.valueChanges.subscribe(data => {
-    //   if(typeof data == 'string') {
-    //     this.servicio.listarPorAlias(data).subscribe(response =>{
-    //       this.resultados = response;
-    //     })
-    //   }
-    // })
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorAlias(data).subscribe(response =>{
+          this.resultados = response;
+        })
+      }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -165,6 +167,20 @@ export class ViajeComponent implements OnInit {
       }
     })
   }
+  //Establece el formulario y listas al seleccionar un elemento del autocompletado
+  public cambioAutocompletado(): void {
+    let viaje = this.autocompletado.value;
+    this.servicio.obtenerPorId(viaje.id).subscribe(res => {
+      let viajePropio = res.json();
+      this.formularioViajePropio.setValue(viajePropio);
+      this.viajeTramoComponente.establecerLista(viajePropio.viajePropioTramos);
+      this.viajeCombustibleComponente.establecerLista(viajePropio.viajePropioCombustibles);
+      this.viajeEfectivoComponente.establecerLista(viajePropio.viajePropioEfectivos);
+      this.viajeInsumoComponente.establecerLista(viajePropio.viajePropioInsumos);
+      this.viajeGastoComponente.establecerLista(viajePropio.viajePropioGastos);
+      this.viajePeajeComponente.establecerLista(viajePropio.viajePropioPeaje);
+    });
+  }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
     let usuario = this.appComponent.getUsuario();
@@ -204,14 +220,33 @@ export class ViajeComponent implements OnInit {
       }
     );
   }
+  //Establece los campos select en solo lectura
+  private establecerCamposSoloLectura(opcion): void {
+    if(opcion) {
+      this.tipoViaje.disable();
+      this.formularioViajePropio.get('esRemolquePropio').disable();
+      this.formularioViajePropio.get('sucursal').disable();
+    } else {
+      this.tipoViaje.enable();
+      this.formularioViajePropio.get('esRemolquePropio').enable();
+      this.formularioViajePropio.get('sucursal').enable();
+    }
+  }
   //Funcion para establecer los valores de las pestañas
-  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+  private establecerValoresPestania(nombrePestania, autocompletado, soloLecturaCabecera, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
+    this.soloLecturaCabecera = soloLecturaCabecera;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.vaciarListas();
     this.establecerValoresPorDefecto();
+    this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    this.viajeCombustibleComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    this.viajeEfectivoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    this.viajeGastoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -228,16 +263,20 @@ export class ViajeComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idFecha');
+        this.establecerCamposSoloLectura(false);
+        this.establecerValoresPestania(nombre, false, false, false, true, 'idFecha');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerCamposSoloLectura(true);
+        this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerCamposSoloLectura(true);
+        this.establecerValoresPestania(nombre, true, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerCamposSoloLectura(true);
+        this.establecerValoresPestania(nombre, true, true, true, true, 'idAutocompletado');
         break;
       default:
         break;
