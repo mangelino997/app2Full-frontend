@@ -92,19 +92,19 @@ export class ViajePeajeComponent implements OnInit {
     switch(indice) {
       case 1:
         this.soloLectura = false;
-        this.establecerCamposSelectSoloLectura(false);
+        // this.establecerCamposSelectSoloLectura(false);
         break;
       case 2:
         this.soloLectura = true;
-        this.establecerCamposSelectSoloLectura(true);
+        // this.establecerCamposSelectSoloLectura(true);
         break;
       case 3:
         this.soloLectura = false;
-        this.establecerCamposSelectSoloLectura(false);
+        // this.establecerCamposSelectSoloLectura(false);
         break;
       case 4:
         this.soloLectura = true;
-        this.establecerCamposSelectSoloLectura(true);
+        // this.establecerCamposSelectSoloLectura(true);
         break;
     }
   }

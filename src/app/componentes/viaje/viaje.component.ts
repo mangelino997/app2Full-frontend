@@ -88,6 +88,8 @@ export class ViajeComponent implements OnInit {
   public usuarioNombre:FormControl = new FormControl();
   //Define la lista de sucursales
   public sucursales:Array<any> = [];
+  //Define una bandera para campos solo lectura de componentes hijos
+  public banderaSoloLectura:boolean = false;
   //Constructor
   constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
@@ -241,12 +243,14 @@ export class ViajeComponent implements OnInit {
     this.mostrarBoton = boton;
     this.vaciarListas();
     this.establecerValoresPorDefecto();
-    this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    this.viajeCombustibleComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    this.viajeEfectivoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    this.viajeGastoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    if(this.banderaSoloLectura) {
+      this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajeCombustibleComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajeEfectivoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajeGastoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    }
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -267,16 +271,22 @@ export class ViajeComponent implements OnInit {
         this.establecerValoresPestania(nombre, false, false, false, true, 'idFecha');
         break;
       case 2:
+        this.banderaSoloLectura = true;
         this.establecerCamposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.banderaSoloLectura = true;
         this.establecerCamposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.banderaSoloLectura = true;
         this.establecerCamposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.banderaSoloLectura = true;
         break;
       default:
         break;
