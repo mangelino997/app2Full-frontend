@@ -179,7 +179,7 @@
         </mat-horizontal-stepper>
         <div class="row" *ngIf="mostrarBoton">
             <div class="centrar">
-                <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="agregar()" [disabled]="!formularioViajePropio.valid">
+                <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="accion()" [disabled]="!formularioViajePropio.valid">
                     {{pestaniaActual}}
                 </button>
             </div>

@@ -53,6 +53,10 @@ export class ViajeTramoComponent implements OnInit {
   public numeroOrden:number;
   //Define si los campos son de solo lectura
   public soloLectura:boolean = false;
+  //Define el indice del tramo para las modificaciones
+  public indiceTramo:number;
+  //Define si muestra el boton agregar tramo o actualizar tramo
+  public btnTramo:boolean = true;
   //Constructor
   constructor(private appComponent: AppComponent, private viajePropioTramoModelo: ViajePropioTramo,
     private tramoServicio: TramoService,
@@ -188,6 +192,21 @@ export class ViajeTramoComponent implements OnInit {
     document.getElementById('idTramoFecha').focus();
     this.enviarDatos();
   }
+  //Modifica los datos del tramo
+  public modificarTramo(): void {
+    this.listaTramos[this.indiceTramo] = this.formularioViajePropioTramo.value;
+    this.btnTramo = true;
+    this.formularioViajePropioTramo.reset();
+    this.establecerValoresPorDefecto();
+    document.getElementById('idTramoFecha').focus();
+    this.enviarDatos();
+  }
+  //Modifica un tramo de la tabla por indice
+  public modTramo(indice): void {
+    this.indiceTramo = indice;
+    this.btnTramo = false;
+    this.formularioViajePropioTramo.patchValue(this.listaTramos[indice]);
+  }
   //Elimina un tramo de la tabla por indice
   public eliminarTramo(indice): void {
     this.listaTramos.splice(indice, 1);
@@ -246,6 +265,11 @@ export class ViajeTramoComponent implements OnInit {
   //Vacia la lista
   public vaciarListas(): void {
     this.listaTramos = [];
+  }
+  //Reestablece formulario y lista al cambiar de pestaña
+  public reestablecerFormularioYLista(): void {
+    this.vaciarListas();
+    this.formularioViajePropioTramo.reset();
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

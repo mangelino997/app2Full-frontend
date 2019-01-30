@@ -24,6 +24,10 @@ export class ViajeEfectivoComponent implements OnInit {
   public fechaActual:any;
   //Define si los campos son de solo lectura
   public soloLectura:boolean = false;
+  //Define el indice del efectivo para las modificaciones
+  public indiceEfectivo:number;
+  //Define si muestra el boton agregar efectivo o actualizar efectivo
+  public btnEfectivo:boolean = true;
   //Constructor
   constructor(private viajePropioEfectivoModelo: ViajePropioEfectivo, private empresaServicio: EmpresaService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog) { }
@@ -75,6 +79,21 @@ export class ViajeEfectivoComponent implements OnInit {
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
+  }
+  //Modifica los datos del Efectivo
+  public modificarEfectivo(): void {
+    this.listaEfectivos[this.indiceEfectivo] = this.formularioViajePropioEfectivo.value;
+    this.btnEfectivo = true;
+    this.formularioViajePropioEfectivo.reset();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idFechaCajaAE').focus();
+    this.enviarDatos();
+  }
+  //Modifica un Efectivo de la tabla por indice
+  public modEfectivo(indice): void {
+    this.indiceEfectivo = indice;
+    this.btnEfectivo = false;
+    this.formularioViajePropioEfectivo.patchValue(this.listaEfectivos[indice]);
   }
   //Elimina un  efectivo de la tabla por indice
   public eliminarEfectivo(indice, elemento): void {
@@ -130,6 +149,11 @@ export class ViajeEfectivoComponent implements OnInit {
   //Vacia la lista
   public vaciarListas(): void {
     this.listaEfectivos = [];
+  }
+  //Reestablece formulario y lista al cambiar de pestaña
+  public reestablecerFormularioYLista(): void {
+    this.vaciarListas();
+    this.formularioViajePropioEfectivo.reset();
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

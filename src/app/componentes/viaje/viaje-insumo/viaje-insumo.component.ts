@@ -25,6 +25,10 @@ export class ViajeInsumoComponent implements OnInit {
   public insumos:Array<any> = [];
   //Define si los campos son de solo lectura
   public soloLectura:boolean = false;
+  //Define el indice del Insumo para las modificaciones
+  public indiceInsumo:number;
+  //Define si muestra el boton agregar Insumo o actualizar Insumo
+  public btnInsumo:boolean = true;
   //Constructor
   constructor(private viajePropioInsumoModelo: ViajePropioInsumo, private proveedorServicio: ProveedorService,
     private fechaServicio: FechaService, private appComponent: AppComponent, 
@@ -102,6 +106,21 @@ export class ViajeInsumoComponent implements OnInit {
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
   }
+  //Modifica los datos del Insumo
+  public modificarInsumo(): void {
+    this.listaInsumos[this.indiceInsumo] = this.formularioViajePropioInsumo.value;
+    this.btnInsumo = true;
+    this.formularioViajePropioInsumo.reset();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idProveedor').focus();
+    this.enviarDatos();
+  }
+  //Modifica un Insumo de la tabla por indice
+  public modInsumo(indice): void {
+    this.indiceInsumo = indice;
+    this.btnInsumo = false;
+    this.formularioViajePropioInsumo.patchValue(this.listaInsumos[indice]);
+  }
   //Elimina una orden insumo de la tabla por indice
   public eliminarInsumo(indice, elemento): void {
     this.listaInsumos.splice(indice, 1);
@@ -157,6 +176,11 @@ export class ViajeInsumoComponent implements OnInit {
   //Vacia la lista
   public vaciarListas(): void {
     this.listaInsumos = [];
+  }
+  //Reestablece formulario y lista al cambiar de pestaña
+  public reestablecerFormularioYLista(): void {
+    this.vaciarListas();
+    this.formularioViajePropioInsumo.reset();
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

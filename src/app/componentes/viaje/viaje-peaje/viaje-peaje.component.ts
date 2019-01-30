@@ -21,6 +21,10 @@ export class ViajePeajeComponent implements OnInit {
   public resultadosProveedores:Array<any> = [];
   //Define si los campos son de solo lectura
   public soloLectura:boolean = false;
+  //Define el indice del Peaje para las modificaciones
+  public indicePeaje:number;
+  //Define si muestra el boton agregar Peaje o actualizar Peaje
+  public btnPeaje:boolean = true;
   //Constructor
   constructor(private viajePropioPeajeModelo: ViajePropioPeaje, private proveedorServicio: ProveedorService,
     private fechaServicio: FechaService, private appComponent: AppComponent) { }
@@ -65,6 +69,21 @@ export class ViajePeajeComponent implements OnInit {
     document.getElementById('idProveedorP').focus();
     this.enviarDatos();
   }
+  //Modifica los datos del Peaje
+  public modificarPeaje(): void {
+    this.listaPeajes[this.indicePeaje] = this.formularioViajePropioPeaje.value;
+    this.btnPeaje = true;
+    this.formularioViajePropioPeaje.reset();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idProveedorP').focus();
+    this.enviarDatos();
+  }
+  //Modifica un Peaje de la tabla por indice
+  public modPeaje(indice): void {
+    this.indicePeaje = indice;
+    this.btnPeaje = false;
+    this.formularioViajePropioPeaje.patchValue(this.listaPeajes[indice]);
+  }
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(indice, elemento): void {
     this.listaPeajes.splice(indice, 1);
@@ -108,14 +127,6 @@ export class ViajePeajeComponent implements OnInit {
         break;
     }
   }
-  //Establece los campos select en solo lectura o no
-  private establecerCamposSelectSoloLectura(opcion): void {
-    if(opcion) {
-      this.formularioViajePropioPeaje.get('insumo').disable();
-    } else {
-      this.formularioViajePropioPeaje.get('insumo').enable();
-    }
-  }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
@@ -127,6 +138,11 @@ export class ViajePeajeComponent implements OnInit {
   //Vacia la lista
   public vaciarListas(): void {
     this.listaPeajes = [];
+  }
+  //Reestablece formulario y lista al cambiar de pestaña
+  public reestablecerFormularioYLista(): void {
+    this.vaciarListas();
+    this.formularioViajePropioPeaje.reset();
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

@@ -22,6 +22,10 @@ export class ViajeGastoComponent implements OnInit {
   public resultadosRubrosProductos:Array<any> = [];
   //Define si los campos son de solo lectura
   public soloLectura:boolean = false;
+  //Define el indice del Gasto para las modificaciones
+  public indiceGasto:number;
+  //Define si muestra el boton agregar Gasto o actualizar Gasto
+  public btnGasto:boolean = true;
   //Constructor
   constructor(private viajePropioGastoModelo: ViajePropioGasto, private rubroProductoServicio: RubroProductoService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog) { }
@@ -70,6 +74,21 @@ export class ViajeGastoComponent implements OnInit {
     document.getElementById('idFechaG').focus();
     this.enviarDatos();
   }
+  //Modifica los datos del Gasto
+  public modificarGasto(): void {
+    this.listaGastos[this.indiceGasto] = this.formularioViajePropioGasto.value;
+    this.btnGasto = true;
+    this.formularioViajePropioGasto.reset();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idFechaG').focus();
+    this.enviarDatos();
+  }
+  //Modifica un Gasto de la tabla por indice
+  public modGasto(indice): void {
+    this.indiceGasto = indice;
+    this.btnGasto = false;
+    this.formularioViajePropioGasto.patchValue(this.listaGastos[indice]);
+  }
   //Elimina un gasto de la tabla por indice
   public eliminarGasto(indice, elemento): void {
     this.listaGastos.splice(indice, 1);
@@ -112,6 +131,11 @@ export class ViajeGastoComponent implements OnInit {
   //Vacia la lista
   public vaciarListas(): void {
     this.listaGastos = [];
+  }
+  //Reestablece formulario y lista al cambiar de pestaña
+  public reestablecerFormularioYLista(): void {
+    this.vaciarListas();
+    this.formularioViajePropioGasto.reset();
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

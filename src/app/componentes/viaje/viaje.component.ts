@@ -245,11 +245,17 @@ export class ViajeComponent implements OnInit {
     this.establecerValoresPorDefecto();
     if(this.banderaSoloLectura) {
       this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajeTramoComponente.reestablecerFormularioYLista();
       this.viajeCombustibleComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajeCombustibleComponente.reestablecerFormularioYLista();
       this.viajeEfectivoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajeEfectivoComponente.reestablecerFormularioYLista();
       this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajeInsumoComponente.reestablecerFormularioYLista();
       this.viajeGastoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajeGastoComponente.reestablecerFormularioYLista();
       this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+      this.viajePeajeComponente.reestablecerFormularioYLista();
     }
     setTimeout(function () {
       document.getElementById(componente).focus();
@@ -335,12 +341,6 @@ export class ViajeComponent implements OnInit {
       }
     );
   }
-  //Obtiene por id
-  public obtenerPorId(): void {
-    this.servicio.obtenerPorId(this.formularioViajePropio.get('id').value).subscribe(res => {
-      console.log(res.json());
-    });
-  }
   //Obtiene el listado de registros
   private listar() {
     this.servicio.listar().subscribe(
@@ -380,8 +380,23 @@ export class ViajeComponent implements OnInit {
   public recibirRemitos($event) {
     console.log($event);
   }
+  //Dependiendo en que pestaña esta, es la acción que realiza
+  public accion(): void {
+    switch(this.indiceSeleccionado) {
+      case 1:
+        this.agregar();
+        break;
+      case 2:
+        break;
+      case 3:
+        this.actualizar();
+        break;
+      case 4:
+        break;
+    }
+  }
   //Agregar el viaje propio
-  public agregar(): void {
+  private agregar(): void {
     let vehiculo = this.formularioViajePropio.get('vehiculo').value;
     this.formularioViajePropio.get('empresa').setValue(vehiculo.empresa);
     this.formularioViajePropio.get('empresaEmision').setValue(this.appComponent.getEmpresa());
@@ -395,6 +410,27 @@ export class ViajeComponent implements OnInit {
           this.vaciarListasHijos();
           this.establecerValoresPorDefecto();
           document.getElementById('idFecha').focus();
+          this.toastr.success(resultado.mensaje);
+        }
+      },
+      err => {
+        let resultado = err.json();
+        this.toastr.error(resultado.mensaje);
+      }
+    );
+  }
+  //Actualiza el viaje propio
+  private actualizar(): void {
+    this.establecerCamposSoloLectura(false);
+    this.servicio.actualizar(this.formularioViajePropio.value).subscribe(
+      res => {
+        let resultado = res.json();
+        if(resultado.codigo == 200) {
+          this.establecerCamposSoloLectura(true);
+          this.reestablecerFormulario(resultado.id);
+          this.vaciarListasHijos();
+          this.establecerValoresPorDefecto();
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(resultado.mensaje);
         }
       },

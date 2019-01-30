@@ -25,6 +25,10 @@ export class ViajeCombustibleComponent implements OnInit {
   public listaCombustibles:Array<any> = [];
   //Define si los campos son de solo lectura
   public soloLectura:boolean = false;
+  //Define el indice del combustible para las modificaciones
+  public indiceCombustible:number;
+  //Define si muestra el boton agregar combustible o actualizar combustible
+  public btnCombustible:boolean = true;
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajePropioCombustibleModelo: ViajePropioCombustible,
     private fechaServicio: FechaService, private appComponent: AppComponent, 
@@ -113,6 +117,21 @@ export class ViajeCombustibleComponent implements OnInit {
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
   }
+  //Modifica los datos del combustible
+  public modificarCombustible(): void {
+    this.listaCombustibles[this.indiceCombustible] = this.formularioViajePropioCombustible.value;
+    this.btnCombustible = true;
+    this.formularioViajePropioCombustible.reset();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idProveedorOC').focus();
+    this.enviarDatos();
+  }
+  //Modifica un combustible de la tabla por indice
+  public modCombustible(indice): void {
+    this.indiceCombustible = indice;
+    this.btnCombustible = false;
+    this.formularioViajePropioCombustible.patchValue(this.listaCombustibles[indice]);
+  }
   //Elimina un combustible de la tabla por indice
   public eliminarCombustible(indice, elemento): void {
     this.listaCombustibles.splice(indice, 1);
@@ -175,6 +194,11 @@ export class ViajeCombustibleComponent implements OnInit {
   //Vacia la lista
   public vaciarListas(): void {
     this.listaCombustibles = [];
+  }
+  //Reestablece formulario y lista al cambiar de pestaña
+  public reestablecerFormularioYLista(): void {
+    this.vaciarListas();
+    this.formularioViajePropioCombustible.reset();
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
