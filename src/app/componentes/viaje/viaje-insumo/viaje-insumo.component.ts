@@ -137,6 +137,7 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Establece la lista de efectivos
   public establecerLista(lista): void {
+    this.establecerValoresPorDefecto(1);
     this.listaInsumos = lista;
   }
   //Establece los campos solo lectura
@@ -172,7 +173,10 @@ export class ViajeInsumoComponent implements OnInit {
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
   }
-  
+  //Establece los ceros en los numeros flotantes en tablas
+  public establecerCerosTabla(elemento) {
+    return this.appComponent.establecerCeros(elemento);
+  }
   //Vacia la lista
   public vaciarListas(): void {
     this.listaInsumos = [];

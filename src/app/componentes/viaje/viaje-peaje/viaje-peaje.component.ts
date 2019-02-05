@@ -98,12 +98,17 @@ export class ViajePeajeComponent implements OnInit {
   public establecerCerosIzq(elemento, string, cantidad) {
     elemento.setValue((string + elemento.value).slice(cantidad));
   }
+  //Define como se muestran los ceros a la izquierda en tablas
+  public mostrarCeros(elemento, string, cantidad) {
+    return elemento ? (string + elemento).slice(cantidad) : elemento;
+  }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
     this.dataEvent.emit(this.listaPeajes);
   }
   //Establece la lista de efectivos
   public establecerLista(lista): void {
+    this.establecerValoresPorDefecto(1);
     this.listaPeajes = lista;
   }
   //Establece los campos solo lectura
@@ -131,9 +136,9 @@ export class ViajePeajeComponent implements OnInit {
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
   }
-  //Define como se muestran los ceros a la izquierda en tablas
-  public mostrarCeros(elemento, string, cantidad) {
-    return elemento ? (string + elemento).slice(cantidad) : elemento;
+  //Establece los ceros en los numeros flotantes en tablas
+  public establecerCerosTabla(elemento) {
+    return this.appComponent.establecerCeros(elemento);
   }
   //Vacia la lista
   public vaciarListas(): void {

@@ -89,13 +89,13 @@
               <span>{{l.proveedor.razonSocial}}</span>
             </td>
             <td align="center">
-              <span>{{l.puntoVenta}}</span>
+              <span>{{mostrarCeros(l.puntoVenta, '000', -4)}}</span>
             </td>
             <td align="center">
-              <span>{{l.numeroComprobante}}</span>
+              <span>{{mostrarCeros(l.numeroComprobante, '0000000', -8)}}</span>
             </td>
             <td align="center">
-              <span>{{l.importe}}</span>
+              <span>{{establecerCerosTabla(l.importe)}}</span>
             </td>
             <td align="center">
               <span class="cursor-color-rojo" (click)="eliminarPeaje(i, l)" *ngIf="!soloLectura">X</span>

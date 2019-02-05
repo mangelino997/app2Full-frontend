@@ -180,7 +180,7 @@ export class ViajeComponent implements OnInit {
       this.viajeEfectivoComponente.establecerLista(viajePropio.viajePropioEfectivos);
       this.viajeInsumoComponente.establecerLista(viajePropio.viajePropioInsumos);
       this.viajeGastoComponente.establecerLista(viajePropio.viajePropioGastos);
-      this.viajePeajeComponente.establecerLista(viajePropio.viajePropioPeaje);
+      this.viajePeajeComponente.establecerLista(viajePropio.viajePropioPeajes);
     });
   }
   //Establece los valores por defecto

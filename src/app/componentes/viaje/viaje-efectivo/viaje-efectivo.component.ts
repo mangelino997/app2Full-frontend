@@ -113,8 +113,13 @@ export class ViajeEfectivoComponent implements OnInit {
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
   }
+  //Establece los ceros en los numeros flotantes en tablas
+  public establecerCerosTabla(elemento) {
+    return this.appComponent.establecerCeros(elemento);
+  }
   //Establece la lista de efectivos
   public establecerLista(lista): void {
+    this.establecerValoresPorDefecto(1);
     this.listaEfectivos = lista;
   }
   //Establece los campos solo lectura

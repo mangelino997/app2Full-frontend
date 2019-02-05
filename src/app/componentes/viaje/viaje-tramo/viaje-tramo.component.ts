@@ -223,6 +223,7 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Establece la lista de tramos
   public establecerLista(lista): void {
+    this.establecerValoresPorDefecto();
     this.listaTramos = lista;
   }
   //Establece los campos solo lectura

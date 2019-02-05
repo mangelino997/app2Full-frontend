@@ -90,7 +90,8 @@
       </div>
     </div>
     <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="agregarCombustible()" [disabled]="soloLectura">Agregar Orden</button>
+      <button mat-raised-button color="primary" (click)="agregarCombustible()" [disabled]="soloLectura" *ngIf="btnCombustible">Agregar Orden</button>
+      <button mat-raised-button color="primary" (click)="modificarCombustible()" [disabled]="soloLectura" *ngIf="!btnCombustible">Actualizar Orden</button>
     </div>
   </div>
   <div class="row">
@@ -107,8 +108,9 @@
             <th class="text-center" style="width:10%" scope="col">Precio Unitario($)</th>
             <th class="text-center" style="width:10%" scope="col">Observaciones</th>
             <th class="text-center" style="width:5%" scope="col">Anulado</th>
-            <th class="text-center" style="width:15%" scope="col">Observaciones Anulado</th>
-            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
+            <th class="text-center" style="width:16%" scope="col">Observaciones Anulado</th>
+            <th class="text-center" style="width:2%" scope="col" *ngIf="!soloLectura">-</th>
+            <th class="text-center" style="width:2%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
         </thead>
         <tbody>
@@ -132,7 +134,7 @@
               <span>{{l.cantidad}}</span>
             </td>
             <td align="center">
-              <span>{{l.precioUnitario}}</span>
+              <span>{{establecerCerosTabla(l.precioUnitario)}}</span>
             </td>
             <td align="center">
               <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
@@ -142,6 +144,9 @@
             </td>
             <td align="center">
               <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
+            </td>
+            <td align="center" *ngIf="!soloLectura">
+              <span class="cursor-color" (click)="modCombustible(i)">Mod</span>
             </td>
             <td align="center">
               <span class="cursor-color-rojo" (click)="eliminarCombustible(i, l)" *ngIf="!soloLectura">X</span>

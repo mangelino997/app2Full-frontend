@@ -98,21 +98,8 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajePropioCombustible.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajePropioCombustible.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaCombustibles.push(this.formularioViajePropioCombustible.value);
-    let insumo = this.formularioViajePropioCombustible.get('insumo').value.id;
-    let cantidad = this.formularioViajePropioCombustible.get('cantidad').value;
-    let totalCombustible = this.formularioViajePropioCombustible.get('totalCombustible').value;
-    let totalUrea = this.formularioViajePropioCombustible.get('totalUrea').value;
-    let total = 0;
     this.formularioViajePropioCombustible.reset();
-    if(insumo == 1) {
-      total = parseFloat(totalCombustible) + parseFloat(cantidad);
-      this.formularioViajePropioCombustible.get('totalCombustible').setValue(total.toFixed(2));
-      this.formularioViajePropioCombustible.get('totalUrea').setValue(totalUrea);
-    } else if(insumo == 3) {
-      total = parseFloat(totalUrea) + parseFloat(cantidad);
-      this.formularioViajePropioCombustible.get('totalUrea').setValue(total.toFixed(2));
-      this.formularioViajePropioCombustible.get('totalCombustible').setValue(totalCombustible);
-    }
+    this.calcularTotalCombustibleYUrea();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
@@ -122,6 +109,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listaCombustibles[this.indiceCombustible] = this.formularioViajePropioCombustible.value;
     this.btnCombustible = true;
     this.formularioViajePropioCombustible.reset();
+    this.calcularTotalCombustibleYUrea();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
@@ -135,24 +123,34 @@ export class ViajeCombustibleComponent implements OnInit {
   //Elimina un combustible de la tabla por indice
   public eliminarCombustible(indice, elemento): void {
     this.listaCombustibles.splice(indice, 1);
-    let insumo = elemento.insumoProducto.id;
-    let cantidad = elemento.cantidad;
-    let totalCombustible = this.formularioViajePropioCombustible.get('totalCombustible').value;
-    let totalUrea = this.formularioViajePropioCombustible.get('totalUrea').value;
-    let total = 0;
-    if(insumo == 1) {
-      total = parseFloat(totalCombustible) - parseFloat(cantidad);
-      this.formularioViajePropioCombustible.get('totalCombustible').setValue(total.toFixed(2));
-    } else if(insumo == 3) {
-      total = parseFloat(totalUrea) - parseFloat(cantidad);
-      this.formularioViajePropioCombustible.get('totalUrea').setValue(total.toFixed(2));
-    }
+    this.calcularTotalCombustibleYUrea();
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
+  }
+  //Calcula el total de combustible y el total de urea
+  private calcularTotalCombustibleYUrea(): void {
+    let lista = this.listaCombustibles;
+    let totalCombustible = 0;
+    let totalUrea = 0;
+    for(let i = 0 ; i < lista.length ; i++) {
+      if(lista[i].id != 0) {
+        if(lista[i].insumo.id == 1) {
+          totalCombustible += lista[i].cantidad;
+        } else if(lista[i].insumo.id == 3) {
+          totalUrea += lista[i].cantidad;
+        }
+      }
+    }
+    this.formularioViajePropioCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
+    this.formularioViajePropioCombustible.get('totalUrea').setValue(totalUrea.toFixed(2));
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+  }
+  //Establece los ceros en los numeros flotantes en tablas
+  public establecerCerosTabla(elemento) {
+    return this.appComponent.establecerCeros(elemento);
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
@@ -160,7 +158,9 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Establece la lista de combustibles
   public establecerLista(lista): void {
+    this.establecerValoresPorDefecto(1);
     this.listaCombustibles = lista;
+    this.calcularTotalCombustibleYUrea();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {

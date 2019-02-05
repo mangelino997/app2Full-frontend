@@ -101,10 +101,10 @@
               <span>{{l.cantidad}}</span>
             </td>
             <td align="center">
-              <span>{{l.precioUnitario}}</span>
+              <span>{{establecerCerosTabla(l.precioUnitario)}}</span>
             </td>
             <td align="center">
-              <span>{{l.importe}}</span>
+              <span>{{establecerCerosTabla(l.importe)}}</span>
             </td>
             <td align="center">
               <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>

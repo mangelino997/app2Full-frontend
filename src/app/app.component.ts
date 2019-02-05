@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Pipe, PipeTransform } from '@angular/core';
 import { AppService } from './servicios/app.service';
 import { Router } from '@angular/router';
 import 'rxjs/Rx';
@@ -92,5 +92,9 @@ export class AppComponent {
   //Establece los ceros en los numero flotantes
   public establecerCeros(valor) {
     return parseFloat(valor).toFixed(2);
+  }
+  //Establece la cantidad de ceros correspondientes a la izquierda del numero
+  public establecerCerosIzq(elemento, string, cantidad) {
+    elemento.setValue((string + elemento.value).slice(cantidad));
   }
 }

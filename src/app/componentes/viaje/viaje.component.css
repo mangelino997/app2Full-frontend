@@ -14,24 +14,6 @@
     height: 30px !important;
     padding: 0px 10px !important;
 }
-th {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 0; 
-    background-color: #FFF;
-}
-.table-condensed>thead>tr>th, .table-condensed>tbody>tr>th, .table-condensed>tfoot>tr>th, .table-condensed>thead>tr>td, .table-condensed>tbody>tr>td, .table-condensed>tfoot>tr>td{
-    padding: 0px;
-}
-.tabla-viaje {
-    width: 2200px !important;
-}
-.tabla-viaje-efectivo {
-    width: 1920px !important;
-}
-.tabla-viaje-peaje {
-    width: 1200px !important;
-}
 .left-inner-addon {
     position: relative;
 }
