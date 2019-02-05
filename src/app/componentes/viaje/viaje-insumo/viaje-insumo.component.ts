@@ -97,11 +97,8 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajePropioInsumo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajePropioInsumo.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaInsumos.push(this.formularioViajePropioInsumo.value);
-    let importe = this.formularioViajePropioInsumo.get('importe').value;
-    let importeTotal = this.formularioViajePropioInsumo.get('importeTotal').value;
-    let total = parseFloat(importeTotal) + parseFloat(importe);
     this.formularioViajePropioInsumo.reset();
-    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
@@ -111,6 +108,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.listaInsumos[this.indiceInsumo] = this.formularioViajePropioInsumo.value;
     this.btnInsumo = true;
     this.formularioViajePropioInsumo.reset();
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
@@ -123,13 +121,20 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Elimina una orden insumo de la tabla por indice
   public eliminarInsumo(indice, elemento): void {
-    this.listaInsumos.splice(indice, 1);
-    let importe = elemento.importe;
-    let importeTotal = this.formularioViajePropioInsumo.get('importeTotal').value;
-    let total = parseFloat(importeTotal) - parseFloat(importe);
-    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.listaInsumos[indice].id = elemento.id*(-1);
+    this.calcularImporteTotal();
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
+  }
+  //Calcula el importe total
+  private calcularImporteTotal(): void {
+    let total = 0;
+    this.listaInsumos.forEach(item => {
+      if(item.id != -1) {
+        total += item.importe;
+      }
+    })
+    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
@@ -139,6 +144,7 @@ export class ViajeInsumoComponent implements OnInit {
   public establecerLista(lista): void {
     this.establecerValoresPorDefecto(1);
     this.listaInsumos = lista;
+    this.calcularImporteTotal();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {

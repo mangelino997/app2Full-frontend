@@ -71,11 +71,8 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajePropioEfectivo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajePropioEfectivo.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaEfectivos.push(this.formularioViajePropioEfectivo.value);
-    let importeTotal = this.formularioViajePropioEfectivo.get('importeTotal').value;
-    let importe = this.formularioViajePropioEfectivo.get('importe').value;
-    let total = parseFloat(importeTotal) + parseFloat(importe);
     this.formularioViajePropioEfectivo.reset();
-    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
@@ -85,6 +82,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.listaEfectivos[this.indiceEfectivo] = this.formularioViajePropioEfectivo.value;
     this.btnEfectivo = true;
     this.formularioViajePropioEfectivo.reset();
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
@@ -97,13 +95,20 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Elimina un  efectivo de la tabla por indice
   public eliminarEfectivo(indice, elemento): void {
-    let importe = elemento.importe;
-    let importeTotal = this.formularioViajePropioEfectivo.get('importeTotal').value;
-    let total = parseFloat(importeTotal) - parseFloat(importe);
-    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
-    this.listaEfectivos.splice(indice, 1);
+    this.listaEfectivos[indice].id = elemento.id*(-1);
+    this.calcularImporteTotal();
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
+  }
+  //Calcula el importe total
+  private calcularImporteTotal(): void {
+    let total = 0;
+    this.listaEfectivos.forEach(item => {
+      if(item.id != -1) {
+        total += item.importe;
+      }
+    })
+    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
@@ -121,6 +126,7 @@ export class ViajeEfectivoComponent implements OnInit {
   public establecerLista(lista): void {
     this.establecerValoresPorDefecto(1);
     this.listaEfectivos = lista;
+    this.calcularImporteTotal();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {

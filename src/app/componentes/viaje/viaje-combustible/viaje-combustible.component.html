@@ -114,44 +114,46 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let l of listaCombustibles; let i = index">
-            <td align="center">
-              <span>{{l.sucursal.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{i+1}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.usuario.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.proveedor.razonSocial}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.insumo.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.cantidad}}</span>
-            </td>
-            <td align="center">
-              <span>{{establecerCerosTabla(l.precioUnitario)}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
-            </td>
-            <td align="center">
-              <span>{{l.anulado}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
-            </td>
-            <td align="center" *ngIf="!soloLectura">
-              <span class="cursor-color" (click)="modCombustible(i)">Mod</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color-rojo" (click)="eliminarCombustible(i, l)" *ngIf="!soloLectura">X</span>
-            </td>
-          </tr>
+          <ng-container *ngFor="let l of listaCombustibles; let i = index">
+            <tr *ngIf="l.id > 0 || l.id == null">
+              <td align="center">
+                <span>{{l.sucursal.nombre}}</span>
+              </td>
+              <td align="center">
+                <span>{{i+1}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.usuario.nombre}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.proveedor.razonSocial}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.insumo.nombre}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.cantidad}}</span>
+              </td>
+              <td align="center">
+                <span>{{establecerCerosTabla(l.precioUnitario)}}</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
+              </td>
+              <td align="center">
+                <span>{{l.anulado}}</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
+              </td>
+              <td align="center" *ngIf="!soloLectura">
+                <span class="cursor-color" (click)="modCombustible(i)">Mod</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color-rojo" (click)="eliminarCombustible(i, l)" *ngIf="!soloLectura">X</span>
+              </td>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>

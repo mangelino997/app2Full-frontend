@@ -53,7 +53,8 @@
       </div>
     </div>
     <div class="col-md-2">
-      <button mat-raised-button color="primary" (click)="agregarEfectivo()" [disabled]="soloLectura">Agregar Adelanto</button>
+      <button mat-raised-button color="primary" (click)="agregarEfectivo()" [disabled]="soloLectura" *ngIf="btnEfectivo">Agregar Adelanto</button>
+      <button mat-raised-button color="primary" (click)="modificarEfectivo()" [disabled]="soloLectura" *ngIf="!btnEfectivo">Actualizar Adelanto</button>
     </div>
   </div>
   <div class="row">
@@ -62,51 +63,56 @@
         <thead>
           <tr>
             <th class="text-center" style="width:10%" scope="col">Sucursal</th>
-            <th class="text-center" style="width:5%" scope="col">Adelanto</th>
+            <th class="text-center" style="width:6%" scope="col">Adelanto</th>
             <th class="text-center" style="width:10%" scope="col">Usuario</th>
             <th class="text-center" style="width:20%" scope="col">Empresa</th>
-            <th class="text-center" style="width:7%" scope="col">Fecha</th>
-            <th class="text-center" style="width:10%" scope="col">Importe($)</th>
+            <th class="text-center" style="width:8%" scope="col">Fecha</th>
+            <th class="text-center" style="width:8%" scope="col">Importe($)</th>
             <th class="text-center" style="width:10%" scope="col">Observaciones</th>
             <th class="text-center" style="width:8%" scope="col">Anulado</th>
-            <th class="text-center" style="width:15%" scope="col">Observaciones
-              Anulado</th>
-            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
+            <th class="text-center" style="width:12%" scope="col">Observaciones Anulado</th>
+            <th class="text-center" style="width:4%" scope="col" *ngIf="!soloLectura">-</th>
+            <th class="text-center" style="width:4%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let l of listaEfectivos; let i = index">
-            <td align="center">
-              <span>{{l.sucursal.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{i+1}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.usuario.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.empresa.razonSocial}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.fechaCaja | date: 'dd/MM/yyyy'}}</span>
-            </td>
-            <td align="center">
-              <span>{{establecerCerosTabla(l.importe)}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
-            </td>
-            <td align="center">
-              <span>{{l.anulado}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color-rojo" (click)="eliminarEfectivo(i, l)" *ngIf="!soloLectura">X</span>
-            </td>
-          </tr>
+          <ng-container *ngFor="let l of listaEfectivos; let i = index">
+            <tr *ngIf="l.id > 0 || l.id == null">
+              <td align="center">
+                <span>{{l.sucursal.nombre}}</span>
+              </td>
+              <td align="center">
+                <span>{{i+1}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.usuario.nombre}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.empresa.razonSocial}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.fechaCaja | date: 'dd/MM/yyyy'}}</span>
+              </td>
+              <td align="center">
+                <span>{{establecerCerosTabla(l.importe)}}</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
+              </td>
+              <td align="center">
+                <span>{{l.anulado}}</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color" (click)="modEfectivo(i)" *ngIf="!soloLectura">Mod</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color-rojo" (click)="eliminarEfectivo(i, l)" *ngIf="!soloLectura">X</span>
+              </td>
+            </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>

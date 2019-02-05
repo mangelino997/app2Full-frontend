@@ -149,48 +149,50 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let l of listaTramos; let i = index">
-                        <td align="center">
-                            <span>{{l.numeroOrden}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.fechaTramo| date: 'dd/MM/yyyy'}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.tramo.origen.nombre}} ->
-                                {{l.tramo.destino.nombre}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.tramo.km}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.empresa.razonSocial}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.viajeTipoCarga.nombre}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.viajeTipo.nombre}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.viajeTarifa.nombre}}</span>
-                        </td>
-                        <td align="center">
-                            <span class="cursor-color" (click)="verDadorDestTablaDialogo(l)">ver</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.viajeUnidadNegocio.nombre}}</span>
-                        </td>
-                        <td align="center">
-                            <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
-                        </td>
-                        <td align="center" *ngIf="!soloLectura">
-                            <span class="cursor-color" (click)="modTramo(i)">Mod</span>
-                        </td>
-                        <td align="center" *ngIf="!soloLectura">
-                            <span class="cursor-color-rojo" (click)="eliminarTramo(i)">X</span>
-                        </td>
-                    </tr>
+                    <ng-container *ngFor="let l of listaTramos; let i = index">
+                        <tr *ngIf="l.id > 0 || l.id == null">
+                            <td align="center">
+                                <span>{{l.numeroOrden}}</span>
+                            </td>
+                            <td align="center">
+                                <span>{{l.fechaTramo| date: 'dd/MM/yyyy'}}</span>
+                            </td>
+                            <td align="center">
+                                <span>{{l.tramo.origen.nombre}} ->
+                                    {{l.tramo.destino.nombre}}</span>
+                            </td>
+                            <td align="center">
+                                <span>{{l.tramo.km}}</span>
+                            </td>
+                            <td align="center">
+                                <span>{{l.empresa.razonSocial}}</span>
+                            </td>
+                            <td align="center">
+                                <span>{{l.viajeTipoCarga.nombre}}</span>
+                            </td>
+                            <td align="center">
+                                <span>{{l.viajeTipo.nombre}}</span>
+                            </td>
+                            <td align="center">
+                                <span>{{l.viajeTarifa.nombre}}</span>
+                            </td>
+                            <td align="center">
+                                <span class="cursor-color" (click)="verDadorDestTablaDialogo(l)">ver</span>
+                            </td>
+                            <td align="center">
+                                <span>{{l.viajeUnidadNegocio.nombre}}</span>
+                            </td>
+                            <td align="center">
+                                <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
+                            </td>
+                            <td align="center" *ngIf="!soloLectura">
+                                <span class="cursor-color" (click)="modTramo(i)">Mod</span>
+                            </td>
+                            <td align="center" *ngIf="!soloLectura">
+                                <span class="cursor-color-rojo" (click)="eliminarTramo(i, l)">X</span>
+                            </td>
+                        </tr>
+                    </ng-container>
                 </tbody>
             </table>
         </div>

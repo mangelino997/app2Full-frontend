@@ -86,8 +86,8 @@
       </div>
     </div>
     <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="agregarInsumo()" [disabled]="soloLectura">Agregar
-        Orden</button>
+      <button mat-raised-button color="primary" (click)="agregarInsumo()" [disabled]="soloLectura" *ngIf="btnInsumo">Agregar Orden</button>
+      <button mat-raised-button color="primary" (click)="modificarInsumo()" [disabled]="soloLectura" *ngIf="!btnInsumo">Actualizar Orden</button>
     </div>
   </div>
   <div class="row">
@@ -105,8 +105,9 @@
             <th class="text-center" style="width:5%" scope="col">Importe</th>
             <th class="text-center" style="width:10%" scope="col">Observaciones</th>
             <th class="text-center" style="width:5%" scope="col">Anulado</th>
-            <th class="text-center" style="width:15%" scope="col">Observaciones Anulado</th>
-            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
+            <th class="text-center" style="width:12%" scope="col">Observaciones Anulado</th>
+            <th class="text-center" style="width:4%" scope="col" *ngIf="!soloLectura">-</th>
+            <th class="text-center" style="width:4%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
         </thead>
         <tbody>
@@ -143,6 +144,9 @@
             </td>
             <td align="center">
               <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="modInsumo(i)" *ngIf="!soloLectura">Mod</span>
             </td>
             <td align="center">
               <span class="cursor-color-rojo" (click)="eliminarInsumo(i, l)" *ngIf="!soloLectura">X</span>

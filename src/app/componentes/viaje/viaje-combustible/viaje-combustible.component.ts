@@ -122,25 +122,24 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Elimina un combustible de la tabla por indice
   public eliminarCombustible(indice, elemento): void {
-    this.listaCombustibles.splice(indice, 1);
+    this.listaCombustibles[indice].id = elemento.id*(-1);
     this.calcularTotalCombustibleYUrea();
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
   }
   //Calcula el total de combustible y el total de urea
   private calcularTotalCombustibleYUrea(): void {
-    let lista = this.listaCombustibles;
     let totalCombustible = 0;
     let totalUrea = 0;
-    for(let i = 0 ; i < lista.length ; i++) {
-      if(lista[i].id != 0) {
-        if(lista[i].insumo.id == 1) {
-          totalCombustible += lista[i].cantidad;
-        } else if(lista[i].insumo.id == 3) {
-          totalUrea += lista[i].cantidad;
+    this.listaCombustibles.forEach(item => {
+      if(item.id != -1) {
+        if(item.insumo.id == 1) {
+          totalCombustible += item.cantidad;
+        } else if(item.insumo.id == 3) {
+          totalUrea += item.cantidad;
         }
       }
-    }
+    })
     this.formularioViajePropioCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
     this.formularioViajePropioCombustible.get('totalUrea').setValue(totalUrea.toFixed(2));
   }

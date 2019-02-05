@@ -208,8 +208,8 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajePropioTramo.patchValue(this.listaTramos[indice]);
   }
   //Elimina un tramo de la tabla por indice
-  public eliminarTramo(indice): void {
-    this.listaTramos.splice(indice, 1);
+  public eliminarTramo(indice, elemento): void {
+    this.listaTramos[indice].id = elemento.id*(-1);
     document.getElementById('idTramoFecha').focus();
     this.enviarDatos();
   }
