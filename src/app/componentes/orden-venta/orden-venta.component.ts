@@ -37,10 +37,6 @@ export class OrdenVentaComponent implements OnInit {
   public pestanias = null;
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
-  //Define los elementos A de la primera tabla
-  public elementosA:FormArray;
-  //Define los elementos B de la segunda tabla
-  public elementosB:FormArray;
   //Define el elemento de autocompletado
   public elemAutocompletado:any = null;
   //Define el siguiente id
@@ -69,10 +65,6 @@ export class OrdenVentaComponent implements OnInit {
   public buscarTramo:FormControl = new FormControl();
   //Define la lista de resultados de busqueda tramo
   public resultadosTramos = [];
-  //Define el estado de edicion de la tabla
-  public estadoEdicionTabla:boolean = false;
-  //Define una variable campos para el manejo de ediciones de tabla
-  public campoTablaEditar:any = {};
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private formBuilder: FormBuilder,
@@ -81,14 +73,6 @@ export class OrdenVentaComponent implements OnInit {
     private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
     private ordenVentaEscalaServicio: OrdenVentaEscalaService,
     private tramoServicio: TramoService) {
-    //Establece estado de campos de tabla
-    this.campoTablaEditar = {
-      escala: false,
-      precioFijo: false,
-      precioUnitario: false,
-      segunTarifa: false,
-      minimo: false
-    }
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -146,7 +130,7 @@ export class OrdenVentaComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = this.formBuilder.group({
+    this.formulario = new FormGroup({
       nombre: new FormControl('', Validators.required),
       empresa: new FormControl('', Validators.required),
       cliente: new FormControl('', Validators.required),
@@ -161,8 +145,11 @@ export class OrdenVentaComponent implements OnInit {
       activaDesde: new FormControl(),
       tipoOrdenVenta: new FormControl(false, Validators.required),
       preciosDesde: new FormControl(),
-      elementosA: this.formBuilder.array([]),
-      elementosB: this.formBuilder.array([this.crearElementoB()])
+      escala: new FormControl(),
+      importeFijo: new FormControl(),
+      precioUnitario: new FormControl(),
+      segunTarifa: new FormControl(),
+      minimo: new FormControl()
     });
     //Obtiene la lista de empresas
     this.listarEmpresas();
@@ -228,10 +215,6 @@ export class OrdenVentaComponent implements OnInit {
     this.escalaTarifaServicio.listar().subscribe(
       res => {
         let escalasTarifas = res.json();
-        for(let i = 0 ; i < escalasTarifas.length ; i++) {
-          this.elementosA = this.formulario.get('elementosA') as FormArray;
-          this.elementosA.push(this.crearElementoA(escalasTarifas[i].valor));
-        }
       },
       err => {
         console.log(err);
@@ -383,30 +366,13 @@ export class OrdenVentaComponent implements OnInit {
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
   }
-  //Agrega una fila a la segunda tabla
-  public agregarElemento() {
-    this.elementosB = this.formulario.get('elementosB') as FormArray;
-    this.elementosB.push(this.crearElementoB());
-  }
-  //Elimina una fila de la segunda tabla
-  public eliminarElemento(indice) {
-    this.elementosB.removeAt(indice);
-  }
-  //Habilita los campos para editar en la tabla
-  public activarEditar(elemento) {
-    this.estadoEdicionTabla = true;
-    if(elemento.porPorcentaje == false) {
-      this.campoTablaEditar.precioFijo = true;
-      this.campoTablaEditar.precioUnitario = true;
-      this.campoTablaEditar.minimo = true;
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
     }
   }
-  //Deshabilita los campos editar - listo
-  /*public activarListo(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.elemAutocompletado = elemento;
-    this.elemento = elemento;
-  }*/
   //Muestra el valor en los autocompletados
   public displayF(elemento) {
     if(elemento != undefined) {
