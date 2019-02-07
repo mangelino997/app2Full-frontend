@@ -127,7 +127,7 @@ import { LoginComponent } from './componentes/login/login.component';
 import { PaisComponent } from './componentes/pais/pais.component'; //Probado
 import { HomeComponent } from './componentes/home/home.component';
 import { UsuarioComponent } from './componentes/usuario/usuario.component';
-import { EmpresaComponent } from './componentes/empresa/empresa.component';
+import { EmpresaComponent, ListaUsuariosDialogo } from './componentes/empresa/empresa.component';
 import { PestaniaComponent } from './componentes/pestania/pestania.component';
 import { AgendaTelefonicaComponent } from './componentes/agenda-telefonica/agenda-telefonica.component'; //Probado
 import { AreaComponent } from './componentes/area/area.component';
@@ -303,7 +303,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.32:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -416,7 +416,8 @@ const stompConfig: StompConfig = {
     ViajeInsumoComponent,
     ViajeGastoComponent,
     ViajePeajeComponent,
-    ViajeRemitoGSComponent
+    ViajeRemitoGSComponent,
+    ListaUsuariosDialogo
   ],
   imports: [
     BrowserModule,
@@ -587,7 +588,8 @@ const stompConfig: StompConfig = {
     ClienteEventualDialogo,
     DadorDestinatarioDialogo,
     DadorDestTablaDialogo,
-    ObservacionesDialogo
+    ObservacionesDialogo,
+    ListaUsuariosDialogo
   ]
 })
 export class AppModule { }

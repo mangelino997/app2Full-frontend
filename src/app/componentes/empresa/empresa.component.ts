@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { EmpresaService } from '../../servicios/empresa.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { BarrioService } from '../../servicios/barrio.service';
@@ -9,6 +9,9 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Empresa } from 'src/app/modelos/empresa';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { UsuarioService } from 'src/app/servicios/usuario.service';
+
 
 @Component({
   selector: 'app-empresa',
@@ -28,6 +31,7 @@ export class EmpresaComponent implements OnInit {
   public soloLectura:boolean = false;
   //Define si mostrar el boton
   public mostrarBoton:boolean = null;
+  public mostrarUsuarios:boolean = null;
   //Define la lista de pestanias
   public pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -48,7 +52,7 @@ export class EmpresaComponent implements OnInit {
   constructor(private servicio: EmpresaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService, 
-    private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa) {
+    private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa, public dialog: MatDialog,) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -125,11 +129,12 @@ export class EmpresaComponent implements OnInit {
     );
   }
   //Funcion para establecer los valores de las pestañas
-  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, btnUsuarios, componente) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
+    this.mostrarUsuarios = btnUsuarios;
     this.vaciarListas();
     this.establecerValoresPorDefecto();
     setTimeout(function () {
@@ -159,19 +164,19 @@ export class EmpresaComponent implements OnInit {
       case 1:
         this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, false, false, true, 'idRazonSocial');
+        this.establecerValoresPestania(nombre, false, false, true, false, 'idRazonSocial');
         break;
       case 2:
         this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, true, 'idAutocompletado');
         break;
       case 3:
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, false, 'idAutocompletado');
         break;
       case 4:
         this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
         break;
       default:
         break;
@@ -336,4 +341,44 @@ export class EmpresaComponent implements OnInit {
       }
     }
   }
+  //Abre un Modal con la lista de Usuarios de la Empresa seleccionada
+  public verActivos(datos){
+    console.log(datos);
+    const dialogRef = this.dialog.open(ListaUsuariosDialogo, {
+      width: '1000px',
+      data: {empresa: datos},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      // var listaSocioDedudas= result;
+    });
+  }
 }
+@Component({
+  selector: 'lista-usuarios-dialogo',
+  templateUrl: 'lista-usuarios-dialogo.html',
+})
+export class ListaUsuariosDialogo{
+  //Define la empresa 
+  public empresa: string;
+  //Define la lista de usuarios activos de la empresa
+  public listaUsuarios:Array<any> = [];
+
+  constructor(public dialogRef: MatDialogRef<ListaUsuariosDialogo>, @Inject(MAT_DIALOG_DATA) public data, private usuarioServicio: UsuarioService, private toastr: ToastrService) {}
+   ngOnInit() {
+     this.empresa=this.data.empresa;
+     console.log(this.empresa['id']);
+    this.usuarioServicio.listarUsuariosPorEmpresa(this.empresa['id']).subscribe(
+      res=>{
+        this.listaUsuarios=res.json();
+      },
+      err=>{
+        this.toastr.error(err.mensaje);
+      }
+    );
+   }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+  
+}
+

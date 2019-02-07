@@ -127,8 +127,13 @@
               </mat-select>
             </div>
           </div>
+          <div class="col-md-2">
+            <button id="idBotonUsrActivos" *ngIf="mostrarUsuarios" mat-raised-button color="primary" (click)="verActivos(appComponent.empresa)" >
+              Usuarios Activos
+            </button>
+          </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
@@ -147,7 +152,8 @@
             <th class="text-center" style="width:15%" scope="col">Localidad</th>
             <th class="text-center" style="width:10%" scope="col">CUIT</th>
             <th class="text-center" style="width:10%" scope="col">Inicio Actividad</th>
-            <th class="text-center" style="width:10%" scope="col">Esta Activa</th>
+            <th class="text-center" style="width:5%" scope="col">Esta Activa</th>
+            <th class="text-center" style="width:5%" scope="col">Usuarios</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
           </tr>
@@ -177,6 +183,9 @@
             </td>
             <td align="center">
               <span>{{l.estaActiva ? 'Si' : 'No'}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="verActivos(l)">Ver</span>
             </td>
             <td align="center">
               <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
