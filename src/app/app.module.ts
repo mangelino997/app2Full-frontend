@@ -100,6 +100,8 @@ import { ViajeTramoClienteService } from './servicios/viaje-tramo-cliente.servic
 import { ViajeTramoService } from './servicios/viaje-tramo.service';
 import { ViajeUnidadNegocioService } from './servicios/viaje-unidad-negocio.service';
 import { OpcionService } from './servicios/opcion.service';
+import { MonedaService } from './servicios/moneda.service';
+
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -120,6 +122,7 @@ import { Vehiculo } from './modelos/vehiculo';
 import { Cliente } from './modelos/cliente';
 import { Empresa } from './modelos/empresa';
 import { Proveedor } from './modelos/proveedor';
+import { Moneda } from './modelos/moneda';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -195,7 +198,7 @@ import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/
 import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-factura.component';
 import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/emitir-nota-credito.component';
 import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
-import { MonedaComponent } from './componentes/moneda/moneda.component';
+import { MonedaComponent, CambiarMonedaPrincipalDialogo } from './componentes/moneda/moneda.component';
 import { MonedaCotizacionComponent } from './componentes/moneda-cotizacion/moneda-cotizacion.component';
 import { MonedaCuentaContableComponent } from './componentes/moneda-cuenta-contable/moneda-cuenta-contable.component';
 import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autorizado/puntos-venta-autorizado.component';
@@ -216,6 +219,7 @@ import { ViajeInsumoComponent } from './componentes/viaje/viaje-insumo/viaje-ins
 import { ViajeGastoComponent } from './componentes/viaje/viaje-gasto/viaje-gasto.component';
 import { ViajePeajeComponent } from './componentes/viaje/viaje-peaje/viaje-peaje.component';
 import { ViajeRemitoGSComponent } from './componentes/viaje/viaje-remito-gs/viaje-remito-gs.component';
+
 
 //Rutas
 const appRoutes: Routes = [
@@ -417,7 +421,8 @@ const stompConfig: StompConfig = {
     ViajeGastoComponent,
     ViajePeajeComponent,
     ViajeRemitoGSComponent,
-    ListaUsuariosDialogo
+    ListaUsuariosDialogo,
+    CambiarMonedaPrincipalDialogo
   ],
   imports: [
     BrowserModule,
@@ -571,6 +576,8 @@ const stompConfig: StompConfig = {
     Reparto,
     UsuarioEmpresa,
     OpcionService,
+    MonedaService,
+    Moneda,
     StompService,
     {
       provide: StompConfig,
@@ -589,7 +596,8 @@ const stompConfig: StompConfig = {
     DadorDestinatarioDialogo,
     DadorDestTablaDialogo,
     ObservacionesDialogo,
-    ListaUsuariosDialogo
+    ListaUsuariosDialogo,
+    CambiarMonedaPrincipalDialogo
   ]
 })
 export class AppModule { }

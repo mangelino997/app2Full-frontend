@@ -11,8 +11,10 @@ export class Moneda {
             version: new FormControl(),
             codigo: new FormControl(),
             nombre: new FormControl('', Validators.required),
-            estaActiva: new FormControl('', Validators.required)
-            
+            estaActivo: new FormControl('', Validators.required),
+            porDefecto: new FormControl('', Validators.required),
+            codigoAfip: new FormControl('', [Validators.required, Validators.maxLength(3)]),
+            simbolo: new FormControl('', [Validators.required, Validators.maxLength(5)])
         })
     }
 }

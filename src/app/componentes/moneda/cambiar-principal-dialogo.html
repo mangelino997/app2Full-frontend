@@ -1,0 +1,26 @@
+<div class="row justify-content-center contenedor">
+    <div class="col-md-6 text-center">
+        <h5>Moneda Principal Actual  </h5>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <span>Nombre: {{monedaPrincipal['nombre']}}</span><br>
+            <span>Símbolo: {{monedaPrincipal['simbolo']}}</span><br>
+            <span>Es Principal: Sí</span><br>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <h5>Moneda a Agregar  </h5>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <span>Nombre: {{monedaAgregar['nombre']}}</span><br>
+            <span>Símbolo: {{monedaAgregar['simbolo']}}</span><br>
+            <span>Será Principal: Sí</span><br>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <h5>¿Cambiar la Moneda Principal por la nueva Moneda?  </h5>
+        <button id="idBoton" mat-raised-button color="primary" (click)="agregar(true)">Si</button>
+        <button id="idBoton" mat-raised-button color="secondary" (click)="agregar(false)">No</button>
+        <button id="idBoton" mat-raised-button color="secondary" (click)="dialogRef.close()">Cancelar</button>
+    </div>
+</div>
