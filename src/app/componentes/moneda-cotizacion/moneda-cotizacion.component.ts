@@ -1,11 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
-import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
-import { EmpresaService } from '../../servicios/empresa.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MonedaCotizacion } from 'src/app/modelos/moneda-cotizacion';
+import { MonedaCotizacionService } from 'src/app/servicios/moneda-cotizacion.service';
+import { MonedaService } from 'src/app/servicios/moneda.service';
 @Component({
   selector: 'app-moneda-cotizacion',
   templateUrl: './moneda-cotizacion.component.html',
@@ -30,8 +29,14 @@ export class MonedaCotizacionComponent implements OnInit {
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta: Array<any> = [];
+  //Define la lista completa de Monedas
+  public listaMonedas: Array<any> = [];
+  //Define la lista completa de Monedas
+  public listaMonedaCotizacion: Array<any> = [];
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
+  //Define el id que se muestra en el campo Codigo
+  public id:FormControl = new FormControl();
   //Define empresa para las busquedas
   public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
@@ -42,7 +47,7 @@ export class MonedaCotizacionComponent implements OnInit {
   public empresas: Array<any> = [];
   // public compereFn:any;
   //Constructor
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+  constructor(private monedaCotizacion: MonedaCotizacion, private monedaCotizacionServicio: MonedaCotizacionService, private monedaServicio: MonedaService,private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(1, 205)
       .subscribe(
@@ -55,23 +60,48 @@ export class MonedaCotizacionComponent implements OnInit {
           console.log(err);
         }
       );
-
-    console.log(this.pestaniaActual)
+    //Controla el autocompletado
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.monedaCotizacionServicio.listarPorMoneda(data).subscribe(res => {
+          this.resultados = res.json();
+          console.log(res.json());
+        })
+      }
+    });
   }
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      moneda: new FormControl(''),
-      fechaCotizacion: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      valor: new FormControl('', Validators.maxLength(45)),
-      cotizaciones: new FormControl('', Validators.maxLength(45)),
-      fechaCotizacionActualizacion: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      valorActualizacion: new FormControl('', Validators.maxLength(45))
-    });
+    this.formulario = this.monedaCotizacion.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+    //Lista todos los registros de Monedas Cotizacion
+    this.listar();
+    //Lista las Monedas
+    this.listarMonedas();
+  }
+  
+  //Obtiene el listado de registros
+  private listar() {
+    this.monedaCotizacionServicio.listar().subscribe(
+      res => {
+        this.listaCompleta = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de Monedas
+  private listarMonedas() {
+    this.monedaServicio.listar().subscribe(
+      res => {
+        this.listaMonedas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -120,35 +150,65 @@ export class MonedaCotizacionComponent implements OnInit {
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
     if (estado) {
-      this.formulario.get('fechaCotizacionActualizacion').enable();
-      this.formulario.get('valorActualizacion').enable();
+      this.formulario.get('fechaCotizacion').enable();
+      this.formulario.get('valor').enable();
     } else {
-      this.formulario.get('fechaCotizacionActualizacion').disable();
-      this.formulario.get('valorActualizacion').disable();
+      this.formulario.get('fechaCotizacion').disable();
+      this.formulario.get('valor').disable();
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  // public accion(indice) {
-  //   switch (indice) {
-  //     case 1:
-  //       this.agregar();
-  //       break;
-  //     case 3:
-  //       this.actualizar();
-  //       break;
-  //     case 4:
-  //       this.eliminar();
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
+  public accion(indice) {
+    switch (indice) {
+      case 1:
+        this.agregar();
+        break;
+      // case 3:
+      //   this.actualizar();
+      //   break;
+      // case 4:
+      //   this.eliminar();
+      //   break;
+      default:
+        break;
+    }
+  }
+  //Agrega un registro
+  private agregar() {
+    this.monedaCotizacionServicio.agregar(this.formulario.value).subscribe(
+      res=>{
+        
+      },
+      err=>{
+        this.toastr.error(err.mensaje);
+      }
+    );
+  }
+  //Carga la tabla con los datos de la moneda seleccionada
+  public cambioSeleccionado(){
+    console.log(this.formulario.value);
+    this.monedaCotizacionServicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(
+      res=>{
+        this.listaMonedaCotizacion=res.json();
+        console.log(res.json());
+      },
+      err=>{
+
+      }
+    );
+  }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.resultados = [];
+  }
+  //Establece el formulario al seleccionar elemento del autocompletado
+  public cambioAutocompletado() {
+    var elemento= this.autocompletado.value;
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -176,6 +236,21 @@ export class MonedaCotizacionComponent implements OnInit {
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
+    }
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
     }
   }
 }

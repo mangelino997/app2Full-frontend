@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MonedaService } from 'src/app/servicios/moneda.service';

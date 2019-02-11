@@ -219,6 +219,8 @@ import { ViajeInsumoComponent } from './componentes/viaje/viaje-insumo/viaje-ins
 import { ViajeGastoComponent } from './componentes/viaje/viaje-gasto/viaje-gasto.component';
 import { ViajePeajeComponent } from './componentes/viaje/viaje-peaje/viaje-peaje.component';
 import { ViajeRemitoGSComponent } from './componentes/viaje/viaje-remito-gs/viaje-remito-gs.component';
+import { MonedaCotizacion } from './modelos/moneda-cotizacion';
+import { MonedaCotizacionService } from './servicios/moneda-cotizacion.service';
 
 
 //Rutas
@@ -303,7 +305,10 @@ const appRoutes: Routes = [
   { path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService] },
   { path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService] },
   { path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService] },
-  { path: 'menuopciones', component: RepartoEntranteComponent, canActivate: [GuardiaService] }
+  { path: 'menuopciones', component: RepartoEntranteComponent, canActivate: [GuardiaService] },
+  { path: 'contablemonedacotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService] },
+
+  
 ]
 
 const stompConfig: StompConfig = {
@@ -562,6 +567,7 @@ const stompConfig: StompConfig = {
     ViajeTramoClienteService,
     ViajeTramoService,
     ViajeUnidadNegocioService,
+    MonedaCotizacionService,
     ViajePropio,
     ViajePropioTramo,
     ViajePropioTramoCliente,
@@ -578,6 +584,7 @@ const stompConfig: StompConfig = {
     OpcionService,
     MonedaService,
     Moneda,
+    MonedaCotizacion,
     StompService,
     {
       provide: StompConfig,
