@@ -194,7 +194,7 @@ export class MonedaComponent implements OnInit {
                   this.cambiarPrincipal(respuesta, this.formulario.value);
               },
               err=>{
-                this.toastr.error(err.mensaje);
+                this.toastr.error(err.json().mensaje);
               }
             );
           }
@@ -209,14 +209,14 @@ export class MonedaComponent implements OnInit {
                 this.toastr.success(respuesta.mensaje);
               },
               err=>{
-                this.toastr.error(err.mensaje);
+                this.toastr.error(err.json().mensaje);
               }
             );
           }
         }
       },
       err=>{
-        this.toastr.error(err.mensaje);
+        this.toastr.error(err.json().mensaje);
       }
     );
   }

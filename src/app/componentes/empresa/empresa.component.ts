@@ -372,7 +372,7 @@ export class ListaUsuariosDialogo{
         this.listaUsuarios=res.json();
       },
       err=>{
-        this.toastr.error(err.mensaje);
+        this.toastr.error(err.json().mensaje);
       }
     );
    }

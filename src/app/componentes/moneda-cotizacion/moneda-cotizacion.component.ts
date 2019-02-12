@@ -5,6 +5,8 @@ import { ToastrService } from 'ngx-toastr';
 import { MonedaCotizacion } from 'src/app/modelos/moneda-cotizacion';
 import { MonedaCotizacionService } from 'src/app/servicios/moneda-cotizacion.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
+import { FechaService } from 'src/app/servicios/fecha.service';
+import { AppComponent } from 'src/app/app.component';
 @Component({
   selector: 'app-moneda-cotizacion',
   templateUrl: './moneda-cotizacion.component.html',
@@ -17,12 +19,16 @@ export class MonedaCotizacionComponent implements OnInit {
   public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
   public pestaniaActual: string = null;
+  //Define el nombre del Boton
+  public nombreBtn: string = null;
   //Define si mostrar el autocompletado
   public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
   public soloLectura: boolean = false;
   //Define si mostrar el boton
   public mostrarBoton: boolean = null;
+  //Define si mostrar el boton
+  public mostrarAgregar: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -47,19 +53,14 @@ export class MonedaCotizacionComponent implements OnInit {
   public empresas: Array<any> = [];
   // public compereFn:any;
   //Constructor
-  constructor(private monedaCotizacion: MonedaCotizacion, private monedaCotizacionServicio: MonedaCotizacionService, private monedaServicio: MonedaService,private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
-    //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(1, 205)
-      .subscribe(
-        res => {
-          this.pestanias = res.json();
-          this.activeLink = this.pestanias[0].nombre;
-          console.log(res.json());
-        },
-        err => {
-          console.log(err);
-        }
-      );
+  constructor(private appComponent: AppComponent, private monedaCotizacion: MonedaCotizacion, private monedaCotizacionServicio: MonedaCotizacionService, private monedaServicio: MonedaService,
+    private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService, private fechaServicio: FechaService) {
+    
+    //Actualiza en tiempo real la tabla
+    this.monedaCotizacionServicio.listaCompleta.subscribe(res=>{
+      this.listaMonedaCotizacion=res;
+      console.log(this.listaMonedaCotizacion);
+    });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -71,24 +72,24 @@ export class MonedaCotizacionComponent implements OnInit {
     });
   }
   ngOnInit() {
+    //Inicializa el boton en Agregar
+    this.mostrarAgregar=true;
     //Define el formulario y validaciones
     this.formulario = this.monedaCotizacion.formulario;
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
-    //Lista todos los registros de Monedas Cotizacion
-    this.listar();
     //Lista las Monedas
     this.listarMonedas();
+    //Inicializamos con la fecha actual
+    this.establecerFecha();
+    console.log(this.mostrarAgregar);
   }
-  
-  //Obtiene el listado de registros
-  private listar() {
-    this.monedaCotizacionServicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
+  //Establecer Fecha
+  public establecerFecha(){
+    this.fechaServicio.obtenerFecha().subscribe(
+      res=>{
+        this.formulario.get('fecha').setValue(res.json());
       },
-      err => {
-        console.log(err);
+      err=>{
+        this.toastr.error(err.mensaje);
       }
     );
   }
@@ -103,86 +104,38 @@ export class MonedaCotizacionComponent implements OnInit {
       }
     );
   }
-  //Funcion para establecer los valores de las pestañas
-  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
-    this.pestaniaActual = nombrePestania;
-    this.mostrarAutocompletado = autocompletado;
-    this.soloLectura = soloLectura;
-    this.mostrarBoton = boton;
-    setTimeout(function () {
-      document.getElementById(componente).focus();
-    }, 20);
-  };
-  //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
-    this.indiceSeleccionado = id;
-    this.activeLink = nombre;
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
-    switch (id) {
-      case 1:
-        // this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
-        break;
-      case 2:
-        this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
-        break;
-      case 3:
-        this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
-        break;
-      case 4:
-        this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
-        break;
-      default:
-        break;
-    }
-  }
-  //Habilita o deshabilita los campos dependiendo de la pestaña
-  private establecerEstadoCampos(estado) {
-    if (estado) {
-      this.formulario.get('fechaCotizacion').enable();
-      this.formulario.get('valor').enable();
-    } else {
-      this.formulario.get('fechaCotizacion').disable();
-      this.formulario.get('valor').disable();
-    }
-  }
-  //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice) {
-    switch (indice) {
-      case 1:
-        this.agregar();
-        break;
-      // case 3:
-      //   this.actualizar();
-      //   break;
-      // case 4:
-      //   this.eliminar();
-      //   break;
-      default:
-        break;
-    }
-  }
   //Agrega un registro
-  private agregar() {
+  public agregar() {
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.monedaCotizacionServicio.agregar(this.formulario.value).subscribe(
       res=>{
-        
+        let respuesta = res.json();
+        this.reestablecerFormulario(respuesta.id);
+        setTimeout(function() {
+          document.getElementById('idNombre').focus();
+          }, 20);
+        this.toastr.success(respuesta.mensaje);
       },
       err=>{
-        this.toastr.error(err.mensaje);
-      }
-    );
+        this.toastr.error(err.json().mensaje);
+      });
+  }
+  //Actualiza un registro
+  public actualizar() {
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    console.log(this.formulario.value);
+    this.monedaCotizacionServicio.actualizar(this.formulario.value).subscribe(
+      res=>{
+        let respuesta = res.json();
+        this.reestablecerFormulario(respuesta.id);
+        setTimeout(function() {
+          document.getElementById('idNombre').focus();
+          }, 20);
+        this.toastr.success(respuesta.mensaje);
+      },
+      err=>{
+        this.toastr.error(err.json().mensaje);
+      });
   }
   //Carga la tabla con los datos de la moneda seleccionada
   public cambioSeleccionado(){
@@ -199,10 +152,12 @@ export class MonedaCotizacionComponent implements OnInit {
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
+    this.formulario.get('fecha').reset();
+    this.formulario.get('valor').reset();
     this.autocompletado.setValue(undefined);
     this.resultados = [];
+    this.establecerFecha();
+    this.mostrarAgregar=true;
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado() {
@@ -217,26 +172,16 @@ export class MonedaCotizacionComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.mostrarAgregar=false;
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-  }
-  //Maneja los evento al presionar una tacla (para pestanias y opciones)
-  public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
-    if (keycode == 113) {
-      if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
-      } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
-      }
-    }
+    this.formulario.get('fecha').setValue(elemento.fecha);
+    this.formulario.get('valor').setValue(elemento.valor);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

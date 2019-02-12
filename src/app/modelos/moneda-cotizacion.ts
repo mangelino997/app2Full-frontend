@@ -10,8 +10,9 @@ export class MonedaCotizacion {
             id: new FormControl(),
             version: new FormControl(),
             moneda: new FormControl('', Validators.required),
-            fechaCotizacion: new FormControl('', Validators.required),
-            valor: new FormControl('', [Validators.required, Validators.maxLength(10)])
+            fecha: new FormControl('', Validators.required),
+            valor: new FormControl('', [Validators.required, Validators.maxLength(10)]),
+            usuarioAlta: new FormControl()
         })
     }
 }
