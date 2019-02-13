@@ -221,6 +221,9 @@ import { ViajePeajeComponent } from './componentes/viaje/viaje-peaje/viaje-peaje
 import { ViajeRemitoGSComponent } from './componentes/viaje/viaje-remito-gs/viaje-remito-gs.component';
 import { MonedaCotizacion } from './modelos/moneda-cotizacion';
 import { MonedaCotizacionService } from './servicios/moneda-cotizacion.service';
+import { MonedaCuentaContableService } from './servicios/moneda-cuenta-contable.service';
+import { MonedaCuentaContable } from './modelos/moneda-cuenta-contable';
+import { PlanCuentaService } from './servicios/plan-cuenta.service';
 
 
 //Rutas
@@ -307,6 +310,7 @@ const appRoutes: Routes = [
   { path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService] },
   { path: 'menuopciones', component: RepartoEntranteComponent, canActivate: [GuardiaService] },
   { path: 'contablemonedacotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService] },
+  { path: 'contablemonedacuentacontable', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] }
 
   
 ]
@@ -583,8 +587,11 @@ const stompConfig: StompConfig = {
     UsuarioEmpresa,
     OpcionService,
     MonedaService,
+    MonedaCuentaContableService,
     Moneda,
     MonedaCotizacion,
+    MonedaCuentaContable,
+    PlanCuentaService,
     StompService,
     {
       provide: StompConfig,

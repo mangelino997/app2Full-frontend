@@ -3,6 +3,11 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MonedaCuentaContable } from 'src/app/modelos/moneda-cuenta-contable';
+import { MonedaCuentaContableService } from 'src/app/servicios/moneda-cuenta-contable.service';
+import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
+import { MonedaService } from 'src/app/servicios/moneda.service';
+import { EmpresaService } from 'src/app/servicios/empresa.service';
 
 @Component({
   selector: 'app-moneda-cuenta-contable',
@@ -28,6 +33,10 @@ export class MonedaCuentaContableComponent implements OnInit {
   public formulario:FormGroup;
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
+  //Define la lista de Monedas
+  public listaMonedas:Array<any> = [];
+  //Define la lista de Empresas
+  public listaEmpresas:Array<any> = [];
   //Define el autocompletado
   public autocompletado:FormControl = new FormControl();
   //Define empresa para las busquedas
@@ -41,7 +50,9 @@ export class MonedaCuentaContableComponent implements OnInit {
   // public compereFn:any;
   //Constructor
 
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+  constructor(private monedaCuentaContableServicio: MonedaCuentaContableService, private monedaCuentaContable: MonedaCuentaContable, 
+    private planCuentaServicio:PlanCuentaService, private subopcionPestaniaService: SubopcionPestaniaService, private monedaServicio: MonedaService,
+    private empresaServicio: EmpresaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(1, 19)
     .subscribe(
@@ -54,21 +65,60 @@ export class MonedaCuentaContableComponent implements OnInit {
         console.log(err);
       }
     );
+    //Controla el autocompletado
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.monedaCuentaContableServicio.listarPorMoneda(data).subscribe(res => {
+          this.resultados = res.json();
+          console.log(res.json());
+        })
+      }
+    });
    }
-
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      moneda: new FormControl('', ),
-      empresa: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      cuentaContable: new FormControl('', [Validators.required, Validators.maxLength(45)])
-      });
-      //Establece los valores de la primera pestania activa
-      this.seleccionarPestania(1, 'Agregar', 0);
+    this.formulario = this.monedaCuentaContable.formulario;
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
+    //Lista las Monedas Cuentas Contables
+    this.listar();
+    //Carga select con la lista de Monedas
+    this.listarMonedas();
+    //Carga select con la lista de Empresas
+    this.listarEmpresas();
   }
-
+  //Obtiene el listado de registros
+  private listar() {
+    this.monedaCuentaContableServicio.listar().subscribe(
+      res => {
+        this.listaCompleta = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de registros
+  private listarMonedas() {
+    this.monedaServicio.listar().subscribe(
+      res => {
+        this.listaMonedas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }//Obtiene el listado de registros
+  private listarEmpresas() {
+    this.empresaServicio.listar().subscribe(
+      res => {
+        this.listaEmpresas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -96,7 +146,7 @@ export class MonedaCuentaContableComponent implements OnInit {
       case 1:
         // this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+        this.establecerValoresPestania(nombre, false, false, true, 'idMoneda');
         break;
       case 2:
         this.establecerEstadoCampos(false);
@@ -148,12 +198,21 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.resultados = [];
+    setTimeout(function() {
+      document.getElementById('idNombre').focus();
+    }, 20);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   };
+  //Establece el formulario al seleccionar elemento del autocompletado
+  public cambioAutocompletado() {
+    var elemento= this.autocompletado.value;
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
+  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
@@ -165,6 +224,7 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -175,6 +235,21 @@ export class MonedaCuentaContableComponent implements OnInit {
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
+    }
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
     }
   }
 }
