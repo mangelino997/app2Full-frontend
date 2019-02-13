@@ -6,7 +6,7 @@ import {
   MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
   MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
-  MatProgressBarModule, MatStepperModule} from '@angular/material';
+  MatProgressBarModule, MatStepperModule, MatTreeModule} from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -101,6 +101,9 @@ import { ViajeTramoService } from './servicios/viaje-tramo.service';
 import { ViajeUnidadNegocioService } from './servicios/viaje-unidad-negocio.service';
 import { OpcionService } from './servicios/opcion.service';
 import { MonedaService } from './servicios/moneda.service';
+import { MonedaCotizacionService } from './servicios/moneda-cotizacion.service';
+import { MonedaCuentaContableService } from './servicios/moneda-cuenta-contable.service';
+import { PlanCuentaService } from './servicios/plan-cuenta.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -125,6 +128,8 @@ import { Moneda } from './modelos/moneda';
 import { OrdenVenta } from './modelos/ordenVenta';
 import { OrdenVentaEscala } from './modelos/ordenVentaEscala';
 import { OrdenVentaTramo } from './modelos/ordenVentaTramo';
+import { MonedaCotizacion } from './modelos/moneda-cotizacion';
+import { MonedaCuentaContable } from './modelos/moneda-cuenta-contable';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -221,11 +226,7 @@ import { ViajeInsumoComponent } from './componentes/viaje/viaje-insumo/viaje-ins
 import { ViajeGastoComponent } from './componentes/viaje/viaje-gasto/viaje-gasto.component';
 import { ViajePeajeComponent } from './componentes/viaje/viaje-peaje/viaje-peaje.component';
 import { ViajeRemitoGSComponent } from './componentes/viaje/viaje-remito-gs/viaje-remito-gs.component';
-import { MonedaCotizacion } from './modelos/moneda-cotizacion';
-import { MonedaCotizacionService } from './servicios/moneda-cotizacion.service';
-import { MonedaCuentaContableService } from './servicios/moneda-cuenta-contable.service';
-import { MonedaCuentaContable } from './modelos/moneda-cuenta-contable';
-import { PlanCuentaService } from './servicios/plan-cuenta.service';
+import { PlanCuentaComponent, ChecklistDatabase } from './componentes/plan-cuenta/plan-cuenta.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -234,12 +235,12 @@ const appRoutes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [GuardiaService] },
   { path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService] },
   { path: 'generalesagendatelefonica', component: AgendaTelefonicaComponent, canActivate: [GuardiaService] },
-  { path: 'area', component: AreaComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'area', component: AreaComponent, canActivate: [GuardiaService] },
   { path: 'contablebancos', component: BancoComponent, canActivate: [GuardiaService] },
   { path: 'generalesbarrios', component: BarrioComponent, canActivate: [GuardiaService] },
   { path: 'categoriasadministrar', component: CategoriaComponent, canActivate: [GuardiaService] },
   { path: 'generalescobradores', component: CobradorComponent, canActivate: [GuardiaService] },
-  { path: 'generalescompaniadeseguro', component: CompaniaSeguroComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'generalescompaniadeseguro', component: CompaniaSeguroComponent, canActivate: [GuardiaService] },
   { path: 'generaleslocalidades', component: LocalidadComponent, canActivate: [GuardiaService] },
   { path: 'logisticamarcasproductos', component: MarcaProductoComponent, canActivate: [GuardiaService] },
   { path: 'logisticamarcasvehiculos', component: MarcaVehiculoComponent, canActivate: [GuardiaService] },
@@ -251,30 +252,30 @@ const appRoutes: Routes = [
   { path: 'generalesrubros', component: RubroComponent, canActivate: [GuardiaService] },
   { path: 'logisticarubrosproductos', component: RubroProductoComponent, canActivate: [GuardiaService] },
   { path: 'orgprevisionalesadministrar', component: SeguridadSocialComponent, canActivate: [GuardiaService] },
-  { path: 'sexo', component: SexoComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'sexo', component: SexoComponent, canActivate: [GuardiaService] },
   { path: 'sindicatosadministrar', component: SindicatoComponent, canActivate: [GuardiaService] },
-  { path: 'situacioncliente', component: SituacionClienteComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'situacioncliente', component: SituacionClienteComponent, canActivate: [GuardiaService] },
   { path: 'menusubmodulos', component: SubmoduloComponent, canActivate: [GuardiaService] },
   { path: 'menusubopciones', component: SubopcionComponent, canActivate: [GuardiaService] },
   { path: 'organizacionsucursales', component: SucursalComponent, canActivate: [GuardiaService] },
   { path: 'contablebancossucursales', component: SucursalBancoComponent, canActivate: [GuardiaService] },
   { path: 'generalesclientessucursales', component: SucursalClienteComponent, canActivate: [GuardiaService] },
-  { path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService] },//Revisar
-  { path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService] },//Revisar
-  { path: 'tipocuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },//Revisar
-  { path: 'tipodocumento', component: TipoDocumentoComponent, canActivate: [GuardiaService] },//Revisar
-  { path: 'tipoproveedor', component: TipoProveedorComponent, canActivate: [GuardiaService] },//Revisar
-  { path: 'tipotarifa', component: TipoProveedorComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService] },
+  { path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService] },
+  { path: 'tipocuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },
+  { path: 'tipodocumento', component: TipoDocumentoComponent, canActivate: [GuardiaService] },
+  { path: 'tipoproveedor', component: TipoProveedorComponent, canActivate: [GuardiaService] },
+  { path: 'tipotarifa', component: TipoProveedorComponent, canActivate: [GuardiaService] },
   { path: 'logisticatiposdevehiculos', component: TipoVehiculoComponent, canActivate: [GuardiaService] },
   { path: 'origenesdestinostramos', component: TramoComponent, canActivate: [GuardiaService] },
-  { path: 'unidadmedida', component: UnidadMedidaComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'unidadmedida', component: UnidadMedidaComponent, canActivate: [GuardiaService] },
   { path: 'usuariosadministrar', component: UsuarioComponent, canActivate: [GuardiaService] },
-  { path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService] },//revisar
+  { path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService] },
   { path: 'generaleszonas', component: ZonaComponent, canActivate: [GuardiaService] },
   { path: 'generalesclientes', component: ClienteComponent, canActivate: [GuardiaService] },
-  { path: 'listasdepreciosordenesdeventa', component: OrdenVentaComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'listasdepreciosordenesdeventa', component: OrdenVentaComponent, canActivate: [GuardiaService] },
   { path: 'generalesproveedores', component: ProveedorComponent, canActivate: [GuardiaService] },
-  { path: 'contablecondicionesdecompra', component: CondicionCompraComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'contablecondicionesdecompra', component: CondicionCompraComponent, canActivate: [GuardiaService] },
   { path: 'contablecondicionesdeventa', component: CondicionVentaComponent, canActivate: [GuardiaService] },
   { path: 'legajosadministraractivos', component: PersonalComponent, canActivate: [GuardiaService] },
   { path: 'listasdepreciosescaladetarifas', component: EscalaTarifaComponent, canActivate: [GuardiaService] },
@@ -282,7 +283,7 @@ const appRoutes: Routes = [
   { path: 'logisticavehiculospropiosconfiguracion', component: ConfiguracionVehiculoComponent, canActivate: [GuardiaService] },
   { path: 'contablebancoscontactos', component: ContactoBancoComponent, canActivate: [GuardiaService] },
   { path: 'generalesclientescontactos', component: ContactoClienteComponent, canActivate: [GuardiaService] },
-  { path: 'generalescompaniadesegurocontactos', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService] },//Revisar
+  { path: 'generalescompaniadesegurocontactos', component: ContactoCompaniaSeguroComponent, canActivate: [GuardiaService] },
   { path: 'generalesproveedorescontactos', component: ContactoProveedorComponent, canActivate: [GuardiaService] },
   { path: 'puntosdeventaadministrar', component: PuntoVentaComponent, canActivate: [GuardiaService] },
   { path: 'logisticavehiculospropios', component: VehiculoComponent, canActivate: [GuardiaService] },
@@ -311,9 +312,8 @@ const appRoutes: Routes = [
   { path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService] },
   { path: 'menuopciones', component: RepartoEntranteComponent, canActivate: [GuardiaService] },
   { path: 'contablemonedacotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService] },
-  { path: 'contablemonedacuentacontable', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] }
-
-  
+  { path: 'contablemonedacuentacontable', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] },
+  { path: 'plandecuentasdefinicion', component: PlanCuentaComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
@@ -432,7 +432,8 @@ const stompConfig: StompConfig = {
     ViajePeajeComponent,
     ViajeRemitoGSComponent,
     ListaUsuariosDialogo,
-    CambiarMonedaPrincipalDialogo
+    CambiarMonedaPrincipalDialogo,
+    PlanCuentaComponent
   ],
   imports: [
     BrowserModule,
@@ -456,6 +457,7 @@ const stompConfig: StompConfig = {
     MatDialogModule,
     MatProgressBarModule,
     MatStepperModule,
+    MatTreeModule,
     ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
     ToastrModule.forRoot({
       timeOut: 3000,
@@ -596,6 +598,7 @@ const stompConfig: StompConfig = {
     OrdenVenta,
     OrdenVentaEscala,
     OrdenVentaTramo,
+    ChecklistDatabase,
     StompService,
     {
       provide: StompConfig,
