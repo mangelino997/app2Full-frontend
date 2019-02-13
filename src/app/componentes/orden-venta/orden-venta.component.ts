@@ -35,6 +35,8 @@ export class OrdenVentaComponent implements OnInit {
   public mostrarBoton:boolean = null;
   //Define una lista
   public lista = null;
+  //Define la lista para las Escalas agregadas
+  public listaDeEscalas:Array<any> = [];
   //Define la lista de pestanias
   public pestanias = null;
   //Define un formulario para validaciones de campos
@@ -47,6 +49,8 @@ export class OrdenVentaComponent implements OnInit {
   public elemAutocompletado:any = null;
   //Define el siguiente id
   public siguienteId:number = null;
+  //Define el id de la Escala que se quiere modificar
+  public idModEscala:number = null;
   //Define la lista completa de registros
   public listaCompleta:any = null;
   //Define la lista de empresas
@@ -71,13 +75,17 @@ export class OrdenVentaComponent implements OnInit {
   public buscarTramo:FormControl = new FormControl();
   //Define la lista de resultados de busqueda tramo
   public resultadosTramos = [];
+  //Define la lista de vendedores
+  public vendedores:Array<any>=[];
+  //Define la lista de escalas
+  public escalas:Array<any>=[];
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private formBuilder: FormBuilder,
     private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService,
     private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
-    private tramoServicio: TramoService, private ordenVenta: OrdenVenta,
+    private tramoServicio: TramoService, private ordenVenta: OrdenVenta, private ordenVentaServicio: OrdenVentaService,
     private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -115,14 +123,14 @@ export class OrdenVentaComponent implements OnInit {
         }
     })
     //Autocompletado - Buscar por nombre vendedor
-    this.buscarVendedor.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.vendedorServicio.listarPorNombre(data).subscribe(response =>{
-            this.resultadosVendedores = response;
-          })
-        }
-    })
+    // this.buscarVendedor.valueChanges
+    //   .subscribe(data => {
+    //     if(typeof data == 'string') {
+    //       this.vendedorServicio.listarPorNombre(data).subscribe(response =>{
+    //         this.resultadosVendedores = response;
+    //       })
+    //     }
+    // })
     //Autocompletado Tramo - Buscar por nombre
     this.buscarTramo.valueChanges
       .subscribe(data => {
@@ -145,6 +153,8 @@ export class OrdenVentaComponent implements OnInit {
     this.listarEmpresas();
     //Obtiene la lista de tipos de tarifas
     this.listarTiposTarifas();
+    //Obtiene la lista de Vendedores
+    this.listarVendedores();
     //Obtiene la lista de escalas tarifas
     this.listarEscalaTarifa();
     //Establece los valores por defecto
@@ -178,11 +188,21 @@ export class OrdenVentaComponent implements OnInit {
       }
     )
   }
+  //Obtiene la lista de vendedores
+  private listarVendedores() {
+    this.vendedorServicio.listar().subscribe(response =>{
+      this.vendedores = response.json();
+    },
+      err => {
+        console.log(err);
+      }
+    )
+  }
   //Obtiene una lista de escalas tarifas
   private listarEscalaTarifa() {
     this.escalaTarifaServicio.listar().subscribe(
       res => {
-        let escalasTarifas = res.json();
+        this.escalas=res.json();
       },
       err => {
         console.log(err);
@@ -263,15 +283,74 @@ export class OrdenVentaComponent implements OnInit {
       }
     );
   }
+  //Controla el valor en los campos de Precio Fijo y Precio Unitario
+  public controlPrecios(tipoPrecio){
+    console.log(this.formularioEscala.value);
+    switch(tipoPrecio){
+      case 1:
+        if(this.formularioEscala.get('importeFijo').value>0){
+          console.log("impun es 0");
+          this.formularioEscala.get('precioUnitario').setValue('0.00');
+        }
+        break;
+
+      case 2:
+        if(this.formularioEscala.get('precioUnitario').value>0){
+          console.log("importeFijo es 0");
+          this.formularioEscala.get('importeFijo').setValue('0.00');
+        }
+        break;
+    }
+    // if(tipoPrecio==1){
+    //   console.log("impun es 0");
+    //   this.formularioEscala.get('precioUnitario').setValue('0.00');
+    // }
+    // if(tipoPrecio==2){
+    //   console.log("importeFijo es 0");
+    //   this.formularioEscala.get('importeFijo').setValue('0.00');
+    // }
+  }
+  //Agrega una Escala a listaDeEscalas
+  public agregarEscalaLista(){
+    this.formulario.disable();
+    if(this.idModEscala!=null){
+      this.listaDeEscalas[this.idModEscala]=this.formularioEscala.value;
+      this.formularioEscala.reset();
+      this.idModEscala=null;
+    }else{
+      this.listaDeEscalas.push(this.formularioEscala.value);
+      this.formularioEscala.reset();
+    }
+    setTimeout(function() {
+      document.getElementById('idEscala').focus();
+    }, 20);
+  }
+  //Elimina una Escala a listaDeEscalas
+  public eliminarEscalaLista(indice){
+    this.listaDeEscalas.splice(indice, 1);
+    if(this.listaDeEscalas.length==0){
+      this.formulario.enable();
+    }
+  }
+  //Modifica una Escala de listaDeEscalas
+  public modificarEscalaLista(escala, indice){
+    this.formularioEscala.patchValue(escala);
+    setTimeout(function() {
+      document.getElementById('idEscala').focus();
+    }, 20);
+    this.idModEscala=indice;
+  }
+  
   //Agrega un registro
   private agregar() {
+    this.formulario.get('ordenesVentasEscalas').setValue(this.listaDeEscalas); 
     console.log(this.formulario.value);
-    /*elemento.ordenesVentasEscalas = lista;
-    this.servicio.agregar(elemento).subscribe(
+
+    this.ordenVentaServicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCamposAgregar(respuesta.id);
+          this.reestablecerCampos(undefined);
           setTimeout(function() {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -286,7 +365,7 @@ export class OrdenVentaComponent implements OnInit {
           this.toastr.error(respuesta.mensaje);
         }
       }
-    );*/
+    );
   }
   //Actualiza un registro
   private actualizar() {
@@ -310,6 +389,14 @@ export class OrdenVentaComponent implements OnInit {
         }
       }
     );
+  }
+  //Reestablecer campos
+  private reestablecerCampos(valor){
+    this.formulario.reset();
+    this.formularioEscala.reset();
+    this.formularioTramo.reset();
+    this.listaDeEscalas=[];
+    this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
   }
   //Elimina un registro
   private eliminar() {

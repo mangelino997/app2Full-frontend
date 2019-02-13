@@ -10,7 +10,7 @@ export class OrdenVenta {
             id: new FormControl(),
             version: new FormControl(),
             nombre: new FormControl('', Validators.required),
-            cliente: new FormControl('', Validators.required),
+            cliente: new FormControl(null, Validators.required),
             empresa: new FormControl('', Validators.required),
             vendedor: new FormControl('', Validators.required),
             fechaAlta: new FormControl(),

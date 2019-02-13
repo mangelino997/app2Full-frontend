@@ -60,26 +60,24 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idVendedor" class="tamanio-label">Vendedor *</label>
-                <input id="idVendedor" class="form-control form-control-sm" formControlName="vendedor" type="text"
-                  matInput [formControl]="buscarVendedor" [matAutocomplete]="autoVendedor" autocomplete="off"
-                  [readonly]="soloLectura" required>
-                <mat-autocomplete #autoVendedor="matAutocomplete" [displayWith]="displayFb.bind(this)">
-                  <mat-option *ngFor="let itemVendedor of resultadosVendedores" [value]="itemVendedor">
+                <mat-select id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let itemVendedor of vendedores" [value]="itemVendedor">
                     {{itemVendedor.nombre}}
                   </mat-option>
-                </mat-autocomplete>
+                </mat-select>
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idTipoTarifa" class="tamanio-label">Tarifa *</label>
-                <input id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa" type="text"
-                  matInput [matAutocomplete]="autoTipoTarifa" autocomplete="off" [readonly]="soloLectura" required>
-                <mat-autocomplete #autoTipoTarifa="matAutocomplete" [displayWith]="displayFb.bind(this)">
+                <mat-select id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
+                  [compareWith]="compareFn">
+                  <mat-option disabled ><span class="espacioNombre">Nombre</span> | <span class="espacio">Por porcentaje</span> | <span class="espacio">Por escala</span></mat-option>
                   <mat-option *ngFor="let itemTipoTarifa of tiposTarifas" [value]="itemTipoTarifa">
-                    {{itemTipoTarifa.nombre}}
+                    <span class="espacioNombre">{{itemTipoTarifa.nombre}}</span> | <span class="centrado">{{itemTipoTarifa.porPorcentaje? 'Sí': 'No'}}</span> | <span class="centrado">{{itemTipoTarifa.porEscala? 'Sí': 'No'}}</span>
                   </mat-option>
-                </mat-autocomplete>
+                </mat-select>
               </div>
             </div>
           </div>
@@ -133,7 +131,7 @@
                   <mat-select id="idEscala" class="form-control form-control-sm" formControlName="escalaTarifa"
                     [compareWith]="compareFn">
                     <mat-option *ngFor="let itemEscala of escalas" [value]="itemEscala">
-                      {{itemEscala.nombre}}
+                      {{itemEscala.valor}}
                     </mat-option>
                   </mat-select>
                 </div>
@@ -141,16 +139,16 @@
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idImporteFijo" class="tamanio-label">Precio Fijo *</label>
-                  <input id="idImporteFijo" formControlName="importeFijo" type="number" autocomplete="off"
-                    class="form-control form-control-sm" min="1" maxlength="4"
+                  <input id="idImporteFijo" [formControl]="formularioEscala.get('importeFijo')" type="number" autocomplete="off"
+                    class="form-control form-control-sm" min="1" maxlength="4"  (blur)="controlPrecios(1)"
                     [readonly]="formulario.get('tipoTarifa').value.porPorcentaje">
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
-                  <input id="idPrecioUnitario" formControlName="precioUnitario" type="number" autocomplete="off"
-                    class="form-control form-control-sm" min="1" maxlength="4"
+                  <input id="idPrecioUnitario" [formControl]="formularioEscala.get('precioUnitario')" type="number" autocomplete="off"
+                    class="form-control form-control-sm" min="1" maxlength="4"  (blur)="controlPrecios(2)"
                     [readonly]="formulario.get('tipoTarifa').value.porPorcentaje">
                 </div>
               </div>
@@ -159,40 +157,43 @@
                   <label for="idSegunTarifa" class="tamanio-label">% Según Tarifa *</label>
                   <input id="idSegunTarifa" formControlName="porcentaje" type="number" autocomplete="off"
                     class="form-control form-control-sm" min="1" maxlength="4"
-                    [readonly]="formulario.get('tipoTarifa').value.porPorcentaje">
+                    [readonly]="!formulario.get('tipoTarifa').value.porPorcentaje">
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
-                  <label for="idMinimo" class="tamanio-label">Mínimo *</label>
+                  <label for="idMinimo" class="tamanio-label">Mínimo </label>
                   <input id="idMinimo" formControlName="minimo" type="number" autocomplete="off"
                     class="form-control form-control-sm" min="1" maxlength="4">
                 </div>
               </div>
               <div class="col-md-2">
-                <button mat-raised-button color="primary">Agregar</button>
+                <button mat-raised-button color="primary" (click)="agregarEscalaLista()">Agregar</button>
               </div>
             </div>
             <table class="table table-bordered table-sm">
               <thead>
                 <tr>
-                  <th class="text-center" style="width:20%" scope="col">Escala</th>
+                  <th class="text-center" style="width:10%" scope="col">Id</th>
+                  <th class="text-center" style="width:10%" scope="col">Escala</th>
                   <th class="text-center" style="width:20%" scope="col">Precio Fijo</th>
                   <th class="text-center" style="width:20%" scope="col">Precio Unitario</th>
                   <th class="text-center" style="width:20%" scope="col">% Según Tarifa</th>
-                  <th class="text-center" style="width:20%" scope="col">Mínimo</th>
+                  <th class="text-center" style="width:10%" scope="col">Mínimo</th>
+                  <th class="text-center" style="width:5%" scope="col">-</th>
+                  <th class="text-center" style="width:5%" scope="col">-</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let l of listaA; let i = index">
+                <tr *ngFor="let l of listaDeEscalas; let i = index">
                   <td align="center">
                     <span>{{i+1}}</span>
                   </td>
                   <td align="center">
-                    <span>{{l.escalaTarifa}}</span>
+                    <span>{{l.escalaTarifa.valor}}</span>
                   </td>
                   <td align="center">
-                    <span>{{l.precioFijo}}</span>
+                    <span>{{l.importeFijo}}</span>
                   </td>
                   <td align="center">
                     <span>{{l.precioUnitario}}</span>
@@ -204,10 +205,10 @@
                     <span>{{l.minimo}}</span>
                   </td>
                   <td align="center">
-                    <span class="cursor-color" (click)="modificarItemA(l)">Mod</span>
+                    <span class="cursor-color" (click)="modificarEscalaLista(l, i)">Mod</span>
                   </td>
                   <td align="center">
-                    <span class="cursor-color" (click)="eliminarItemA(l)">X</span>
+                    <span class="cursor-color" (click)="eliminarEscalaLista(i)">X</span>
                   </td>
                 </tr>
               </tbody>

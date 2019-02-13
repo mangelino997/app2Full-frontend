@@ -1,0 +1,13 @@
+.centrado {
+    width: 87px;
+    display: inline-block;
+    text-align: center !important;
+}
+.espacio {
+    width: 87px;
+    display: inline-block;
+}
+.espacioNombre {
+    width: 150px;
+    display: inline-block;
+}
