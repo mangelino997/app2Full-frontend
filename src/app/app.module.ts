@@ -102,7 +102,6 @@ import { ViajeUnidadNegocioService } from './servicios/viaje-unidad-negocio.serv
 import { OpcionService } from './servicios/opcion.service';
 import { MonedaService } from './servicios/moneda.service';
 
-
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
 import { ViajePropioTramo } from './modelos/viajePropioTramo';
@@ -123,6 +122,9 @@ import { Cliente } from './modelos/cliente';
 import { Empresa } from './modelos/empresa';
 import { Proveedor } from './modelos/proveedor';
 import { Moneda } from './modelos/moneda';
+import { OrdenVenta } from './modelos/ordenVenta';
+import { OrdenVentaEscala } from './modelos/ordenVentaEscala';
+import { OrdenVentaTramo } from './modelos/ordenVentaTramo';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -224,7 +226,6 @@ import { MonedaCotizacionService } from './servicios/moneda-cotizacion.service';
 import { MonedaCuentaContableService } from './servicios/moneda-cuenta-contable.service';
 import { MonedaCuentaContable } from './modelos/moneda-cuenta-contable';
 import { PlanCuentaService } from './servicios/plan-cuenta.service';
-
 
 //Rutas
 const appRoutes: Routes = [
@@ -592,6 +593,9 @@ const stompConfig: StompConfig = {
     MonedaCotizacion,
     MonedaCuentaContable,
     PlanCuentaService,
+    OrdenVenta,
+    OrdenVentaEscala,
+    OrdenVentaTramo,
     StompService,
     {
       provide: StompConfig,

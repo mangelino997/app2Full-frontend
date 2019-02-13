@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>ORDEN VENTA</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-        (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -17,8 +17,8 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idTipoOrdenVenta" class="tamanio-label">Tipo *</label>
-                <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta"
-                  class="form-control form-control-sm" required>
+                <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta" class="form-control form-control-sm"
+                  required>
                   <mat-option [value]="false">Por Empresa</mat-option>
                   <mat-option [value]="true">Por Cliente</mat-option>
                 </mat-select>
@@ -27,23 +27,20 @@
             <div class="col-md-3" *ngIf="formulario.get('tipoOrdenVenta').value == false">
               <div class="form-group has-float-label">
                 <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-                <input id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
-                type="text" matInput [matAutocomplete]="autoEmpresa" autocomplete="off"
-                [readonly]="soloLectura" [required]="formulario.get('tipoOrdenVenta').value == false">
-                <mat-autocomplete #autoEmpresa="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
+                  [compareWith]="compareFn" [required]="formulario.get('tipoOrdenVenta').value == false">
                   <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                     {{itemEmpresa.razonSocial}}
                   </mat-option>
-                </mat-autocomplete>
+                </mat-select>
               </div>
             </div>
             <div class="col-md-3" *ngIf="formulario.get('tipoOrdenVenta').value == true">
               <div class="form-group has-float-label">
                 <label for="idCliente" class="tamanio-label">Cliente *</label>
-                <input id="idCliente" class="form-control form-control-sm" formControlName="cliente"
-                type="text" matInput [formControl]="buscarCliente" [matAutocomplete]="autoCliente"
-                autocomplete="off" [readonly]="soloLectura"
-                [required]="formulario.get('tipoOrdenVenta').value == true">
+                <input id="idCliente" class="form-control form-control-sm" formControlName="cliente" type="text"
+                  matInput [formControl]="buscarCliente" [matAutocomplete]="autoCliente" autocomplete="off"
+                  [readonly]="soloLectura" [required]="formulario.get('tipoOrdenVenta').value == true">
                 <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
                   <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
                     {{itemCliente.alias}}
@@ -57,17 +54,15 @@
               <div class="form-group has-float-label">
                 <label for="idNombre" class="tamanio-label">Descripción *</label>
                 <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                class="form-control form-control-sm" maxlength="45"
-                [readonly]="soloLectura" required>
+                  class="form-control form-control-sm" maxlength="45" [readonly]="soloLectura" required>
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idVendedor" class="tamanio-label">Vendedor *</label>
-                <input id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
-                type="text" matInput [formControl]="buscarVendedor" [matAutocomplete]="autoVendedor"
-                autocomplete="off"
-                [readonly]="soloLectura" required>
+                <input id="idVendedor" class="form-control form-control-sm" formControlName="vendedor" type="text"
+                  matInput [formControl]="buscarVendedor" [matAutocomplete]="autoVendedor" autocomplete="off"
+                  [readonly]="soloLectura" required>
                 <mat-autocomplete #autoVendedor="matAutocomplete" [displayWith]="displayFb.bind(this)">
                   <mat-option *ngFor="let itemVendedor of resultadosVendedores" [value]="itemVendedor">
                     {{itemVendedor.nombre}}
@@ -78,9 +73,8 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idTipoTarifa" class="tamanio-label">Tarifa *</label>
-                <input id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
-                type="text" matInput [matAutocomplete]="autoTipoTarifa" autocomplete="off"
-                [readonly]="soloLectura" required>
+                <input id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa" type="text"
+                  matInput [matAutocomplete]="autoTipoTarifa" autocomplete="off" [readonly]="soloLectura" required>
                 <mat-autocomplete #autoTipoTarifa="matAutocomplete" [displayWith]="displayFb.bind(this)">
                   <mat-option *ngFor="let itemTipoTarifa of tiposTarifas" [value]="itemTipoTarifa">
                     {{itemTipoTarifa.nombre}}
@@ -94,24 +88,16 @@
               <div class="form-group has-float-label">
                 <label for="idSeguro" class="tamanio-label">Seguro(%) *</label>
                 <input id="idSeguro" type="number" formControlName="seguro" autocomplete="off"
-                class="form-control form-control-sm" min="1" maxlength="4"
-                [readonly]="soloLectura" (blur)="setDecimales($event, 2)">
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idAforo" class="tamanio-label">Aforo(kg) *</label>
-                <input id="idAforo" type="number" formControlName="aforo" autocomplete="off"
-                class="form-control form-control-sm" min="1" maxlength="4"
-                [readonly]="soloLectura" required>
+                  class="form-control form-control-sm" min="1" maxlength="4" [readonly]="soloLectura"
+                  (blur)="setDecimales($event, 2)">
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idComisionCR" class="tamanio-label">Comisión Contra Reembolso(%)</label>
                 <input id="idComisionCR" type="number" formControlName="comisionCR" autocomplete="off"
-                class="form-control form-control-sm" min="1" maxlength="4" [readonly]="soloLectura"
-                (blur)="setDecimales($event, 2)">
+                  class="form-control form-control-sm" min="1" maxlength="4" [readonly]="soloLectura"
+                  (blur)="setDecimales($event, 2)">
               </div>
             </div>
           </div>
@@ -120,7 +106,7 @@
               <div class="form-group has-float-label">
                 <label for="idObservaciones" class="tamanio-label">Observaciones</label>
                 <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones"
-                maxlength="200" rows="2" [readonly]="soloLectura"></textarea>
+                  maxlength="200" rows="2" [readonly]="soloLectura"></textarea>
               </div>
             </div>
           </div>
@@ -128,22 +114,24 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
-                <input id="idPreciosDesde" type="date" formControlName="preciosDesde"
-                autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
+                <input id="idPreciosDesde" type="date" formControlName="activaDesde" autocomplete="off"
+                  class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row justify-content-center contenedor">
-        <div class="col-md-12 text-center">
-          <div *ngIf="formulario.get('tipoTarifa').value.porEscala">
+    </form>
+    <div class="row justify-content-center contenedor">
+      <div class="col-md-12 text-center">
+        <div *ngIf="formulario.get('tipoTarifa').value.porEscala">
+          <form [formGroup]="formularioEscala">
             <div class="row">
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idEscala" class="tamanio-label">Escala *</label>
-                  <mat-select id="idEscala" class="form-control form-control-sm" formControlName="escala" [compareWith]="compareFn">
+                  <mat-select id="idEscala" class="form-control form-control-sm" formControlName="escalaTarifa"
+                    [compareWith]="compareFn">
                     <mat-option *ngFor="let itemEscala of escalas" [value]="itemEscala">
                       {{itemEscala.nombre}}
                     </mat-option>
@@ -161,22 +149,23 @@
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
-                  <input id="idPrecioUnitario" formControlName="precioUnitario"
-                    type="number" autocomplete="off" class="form-control form-control-sm"
-                    min="1" maxlength="4" [readonly]="formulario.get('tipoTarifa').value.porPorcentaje">
+                  <input id="idPrecioUnitario" formControlName="precioUnitario" type="number" autocomplete="off"
+                    class="form-control form-control-sm" min="1" maxlength="4"
+                    [readonly]="formulario.get('tipoTarifa').value.porPorcentaje">
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idSegunTarifa" class="tamanio-label">% Según Tarifa *</label>
-                  <input id="idSegunTarifa" formControlName="segunTarifa" type="number" autocomplete="off" class="form-control form-control-sm"
-                    min="1" maxlength="4" [readonly]="formulario.get('tipoTarifa').value.porPorcentaje">
+                  <input id="idSegunTarifa" formControlName="porcentaje" type="number" autocomplete="off"
+                    class="form-control form-control-sm" min="1" maxlength="4"
+                    [readonly]="formulario.get('tipoTarifa').value.porPorcentaje">
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idMinimo" class="tamanio-label">Mínimo *</label>
-                  <input id="idMinimo" formControlName="minimo" type="number" autocomplete="off" 
+                  <input id="idMinimo" formControlName="minimo" type="number" autocomplete="off"
                     class="form-control form-control-sm" min="1" maxlength="4">
                 </div>
               </div>
@@ -200,7 +189,7 @@
                     <span>{{i+1}}</span>
                   </td>
                   <td align="center">
-                    <span>{{l.escala}}</span>
+                    <span>{{l.escalaTarifa}}</span>
                   </td>
                   <td align="center">
                     <span>{{l.precioFijo}}</span>
@@ -209,7 +198,7 @@
                     <span>{{l.precioUnitario}}</span>
                   </td>
                   <td align="center">
-                    <span>{{l.segunTarifa}}</span>
+                    <span>{{l.porcentaje}}</span>
                   </td>
                   <td align="center">
                     <span>{{l.minimo}}</span>
@@ -223,16 +212,19 @@
                 </tr>
               </tbody>
             </table>
-          </div>
-          <div *ngIf="!formulario.get('tipoTarifa').value.porEscala">
+          </form>
+        </div>
+        <div *ngIf="!formulario.get('tipoTarifa').value.porEscala">
+          <form [formGroup]="formularioTramo">
             <div class="row">
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idTramo" class="tamanio-label">Tramo *</label>
-                  <input id="idTramo" class="form-control form-control-sm" formControlName="tramo" type="text"
-                    matInput [formControl]="formulario.get('tramo')" [matAutocomplete]="autoTramo" autocomplete="off" [readonly]="soloLectura"
-                    required>
-                  <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFc.bind(this)" (optionSelected)="cambioAutocompletadoTramo()">
+                  <input id="idTramo" class="form-control form-control-sm" formControlName="tramo" type="text" matInput
+                    [formControl]="formularioTramo.get('tramo')" [matAutocomplete]="autoTramo" autocomplete="off"
+                    [readonly]="soloLectura" required>
+                  <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFc.bind(this)"
+                    (optionSelected)="cambioAutocompletadoTramo()">
                     <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">
                       {{itemTramo.origen.nombre}} - {{itemTramo.destino.nombre}}
                     </mat-option>
@@ -242,32 +234,29 @@
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idKmTramo" class="tamanio-label">Km *</label>
-                  <input id="idKmTramo" class="form-control form-control-sm" type="number"
-                    formControlName="kmTramo" autocomplete="off" readonly>
+                  <input id="idKmTramo" class="form-control form-control-sm" type="number" formControlName="kmTramo"
+                    autocomplete="off" readonly>
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idKmPactado" class="tamanio-label">Km Pactado *</label>
-                  <input id="idKmPactado" class="form-control form-control-sm"
-                    formControlName="kmPactado" type="number" autocomplete="off"
-                    min="1" maxlength="4">
+                  <input id="idKmPactado" class="form-control form-control-sm" formControlName="kmPactado" type="number"
+                    autocomplete="off" min="1" maxlength="4">
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idImporteFijoSeco" class="tamanio-label">Importe Fijo Seco *</label>
-                  <input id="idImporteFijoSeco" class="form-control form-control-sm"
-                    formControlName="importeFijoSeco" type="number" autocomplete="off"
-                    min="1" maxlength="12">
+                  <input id="idImporteFijoSeco" class="form-control form-control-sm" formControlName="importeFijoSeco"
+                    type="number" autocomplete="off" min="1" maxlength="12">
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
-                  <label for="idPrecioUnitarioSeco" class="tamanio-label">Mínimo *</label>
+                  <label for="idPrecioUnitarioSeco" class="tamanio-label">Precio Unitario Seco *</label>
                   <input id="idPrecioUnitarioSeco" class="form-control form-control-sm input-edicion-tabla"
-                    formControlName="precioUnitarioSeco" type="number" autocomplete="off"
-                    min="1" maxlength="12">
+                    formControlName="precioUnitarioSeco" type="number" autocomplete="off" min="1" maxlength="12">
                 </div>
               </div>
               <div class="col-md-2">
@@ -321,14 +310,14 @@
                 </tr>
               </tbody>
             </table>
-          </div>
+          </form>
         </div>
       </div>
-    </form>
+    </div>
     <div class="row justify-content-center contenedor">
       <div class="col-md-12 text-center">
-        <button id="idBoton" ng-show="mostrarBoton" class="btn btn-primary" type="button"
-        formnovalidate (click)="accion(indiceSeleccionado)">
+        <button id="idBoton" ng-show="mostrarBoton" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)">
           {{pestaniaActual}}
         </button>
       </div>

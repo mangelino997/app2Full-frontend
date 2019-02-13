@@ -6,12 +6,14 @@ import { ClienteService } from '../../servicios/cliente.service';
 import { VendedorService } from '../../servicios/vendedor.service';
 import { TipoTarifaService } from '../../servicios/tipo-tarifa.service';
 import { EscalaTarifaService } from '../../servicios/escala-tarifa.service';
-import { OrdenVentaEscalaService } from '../../servicios/orden-venta-escala.service';
 import { TramoService } from '../../servicios/tramo.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from '../../servicios/app.service';
+import { OrdenVenta } from 'src/app/modelos/ordenVenta';
+import { OrdenVentaEscala } from 'src/app/modelos/ordenVentaEscala';
+import { OrdenVentaTramo } from 'src/app/modelos/ordenVentaTramo';
 
 @Component({
   selector: 'app-orden-venta',
@@ -37,6 +39,10 @@ export class OrdenVentaComponent implements OnInit {
   public pestanias = null;
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
+  //Define un formulario para validaciones de campos
+  public formularioEscala:FormGroup;
+  //Define un formulario para validaciones de campos
+  public formularioTramo:FormGroup;
   //Define el elemento de autocompletado
   public elemAutocompletado:any = null;
   //Define el siguiente id
@@ -71,8 +77,8 @@ export class OrdenVentaComponent implements OnInit {
     private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService,
     private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
-    private ordenVentaEscalaServicio: OrdenVentaEscalaService,
-    private tramoServicio: TramoService) {
+    private tramoServicio: TramoService, private ordenVenta: OrdenVenta,
+    private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -129,28 +135,12 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-    //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      nombre: new FormControl('', Validators.required),
-      empresa: new FormControl('', Validators.required),
-      cliente: new FormControl('', Validators.required),
-      vendedor: new FormControl('', Validators.required),
-      fechaAlta: new FormControl(),
-      tipoTarifa: new FormControl('', Validators.required),
-      seguro: new FormControl('8.00', Validators.required),
-      aforo: new FormControl('350', Validators.required),
-      comisionCR: new FormControl('', Validators.required),
-      observaciones: new FormControl(),
-      estaActiva: new FormControl(),
-      activaDesde: new FormControl(),
-      tipoOrdenVenta: new FormControl(false, Validators.required),
-      preciosDesde: new FormControl(),
-      escala: new FormControl(),
-      importeFijo: new FormControl(),
-      precioUnitario: new FormControl(),
-      segunTarifa: new FormControl(),
-      minimo: new FormControl()
-    });
+    //Define el formulario de orden venta
+    this.formulario = this.ordenVenta.formulario;
+    //Define el formulario de orden venta escala
+    this.formularioEscala = this.ordenVentaEscala.formulario;
+    //Define el formulario de orden venta tramo
+    this.formularioTramo = this.ordenVentaTramo.formulario;
     //Obtiene la lista de empresas
     this.listarEmpresas();
     //Obtiene la lista de tipos de tarifas
@@ -164,28 +154,6 @@ export class OrdenVentaComponent implements OnInit {
   private establecerValoresPorDefecto() {
     this.formulario.get('seguro').setValue('0.00');
     this.formulario.get('comisionCR').setValue('0.00');
-  }
-  //Crea el elemento A (form) para la primera tabla
-  private crearElementoA(valor): FormGroup {
-    return this.formBuilder.group({
-      escala: valor,
-      importeFijo: '',
-      precioUnitario: '',
-      segunTarifa: '',
-      minimo: ''
-    })
-  }
-  //Crea el elemento B (form) para la segunda tabla
-  private crearElementoB(): FormGroup {
-    return this.formBuilder.group({
-      tramo: '',
-      kmTramo: '',
-      kmPactado: '',
-      importeFijoSeco: '',
-      importeFijoRef: '',
-      precioUnitarioSeco: '',
-      precioUnitarioRef: ''
-    })
   }
   //Obtiene la lista de empresas
   private listarEmpresas() {
@@ -354,13 +322,10 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Manejo de cambio de autocompletado tramo
   public cambioAutocompletadoTramo(elemento, indice) {
-    (<FormArray>this.formulario.get('elementosB')).at(indice).get('tramo').setValue(elemento);
-    (<FormArray>this.formulario.get('elementosB')).at(indice).get('kmTramo').setValue(elemento.km);
+    
   }
   public cambioImporte(valor, elemento, i) {
-    if(valor != undefined) {
-      (<FormArray>this.formulario.get('elementosA')).at(i).get(elemento).patchValue(undefined);
-    }
+    
   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
