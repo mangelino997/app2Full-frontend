@@ -3,14 +3,16 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { TipoCuentaContable } from 'src/app/modelos/tipo-cuenta-contable';
-import { TipoCuentaContableService } from 'src/app/servicios/tipo-cuenta-contable.service';
+import { EjercicioService } from 'src/app/servicios/ejercicio.service';
+import { Ejercicio } from 'src/app/modelos/ejercicio';
+import { MesService } from 'src/app/servicios/mes.service';
 @Component({
-  selector: 'app-tipo-cuenta-contable',
-  templateUrl: './tipo-cuenta-contable.component.html',
-  styleUrls: ['./tipo-cuenta-contable.component.css']
+  selector: 'app-ejercicio',
+  templateUrl: './ejercicio.component.html',
+  styleUrls: ['./ejercicio.component.css']
 })
-export class TipoCuentaContableComponent implements OnInit {
+export class EjercicioComponent implements OnInit {
+
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -29,13 +31,17 @@ export class TipoCuentaContableComponent implements OnInit {
   public formulario:FormGroup;
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
+  //Define la lista completa de años
+  public anios:Array<any> = [];
+  //Define la lista completa de meses
+  public meses:Array<any> = [];
   //Define el autocompletado para las busquedas
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
   public resultados:Array<any> = [];
   //Constructor
-  constructor(private servicio: TipoCuentaContableService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private tipoCuentaContable: TipoCuentaContable, private appComponent: AppComponent, private toastr: ToastrService) {
+  constructor(private servicio: EjercicioService, private subopcionPestaniaService: SubopcionPestaniaService, private mesService: MesService,
+    private ejercicio: Ejercicio, private appComponent: AppComponent, private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -46,7 +52,6 @@ export class TipoCuentaContableComponent implements OnInit {
       err => {
       }
     );
-    
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -63,11 +68,15 @@ export class TipoCuentaContableComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = this.tipoCuentaContable.formulario;
+    this.formulario = this.ejercicio.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
+    //Obtiene la lista completa de años
+    this.listarAnios();
+    //Obtiene la lista completa de meses
+    this.listarMeses();
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -137,7 +146,31 @@ export class TipoCuentaContableComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
+        console.log(res.json());
         this.listaCompleta = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de años
+  private listarAnios() {
+    this.servicio.listarAnios().subscribe(
+      res => {
+        console.log(res.json());
+
+        this.anios = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }//Obtiene el listado de meses
+  private listarMeses() {
+    this.mesService.listar().subscribe(
+      res => {
+        this.meses = res.json();
       },
       err => {
         console.log(err);
@@ -146,6 +179,8 @@ export class TipoCuentaContableComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -170,6 +205,7 @@ export class TipoCuentaContableComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar() {
+    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -226,6 +262,13 @@ export class TipoCuentaContableComponent implements OnInit {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
+    }
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
     }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)

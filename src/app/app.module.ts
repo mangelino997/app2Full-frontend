@@ -106,6 +106,7 @@ import { MonedaCuentaContableService } from './servicios/moneda-cuenta-contable.
 import { PlanCuentaService } from './servicios/plan-cuenta.service';
 import { TipoCuentaContableService } from './servicios/tipo-cuenta-contable.service';
 import { GrupoCuentaContableService } from './servicios/grupo-cuenta-contable.service';
+import { EjercicioService } from './servicios/ejercicio.service';
 
 
 //Modelos
@@ -136,6 +137,7 @@ import { MonedaCuentaContable } from './modelos/moneda-cuenta-contable';
 import { TipoCuentaBancaria } from './modelos/tipo-cuenta-bancaria';
 import { TipoCuentaContable } from './modelos/tipo-cuenta-contable';
 import { GrupoCuentaContable } from './modelos/grupo-cuenta-contable';
+import { Ejercicio } from './modelos/ejercicio';
 
 
 //Componentes
@@ -236,6 +238,8 @@ import { ViajeRemitoGSComponent } from './componentes/viaje/viaje-remito-gs/viaj
 import { PlanCuentaComponent, ChecklistDatabase } from './componentes/plan-cuenta/plan-cuenta.component';
 import { TipoCuentaContableComponent } from './componentes/tipo-cuenta-contable/tipo-cuenta-contable.component';
 import { GrupoCuentaContableComponent } from './componentes/grupo-cuenta-contable/grupo-cuenta-contable.component';
+import { EjercicioComponent } from './componentes/ejercicio/ejercicio.component';
+import { MesService } from './servicios/mes.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -274,6 +278,7 @@ const appRoutes: Routes = [
   { path: 'configuraciontiposdecuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipodecuentacontable', component: TipoCuentaContableComponent, canActivate: [GuardiaService] },
   { path: 'configuraciongruposdecuentacontable', component: GrupoCuentaContableComponent, canActivate: [GuardiaService] },
+  { path: 'configuracionejercicio', component: EjercicioComponent, canActivate: [GuardiaService] },  
   { path: 'tipodocumento', component: TipoDocumentoComponent, canActivate: [GuardiaService] },
   { path: 'tipoproveedor', component: TipoProveedorComponent, canActivate: [GuardiaService] },
   { path: 'tipotarifa', component: TipoProveedorComponent, canActivate: [GuardiaService] },
@@ -448,7 +453,8 @@ const stompConfig: StompConfig = {
     CambiarMonedaPrincipalDialogo,
     PlanCuentaComponent,
     TipoCuentaContableComponent,
-    GrupoCuentaContableComponent
+    GrupoCuentaContableComponent,
+    EjercicioComponent
   ],
   imports: [
     BrowserModule,
@@ -619,7 +625,10 @@ const stompConfig: StompConfig = {
     TipoCuentaContableService,
     GrupoCuentaContable,
     GrupoCuentaContableService,
+    Ejercicio,
+    EjercicioService,
     StompService,
+    MesService,
     {
       provide: StompConfig,
       useValue: stompConfig

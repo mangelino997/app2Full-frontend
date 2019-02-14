@@ -47,8 +47,7 @@ export class TipoCuentaBancariaComponent implements OnInit {
       err => {
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -66,6 +65,8 @@ export class TipoCuentaBancariaComponent implements OnInit {
   ngOnInit() {
     //Define los campos para validaciones
     this.formulario = this.tipoCuentaBancaria.formulario;
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
   }
@@ -81,7 +82,7 @@ export class TipoCuentaBancariaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    
+    this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
