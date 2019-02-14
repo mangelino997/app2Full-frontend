@@ -37,6 +37,8 @@ export class OrdenVentaComponent implements OnInit {
   public lista = null;
   //Define la lista para las Escalas agregadas
   public listaDeEscalas:Array<any> = [];
+  //Define la lista para los tramos agregados
+  public listaDeTramos:Array<any> = [];
   //Define la lista de pestanias
   public pestanias = null;
   //Define un formulario para validaciones de campos
@@ -51,6 +53,8 @@ export class OrdenVentaComponent implements OnInit {
   public siguienteId:number = null;
   //Define el id de la Escala que se quiere modificar
   public idModEscala:number = null;
+  //Define el id del Tramo que se quiere modificar
+  public idModTramo:number = null;
   //Define la lista completa de registros
   public listaCompleta:any = null;
   //Define la lista de empresas
@@ -131,15 +135,7 @@ export class OrdenVentaComponent implements OnInit {
     //       })
     //     }
     // })
-    //Autocompletado Tramo - Buscar por nombre
-    this.buscarTramo.valueChanges
-      .subscribe(data => {
-        if(typeof data == 'string') {
-          this.tramoServicio.listarPorOrigen(data).subscribe(response =>{
-            this.resultadosTramos = response;
-          })
-        }
-    })
+    
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -159,6 +155,25 @@ export class OrdenVentaComponent implements OnInit {
     this.listarEscalaTarifa();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
+    //Autocompletado Tramo - Buscar por nombre
+    this.formularioTramo.get('tramo').valueChanges
+      .subscribe(data => {
+        if(typeof data == 'string') {
+          this.tramoServicio.listarPorOrigen(data).subscribe(response =>{
+            console.log(response);
+            this.resultadosTramos = response;
+          })
+        }
+    });
+    //Controla el cambio de Tabla, borrando lo que hay en una si se elige la otra
+    // if(this.formulario.get('tipoTarifa').value.porEscala){
+    //   this.formularioTramo.reset();
+    //   this.listaDeTramos=[];
+    // }
+    // if(!this.formulario.get('tipoTarifa').value.porEscala){
+    //   this.formularioEscala.reset();
+    //   this.listaDeEscalas=[];
+    // }
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
@@ -283,32 +298,21 @@ export class OrdenVentaComponent implements OnInit {
       }
     );
   }
-  //Controla el valor en los campos de Precio Fijo y Precio Unitario
+  //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA ESCALA
   public controlPrecios(tipoPrecio){
     console.log(this.formularioEscala.value);
     switch(tipoPrecio){
       case 1:
         if(this.formularioEscala.get('importeFijo').value>0){
-          console.log("impun es 0");
           this.formularioEscala.get('precioUnitario').setValue('0.00');
         }
         break;
-
       case 2:
         if(this.formularioEscala.get('precioUnitario').value>0){
-          console.log("importeFijo es 0");
           this.formularioEscala.get('importeFijo').setValue('0.00');
         }
         break;
     }
-    // if(tipoPrecio==1){
-    //   console.log("impun es 0");
-    //   this.formularioEscala.get('precioUnitario').setValue('0.00');
-    // }
-    // if(tipoPrecio==2){
-    //   console.log("importeFijo es 0");
-    //   this.formularioEscala.get('importeFijo').setValue('0.00');
-    // }
   }
   //Agrega una Escala a listaDeEscalas
   public agregarEscalaLista(){
@@ -340,12 +344,73 @@ export class OrdenVentaComponent implements OnInit {
     }, 20);
     this.idModEscala=indice;
   }
-  
+  //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA TRAMO
+  public controlPreciosTramo(tipoPrecio){
+    console.log(this.formularioTramo.value);
+    switch(tipoPrecio){
+      case 1:
+        if(this.formularioTramo.get('importeFijoSeco').value>0){
+          this.formularioTramo.get('precioUnitarioSeco').setValue('0.00');
+        }
+        break;
+      case 2:
+        if(this.formularioTramo.get('precioUnitarioSeco').value>0){
+          this.formularioTramo.get('importeFijoSeco').setValue('0.00');
+        }
+        break;
+    }
+  }
+  //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA TRAMO
+  public controlPreciosTramoRef(tipoPrecio){
+    console.log(this.formularioTramo.value);
+    switch(tipoPrecio){
+      case 1:
+        if(this.formularioTramo.get('importeFijoRef').value>0){
+          this.formularioTramo.get('precioUnitarioRef').setValue('0.00');
+        }
+        break;
+      case 2:
+        if(this.formularioTramo.get('precioUnitarioRef').value>0){
+          this.formularioTramo.get('importeFijoRef').setValue('0.00');
+        }
+        break;
+    }
+  }
+  //Agrega un Tramo a listaDeTramos
+  public agregarTramoLista(){
+    this.formulario.disable();
+    if(this.idModTramo!=null){
+      this.listaDeTramos[this.idModTramo]=this.formularioTramo.value;
+      this.formularioTramo.reset();
+      this.idModTramo=null;
+    }else{
+      this.listaDeTramos.push(this.formularioTramo.value);
+      this.formularioTramo.reset();
+    }
+    setTimeout(function() {
+      document.getElementById('idTramo').focus();
+    }, 20);
+  }
+  //Elimina un Tramo a listaDeTramos
+  public eliminarTramoLista(indice){
+    this.listaDeTramos.splice(indice, 1);
+    if(this.listaDeTramos.length==0){
+      this.formulario.enable();
+    }
+  }
+  //Modifica un Tramo de listaDeTramos
+  public modificarTramoLista(tramo, indice){
+    this.formularioTramo.patchValue(tramo);
+    setTimeout(function() {
+      document.getElementById('idTramo').focus();
+    }, 20);
+    this.idModTramo=indice;
+  }
   //Agrega un registro
   private agregar() {
     this.formulario.get('ordenesVentasEscalas').setValue(this.listaDeEscalas); 
+    this.formulario.get('ordenesVentasTramos').setValue(this.listaDeTramos); 
     console.log(this.formulario.value);
-
     this.ordenVentaServicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -392,6 +457,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Reestablecer campos
   private reestablecerCampos(valor){
+    this.formulario.disable();
     this.formulario.reset();
     this.formularioEscala.reset();
     this.formularioTramo.reset();
@@ -408,8 +474,8 @@ export class OrdenVentaComponent implements OnInit {
     document.getElementById(label).classList.remove('label-error');
   }
   //Manejo de cambio de autocompletado tramo
-  public cambioAutocompletadoTramo(elemento, indice) {
-    
+  public cambioAutocompletadoTramo() {
+    this.formularioTramo.get('kmTramo').setValue(this.formularioTramo.get('tramo').value.km);
   }
   public cambioImporte(valor, elemento, i) {
     

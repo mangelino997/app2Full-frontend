@@ -11,3 +11,15 @@
     width: 150px;
     display: inline-block;
 }
+.col-md-3-5 {
+    flex: 0 0 29.1999999%;
+    max-width: 29.1999999%;
+}
+.col-md-1-5 {
+    flex: 0 0 12.499999995%;
+    max-width: 12.499999995%;
+}
+.col-md-0-5 {
+    flex: 0 0 4.12%;
+    max-width: 4.12%;
+}
