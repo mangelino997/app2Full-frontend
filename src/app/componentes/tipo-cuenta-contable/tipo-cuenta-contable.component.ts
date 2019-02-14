@@ -1,17 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { TipoCuentaBancariaService } from '../../servicios/tipo-cuenta-bancaria.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { TipoCuentaBancaria } from 'src/app/modelos/tipo-cuenta-bancaria';
-
+import { TipoCuentaContable } from 'src/app/modelos/tipo-cuenta-contable';
+import { TipoCuentaContableService } from 'src/app/servicios/tipo-cuenta-contable.service';
 @Component({
-  selector: 'app-tipo-cuenta-bancaria',
-  templateUrl: './tipo-cuenta-bancaria.component.html',
-  styleUrls: ['./tipo-cuenta-bancaria.component.css']
+  selector: 'app-tipo-cuenta-contable',
+  templateUrl: './tipo-cuenta-contable.component.html',
+  styleUrls: ['./tipo-cuenta-contable.component.css']
 })
-export class TipoCuentaBancariaComponent implements OnInit {
+export class TipoCuentaContableComponent implements OnInit {
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -35,8 +34,8 @@ export class TipoCuentaBancariaComponent implements OnInit {
   //Define la lista de resultados del autocompletado
   public resultados:Array<any> = [];
   //Constructor
-  constructor(private servicio: TipoCuentaBancariaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private tipoCuentaBancaria: TipoCuentaBancaria, private appComponent: AppComponent, private toastr: ToastrService) {
+  constructor(private servicio: TipoCuentaContableService, private subopcionPestaniaService: SubopcionPestaniaService,
+    private tipoCuentaContable: TipoCuentaContable, private appComponent: AppComponent, private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -65,7 +64,7 @@ export class TipoCuentaBancariaComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = this.tipoCuentaBancaria.formulario;
+    this.formulario = this.tipoCuentaContable.formulario;
     //Obtiene la lista completa de registros
     this.listar();
   }
@@ -81,7 +80,7 @@ export class TipoCuentaBancariaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    
+    // this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {

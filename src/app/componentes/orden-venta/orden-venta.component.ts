@@ -406,6 +406,11 @@ export class OrdenVentaComponent implements OnInit {
     }, 20);
     this.idModTramo=indice;
   }
+  //Establece ceros a la derecha de los campos (decimales)
+  public establecerCeros(campo){
+    campo.setValue(this.appComponent.establecerCeros(campo.value));
+    console.log(this.appComponent.establecerCeros(campo.value));
+  }
   //Agrega un registro
   private agregar() {
     this.formulario.get('ordenesVentasEscalas').setValue(this.listaDeEscalas); 
