@@ -1,8 +1,8 @@
-import { SelectionModel } from '@angular/cdk/collections';
-import { FlatTreeControl } from '@angular/cdk/tree';
 import { Component, Injectable } from '@angular/core';
+import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { BehaviorSubject } from 'rxjs';
+import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 
 export class TodoItemNode {
   children: TodoItemNode[];
@@ -15,36 +15,39 @@ export class TodoItemFlatNode {
   expandable: boolean;
 }
 
-const TREE_DATA = {
-  Groceries: {
-    'Almond Meal flour': null,
-    'Organic eggs': null,
-    'Protein Powder': null,
-    Fruits: {
-      Apple: null,
-      Berries: ['Blueberry', 'Raspberry'],
-      Orange: null
-    }
-  },
-  Reminders: [
-    'Cook dinner',
-    'Read the Material Design spec',
-    'Upgrade Application to Angular'
-  ]
-};
+// const TREE_DATA = {
+//   Groceries: {
+//     'Almond Meal flour': null,
+//     'Organic eggs': null,
+//     'Protein Powder': null,
+//     Fruits: {
+//       Apple: null,
+//       Berries: ['Blueberry', 'Raspberry'],
+//       Orange: null
+//     }
+//   },
+//   Reminders: [
+//     'Cook dinner',
+//     'Read the Material Design spec',
+//     'Upgrade Application to Angular'
+//   ]
+// };
 
 @Injectable()
 export class ChecklistDatabase {
   dataChange = new BehaviorSubject<TodoItemNode[]>([]);
-
+  public planCuenta:any;
   get data(): TodoItemNode[] { return this.dataChange.value; }
 
-  constructor() {
+  constructor(private planCuentaServicio: PlanCuentaService) {
+    this.planCuentaServicio.obtenerPlanCuenta().subscribe(res => {
+      this.planCuenta = res.json();
+    });
     this.initialize();
   }
 
   initialize() {
-    const data = this.buildFileTree(TREE_DATA, 0);
+    const data = this.buildFileTree(this.planCuenta, 0);
     this.dataChange.next(data);
   }
 
@@ -103,7 +106,6 @@ export class PlanCuentaComponent {
       this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<TodoItemFlatNode>(this.getLevel, this.isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-
     database.dataChange.subscribe(data => {
       this.dataSource.data = data;
     });

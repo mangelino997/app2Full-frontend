@@ -52,11 +52,15 @@ export class PlanCuentaService {
   }
   //Obtiene un registros por nombre
   public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/'+ nombre, this.options);
+    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options);
   }
   //Obtiene un registros por Grupo Activo
   public listarGrupoActivo(idGrupo) {
-    return this.http.get(this.url + '/listarGrupoActivo/'+ idGrupo, this.options);
+    return this.http.get(this.url + '/listarGrupoActivo/' + idGrupo, this.options);
+  }
+  //Obtiene el plan de cuenta
+  public obtenerPlanCuenta() {
+    return this.http.get(this.url + '/obtenerPlanCuenta', this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
