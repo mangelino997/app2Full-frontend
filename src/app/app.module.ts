@@ -243,7 +243,7 @@ import { MesService } from './servicios/mes.service';
 
 //Rutas
 const appRoutes: Routes = [
-  { path: '', component: LoginComponent },
+  { path: '', component: PlanCuentaComponent },
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent, canActivate: [GuardiaService] },
   { path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService] },

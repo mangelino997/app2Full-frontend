@@ -4,10 +4,17 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { BehaviorSubject } from 'rxjs';
 import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 
-export class TodoItemNode {
-  children: TodoItemNode[];
-  item: string;
+export class Arbol {
+  nombre: string;
+  hijos: Arbol[];
 }
+
+// export class Arbol {
+//   children: Arbol[];
+//   item: string;
+//   // esImputable: boolean;
+//   // estaActivo: boolean;
+// }
 
 export class TodoItemFlatNode {
   item: string;
@@ -16,73 +23,79 @@ export class TodoItemFlatNode {
 }
 
 // const TREE_DATA = {
-//   Groceries: {
-//     'Almond Meal flour': null,
-//     'Organic eggs': null,
-//     'Protein Powder': null,
-//     Fruits: {
-//       Apple: null,
-//       Berries: ['Blueberry', 'Raspberry'],
-//       Orange: null
+//   '/': {
+//     Activo: {
+//       Lenguajes: [
+//         'sql', 'java', 'angular'
+//       ]
+//     },
+//     Pasivo: {
+
 //     }
-//   },
-//   Reminders: [
-//     'Cook dinner',
-//     'Read the Material Design spec',
-//     'Upgrade Application to Angular'
-//   ]
+//   }
 // };
 
 @Injectable()
 export class ChecklistDatabase {
-  dataChange = new BehaviorSubject<TodoItemNode[]>([]);
+  dataChange = new BehaviorSubject<Arbol[]>([]);
   public planCuenta:any;
-  get data(): TodoItemNode[] { return this.dataChange.value; }
+  get data(): Arbol[] { return this.dataChange.value; }
 
   constructor(private planCuentaServicio: PlanCuentaService) {
     this.planCuentaServicio.obtenerPlanCuenta().subscribe(res => {
-      this.planCuenta = res.json();
+      this.initialize(res.json());
     });
-    this.initialize();
   }
 
-  initialize() {
-    const data = this.buildFileTree(this.planCuenta, 0);
-    this.dataChange.next(data);
+  initialize(planCuenta) {
+    // const d = this.buildFileTree(TREE_DATA, 0);
+    const data = this.crearArbol(planCuenta);
+    console.log(data);
+    let arbol = [];
+    arbol.push(data);
+    this.dataChange.next(arbol);
   }
 
-  buildFileTree(obj: { [key: string]: any }, level: number): TodoItemNode[] {
-    return Object.keys(obj).reduce<TodoItemNode[]>((accumulator, key) => {
-      const value = obj[key];
-      const node = new TodoItemNode();
-      node.item = key;
-
-      if (value != null) {
-        if (typeof value === 'object') {
-          node.children = this.buildFileTree(value, level + 1);
-        } else {
-          node.item = value;
-        }
-      }
-
-      return accumulator.concat(node);
-    }, []);
+  private crearArbol(elemento): Arbol {
+    let arbol = new Arbol();
+    arbol.nombre = elemento.nombre;
+    arbol.hijos = elemento.hijos;
+    for (const i in arbol.hijos) {
+      arbol.hijos[i] = this.crearArbol(arbol.hijos[i]);
+    }
+    return arbol;
   }
 
-  insertItem(parent: TodoItemNode, name: string) {
-    if (parent.children) {
-      parent.children.push({ item: name } as TodoItemNode);
+  // buildFileTree(obj: { [key: string]: any }, level: number): Arbol[] {
+  //   return Object.keys(obj).reduce<Arbol[]>((accumulator, key) => {
+  //     const value = obj[key];
+  //     const node = new Arbol();
+  //     node.item = key;
+  //     if (value != null) {
+  //       if (typeof value === 'object') {
+  //         node.children = this.buildFileTree(value, level + 1);
+  //       } else {
+  //         node.item = obj[key];
+  //       }
+  //     }
+  //     return accumulator.concat(node);
+  //   }, []);
+  // }
+
+  insertItem(parent: Arbol, name: string) {
+    if (parent.hijos) {
+      parent.hijos.push({ nombre: name } as Arbol);
       this.dataChange.next(this.data);
     }
   }
 
-  updateItem(node: TodoItemNode, name: string) {
-    node.item = name;
+  updateItem(node: Arbol, name: string) {
+    node.nombre = name;
     this.dataChange.next(this.data);
   }
 
-  deleteItem(node: TodoItemNode) {
-    node.item = null;
+  deleteItem(node: Arbol) {
+    node.nombre = null;
     this.dataChange.next(this.data);
   }
 }
@@ -93,13 +106,13 @@ export class ChecklistDatabase {
   styleUrls: ['./plan-cuenta.component.css']
 })
 export class PlanCuentaComponent {
-  flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
-  nestedNodeMap = new Map<TodoItemNode, TodoItemFlatNode>();
+  flatNodeMap = new Map<TodoItemFlatNode, Arbol>();
+  nestedNodeMap = new Map<Arbol, TodoItemFlatNode>();
   selectedParent: TodoItemFlatNode | null = null;
   newItemName = '';
   treeControl: FlatTreeControl<TodoItemFlatNode>;
-  treeFlattener: MatTreeFlattener<TodoItemNode, TodoItemFlatNode>;
-  dataSource: MatTreeFlatDataSource<TodoItemNode, TodoItemFlatNode>;
+  treeFlattener: MatTreeFlattener<Arbol, TodoItemFlatNode>;
+  dataSource: MatTreeFlatDataSource<Arbol, TodoItemFlatNode>;
 
   constructor(private database: ChecklistDatabase) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
@@ -115,20 +128,20 @@ export class PlanCuentaComponent {
 
   isExpandable = (node: TodoItemFlatNode) => node.expandable;
 
-  getChildren = (node: TodoItemNode): TodoItemNode[] => node.children;
+  getChildren = (node: Arbol): Arbol[] => node.hijos;
 
   hasChild = (_: number, _nodeData: TodoItemFlatNode) => _nodeData.expandable;
 
   hasNoContent = (_: number, _nodeData: TodoItemFlatNode) => _nodeData.item === '';
 
-  transformer = (node: TodoItemNode, level: number) => {
+  transformer = (node: Arbol, level: number) => {
     const existingNode = this.nestedNodeMap.get(node);
-    const flatNode = existingNode && existingNode.item === node.item
+    const flatNode = existingNode && existingNode.item === node.nombre
       ? existingNode
       : new TodoItemFlatNode();
-    flatNode.item = node.item;
+    flatNode.item = node.nombre;
     flatNode.level = level;
-    flatNode.expandable = !!node.children;
+    flatNode.expandable = !!node.hijos;
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
     return flatNode;
