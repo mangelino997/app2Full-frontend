@@ -21,7 +21,7 @@
             <mat-option [value]="false">No</mat-option>
             <mat-option [value]="true">Si</mat-option>
           </mat-select>
-          <button mat-raised-button color="primary" (click)="saveNode(node, nombre.value, imputable.value, activo.value)">Agregar</button>
+          <button mat-raised-button color="primary" (click)="agregar(node, nombre.value, imputable.value, activo.value)">Agregar</button>
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
           <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.filename">
@@ -31,10 +31,10 @@
           </button>
           <b style="font-size: 16px; margin-right: 5px;">{{node.nombre}}</b>
           ({{node.esImputable ? 'Imputable' : 'No Imputable'}} - {{node.estaActivo ? 'Activo' : 'No Activo'}})
-          <button mat-icon-button (click)="addNewItem(node)">
+          <button class="boton-agregar" mat-icon-button (click)="nuevoNodo(node)">
             <mat-icon>add_circle</mat-icon>
           </button>
-          <button mat-icon-button (click)="deleteNode(node)">
+          <button class="boton-eliminar" mat-icon-button (click)="eliminar(node, i)">
             <mat-icon>cancel</mat-icon>
           </button>
         </mat-tree-node>

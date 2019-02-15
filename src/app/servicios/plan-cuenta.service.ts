@@ -116,7 +116,6 @@ export class PlanCuentaService {
       res => {
         if(res.status == 201) {
           let respuesta = res.json();
-          console.log(respuesta);
           elemento.id = respuesta.id;
           this.listaCompleta.next(this.data);
         }
@@ -131,21 +130,22 @@ export class PlanCuentaService {
     return this.http.put(this.url, elemento, this.options);
   }
   //Elimina un registro
-  public eliminar(id) {
+  public eliminar(id, nodoPadre) {
     return this.http.delete(this.url + '/' + id, this.options).subscribe(
       res => {
         let respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.eliminarNodo(id);
+          for(let i in nodoPadre.hijos) {
+            if(nodoPadre.hijos[i].id == id) {
+              nodoPadre.hijos.splice(i, 1);
+              this.listaCompleta.next(this.data);
+            }
+          }
         }
       },
       err => {
         console.log('ERROR');
       }
     );
-  }
-  //Elimina el nodo del arbol
-  private eliminarNodo(id) {
-    
   }
 }
