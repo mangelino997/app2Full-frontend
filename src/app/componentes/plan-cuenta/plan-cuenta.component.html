@@ -1,18 +1,27 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md 12">
-      <mat-tree [dataSource]="dataSource" [treeControl]="treeControl">
-        <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
+      <mat-tree [dataSource]="datos" [treeControl]="treeControl">
+        <!-- <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
           <button mat-icon-button disabled></button>
-          {{node.item}}
-          <button mat-icon-button (click)="deleteNode(node)"><mat-icon>cancel</mat-icon></button>
-        </mat-tree-node>
+          {{node.nombre}}
+          <button mat-icon-button (click)="deleteNode(node)">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </mat-tree-node> -->
         <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding>
           <button mat-icon-button disabled></button>
-          <mat-form-field>
-            <input matInput #itemValue placeholder="New item...">
-          </mat-form-field>
-          <button mat-button (click)="saveNode(node, itemValue.value)">Save</button>
+          <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm"
+            #nombre placeholder="Nombre">
+          <mat-select id="idImputable" class="form-control form-control-sm" #imputable placeholder="Es Imputable">
+            <mat-option [value]="false">No</mat-option>
+            <mat-option [value]="true">Si</mat-option>
+          </mat-select>
+          <mat-select id="idActivo" class="form-control form-control-sm" #activo placeholder="Esta Activo">
+            <mat-option [value]="false">No</mat-option>
+            <mat-option [value]="true">Si</mat-option>
+          </mat-select>
+          <button mat-raised-button color="primary" (click)="saveNode(node, nombre.value, imputable.value, activo.value)">Agregar</button>
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
           <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.filename">
@@ -20,9 +29,13 @@
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
           </button>
-          {{node.item}}
+          <b style="font-size: 16px; margin-right: 5px;">{{node.nombre}}</b>
+          ({{node.esImputable ? 'Imputable' : 'No Imputable'}} - {{node.estaActivo ? 'Activo' : 'No Activo'}})
           <button mat-icon-button (click)="addNewItem(node)">
             <mat-icon>add_circle</mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteNode(node)">
+            <mat-icon>cancel</mat-icon>
           </button>
         </mat-tree-node>
       </mat-tree>

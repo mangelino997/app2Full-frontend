@@ -3,9 +3,16 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { BehaviorSubject } from 'rxjs';
 import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
+import { AppComponent } from 'src/app/app.component';
 
 export class Arbol {
+  id: number;
   nombre: string;
+  esImputable: boolean;
+  estaActivo: boolean;
+  padre: Arbol;
+  empresa: {};
+  usuarioAlta: {};
   hijos: Arbol[];
 }
 
@@ -16,8 +23,14 @@ export class Arbol {
 //   // estaActivo: boolean;
 // }
 
-export class TodoItemFlatNode {
-  item: string;
+export class Nodo {
+  id: number;
+  nombre: string;
+  esImputable: boolean;
+  estaActivo: boolean;
+  padre: Arbol;
+  empresa: {};
+  usuarioAlta: {};
   level: number;
   expandable: boolean;
 }
@@ -35,70 +48,83 @@ export class TodoItemFlatNode {
 //   }
 // };
 
-@Injectable()
-export class ChecklistDatabase {
-  dataChange = new BehaviorSubject<Arbol[]>([]);
-  public planCuenta:any;
-  get data(): Arbol[] { return this.dataChange.value; }
+// @Injectable()
+// export class ChecklistDatabase {
+//   dataChange = new BehaviorSubject<Arbol[]>([]);
+//   public planCuenta:any;
+//   get data(): Arbol[] { return this.dataChange.value; }
 
-  constructor(private planCuentaServicio: PlanCuentaService) {
-    this.planCuentaServicio.obtenerPlanCuenta().subscribe(res => {
-      this.initialize(res.json());
-    });
-  }
+//   constructor(private planCuentaServicio: PlanCuentaService) {
+//     this.planCuentaServicio.obtenerPlanCuenta().subscribe(res => {
+//       this.initialize(res.json());
+//     });
+//   }
 
-  initialize(planCuenta) {
-    // const d = this.buildFileTree(TREE_DATA, 0);
-    const data = this.crearArbol(planCuenta);
-    console.log(data);
-    let arbol = [];
-    arbol.push(data);
-    this.dataChange.next(arbol);
-  }
+//   initialize(planCuenta) {
+//     // const d = this.buildFileTree(TREE_DATA, 0);
+//     const data = this.crearArbol(planCuenta);
+//     let arbol = [];
+//     arbol.push(data);
+//     this.dataChange.next(arbol);
+//   }
 
-  private crearArbol(elemento): Arbol {
-    let arbol = new Arbol();
-    arbol.nombre = elemento.nombre;
-    arbol.hijos = elemento.hijos;
-    for (const i in arbol.hijos) {
-      arbol.hijos[i] = this.crearArbol(arbol.hijos[i]);
-    }
-    return arbol;
-  }
+//   private crearArbol(elemento): Arbol {
+//     let arbol = new Arbol();
+//     arbol.id = elemento.id;
+//     arbol.nombre = elemento.nombre;
+//     arbol.esImputable = elemento.esImputable;
+//     arbol.estaActivo = elemento.estaActivo;
+//     arbol.hijos = elemento.hijos;
+//     for (const i in arbol.hijos) {
+//       arbol.hijos[i] = this.crearArbol(arbol.hijos[i]);
+//     }
+//     return arbol;
+//   }
 
-  // buildFileTree(obj: { [key: string]: any }, level: number): Arbol[] {
-  //   return Object.keys(obj).reduce<Arbol[]>((accumulator, key) => {
-  //     const value = obj[key];
-  //     const node = new Arbol();
-  //     node.item = key;
-  //     if (value != null) {
-  //       if (typeof value === 'object') {
-  //         node.children = this.buildFileTree(value, level + 1);
-  //       } else {
-  //         node.item = obj[key];
-  //       }
-  //     }
-  //     return accumulator.concat(node);
-  //   }, []);
-  // }
+//   buildFileTree(obj: { [key: string]: any }, level: number): Arbol[] {
+//     return Object.keys(obj).reduce<Arbol[]>((accumulator, key) => {
+//       const value = obj[key];
+//       const node = new Arbol();
+//       node.item = key;
+//       if (value != null) {
+//         if (typeof value === 'object') {
+//           node.children = this.buildFileTree(value, level + 1);
+//         } else {
+//           node.item = obj[key];
+//         }
+//       }
+//       return accumulator.concat(node);
+//     }, []);
+//   }
 
-  insertItem(parent: Arbol, name: string) {
-    if (parent.hijos) {
-      parent.hijos.push({ nombre: name } as Arbol);
-      this.dataChange.next(this.data);
-    }
-  }
+//   insertItem(parent: Arbol, name: string) {
+//     if (parent.hijos) {
+//       parent.hijos.push({ nombre: name } as Arbol);
+//       this.dataChange.next(this.data);
+//     }
+//   }
 
-  updateItem(node: Arbol, name: string) {
-    node.nombre = name;
-    this.dataChange.next(this.data);
-  }
+//   updateItem(nodo: Arbol, nombre: string, imputable: boolean, activo: boolean, idPadre: number) {
+//     nodo.nombre = nombre;
+//     nodo.esImputable = imputable;
+//     nodo.estaActivo = activo;
+//     nodo.padre.id = idPadre;
+//     nodo.hijos = [];
+//     this.planCuentaServicio.agregar(nodo).subscribe(
+//       res => {
+//         this.dataChange.next(this.data);
+//       },
+//       err => {
 
-  deleteItem(node: Arbol) {
-    node.nombre = null;
-    this.dataChange.next(this.data);
-  }
-}
+//       }
+//     );
+//   }
+
+//   deleteItem(node: Arbol) {
+//     node.nombre = null;
+//     this.dataChange.next(this.data);
+//   }
+// }
 
 @Component({
   selector: 'app-plan-cuenta',
@@ -106,48 +132,54 @@ export class ChecklistDatabase {
   styleUrls: ['./plan-cuenta.component.css']
 })
 export class PlanCuentaComponent {
-  flatNodeMap = new Map<TodoItemFlatNode, Arbol>();
-  nestedNodeMap = new Map<Arbol, TodoItemFlatNode>();
-  selectedParent: TodoItemFlatNode | null = null;
+  flatNodeMap = new Map<Nodo, Arbol>();
+  nestedNodeMap = new Map<Arbol, Nodo>();
+  selectedParent: Nodo | null = null;
   newItemName = '';
-  treeControl: FlatTreeControl<TodoItemFlatNode>;
-  treeFlattener: MatTreeFlattener<Arbol, TodoItemFlatNode>;
-  dataSource: MatTreeFlatDataSource<Arbol, TodoItemFlatNode>;
+  treeControl: FlatTreeControl<Nodo>;
+  treeFlattener: MatTreeFlattener<Arbol, Nodo>;
+  //Defiene los datos del plan de cuenta
+  datos: MatTreeFlatDataSource<Arbol, Nodo>;
 
-  constructor(private database: ChecklistDatabase) {
+  constructor(private planCuentaServicio: PlanCuentaService, private appComponent: AppComponent) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
-    this.treeControl = new FlatTreeControl<TodoItemFlatNode>(this.getLevel, this.isExpandable);
-    this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-    database.dataChange.subscribe(data => {
-      this.dataSource.data = data;
+    this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
+    this.datos = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    this.planCuentaServicio.listaCompleta.subscribe(data => {
+      this.datos.data = data;
     });
   }
 
-  getLevel = (node: TodoItemFlatNode) => node.level;
+  getLevel = (node: Nodo) => node.level;
 
-  isExpandable = (node: TodoItemFlatNode) => node.expandable;
+  isExpandable = (node: Nodo) => node.expandable;
 
   getChildren = (node: Arbol): Arbol[] => node.hijos;
 
-  hasChild = (_: number, _nodeData: TodoItemFlatNode) => _nodeData.expandable;
+  hasChild = (_: number, _nodeData: Nodo) => _nodeData.expandable;
 
-  hasNoContent = (_: number, _nodeData: TodoItemFlatNode) => _nodeData.item === '';
+  hasNoContent = (_: number, _nodeData: Nodo) => _nodeData.nombre === '';
 
   transformer = (node: Arbol, level: number) => {
     const existingNode = this.nestedNodeMap.get(node);
-    const flatNode = existingNode && existingNode.item === node.nombre
+    const flatNode = existingNode && existingNode.nombre === node.nombre
       ? existingNode
-      : new TodoItemFlatNode();
-    flatNode.item = node.nombre;
+      : new Nodo();
+    flatNode.id = node.id;
+    flatNode.nombre = node.nombre;
     flatNode.level = level;
+    flatNode.esImputable = node.esImputable;
+    flatNode.estaActivo = node.estaActivo;
+    flatNode.empresa = {};
+    flatNode.usuarioAlta = {};
     flatNode.expandable = !!node.hijos;
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
     return flatNode;
   }
 
-  getParentNode(node: TodoItemFlatNode): TodoItemFlatNode | null {
+  getParentNode(node: Nodo): Nodo | null {
     const currentLevel = this.getLevel(node);
 
     if (currentLevel < 1) {
@@ -166,19 +198,27 @@ export class PlanCuentaComponent {
     return null;
   }
 
-  addNewItem(node: TodoItemFlatNode) {
-    const parentNode = this.flatNodeMap.get(node);
-    this.database.insertItem(parentNode!, '');
-    this.treeControl.expand(node);
+  addNewItem(nodo: Nodo) {
+    const nodoPadre = this.flatNodeMap.get(nodo);
+    this.planCuentaServicio.agregarElemento(nodoPadre!, '');
+    //this.database.insertItem(parentNode!, '');
+    this.treeControl.expand(nodo);
   }
 
-  saveNode(node: TodoItemFlatNode, itemValue: string) {
-    const nestedNode = this.flatNodeMap.get(node);
-    this.database.updateItem(nestedNode!, itemValue);
+  saveNode(nodo: Nodo, nombre: string, imputable: boolean, activo: boolean) {
+    const elemento = this.flatNodeMap.get(nodo);
+    elemento.nombre = nombre;
+    elemento.esImputable = imputable;
+    elemento.estaActivo = activo;
+    elemento.hijos = [];
+    elemento.empresa = this.appComponent.getEmpresa();
+    elemento.usuarioAlta = this.appComponent.getUsuario();
+    this.planCuentaServicio.agregar(elemento);
+    // this.database.updateItem(nestedNode!, nombre, imputable, activo, this.idPadre);
   }
 
-  deleteNode(node: TodoItemFlatNode) {
-    const nestedNode = this.flatNodeMap.get(node);
-    this.database.deleteItem(nestedNode!);
+  deleteNode(node: Nodo) {
+    let nestedNode = this.flatNodeMap.get(node);
+    this.planCuentaServicio.eliminar(nestedNode.id);
   }
 }
