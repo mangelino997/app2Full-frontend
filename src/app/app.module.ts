@@ -144,6 +144,7 @@ import { CondicionCompra } from './modelos/condicion-compra';
 import { CondicionVenta } from './modelos/condicion-venta';
 import { Producto } from './modelos/producto';
 import { ConceptoAfip } from './modelos/concepto-afip';
+import { VentaConcepto } from './modelos/venta-concepto';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -244,6 +245,7 @@ import { PlanCuentaComponent } from './componentes/plan-cuenta/plan-cuenta.compo
 import { TipoCuentaContableComponent } from './componentes/tipo-cuenta-contable/tipo-cuenta-contable.component';
 import { GrupoCuentaContableComponent } from './componentes/grupo-cuenta-contable/grupo-cuenta-contable.component';
 import { EjercicioComponent } from './componentes/ejercicio/ejercicio.component';
+import { VentaConceptoService } from './servicios/venta-concepto.service';
 
 
 
@@ -336,7 +338,11 @@ const appRoutes: Routes = [
   { path: 'contablemonedacotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService] },
   { path: 'contablemonedacuentacontable', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] },
   { path: 'plandecuentasdefinicion', component: PlanCuentaComponent, canActivate: [GuardiaService] },
-  { path: 'configuracionafipconcepto', component: ConceptoAfipComponent, canActivate: [GuardiaService] }
+  { path: 'configuracionafipconcepto', component: ConceptoAfipComponent, canActivate: [GuardiaService] },
+  { path: 'configuracionventasconceptos', component: VentaConceptoComponent, canActivate: [GuardiaService] }
+
+
+  
   
 ]
 
@@ -639,6 +645,8 @@ const stompConfig: StompConfig = {
     ProductoService,
     ConceptoAfip,
     AfipConceptoService,
+    VentaConcepto,
+    VentaConceptoService,
     MesService,
     {
       provide: StompConfig,
