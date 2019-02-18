@@ -19,8 +19,7 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idMoneda" class="tamanio-label">Código</label>
-              <input id="idMoneda" type="number" formControlName="codigo" class="form-control form-control-sm"
-                [readonly]="true">
+              <input id="idMoneda" type="number" formControlName="id" class="form-control form-control-sm" readonly>
             </div>
           </div>
         </div>
@@ -28,17 +27,17 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre*</label>
-              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm">
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label id="labelEstaActivo" for="idEstaActivo" class="tamanio-label">Está Activo</label>
-              <mat-select class="form-control" formControlName="estaActivo">
-                <mat-option [value]="false"> Sí</mat-option>
-                <mat-option [value]="true"> No</mat-option>
+              <label id="labelEsContado" for="idEsContado" class="tamanio-label">Es Contado *</label>
+              <mat-select class="form-control form-control-sm" formControlName="esContado">
+                <mat-option [value]="true"> Sí</mat-option>
+                <mat-option [value]="false"> No</mat-option>
               </mat-select>
             </div>
           </div>
@@ -51,30 +50,34 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-8">
+    <div class="col-md-10">
       <table class="table table-bordered table-striped table-sm">
         <thead>
           <tr>
             <th class="text-center" style="width:20%" scope="col">#</th>
-            <th class="text-center" style="width:30%" scope="col">Nombre</th>
-            <th class="text-center" style="width:30%" scope="col">Está Activa</th>
+            <th class="text-center" style="width:35%" scope="col">Nombre</th>
+            <th class="text-center" style="width:35%" scope="col">Es Contado</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
+            <th class="text-center" style="width:5%" scope="col">-</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+          <tr *ngFor="let l of listaCompleta">
+            <td align="center">
+              <span>{{l.id}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.nombre}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.esContado? 'Sí':'No'}}</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+            </td>
+            <td align="center">
+              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+            </td>
           </tr>
         </tbody>
       </table>

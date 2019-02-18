@@ -3,6 +3,8 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { CondicionCompra } from 'src/app/modelos/condicion-compra';
+import { CondicionCompraService } from 'src/app/servicios/condicion-compra.service';
 
 @Component({
   selector: 'app-condicion-compra',
@@ -40,34 +42,39 @@ export class CondicionCompraComponent implements OnInit {
    public empresas:Array<any> = [];
    // public compereFn:any;
    //Constructor
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+  constructor(private servicio: CondicionCompraService ,private condicionCompra: CondicionCompra, private appComponent: AppComponent, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(1, 5)
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
-        console.log(res.json());
       },
       err => {
-        console.log(err);
       }
     );
    }
 
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      codigo: new FormControl(),
-      nombre: new FormControl( ),
-      estaActivo: new FormControl()
-      });
-      //Establece los valores de la primera pestania activa
-      this.seleccionarPestania(1, 'Agregar', 0);
+    this.formulario = this.condicionCompra.formulario;
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
+    //Obtiene la lista completa de registros
+    this.listar();
   }
-
+  //Obtiene el listado de registros
+  private listar() {
+    this.servicio.listar().subscribe(
+      res => {
+        console.log(res.json());
+        this.listaCompleta = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -81,6 +88,7 @@ export class CondicionCompraComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.formulario.reset();
+    this.listar();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     /*
@@ -93,7 +101,7 @@ export class CondicionCompraComponent implements OnInit {
     }
     switch (id) {
       case 1:
-        // this.obtenerSiguienteId();
+        this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
@@ -116,31 +124,90 @@ export class CondicionCompraComponent implements OnInit {
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('codigo').enable();
-      this.formulario.get('nombre').enable();
-      this.formulario.get('estaActivo').enable();
+      this.formulario.get('esContado').enable();
     } else {
-      this.formulario.get('codigo').disable();
-      this.formulario.get('nombre').disable();
-      this.formulario.get('estaActivo').disable();
+      this.formulario.get('esContado').disable();
     }
   }
+  //Obtiene el siguiente id
+  private obtenerSiguienteId() {
+    this.servicio.obtenerSiguienteId().subscribe(
+      res => {
+        this.formulario.get('id').setValue(res.json());
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  // public accion(indice) {
-  //   switch (indice) {
-  //     case 1:
-  //       this.agregar();
-  //       break;
-  //     case 3:
-  //       this.actualizar();
-  //       break;
-  //     case 4:
-  //       this.eliminar();
-  //       break;
-  //     default:
-  //       break;
-  //   }
-  // }
+  public accion(indice) {
+    switch (indice) {
+      case 1:
+        this.agregar();
+        break;
+      case 3:
+        this.actualizar();
+        break;
+      case 4:
+        this.eliminar();
+        break;
+      default:
+        break;
+    }
+  }
+  //Agrega un registro
+  private agregar() {
+    this.servicio.agregar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 201) {
+          this.reestablecerFormulario(respuesta.id);
+          setTimeout(function() {
+            document.getElementById('idNombre').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+      }
+    );
+  }
+  //Actualiza un registro
+  private actualizar() {
+    this.servicio.actualizar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.reestablecerFormulario('');
+          setTimeout(function() {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+      }
+    );
+  }
+  //Elimina un registro
+  private eliminar() {
+    console.log();
+  }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
