@@ -12,8 +12,15 @@
       <h5>{{pestaniaActual}} Condición de Compra</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
-          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" autocomplete="off">
+          <label for="idAutocompletado" class="tamanio-label">Buscar Cliente</label>
+          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
+            type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+            <mat-option *ngFor="let item of resultados" [value]="item"
+              (onSelectionChange)="formulario.setValue(item)">
+              {{item.nombre}}
+            </mat-option>
+          </mat-autocomplete>
         </div>
         <div class="row justify-content-center">
           <div class="col-md-12">
