@@ -107,7 +107,7 @@ import { PlanCuentaService } from './servicios/plan-cuenta.service';
 import { TipoCuentaContableService } from './servicios/tipo-cuenta-contable.service';
 import { GrupoCuentaContableService } from './servicios/grupo-cuenta-contable.service';
 import { EjercicioService } from './servicios/ejercicio.service';
-
+import { MesService } from './servicios/mes.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -138,7 +138,6 @@ import { TipoCuentaBancaria } from './modelos/tipo-cuenta-bancaria';
 import { TipoCuentaContable } from './modelos/tipo-cuenta-contable';
 import { GrupoCuentaContable } from './modelos/grupo-cuenta-contable';
 import { Ejercicio } from './modelos/ejercicio';
-
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -235,11 +234,10 @@ import { ViajeInsumoComponent } from './componentes/viaje/viaje-insumo/viaje-ins
 import { ViajeGastoComponent } from './componentes/viaje/viaje-gasto/viaje-gasto.component';
 import { ViajePeajeComponent } from './componentes/viaje/viaje-peaje/viaje-peaje.component';
 import { ViajeRemitoGSComponent } from './componentes/viaje/viaje-remito-gs/viaje-remito-gs.component';
-import { PlanCuentaComponent, ChecklistDatabase } from './componentes/plan-cuenta/plan-cuenta.component';
+import { PlanCuentaComponent } from './componentes/plan-cuenta/plan-cuenta.component';
 import { TipoCuentaContableComponent } from './componentes/tipo-cuenta-contable/tipo-cuenta-contable.component';
 import { GrupoCuentaContableComponent } from './componentes/grupo-cuenta-contable/grupo-cuenta-contable.component';
 import { EjercicioComponent } from './componentes/ejercicio/ejercicio.component';
-import { MesService } from './servicios/mes.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -330,12 +328,10 @@ const appRoutes: Routes = [
   { path: 'contablemonedacotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService] },
   { path: 'contablemonedacuentacontable', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] },
   { path: 'plandecuentasdefinicion', component: PlanCuentaComponent, canActivate: [GuardiaService] }
-
-  
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.32:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -619,7 +615,6 @@ const stompConfig: StompConfig = {
     OrdenVenta,
     OrdenVentaEscala,
     OrdenVentaTramo,
-    ChecklistDatabase,
     TipoCuentaBancaria,
     TipoCuentaContable,
     TipoCuentaContableService,
