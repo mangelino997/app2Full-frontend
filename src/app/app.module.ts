@@ -240,6 +240,8 @@ import { GrupoCuentaContableComponent } from './componentes/grupo-cuenta-contabl
 import { EjercicioComponent } from './componentes/ejercicio/ejercicio.component';
 import { CondicionCompra } from './modelos/condicion-compra';
 import { CondicionVenta } from './modelos/condicion-venta';
+import { Producto } from './modelos/producto';
+import { ProductoService } from './servicios/producto.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -627,6 +629,8 @@ const stompConfig: StompConfig = {
     StompService,
     CondicionCompra,
     CondicionVenta,
+    Producto,
+    ProductoService,
     MesService,
     {
       provide: StompConfig,

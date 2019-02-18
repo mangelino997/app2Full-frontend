@@ -3,6 +3,12 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { ProductoService } from 'src/app/servicios/producto.service';
+import { Producto } from 'src/app/modelos/producto';
+import { RubroService } from 'src/app/servicios/rubro.service';
+import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
+import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
+import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 
 @Component({
   selector: 'app-producto',
@@ -28,6 +34,12 @@ public pestanias:Array<any> = [];
 public formulario:FormGroup;
 //Define la lista completa de registros
 public listaCompleta:Array<any> = [];
+//Define la lista completa de rubros
+public rubros:Array<any> = [];
+//Define la lista completa de marcas
+public marcas:Array<any> = [];
+//Define la lista completa de unidades de medida
+public unidadesMedidas:Array<any> = [];
 //Define el autocompletado
 public autocompletado:FormControl = new FormControl();
 //Define empresa para las busquedas
@@ -41,42 +53,88 @@ public empresas:Array<any> = [];
 // public compereFn:any;
 //Constructor
 
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+  constructor(private appComponent: AppComponent, private producto: Producto, private servicio: ProductoService, private subopcionPestaniaService: SubopcionPestaniaService, 
+    private rubrosServicio: RubroProductoService, private unidadMedidaServicio: UnidadMedidaService, private marcaServicio: MarcaProductoService , private toastr: ToastrService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(1, 4)
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
+      },
+      err => {
+      }
+    );
+    //Controla el autocompletado
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    });
+   }
+  ngOnInit() {
+    //Define el formulario y validaciones
+    this.formulario = this.producto.formulario;
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
+    //Obtiene la lista completa de registros
+    this.listar();
+    //Obtiene los rubros
+    this.listarRubros();
+    //Obtiene las marcas
+    this.listarMarcas();
+    //Obtiene las unidades de medida
+    this.listarUnidadesMedida();
+  }
+  //Obtiene el listado de registros
+  private listar() {
+    this.servicio.listar().subscribe(
+      res => {
         console.log(res.json());
+        this.listaCompleta = res.json();
       },
       err => {
         console.log(err);
       }
     );
-   }
-
-  ngOnInit() {
-    //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      codigo: new FormControl(),
-      nombre: new FormControl(),
-      marca: new FormControl(),
-      modelo: new FormControl(),
-      rubro: new FormControl(),
-      esAsignable: new FormControl(),
-      esSerializable: new FormControl(),
-      esCritico: new FormControl(),
-      reposicion: new FormControl()
-      });
-      //Establece los valores de la primera pestania activa
-      this.seleccionarPestania(1, 'Agregar', 0);
   }
-
+  //Obtiene el listado de rubros
+  private listarRubros() {
+    this.rubrosServicio.listar().subscribe(
+      res => {
+        this.rubros = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de marcas
+  private listarMarcas() {
+    this.marcaServicio.listar().subscribe(
+      res => {
+        this.marcas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de unidades de medida
+  private listarUnidadesMedida() {
+    this.unidadMedidaServicio.listar().subscribe(
+      res => {
+        this.unidadesMedidas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Funcion para establecer los valores de las pestañas
-private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
   this.pestaniaActual = nombrePestania;
   this.mostrarAutocompletado = autocompletado;
   this.soloLectura = soloLectura;
@@ -84,104 +142,189 @@ private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, b
   setTimeout(function () {
     document.getElementById(componente).focus();
   }, 20);
-};
-//Establece valores al seleccionar una pestania
-public seleccionarPestania(id, nombre, opcion) {
-  this.formulario.reset();
-  this.indiceSeleccionado = id;
-  this.activeLink = nombre;
-  /*
-  * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-  * cuando se hace click en ver o mod de la pestania lista
-  */
-  if(opcion == 0) {
+  };
+  //Establece valores al seleccionar una pestania
+  public seleccionarPestania(id, nombre, opcion) {
+    this.formulario.reset();
+    this.listar();
+    this.indiceSeleccionado = id;
+    this.activeLink = nombre;
+    /*
+    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
+    * cuando se hace click en ver o mod de la pestania lista
+    */
+    if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
+      this.resultados = [];
+    }
+    switch (id) {
+      case 1:
+        this.obtenerSiguienteId();
+        this.establecerEstadoCampos(true);
+        this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+        break;
+      case 2:
+        this.establecerEstadoCampos(false);
+        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        break;
+      case 3:
+        this.establecerEstadoCampos(true);
+        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        break;
+      case 4:
+        this.establecerEstadoCampos(false);
+        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      default:
+        break;
+    }
+  }
+  //Obtiene el siguiente id
+  private obtenerSiguienteId() {
+    this.servicio.obtenerSiguienteId().subscribe(
+      res => {
+        this.formulario.get('id').setValue(res.json());
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Habilita o deshabilita los campos dependiendo de la pestaña
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('rubroProducto').enable();
+      this.formulario.get('marcaProducto').enable();
+      this.formulario.get('unidadMedida').enable();
+      this.formulario.get('esAsignable').enable();
+      this.formulario.get('esSerializable').enable();
+      this.formulario.get('esCritico').enable();
+    } else {
+      this.formulario.get('rubroProducto').disable();
+      this.formulario.get('marcaProducto').disable();
+      this.formulario.get('unidadMedida').disable();
+      this.formulario.get('esAsignable').disable();
+      this.formulario.get('esSerializable').disable();
+      this.formulario.get('esCritico').disable();
+    }
+  }
+  //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
+  public accion(indice) {
+    switch (indice) {
+      case 1:
+        this.agregar();
+        break;
+      case 3:
+        this.actualizar();
+        break;
+      case 4:
+        this.eliminar();
+        break;
+      default:
+        break;
+    }
+  }
+  //Agrega un registro
+  private agregar() {
+    this.formulario.get('usuario').setValue(this.appComponent.getUsuario());
+    this.servicio.agregar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 201) {
+          this.reestablecerFormulario(respuesta.id);
+          setTimeout(function() {
+            document.getElementById('idNombre').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+      }
+    );
+  }
+  //Actualiza un registro
+  private actualizar() {
+    this.servicio.actualizar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.reestablecerFormulario('');
+          setTimeout(function() {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+      }
+    );
+  }
+  //Elimina un registro
+  private eliminar() {
+    console.log();
+  }
+  //Reestablece los campos formularios
+  private reestablecerFormulario(id) {
+    this.formulario.reset();
+    this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.resultados = [];
   }
-  switch (id) {
-    case 1:
-      // this.obtenerSiguienteId();
-      this.establecerEstadoCampos(true);
-      this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
-      break;
-    case 2:
-      this.establecerEstadoCampos(false);
-      this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
-      break;
-    case 3:
-      this.establecerEstadoCampos(true);
-      this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
-      break;
-    case 4:
-      this.establecerEstadoCampos(false);
-      this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
-      break;
-    default:
-      break;
+  //Manejo de colores de campos y labels
+  public cambioCampo(id, label) {
+    document.getElementById(id).classList.remove('is-invalid');
+    document.getElementById(label).classList.remove('label-error');
+  };
+  //Muestra en la pestania buscar el elemento seleccionado de listar
+  public activarConsultar(elemento) {
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
-}
-//Habilita o deshabilita los campos dependiendo de la pestaña
-private establecerEstadoCampos(estado) {
-  // if(estado) {
-  //   this.formulario.get('codigo').enable();
-  //   this.formulario.get('nombre').enable();
-  //   this.formulario.get('esContado').enable();
-  // } else {
-  //   this.formulario.get('codigo').disable();
-  //   this.formulario.get('nombre').disable();
-  //   this.formulario.get('esContado').disable();
-  // }
-}
-//Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-// public accion(indice) {
-//   switch (indice) {
-//     case 1:
-//       this.agregar();
-//       break;
-//     case 3:
-//       this.actualizar();
-//       break;
-//     case 4:
-//       this.eliminar();
-//       break;
-//     default:
-//       break;
-//   }
-// }
-//Reestablece los campos formularios
-private reestablecerFormulario(id) {
-  this.formulario.reset();
-  this.formulario.get('id').setValue(id);
-  this.autocompletado.setValue(undefined);
-  this.resultados = [];
-}
-//Manejo de colores de campos y labels
-public cambioCampo(id, label) {
-  document.getElementById(id).classList.remove('is-invalid');
-  document.getElementById(label).classList.remove('label-error');
-};
-//Muestra en la pestania buscar el elemento seleccionado de listar
-public activarConsultar(elemento) {
-  this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-  this.autocompletado.setValue(elemento);
-  this.formulario.patchValue(elemento);
-}
-//Muestra en la pestania actualizar el elemento seleccionado de listar
-public activarActualizar(elemento) {
-  this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-  this.autocompletado.setValue(elemento);
-  this.formulario.patchValue(elemento);
-}
-//Maneja los evento al presionar una tacla (para pestanias y opciones)
-public manejarEvento(keycode) {
-  var indice = this.indiceSeleccionado;
-  if(keycode == 113) {
-    if(indice < this.pestanias.length) {
-      this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
-    } else {
-      this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+  //Muestra en la pestania actualizar el elemento seleccionado de listar
+  public activarActualizar(elemento) {
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
+  }
+  //Maneja los evento al presionar una tacla (para pestanias y opciones)
+  public manejarEvento(keycode) {
+    var indice = this.indiceSeleccionado;
+    if(keycode == 113) {
+      if(indice < this.pestanias.length) {
+        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+      } else {
+        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+      }
     }
   }
-}
-
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado
+  public displayF(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
 }

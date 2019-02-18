@@ -58,7 +58,6 @@ public empresas:Array<any> = [];
       if(typeof data == 'string') {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
-          console.log(res);
         })
       }
     });

@@ -77,6 +77,8 @@ export class EjercicioComponent implements OnInit {
     this.listarAnios();
     //Obtiene la lista completa de meses
     this.listarMeses();
+    //Por defecto cantidad de meses es 12
+    this.formulario.get('cantidadMeses').setValue(12);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -181,7 +183,8 @@ export class EjercicioComponent implements OnInit {
         console.log(err);
       }
     );
-  }//Obtiene el listado de meses
+  }
+  //Obtiene el listado de meses
   private listarMeses() {
     this.mesService.listar().subscribe(
       res => {
