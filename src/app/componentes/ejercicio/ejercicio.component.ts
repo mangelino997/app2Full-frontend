@@ -100,20 +100,35 @@ export class EjercicioComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
         break;
     }
+  }
+  //Habilita o deshabilita los campos dependiendo de la pestaña
+  private establecerEstadoCampos(estado) {
+    if(estado) {
+      this.formulario.get('anioInicio').enable();
+      this.formulario.get('mesInicio').enable();
+      this.formulario.get('porDefecto').enable();
+    } else {
+      this.formulario.get('anioInicio').disable();
+      this.formulario.get('mesInicio').disable();
+      this.formulario.get('porDefecto').disable();    }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {

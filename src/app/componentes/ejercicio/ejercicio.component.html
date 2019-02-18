@@ -54,7 +54,7 @@
           </div>
           <div class="form-group has-float-label">
             <label id="labelCantidad" for="idCantidad" class="tamanio-label">Cantidad de meses *</label>
-            <input id="idCantidad" type="text" formControlName="cantidadMeses" autocomplete="off" pattern="[1-12]"
+            <input id="idCantidad" type="text" formControlName="cantidadMeses" autocomplete="off" pattern="[1-12]+"
               class="form-control form-control-sm" [readonly]="soloLectura">
           </div>
           <div class="form-group has-float-label">
@@ -72,7 +72,7 @@
       </div>
     </div>
     <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-      <div class="col-md-6">
+      <div class="col-md-10">
         <table class="table table-bordered table-striped table-sm">
           <thead>
             <tr>
@@ -95,16 +95,16 @@
                 <span>{{l.nombre}}</span>
               </td>
               <td align="center">
-                <span>{{l.anio}}</span>
+                <span>{{l.anioInicio}}</span>
               </td>
               <td align="center">
-                <span>{{l.mes.nombre}}</span>
+                <span>{{l.mesInicio.nombre}}</span>
               </td>
               <td align="center">
                 <span>{{l.cantidadMeses}}</span>
               </td>
               <td align="center">
-                <span>{{l.porDefecto}}</span>
+                <span>{{l.porDefecto? 'Sí':'No'}}</span>
               </td>
               <td align="center">
                 <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
