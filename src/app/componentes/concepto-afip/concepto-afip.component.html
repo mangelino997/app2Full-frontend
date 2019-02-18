@@ -2,7 +2,7 @@
   <div class="row">
     <div class="centrar">
       <nav mat-tab-nav-bar>
-        <a mat-tab-link disabled>CONCEPTO DE AFIP</a>
+        <a mat-tab-link disabled>AFIP CONCEPTO</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
           (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
@@ -10,17 +10,24 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-4 text-center">
-      <h5>{{pestaniaActual}} Concepto de Afip</h5>
+      <h5>{{pestaniaActual}} Afip Concepto</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar</label>
-          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" autocomplete="off">
+            <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+              [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+              <mat-option *ngFor="let item of resultados" [value]="item"
+                (onSelectionChange)="formulario.setValue(item)">
+                {{item.nombre}}
+              </mat-option>
+            </mat-autocomplete>
         </div>
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idMoneda" class="tamanio-label">Código</label>
-              <input id="idMoneda" type="number" formControlName="codigo" class="form-control form-control-sm" [readonly]="true">
+              <input id="idMoneda" type="number" formControlName="id" class="form-control form-control-sm" readonly>
             </div>
           </div>
         </div>
@@ -28,15 +35,15 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre*</label>
-              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm">
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label id="labelNombre" for="idNombre" class="tamanio-label">Código Afip</label>
-              <input id="idNombre" type="text" formControlName="codigoAfip" autocomplete="off" class="form-control form-control-sm">
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Código Afip*</label>
+              <input id="idNombre" type="text" formControlName="codigoAfip" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -55,23 +62,27 @@
             <th class="text-center" style="width:20%" scope="col">#</th>
             <th class="text-center" style="width:30%" scope="col">Nombre</th>
             <th class="text-center" style="width:30%" scope="col">Código Afip</th>
+            <th class="text-center" style="width:10%" scope="col">-</th>
+            <th class="text-center" style="width:10%" scope="col">-</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          <tr *ngFor="let l of listaCompleta">
+              <td align="center">
+                <span>{{l.id}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.nombre}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.codigoAfip}}</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
+              </td>
+              <td align="center">
+                <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
+              </td>
+            </tr>
         </tbody>
       </table>

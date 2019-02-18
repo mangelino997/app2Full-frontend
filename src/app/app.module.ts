@@ -108,6 +108,8 @@ import { TipoCuentaContableService } from './servicios/tipo-cuenta-contable.serv
 import { GrupoCuentaContableService } from './servicios/grupo-cuenta-contable.service';
 import { EjercicioService } from './servicios/ejercicio.service';
 import { MesService } from './servicios/mes.service';
+import { ProductoService } from './servicios/producto.service';
+import { AfipConceptoService } from './servicios/afip-concepto.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -138,6 +140,10 @@ import { TipoCuentaBancaria } from './modelos/tipo-cuenta-bancaria';
 import { TipoCuentaContable } from './modelos/tipo-cuenta-contable';
 import { GrupoCuentaContable } from './modelos/grupo-cuenta-contable';
 import { Ejercicio } from './modelos/ejercicio';
+import { CondicionCompra } from './modelos/condicion-compra';
+import { CondicionVenta } from './modelos/condicion-venta';
+import { Producto } from './modelos/producto';
+import { ConceptoAfip } from './modelos/concepto-afip';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -238,10 +244,8 @@ import { PlanCuentaComponent } from './componentes/plan-cuenta/plan-cuenta.compo
 import { TipoCuentaContableComponent } from './componentes/tipo-cuenta-contable/tipo-cuenta-contable.component';
 import { GrupoCuentaContableComponent } from './componentes/grupo-cuenta-contable/grupo-cuenta-contable.component';
 import { EjercicioComponent } from './componentes/ejercicio/ejercicio.component';
-import { CondicionCompra } from './modelos/condicion-compra';
-import { CondicionVenta } from './modelos/condicion-venta';
-import { Producto } from './modelos/producto';
-import { ProductoService } from './servicios/producto.service';
+
+
 
 //Rutas
 const appRoutes: Routes = [
@@ -331,11 +335,13 @@ const appRoutes: Routes = [
   { path: 'menuopciones', component: RepartoEntranteComponent, canActivate: [GuardiaService] },
   { path: 'contablemonedacotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService] },
   { path: 'contablemonedacuentacontable', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] },
-  { path: 'plandecuentasdefinicion', component: PlanCuentaComponent, canActivate: [GuardiaService] }
+  { path: 'plandecuentasdefinicion', component: PlanCuentaComponent, canActivate: [GuardiaService] },
+  { path: 'configuracionafipconcepto', component: ConceptoAfipComponent, canActivate: [GuardiaService] }
+  
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.32:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -631,6 +637,8 @@ const stompConfig: StompConfig = {
     CondicionVenta,
     Producto,
     ProductoService,
+    ConceptoAfip,
+    AfipConceptoService,
     MesService,
     {
       provide: StompConfig,
