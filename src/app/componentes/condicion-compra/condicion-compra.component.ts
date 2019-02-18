@@ -53,6 +53,14 @@ export class CondicionCompraComponent implements OnInit {
       err => {
       }
     );
+    //Controla el autocompletado
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    });
    }
 
   ngOnInit() {
@@ -228,6 +236,7 @@ export class CondicionCompraComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
@@ -241,6 +250,21 @@ export class CondicionCompraComponent implements OnInit {
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
+    }
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado
+  public displayF(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
     }
   }
 }
