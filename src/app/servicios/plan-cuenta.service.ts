@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { AppService } from './app.service';
-import { Observable, Subscription, Subject, BehaviorSubject } from 'rxjs';
+import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
