@@ -3,8 +3,6 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { VentaConceptoService } from 'src/app/servicios/venta-concepto.service';
-import { VentaConcepto } from 'src/app/modelos/venta-concepto';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';

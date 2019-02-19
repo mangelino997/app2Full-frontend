@@ -249,6 +249,7 @@ import { VentaConceptoService } from './servicios/venta-concepto.service';
 import { VentaTipoComponent } from './componentes/venta-tipo/venta-tipo.component';
 import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
 import { VentaTipoItem } from './modelos/venta-tipo-item';
+import { ViajeUnidadNegocio } from './modelos/viajeUnidadNegocio';
 
 
 
@@ -343,8 +344,10 @@ const appRoutes: Routes = [
   { path: 'plandecuentasdefinicion', component: PlanCuentaComponent, canActivate: [GuardiaService] },
   { path: 'configuracionafipconcepto', component: ConceptoAfipComponent, canActivate: [GuardiaService] },
   { path: 'configuracionventasconceptos', component: VentaConceptoComponent, canActivate: [GuardiaService] },
-  { path: 'configuracionventatipoitem', component: VentaTipoComponent, canActivate: [GuardiaService] }
+  { path: 'configuracionventatipoitem', component: VentaTipoComponent, canActivate: [GuardiaService] },
+  { path: 'configuracionviajeunidadnegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] }
 
+  
 ]
 
 const stompConfig: StompConfig = {
@@ -651,6 +654,7 @@ const stompConfig: StompConfig = {
     VentaConceptoService,
     VentaTipoItem,
     VentaTipoItemService,
+    ViajeUnidadNegocio,
     MesService,
     {
       provide: StompConfig,
