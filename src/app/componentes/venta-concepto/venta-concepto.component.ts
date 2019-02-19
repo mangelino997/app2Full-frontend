@@ -14,7 +14,7 @@ import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
   styleUrls: ['./venta-concepto.component.css']
 })
 export class VentaConceptoComponent implements OnInit {
-  //Define la pestania activa
+//Define la pestania activa
 public activeLink:any = null;
 //Define el indice seleccionado de pestania
 public indiceSeleccionado:number = null;

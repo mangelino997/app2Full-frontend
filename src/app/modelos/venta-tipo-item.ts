@@ -11,6 +11,9 @@ export class VentaTipoItem {
             version: new FormControl(),
             nombre: new FormControl('', Validators.required),
             tipoComprobante: new FormControl('', Validators.required),
+            esContrareembolso: new FormControl('', Validators.required),
+            afipConcepto: new FormControl('', Validators.required),
+            esChequeRechazado: new FormControl('', Validators.required),
             estaHabilitado: new FormControl('', Validators.required)
         })
     }

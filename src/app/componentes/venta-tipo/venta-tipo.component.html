@@ -55,7 +55,43 @@
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label id="labelEsContraReembolso" for="idEsContraReembolso" class="tamanio-label">Está Habilitado</label>
+              <label id="labelEsContraReembolso" for="idEsContraReembolso" class="tamanio-label">Es ContraReembolso</label>
+              <mat-select class="form-control form-control-sm" formControlName="esContrareembolso">
+                <mat-option [value]="true">Sí</mat-option>
+                <mat-option [value]="false">No</mat-option>
+              </mat-select>            
+            </div>
+          </div>
+        </div>
+        
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label id="labelTipoComprobante" for="idTipoComprobante" class="tamanio-label">Afip Concepto</label>
+              <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="afipConcepto"  
+              [compareWith]="compareFn">
+              <mat-option *ngFor="let concepto of afipConceptos" [value]="concepto">
+                  {{concepto.nombre}}
+              </mat-option>
+            </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label id="labelEsChequeRechazado" for="idEsChequeRechazado" class="tamanio-label">Es Cheque Rechazado</label>
+              <mat-select class="form-control form-control-sm" formControlName="esChequeRechazado">
+                <mat-option [value]="true">Sí</mat-option>
+                <mat-option [value]="false">No</mat-option>
+              </mat-select>            
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label id="labelEstaHabilitado" for="idEstaHabilitado" class="tamanio-label">Está Habilitado</label>
               <mat-select class="form-control form-control-sm" formControlName="estaHabilitado">
                 <mat-option [value]="true">Sí</mat-option>
                 <mat-option [value]="false">No</mat-option>
@@ -63,7 +99,6 @@
             </div>
           </div>
         </div>
-
         <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate (click)="accion(indiceSeleccionado)"
           [disabled]="!formulario.valid">
           {{pestaniaActual}}
@@ -78,8 +113,11 @@
           <tr>
             <th class="text-center" style="width:5%" scope="col">#</th>
             <th class="text-center" style="width:15%" scope="col">Nombre</th>
-            <th class="text-center" style="width:25%" scope="col">Tipo de Comprobante</th>
-            <th class="text-center" style="width:20%" scope="col">estaHabilitado</th>
+            <th class="text-center" style="width:15%" scope="col">Tipo de Comprobante</th>
+            <th class="text-center" style="width:15%" scope="col">Es ContraReembolso</th>
+            <th class="text-center" style="width:15%" scope="col">Afip Concepto</th>
+            <th class="text-center" style="width:15%" scope="col">Es Cheque Rechazado</th>
+            <th class="text-center" style="width:10%" scope="col">Está Habilitado</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
           </tr>
@@ -94,6 +132,15 @@
               </td>
               <td align="center">
                 <span>{{l.tipoComprobante.nombre}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.esContrareembolso? 'Sí':'No'}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.afipConcepto.nombre}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.esChequeRechazado? 'Sí':'No'}}</span>
               </td>
               <td align="center">
                 <span>{{l.estaHabilitado? 'Sí':'No'}}</span>
