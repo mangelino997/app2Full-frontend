@@ -1,3 +1,13 @@
 .left {
     text-align: left;
 }
+.checkBoxSelected {
+    padding: 1px;
+    background-color: #85ce36;
+    color: black;
+}
+.checkBoxNotSelected {
+    background-color: #ffffff;
+    color: #ffffff;
+    padding: 1px;
+}

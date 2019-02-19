@@ -1,26 +1,40 @@
 <div id="agendatelefonica" class="container-fluid" >
-  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+  <div class="row justify-content-center contenedor" >
     <div class="col-md-10 text-center">
       <h5>Actualización de Precios</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idNombre" class="tamanio-label">Buscar por</label>
-              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <label for="idAutocompletado" class="tamanio-label">Buscar </label>
+              <mat-select class="form-control form-control-sm" [formControl]="buscarPor" (selectionChange)="cambioDeCampo()">
+                <mat-option [value]="0">Por Cliente</mat-option>
+                <mat-option [value]="1">Por Empresa</mat-option>
+              </mat-select>  
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3" *ngIf="buscarPorCliente">
             <div class="form-group has-float-label">
-              <label for="idNombre" class="tamanio-label">Empresa/Cliente</label>
-              <input id="idNombre" type="text" formControlName="cliente" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <label for="idAutocompletado" class="tamanio-label">Cliente </label>
+              <input id="idAutocompletado" class="form-control form-control-sm " autocomplete="off"
+                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cargarTabla(0, item.id)"
+                  > <!--(onSelectionChange)=""-->
+                  {{item.nombre}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3" *ngIf="!buscarPorCliente">
             <div class="form-group has-float-label">
-      
+              <label for="idRubro" class="rubro-label">Empresa </label>
+                <mat-select id="idRubro" class="form-control form-control-sm" [formControl]="empresa" (selectionChange)="cargarTabla(1, undefined)"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let empresa of empresas" [value]="empresa">
+                      {{empresa.razonSocial}}
+                  </mat-option>
+                </mat-select>
             </div>
           </div>
         </div>
@@ -30,50 +44,42 @@
               <thead>
                 <tr>
                   <th class="text-center" style="width:15%" scope="col">Nombre</th>
-                  <th class="text-center" style="width:20%" scope="col">Vendedor</th>
-                  <th class="text-center" style="width:5%" scope="col">Tarifa</th>
+                  <th class="text-center" style="width:15%" scope="col">Vendedor</th>
+                  <th class="text-center" style="width:10%" scope="col">Tarifa</th>
                   <th class="text-center" style="width:10%" scope="col">% Seguro</th>
-                  <th class="text-center" style="width:5%" scope="col">Aforo</th>
-                  <th class="text-center" style="width:15%" scope="col">% Com. C.R.</th>
-                  <th class="text-center" style="width:5%" scope="col">Activa</th>
-                  <th class="text-center" style="width:5%" scope="col">Desde</th>
+                  <th class="text-center" style="width:10%" scope="col">% Com. C.R.</th>
+                  <th class="text-center" style="width:10%" scope="col">Activa</th>
                   <th class="text-center" style="width:20%" scope="col">Observaciones</th>
+                  <th class="text-center" style="width:20%" scope="col">Seleccionar</th>
                 </tr>
               </thead>
               <tbody>
-                <tr >
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr >
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
-                <tr >
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                  <td></td>
-                </tr>
+                  <tr *ngFor="let l of listaCompleta; let i= index">
+                    <td align="center">
+                      <span>{{l.nombre}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.vendedor.nombre}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.tipoTarifa.nombre}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.seguro}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.comisionCR}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.estaActiva? 'Sí':'No'}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.observaciones}}</span>
+                    </td>
+                    <td align="center">
+                      <mat-checkbox class="" (change)="ordenSeleccionada(i, $event)"></mat-checkbox>
+                    </td>
+                  </tr>
               </tbody>
             </table>
           </div>
@@ -88,7 +94,7 @@
           </div>
           <div class="col-md-3">
             <div class="form-group left">
-              <button class="btn btn-primary" type="button">Consultar Lista de Precios</button>
+              <button class="btn btn-primary btn-sm" type="button" (click)="listaDePrecios()">Consultar Lista de Precios</button>
             </div>
           </div>
         </div>
@@ -116,14 +122,14 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idNombre" class="tamanio-label">Fecha Desde</label>
-              <input id="idNombre" type="text" formControlName="fechaDesde" autocomplete="off"
+              <label for="idNombre" class="tamanio-label">Nuevos Precios Desde</label>
+              <input id="idNombre" type="date" formControlName="fechaDesde" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group left">
-              <button class="btn btn-primary col-auto mr-auto" type="button">Confirmar</button>
+              <button class="btn btn-primary col-auto mr-auto btn-sm" type="button" (click)="actualizar()">Confirmar</button>
             </div>
           </div>
         </div>

@@ -110,6 +110,7 @@ import { EjercicioService } from './servicios/ejercicio.service';
 import { MesService } from './servicios/mes.service';
 import { ProductoService } from './servicios/producto.service';
 import { AfipConceptoService } from './servicios/afip-concepto.service';
+import { OrdenVentaTramoService } from './servicios/orden-venta-tramo.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -214,7 +215,7 @@ import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-sub
 import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component'; //Probado
 import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
 import { ViajeComponent } from './componentes/viaje/viaje.component';
-import { ActualizacionPreciosComponent } from './componentes/actualizacion-precios/actualizacion-precios.component';
+import { ActualizacionPreciosComponent, ListaPreciosDialogo } from './componentes/actualizacion-precios/actualizacion-precios.component';
 import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
 import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
 import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-factura.component';
@@ -250,6 +251,7 @@ import { VentaTipoComponent } from './componentes/venta-tipo/venta-tipo.componen
 import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
 import { VentaTipoItem } from './modelos/venta-tipo-item';
 import { ViajeUnidadNegocio } from './modelos/viajeUnidadNegocio';
+import { ActualizacionPrecios } from './modelos/actualizacionPrecios';
 
 
 
@@ -467,6 +469,7 @@ const stompConfig: StompConfig = {
     ViajeRemitoGSComponent,
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,
+    ListaPreciosDialogo,
     PlanCuentaComponent,
     TipoCuentaContableComponent,
     GrupoCuentaContableComponent,
@@ -593,6 +596,7 @@ const stompConfig: StompConfig = {
     ContactoProveedorService,
     PuntoVentaService,
     OrdenVentaEscalaService,
+    OrdenVentaTramoService,
     ViajePropioService,
     FechaService,
     VehiculoService,
@@ -655,6 +659,7 @@ const stompConfig: StompConfig = {
     VentaTipoItem,
     VentaTipoItemService,
     ViajeUnidadNegocio,
+    ActualizacionPrecios,
     MesService,
     {
       provide: StompConfig,
@@ -674,7 +679,8 @@ const stompConfig: StompConfig = {
     DadorDestTablaDialogo,
     ObservacionesDialogo,
     ListaUsuariosDialogo,
-    CambiarMonedaPrincipalDialogo
+    CambiarMonedaPrincipalDialogo,
+    ListaPreciosDialogo
   ]
 })
 export class AppModule { }

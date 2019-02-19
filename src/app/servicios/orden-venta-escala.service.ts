@@ -46,6 +46,10 @@ export class OrdenVentaEscalaService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
+  //Obtiene el precio flete por id
+  public obtenerPrecioFlete(id) {
+    return this.http.get(this.url + '/obtenerPrecioFlete/' + id, this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
@@ -53,6 +57,10 @@ export class OrdenVentaEscalaService {
   //Obtiene una lista con escalas tarifas asignadas
   public listarConEscalaTarifa() {
     return this.http.get(this.url + '/listarConEscalaTarifa', this.options);
+  }
+   //Obtiene una lista por id de Orden Venta
+   public listarPorOrdenVenta(id) {
+    return this.http.get(this.url + '/listarPorOrdenVenta/' + id, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

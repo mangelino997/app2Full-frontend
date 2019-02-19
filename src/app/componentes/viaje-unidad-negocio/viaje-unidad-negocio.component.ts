@@ -30,21 +30,14 @@ public pestanias:Array<any> = [];
 public formulario:FormGroup;
 //Define la lista completa de registros
 public listaCompleta:Array<any> = [];
-//Define la lista completa de tipos de comprobantes
-public tiposComprobantes:Array<any> = [];
-//Define la lista completa de Afip Conceptos
-public afipConceptos:Array<any> = [];
 //Define el autocompletado
 public autocompletado:FormControl = new FormControl();
 //Define empresa para las busquedas
 public empresaBusqueda:FormControl = new FormControl();
 //Define la lista de resultados de busqueda
 public resultados:Array<any> = [];
-//Define la lista de resultados de busqueda companias seguros
-public resultadosCompaniasSeguros:Array<any> = [];
 //Defien la lista de empresas
 public empresas:Array<any> = [];
-// public compereFn:any;
 //Constructor
 
   constructor(private servicio: ViajeUnidadNegocioService, private ventaConcepto: ViajeUnidadNegocio, private appComponent: AppComponent, 

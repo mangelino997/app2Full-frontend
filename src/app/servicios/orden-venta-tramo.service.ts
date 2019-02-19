@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class OrdenVentaService {
+export class OrdenVentaTramoService {
   //Define la ruta al servicio web
-  private ruta:string = "/ordenventa";
+  private ruta:string = "/ordenventatramo";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -50,21 +50,10 @@ export class OrdenVentaService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
-  }
-  //Obtiene el listado por Empresa
-  public listarPorEmpresa(id) {
-    return this.http.get(this.url + '/listarPorEmpresa/' + id, this.options);
-  }
-  //Obtiene el listado por Cliente
-  public listarPorCliente(id) {
-    return this.http.get(this.url + '/listarPorCliente/' + id, this.options);
+   //Obtiene una lista por id de Orden Venta
+   public listarPorOrdenVenta(id) {
+     console.log("entra");
+    return this.http.get(this.url + '/listarPorOrdenVenta/' + id, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

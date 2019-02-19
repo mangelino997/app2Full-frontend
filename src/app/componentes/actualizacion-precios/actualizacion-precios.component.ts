@@ -1,10 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { AgendaTelefonicaService } from '../../servicios/agenda-telefonica.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { EmpresaService } from 'src/app/servicios/empresa.service';
+import { ActualizacionPrecios } from 'src/app/modelos/actualizacionPrecios';
+import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
+import { OrdenVentaTramoService } from 'src/app/servicios/orden-venta-tramo.service';
+import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+
 
 @Component({
   selector: 'app-actualizacion-precios',
@@ -24,38 +31,36 @@ export class ActualizacionPreciosComponent implements OnInit {
   public soloLectura:boolean = false;
   //Define si mostrar el boton
   public mostrarBoton:boolean = null;
+  //Define que campo muestra
+  public buscarPorCliente:boolean = null;
   //Define la lista de pestanias
   public pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
+  //Define la lista completa de registros (ordenes de venta) filtrados por la fecha de precio desde
+  public listaFiltrada:Array<any> = [];
+  //Define la lista completa de registros
+  public empresas:Array<any> = [];
   //Define el autocompletado
   public autocompletado:FormControl = new FormControl();
+  //Define el campo como un formControl
+  public buscarPor:FormControl = new FormControl();
+  //Define el campo como un formControl
+  public empresa:FormControl = new FormControl();
+  //Define los datos de la tabla OrdenVentaTramo/OrdenVentaEscala segun la orden venta seleccionada
+  public ordenVenta:Array<any> = [];
   //Define los resultados del autocompletado
   public resultados:Array<any> = [];
   //Define los resultados de autocompletado localidad
   public resultadosLocalidades:Array<any> = [];
   //Constructor
-  constructor(private servicio: AgendaTelefonicaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private localidadServicio: LocalidadService, private appComponent: AppComponent,
-    private toastr: ToastrService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
-    //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
-    //Defiene autocompletado
+  constructor(private servicio: AgendaTelefonicaService, private subopcionPestaniaService: SubopcionPestaniaService, private actualizacionPrecios: ActualizacionPrecios,
+    private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService, private empresaServicio: EmpresaService, private ordenVentaServicio: OrdenVentaService,
+    private toastr: ToastrService, public dialog: MatDialog) {
+    
+    //Defiene autocompletado de Clientes
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.servicio.listarPorNombre(data).subscribe(res => {
@@ -67,160 +72,31 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      domicilio: new FormControl('', Validators.maxLength(45)),
-      telefonoFijo: new FormControl('', Validators.maxLength(45)),
-      telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      correoelectronico: new FormControl('', Validators.maxLength(30)),
-      localidad: new FormControl('', Validators.required)
-    })
-    //Defiene autocompletado localidad
-    this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.localidadServicio.listarPorNombre(data).subscribe(res => {
-          this.resultadosLocalidades = res;
-        })
-      }
-    })
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.formulario = this.actualizacionPrecios.formulario;
+    //Setea el campo a buscar por defecto
+    this.buscarPor.setValue(1);
     //Obtiene la lista completa de registros
-    this.listar();
-  }
-  //Establece el formulario al seleccionar elemento de autocompletado
-  public cambioAutocompletado(elemento) {
-    this.formulario.patchValue(elemento);
-    //this.autoLocalidad.setValue(elemento.localidad);
-  }
-  //Formatea el valor del autocompletado
-  public displayFn(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
-    } else {
-      return elemento;
-    }
-  }
-  //Formatea el valor del autocompletado a
-  public displayFa(elemento) {
-    if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
-    } else {
-      return elemento;
-    }
+    this.listarEmpresas();
   }
   //Vacia la lista de autocompletados
   public vaciarListas() {
     this.resultados = [];
     this.resultadosLocalidades = [];
   }
-  //Funcion para establecer los valores de las pestañas
-  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
-    this.pestaniaActual = nombrePestania;
-    this.mostrarAutocompletado = autocompletado;
-    this.soloLectura = soloLectura;
-    this.mostrarBoton = boton;
-    setTimeout(function () {
-      document.getElementById(componente).focus();
-    }, 20);
-  };
-  //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario(undefined);
-    this.indiceSeleccionado = id;
-    this.activeLink = nombre;
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
-    if(opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
-    switch (id) {
-      case 1:
-        this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
-        break;
-      case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
-        break;
-      case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
-        break;
-      case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
-        break;
-      default:
-        break;
-    }
-  }
-  //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice) {
-    switch (indice) {
-      case 1:
-        this.agregar();
-        break;
-      case 3:
-        this.actualizar();
-        break;
-      case 4:
-        this.eliminar();
-        break;
-      default:
-        break;
-    }
-  }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
   //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
+  private listarEmpresas() {
+    this.empresaServicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        console.log(res.json());
+        this.empresas = res.json();
       },
       err => {
         console.log(err);
-      }
-    );
-  }
-  //Agrega un registro
-  private agregar() {
-    this.servicio.agregar(this.formulario.value).subscribe(
-      res => {
-        var respuesta = res.json();
-        if(respuesta.codigo == 201) {
-          this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
-            document.getElementById('idNombre').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-        }
-      },
-      err => {
-        var respuesta = err.json();
-        if(respuesta.codigo == 11003) {
-          document.getElementById("labelCorreoelectronico").classList.add('label-error');
-          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-          document.getElementById("idCorreoelectronico").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
       }
     );
   }
   //Actualiza un registro
-  private actualizar() {
+  public actualizar() {
   this.servicio.actualizar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
@@ -243,9 +119,94 @@ export class ActualizacionPreciosComponent implements OnInit {
     }
   );
   }
-  //Elimina un registro
-  private eliminar() {
-    console.log();
+  //Realiza el cambio de campo a buscar
+  public cambioDeCampo(){
+    if(this.buscarPor.value==0){
+      this.buscarPorCliente=true;
+    }else{
+      this.buscarPorCliente=false;
+    }
+  }
+  //Carga la Tabla 
+  public cargarTabla(opcion, id){
+    this.listaCompleta=[];
+    if(opcion==0){
+      this.ordenVentaServicio.listarPorCliente(id).subscribe(
+        res=>{
+          this.listaCompleta= res.json();
+        },
+        err=>{
+        }
+      );
+    }else{
+      this.ordenVentaServicio.listarPorEmpresa(this.empresa.value.id).subscribe(
+        res=>{
+          this.listaCompleta= res.json();
+        },
+        err=>{
+        }
+      );
+    }
+  }
+  //Controla los checkbox
+  public ordenSeleccionada(indice, $event){
+    let checkboxs=document.getElementsByTagName('mat-checkbox');
+    for(let i=0; i<checkboxs.length; i++){
+      let id="mat-checkbox-"+(i+1);
+      if(i==indice&&$event.checked==true){
+        document.getElementById(id).className="checkBoxSelected";
+        this.buscarPorOrdenPrecios(i);
+      }
+      else{
+        document.getElementById(id).className="checkBoxNotSelected";
+        document.getElementById(id)['checked'] = false;
+      }
+    }
+  }
+  //Busca los datos segun la Orden seleccionada
+  public buscarPorOrdenPrecios(indice){
+    this.ordenVenta=[];
+    if(this.listaCompleta[indice].tipoTarifa.porEscala==true){
+      this.ordenVentaEscalaServicio.listarPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
+        res=>{
+          console.log(res.json());
+          this.ordenVenta=res.json();
+          this.formulario.get('precioDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
+          this.filtrarPorPrecioDesde(this.ordenVenta);
+        },
+        err=>{
+        }
+      );
+    }else{
+      this.ordenVentaTramoServicio.listarPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
+        res=>{
+          console.log(res.json());
+          this.ordenVenta=res.json();
+          this.formulario.get('precioDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
+          this.filtrarPorPrecioDesde(this.ordenVenta);
+        },
+        err=>{
+        }
+      );
+    }
+  }
+  //Filtra las ordenes de venta y carga en la lista los de la fecha de precioDesde
+  public filtrarPorPrecioDesde(ordenesDeVenta){
+    this.listaFiltrada=[];
+    let fechaFiltro= this.formulario.get('precioDesde').value;
+    for(let i=0; i< ordenesDeVenta.length;i++){
+      if(ordenesDeVenta[i].preciosDesde==fechaFiltro)
+      this.listaFiltrada.push(ordenesDeVenta[i]);
+    }
+  }
+  //Abre un Modal con la lista de precios para la fecha de precioDesde
+  public listaDePrecios(){
+    const dialogRef = this.dialog.open(ListaPreciosDialogo, {
+      width: '1000px',
+      data: {fecha: this.formulario.get('precioDesde').value, listaFiltrada: this.listaFiltrada},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+    });
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -255,10 +216,10 @@ export class ActualizacionPreciosComponent implements OnInit {
     this.vaciarListas();
   }
   //Manejo de colores de campos y labels
-  public cambioCampo(id, label) {
-    document.getElementById(id).classList.remove('is-invalid');
-    document.getElementById(label).classList.remove('label-error');
-  };
+  // public cambioCampo(id, label) {
+  //   document.getElementById(id).classList.remove('is-invalid');
+  //   document.getElementById(label).classList.remove('label-error');
+  // };
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
@@ -282,26 +243,58 @@ export class ActualizacionPreciosComponent implements OnInit {
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
-  public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
-  }
-  //Muestra en la pestania actualizar el elemento seleccionado de listar
-  public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
-  }
-  //Maneja los evento al presionar una tacla (para pestanias y opciones)
-  public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
-      } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
-      }
+  // public activarConsultar(elemento) {
+  //   this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+  //   this.autocompletado.setValue(elemento);
+  //   this.formulario.patchValue(elemento);
+  // }
+  // //Muestra en la pestania actualizar el elemento seleccionado de listar
+  // public activarActualizar(elemento) {
+  //   this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+  //   this.autocompletado.setValue(elemento);
+  //   this.formulario.patchValue(elemento);
+  // }
+  //Define como se muestra los datos en el autcompletado
+  public displayFn(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.nombre : elemento;
+    } else {
+      return elemento;
     }
   }
+  //Formatea el valor del autocompletado a
+  public displayFa(elemento) {
+    if(elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+}
+@Component({
+  selector: 'lista-precios-dialogo',
+  templateUrl: 'lista-precios.html',
+})
+export class ListaPreciosDialogo{
+  //Define la empresa 
+  public fecha: string;
+  //Define la lista de usuarios activos de la empresa
+  public listaPrecios:Array<any> = [];
+
+  constructor(public dialogRef: MatDialogRef<ListaPreciosDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService) {}
+   ngOnInit() {
+    this.listaPrecios=this.data.listaFiltrada;
+    this.fecha=this.data.fecha;
+   }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+  
 }
