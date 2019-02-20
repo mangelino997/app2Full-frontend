@@ -29,6 +29,8 @@ export class ActualizacionPreciosComponent implements OnInit {
   public mostrarAutocompletado:boolean = null;
   //Define si el campo es de solo lectura
   public soloLectura:boolean = false;
+  //Define la variable como un boolean
+  public porEscala:boolean = false;
   //Define si mostrar el boton
   public mostrarBoton:boolean = null;
   //Define que campo muestra
@@ -45,8 +47,13 @@ export class ActualizacionPreciosComponent implements OnInit {
   public empresas:Array<any> = [];
   //Define el autocompletado
   public autocompletado:FormControl = new FormControl();
+  //Define como formControl
+  public precioDesde:FormControl = new FormControl();
+  
   //Define el campo como un formControl
   public buscarPor:FormControl = new FormControl();
+  //Define el campo como un formControl
+  public aumento:FormControl = new FormControl();
   //Define el campo como un formControl
   public empresa:FormControl = new FormControl();
   //Define los datos de la tabla OrdenVentaTramo/OrdenVentaEscala segun la orden venta seleccionada
@@ -56,10 +63,9 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Define los resultados de autocompletado localidad
   public resultadosLocalidades:Array<any> = [];
   //Constructor
-  constructor(private servicio: AgendaTelefonicaService, private subopcionPestaniaService: SubopcionPestaniaService, private actualizacionPrecios: ActualizacionPrecios,
+  constructor(private servicio: OrdenVentaService, private actualizacionPrecios: ActualizacionPrecios,
     private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService, private empresaServicio: EmpresaService, private ordenVentaServicio: OrdenVentaService,
     private toastr: ToastrService, public dialog: MatDialog) {
-    
     //Defiene autocompletado de Clientes
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -77,12 +83,10 @@ export class ActualizacionPreciosComponent implements OnInit {
     this.buscarPor.setValue(1);
     //Obtiene la lista completa de registros
     this.listarEmpresas();
+    //Setea por defecto que el combo sea un aumento de precio
+    this.aumento.setValue(1);
   }
-  //Vacia la lista de autocompletados
-  public vaciarListas() {
-    this.resultados = [];
-    this.resultadosLocalidades = [];
-  }
+  
   //Obtiene el listado de registros
   private listarEmpresas() {
     this.empresaServicio.listar().subscribe(
@@ -97,27 +101,28 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Actualiza un registro
   public actualizar() {
-  this.servicio.actualizar(this.formulario.value).subscribe(
-    res => {
-      var respuesta = res.json();
-      if(respuesta.codigo == 200) {
-        this.reestablecerFormulario(undefined);
-        setTimeout(function() {
-          document.getElementById('idAutocompletado').focus();
-        }, 20);
-        this.toastr.success(respuesta.mensaje);
-      }
-    },
-    err => {
-      var respuesta = err.json();
-      if(respuesta.codigo == 11002) {
-        document.getElementById("labelNombre").classList.add('label-error');
-        document.getElementById("idNombre").classList.add('is-invalid');
-        document.getElementById("idNombre").focus();
-        this.toastr.error(respuesta.mensaje);
-      }
-    }
-  );
+  
+  // this.servicio.actualizar(this.formulario.value).subscribe(
+  //   res => {
+  //     var respuesta = res.json();
+  //     if(respuesta.codigo == 200) {
+  //       this.reestablecerFormulario(undefined);
+  //       setTimeout(function() {
+  //         document.getElementById('idAutocompletado').focus();
+  //       }, 20);
+  //       this.toastr.success(respuesta.mensaje);
+  //     }
+  //   },
+  //   err => {
+  //     var respuesta = err.json();
+  //     if(respuesta.codigo == 11002) {
+  //       document.getElementById("labelNombre").classList.add('label-error');
+  //       document.getElementById("idNombre").classList.add('is-invalid');
+  //       document.getElementById("idNombre").focus();
+  //       this.toastr.error(respuesta.mensaje);
+  //     }
+  //   }
+  // );
   }
   //Realiza el cambio de campo a buscar
   public cambioDeCampo(){
@@ -166,12 +171,14 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Busca los datos segun la Orden seleccionada
   public buscarPorOrdenPrecios(indice){
     this.ordenVenta=[];
+    this.porEscala=this.listaCompleta[indice].tipoTarifa.porEscala; //true o false
+    this.indiceSeleccionado=indice;
+    
     if(this.listaCompleta[indice].tipoTarifa.porEscala==true){
       this.ordenVentaEscalaServicio.listarPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
         res=>{
-          console.log(res.json());
           this.ordenVenta=res.json();
-          this.formulario.get('precioDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
+          this.formulario.get('fechaDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
           this.filtrarPorPrecioDesde(this.ordenVenta);
         },
         err=>{
@@ -180,20 +187,20 @@ export class ActualizacionPreciosComponent implements OnInit {
     }else{
       this.ordenVentaTramoServicio.listarPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
         res=>{
-          console.log(res.json());
           this.ordenVenta=res.json();
-          this.formulario.get('precioDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
+          this.formulario.get('fechaDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
           this.filtrarPorPrecioDesde(this.ordenVenta);
         },
         err=>{
         }
       );
     }
+    
   }
   //Filtra las ordenes de venta y carga en la lista los de la fecha de precioDesde
   public filtrarPorPrecioDesde(ordenesDeVenta){
     this.listaFiltrada=[];
-    let fechaFiltro= this.formulario.get('precioDesde').value;
+    let fechaFiltro= this.formulario.get('fechaDesde').value;
     for(let i=0; i< ordenesDeVenta.length;i++){
       if(ordenesDeVenta[i].preciosDesde==fechaFiltro)
       this.listaFiltrada.push(ordenesDeVenta[i]);
@@ -202,58 +209,115 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Abre un Modal con la lista de precios para la fecha de precioDesde
   public listaDePrecios(){
     const dialogRef = this.dialog.open(ListaPreciosDialogo, {
-      width: '1000px',
-      data: {fecha: this.formulario.get('precioDesde').value, listaFiltrada: this.listaFiltrada},
+      width: '1100px',
+      data: {fecha: this.formulario.get('fechaDesde').value, listaFiltrada: this.listaFiltrada, porEscala: this.porEscala},
     });
     dialogRef.afterClosed().subscribe(result => {
     });
   }
+  //Abre un modal con los datos actualizados antes de confirmar 
+  public confirmar(){
+    const dialogRef = this.dialog.open(ConfimarDialogo, {
+      width: '1100px',
+      data: {
+        formulario: this.ordenVenta, 
+        porEscala: this.porEscala
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.formulario.get('fechaDesde').setValue(this.formulario.get('precioDesde').value);
+      this.reestablecerFormulario(undefined);
+    });
+  }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
-    this.vaciarListas();
+    this.listaCompleta=[];
+    this.formulario.get('precioDesde').setValue(null);
+    this.formulario.get('porcentaje').setValue(null);
+    this.empresa.setValue(null);
+    this.autocompletado.setValue(null);
+    
   }
-  //Manejo de colores de campos y labels
-  // public cambioCampo(id, label) {
-  //   document.getElementById(id).classList.remove('is-invalid');
-  //   document.getElementById(label).classList.remove('label-error');
-  // };
-  //Manejo de colores de campos y labels con patron erroneo
-  public validarPatron(patron, campo) {
-    let valor = this.formulario.get(campo).value;
-    if(valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
-      if (!patronVerificador.test(valor)) {
-        if(campo == 'telefonoFijo') {
-          document.getElementById("labelTelefonoFijo").classList.add('label-error');
-          document.getElementById("idTelefonoFijo").classList.add('is-invalid');
-          this.toastr.error('Telefono Fijo Incorrecto');
-        } else if(campo == 'telefonoMovil') {
-          document.getElementById("labelTelefonoMovil").classList.add('label-error');
-          document.getElementById("idTelefonoMovil").classList.add('is-invalid');
-          this.toastr.error('Telefono Movil Incorrecto');
-        } else if(campo == 'correoelectronico') {
-          document.getElementById("labelCorreoelectronico").classList.add('label-error');
-          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-          this.toastr.error('Correo Electronico Incorrecto');
-        }
+  //Realiza la actualizacion del precio de la orden seleccionada
+  public aplicarActualizacion(){
+    switch(this.aumento.value){
+      case 0:
+        this.aplicarAnulacion();
+        break;
+      case 1:
+        this.aplicarAumento();
+        break;
+    }
+  }
+  //Aplica un aumento de porcentaje en los precios de la orden venta seleccionada
+  public aplicarAumento(){
+    let porcentaje=this.formulario.get('porcentaje').value;
+    if(this.porEscala==true){
+      for(let i=0; i< this.ordenVenta.length; i++){
+        if(this.ordenVenta[i].importeFijo!=0&&this.ordenVenta[i].importeFijo!=null)
+          this.ordenVenta[i].importeFijo=this.ordenVenta[i].importeFijo+this.ordenVenta[i].importeFijo*(porcentaje/100);
+        if(this.ordenVenta[i].precioUnitario!=0&&this.ordenVenta[i].precioUnitario!=null)
+        this.ordenVenta[i].precioUnitario=this.ordenVenta[i].precioUnitario+this.ordenVenta[i].precioUnitario*(porcentaje/100);
+      }
+    }
+    else{
+      for(let i=0; i< this.ordenVenta.length; i++){
+        if(this.ordenVenta[i].importeFijoSeco!=0&&this.ordenVenta[i].importeFijoSeco!=null)
+        this.ordenVenta[i].importeFijoSeco=this.ordenVenta[i].importeFijoSeco+this.ordenVenta[i].importeFijoSeco*(porcentaje/100);
+        if(this.ordenVenta[i].importeFijoRef!=0&&this.ordenVenta[i].importeFijoRef!=null)
+        this.ordenVenta[i].importeFijoRef=this.ordenVenta[i].importeFijoRef+this.ordenVenta[i].importeFijoRef*(porcentaje/100);
+        if(this.ordenVenta[i].precioUnitarioRef!=0&&this.ordenVenta[i].precioUnitarioRef!=null)
+        this.ordenVenta[i].precioUnitarioRef=this.ordenVenta[i].precioUnitarioRef+this.ordenVenta[i].precioUnitarioRef*(porcentaje/100);
+        if(this.ordenVenta[i].precioUnitarioSeco!=0&&this.ordenVenta[i].precioUnitarioSeco!=null)
+        this.ordenVenta[i].precioUnitarioSeco=this.ordenVenta[i].precioUnitarioSeco+this.ordenVenta[i].precioUnitarioSeco*(porcentaje/100);
       }
     }
   }
-  //Muestra en la pestania buscar el elemento seleccionado de listar
-  // public activarConsultar(elemento) {
-  //   this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-  //   this.autocompletado.setValue(elemento);
-  //   this.formulario.patchValue(elemento);
-  // }
-  // //Muestra en la pestania actualizar el elemento seleccionado de listar
-  // public activarActualizar(elemento) {
-  //   this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-  //   this.autocompletado.setValue(elemento);
-  //   this.formulario.patchValue(elemento);
-  // }
+  //Aplica una anulacion de porcentaje en los precios de la orden de venta seleccionada
+  public aplicarAnulacion(){
+    let porcentaje=this.formulario.get('porcentaje').value;
+    if(this.porEscala==true){
+      for(let i=0; i< this.ordenVenta.length; i++){
+        if(this.ordenVenta[i].importeFijo!=0&&this.ordenVenta[i].importeFijo!=null)
+          this.ordenVenta[i].importeFijo=this.ordenVenta[i].importeFijo-this.ordenVenta[i].importeFijo*(porcentaje/100);
+        if(this.ordenVenta[i].precioUnitario!=0&&this.ordenVenta[i].precioUnitario!=null)
+        this.ordenVenta[i].precioUnitario=this.ordenVenta[i].precioUnitario-this.ordenVenta[i].precioUnitario*(porcentaje/100);
+      }
+    }
+    else{
+      for(let i=0; i< this.ordenVenta.length; i++){
+        if(this.ordenVenta[i].importeFijoSeco!=0&&this.ordenVenta[i].importeFijoSeco!=null)
+        this.ordenVenta[i].importeFijoSeco=this.ordenVenta[i].importeFijoSeco-this.ordenVenta[i].importeFijoSeco*(porcentaje/100);
+        if(this.ordenVenta[i].importeFijoRef!=0&&this.ordenVenta[i].importeFijoRef!=null)
+        this.ordenVenta[i].importeFijoRef=this.ordenVenta[i].importeFijoRef-this.ordenVenta[i].importeFijoRef*(porcentaje/100);
+        if(this.ordenVenta[i].precioUnitarioRef!=0&&this.ordenVenta[i].precioUnitarioRef!=null)
+        this.ordenVenta[i].precioUnitarioRef=this.ordenVenta[i].precioUnitarioRef-this.ordenVenta[i].precioUnitarioRef*(porcentaje/100);
+        if(this.ordenVenta[i].precioUnitarioSeco!=0&&this.ordenVenta[i].precioUnitarioSeco!=null)
+        this.ordenVenta[i].precioUnitarioSeco=this.ordenVenta[i].precioUnitarioSeco-this.ordenVenta[i].precioUnitarioSeco*(porcentaje/100);
+      }
+    }
+  }
+  //Valida que la nueva fechaDesde sea mayor a la de precioDesde
+  public validarNuevaFechaDesde(){
+    if(this.formulario.get('precioDesde').value>this.formulario.get('fechaDesde').value){
+      document.getElementById('btn-confirm').focus();
+      if(this.porEscala==true){
+        for(let i=0;i<this.ordenVenta.length; i++){
+          this.ordenVenta[i].preciosDesde=this.formulario.get('precioDesde').value;
+        }
+      }
+      else{
+        for(let i=0;i<this.ordenVenta.length; i++){
+          this.ordenVenta[i].preciosDesde=this.formulario.get('precioDesde').value;
+        }
+      }
+    }
+    else{
+      this.formulario.get('precioDesde').setValue(null);
+      document.getElementById('idNuevoPrecioDesde').focus();
+      this.toastr.error("¡La nueva fecha debe ser mayor a la anterior!");
+    }
+  }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
     if(elemento != undefined) {
@@ -285,6 +349,8 @@ export class ActualizacionPreciosComponent implements OnInit {
 export class ListaPreciosDialogo{
   //Define la empresa 
   public fecha: string;
+  //Define la variable como un booleano
+  public porEscala: boolean;
   //Define la lista de usuarios activos de la empresa
   public listaPrecios:Array<any> = [];
 
@@ -292,9 +358,77 @@ export class ListaPreciosDialogo{
    ngOnInit() {
     this.listaPrecios=this.data.listaFiltrada;
     this.fecha=this.data.fecha;
+    this.porEscala= this.data.porEscala; //controlo que tabla muestro en el modal
    }
   onNoClick(): void {
     this.dialogRef.close();
-  }
-  
+    document.getElementById('idActualizacion').focus();
+  }  
+}
+@Component({
+  selector: 'confirmar-dialogo',
+  templateUrl: 'confirmar-modal.html',
+})
+export class ConfimarDialogo{
+  //Define el formulario que envía a la base de datos
+  public formulario:Array<any> = [];
+  //Define la variable como un booleano
+  public porEscala: boolean;
+
+  constructor(public dialogRef: MatDialogRef<ConfimarDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
+  private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService) {}
+   ngOnInit() {
+    this.formulario=this.data.formulario;
+    this.porEscala= this.data.porEscala; //controlo que tabla muestro en el modal
+    console.log(this.data.formulario);
+   }
+   public actualizar(){
+    if(this.porEscala==true){
+      this.ordenVentaEscalaServicio.agregar(this.formulario).subscribe(
+        res => {
+          var respuesta = res.json();
+          if(respuesta.codigo == 200) {
+            setTimeout(function() {
+              document.getElementById('idAutocompletado').focus();
+            }, 20);
+            this.toastr.success(respuesta.mensaje);
+          }
+        },
+        err => {
+          var respuesta = err.json();
+          if(respuesta.codigo == 11002) {
+            document.getElementById("labelNombre").classList.add('label-error');
+            document.getElementById("idNombre").classList.add('is-invalid');
+            document.getElementById("idNombre").focus();
+            this.toastr.error(respuesta.mensaje);
+          }
+        }
+      );
+    }else{
+      this.ordenVentaTramoServicio.agregar(this.formulario).subscribe(
+        res => {
+          var respuesta = res.json();
+          if(respuesta.codigo == 200) {
+            setTimeout(function() {
+              document.getElementById('idAutocompletado').focus();
+            }, 20);
+            this.toastr.success(respuesta.mensaje);
+          }
+        },
+        err => {
+          var respuesta = err.json();
+          if(respuesta.codigo == 11002) {
+            document.getElementById("labelNombre").classList.add('label-error');
+            document.getElementById("idNombre").classList.add('is-invalid');
+            document.getElementById("idNombre").focus();
+            this.toastr.error(respuesta.mensaje);
+          }
+        }
+      );
+    }
+   }
+  onNoClick(): void {
+    this.dialogRef.close();
+    document.getElementById('idActualizacion').focus();
+  } 
 }

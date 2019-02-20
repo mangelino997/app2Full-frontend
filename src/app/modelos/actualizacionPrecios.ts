@@ -10,11 +10,11 @@ export class ActualizacionPrecios {
             id: new FormControl(),
             version: new FormControl(),
             nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-            precioDesde: new FormControl('', Validators.maxLength(45)),
+            precioDesde: new FormControl('', Validators.maxLength(45)), //nueva fecha
+            listaPrecios: new FormControl(),
             aumento: new FormControl('', Validators.maxLength(45)),
-            porcentaje: new FormControl('', Validators.maxLength(45)),
-            fechaDesde: new FormControl('', Validators.maxLength(30)),
-            localidad: new FormControl('', Validators.required)
+            porcentaje: new FormControl(),
+            fechaDesde: new FormControl('', Validators.maxLength(30)) //la ultima fecha
         })
     }
 }

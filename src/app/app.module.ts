@@ -215,7 +215,7 @@ import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-sub
 import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component'; //Probado
 import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
 import { ViajeComponent } from './componentes/viaje/viaje.component';
-import { ActualizacionPreciosComponent, ListaPreciosDialogo } from './componentes/actualizacion-precios/actualizacion-precios.component';
+import { ActualizacionPreciosComponent, ListaPreciosDialogo, ConfimarDialogo } from './componentes/actualizacion-precios/actualizacion-precios.component';
 import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
 import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
 import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-factura.component';
@@ -470,6 +470,7 @@ const stompConfig: StompConfig = {
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,
     ListaPreciosDialogo,
+    ConfimarDialogo,
     PlanCuentaComponent,
     TipoCuentaContableComponent,
     GrupoCuentaContableComponent,
@@ -680,7 +681,8 @@ const stompConfig: StompConfig = {
     ObservacionesDialogo,
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,
-    ListaPreciosDialogo
+    ListaPreciosDialogo,
+    ConfimarDialogo
   ]
 })
 export class AppModule { }

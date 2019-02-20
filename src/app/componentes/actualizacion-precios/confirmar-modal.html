@@ -1,0 +1,92 @@
+<div class="row justify-content-center contenedor">
+    <div class="col-md-12 text-center">
+        <h5>Esta seguro de realizar los siguientes cambios?</h5>
+        <h6>La nueva Fecha Desde será: {{formulario[0].preciosDesde}}</h6>
+        <div class="row" *ngIf="!porEscala">
+          <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                  <th class="text-center"  scope="col">#</th>
+                  <th class="text-center"  scope="col">Tramo Origen</th>
+                  <th class="text-center"  scope="col">Tramo Destino</th>
+                  <th class="text-center"  scope="col">Km</th>
+                  <th class="text-center"  scope="col">Precio Fijo Seco</th>
+                  <th class="text-center"  scope="col">Precio Unitario Seco</th>
+                  <th class="text-center"  scope="col">Precio Fijo Refrigerado</th>
+                  <th class="text-center"  scope="col">Precio Unitario Refrigerado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let precio of formulario; let i = index">
+                  <td>
+                    <span>{{precio.id}}</span>
+                  </td>
+                  <td>
+                    <span>{{precio.tramo.origen.nombre}}</span>
+                  </td>
+                  <td >
+                    <span>{{precio.tramo.origen.nombre}}</span>
+                  </td>
+                  <td>
+                    <span>{{precio.tramo.km}}</span>
+                  </td>
+                  <td>
+                    <span>{{precio.importeFijoSeco}}</span>
+                  </td>
+                  <td>
+                    <span>{{precio.precioUnitarioSeco}}</span>
+                  </td>
+                  <td>
+                    <span>{{precio.precioFijoRefrigerado}}</span>
+                  </td>
+                  <td>
+                    <span>{{precio.precioUnitarioRefrigerado}}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="row" *ngIf="porEscala">
+          <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-sm">
+              <thead>
+                <tr>
+                <th class="text-center"  scope="col">Id</th>
+                <th class="text-center"  scope="col">Escala</th>
+                <th class="text-center"  scope="col">Precio Fijo</th>
+                <th class="text-center"  scope="col">Precio Unitario</th>
+                <th class="text-center"  scope="col">% Según Tarifa</th>
+                <th class="text-center"  scope="col">Mínimo</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let l of formulario; let i = index">
+                <td>
+                    <span>{{l.id}}</span>
+                </td>
+                <td>
+                    <span>{{l.escalaTarifa.valor}}</span>
+                </td>
+                <td>
+                    <span>{{l.importeFijo}}</span>
+                </td>
+                <td>
+                    <span>{{l.precioUnitario}}</span>
+                </td>
+                <td>
+                    <span>{{l.porcentaje}}</span>
+                </td>
+                <td>
+                    <span>{{l.minimo}}</span>
+                </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <button id="idBoton" mat-raised-button color="" (click)="dialogRef.close()">Cancelar</button>
+        <button id="idBoton" mat-raised-button color="primary" (click)="actualizar()">Agregar</button>
+    </div>
+</div>
