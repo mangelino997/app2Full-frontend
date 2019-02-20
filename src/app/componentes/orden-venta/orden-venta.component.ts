@@ -69,6 +69,8 @@ export class OrdenVentaComponent implements OnInit {
   public resultados = [];
   //Define el form control para las busquedas cliente
   public buscarCliente:FormControl = new FormControl();
+  //Define el form control para el precioDesde de cada registro
+  public precioDesde:FormControl = new FormControl();
   //Define la lista de resultados de busqueda cliente
   public resultadosClientes = [];
   //Define el form control para las busquedas vendedor
@@ -318,10 +320,12 @@ export class OrdenVentaComponent implements OnInit {
   public agregarEscalaLista(){
     this.formulario.disable();
     if(this.idModEscala!=null){
+      this.formularioEscala.get('preciosDesde').setValue(this.precioDesde.value);
       this.listaDeEscalas[this.idModEscala]=this.formularioEscala.value;
       this.formularioEscala.reset();
       this.idModEscala=null;
     }else{
+      this.formularioEscala.get('preciosDesde').setValue(this.precioDesde.value);
       this.listaDeEscalas.push(this.formularioEscala.value);
       this.formularioEscala.reset();
     }
@@ -380,10 +384,12 @@ export class OrdenVentaComponent implements OnInit {
   public agregarTramoLista(){
     this.formulario.disable();
     if(this.idModTramo!=null){
+      this.formularioTramo.get('preciosDesde').setValue(this.precioDesde.value);
       this.listaDeTramos[this.idModTramo]=this.formularioTramo.value;
       this.formularioTramo.reset();
       this.idModTramo=null;
     }else{
+      this.formularioTramo.get('preciosDesde').setValue(this.precioDesde.value);
       this.listaDeTramos.push(this.formularioTramo.value);
       this.formularioTramo.reset();
     }

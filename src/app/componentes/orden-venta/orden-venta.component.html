@@ -112,7 +112,7 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
-                <input id="idPreciosDesde" type="date" formControlName="activaDesde" autocomplete="off"
+                <input id="idPreciosDesde" type="date" [formControl]="precioDesde" autocomplete="off"
                   class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
             </div>
