@@ -252,6 +252,7 @@ import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
 import { VentaTipoItem } from './modelos/venta-tipo-item';
 import { ViajeUnidadNegocio } from './modelos/viajeUnidadNegocio';
 import { ActualizacionPrecios } from './modelos/actualizacionPrecios';
+import { OrdenRecoleccionComponent } from './componentes/orden-recoleccion/orden-recoleccion.component';
 
 
 
@@ -347,7 +348,8 @@ const appRoutes: Routes = [
   { path: 'configuracionafipconcepto', component: ConceptoAfipComponent, canActivate: [GuardiaService] },
   { path: 'configuracionventasconceptos', component: VentaConceptoComponent, canActivate: [GuardiaService] },
   { path: 'configuracionventatipoitem', component: VentaTipoComponent, canActivate: [GuardiaService] },
-  { path: 'configuracionviajeunidadnegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] }
+  { path: 'configuracionviajeunidadnegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
+  { path: 'recoleccionesadministrar', component: OrdenRecoleccionComponent, canActivate: [GuardiaService] }
 
   
 ]
@@ -475,7 +477,8 @@ const stompConfig: StompConfig = {
     TipoCuentaContableComponent,
     GrupoCuentaContableComponent,
     EjercicioComponent,
-    VentaTipoComponent
+    VentaTipoComponent,
+    OrdenRecoleccionComponent
   ],
   imports: [
     BrowserModule,

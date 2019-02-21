@@ -1,0 +1,222 @@
+<div id="ordenrecoleccion" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>RECOLECCIÓN </a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div *ngIf="indiceSeleccionado < 5" class="row justify-content-center contenedor">
+    <div class="col-md-8">
+      <h5>Tipo de Comprobante: ORDEN DE RECOLECCIÓN</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="row">
+                  <div class="col-md-3">
+                    <div class="form-group has-float-label">
+                      <label for="idPreciosDesde" class="tamanio-label">Fecha *</label>
+                      <input id="idPreciosDesde" type="date" formControlName="fecha" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="form-group has-float-label">
+                      <label for="idCliente" class="tamanio-label">Reminente *</label>
+                      <input id="idCliente" class="form-control form-control-sm"  type="text"
+                        matInput [formControl]="reminente" [matAutocomplete]="autoCliente" autocomplete="off">
+                      <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="listarOrdenesVentas('cliente')">
+                        <mat-option *ngFor="let cliente of resultadosClientes" [value]="itemCliente">
+                          {{itemCliente.alias}}
+                        </mat-option>
+                      </mat-autocomplete>
+                    </div>
+                  </div>
+                  <div class="col-md-1">
+                    <button mat-raised-button color="primary" (click)="agregarClienteEventual()">Agregar</button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group has-float-label col-md-4">
+                    <label for="idNombre" class="tamanio-label">Domicilio - Barrio</label>
+                    <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group has-float-label col-md-4">
+                    <label for="idNombre" class="tamanio-label">Localidad - Provincia</label>
+                    <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura" required>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2"></div>
+              <div class="col-md-3">
+                <div class="row">
+                  <h5>Retirar en:</h5>
+                  <div class="form-group has-float-label">
+                    <label for="idNombre" class="tamanio-label">Domicilio</label>
+                    <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura" required>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group has-float-label">
+                    <label for="idBarrio" class="tamanio-label">Barrio *</label>
+                      <input id="idBarrio" class="form-control form-control-sm"  type="text"
+                        matInput [formControl]="reminente" [matAutocomplete]="autoCliente" autocomplete="off">
+                      <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="listarOrdenesVentas('cliente')">
+                        <mat-option *ngFor="let cliente of resultadosClientes" [value]="itemCliente">
+                          {{itemCliente.alias}}
+                        </mat-option>
+                      </mat-autocomplete>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="form-group has-float-label">
+                    <label for="idLocalidad" class="tamanio-label">Localidad *</label>
+                      <input id="idLocalidad" class="form-control form-control-sm"  type="text"
+                        matInput [formControl]="reminente" [matAutocomplete]="autoCliente" autocomplete="off">
+                      <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="listarOrdenesVentas('cliente')">
+                        <mat-option *ngFor="let cliente of resultadosClientes" [value]="itemCliente">
+                          {{itemCliente.alias}}
+                        </mat-option>
+                      </mat-autocomplete>
+                  </div>
+                </div>
+              </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idPreciosDesde" class="tamanio-label">Fecha de Recolección *</label>
+              <input id="idPreciosDesde" type="date" formControlName="fecha" autocomplete="off"
+              class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idPreciosDesde" class="tamanio-label">Hora desde *</label>
+              <input id="idPreciosDesde" type="time" formControlName="fecha" autocomplete="off"
+              class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idPreciosDesde" class="tamanio-label">Hora Hasta *</label>
+              <input id="idPreciosDesde" type="time" formControlName="fecha" autocomplete="off"
+              class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idPreciosDesde" class="tamanio-label">Solicitado Por *</label>
+              <input id="idPreciosDesde" type="text" formControlName="fecha" autocomplete="off"
+              class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idPreciosDesde" class="tamanio-label">Teléfono Contacto *</label>
+              <input id="idPreciosDesde" type="text" formControlName="fecha" autocomplete="off"
+              class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Descripción de la Carga*</label>
+                <input id="idPreciosDesde" type="text" formControlName="fecha" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Bultos *</label>
+                <input id="idPreciosDesde" type="time" formControlName="fecha" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Kg Efectivo *</label>
+                <input id="idPreciosDesde" type="time" formControlName="fecha" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">m3 *</label>
+                <input id="idPreciosDesde" type="text" formControlName="fecha" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Valor Declarado *</label>
+                <input id="idPreciosDesde" type="text" formControlName="fecha" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Sucursal Destino*</label>
+                <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta" class="form-control form-control-sm"
+                  required>
+                  <mat-option [value]="false">Por Empresa</mat-option>
+                  <mat-option [value]="true">Por Cliente</mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Entrega en Domicilio *</label>
+                <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta" class="form-control form-control-sm"
+                  required>
+                  <mat-option [value]="true">Sí</mat-option>
+                  <mat-option [value]="false">No</mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Pago en Origen/Destino *</label>
+                <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta" class="form-control form-control-sm"
+                  required>
+                  <mat-option [value]="origen">Origen</mat-option>
+                  <mat-option [value]="destino">Destino</mat-option>
+                </mat-select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Observaciones *</label>
+                <textarea id="idPreciosDesde" type="text" formControlName="fecha" autocomplete="off" rows="3"
+                class="form-control" [readonly]="soloLectura"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row justify-content-center contenedor">
+            <div class="col-md-12 text-center">
+              <button id="idBoton" ng-show="mostrarBoton" mat-raised-button color="primary" 
+              (click)="accion(indiceSeleccionado)">
+              {{pestaniaActual}}
+              </button>
+            </div>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+
