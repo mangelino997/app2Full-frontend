@@ -60,7 +60,7 @@ export class OrdenVentaComponent implements OnInit {
   //Define la lista de empresas
   public empresas:any = null;
   //Define la lista de tipos de tarifas
-  public tiposTarifas:any = null;
+  public tiposTarifas:any = [];
   //Define la lista de tramos para la segunda tabla
   public listaTramos:any = [];
   //Define el form control para las busquedas
@@ -79,6 +79,10 @@ export class OrdenVentaComponent implements OnInit {
   public resultadosVendedores = [];
   //Define el form control para las busquedas tramo
   public buscarTramo:FormControl = new FormControl();
+  //Define el form control para el combo ordenes de venta
+  public ordenventa:FormControl = new FormControl();
+  //Define la lista de ordenes de ventas
+  public ordenesVentas:Array<any>=[];
   //Define la lista de resultados de busqueda tramo
   public resultadosTramos = [];
   //Define la lista de vendedores
@@ -104,8 +108,7 @@ export class OrdenVentaComponent implements OnInit {
         console.log(err);
       }
     );
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
@@ -128,25 +131,9 @@ export class OrdenVentaComponent implements OnInit {
           })
         }
     })
-    //Autocompletado - Buscar por nombre vendedor
-    // this.buscarVendedor.valueChanges
-    //   .subscribe(data => {
-    //     if(typeof data == 'string') {
-    //       this.vendedorServicio.listarPorNombre(data).subscribe(response =>{
-    //         this.resultadosVendedores = response;
-    //       })
-    //     }
-    // })
-    
   }
   //Al iniciarse el componente
   ngOnInit() {
-    //Define el formulario de orden venta
-    this.formulario = this.ordenVenta.formulario;
-    //Define el formulario de orden venta escala
-    this.formularioEscala = this.ordenVentaEscala.formulario;
-    //Define el formulario de orden venta tramo
-    this.formularioTramo = this.ordenVentaTramo.formulario;
     //Obtiene la lista de empresas
     this.listarEmpresas();
     //Obtiene la lista de tipos de tarifas
@@ -155,6 +142,13 @@ export class OrdenVentaComponent implements OnInit {
     this.listarVendedores();
     //Obtiene la lista de escalas tarifas
     this.listarEscalaTarifa();
+    
+    //Define el formulario de orden venta
+    this.formulario = this.ordenVenta.formulario;
+    //Define el formulario de orden venta escala
+    this.formularioEscala = this.ordenVentaEscala.formulario;
+    //Define el formulario de orden venta tramo
+    this.formularioTramo = this.ordenVentaTramo.formulario;
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
     //Autocompletado Tramo - Buscar por nombre
@@ -162,23 +156,16 @@ export class OrdenVentaComponent implements OnInit {
       .subscribe(data => {
         if(typeof data == 'string') {
           this.tramoServicio.listarPorOrigen(data).subscribe(response =>{
-            console.log(response);
             this.resultadosTramos = response;
           })
         }
     });
-    //Controla el cambio de Tabla, borrando lo que hay en una si se elige la otra
-    // if(this.formulario.get('tipoTarifa').value.porEscala){
-    //   this.formularioTramo.reset();
-    //   this.listaDeTramos=[];
-    // }
-    // if(!this.formulario.get('tipoTarifa').value.porEscala){
-    //   this.formularioEscala.reset();
-    //   this.listaDeEscalas=[];
-    // }
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
+    this.formulario.get('tipoOrdenVenta').setValue(true);
     this.formulario.get('seguro').setValue('0.00');
     this.formulario.get('comisionCR').setValue('0.00');
   }
@@ -211,7 +198,6 @@ export class OrdenVentaComponent implements OnInit {
       this.vendedores = response.json();
     },
       err => {
-        console.log(err);
       }
     )
   }
@@ -222,9 +208,29 @@ export class OrdenVentaComponent implements OnInit {
         this.escalas=res.json();
       },
       err => {
-        console.log(err);
       }
     )
+  }
+  //Listar ordenes de ventas por Empresa/Cliente
+  public listarOrdenesVentas(tipo){
+    switch(tipo){
+      case 'empresa':
+        this.ordenVentaServicio.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
+          res=>{
+            this.ordenesVentas= res.json();
+          }
+        );
+        break;
+      case 'cliente':
+        this.formulario.get('cliente').setValue(this.buscarCliente.value);
+        this.formulario.get('empresa').setValue(null);
+        this.ordenVentaServicio.listarPorCliente(this.buscarCliente.value.id).subscribe(
+          res=>{
+            this.ordenesVentas= res.json();
+          }
+        );
+        break;
+    }
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
@@ -235,10 +241,10 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado(elemAutocompletado) {
-   //this.elemento = elemAutocompletado;
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+    this.reestablecerCampos();
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
@@ -249,7 +255,6 @@ export class OrdenVentaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    //this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
@@ -258,15 +263,19 @@ export class OrdenVentaComponent implements OnInit {
     }
     switch (id) {
       case 1:
+        this.establecerCampos(1);
         this.establecerValoresPestania(nombre, false, false, true, 'idTipoOrdenVenta');
         break;
       case 2:
+        this.establecerCampos(2);
         this.establecerValoresPestania(nombre, true, true, false, 'idTipoOrdenVenta');
         break;
       case 3:
+        this.establecerCampos(3);
         this.establecerValoresPestania(nombre, true, false, true, 'idTipoOrdenVenta');
         break;
       case 4:
+        this.establecerCampos(4);
         this.establecerValoresPestania(nombre, true, true, true, 'idTipoOrdenVenta');
         break;
       default:
@@ -289,6 +298,35 @@ export class OrdenVentaComponent implements OnInit {
         break;
     }
   }
+  //Establecer campos
+  public establecerCampos(pestania){
+    switch(pestania){
+      case 1:
+      case 3:
+        this.formulario.get('tipoOrdenVenta').enable();
+        this.formulario.get('empresa').enable();
+        this.buscarCliente.enable();
+        this.ordenventa.enable();
+        this.formulario.get('vendedor').enable();
+        this.formulario.get('tipoTarifa').enable();
+        this.formularioEscala.enable();
+        this.formularioTramo.enable();
+        break;
+      case 2:
+      case 4:
+        this.formulario.get('tipoOrdenVenta').enable();
+        this.formulario.get('empresa').enable();
+        this.buscarCliente.enable();
+        this.ordenventa.enable();
+        this.formulario.get('vendedor').disable();
+        this.formulario.get('tipoTarifa').disable();
+        this.formularioEscala.disable();
+        this.formularioTramo.disable();
+        break;
+    }
+    this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
+
+  }
   //Obtiene el listado de registros
   private listar() {
     this.servicio.listar().subscribe(
@@ -296,13 +334,11 @@ export class OrdenVentaComponent implements OnInit {
         this.listaCompleta = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
   //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA ESCALA
   public controlPrecios(tipoPrecio){
-    console.log(this.formularioEscala.value);
     switch(tipoPrecio){
       case 1:
         if(this.formularioEscala.get('importeFijo').value>0){
@@ -319,6 +355,7 @@ export class OrdenVentaComponent implements OnInit {
   //Agrega una Escala a listaDeEscalas
   public agregarEscalaLista(){
     this.formulario.disable();
+    this.precioDesde.disable();
     if(this.idModEscala!=null){
       this.formularioEscala.get('preciosDesde').setValue(this.precioDesde.value);
       this.listaDeEscalas[this.idModEscala]=this.formularioEscala.value;
@@ -350,7 +387,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA TRAMO
   public controlPreciosTramo(tipoPrecio){
-    console.log(this.formularioTramo.value);
     switch(tipoPrecio){
       case 1:
         if(this.formularioTramo.get('importeFijoSeco').value>0){
@@ -366,7 +402,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA TRAMO
   public controlPreciosTramoRef(tipoPrecio){
-    console.log(this.formularioTramo.value);
     switch(tipoPrecio){
       case 1:
         if(this.formularioTramo.get('importeFijoRef').value>0){
@@ -383,6 +418,7 @@ export class OrdenVentaComponent implements OnInit {
   //Agrega un Tramo a listaDeTramos
   public agregarTramoLista(){
     this.formulario.disable();
+    this.precioDesde.disable();
     if(this.idModTramo!=null){
       this.formularioTramo.get('preciosDesde').setValue(this.precioDesde.value);
       this.listaDeTramos[this.idModTramo]=this.formularioTramo.value;
@@ -415,18 +451,16 @@ export class OrdenVentaComponent implements OnInit {
   //Establece ceros a la derecha de los campos (decimales)
   public establecerCeros(campo){
     campo.setValue(this.appComponent.establecerCeros(campo.value));
-    console.log(this.appComponent.establecerCeros(campo.value));
   }
   //Agrega un registro
   private agregar() {
     this.formulario.get('ordenesVentasEscalas').setValue(this.listaDeEscalas); 
     this.formulario.get('ordenesVentasTramos').setValue(this.listaDeTramos); 
-    console.log(this.formulario.value);
     this.ordenVentaServicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerCampos(undefined);
+          this.reestablecerCampos();
           setTimeout(function() {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -466,18 +500,29 @@ export class OrdenVentaComponent implements OnInit {
       }
     );
   }
+  //Carga los datos de la orden de venta seleccionada en los input
+  public cargarDatosOrden(){
+    this.formulario.patchValue(this.ordenventa.value);
+    if(this.formulario.get('tipoTarifa').value.porEscala==true){
+      this.listaDeEscalas=this.ordenventa.value.ordenesVentasEscalas;
+    }else{
+      this.listaDeTramos=this.ordenventa.value.ordenesVentasTramos;
+    }
+    this.precioDesde.setValue(this.ordenventa.value.activaDesde);
+  }
   //Reestablecer campos
-  private reestablecerCampos(valor){
-    this.formulario.disable();
+  private reestablecerCampos(){
     this.formulario.reset();
     this.formularioEscala.reset();
     this.formularioTramo.reset();
     this.listaDeEscalas=[];
+    this.listaDeTramos=[];
+    this.precioDesde.setValue(null);
     this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
-  }
+
+    }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

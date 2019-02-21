@@ -28,7 +28,7 @@
               <div class="form-group has-float-label">
                 <label for="idEmpresa" class="tamanio-label">Empresa *</label>
                 <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
-                  [compareWith]="compareFn" [required]="formulario.get('tipoOrdenVenta').value == false">
+                  [compareWith]="compareFn" [required]="formulario.get('tipoOrdenVenta').value == false" (selectionChange)="listarOrdenesVentas('empresa')">
                   <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                     {{itemEmpresa.razonSocial}}
                   </mat-option>
@@ -40,12 +40,23 @@
                 <label for="idCliente" class="tamanio-label">Cliente *</label>
                 <input id="idCliente" class="form-control form-control-sm" formControlName="cliente" type="text"
                   matInput [formControl]="buscarCliente" [matAutocomplete]="autoCliente" autocomplete="off"
-                  [readonly]="soloLectura" [required]="formulario.get('tipoOrdenVenta').value == true">
-                <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
+                  [required]="formulario.get('tipoOrdenVenta').value == true">
+                <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="listarOrdenesVentas('cliente')">
                   <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
                     {{itemCliente.alias}}
                   </mat-option>
                 </mat-autocomplete>
+              </div>
+            </div>
+            <div class="col-md-4" *ngIf="mostrarAutocompletado">
+              <div class="form-group has-float-label">
+                <label for="idOrdenVenta" class="orden-venta-label">Orden Venta *</label>
+                <mat-select id="idOrdenVenta" class="form-control form-control-sm" [formControl]="ordenventa" 
+                  [compareWith]="compareFn" (selectionChange)="cargarDatosOrden()">
+                  <mat-option *ngFor="let orden of ordenesVentas" [value]="orden">
+                    {{orden.nombre}} - {{orden.cliente? orden.cliente.razonSocial : orden.empresa.razonSocial}} - {{orden.vendedor.nombre}} - {{orden.activaDesde}}
+                  </mat-option>
+                </mat-select>
               </div>
             </div>
           </div>
@@ -180,8 +191,8 @@
                   <th class="text-center" style="width:20%" scope="col">Precio Unitario</th>
                   <th class="text-center" style="width:20%" scope="col">% Según Tarifa</th>
                   <th class="text-center" style="width:10%" scope="col">Mínimo</th>
-                  <th class="text-center" style="width:5%" scope="col">-</th>
-                  <th class="text-center" style="width:5%" scope="col">-</th>
+                  <th class="text-center" style="width:5%" scope="col" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">-</th>
+                  <th class="text-center" style="width:5%" scope="col" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">-</th>
                 </tr>
               </thead>
               <tbody>
