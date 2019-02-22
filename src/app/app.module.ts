@@ -111,6 +111,8 @@ import { MesService } from './servicios/mes.service';
 import { ProductoService } from './servicios/producto.service';
 import { AfipConceptoService } from './servicios/afip-concepto.service';
 import { OrdenVentaTramoService } from './servicios/orden-venta-tramo.service';
+import { VentaConceptoService } from './servicios/venta-concepto.service';
+import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -146,6 +148,9 @@ import { CondicionVenta } from './modelos/condicion-venta';
 import { Producto } from './modelos/producto';
 import { ConceptoAfip } from './modelos/concepto-afip';
 import { VentaConcepto } from './modelos/venta-concepto';
+import { VentaTipoItem } from './modelos/venta-tipo-item';
+import { ViajeUnidadNegocio } from './modelos/viajeUnidadNegocio';
+import { ActualizacionPrecios } from './modelos/actualizacionPrecios'
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -246,15 +251,8 @@ import { PlanCuentaComponent } from './componentes/plan-cuenta/plan-cuenta.compo
 import { TipoCuentaContableComponent } from './componentes/tipo-cuenta-contable/tipo-cuenta-contable.component';
 import { GrupoCuentaContableComponent } from './componentes/grupo-cuenta-contable/grupo-cuenta-contable.component';
 import { EjercicioComponent } from './componentes/ejercicio/ejercicio.component';
-import { VentaConceptoService } from './servicios/venta-concepto.service';
 import { VentaTipoComponent } from './componentes/venta-tipo/venta-tipo.component';
-import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
-import { VentaTipoItem } from './modelos/venta-tipo-item';
-import { ViajeUnidadNegocio } from './modelos/viajeUnidadNegocio';
-import { ActualizacionPrecios } from './modelos/actualizacionPrecios';
 import { OrdenRecoleccionComponent } from './componentes/orden-recoleccion/orden-recoleccion.component';
-
-
 
 //Rutas
 const appRoutes: Routes = [
@@ -350,12 +348,10 @@ const appRoutes: Routes = [
   { path: 'configuracionventatipoitem', component: VentaTipoComponent, canActivate: [GuardiaService] },
   { path: 'configuracionviajeunidadnegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
   { path: 'recoleccionesadministrar', component: OrdenRecoleccionComponent, canActivate: [GuardiaService] }
-
-  
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.32:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
