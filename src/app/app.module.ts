@@ -113,6 +113,8 @@ import { AfipConceptoService } from './servicios/afip-concepto.service';
 import { OrdenVentaTramoService } from './servicios/orden-venta-tramo.service';
 import { VentaConceptoService } from './servicios/venta-concepto.service';
 import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
+import { OrdenRecoleccionService } from './servicios/orden-recoleccion.service';
+
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -151,6 +153,7 @@ import { VentaConcepto } from './modelos/venta-concepto';
 import { VentaTipoItem } from './modelos/venta-tipo-item';
 import { ViajeUnidadNegocio } from './modelos/viajeUnidadNegocio';
 import { ActualizacionPrecios } from './modelos/actualizacionPrecios'
+import { OrdenRecoleccion } from './modelos/ordenRecoleccion';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -254,6 +257,7 @@ import { EjercicioComponent } from './componentes/ejercicio/ejercicio.component'
 import { VentaTipoComponent } from './componentes/venta-tipo/venta-tipo.component';
 import { OrdenRecoleccionComponent } from './componentes/orden-recoleccion/orden-recoleccion.component';
 
+
 //Rutas
 const appRoutes: Routes = [
   { path: '', component: LoginComponent },
@@ -348,10 +352,12 @@ const appRoutes: Routes = [
   { path: 'configuracionventatipoitem', component: VentaTipoComponent, canActivate: [GuardiaService] },
   { path: 'configuracionviajeunidadnegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
   { path: 'recoleccionesadministrar', component: OrdenRecoleccionComponent, canActivate: [GuardiaService] }
+
+  
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.156:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -660,6 +666,8 @@ const stompConfig: StompConfig = {
     VentaTipoItemService,
     ViajeUnidadNegocio,
     ActualizacionPrecios,
+    OrdenRecoleccion,
+    OrdenRecoleccionService,
     MesService,
     {
       provide: StompConfig,

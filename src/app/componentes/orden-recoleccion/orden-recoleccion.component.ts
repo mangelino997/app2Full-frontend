@@ -8,6 +8,12 @@ import { OrdenVenta } from 'src/app/modelos/ordenVenta';
 import { OrdenVentaEscala } from 'src/app/modelos/ordenVentaEscala';
 import { OrdenVentaTramo } from 'src/app/modelos/ordenVentaTramo';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { OrdenRecoleccion } from 'src/app/modelos/ordenRecoleccion';
+import { ClienteService } from 'src/app/servicios/cliente.service';
+import { LocalidadService } from 'src/app/servicios/localidad.service';
+import { BarrioService } from 'src/app/servicios/barrio.service';
+import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.service';
+import { SucursalService } from 'src/app/servicios/sucursal.service';
 @Component({
   selector: 'app-orden-recoleccion',
   templateUrl: './orden-recoleccion.component.html',
@@ -24,8 +30,12 @@ export class OrdenRecoleccionComponent implements OnInit {
   public mostrarAutocompletado:boolean = null;
   //Define si el campo es de solo lectura
   public soloLectura:boolean = false;
+  //Define si los campos de seleccion son de solo lectura
+  public selectSoloLectura:boolean = false;
   //Define si mostrar el boton
   public mostrarBoton:boolean = null;
+  //Define si muestra los datos (localidad-barrio-provincia) del cliente
+  public mostrarCliente:boolean=false;
   //Define una lista
   public lista = null;
   //Define la lista para las Escalas agregadas
@@ -36,54 +46,31 @@ export class OrdenRecoleccionComponent implements OnInit {
   public pestanias = null;
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
-  //Define un formulario para validaciones de campos
-  public formularioEscala:FormGroup;
-  //Define un formulario para validaciones de campos
-  public formularioTramo:FormGroup;
-  //Define el elemento de autocompletado
-  public elemAutocompletado:any = null;
   //Define el siguiente id
   public siguienteId:number = null;
-  //Define el id de la Escala que se quiere modificar
-  public idModEscala:number = null;
-  //Define el id del Tramo que se quiere modificar
-  public idModTramo:number = null;
   //Define la lista completa de registros
   public listaCompleta:any = null;
-  //Define la lista de empresas
-  public empresas:any = null;
-  //Define la lista de tipos de tarifas
-  public tiposTarifas:any = [];
-  //Define la lista de tramos para la segunda tabla
-  public listaTramos:any = [];
-  //Define el form control para las busquedas
-  public buscar:FormControl = new FormControl();
+  //Define el form control para el remitente
+  public cliente:FormControl = new FormControl();
+  public domicilio:FormControl = new FormControl();
+  public localidad:FormControl = new FormControl();
+  public barrio:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados = [];
   //Define el form control para las busquedas cliente
   public buscarCliente:FormControl = new FormControl();
-  //Define el form control para el precioDesde de cada registro
-  public precioDesde:FormControl = new FormControl();
   //Define la lista de resultados de busqueda cliente
   public resultadosClientes = [];
-  //Define el form control para las busquedas vendedor
-  public buscarVendedor:FormControl = new FormControl();
-  //Define la lista de resultados de busqueda vendedor
-  public resultadosVendedores = [];
-  //Define el form control para las busquedas tramo
-  public buscarTramo:FormControl = new FormControl();
-  //Define el form control para el combo ordenes de venta
-  public ordenventa:FormControl = new FormControl();
-  //Define la lista de ordenes de ventas
-  public ordenesVentas:Array<any>=[];
-  //Define la lista de resultados de busqueda tramo
-  public resultadosTramos = [];
-  //Define la lista de vendedores
-  public vendedores:Array<any>=[];
-  //Define la lista de escalas
-  public escalas:Array<any>=[];
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appComponent: AppComponent, private fechaServicio: FechaService,
-    private toastr: ToastrService, private appService: AppService) {
+  //Define la lista de resultados de busqueda localidad
+  public resultadosLocalidades = [];
+  //Define la lista de resultados de sucursales
+  public resultadosSucursales = [];
+  
+  //Define la lista de resultados de busqueda barrio
+  public resultadosBarrios = [];
+  constructor(private ordenRecoleccion: OrdenRecoleccion, private subopcionPestaniaService: SubopcionPestaniaService, private appComponent: AppComponent, private fechaServicio: FechaService,
+    private localidadService: LocalidadService, private clienteService: ClienteService, private toastr: ToastrService, private barrioService: BarrioService,
+    private appService: AppService, private servicio: OrdenRecoleccionService, private sucursalService: SucursalService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -92,33 +79,99 @@ export class OrdenRecoleccionComponent implements OnInit {
         this.activeLink = this.pestanias[0].nombre;
       },
       err => {
-        console.log(err);
       }
     );
    }
-
   ngOnInit() {
     //Define el formulario de orden venta
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      fecha: new FormControl('', Validators.maxLength(45)),
-      telefonoFijo: new FormControl('', Validators.maxLength(45)),
-      telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      correoelectronico: new FormControl('', Validators.maxLength(30)),
-      localidad: new FormControl('', Validators.required)
-    })
+    this.formulario = this.ordenRecoleccion.formulario;
+    //Setea la fecha actual
+    this.fechaServicio.obtenerFechaYHora().subscribe(res=>{
+      this.formulario.get('fechaEmision').setValue(res.json());
+    },
+    err=>{
+
+    });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    
+    //Lista todos los registros
+    this.listar();
+    //Lista todas las sucursales
+    this.listarSucursales();
+    //Autcompletado - Buscar por Remitente
+    this.formulario.get('cliente').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.clienteService.listarPorAlias(data).subscribe(res => {
+          this.resultadosClientes = res;
+        })
+      }
+    });
+    //Autcompletado - Buscar por Localidad
+    this.formulario.get('localidad').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.localidadService.listarPorNombre(data).subscribe(res => {
+          this.resultadosLocalidades = res;
+        })
+      }
+    });
+    //Autcompletado - Buscar por Barrio
+    this.formulario.get('barrio').valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.barrioService.listarPorNombre(data).subscribe(res => {
+          this.resultadosBarrios = res;
+        })
+      }
+    })
+  }
+  //Obtiene el listado de registros
+  private listar() {
+    this.servicio.listar().subscribe(
+      res => {
+        this.listaCompleta = res.json();
+      },
+      err => {
+      }
+    );
+  }
+  //Obtiene el listado de Sucursales
+  private listarSucursales() {
+    this.sucursalService.listar().subscribe(
+      res => {
+        this.resultadosSucursales = res.json();
+      },
+      err => {
+      }
+    );
+  }
+  //Controla el cambio del autocompletado para el Remitente
+  public cambioRemitente(){
+    this.mostrarCliente=true;
   }
   //Funcion para establecer los valores de las pestañas
-  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, selectSoloLectura, componente) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
+
+    if(selectSoloLectura==true){
+      this.formulario.get('entregarEnDomicilio').disable();
+      this.formulario.get('pagoEnOrigen').disable();
+      this.formulario.get('sucursalDestino').disable();
+      this.formulario.get('entregarEnDomicilio').disable();
+      this.formulario.get('localidad').disable();
+      this.formulario.get('barrio').disable();
+      this.formulario.get('cliente').disable();
+    }else{
+      this.formulario.get('entregarEnDomicilio').enable();
+      this.formulario.get('pagoEnOrigen').enable();
+      this.formulario.get('sucursalDestino').enable();
+      this.formulario.get('entregarEnDomicilio').enable();
+      this.formulario.get('localidad').enable();
+      this.formulario.get('barrio').enable();
+      this.formulario.get('cliente').enable();
+    }
+
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -128,21 +181,20 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
-      this.elemAutocompletado = null;
       this.resultados = [];
     }
     switch (id) {
       case 1:
-        this.establecerValoresPestania(nombre, false, false, true, 'idTipoOrdenVenta');
+        this.establecerValoresPestania(nombre, false, false, true, false, 'idCliente');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idTipoOrdenVenta');
+        this.establecerValoresPestania(nombre, true, true, false, true, 'idOrdenRecoleccion');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idTipoOrdenVenta');
+        this.establecerValoresPestania(nombre, true, false, true, false, 'idOrdenRecoleccion');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idTipoOrdenVenta');
+        this.establecerValoresPestania(nombre, true, true, true, true, 'idOrdenRecoleccion');
         break;
       default:
         break;
@@ -150,27 +202,83 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
-    // switch (indice) {
-    //   case 1:
-    //     this.agregar();
-    //     break;
-    //   case 3:
-    //     this.actualizar();
-    //     break;
-    //   case 4:
-    //     this.eliminar();
-    //     break;
-    //   default:
-    //     break;
-    // }
+    switch (indice) {
+      case 1:
+        this.agregar();
+        break;
+      case 3:
+        this.actualizar();
+        break;
+      case 4:
+        this.eliminar();
+        break;
+      default:
+        break;
+    }
   }
   //Agrega un Cliente Eventual
   public agregarClienteEventual(){
 
   }
+  //Agrega un registro
+  private agregar() {
+    console.log(this.formulario.value);
+    this.servicio.agregar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 201) {
+          this.reestablecerFormulario();
+          setTimeout(function() {
+            document.getElementById('idNombre').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        document.getElementById("labelNombre").classList.add('label-error');
+        document.getElementById("idNombre").classList.add('is-invalid');
+        document.getElementById("idNombre").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
+    );
+  }
+  //Actualiza un registro
+  private actualizar() {
+    console.log(this.formulario.value);
+    this.servicio.actualizar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          setTimeout(function() {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if(respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+      }
+    );
+  }
+  //Elimina un registro
+  private eliminar() {
+    console.log();
+  }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+  }
+  //Reestablece el formulario
+  public reestablecerFormulario(){
+    this.mostrarCliente=false;
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
@@ -188,7 +296,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     }
   }
   //Define como se muestra los datos en el autcompletado a
-  public displayFa(elemento) {
+  public displayFn(elemento) {
     if(elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
