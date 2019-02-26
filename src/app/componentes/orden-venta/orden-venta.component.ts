@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { EmpresaService } from '../../servicios/empresa.service';
@@ -14,6 +14,7 @@ import { AppService } from '../../servicios/app.service';
 import { OrdenVenta } from 'src/app/modelos/ordenVenta';
 import { OrdenVentaEscala } from 'src/app/modelos/ordenVentaEscala';
 import { OrdenVentaTramo } from 'src/app/modelos/ordenVentaTramo';
+
 
 @Component({
   selector: 'app-orden-venta',

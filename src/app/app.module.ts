@@ -256,6 +256,8 @@ import { GrupoCuentaContableComponent } from './componentes/grupo-cuenta-contabl
 import { EjercicioComponent } from './componentes/ejercicio/ejercicio.component';
 import { VentaTipoComponent } from './componentes/venta-tipo/venta-tipo.component';
 import { OrdenRecoleccionComponent } from './componentes/orden-recoleccion/orden-recoleccion.component';
+import { ClienteEventualComponent } from './componentes/cliente-eventual/cliente-eventual.component';
+import { ClienteEventual } from './modelos/clienteEventual';
 
 
 //Rutas
@@ -480,7 +482,8 @@ const stompConfig: StompConfig = {
     GrupoCuentaContableComponent,
     EjercicioComponent,
     VentaTipoComponent,
-    OrdenRecoleccionComponent
+    OrdenRecoleccionComponent,
+    ClienteEventualComponent
   ],
   imports: [
     BrowserModule,
@@ -668,6 +671,7 @@ const stompConfig: StompConfig = {
     ActualizacionPrecios,
     OrdenRecoleccion,
     OrdenRecoleccionService,
+    ClienteEventual,
     MesService,
     {
       provide: StompConfig,
@@ -689,7 +693,8 @@ const stompConfig: StompConfig = {
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,
     ListaPreciosDialogo,
-    ConfimarDialogo
+    ConfimarDialogo,
+    ClienteEventualComponent
   ]
 })
 export class AppModule { }

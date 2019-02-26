@@ -16,6 +16,7 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { ClienteEventual } from 'src/app/modelos/clienteEventual';
 
 @Component({
   selector: 'app-viaje-remito',
@@ -477,28 +478,10 @@ export class ClienteEventualDialogo {
   private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
   private cobradorServicio: CobradorService, private zonaServicio: ZonaService,
   private rubroServicio: RubroService, private sucursalServicio: SucursalService,
-  private clienteServicio: ClienteService, private toastr: ToastrService) { }
+  private clienteServicio: ClienteService, private toastr: ToastrService, public clienteEventual: ClienteEventual) { }
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      razonSocial: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      nombreFantasia: new FormControl('', Validators.maxLength(45)),
-      domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
-      localidad: new FormControl('', [Validators.required]),
-      barrio: new FormControl(),
-      telefono: new FormControl('', [Validators.maxLength(45)]),
-      zona: new FormControl(),
-      rubro: new FormControl(),
-      cobrador: new FormControl(),
-      condicionIva: new FormControl(),
-      tipoDocumento: new FormControl(),
-      numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(15)]),
-      numeroIIBB: new FormControl('', Validators.maxLength(15)),
-      sucursalLugarPago: new FormControl(),
-      usuarioAlta: new FormControl()
-    });
+    this.formulario = this.clienteEventual.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if(typeof data == 'string') {

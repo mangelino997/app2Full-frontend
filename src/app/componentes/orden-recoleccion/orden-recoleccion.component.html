@@ -14,11 +14,26 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
             <div class="col-md-7">
+              <div class="row">
+                <div class="col-md-8">
+                  <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+                  <label for="idAutocompletado" class="tamanio-label">Buscar </label>
+                  <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+                    [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+                  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                    <mat-option *ngFor="let item of resultados" [value]="item"
+                      (onSelectionChange)="formulario.setValue(item)">
+                      {{item.nombre}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+                </div>
+              </div>
                 <div class="row">
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idFechaEmision" class="tamanio-label">Fecha *</label>
-                      <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off"
+                      <input id="idFechaEmision" type="text" formControlName="fechaEmision" autocomplete="off"
                         class="form-control form-control-sm" readonly>
                     </div>
                   </div>
@@ -26,7 +41,7 @@
                 <div class="row">
                   <div class="col-md-8">
                     <div class="form-group has-float-label">
-                      <label for="idCliente" class="tamanio-label">Remitente *</label>
+                      <label for="idCliente" class="cliente-label">Remitente *</label>
                       <input id="idCliente" class="form-control form-control-sm"  type="text" 
                         matInput [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off">
                       <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="cambioRemitente()"> 
@@ -40,16 +55,16 @@
                     <button mat-raised-button color="primary" (click)="agregarClienteEventual()">Agregar</button>
                   </div>
                 </div>
-                <div class="row" *ngIf="mostrarCliente">
+                <div class="row" >
                   <div class="form-group has-float-label col-md-8">
                     <label for="idDomicilioBarrio" class="tamanio-label">Domicilio - Barrio</label>
-                    <span class="datosRemitente">{{formulario.get('cliente').value.domicilio}} - {{formulario.get('cliente').value.barrio}}</span>
+                    <input id="idDomicilioBarrio" type="text" [formControl]="domicilioBarrio" autocomplete="off" class="form-control form-control-sm"  readonly>
                   </div>
                 </div>
-                <div class="row" *ngIf="mostrarCliente">
+                <div class="row" >
                   <div class="form-group has-float-label col-md-8">
                     <label for="idLocalidadProvincia" class="tamanio-label">Localidad - Provincia</label>
-                    <span class="datosRemitente">{{formulario.get('cliente').value.localidad.nombre}} - {{formulario.get('cliente').value.localidad.provincia.nombre}}</span>
+                    <input id="idDomicilioBarrio" type="text" [formControl]="localidadProvincia" autocomplete="off" class="form-control form-control-sm"  readonly>
                   </div>
                 </div>
               </div>
@@ -59,7 +74,7 @@
                   <h5>Retirar en:</h5>
                   <div class="form-group has-float-label">
                     <label for="idDomicilio" class="tamanio-label">Domicilio *</label>
-                    <input id="idDomicilio" type="text" [formControl]="domicilio" autocomplete="off"
+                    <input id="idDomicilio" type="text" [formControl]="formulario.get('domicilio')" autocomplete="off"
                         class="form-control form-control-sm" [readonly]="soloLectura" required>
                   </div>
                 </div>
@@ -145,21 +160,21 @@
             <div class="col-md-2">
               <div class="form-group has-float-label">
                 <label for="idKgEfectivo" class="tamanio-label">Kg Efectivo </label>
-                <input id="idKgEfectivo" type="number" formControlName="kiloEfectivo" autocomplete="off"
+                <input id="idKgEfectivo" type="number" formControlName="kiloEfectivo" autocomplete="off" (blur)="setDecimales($event, 2)"
                 class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
             </div>
             <div class="col-md-2">
               <div class="form-group has-float-label">
                 <label for="idM3" class="tamanio-label">m3 </label>
-                <input id="idM3" type="number" formControlName="m3" autocomplete="off"
+                <input id="idM3" type="number" formControlName="m3" autocomplete="off" (blur)="setDecimales($event, 2)"
                 class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
             </div>
             <div class="col-md-2">
               <div class="form-group has-float-label">
                 <label for="idValorDeclarado" class="tamanio-label">Valor Declarado *</label>
-                <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" autocomplete="off"
+                <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" autocomplete="off" (blur)="setDecimales($event, 2)"
                 class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
             </div>

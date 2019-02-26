@@ -50,21 +50,9 @@ export class OrdenRecoleccionService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
-  }
-  //Obtiene el listado por Empresa
-  public listarPorEmpresa(id) {
-    return this.http.get(this.url + '/listarPorEmpresa/' + id, this.options);
-  }
-  //Obtiene el listado por Cliente
-  public listarPorCliente(id) {
-    return this.http.get(this.url + '/listarPorCliente/' + id, this.options);
+  //Obtiene el listado por id
+  public obtenerPorId(id) {
+    return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { ToastrService } from 'ngx-toastr';
 import { AppComponent } from '../../app.component';
@@ -14,12 +14,24 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { BarrioService } from 'src/app/servicios/barrio.service';
 import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
+import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
+import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
+import { CobradorService } from 'src/app/servicios/cobrador.service';
+import { ZonaService } from 'src/app/servicios/zona.service';
+import { RubroService } from 'src/app/servicios/rubro.service';
+import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.component';
+
+
 @Component({
   selector: 'app-orden-recoleccion',
   templateUrl: './orden-recoleccion.component.html',
   styleUrls: ['./orden-recoleccion.component.css']
 })
 export class OrdenRecoleccionComponent implements OnInit {
+  //Define el componente Datos del Paciente
+  // @ViewChild(ModalAltaClienteEventualComponent) modAltaCliente;
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -52,9 +64,8 @@ export class OrdenRecoleccionComponent implements OnInit {
   public listaCompleta:any = null;
   //Define el form control para el remitente
   public cliente:FormControl = new FormControl();
-  public domicilio:FormControl = new FormControl();
-  public localidad:FormControl = new FormControl();
-  public barrio:FormControl = new FormControl();
+  public domicilioBarrio:FormControl = new FormControl();
+  public localidadProvincia:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados = [];
   //Define el form control para las busquedas cliente
@@ -65,12 +76,16 @@ export class OrdenRecoleccionComponent implements OnInit {
   public resultadosLocalidades = [];
   //Define la lista de resultados de sucursales
   public resultadosSucursales = [];
+  //Define el autocompletado para las busquedas
+  public autocompletado:FormControl = new FormControl();
   
   //Define la lista de resultados de busqueda barrio
   public resultadosBarrios = [];
-  constructor(private ordenRecoleccion: OrdenRecoleccion, private subopcionPestaniaService: SubopcionPestaniaService, private appComponent: AppComponent, private fechaServicio: FechaService,
-    private localidadService: LocalidadService, private clienteService: ClienteService, private toastr: ToastrService, private barrioService: BarrioService,
-    private appService: AppService, private servicio: OrdenRecoleccionService, private sucursalService: SucursalService) {
+  constructor(
+    private ordenRecoleccion: OrdenRecoleccion, private subopcionPestaniaService: SubopcionPestaniaService, private appComponent: AppComponent, 
+    private fechaServicio: FechaService, private localidadService: LocalidadService, private clienteService: ClienteService, private toastr: ToastrService,
+    private barrioService: BarrioService, private appService: AppService, private servicio: OrdenRecoleccionService, 
+    private sucursalService: SucursalService,  public dialog: MatDialog, public clienteServicio: ClienteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -81,6 +96,7 @@ export class OrdenRecoleccionComponent implements OnInit {
       err => {
       }
     );
+    
    }
   ngOnInit() {
     //Define el formulario de orden venta
@@ -98,6 +114,14 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.listar();
     //Lista todas las sucursales
     this.listarSucursales();
+    //Autocompletado - Buscar por nombre
+    this.autocompletado.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.obtenerPorId(data).subscribe(res => {
+          this.formulario.patchValue(res.json());
+        })
+      }
+    })
     //Autcompletado - Buscar por Remitente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -146,6 +170,10 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Controla el cambio del autocompletado para el Remitente
   public cambioRemitente(){
     this.mostrarCliente=true;
+    let domicilioYBarrio= this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio;
+    let localidadYProvincia= this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
+    this.domicilioBarrio.setValue(domicilioYBarrio);
+    this.localidadProvincia.setValue(localidadYProvincia);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, selectSoloLectura, componente) {
@@ -178,9 +206,11 @@ export class OrdenRecoleccionComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
+    this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
+      this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
     switch (id) {
@@ -216,10 +246,6 @@ export class OrdenRecoleccionComponent implements OnInit {
         break;
     }
   }
-  //Agrega un Cliente Eventual
-  public agregarClienteEventual(){
-
-  }
   //Agrega un registro
   private agregar() {
     console.log(this.formulario.value);
@@ -227,18 +253,16 @@ export class OrdenRecoleccionComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(respuesta.id);
           setTimeout(function() {
-            document.getElementById('idNombre').focus();
+            document.getElementById('idCliente').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
       },
       err => {
         var respuesta = err.json();
-        document.getElementById("labelNombre").classList.add('label-error');
-        document.getElementById("idNombre").classList.add('is-invalid');
-        document.getElementById("idNombre").focus();
+        document.getElementById("idCliente").focus();
         this.toastr.error(respuesta.mensaje);
       }
     );
@@ -250,7 +274,7 @@ export class OrdenRecoleccionComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
-          this.reestablecerFormulario();
+          this.reestablecerFormulario(undefined);
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -260,9 +284,9 @@ export class OrdenRecoleccionComponent implements OnInit {
       err => {
         var respuesta = err.json();
         if(respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
+          // document.getElementById("idCliente").classList.add('label-error');
+          // document.getElementById("idCliente").classList.add('is-invalid');
+          document.getElementById("idCliente").focus();
           this.toastr.error(respuesta.mensaje);
         }
       }
@@ -272,13 +296,33 @@ export class OrdenRecoleccionComponent implements OnInit {
   private eliminar() {
     console.log();
   }
+  //Abre el dialogo para agregar un cliente eventual
+  public agregarClienteEventual(): void {
+    const dialogRef = this.dialog.open(ClienteEventualComponent, {
+      width: '1200px',
+      data: {
+        formulario: null,
+        usuario: this.appComponent.getUsuario()
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
+      this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
+        var cliente = res.json();
+        this.formulario.get('cliente').setValue(cliente);
+        
+      })
+    });
+  }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
   }
   //Reestablece el formulario
-  public reestablecerFormulario(){
+  public reestablecerFormulario(id){
     this.mostrarCliente=false;
+    this.autocompletado.setValue(undefined);
+    this.formulario.reset();
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
@@ -315,21 +359,21 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado c
   public displayFc(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ', ' + elemento.localidad.nombre : elemento;
+      return elemento ? elemento.domicilio + ' - ' + elemento.barrio : elemento;
     } else {
-      return elemento;
+      return '';
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    // this.autocompletado.setValue(elemento);
+    this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    // this.autocompletado.setValue(elemento);
+    this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
