@@ -258,6 +258,7 @@ import { VentaTipoComponent } from './componentes/venta-tipo/venta-tipo.componen
 import { OrdenRecoleccionComponent } from './componentes/orden-recoleccion/orden-recoleccion.component';
 import { ClienteEventualComponent } from './componentes/cliente-eventual/cliente-eventual.component';
 import { ClienteEventual } from './modelos/clienteEventual';
+import { EmitirFactura } from './modelos/emitirFactura';
 
 
 //Rutas
@@ -672,6 +673,7 @@ const stompConfig: StompConfig = {
     OrdenRecoleccion,
     OrdenRecoleccionService,
     ClienteEventual,
+    EmitirFactura,
     MesService,
     {
       provide: StompConfig,

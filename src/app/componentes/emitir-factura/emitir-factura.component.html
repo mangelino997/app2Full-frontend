@@ -1,324 +1,300 @@
 <div class="row">
   <div class="col-md-12 text-center">
     <h5>Emitir Factura</h5>
-    <div class="tamanio-pantalla inline">
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Fecha</label>
-        <input id="idCodigo" type="date" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 150px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Punto de venta</label>
-        <input id="idCodigo" type="number" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 130px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Letra</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 60px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Número</label>
-        <input id="idCodigo" type="number" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Código Afip</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 105px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Tipo de Comprobante</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 175px;">
-      </div>
-      <mat-radio-group style="margin-left: 30px;">
-        <span style="margin-right: 10px;">Pago en:</span>
-        <mat-radio-button class="example-margin" value="Observacion1">Origen</mat-radio-button>
-        <mat-radio-button class="example-margin" value="Observacion2">Destino</mat-radio-button>
-      </mat-radio-group>
-    </div>
-    <hr style="margin-top: 0px; margin-bottom: 10px;">
-    <div class="tamanio-pantalla inline">
-      <div class="border has-float-label" style="margin-right: 5px;">
-        <label style="font-size: 16px;">Remitente</label>
-        <div class="inline">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Buscar Remitente</label>
-            <input id="idCodigo" type="text" formControlName="buscador" class="form-control form-control-sm" style="width: 606px;">
-          </div>
+    <form [formGroup]="formulario" class="contenedor">
+      <div class="tamanio-pantalla inline">
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Fecha</label>
+          <input id="idCodigo" type="date" formControlName="fecha" class="form-control form-control-sm" min="{{fechaActual}}" style="width: 150px;">
         </div>
-        <div class="inline">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Domicilio</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 250px;">
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Localidad</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 351px;">
-          </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Punto de venta</label>
+          <input id="idCodigo" type="number" formControlName="puntoVenta" class="form-control form-control-sm" style="width: 130px;">
         </div>
-        <div class="inline">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Condición de IVA</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 250px;">
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Condición de Venta</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 250px;">
-          </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Letra</label>
+          <input id="idCodigo" type="text" formControlName="letra" class="form-control form-control-sm" readonly style="width: 60px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Número</label>
+          <input id="idCodigo" type="number" formControlName="numero" class="form-control form-control-sm" readonly style="width: 80px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Código Afip</label>
+          <input id="idCodigo" type="text" formControlName="codigoAfip" class="form-control form-control-sm" readonly style="width: 105px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Tipo de Comprobante</label>
+          <input id="idCodigo" type="text" formControlName="tipoComprobante" class="form-control form-control-sm" style="width: 175px;">
+        </div>
+        <div class="form-group has-float-label col-md-3"></div>
+        <div class="form-group has-float-label col-md-2 ">
+          <label for="idEntrega" class="tamanio-label">Pago en: </label>
+          <mat-select id="idEntrega" formControlName="pagoEnOrigen" class="form-control form-control-sm" required>
+            <mat-option [value]="true">Origen</mat-option>
+            <mat-option [value]="false">Destino</mat-option>
+          </mat-select>
         </div>
       </div>
-      <div class="border has-float-label" style="margin-left: 5px;">
-        <label style="font-size: 16px;">Destinatario</label>
-        <div class="inline">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Buscar Destinatario</label>
-            <input id="idCodigo" type="text" formControlName="buscador" class="form-control form-control-sm" style="width: 606px;">
+      <hr style="margin-top: 10px; margin-bottom: 20px;">
+      <div class="tamanio-pantalla inline">
+        <form [formGroup]="this.formulario.remitente" >
+          <div class="border has-float-label" style="margin-right: 5px;">
+          <label style="font-size: 16px;">Remitente</label>
+          <div class="inline">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Buscar Remitente</label>
+              <input id="idCodigo" type="text" [formControl]="formularioRemitente.get('remitente')" class="form-control form-control-sm" style="width: 522px;">
+            </div>
+            <div class="form-group ">
+              <button id="idBtnCli1" mat-raised-button color="primary" (click)="agregarClienteEventual()" style="width: 50px;">Agregar</button>
+            </div>
+          </div>
+          <div class="inline">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Domicilio</label>
+              <input id="idCodigo" type="text" [formControl]="domicilio" readonly class="form-control form-control-sm"
+                style="width: 300px;">
+            </div>
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Localidad</label>
+              <input id="idCodigo" type="text" [formControl]="localidad" readonly class="form-control form-control-sm"
+                style="width: 300px;">
+            </div>
+          </div>
+          <div class="inline">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Condición de IVA</label>
+              <input id="idCodigo" type="text" [formControl]="condicionIVA" readonly class="form-control form-control-sm"
+                style="width: 300px;">
+            </div>
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Condición de Venta</label>
+              <input id="idCodigo" type="text" [formControl]="condicionVenta" readonly class="form-control form-control-sm"
+                style="width: 300px;">
+            </div>
+          </div>
+          <div class="inline">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Sucursal</label>
+              <input id="idCodigo" type="text" [formControl]="sucursal" class="form-control form-control-sm"
+                style="width: 606px;">
+            </div>
           </div>
         </div>
-        <div class="inline">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Domicilio</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 210px;">
+        </form>
+        <form [formGroup]="formularioDestinatario" >
+          <div class="border has-float-label" style="margin-left: 5px;">
+          <label style="font-size: 16px;">Destinatario</label>
+          <div class="inline">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Buscar Destinatario</label>
+              <input id="idCodigo" type="text" [formControl]="formularioDestinatario.get('destinatario')" class="form-control form-control-sm" style="width: 522px;">
+            </div>
+            <div class="form-group ">
+              <button id="idBtnCli2" mat-raised-button color="primary" (click)="agregarClienteEventual()" style="width: 50px;">Agregar</button>
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Localidad</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 270px;">
+          <div class="inline">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Domicilio</label>
+              <input id="idCodigo" type="text" formControlName="domicilio" readonly class="form-control form-control-sm"
+                style="width: 300px;">
+            </div>
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Localidad</label>
+              <input id="idCodigo" type="text" formControlName="localidad" readonly class="form-control form-control-sm"
+                style="width: 300px;">
+            </div>
           </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Suc. Domicilio</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 115px;">
+          <div class="inline">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Condición de IVA</label>
+              <input id="idCodigo" type="text" formControlName="condicionIVA" readonly class="form-control form-control-sm"
+                style="width: 300px;">
+            </div>
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Condición de Venta</label>
+              <input id="idCodigo" type="text" formControlName="condicionVenta" readonly class="form-control form-control-sm"
+                style="width: 300px;">
+            </div>
+          </div>
+          <div class="inline">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Sucursal</label>
+              <input id="idCodigo" type="text" formControlName="sucursal" class="form-control form-control-sm"
+                style="width: 606px;">
+            </div>
           </div>
         </div>
-        <div class="inline">
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Condición de IVA</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 240px;">
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Condición de Venta</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 240px;">
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idCodigo" class="tamanio-label">Suc. Entrega</label>
-            <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm"
-              style="width: 115px;">
-          </div>
+        </form>
+
+        
+      </div>
+      <hr style="margin-top: 10px; margin-bottom: 20px;">
+      <!-- <div class="row">
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Item</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 85px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">N° Viaje</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 72px;">
+        </div>
+        <div class="form-group has-float-label ">
+          <label for="idCodigo" class="tamanio-label">N° Remito</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 85px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Bultos</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 58px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Kg Efectivo</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 91px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Kg Aforado</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 91px;">
+        </div>
+        <button class="btn btn-secondary btn-custom">Aforar</button>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">m3</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 45px;">
+        </div>
+        <div class="form-group has-float-label ">
+          <label for="idCodigo" class="tamanio-label">Tarifa O. Vta.</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 100px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Descripción Carga</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 140px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Valor Declarado</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 125px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">% Seguro</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Flete</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 120px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">% dto.</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 60px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Retiro</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 55px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Entrega</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 68px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Conceptos Varios</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 132px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Importe</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 68px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Subtotal</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 73px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Alic. IVA</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 75px;">
+        </div>
+        <button class="btn btn-warning btn-custom margin-left-button">Agregar</button>
+      </div> -->
+      <div class="inline">
+        <div style="width: 100%; height: 150px; overflow-y: scroll;">
+          <table class="table table-bordered table-striped table-condensed">
+            <thead>
+              <tr>
+                <th class="text-center">N° de Viaje</th>
+                <th class="text-center">N° de Remito</th>
+                <th class="text-center">Bultos</th>
+                <th class="text-center">Kg. Efectivo</th>
+                <th class="text-center">Valor Declarado</th>
+                <th class="text-center">Flete</th>
+                <th class="text-center">-</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="cursor-color">X</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
-    <hr style="margin-top: 8px; margin-bottom: 12px;">
-    <div class="row">
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Item</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 85px;">
+      <br>
+      <!-- <div class="inline">
+        <div class="form-group has-float-label">
+          <label for="idTotalItems" class="tamanio-label">Total Items</label>
+          <input id="idTotalItems" type="text" formControlName="totalItems" class="form-control form-control-sm" style="width: 96px;">
+        </div>
+        <span class="spacer"></span>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Importe No Grav/Exento ($)</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 200px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Importe Neto Gravado ($)</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 189px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Importe IVA ($)</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 120px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Importe Total ($)</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 130px;">
+        </div>
       </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">N° Viaje</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 72px;">
+      <div class="inline">
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">ContraReembolso</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 140px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Tarifa O. Vta.</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 102px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">% C.C</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 60px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Comisión</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Alíc. IVA</label>
+          <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
+        </div>
+        <button class="btn btn-warning btn-custom margin-left-button">Agregar</button>
+        <span class="spacer"></span>
+        <button class="btn btn-primary" type="button" style="width: 130px;">Emitir</button>
+      </div> -->
+      <div class="inline">
+          <button class="btn btn-info btn-custom margin-left-button" style="width: 130px;">ContraReembolso</button>
+        <button class="btn btn-info btn-custom margin-left-button" style="width: 125px;">Totales de Carga</button>
+        <button class="btn btn-info btn-custom margin-left-button" style="width: 157px;">Totales por Concepto</button>
+        <button class="btn btn-info btn-custom margin-left-button" style="width: 112px;">Observaciones</button>
       </div>
-      <div class="form-group has-float-label ">
-        <label for="idCodigo" class="tamanio-label">N° Remito</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 85px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Bultos</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 58px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Kg Efectivo</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 91px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Kg Aforado</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 91px;">
-      </div>
-      <button class="btn btn-secondary btn-custom">Aforar</button>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">m3</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 45px;">
-      </div>
-      <div class="form-group has-float-label ">
-        <label for="idCodigo" class="tamanio-label">Tarifa O. Vta.</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 100px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Descripción Carga</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 140px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Valor Declarado</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 125px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">% Seguro</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Flete</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 120px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">% dto.</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 60px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Retiro</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 55px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Entrega</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 68px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Conceptos Varios</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 132px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Importe</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 68px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Subtotal</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 73px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Alic. IVA</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 75px;">
-      </div>
-      <button class="btn btn-warning btn-custom margin-left-button">Agregar</button>
-    </div>
-    <div class="inline">
-      <div style="width: 100%; height: 150px; overflow-y: scroll;">
-        <table class="table table-bordered table-striped table-condensed">
-          <thead>
-            <tr>
-              <th class="text-center">N° de Viaje</th>
-              <th class="text-center">N° de Remito</th>
-              <th class="text-center">Bultos</th>
-              <th class="text-center">Kg. Efectivo</th>
-              <th class="text-center">Valor Declarado</th>
-              <th class="text-center">Flete</th>
-              <th class="text-center">-</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="cursor-color">X</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="cursor-color">X</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="cursor-color">X</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="cursor-color">X</td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="cursor-color">X</td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td class="cursor-color">X</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <br>
-    <div class="inline">
-      <div class="form-group has-float-label">
-        <label for="idTotalItems" class="tamanio-label">Total Items</label>
-        <input id="idTotalItems" type="text" formControlName="totalItems" class="form-control form-control-sm" style="width: 96px;">
-      </div>
-      <span class="spacer"></span>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Importe No Grav/Exento ($)</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 200px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Importe Neto Gravado ($)</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 189px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Importe IVA ($)</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 120px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Importe Total ($)</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 130px;">
-      </div>
-    </div>
-    <div class="inline">
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">ContraReembolso</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 140px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Tarifa O. Vta.</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 102px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">% C.C</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 60px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Comisión</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
-      </div>
-      <div class="form-group has-float-label">
-        <label for="idCodigo" class="tamanio-label">Alíc. IVA</label>
-        <input id="idCodigo" type="text" formControlName="companiaSeguro" class="form-control form-control-sm" style="width: 80px;">
-      </div>
-      <button class="btn btn-warning btn-custom margin-left-button">Agregar</button>
-      <span class="spacer"></span>
-      <button class="btn btn-primary" type="button" style="width: 130px;">Emitir</button>
-    </div>
-    <div class="inline">
-        <button class="btn btn-info btn-custom margin-left-button" style="width: 130px;">ContraReembolso</button>
-      <button class="btn btn-info btn-custom margin-left-button" style="width: 125px;">Totales de Carga</button>
-      <button class="btn btn-info btn-custom margin-left-button" style="width: 157px;">Totales por Concepto</button>
-      <button class="btn btn-info btn-custom margin-left-button" style="width: 112px;">Observaciones</button>
-    </div>
+    </form>
   </div>
 </div>

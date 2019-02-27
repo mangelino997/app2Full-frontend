@@ -30,8 +30,6 @@ import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.c
   styleUrls: ['./orden-recoleccion.component.css']
 })
 export class OrdenRecoleccionComponent implements OnInit {
-  //Define el componente Datos del Paciente
-  // @ViewChild(ModalAltaClienteEventualComponent) modAltaCliente;
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
