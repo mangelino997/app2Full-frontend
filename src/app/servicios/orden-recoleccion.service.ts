@@ -50,6 +50,10 @@ export class OrdenRecoleccionService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros
+  public listarPorAlias(alias) {
+    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options);
+  }
   //Obtiene el listado por id
   public obtenerPorId(id) {
     return this.http.get(this.url + '/obtenerPorId/' + id, this.options);

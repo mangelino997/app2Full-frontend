@@ -15,13 +15,13 @@ export class OrdenRecoleccion {
             domicilio: new FormControl(),
             localidad: new FormControl(),
             barrio: new FormControl(),
-            horaDesde: new FormControl('', [Validators.required, Validators.maxLength(5)]),
-            horaHasta: new FormControl('', [Validators.required, Validators.maxLength(5)]),
+            horaDesde: new FormControl('', [Validators.required, Validators.maxLength(11)]),
+            horaHasta: new FormControl('', [Validators.required, Validators.maxLength(11)]),
             solicitadoPor: new FormControl('', Validators.required),
-            telefonoContacto: new FormControl(),
+            telefonoContacto: new FormControl('', Validators.required),
             descripcionCarga: new FormControl('', Validators.required),
             bultos: new FormControl('', [Validators.required, Validators.maxLength(5)]),
-            kiloEfectivo: new FormControl('', Validators.maxLength(10)),
+            kilosEfectivo: new FormControl(),
             m3: new FormControl(false, Validators.maxLength(3)),
             valorDeclarado: new FormControl('', [Validators.required, Validators.maxLength(12)]),
             sucursalDestino: new FormControl(),
@@ -29,7 +29,10 @@ export class OrdenRecoleccion {
             pagoEnOrigen: new FormControl(),
             estaEnReparto: new FormControl(),
             observaciones: new FormControl(),
-            tipoComprobante: new FormControl()
+            tipoComprobante: new FormControl(),
+            sucursal: new FormControl(),
+            empresa: new FormControl(),
+            usuario: new FormControl()
         })
     }
 }

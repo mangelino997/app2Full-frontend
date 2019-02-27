@@ -20,23 +20,29 @@
                   <label for="idAutocompletado" class="tamanio-label">Buscar </label>
                   <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                     [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-                  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                  <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                     <mat-option *ngFor="let item of resultados" [value]="item"
                       (onSelectionChange)="formulario.setValue(item)">
-                      {{item.nombre}}
+                      {{item.alias}}
                     </mat-option>
                   </mat-autocomplete>
                 </div>
                 </div>
               </div>
-                <div class="row">
-                  <div class="col-md-3">
-                    <div class="form-group has-float-label">
-                      <label for="idFechaEmision" class="tamanio-label">Fecha *</label>
-                      <input id="idFechaEmision" type="text" formControlName="fechaEmision" autocomplete="off"
-                        class="form-control form-control-sm" readonly>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group has-float-label-icon">
+                    <label for="idFechaEmision" class="tamanio-label">Fecha *</label>
+                    <div class="input-group input-group-sm mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text">
+                          <mat-icon>date_range</mat-icon>
+                        </span>
+                      </div>
+                      <input id="idFechaEmision" type="text" formControlName="fechaEmision" autocomplete="off" class="form-control form-control-sm" readonly>
                     </div>
                   </div>
+                </div>
                 </div>
                 <div class="row">
                   <div class="col-md-8">
@@ -52,7 +58,7 @@
                     </div>
                   </div>
                   <div class="col-md-1">
-                    <button mat-raised-button color="primary" (click)="agregarClienteEventual()">Agregar</button>
+                    <button id="btnAgregar" mat-raised-button color="primary" (click)="agregarClienteEventual()">Agregar</button>
                   </div>
                 </div>
                 <div class="row" >
@@ -107,23 +113,30 @@
         <mat-divider></mat-divider>
         <div class="row">
           <div class="col-md-4">
-            <div class="form-group has-float-label">
+            <div class="form-group has-float-label-icon">
               <label for="idFecha" class="tamanio-label">Fecha de Recolección *</label>
-              <input id="idFecha" type="date" formControlName="fecha" autocomplete="off"
-              class="form-control form-control-sm" [readonly]="soloLectura">
+                <div class="input-group input-group-sm mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">
+                      <mat-icon>date_range</mat-icon>
+                    </span>
+                  </div>
+                  <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" (blur)="verificarFecha()"
+                  class="form-control form-control-sm" [readonly]="soloLectura">                  
+              </div>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idHoraDesde" class="tamanio-label">Hora Desde *</label>
-              <input id="idHoraDesde" type="text" formControlName="horaDesde" autocomplete="off"
+              <input id="idHoraDesde" type="time" formControlName="horaDesde" autocomplete="off"
               class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idHoraHasta" class="tamanio-label">Hora Hasta *</label>
-              <input id="idHoraHasta" type="text" formControlName="horaHasta" autocomplete="off"
+              <input id="idHoraHasta"  type="time" formControlName="horaHasta" autocomplete="off"
               class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
@@ -136,7 +149,7 @@
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idTelefonoContacto" class="tamanio-label">Teléfono Contacto </label>
+              <label for="idTelefonoContacto" class="tamanio-label">Teléfono Contacto *</label>
               <input id="idTelefonoContacto" type="text" formControlName="telefonoContacto" autocomplete="off"
               class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -160,7 +173,7 @@
             <div class="col-md-2">
               <div class="form-group has-float-label">
                 <label for="idKgEfectivo" class="tamanio-label">Kg Efectivo </label>
-                <input id="idKgEfectivo" type="number" formControlName="kiloEfectivo" autocomplete="off" (blur)="setDecimales($event, 2)"
+                <input id="idKgEfectivo" type="number" formControlName="kilosEfectivo" autocomplete="off" (blur)="setDecimales($event, 2)"
                 class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
             </div>
@@ -222,7 +235,7 @@
           </div>
           <div class="row justify-content-center contenedor">
             <div class="col-md-12 text-center">
-              <button id="idBoton" ng-show="mostrarBoton" mat-raised-button color="primary" [disabled]="!formulario.valid"
+              <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" [disabled]="!formulario.valid"
               (click)="accion(indiceSeleccionado)">
               {{pestaniaActual}}
               </button>
@@ -273,10 +286,10 @@
               <span>{{l.bultos}}</span>
             </td>
             <td align="center">
-              <span>{{l.kiloEfectivo}}</span>
+              <span>{{l.kilosEfectivo}}</span>
             </td>
             <td align="center">
-              <span>{{l.pagoEnOrigen}}</span>
+              <span>{{l.pagoEnOrigen? 'Sí': 'No'}}</span>
             </td>
             <td align="center">
               <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>

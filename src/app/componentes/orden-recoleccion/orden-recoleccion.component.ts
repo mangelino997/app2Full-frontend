@@ -101,23 +101,17 @@ export class OrdenRecoleccionComponent implements OnInit {
   ngOnInit() {
     //Define el formulario de orden venta
     this.formulario = this.ordenRecoleccion.formulario;
-    //Setea la fecha actual
-    this.fechaServicio.obtenerFechaYHora().subscribe(res=>{
-      this.formulario.get('fechaEmision').setValue(res.json());
-    },
-    err=>{
-
-    });
+    this.reestablecerFormulario(undefined);
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Lista todos los registros
     this.listar();
     //Lista todas las sucursales
     this.listarSucursales();
-    //Autocompletado - Buscar por nombre
+    //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.servicio.obtenerPorId(data).subscribe(res => {
+        this.servicio.listarPorAlias(data).subscribe(res => {
           this.formulario.patchValue(res.json());
         })
       }
@@ -170,10 +164,17 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Controla el cambio del autocompletado para el Remitente
   public cambioRemitente(){
     this.mostrarCliente=true;
-    let domicilioYBarrio= this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio;
+    let domicilioYBarrio= this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
     let localidadYProvincia= this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
     this.domicilioBarrio.setValue(domicilioYBarrio);
     this.localidadProvincia.setValue(localidadYProvincia);
+    // console.log(this.formulario.get('cliente').value.localidad);
+    // console.log(this.formulario.get('cliente').value.barrio);
+
+    this.formulario.get('localidad').setValue(this.formulario.get('cliente').value.localidad);
+    this.formulario.get('barrio').setValue(this.formulario.get('cliente').value.barrio);
+    this.formulario.get('domicilio').setValue(this.formulario.get('cliente').value.domicilio);
+    // console.log(this.formulario.get('barrio').value)
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, selectSoloLectura, componente) {
@@ -181,7 +182,6 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-
     if(selectSoloLectura==true){
       this.formulario.get('entregarEnDomicilio').disable();
       this.formulario.get('pagoEnOrigen').disable();
@@ -190,6 +190,9 @@ export class OrdenRecoleccionComponent implements OnInit {
       this.formulario.get('localidad').disable();
       this.formulario.get('barrio').disable();
       this.formulario.get('cliente').disable();
+      setTimeout(function() {
+        document.getElementById('btnAgregar').setAttribute("disabled","disabled");
+      }, 20);
     }else{
       this.formulario.get('entregarEnDomicilio').enable();
       this.formulario.get('pagoEnOrigen').enable();
@@ -198,8 +201,10 @@ export class OrdenRecoleccionComponent implements OnInit {
       this.formulario.get('localidad').enable();
       this.formulario.get('barrio').enable();
       this.formulario.get('cliente').enable();
+      setTimeout(function() {
+        document.getElementById('btnAgregar').removeAttribute("disabled");
+      }, 20);
     }
-
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -207,6 +212,7 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.reestablecerFormulario(undefined);
+    this.listar();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
@@ -218,13 +224,13 @@ export class OrdenRecoleccionComponent implements OnInit {
         this.establecerValoresPestania(nombre, false, false, true, false, 'idCliente');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, true, 'idOrdenRecoleccion');
+        this.establecerValoresPestania(nombre, true, true, false, true, 'idAutocompletado');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, false, 'idOrdenRecoleccion');
+        this.establecerValoresPestania(nombre, true, false, true, false, 'idAutocompletado');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, true, 'idOrdenRecoleccion');
+        this.establecerValoresPestania(nombre, true, true, true, true, 'idAutocompletado');
         break;
       default:
         break;
@@ -248,7 +254,10 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    console.log(this.formulario.value);
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formulario.get('usuario').setValue(this.appComponent.getUsuario());
+    this.formulario.get('fechaEmision').setValue(this.formulario.get('fechaEmision').value+'T00:00:00');
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -269,6 +278,10 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar() {
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formulario.get('usuario').setValue(this.appComponent.getUsuario());
+    this.formulario.get('fechaEmision').setValue(this.formulario.get('fechaEmision').value+'T00:00:00');
     console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -284,8 +297,6 @@ export class OrdenRecoleccionComponent implements OnInit {
       err => {
         var respuesta = err.json();
         if(respuesta.codigo == 11002) {
-          // document.getElementById("idCliente").classList.add('label-error');
-          // document.getElementById("idCliente").classList.add('is-invalid');
           document.getElementById("idCliente").focus();
           this.toastr.error(respuesta.mensaje);
         }
@@ -306,13 +317,21 @@ export class OrdenRecoleccionComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      console.log(resultado);
       this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
         var cliente = res.json();
         this.formulario.get('cliente').setValue(cliente);
-        
       })
     });
+  }
+  //Comprueba que la fecha de Recolección sea igual o mayor a la fecha actual 
+  public verificarFecha(){
+    if(this.formulario.get('fecha').value < this.formulario.get('fechaEmision').value){
+      this.formulario.get('fecha').reset();
+      this.toastr.error("La Fecha de recolección no puede ser menor a la fecha actual");
+      setTimeout(function() {
+        document.getElementById('idFecha').focus();
+      }, 20);
+    }
   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
@@ -320,9 +339,18 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Reestablece el formulario
   public reestablecerFormulario(id){
+    this.resultadosClientes=[];
     this.mostrarCliente=false;
     this.autocompletado.setValue(undefined);
     this.formulario.reset();
+    this.domicilioBarrio.setValue(null);
+    this.localidadProvincia.setValue(null);
+    //Setea la fecha actual
+    this.fechaServicio.obtenerFecha().subscribe(res=>{
+    this.formulario.get('fechaEmision').setValue(res.json());});
+    setTimeout(function() {
+      document.getElementById('idCliente').focus();
+    }, 20);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
@@ -369,12 +397,20 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    let domicilioYBarrio= this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
+    let localidadYProvincia= this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
+    this.domicilioBarrio.setValue(domicilioYBarrio);
+    this.localidadProvincia.setValue(localidadYProvincia);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    let domicilioYBarrio= this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
+    let localidadYProvincia= this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
+    this.domicilioBarrio.setValue(domicilioYBarrio);
+    this.localidadProvincia.setValue(localidadYProvincia);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
