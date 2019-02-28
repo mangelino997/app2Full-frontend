@@ -20,19 +20,21 @@ export class EmitirFactura {
             codigoAfip: new FormControl(),
             tipoComprobante: new FormControl(),
             pagoEnOrigen: new FormControl(),
-            remitente: new FormGroup({
+            remitente: new FormControl(),
+            rem: new FormGroup({
                 cliente: new FormControl(),
                 domicilio: new FormControl(),
                 localidad: new FormControl(),
-                condicionIVA: new FormControl(),
+                afipCondicionIva: new FormControl(),
                 condicionVenta: new FormControl(),
                 sucursal: new FormControl()
             }),
-            destinatario: new FormGroup({
+            destinatario: new FormControl(),
+            des: new FormGroup({
                 cliente: new FormControl(),
                 domicilio: new FormControl(),
                 localidad: new FormControl(),
-                condicionIVA: new FormControl(),
+                afipCondicionIva: new FormControl(),
                 condicionVenta: new FormControl(),
                 sucursal: new FormControl()
             }),

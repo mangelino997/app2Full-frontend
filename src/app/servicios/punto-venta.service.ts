@@ -54,6 +54,10 @@ export class PuntoVentaService {
   public listarPorSucursal(id) {
     return this.http.get(this.url + '/listarPorSucursal/' + id, this.options);
   }
+  //Obtiene una lista por empresa y sucursal
+  public listarPorEmpresaYSucursal(idEmpresa, idSucursal) {
+    return this.http.get(this.url + '/listarPorEmpresaYSucursal/' + idEmpresa + '/' + idSucursal, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
