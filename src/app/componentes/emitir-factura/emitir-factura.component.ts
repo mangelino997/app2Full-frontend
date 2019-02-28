@@ -15,6 +15,8 @@ import { EmitirFactura } from 'src/app/modelos/emitirFactura';
 import { AppService } from 'src/app/servicios/app.service';
 import { SucursalClienteService } from 'src/app/servicios/sucursal-cliente.service';
 import { PuntoVentaService } from 'src/app/servicios/punto-venta.service';
+import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
+import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 
 @Component({
   selector: 'app-emitir-factura',
@@ -43,6 +45,8 @@ export class EmitirFacturaComponent implements OnInit {
   //Define el form control para los combos de Sucursales Remitente y Destinatario
   public sucursalDestinatario:FormControl = new FormControl();
   public sucursalRemitente:FormControl = new FormControl();
+  //Define el form control para tipo de comprobante
+  public tipoComprobante:FormControl = new FormControl();
   //Define la lista de resultados de busqueda para Reminentes y Destinatarios
   public resultadosReminentes = [];
   public resultadosDestinatarios = [];
@@ -63,7 +67,9 @@ export class EmitirFacturaComponent implements OnInit {
   constructor(
     private appComponent: AppComponent, public dialog: MatDialog, private fechaService: FechaService,
     public clienteService: ClienteService, private toastr: ToastrService, private factura: EmitirFactura, private appService: AppService, 
-    private sucursalService: SucursalClienteService, private puntoVentaService: PuntoVentaService
+    private sucursalService: SucursalClienteService, private puntoVentaService: PuntoVentaService, private tipoComprobanteservice: TipoComprobanteService,
+    private afipComprobanteService: AfipComprobanteService
+
     ) {}
 
   ngOnInit() {
@@ -72,6 +78,13 @@ export class EmitirFacturaComponent implements OnInit {
     this.reestablecerFormulario(undefined);
     //Lista los puntos de venta 
     this.listarPuntoVenta();
+    //Carga el tipo de comprobante
+    this.tipoComprobanteservice.obtenerPorId(1).subscribe(
+      res=>{
+        this.formulario.get('tipoComprobante').setValue(res.json());
+        this.tipoComprobante.setValue(this.formulario.get('tipoComprobante').value.nombre);
+      }
+    )
     //Autcompletado - Buscar por Remitente
     this.formulario.get('remitente').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -178,15 +191,45 @@ export class EmitirFacturaComponent implements OnInit {
     if(this.formulario.get('pagoEnOrigen').value==true){
       document.getElementById('Remitente').className="border has-float-label pagaSeleccionado";
       document.getElementById('Destinatario').className="border has-float-label";
+      this.afipComprobanteService.obtenerLetra(this.formulario.get('remitente').value.id).subscribe(
+        res=>{
+          this.formulario.get('letra').setValue(res.text());
+          this.cargarCodigoAfip(res.text());  
+        }
+      )
     }
     else{
       document.getElementById('Remitente').className="border has-float-label";
       document.getElementById('Destinatario').className="border has-float-label pagaSeleccionado";
-    }  
+      this.afipComprobanteService.obtenerLetra(this.formulario.get('destinatario').value.id).subscribe(
+        res=>{
+          this.formulario.get('letra').setValue(res.text());
+          this.cargarCodigoAfip(res.text());  
+        }
+      )
+    }
+  }
+  //Setea el codigo de Afip por el tipo de comprobante y la letra
+  public cargarCodigoAfip(letra){
+    this.afipComprobanteService.obtenerCodigoAfip(this.formulario.get('tipoComprobante').value.id, letra).subscribe(
+      res=>{
+        this.formulario.get('codigoAfip').setValue(res.text());
+        this.cargarNumero(res.text());
+      }
+    )
+  }
+  //Setea el numero por el punto de venta y el codigo de Afip
+  public cargarNumero(codigoAfip){
+    this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value, codigoAfip).subscribe();
   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+  }
+  //Establece la cantidad de ceros correspondientes a la izquierda del numero
+  public establecerCerosIzq(elemento, string, cantidad) {
+    console.log(string , elemento ,cantidad);
+    return (string + elemento.value).slice(cantidad);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

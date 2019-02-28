@@ -11,7 +11,7 @@
           <label for="idPuntoVenta" class="tamanio-label">Punto de venta</label>
           <mat-select id="idPuntoVenta" class="form-control form-control-sm" style="width: 130px;" formControlName="puntoVenta" [compareWith]="compareFn" >
             <mat-option *ngFor="let itemPuntoVenta of resultadosPuntoVenta" [value]="itemPuntoVenta">
-             {{itemPuntoVenta.puntoVenta}}
+             {{establecerCerosIzq(itemPuntoVenta.puntoVenta, "0000", -5)}}
             </mat-option>
           </mat-select>
         </div>
@@ -29,7 +29,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante</label>
-          <input id="idTipoComprobante" type="text" formControlName="tipoComprobante" class="form-control form-control-sm" style="width: 175px;">
+          <input id="idTipoComprobante" type="text" [formControl]="tipoComprobante" class="form-control form-control-sm" readonly style="width: 175px;">
         </div>
         <div class="form-group has-float-label col-md-3"></div>
         
