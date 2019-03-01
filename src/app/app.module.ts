@@ -226,7 +226,7 @@ import { ViajeComponent } from './componentes/viaje/viaje.component';
 import { ActualizacionPreciosComponent, ListaPreciosDialogo, ConfimarDialogo } from './componentes/actualizacion-precios/actualizacion-precios.component';
 import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
 import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
-import { EmitirFacturaComponent } from './componentes/emitir-factura/emitir-factura.component';
+import { EmitirFacturaComponent, ViajeDialogo } from './componentes/emitir-factura/emitir-factura.component';
 import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/emitir-nota-credito.component';
 import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
 import { MonedaComponent, CambiarMonedaPrincipalDialogo } from './componentes/moneda/moneda.component';
@@ -259,6 +259,8 @@ import { OrdenRecoleccionComponent } from './componentes/orden-recoleccion/orden
 import { ClienteEventualComponent } from './componentes/cliente-eventual/cliente-eventual.component';
 import { ClienteEventual } from './modelos/clienteEventual';
 import { EmitirFactura } from './modelos/emitirFactura';
+import { ViajePropioTramoService } from './servicios/viaje-propio-tramo.service';
+import { ViajeTerceroTramoService } from './servicios/viaje-tercero-tramo.service';
 
 
 //Rutas
@@ -478,6 +480,7 @@ const stompConfig: StompConfig = {
     CambiarMonedaPrincipalDialogo,
     ListaPreciosDialogo,
     ConfimarDialogo,
+    ViajeDialogo,
     PlanCuentaComponent,
     TipoCuentaContableComponent,
     GrupoCuentaContableComponent,
@@ -674,6 +677,8 @@ const stompConfig: StompConfig = {
     OrdenRecoleccionService,
     ClienteEventual,
     EmitirFactura,
+    ViajePropioTramoService,
+    ViajeTerceroTramoService,
     MesService,
     {
       provide: StompConfig,
@@ -696,6 +701,7 @@ const stompConfig: StompConfig = {
     CambiarMonedaPrincipalDialogo,
     ListaPreciosDialogo,
     ConfimarDialogo,
+    ViajeDialogo,
     ClienteEventualComponent
   ]
 })

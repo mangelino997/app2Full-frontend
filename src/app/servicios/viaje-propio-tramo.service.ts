@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class ViajeRemitoService {
+export class ViajePropioTramoService {
   //Define la ruta al servicio web
-  private ruta:string = "/viajeremito";
+  private ruta:string = "/viajepropiotramo";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -46,47 +46,13 @@ export class ViajeRemitoService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
+  //Obtiene los tramos por id de tipoItem (1=propio/2=tercero)
+  public listarTramos(id) {
+    return this.http.get(this.url + '/listarTramos/' + id, this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
-  }
-  //Obtiene la lista de Remito por idTramo y Item
-  public listarRemitos(idTramo, idItem) {
-    return this.http.get(this.url + '/listarRemitos/' + idTramo +'/' + idItem, this.options);
-  }
-  //Obtiene una lista por alias
-  public listarPorAlias(alias) {
-    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
-  }
-  //Obtiene un listado por numero
-  public listarPorNumero(numero) {
-    return this.http.get(this.url + '/listarPorNumero/' + numero, this.options);
-  }
-  //Obtiene una lista de remitos pendientes por sucursal
-  public listarPendientesPorSucursal(idSucursal) {
-    return this.http.get(this.url + '/listarPendientesPorSucursal/' + idSucursal, this.options);
-  }
-  //Obtiene una lista de remitos pendientes por sucursal, sucursal destino y numero de camion
-  public listarPendientesPorFiltro(idSucursal, idSucursalDestino, numeroCamion) {
-    return this.http.get(this.url + '/listarPendientesPorFiltro/' + idSucursal
-      + '/' + idSucursalDestino + '/' + numeroCamion, this.options);
-  }
-  //Obtiene una lista de remitos asignados por sucursal, sucursal destino, numero de camion y viaje propio tramo
-  public listarAsignadosPorFiltro(idSucursal, idSucursalDestino, numeroCamion, idViajePropioTramo) {
-    return this.http.get(this.url + '/listarPendientesPorFiltro/' + idSucursal
-      + '/' + idSucursalDestino + '/' + numeroCamion + '/' + idViajePropioTramo, this.options);
-  }
-  //Asigna remitos
-  public asignar(elemento) {
-    return this.http.put(this.url + '/asignar', elemento, this.options);
-  }
-  //Quita remitos
-  public quitar(elemento) {
-    return this.http.put(this.url + '/quitar', elemento, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

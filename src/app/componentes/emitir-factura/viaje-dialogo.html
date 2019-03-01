@@ -1,0 +1,29 @@
+<div class="row">
+        <div class="col-md-12">
+            <form [formGroup]="formulario">
+                <h5 class="text-center">Lista de Tramos</h5>
+                <h6 class="text-center">Item {{this.data.tipoItem==1? 'Propio' : 'Tercero'}} - Id viaje {{this.data.idViaje}}</h6>
+
+                <br>
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="form-group has-float-label">
+                            <label for="idTramo" class="tamanio-label">Tramos</label>
+                            <mat-select id="idTramo" class="form-control form-control-sm"  formControlName="tramo"
+                            [compareWith]="compareFn" > 
+                                <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">
+                                {{itemTramo.nombre}} 
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <button mat-raised-button color="primary" [disabled]="!formulario.valid" >Aceptar</button>
+                        <button mat-raised-button  color="accent" [mat-dialog-close]="data.formulario.get('tramo').value">Cerrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+      </div>
