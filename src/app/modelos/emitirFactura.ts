@@ -67,28 +67,30 @@ export class EmitirFactura {
         //     sucursal: new FormControl()
         // });
         this.formularioViaje = new FormGroup({
-            item: new FormControl(),
-            numeroViaje: new FormControl(),
-            idTramo: new FormControl(),
-            numeroRemito: new FormControl(),
-            bultos: new FormControl(),
-            kiloEfectivo: new FormControl(),
-            kiloAforado: new FormControl(),
+            item: new FormControl('', Validators.required),
+            numeroViaje: new FormControl('', Validators.required),
+            idTramo: new FormControl('', Validators.required),
+            remito: new FormControl(),
+            bultos: new FormControl(0.00),
+            kilosEfectivo: new FormControl(0.00),
+            kilosAforado: new FormControl(0.00),
             m3: new FormControl(),
 
-            tarifaOVta: new FormControl(),
+            tarifaOVta: new FormControl('', Validators.required),
             descripcionCarga: new FormControl(),
-            valorDeclarado: new FormControl(),
-            seguro: new FormControl(),
-            flete: new FormControl(),
-            descuento: new FormControl(),
+            valorDeclarado: new FormControl(0.00),
+            seguro: new FormControl(0.00),
+            flete: new FormControl(0.00),
+            descuento: new FormControl(0.00),
 
-            retiro: new FormControl(),
-            entrega: new FormControl(),
+            importeRetiro: new FormControl(0.00),
+            importeEntrega: new FormControl(0.00),
             conceptosVarios: new FormControl(),
-            importe: new FormControl(),
-            subtotal: new FormControl(),
-            alicuotaIva: new FormControl()
+            importeConcepto: new FormControl(0.00),
+            subtotal: new FormControl(0.00),
+            alicuotaIva: new FormControl(0.00),
+            subtotalNeto: new FormControl(0.00)
+
         });
     }
 }

@@ -111,7 +111,6 @@ import { MesService } from './servicios/mes.service';
 import { ProductoService } from './servicios/producto.service';
 import { AfipConceptoService } from './servicios/afip-concepto.service';
 import { OrdenVentaTramoService } from './servicios/orden-venta-tramo.service';
-import { VentaConceptoService } from './servicios/venta-concepto.service';
 import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
 import { OrdenRecoleccionService } from './servicios/orden-recoleccion.service';
 
@@ -261,6 +260,10 @@ import { ClienteEventual } from './modelos/clienteEventual';
 import { EmitirFactura } from './modelos/emitirFactura';
 import { ViajePropioTramoService } from './servicios/viaje-propio-tramo.service';
 import { ViajeTerceroTramoService } from './servicios/viaje-tercero-tramo.service';
+import { VentaItemConceptoService } from './servicios/venta-item-concepto.service';
+import { AforoComponent } from './componentes/aforo/aforo.component';
+import { VentaConfigService } from './servicios/venta-config.service';
+import { Aforo } from './modelos/aforo';
 
 
 //Rutas
@@ -487,7 +490,8 @@ const stompConfig: StompConfig = {
     EjercicioComponent,
     VentaTipoComponent,
     OrdenRecoleccionComponent,
-    ClienteEventualComponent
+    ClienteEventualComponent,
+    AforoComponent
   ],
   imports: [
     BrowserModule,
@@ -668,7 +672,6 @@ const stompConfig: StompConfig = {
     ConceptoAfip,
     AfipConceptoService,
     VentaConcepto,
-    VentaConceptoService,
     VentaTipoItem,
     VentaTipoItemService,
     ViajeUnidadNegocio,
@@ -679,6 +682,9 @@ const stompConfig: StompConfig = {
     EmitirFactura,
     ViajePropioTramoService,
     ViajeTerceroTramoService,
+    VentaItemConceptoService,
+    VentaConfigService,
+    Aforo,
     MesService,
     {
       provide: StompConfig,
@@ -702,7 +708,8 @@ const stompConfig: StompConfig = {
     ListaPreciosDialogo,
     ConfimarDialogo,
     ViajeDialogo,
-    ClienteEventualComponent
+    ClienteEventualComponent,
+    AforoComponent
   ]
 })
 export class AppModule { }

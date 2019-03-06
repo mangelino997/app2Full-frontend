@@ -3,10 +3,10 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { VentaConceptoService } from 'src/app/servicios/venta-concepto.service';
 import { VentaConcepto } from 'src/app/modelos/venta-concepto';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
+import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
 
 @Component({
   selector: 'app-venta-concepto',
@@ -47,7 +47,7 @@ public empresas:Array<any> = [];
 // public compereFn:any;
 //Constructor
 
-  constructor(private servicio: VentaConceptoService, private ventaConcepto: VentaConcepto, private appComponent: AppComponent, 
+  constructor(private servicio: VentaItemConceptoService, private ventaConcepto: VentaConcepto, private appComponent: AppComponent, 
     private subopcionPestaniaService: SubopcionPestaniaService, private tipoComprobanteServicio: TipoComprobanteService, private conceptosAfipServicio: AfipConceptoService,
     private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion

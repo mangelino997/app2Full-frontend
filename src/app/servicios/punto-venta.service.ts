@@ -47,8 +47,8 @@ export class PuntoVentaService {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
   //Obtiene el Numero por PuntoVenta y codigoAfip
-  public obtenerNumero(punto, codigo) {
-    return this.http.get(this.url + '/obtenerNumero/' + punto + '/' + codigo, this.options);
+  public obtenerNumero(punto, codigo, sucursal, empresa) {
+    return this.http.get(this.url + '/obtenerNumero/' + punto + '/' + codigo + '/' + sucursal + '/' + empresa, this.options);
   }
   //Obtiene la lista de registros
   public listar() {

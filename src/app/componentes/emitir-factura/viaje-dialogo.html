@@ -12,7 +12,7 @@
                             <mat-select id="idTramo" class="form-control form-control-sm"  formControlName="tramo"
                             [compareWith]="compareFn" > 
                                 <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">
-                                {{itemTramo.nombre}} 
+                                Origen: {{itemTramo.tramo.origen.nombre}} | destino: {{itemTramo.tramo.destino.nombre}} | Precio: {{itemTramo.precioUnitario}} 
                                 </mat-option>
                             </mat-select>
                         </div>
@@ -20,8 +20,8 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <button mat-raised-button color="primary" [disabled]="!formulario.valid" >Aceptar</button>
-                        <button mat-raised-button  color="accent" [mat-dialog-close]="data.formulario.get('tramo').value">Cerrar</button>
+                        <button mat-raised-button color="primary" [disabled]="!formulario.valid" [mat-dialog-close]="formulario.get('tramo').value">Aceptar</button>
+                        <button mat-raised-button  color="accent" [mat-dialog-close]="formulario.get('tramo').value">Cerrar</button>
                     </div>
                 </div>
             </form>

@@ -47,8 +47,9 @@ export class OrdenVentaEscalaService {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
   //Obtiene el precio flete por id
-  public obtenerPrecioFlete(id) {
-    return this.http.get(this.url + '/obtenerPrecioFlete/' + id, this.options);
+  // El valor puede ser: bultos, kg, m3
+  public obtenerPrecioFlete(id, valor) {
+    return this.http.get(this.url + '/obtenerPrecioFlete/' + id + '/' + valor, this.options);
   }
   //Obtiene la lista de registros
   public listar() {

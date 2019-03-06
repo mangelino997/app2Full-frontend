@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class VentaConceptoService {
+export class VentaConfigService {
   //Define la ruta al servicio web
-  private ruta:string = "/ventaitemconcepto";
+  private ruta:string = "/ventaconfig";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -50,13 +50,9 @@ export class VentaConceptoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
-      return res.json().map(item => {
-        return item;
-      })
-    })
+  //Obtiene por id
+  public obtenerPorId(id) {
+    return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
