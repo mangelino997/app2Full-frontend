@@ -453,3 +453,14 @@ th {
 .tabla-viaje {
   width: 1890px !important;
 }
+//Define los colores del mat-check cuando es seleccionado
+.checkBoxSelected {
+  padding: 1px;
+  background-color: #85ce36;
+  color: black;
+}
+.checkBoxNotSelected {
+  background-color: #ffffff;
+  color: #ffffff;
+  padding: 1px;
+}

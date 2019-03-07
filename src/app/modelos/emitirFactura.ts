@@ -39,16 +39,17 @@ export class EmitirFactura {
                 sucursal: new FormControl()
             }),
             viajes: new FormControl(),
-            total: new FormControl(),
-            importeNoGravado: new FormControl(),
-            importeGravado: new FormControl(),
-            importeIva: new FormControl(),
-            importeTotal: new FormControl(),
+            total: new FormControl(0.00),
+            importeNoGravado: new FormControl(0.00),
+            importeGravado: new FormControl(0.00),
+            importeIva: new FormControl(0.00),
+            importeTotal: new FormControl(0.00),
             tarifaOVta: new FormControl(),
             contrareembolso: new FormControl(),
             porcentajeCC: new FormControl(),
             comision: new FormControl(),
             alicuotaIva: new FormControl()
+            
         });
         // this.formularioRemitente = new FormGroup({
         //     cliente: new FormControl(),
@@ -87,10 +88,9 @@ export class EmitirFactura {
             importeEntrega: new FormControl(0.00),
             conceptosVarios: new FormControl(),
             importeConcepto: new FormControl(0.00),
-            subtotal: new FormControl(0.00),
+            subtotal: new FormControl(0.00, Validators.required),
             alicuotaIva: new FormControl(0.00),
-            subtotalNeto: new FormControl(0.00)
-
+            subtotalCIva: new FormControl(0.00)
         });
     }
 }

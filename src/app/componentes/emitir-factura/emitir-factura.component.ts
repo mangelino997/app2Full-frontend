@@ -264,6 +264,7 @@ export class EmitirFacturaComponent implements OnInit {
         }
       )
     }
+    console.log(this.formulario.value);
   }
   //Setea el codigo de Afip por el tipo de comprobante y la letra
   public cargarCodigoAfip(letra){
@@ -290,23 +291,34 @@ export class EmitirFacturaComponent implements OnInit {
   //Agrega al Array un item-viaje 
   public agregarItemViaje(){
     let subtotal=this.formularioItem.get('subtotal').value;
-    let subtotalNeto=0;
+    this.formulario.get('importeGravado').setValue(this.formulario.get('importeGravado').value + subtotal);
+    let importeIva=0;
     if(this.formularioItem.get('alicuotaIva').value==0){
-      this.formularioItem.get('subtotalNeto').setValue(subtotal);
+      this.formularioItem.get('subtotalCIva').setValue(0);
     }
     else{
-      subtotalNeto = subtotal + subtotal*(this.formularioItem.get('alicuotaIva').value/100)
-      this.formularioItem.get('subtotalNeto').setValue(subtotalNeto);
+      importeIva = subtotal*(this.formularioItem.get('alicuotaIva').value/100);
+      this.formularioItem.get('subtotalCIva').setValue(importeIva); //guardo en cada item el importe extra (iva)
+      let importeIvaTotal= this.formulario.get('importeIva').value + importeIva;
+      this.formulario.get('importeIva').setValue(importeIvaTotal); //sumo en el formulario general (cabecera de la factura)
     }
     this.listaItemViaje.push(this.formularioItem.value);
     this.contador.setValue(this.contador.value+1);
-    this.subtotalSuma.setValue(this.subtotalSuma.value + this.formularioItem.get('subtotalNeto').value);
+    let importeTotal= this.formulario.get('importeGravado').value + this.formulario.get('importeIva').value;
+    this.formulario.get('importeTotal').setValue(importeTotal.toFixed(2));
+
     this.reestablecerFormularioItemViaje();
     console.log(this.listaItemViaje);
   }
   //eliminar un item del Array item-viaje 
-  public eliminarItemViaje(subtotalNeto, index){
-    this.subtotalSuma.setValue(this.subtotalSuma.value - subtotalNeto);  ;
+  public eliminarItemViaje(subtotal, subtotalIva, index){
+    console.log(subtotal, subtotalIva);
+    // this.subtotalSuma.setValue(this.subtotalSuma.value - subtotalNeto);  
+    this.formulario.get('importeGravado').setValue(this.formulario.get('importeGravado').value - subtotal);
+    this.formulario.get('importeIva').setValue(this.formulario.get('importeIva').value - subtotalIva);
+    let importeTotal=subtotal + subtotalIva;
+    this.formulario.get('importeTotal').setValue(this.formulario.get('importeTotal').value - importeTotal);
+
     this.listaItemViaje.splice(index, 1);
     this.contador.setValue(this.contador.value-1);
     setTimeout(function() {
@@ -369,7 +381,6 @@ export class EmitirFacturaComponent implements OnInit {
   //Abre el dialogo para seleccionar un Tramo
   public abrirDialogoTramo(): void {
     //Primero comprobar que ese numero de viaje exista y depsues abrir la ventana emergente
-    console.log(this.formularioItem.get('numeroViaje').value);
     this.viajePropioTramoService.listarTramos(this.formularioItem.get('numeroViaje').value).subscribe(
       res=>{
         const dialogRef = this.dialog.open(ViajeDialogo, {
@@ -392,13 +403,11 @@ export class EmitirFacturaComponent implements OnInit {
       this.toastr.error("No existen Tramos para el N° de viaje ingresado.");
     }
     );
-    
   }
   //Obtiene la Lista de Remitos por el id del tramo seleccionado
   public listarRemitos(){
     this.viajeRemitoServicio.listarRemitos(this.formularioItem.get('idTramo').value.id, this.formularioItem.get('item').value.id).subscribe(
       res=>{
-        console.log(res.json());
         this.resultadosRemitos = res.json();
         if(this.resultadosRemitos.length==0){
           this.toastr.error("No existen Remitos para el Tramo seleccionado.");
@@ -434,7 +443,6 @@ export class EmitirFacturaComponent implements OnInit {
   public cambioOVta(){
     this.soloLecturaOrden = false;
     this.formularioItem.get('seguro').setValue(this.formularioItem.get('tarifaOVta').value.seguro);
-    console.log(this.formularioItem.value);
     this.obtenerPrecioFlete();
   }
   //Obtiene el Precio del Flete seleccionado
@@ -489,8 +497,9 @@ export class EmitirFacturaComponent implements OnInit {
     }
   }
   //Calcular el Subtotal del item agregado
-  public calcularSubtotal(){
+  public calcularSubtotal($event){
     let subtotal=0;
+    this.formularioItem.get('subtotal').setValue(subtotal);
     let vdeclaradoNeto = this.formularioItem.get('valorDeclarado').value*(this.formularioItem.get('seguro').value/1000);
     let descuento = this.formularioItem.get('descuento').value;
     let flete = this.formularioItem.get('flete').value;
@@ -499,9 +508,10 @@ export class EmitirFacturaComponent implements OnInit {
     let retiro = this.formularioItem.get('importeRetiro').value;
     let entrega = this.formularioItem.get('importeEntrega').value;
     let concepto = this.formularioItem.get('importeConcepto').value;
+    console.log(vdeclaradoNeto, descuento, flete, retiro, entrega);
     subtotal = vdeclaradoNeto + flete + retiro + entrega + concepto;
     this.formularioItem.get('subtotal').setValue(subtotal);
-
+    this.setDecimales($event, 2);
   }
   //Abre un modal para agregar un aforo
   public agregarAforo(): void {
@@ -511,6 +521,23 @@ export class EmitirFacturaComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => {
       this.formularioItem.get('kilosAforado').setValue(resultado);
+    });
+  }
+  //Abre un modal ver la nota Impresion Comprobante del cliente que paga
+  public abrirObervacion(): void {
+    let nota; //guarad la nota de impresion comprobante
+    if(this.formulario.get('pagoEnOrigen').value==true){
+      nota= this.formulario.get('remitente').value.notaImpresionComprobante;
+    }
+    else{
+      nota= this.formulario.get('destinatario').value.notaImpresionComprobante;
+    }
+    const dialogRef = this.dialog.open(ObservacionDialogo, {
+      width: '1200px',
+      data: { nota: nota }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
     });
   }
   //Formatea el numero a x decimales
@@ -615,4 +642,38 @@ export class ViajeDialogo{
   }
   
 }
+@Component({
+  selector: 'observacion-dialogo',
+  templateUrl: 'observacion-dialogo.html',
+})
+export class ObservacionDialogo{
+  //Define la notaImpresionComprobante
+  public observacion:string;
+  //Define el check
+  public check:boolean=false;
+  //Define un formulario para validaciones de campos
+  public formulario:FormGroup;
 
+  constructor(public dialogRef: MatDialogRef<ObservacionDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
+   private servicio: ClienteService) {}
+   ngOnInit() {
+     this.formulario = new FormGroup({});
+     this.observacion = this.data.nota;
+     console.log(this.data.nota);
+  }      
+  //Controla los checkbox
+  public agregarObs($event){
+    if($event.checked==true){
+      this.check=true;
+      document.getElementById('check').className="checkBoxSelected";
+    }
+    else{
+      this.check=false;
+      document.getElementById('check').className="checkBoxNotSelected";
+    }
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+  
+}

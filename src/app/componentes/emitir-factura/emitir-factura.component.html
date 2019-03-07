@@ -183,7 +183,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idBultos" class="tamanio-label">Bultos</label>
-          <input id="idBultos" type="number" formControlName="bultos" class="form-control form-control-sm" style="width: 58px;" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idBultos" type="number" formControlName="bultos" class="form-control form-control-sm" style="width: 58px;" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idKiloEfectivo" class="tamanio-label">Kg Efectivo</label>
@@ -213,27 +213,27 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
-          <input id="idValorDeclarado" type="number" formControlName="valorDeclarado" class="form-control form-control-sm" style="width: 125px;" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idValorDeclarado" type="number" formControlName="valorDeclarado" class="form-control form-control-sm" style="width: 125px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idSeguro" class="tamanio-label">% Seguro</label>
-          <input id="idSeguro" type="number" formControlName="seguro" class="form-control form-control-sm" style="width: 80px;" (blur)="setDecimales($event, 2)" readonly>
+          <input id="idSeguro" type="number" formControlName="seguro" class="form-control form-control-sm" style="width: 80px;" (blur)="calcularSubtotal($event)" readonly>
         </div>
         <div class="form-group has-float-label">
           <label for="idFlete" class="tamanio-label">Flete</label>
-          <input id="idFlete" type="number" formControlName="flete" class="form-control form-control-sm" style="width: 120px;" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idFlete" type="number" formControlName="flete" class="form-control form-control-sm" style="width: 120px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idDescuento" class="tamanio-label">% dto.</label>
-          <input id="idDescuento" type="number" formControlName="descuento" class="form-control form-control-sm" style="width: 60px;" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idDescuento" type="number" formControlName="descuento" class="form-control form-control-sm" style="width: 60px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idRetiro" class="tamanio-label">Retiro</label>
-          <input id="idRetiro" type="number" formControlName="importeRetiro" class="form-control form-control-sm" style="width: 55px;" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idRetiro" type="number" formControlName="importeRetiro" class="form-control form-control-sm" style="width: 55px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idEntrega" class="tamanio-label">Entrega</label>
-          <input id="idEntrega" type="number" formControlName="importeEntrega" class="form-control form-control-sm" style="width: 68px;" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idEntrega" type="number" formControlName="importeEntrega" class="form-control form-control-sm" style="width: 68px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label ">
           <label for="idConcepto" class="tamanio-label">Conceptos Varios</label>        
@@ -248,15 +248,15 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idImporteConcepto" class="tamanio-label">Precio(Conc.Var.)</label>
-          <input id="idImporteConcepto" type="number" formControlName="importeConcepto" class="form-control form-control-sm" style="width: 130px;" (blur)="calcularSubtotal()">
+          <input id="idImporteConcepto" type="number" formControlName="importeConcepto" class="form-control form-control-sm" style="width: 130px;" (blur)="calcularSubtotal($event)">
         </div>
         <div class="form-group has-float-label">
           <label for="idSubtotal" class="tamanio-label">Subtotal</label>
-          <input id="idSubtotal" type="number" formControlName="subtotal" class="form-control form-control-sm" style="width: 73px;" (blur)="setDecimales($event, 2)" readonly>
+          <input id="idSubtotal" type="number" formControlName="subtotal" class="form-control form-control-sm" style="width: 73px;" (blur)="calcularSubtotal($event)" readonly>
         </div>
         <div class="form-group has-float-label">
           <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>
-          <input id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" style="width: 75px;"  (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" style="width: 75px;"  (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <button class="btn btn-warning btn-custom margin-left-button" (click)="agregarItemViaje()" [disabled]="!formularioItem.valid">Agregar</button>
       </div>
@@ -275,7 +275,7 @@
                 <th class="text-center">Flete</th>
                 <th class="text-center">Subtotal</th>
                 <th class="text-center">IVA</th>
-                <th class="text-center">Subtotal neto</th>
+                <th class="text-center">Subtotal c/IVA</th>
                 <th class="text-center">-</th>
               </tr>
             </thead>
@@ -289,8 +289,8 @@
                 <td>{{item.flete}}</td>
                 <td>{{item.subtotal}}</td>
                 <td>{{item.alicuotaIva}}</td>
-                <td>{{item.subtotalNeto}}</td>
-                <td class="cursor-color" (click)="eliminarItemViaje(item.subtotalNeto, i)">X</td>
+                <td>{{item.subtotalCIva}}</td>
+                <td class="cursor-color" (click)="eliminarItemViaje(item.subtotal, item.subtotalCIva, i)">X</td>
               </tr>
             </tbody>
           </table>
@@ -305,24 +305,20 @@
         <span class="spacer"></span>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Importe No Grav/Exento ($)</label>
-          <input id="idCodigo" type="text" formControlName="importeNoGravado" class="form-control form-control-sm" style="width: 200px;">
+          <input id="idCodigo" type="text" formControlName="importeNoGravado"  class="form-control form-control-sm" style="width: 200px;">
         </div>
         <div class="form-group has-float-label">
-          <label for="idCodigo" class="tamanio-label">Importe Nto Gravado ($)</label>
-          <input id="idCodigo" type="text" formControlName="importeGravado" class="form-control form-control-sm" style="width: 189px;">
+          <label for="idCodigo" class="tamanio-label">Importe Neto Gravado ($)</label>
+          <input id="idCodigo" type="text" formControlName="importeGravado" (change)="setDecimales($event, 2)" class="form-control form-control-sm" style="width: 189px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Importe IVA ($)</label>
-          <input id="idCodigo" type="text" formControlName="importeIva" class="form-control form-control-sm" style="width: 120px;">
+          <input id="idCodigo" type="text" formControlName="importeIva" (change)="setDecimales($event, 2)" class="form-control form-control-sm" style="width: 120px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Importe Total ($)</label>
-          <input id="idCodigo" type="text" formControlName="importeTotal" class="form-control form-control-sm" style="width: 130px;">
+          <input id="idCodigo" type="text" formControlName="importeTotal" (change)="setDecimales($event, 2)" class="form-control form-control-sm" style="width: 130px;">
         </div>
-        <!-- <div class="form-group has-float-label">
-          <label for="idCodigo" class="tamanio-label">Importe Total ($)</label>
-          <input id="idCodigo" type="text" [formControl]="subtotalSuma" class="form-control form-control-sm" style="width: 130px;">
-        </div> -->
       </div>
       <div class="inline">
         <div class="form-group has-float-label">
@@ -330,8 +326,13 @@
           <input id="idCodigo" type="text" formControlName="contrareembolso" class="form-control form-control-sm" style="width: 140px;">
         </div>
         <div class="form-group has-float-label">
-          <label for="idCodigo" class="tamanio-label">Tarifa O. Vta.</label>
-          <input id="idCodigo" type="text" formControlName="tarifaOVta" class="form-control form-control-sm" style="width: 102px;">
+          <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
+          <mat-select id="idTarifaOVta" class="form-control form-control-sm"  formControlName="tarifaOVta" style="width: 102px;"
+          [compareWith]="compareFn" (selectionChange)="cambioOVta()"> 
+              <mat-option *ngFor="let itemOrdenVenta of resultadosTarifas" [value]="itemOrdenVenta">
+              {{itemOrdenVenta.nombre}} | {{itemOrdenVenta.tipoTarifa.nombre}} 
+              </mat-option>
+          </mat-select>
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">% C.C</label>
@@ -353,7 +354,7 @@
           <button class="btn btn-info btn-custom margin-left-button" style="width: 130px;">ContraReembolso</button>
         <button class="btn btn-info btn-custom margin-left-button" style="width: 125px;">Totales de Carga</button>
         <button class="btn btn-info btn-custom margin-left-button" style="width: 157px;">Totales por Concepto</button>
-        <button class="btn btn-info btn-custom margin-left-button" style="width: 112px;">Observaciones</button>
+        <button class="btn btn-info btn-custom margin-left-button" style="width: 112px;" (click)="abrirObervacion()">Observaciones</button>
       </div>
     </form>
   </div>

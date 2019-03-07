@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-md-12">
+        <form [formGroup]="formulario">
+            <h5 class="text-center">Nota de Impresión de Comprobante</h5>
+            <br>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <table class="table table-bordered table-striped table-sm">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width:10%" scope="col">Observación</th>
+                            <th class="text-center" style="width:10%" scope="col">Añadir a Factura</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr >
+                            <td align="center">
+                              <span>{{observacion? 'observacion' : 'El Cliente que paga no tiene asignada una Nota Impresiónn de Comprobante'}}</span>
+                            </td>
+                            <td align="center">
+                                <mat-checkbox class="checkNotBoxSelected" id="check" (change)="agregarObs($event)"></mat-checkbox>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <button mat-raised-button  color="accent" [mat-dialog-close]="check">Cerrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>
