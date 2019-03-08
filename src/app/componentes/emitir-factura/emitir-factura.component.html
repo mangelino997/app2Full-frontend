@@ -5,7 +5,7 @@
       <div class="tamanio-pantalla inline">
         <div class="form-group has-float-label">
           <label for="idFecha" class="tamanio-label">Fecha</label>
-          <input id="idFecha" type="date" formControlName="fecha" class="form-control form-control-sm" min="{{fechaActual}}" style="width: 150px;">
+          <input id="idFecha" type="date" formControlName="fechaEmision" class="form-control form-control-sm" min="{{fechaActual}}" style="width: 150px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idPuntoVenta" class="tamanio-label">Punto de venta</label>
@@ -161,7 +161,7 @@
       <div class="row">
         <div class="form-group has-float-label">
           <label for="idItem" class="tamanio-label">Item *</label>
-          <mat-select id="idItem" class="form-control form-control-sm" style="width: 130px;" formControlName="item" [compareWith]="compareFn" 
+          <mat-select id="idItem" class="form-control form-control-sm" style="width: 130px;" formControlName="ventaTipoItem" [compareWith]="compareFn" 
           style="width: 85px;" (selectionChange)="habilitarCamposItem()">
             <mat-option *ngFor="let item of resultadosItems" [value]="item">
              {{item.nombre}}
@@ -174,7 +174,7 @@
         </div>
         <div class="form-group has-float-label ">
           <label for="idRemito" class="tamanio-label">N° Remito*</label>
-          <mat-select id="idRemito" class="form-control form-control-sm"  formControlName="remito" style="width: 100px;" 
+          <mat-select id="idRemito" class="form-control form-control-sm"  formControlName="viajeRemito" style="width: 100px;" 
           [compareWith]="compareFn"(selectionChange)="cambioRemito()" > 
               <mat-option *ngFor="let itemRemito of resultadosRemitos" [value]="itemRemito">
               {{itemRemito.id}} 
@@ -200,7 +200,7 @@
         </div>
         <div class="form-group has-float-label ">
           <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
-          <mat-select id="idTarifaOVta" class="form-control form-control-sm"  formControlName="tarifaOVta" style="width: 140px;"
+          <mat-select id="idTarifaOVta" class="form-control form-control-sm"  formControlName="ordenVenta" style="width: 140px;"
           [compareWith]="compareFn" (selectionChange)="cambioOVta()"> 
               <mat-option *ngFor="let itemOrdenVenta of resultadosTarifas" [value]="itemOrdenVenta">
               {{itemOrdenVenta.nombre}} | {{itemOrdenVenta.tipoTarifa.nombre}} 
@@ -217,7 +217,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idSeguro" class="tamanio-label">% Seguro</label>
-          <input id="idSeguro" type="number" formControlName="seguro" class="form-control form-control-sm" style="width: 80px;" (blur)="calcularSubtotal($event)" readonly>
+          <input id="idSeguro" type="number" formControlName="importeSeguro" class="form-control form-control-sm" style="width: 80px;" (blur)="calcularSubtotal($event)" readonly>
         </div>
         <div class="form-group has-float-label">
           <label for="idFlete" class="tamanio-label">Flete</label>
@@ -248,15 +248,19 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idImporteConcepto" class="tamanio-label">Precio(Conc.Var.)</label>
-          <input id="idImporteConcepto" type="number" formControlName="importeConcepto" class="form-control form-control-sm" style="width: 130px;" (blur)="calcularSubtotal($event)">
+          <input id="idImporteConcepto" type="number" formControlName="importeVentaItemConcepto" class="form-control form-control-sm" style="width: 130px;" (blur)="calcularSubtotal($event)">
         </div>
         <div class="form-group has-float-label">
           <label for="idSubtotal" class="tamanio-label">Subtotal</label>
-          <input id="idSubtotal" type="number" formControlName="subtotal" class="form-control form-control-sm" style="width: 73px;" (blur)="calcularSubtotal($event)" readonly>
+          <input id="idSubtotal" type="number" formControlName="importeNetoGravado" class="form-control form-control-sm" style="width: 73px;" (blur)="calcularSubtotal($event)" readonly>
         </div>
         <div class="form-group has-float-label">
-          <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>
-          <input id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" style="width: 75px;"  (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+          <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>        
+          <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" style="width: 75px;"  (blur)="calcularSubtotal($event)">
+            <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota" >
+              {{itemAlicuota.alicuota}} 
+            </mat-option>
+          </mat-select>
         </div>
         <button class="btn btn-warning btn-custom margin-left-button" (click)="agregarItemViaje()" [disabled]="!formularioItem.valid">Agregar</button>
       </div>
@@ -323,11 +327,11 @@
       <div class="inline">
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">ContraReembolso</label>
-          <input id="idCodigo" type="text" formControlName="contrareembolso" class="form-control form-control-sm" style="width: 140px;">
+          <input id="idCodigo" type="text" formControlName="contrareembolso" class="form-control form-control-sm" [readOnly]="soloLecturaCR" style="width: 140px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
-          <mat-select id="idTarifaOVta" class="form-control form-control-sm"  formControlName="tarifaOVta" style="width: 102px;"
+          <mat-select id="idTarifaOVta" class="form-control form-control-sm"  formControlName="ordenVenta" style="width: 112px;"
           [compareWith]="compareFn" (selectionChange)="cambioOVta()"> 
               <mat-option *ngFor="let itemOrdenVenta of resultadosTarifas" [value]="itemOrdenVenta">
               {{itemOrdenVenta.nombre}} | {{itemOrdenVenta.tipoTarifa.nombre}} 
@@ -336,15 +340,19 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">% C.C</label>
-          <input id="idCodigo" type="text" formControlName="porcentajeCC" class="form-control form-control-sm" style="width: 60px;">
+          <input id="idCodigo" type="text" formControlName="porcentajeCC" class="form-control form-control-sm" style="width: 60px;" readonly>
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Comisión</label>
-          <input id="idCodigo" type="text" formControlName="comision" class="form-control form-control-sm" style="width: 80px;">
+          <input id="idCodigo" type="text" formControlName="comision" class="form-control form-control-sm" style="width: 80px;" readonly>
         </div>
         <div class="form-group has-float-label">
-          <label for="idCodigo" class="tamanio-label">Alíc. IVA</label>
-          <input id="idCodigo" type="text" formControlName="alicuotaIva" class="form-control form-control-sm" style="width: 80px;">
+          <label for="idAlicuotaCR" class="tamanio-label">Alíc. IVA</label>
+          <mat-select id="idAlicuotaCR" type="text" formControlName="alicuotaIva" class="form-control form-control-sm" style="width: 80px;">
+            <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota" >
+              {{itemAlicuota.alicuota}} 
+            </mat-option>
+          </mat-select>
         </div>
         <button class="btn btn-warning btn-custom margin-left-button">Agregar</button>
         <span class="spacer"></span>
@@ -352,8 +360,8 @@
       </div>
       <div class="inline">
           <button class="btn btn-info btn-custom margin-left-button" style="width: 130px;">ContraReembolso</button>
-        <button class="btn btn-info btn-custom margin-left-button" style="width: 125px;">Totales de Carga</button>
-        <button class="btn btn-info btn-custom margin-left-button" style="width: 157px;">Totales por Concepto</button>
+        <button class="btn btn-info btn-custom margin-left-button" style="width: 125px;" (click)="abrirTotalCarga()">Totales de Carga</button>
+        <button class="btn btn-info btn-custom margin-left-button" style="width: 157px;" (click)="abrirTotalConcepto()">Totales por Concepto</button>
         <button class="btn btn-info btn-custom margin-left-button" style="width: 112px;" (click)="abrirObervacion()">Observaciones</button>
       </div>
     </form>

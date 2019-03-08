@@ -1,0 +1,51 @@
+<div class="row">
+    <div class="col-md-12">
+        <form [formGroup]="formulario">
+            <h5 class="text-center">Totales de Carga</h5>
+            <br>
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <table class="table table-bordered table-striped table-sm">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width:15%" scope="col">#</th>
+                            <th class="text-center" style="width:15%" scope="col">Bultos</th>
+                            <th class="text-center" style="width:15%" scope="col">Kg. Efectivo</th>
+                            <th class="text-center" style="width:15%" scope="col">Kg. Aforado</th>
+                            <th class="text-center" style="width:15%" scope="col">m3</th>
+                            <th class="text-center" style="width:20%" scope="col">Valor Declarado</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let item of listaCompleta; let i=index">
+                                <td align="center">
+                                    <span>{{i+1}}</span>
+                                </td>
+                                <td align="center">
+                                    <span>{{item.bultos}}</span>
+                                </td>
+                                <td align="center">
+                                    <span>{{item.kilosEfectivo}}</span>
+                                </td>
+                                <td align="center">
+                                    <span>{{item.kilosAforado}}</span>
+                                </td>
+                                <td align="center">
+                                    <span>{{item.m3}}</span>
+                                </td>
+                                <td align="center">
+                                    <span>{{item.valorDeclarado}}</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <button mat-raised-button  color="accent" (click)="onNoClick()">Cerrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+  </div>

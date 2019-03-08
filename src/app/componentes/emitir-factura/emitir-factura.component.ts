@@ -21,6 +21,7 @@ import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
 import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
 import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
 import { AforoComponent } from '../aforo/aforo.component';
+import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 
 
 @Component({
@@ -70,6 +71,8 @@ export class EmitirFacturaComponent implements OnInit {
   public resultadosTarifas = [];
   //Define la lista de Conceptos Varios
   public resultadosConceptosVarios = [];
+  //Define la lista de Alicuotas Afip Iva que estan activas
+  public resultadosAlicuotasIva = [];
   //Define el autocompletado para las busquedas
   public autocompletado:FormControl = new FormControl();
   //Define la fecha actual
@@ -78,8 +81,8 @@ export class EmitirFacturaComponent implements OnInit {
   public listaItemViaje:Array<any> = [];
   //Define si los campos son de solo lectura
   public soloLectura:boolean= true;
-  //Define si los campos que dependen de tarifa Orden Venta son de solo lectura
-  public soloLecturaOrden:boolean= true;
+  //Define si los campos para el formulario de Contra reembolso son de solo lectura
+  public soloLecturaCR:boolean= true;
   //Define los datos de la Empresa
   public empresa:FormControl = new FormControl();
   //Define el importeTotal como la suma de cada subtotal de cada item
@@ -94,7 +97,7 @@ export class EmitirFacturaComponent implements OnInit {
     private sucursalService: SucursalClienteService, private puntoVentaService: PuntoVentaService, private tipoComprobanteservice: TipoComprobanteService,
     private afipComprobanteService: AfipComprobanteService, private ventaTipoItemService: VentaTipoItemService, private viajeRemitoServicio: ViajeRemitoService,
     private ordenVentaServicio: OrdenVentaService, private viajePropioTramoService: ViajePropioTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService,
-    private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ventaItemConceptoService: VentaItemConceptoService
+    private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ventaItemConceptoService: VentaItemConceptoService, private alicuotasIvaService: AfipAlicuotaIvaService
     ) {}
 
   ngOnInit() {
@@ -106,6 +109,8 @@ export class EmitirFacturaComponent implements OnInit {
     this.listarPuntoVenta();
     //Lista los items
     this.listarItems();
+    //Lista las alicuotas afip iva
+    this.listarAlicuotaIva();
     //Lista Tarifa 
     //Carga el tipo de comprobante
     this.tipoComprobanteservice.obtenerPorId(1).subscribe(
@@ -208,18 +213,21 @@ export class EmitirFacturaComponent implements OnInit {
     this.resultadosDestinatarios = []; 
     this.resultadosSucursalesRem = [];
     this.resultadosSucursalesDes = [];   
+    this.resultadosRemitos = [];
     this.autocompletado.setValue(undefined);
-    this.formulario.reset();
+    this.formulario.reset(); 
     this.soloLectura= true;
-    this.soloLecturaOrden=false;
+    this.soloLecturaCR = true;
     this.empresa.setValue(this.appComponent.getEmpresa());
-    this.formularioItem.get('remito').disable();
-    this.formularioItem.get('tarifaOVta').disable();
+    this.formularioItem.get('viajeRemito').disable();
+    this.formularioItem.get('ordenVenta').disable();
     this.formularioItem.get('conceptosVarios').disable();
-    this.formularioItem.get('importeConcepto').disable();
-
+    this.formularioItem.get('importeVentaItemConcepto').disable();
+    this.formularioItem.get('alicuotaIva').disable();
     this.fechaService.obtenerFecha().subscribe(res=>{
-      this.formulario.get('fecha').setValue(res.json());
+      this.formulario.get('fechaEmision').setValue(res.json());
+      this.formulario.get('fechaVtoPago').setValue(res.json());
+
       this.fechaActual= res.json();
     });
     setTimeout(function() {
@@ -228,19 +236,51 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Reestablecer formulario item-viaje
   public reestablecerFormularioItemViaje(){
-    this.resultadosRemitos = [];   
-    this.formularioItem.reset();
-    this.soloLectura= true;
-    this.soloLecturaOrden =false;
-    this.formularioItem.get('remito').disable();
-    this.formularioItem.get('tarifaOVta').disable();
-    this.formularioItem.get('conceptosVarios').disable();
-    this.formularioItem.get('importeConcepto').disable();
+    this.formularioItem.get('viajeRemito').reset();
+    this.formularioItem.get('bultos').reset();
+    this.formularioItem.get('kilosEfectivo').reset();
+    this.formularioItem.get('kilosAforado').reset();
+    this.formularioItem.get('m3').reset();
+    this.formularioItem.get('descripcionCarga').reset();
+    this.formularioItem.get('valorDeclarado').reset();
+    this.formularioItem.get('flete').reset();
+    this.formularioItem.get('descuento').reset();
+    this.formularioItem.get('importeRetiro').reset();
+    this.formularioItem.get('importeEntrega').reset();
+    this.formularioItem.get('importeVentaItemConcepto').reset();
+    this.formularioItem.get('importeNetoGravado').reset();
+    this.formularioItem.get('alicuotaIva').reset();
+    this.formularioItem.get('ordenVenta').reset();
+    this.formularioItem.get('conceptosVarios').reset();
+    this.formularioItem.get('importeVentaItemConcepto').reset();
+    this.soloLectura= false;
     setTimeout(function() {
-      document.getElementById('idItem').focus();
+      document.getElementById('idRemito').focus();
     }, 20);
-    this.formularioItem.get('importeConcepto').disable();
+    console.log(this.resultadosRemitos);
+    console.log(this.listaItemViaje);
 
+  }
+  //Controla que un remito agregado a la tabla no se pueda volver a seleccionar
+  public remitosDisponibles(opcion, remito){
+    //opcion = 1 (saca de la lista de Remitos) opcion = 2 (agrega a la lista de Remitos) 
+    console.log(opcion, remito);   
+    switch(opcion){
+      case 1:
+        for(let i=0; i< this.resultadosRemitos.length; i++){
+          if(remito.id==this.resultadosRemitos[i].id){
+            console.log("elimina el remito en " + i);
+            this.resultadosRemitos.splice(i, 1);
+          }
+        }
+        console.log(this.resultadosRemitos);
+        break;
+      case 2:
+        this.resultadosRemitos.push(remito);
+        console.log(this.resultadosRemitos);
+
+        break;
+    }
   }
   //Controla los checkbox
   public pagoEnOrigen(){
@@ -290,14 +330,14 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Agrega al Array un item-viaje 
   public agregarItemViaje(){
-    let subtotal=this.formularioItem.get('subtotal').value;
+    let subtotal=this.formularioItem.get('importeNetoGravado').value;
     this.formulario.get('importeGravado').setValue(this.formulario.get('importeGravado').value + subtotal);
     let importeIva=0;
-    if(this.formularioItem.get('alicuotaIva').value==0){
+    if(this.formularioItem.get('alicuotaIva').value==0||this.formularioItem.get('alicuotaIva').value==null){
       this.formularioItem.get('subtotalCIva').setValue(0);
     }
     else{
-      importeIva = subtotal*(this.formularioItem.get('alicuotaIva').value/100);
+      importeIva = subtotal*this.formularioItem.get('alicuotaIva').value;
       this.formularioItem.get('subtotalCIva').setValue(importeIva); //guardo en cada item el importe extra (iva)
       let importeIvaTotal= this.formulario.get('importeIva').value + importeIva;
       this.formulario.get('importeIva').setValue(importeIvaTotal); //sumo en el formulario general (cabecera de la factura)
@@ -306,8 +346,8 @@ export class EmitirFacturaComponent implements OnInit {
     this.contador.setValue(this.contador.value+1);
     let importeTotal= this.formulario.get('importeGravado').value + this.formulario.get('importeIva').value;
     this.formulario.get('importeTotal').setValue(importeTotal.toFixed(2));
-
     this.reestablecerFormularioItemViaje();
+    this.remitosDisponibles(1, this.listaItemViaje[this.listaItemViaje.length-1].remito);
     console.log(this.listaItemViaje);
   }
   //eliminar un item del Array item-viaje 
@@ -318,7 +358,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('importeIva').setValue(this.formulario.get('importeIva').value - subtotalIva);
     let importeTotal=subtotal + subtotalIva;
     this.formulario.get('importeTotal').setValue(this.formulario.get('importeTotal').value - importeTotal);
-
+    this.remitosDisponibles(2, this.listaItemViaje[index].remito);
     this.listaItemViaje.splice(index, 1);
     this.contador.setValue(this.contador.value-1);
     setTimeout(function() {
@@ -328,15 +368,22 @@ export class EmitirFacturaComponent implements OnInit {
   //Habilita y carga los campos una vez que se selecciono el item
   public habilitarCamposItem(){
     this.soloLectura=false;
-    this.formularioItem.get('remito').enable();
-    this.formularioItem.get('tarifaOVta').enable();
+    this.formularioItem.get('viajeRemito').enable();
+    this.formularioItem.get('ordenVenta').enable();
     this.formularioItem.get('conceptosVarios').enable();
+    this.formularioItem.get('alicuotaIva').enable();
     this.listarTarifaOVenta();
     this.listarConceptos();
+    if(this.formularioItem.get('ventaTipoItem').value.id==4){ //el item con id=4 es Contrareembolso
+      this.soloLecturaCR = false;
+      // this.
+    }else{
+      this.soloLecturaCR = true;
+    }
   }
   // Habilita el campo Precio de Concepto Venta
   public habilitarPrecioCV(){
-    this.formularioItem.get('importeConcepto').enable();
+    this.formularioItem.get('importeVentaItemConcepto').enable();
   }
   //Obtiene la lista de Tarifas Orden Venta por Cliente
   public listarTarifaOVenta(){
@@ -369,6 +416,23 @@ export class EmitirFacturaComponent implements OnInit {
       }
     );
   }
+  //Obtiene una lista con las Alicuotas Iva
+  public listarAlicuotaIva(){
+    console.log(this.formularioItem.value);
+    this.alicuotasIvaService.listarActivas().subscribe(
+      res=>{
+        this.resultadosAlicuotasIva = res.json();
+        for(let i=0; i<this.resultadosAlicuotasIva.length; i++){
+          if(this.resultadosAlicuotasIva[i].porDefecto==true){
+            console.log(this.resultadosAlicuotasIva[i].alicuota);
+            this.formularioItem.get('alicuotaIva').setValue(this.resultadosAlicuotasIva[i].alicuota);
+            this.formularioItem.get('afipAlicuotaIva').setValue(this.resultadosAlicuotasIva[i]);
+            //agregar al formulario del Contrareembolso las mismas 2 lineas de arriba
+          }
+        }
+      }
+    );
+  }
   //Obtiene la lista de Tarifas Orden Venta por Empresa cuando en el Cliente no tiene asignada una lista de Orden Venta
   public listarTarifasOVentaEmpresa(){
     this.ordenVentaServicio.listar().subscribe(
@@ -386,7 +450,7 @@ export class EmitirFacturaComponent implements OnInit {
         const dialogRef = this.dialog.open(ViajeDialogo, {
           width: '1200px',
           data: {
-            tipoItem: this.formularioItem.get('item').value.id, //le pasa 1 si es propio, 2 si es de tercero
+            tipoItem: this.formularioItem.get('ventaTipoItem').value.id, //le pasa 1 si es propio, 2 si es de tercero
             idViaje: this.formularioItem.get('numeroViaje').value
           }
         });
@@ -406,7 +470,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene la Lista de Remitos por el id del tramo seleccionado
   public listarRemitos(){
-    this.viajeRemitoServicio.listarRemitos(this.formularioItem.get('idTramo').value.id, this.formularioItem.get('item').value.id).subscribe(
+    this.viajeRemitoServicio.listarRemitos(this.formularioItem.get('idTramo').value.id, this.formularioItem.get('ventaTipoItem').value.id).subscribe(
       res=>{
         this.resultadosRemitos = res.json();
         if(this.resultadosRemitos.length==0){
@@ -431,24 +495,24 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Completa los input segun el remito seleccionado
   public cambioRemito(){
-    this.formularioItem.get('kilosAforado').setValue(this.formularioItem.get('remito').value.kilosAforado);
-    this.formularioItem.get('kilosEfectivo').setValue(this.formularioItem.get('remito').value.kilosEfectivo);
-    this.formularioItem.get('bultos').setValue(this.formularioItem.get('remito').value.bultos);
-    this.formularioItem.get('m3').setValue(this.formularioItem.get('remito').value.m3);
-    this.formularioItem.get('valorDeclarado').setValue(this.formularioItem.get('remito').value.valorDeclarado);
-    this.formularioItem.get('importeEntrega').setValue(this.formularioItem.get('remito').value.importeEntrega);
-    this.formularioItem.get('importeRetiro').setValue(this.formularioItem.get('remito').value.importeRetiro);
+    this.formularioItem.get('kilosAforado').setValue(this.formularioItem.get('viajeRemito').value.kilosAforado);
+    this.formularioItem.get('kilosEfectivo').setValue(this.formularioItem.get('viajeRemito').value.kilosEfectivo);
+    this.formularioItem.get('bultos').setValue(this.formularioItem.get('viajeRemito').value.bultos);
+    this.formularioItem.get('m3').setValue(this.formularioItem.get('viajeRemito').value.m3);
+    this.formularioItem.get('valorDeclarado').setValue(this.formularioItem.get('viajeRemito').value.valorDeclarado);
+    this.formularioItem.get('importeEntrega').setValue(this.formularioItem.get('viajeRemito').value.importeEntrega);
+    this.formularioItem.get('importeRetiro').setValue(this.formularioItem.get('viajeRemito').value.importeRetiro);
   }
   //Completa el input "porcentaje" segun la Orden Venta seleccionada 
   public cambioOVta(){
-    this.soloLecturaOrden = false;
-    this.formularioItem.get('seguro').setValue(this.formularioItem.get('tarifaOVta').value.seguro);
+    // this.soloLecturaOrden = false;
+    this.formularioItem.get('importeSeguro').setValue(this.formularioItem.get('ordenVenta').value.seguro);
     this.obtenerPrecioFlete();
   }
   //Obtiene el Precio del Flete seleccionado
   public obtenerPrecioFlete(){
-    let tipoTarifa = this.formularioItem.get('tarifaOVta').value.tipoTarifa.id;
-    let idOrdenVta = this.formularioItem.get('tarifaOVta').value.id;
+    let tipoTarifa = this.formularioItem.get('ordenVenta').value.tipoTarifa.id;
+    let idOrdenVta = this.formularioItem.get('ordenVenta').value.id;
     let respuesta;
     switch(tipoTarifa){
       case 1:
@@ -499,18 +563,22 @@ export class EmitirFacturaComponent implements OnInit {
   //Calcular el Subtotal del item agregado
   public calcularSubtotal($event){
     let subtotal=0;
-    this.formularioItem.get('subtotal').setValue(subtotal);
-    let vdeclaradoNeto = this.formularioItem.get('valorDeclarado').value*(this.formularioItem.get('seguro').value/1000);
+    this.formularioItem.get('importeNetoGravado').setValue(subtotal);
+    let vdeclaradoNeto = this.formularioItem.get('valorDeclarado').value*(this.formularioItem.get('importeSeguro').value/1000);
     let descuento = this.formularioItem.get('descuento').value;
     let flete = this.formularioItem.get('flete').value;
-    if(descuento>0)
-    flete = flete-flete*(descuento/100); //valor neto del flete con el descuento
+    if(descuento>0){
+      flete = flete-flete*(descuento/100); //valor neto del flete con el descuento
+      this.formularioItem.get('importeFlete').setValue(flete);
+    }else{
+      this.formularioItem.get('importeFlete').setValue(flete);
+    }
     let retiro = this.formularioItem.get('importeRetiro').value;
     let entrega = this.formularioItem.get('importeEntrega').value;
-    let concepto = this.formularioItem.get('importeConcepto').value;
+    let concepto = this.formularioItem.get('importeVentaItemConcepto').value;
     console.log(vdeclaradoNeto, descuento, flete, retiro, entrega);
     subtotal = vdeclaradoNeto + flete + retiro + entrega + concepto;
-    this.formularioItem.get('subtotal').setValue(subtotal);
+    this.formularioItem.get('importeNetoGravado').setValue(subtotal);
     this.setDecimales($event, 2);
   }
   //Abre un modal para agregar un aforo
@@ -540,6 +608,36 @@ export class EmitirFacturaComponent implements OnInit {
       console.log(resultado);
     });
   }
+  //Abre un modal ver los Totales de Carga
+  public abrirTotalCarga(): void {
+    const dialogRef = this.dialog.open(TotalCargaDialogo, {
+      width: '1200px',
+      data: { items: this.listaItemViaje }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+    });
+  }
+  //Abre un modal ver los Totales de Carga
+  public abrirTotalConcepto(): void {
+    const dialogRef = this.dialog.open(TotalConceptoDialogo, {
+      width: '1200px',
+      data: { items: this.listaItemViaje }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+    });
+  }
+  //METODO PRINCIPAL - EMITE LA FACTURA
+  public emitirFactura(){
+    let afipConcepto = this.listaItemViaje[0].get('ventaTipoItem').value.afipConcepto.id; //guardamos el id de afipConcepto del primer item de la tabla
+    this.formulario.get('afipConcepto').setValue({
+      id: afipConcepto
+    });
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('esCAEA').setValue(this.appComponent.getEmpresa().feCAEA);
+    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+  }
+  //-----------------------------------
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
@@ -675,5 +773,50 @@ export class ObservacionDialogo{
   onNoClick(): void {
     this.dialogRef.close();
   }
+}
+@Component({
+  selector: 'total-carga-dialogo',
+  templateUrl: 'total-carga-dialogo.html',
+})
+export class TotalCargaDialogo{
+  //Define el check
+  public check:boolean=false;
+  //Define un formulario para validaciones de campos
+  public formulario:FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta:any = null;
+
+  constructor(public dialogRef: MatDialogRef<TotalCargaDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
+   private servicio: ClienteService) {}
+   ngOnInit() {
+     this.formulario = new FormGroup({});
+     this.listaCompleta = this.data.items;
+  } 
   
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+@Component({
+  selector: 'total-concepto-dialogo',
+  templateUrl: 'total-concepto-dialogo.html',
+})
+export class TotalConceptoDialogo{
+  //Define el check
+  public check:boolean=false;
+  //Define un formulario para validaciones de campos
+  public formulario:FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta:any = null;
+
+  constructor(public dialogRef: MatDialogRef<TotalConceptoDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
+   private servicio: ClienteService) {}
+   ngOnInit() {
+     this.formulario = new FormGroup({});
+     this.listaCompleta = this.data.items;
+  } 
+  
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }

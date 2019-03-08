@@ -1,0 +1,51 @@
+<div class="row">
+        <div class="col-md-12">
+            <form [formGroup]="formulario">
+                <h5 class="text-center">Totales por Conceptos</h5>
+                <br>
+                <div class="row justify-content-center">
+                    <div class="col-md-10">
+                        <table class="table table-bordered table-striped table-sm">
+                            <thead>
+                              <tr>
+                                <th class="text-center" style="width:15%" scope="col">#</th>
+                                <th class="text-center" style="width:15%" scope="col">Seguro</th>
+                                <th class="text-center" style="width:15%" scope="col">Flete</th>
+                                <th class="text-center" style="width:15%" scope="col">Retiro</th>
+                                <th class="text-center" style="width:15%" scope="col">Entrega</th>
+                                <th class="text-center" style="width:20%" scope="col">Varios</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let item of listaCompleta; let i=index">
+                                    <td align="center">
+                                        <span>{{i+1}}</span>
+                                    </td>
+                                    <td align="center">
+                                        <span>{{item.seguro}}%</span>
+                                    </td>
+                                    <td align="center">
+                                        <span>{{item.flete}}</span>
+                                    </td>
+                                    <td align="center">
+                                        <span>{{item.importeRetiro}}</span>
+                                    </td>
+                                    <td align="center">
+                                        <span>{{item.importeEntrega}}</span>
+                                    </td>
+                                    <td align="center">
+                                        <span>{{item.conceptosVarios.nombre}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <button mat-raised-button  color="accent" (click)="onNoClick()">Cerrar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+      </div>

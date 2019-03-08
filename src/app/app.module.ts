@@ -225,7 +225,7 @@ import { ViajeComponent } from './componentes/viaje/viaje.component';
 import { ActualizacionPreciosComponent, ListaPreciosDialogo, ConfimarDialogo } from './componentes/actualizacion-precios/actualizacion-precios.component';
 import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
 import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
-import { EmitirFacturaComponent, ViajeDialogo, ObservacionDialogo } from './componentes/emitir-factura/emitir-factura.component';
+import { EmitirFacturaComponent, ViajeDialogo, ObservacionDialogo, TotalConceptoDialogo, TotalCargaDialogo } from './componentes/emitir-factura/emitir-factura.component';
 import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/emitir-nota-credito.component';
 import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
 import { MonedaComponent, CambiarMonedaPrincipalDialogo } from './componentes/moneda/moneda.component';
@@ -264,6 +264,7 @@ import { VentaItemConceptoService } from './servicios/venta-item-concepto.servic
 import { AforoComponent } from './componentes/aforo/aforo.component';
 import { VentaConfigService } from './servicios/venta-config.service';
 import { Aforo } from './modelos/aforo';
+import { AfipAlicuotaIvaService } from './servicios/afip-alicuota-iva.service';
 
 
 //Rutas
@@ -492,7 +493,9 @@ const stompConfig: StompConfig = {
     OrdenRecoleccionComponent,
     ClienteEventualComponent,
     AforoComponent,
-    ObservacionDialogo
+    ObservacionDialogo,
+    TotalCargaDialogo,
+    TotalConceptoDialogo
   ],
   imports: [
     BrowserModule,
@@ -685,6 +688,7 @@ const stompConfig: StompConfig = {
     ViajeTerceroTramoService,
     VentaItemConceptoService,
     VentaConfigService,
+    AfipAlicuotaIvaService,
     Aforo,
     MesService,
     {
@@ -711,7 +715,9 @@ const stompConfig: StompConfig = {
     ViajeDialogo,
     ClienteEventualComponent,
     AforoComponent,
-    ObservacionDialogo
+    ObservacionDialogo,
+    TotalCargaDialogo,
+    TotalConceptoDialogo
   ]
 })
 export class AppModule { }

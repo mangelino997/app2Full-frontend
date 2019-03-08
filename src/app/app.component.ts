@@ -11,7 +11,7 @@ export class AppComponent {
   public visible:boolean = false;
   public modulos = null;
   public usuario = {rol:{id:null}, sucursal:{id:null}, nombre:null};
-  public empresa = {};
+  public empresa = {feCAEA: null};
   public subopcion = null;
   public rol:number = null;
   public tema:string;
