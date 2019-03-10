@@ -23,7 +23,7 @@
           </mat-select>
           <button mat-raised-button color="primary" (click)="agregar(node, nombre.value, imputable.value, activo.value)">Agregar</button>
         </mat-tree-node>
-        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding (mouseover)="activarBotones(node)" (mouseleave)="desactivarBotones(node)">
           <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.filename">
             <mat-icon class="mat-icon-rtl-mirror">
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
@@ -31,12 +31,14 @@
           </button>
           <b style="font-size: 16px; margin-right: 5px;">{{node.nombre}}</b>
           ({{node.esImputable ? 'Imputable' : 'No Imputable'}} - {{node.estaActivo ? 'Activo' : 'No Activo'}})
-          <button class="boton-agregar" mat-icon-button (click)="nuevoNodo(node)">
-            <mat-icon>add_circle</mat-icon>
-          </button>
-          <button class="boton-eliminar" mat-icon-button (click)="eliminar(node, i)">
-            <mat-icon>cancel</mat-icon>
-          </button>
+          <div *ngIf="node.mostrarBotones">
+            <button class="boton-agregar" mat-icon-button (click)="nuevoNodo(node)">
+              <mat-icon>add_circle</mat-icon>
+            </button>
+            <button class="boton-eliminar" mat-icon-button (click)="eliminar(node, i)">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </div>
         </mat-tree-node>
       </mat-tree>
     </div>

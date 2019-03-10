@@ -114,7 +114,6 @@ import { OrdenVentaTramoService } from './servicios/orden-venta-tramo.service';
 import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
 import { OrdenRecoleccionService } from './servicios/orden-recoleccion.service';
 
-
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
 import { ViajePropioTramo } from './modelos/viajePropioTramo';
@@ -266,7 +265,6 @@ import { VentaConfigService } from './servicios/venta-config.service';
 import { Aforo } from './modelos/aforo';
 import { AfipAlicuotaIvaService } from './servicios/afip-alicuota-iva.service';
 
-
 //Rutas
 const appRoutes: Routes = [
   { path: '', component: LoginComponent },
@@ -361,12 +359,10 @@ const appRoutes: Routes = [
   { path: 'configuracionventatipoitem', component: VentaTipoComponent, canActivate: [GuardiaService] },
   { path: 'configuracionviajeunidadnegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
   { path: 'recoleccionesadministrar', component: OrdenRecoleccionComponent, canActivate: [GuardiaService] }
-
-  
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.156:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,

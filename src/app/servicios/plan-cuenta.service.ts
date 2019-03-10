@@ -12,6 +12,7 @@ export class Arbol {
   estaActivo: boolean;
   padre: Arbol;
   empresa: {};
+  nivel: number;
   usuarioAlta: {};
   hijos: Arbol[];
 }
@@ -38,6 +39,8 @@ export class PlanCuentaService {
   public planCuenta:any;
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
+    //Establece la empresa
+    let idEmpresa = this.appService.getEmpresa().id;
     //Establece la url base
     this.url = this.appService.getUrlBase() + this.ruta;
     //Establece la url de subcripcion a socket
@@ -51,7 +54,7 @@ export class PlanCuentaService {
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
     //Obtiene el plan de cuentas
-    this.obtenerPlanCuenta().subscribe(res => {
+    this.obtenerPlanCuenta(idEmpresa).subscribe(res => {
       this.inicializar(res.json());
     });
   }
@@ -76,6 +79,7 @@ export class PlanCuentaService {
     arbol.nombre = elemento.nombre;
     arbol.esImputable = elemento.esImputable;
     arbol.estaActivo = elemento.estaActivo;
+    arbol.nivel = elemento.nivel;
     arbol.hijos = elemento.hijos;
     for (const i in arbol.hijos) {
       arbol.hijos[i] = this.crearArbol(arbol.hijos[i]);
@@ -99,8 +103,8 @@ export class PlanCuentaService {
     return this.http.get(this.url + '/listarGrupoActivo/' + idGrupo, this.options);
   }
   //Obtiene el plan de cuenta
-  public obtenerPlanCuenta() {
-    return this.http.get(this.url + '/obtenerPlanCuenta', this.options);
+  public obtenerPlanCuenta(idEmpresa) {
+    return this.http.get(this.url + '/obtenerPlanCuentaPorEmpresa/' + idEmpresa, this.options);
   }
   public agregarElemento(padre: Arbol, nombre: string) {
     if (padre.hijos) {

@@ -7,7 +7,7 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class AppService {
   //Define la IP
-  private IP = 'http://192.168.0.156:8080'; //http://localhost:8080 -------http://192.168.0.99:8080
+  private IP = 'http://localhost:8080'; //http://localhost:8080 -------http://192.168.0.99:8080
   //Define la url base
   private URL_BASE = this.IP + '/jitws/auth';
   //Define la url de subcripcion a socket
@@ -20,6 +20,8 @@ export class AppService {
   private mensaje: Observable<Message>;
   //Define la lista completa
   public listaCompleta:Subject<any> = new Subject<any>();
+  //Define la empresa
+  public empresa:any;
   //Constructor
   constructor(private http: Http, private stompService: StompService) {
     const headers: Headers = new Headers();
@@ -49,6 +51,14 @@ export class AppService {
   //Obtiene la url de subcripcion a socket
   public getTopic() {
     return this.URL_TOPIC;
+  }
+  //Obtiene la empresa
+  public getEmpresa() {
+    return this.empresa;
+  }
+  //Establece la empresa
+  public setEmpresa(empresa) {
+    this.empresa = empresa;
   }
   //Formatear numero a x decimales
   public setDecimales(valor, cantidad) {

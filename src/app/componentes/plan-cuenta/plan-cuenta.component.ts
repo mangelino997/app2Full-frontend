@@ -11,6 +11,7 @@ export class Arbol {
   estaActivo: boolean;
   padre: Arbol;
   empresa: {};
+  nivel: number;
   usuarioAlta: {};
   hijos: Arbol[];
 }
@@ -22,10 +23,12 @@ export class Nodo {
   estaActivo: boolean;
   padre: Arbol;
   empresa: {};
+  nivel: number;
   usuarioAlta: {};
   hijos: Arbol[];
   level: number;
   expandable: boolean;
+  mostrarBotones: boolean;
 }
 
 @Component({
@@ -74,6 +77,7 @@ export class PlanCuentaComponent {
     flatNode.esImputable = node.esImputable;
     flatNode.estaActivo = node.estaActivo;
     flatNode.empresa = {};
+    flatNode.nivel = node.nivel;
     flatNode.usuarioAlta = {};
     flatNode.hijos = node.hijos;
     flatNode.expandable = !!node.hijos;
@@ -104,10 +108,12 @@ export class PlanCuentaComponent {
   }
   //Agrega el nodo
   public agregar(nodo: Nodo, nombre: string, imputable: boolean, activo: boolean) {
+    const elementoPadre = this.obtenerNodoPadre(nodo);
     const elemento = this.flatNodeMap.get(nodo);
     elemento.nombre = nombre;
     elemento.esImputable = imputable;
     elemento.estaActivo = activo;
+    elemento.nivel = elementoPadre.nivel+1;
     elemento.hijos = [];
     elemento.empresa = this.appComponent.getEmpresa();
     elemento.usuarioAlta = this.appComponent.getUsuario();
@@ -118,5 +124,13 @@ export class PlanCuentaComponent {
     let aNodo = this.flatNodeMap.get(nodo);
     let pNodo = this.obtenerNodoPadre(nodo);
     this.planCuentaServicio.eliminar(aNodo.id, pNodo);
+  }
+  //Activa los botones de nuevo y eliminar node
+  public activarBotones(nodo): void {
+    nodo.mostrarBotones = true;
+  }
+  //Desactiva los botones de nuevo y eliminar node
+  public desactivarBotones(nodo): void {
+    nodo.mostrarBotones = false;
   }
 }
