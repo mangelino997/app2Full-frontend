@@ -351,8 +351,6 @@ const appRoutes: Routes = [
   { path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService] },
   { path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService] },
   { path: 'menuopciones', component: RepartoEntranteComponent, canActivate: [GuardiaService] },
-  { path: 'contablemonedacotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService] },
-  { path: 'contablemonedacuentacontable', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] },
   { path: 'plandecuentasdefinicion', component: PlanCuentaComponent, canActivate: [GuardiaService] },
   { path: 'configuracionafipconcepto', component: ConceptoAfipComponent, canActivate: [GuardiaService] },
   { path: 'configuracionventasconceptos', component: VentaConceptoComponent, canActivate: [GuardiaService] },
