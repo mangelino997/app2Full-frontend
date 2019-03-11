@@ -52,4 +52,7 @@ export class AforoComponent implements OnInit {
   public reestablecerFormulario() {
     this.formulario.reset();
   }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }

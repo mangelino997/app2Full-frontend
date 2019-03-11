@@ -4,7 +4,7 @@ export class EmitirFactura {
     //define un formulario FormGroup
     public formulario: FormGroup;
     public formularioViaje: FormGroup;
-    public formularioContraR: FormGroup;
+    public formularioContraReembolso: FormGroup;
 
 
     //constructor
@@ -87,11 +87,15 @@ export class EmitirFactura {
             afipAlicuotaIva: new FormControl(''),
             subtotalCIva: new FormControl(0.00)
         });
-        this.formularioContraR = new FormGroup({
+        this.formularioContraReembolso = new FormGroup({
             item: new FormControl('', Validators.required),
+            porcentajeCC: new FormControl('', Validators.required),
             ordenVenta: new FormControl('', Validators.required),
             importeContraReembolso: new FormControl('', Validators.required),
-            pComision: new FormControl('', Validators.required)
+            pComision: new FormControl('', Validators.required),
+            alicuotaIva: new FormControl('', Validators.required),
+            subtotalCIva: new FormControl(0.00)
+
         });
     }
 }

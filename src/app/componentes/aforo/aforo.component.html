@@ -57,6 +57,9 @@
                 <button mat-raised-button color="accent" [mat-dialog-close]="data.formulario" (click)="reestablecerFormulario()" [disabled]="!formulario.valid">
                   Agregar
                 </button>
+                <button mat-raised-button color="accent"  (click)="onNoClick()">
+                  Cerrar
+                </button>
             </div>
         </div>
       </form>
