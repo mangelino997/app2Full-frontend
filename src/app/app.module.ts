@@ -264,6 +264,9 @@ import { AforoComponent } from './componentes/aforo/aforo.component';
 import { VentaConfigService } from './servicios/venta-config.service';
 import { Aforo } from './modelos/aforo';
 import { AfipAlicuotaIvaService } from './servicios/afip-alicuota-iva.service';
+import { VentaComprobanteService } from './servicios/venta-comprobante.service';
+import { VentaComprobanteItemNCService } from './servicios/venta-comprobante-item-nc.service';
+import { VentaComprobanteItemNDService } from './servicios/venta-comprobante-item-nd.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -683,6 +686,9 @@ const stompConfig: StompConfig = {
     VentaItemConceptoService,
     VentaConfigService,
     AfipAlicuotaIvaService,
+    VentaComprobanteService,
+    VentaComprobanteItemNCService,
+    VentaComprobanteItemNDService,
     Aforo,
     MesService,
     {

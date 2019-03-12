@@ -10,7 +10,7 @@
         <div class="form-group has-float-label">
           <label for="idPuntoVenta" class="tamanio-label">Punto de venta</label>
           <mat-select id="idPuntoVenta" class="form-control form-control-sm" style="width: 130px;" formControlName="puntoVenta" [compareWith]="compareFn" 
-          (selectionChange)="comprobarCodAfip() ">
+          (selectionChange)="comprobarCodAfip()">
             <mat-option *ngFor="let itemPuntoVenta of resultadosPuntoVenta" [value]="itemPuntoVenta">
              {{establecerCerosIzq(itemPuntoVenta.puntoVenta, "0000", -5)}}
             </mat-option>
@@ -183,20 +183,20 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idBultos" class="tamanio-label">Bultos</label>
-          <input id="idBultos" type="number" formControlName="bultos" class="form-control form-control-sm" style="width: 58px;" [readOnly]="soloLectura">
+          <input id="idBultos" type="number" formControlName="bultos" class="form-control form-control-sm" style="width: 58px;" autocomplete="off" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idKiloEfectivo" class="tamanio-label">Kg Efectivo</label>
-          <input id="idKiloEfectivo" type="number" formControlName="kilosEfectivo" class="form-control form-control-sm" style="width: 91px;" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idKiloEfectivo" type="number" formControlName="kilosEfectivo" class="form-control form-control-sm" style="width: 91px;" autocomplete="off" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idKiloAforado" class="tamanio-label">Kg Aforado</label>
-          <input id="idKiloAforado" type="number" formControlName="kilosAforado" class="form-control form-control-sm" style="width: 91px;" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idKiloAforado" type="number" formControlName="kilosAforado" class="form-control form-control-sm" style="width: 91px;" autocomplete="off" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
         </div>
         <button class="btn btn-secondary btn-custom" (click)="agregarAforo()" >Aforar</button>
         <div class="form-group has-float-label">
           <label for="idM3" class="tamanio-label">m3</label>
-          <input id="idM3" type="number" formControlName="m3" class="form-control form-control-sm" style="width: 45px;" (blur)="setDecimales($event, 2)" [readOnly]="soloLectura">
+          <input id="idM3" type="number" formControlName="m3" class="form-control form-control-sm" style="width: 45px;" (blur)="setDecimales($event, 2)" autocomplete="off" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label ">
           <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
@@ -209,31 +209,31 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idDescripcionCarga" class="tamanio-label">Descripción Carga</label>
-          <input id="idDescripcionCarga" type="text" formControlName="descripcionCarga" class="form-control form-control-sm" style="width: 140px;" [readOnly]="soloLectura">
+          <input id="idDescripcionCarga" type="text" formControlName="descripcionCarga" class="form-control form-control-sm" style="width: 140px;" autocomplete="off" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
-          <input id="idValorDeclarado" type="number" formControlName="valorDeclarado" class="form-control form-control-sm" style="width: 125px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+          <input id="idValorDeclarado" type="number" formControlName="valorDeclarado" class="form-control form-control-sm" style="width: 125px;" autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idSeguro" class="tamanio-label">% Seguro</label>
-          <input id="idSeguro" type="number" formControlName="importeSeguro" class="form-control form-control-sm" style="width: 80px;" (blur)="calcularSubtotal($event)" readonly>
+          <input id="idSeguro" type="number" formControlName="importeSeguro" class="form-control form-control-sm" style="width: 80px;"  (blur)="calcularSubtotal($event)" readonly>
         </div>
         <div class="form-group has-float-label">
           <label for="idFlete" class="tamanio-label">Flete</label>
-          <input id="idFlete" type="number" formControlName="flete" class="form-control form-control-sm" style="width: 120px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+          <input id="idFlete" type="number" formControlName="flete" class="form-control form-control-sm" style="width: 120px;" autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idDescuento" class="tamanio-label">% dto.</label>
-          <input id="idDescuento" type="number" formControlName="descuento" class="form-control form-control-sm" style="width: 60px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+          <input id="idDescuento" type="number" formControlName="descuento" class="form-control form-control-sm" style="width: 60px;" autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idRetiro" class="tamanio-label">Retiro</label>
-          <input id="idRetiro" type="number" formControlName="importeRetiro" class="form-control form-control-sm" style="width: 55px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+          <input id="idRetiro" type="number" formControlName="importeRetiro" class="form-control form-control-sm" style="width: 55px;" autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label for="idEntrega" class="tamanio-label">Entrega</label>
-          <input id="idEntrega" type="number" formControlName="importeEntrega" class="form-control form-control-sm" style="width: 68px;" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+          <input id="idEntrega" type="number" formControlName="importeEntrega" class="form-control form-control-sm" style="width: 68px;" autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
         </div>
         <div class="form-group has-float-label ">
           <label for="idConcepto" class="tamanio-label">Conceptos Varios</label>        
@@ -248,7 +248,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idImporteConcepto" class="tamanio-label">Precio(Conc.Var.)</label>
-          <input id="idImporteConcepto" type="number" formControlName="importeVentaItemConcepto" class="form-control form-control-sm" style="width: 130px;" (blur)="calcularSubtotal($event)">
+          <input id="idImporteConcepto" type="number" formControlName="importeVentaItemConcepto" class="form-control form-control-sm" style="width: 130px;" autocomplete="off" (blur)="calcularSubtotal($event)">
         </div>
         <div class="form-group has-float-label">
           <label for="idSubtotal" class="tamanio-label">Subtotal</label>
@@ -327,7 +327,7 @@
         <div class="inline" >
           <div class="form-group has-float-label">
             <label for="idContraReembolso" class="tamanio-label">ContraReembolso</label>
-            <input id="idContraReembolso" type="number" formControlName="importeContraReembolso" class="form-control form-control-sm"  style="width: 140px;" [readOnly]="soloLecturaCR">
+            <input id="idContraReembolso" type="number" formControlName="importeContraReembolso" class="form-control form-control-sm" autocomplete="off" style="width: 140px;" [readOnly]="soloLecturaCR">
           </div>
           <div class="form-group has-float-label">
             <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
@@ -358,7 +358,7 @@
           <button class="btn btn-warning btn-custom margin-left-button" (click)="eliminarCR()" *ngIf="listaCR.length>0">Quitar</button>
 
           <span class="spacer"></span>
-          <button class="btn btn-primary" type="button" style="width: 130px;">Emitir</button>
+          <button class="btn btn-primary" type="button" style="width: 130px;" (click)="emitirFactura()">Emitir</button>
         </div>
       </form>
       <div class="inline">

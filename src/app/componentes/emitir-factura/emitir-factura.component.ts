@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
@@ -13,7 +13,6 @@ import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.servi
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { ViajePropioService } from 'src/app/servicios/viaje-propio.service';
 import { ViajePropioTramoService } from 'src/app/servicios/viaje-propio-tramo.service';
 import { ViajeTerceroTramoService } from 'src/app/servicios/viaje-tercero-tramo.service';
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
@@ -22,8 +21,7 @@ import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.se
 import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
 import { AforoComponent } from '../aforo/aforo.component';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
-
-
+import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 @Component({
   selector: 'app-emitir-factura',
   templateUrl: './emitir-factura.component.html',
@@ -96,20 +94,18 @@ export class EmitirFacturaComponent implements OnInit {
   //Define la lista de resultados de busqueda barrio
   public resultadosBarrios = [];
   constructor(
-    private appComponent: AppComponent, public dialog: MatDialog, private fechaService: FechaService,
+    private appComponent: AppComponent, public dialog: MatDialog, private fechaService: FechaService, private ventaComprobanteService: VentaComprobanteService,
     public clienteService: ClienteService, private toastr: ToastrService, private factura: EmitirFactura, private appService: AppService, 
     private sucursalService: SucursalClienteService, private puntoVentaService: PuntoVentaService, private tipoComprobanteservice: TipoComprobanteService,
     private afipComprobanteService: AfipComprobanteService, private ventaTipoItemService: VentaTipoItemService, private viajeRemitoServicio: ViajeRemitoService,
     private ordenVentaServicio: OrdenVentaService, private viajePropioTramoService: ViajePropioTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService,
     private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ventaItemConceptoService: VentaItemConceptoService, private alicuotasIvaService: AfipAlicuotaIvaService
     ) {}
-
   ngOnInit() {
     //Define el formulario de orden venta
-    this.formulario = this.factura.formulario;
-    this.formularioItem= this.factura.formularioViaje;
+    this.formulario = this.factura.formulario; // formulario general (engloba los demás)
+    this.formularioItem= this.factura.formularioViaje; // formulario para los item de tabla
     this.formularioCR= this.factura.formularioContraReembolso; // formulario para contrareembolso
-
     this.reestablecerFormulario(undefined);
     //Lista los puntos de venta 
     this.listarPuntoVenta();
@@ -117,7 +113,6 @@ export class EmitirFacturaComponent implements OnInit {
     this.listarItems();
     //Lista las alicuotas afip iva
     this.listarAlicuotaIva();
-    //Lista Tarifa 
     //Carga el tipo de comprobante
     this.tipoComprobanteservice.obtenerPorId(1).subscribe(
       res=>{
@@ -144,15 +139,10 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene la lista de Puntos de Venta
   public listarPuntoVenta(){
-    // let empresa= this.appComponent.getEmpresa();
     this.puntoVentaService.listarPorEmpresaYSucursal(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id).subscribe(
       res=>{
         this.resultadosPuntoVenta= res.json();
-        for(let i=0; i<this.resultadosPuntoVenta.length; i++){
-          if(this.resultadosPuntoVenta[i].porDefecto==true){
-            this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[i]);
-          }
-        }
+        this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta);
       }
     );
   }
@@ -160,7 +150,6 @@ export class EmitirFacturaComponent implements OnInit {
   public listarItems(){
     this.ventaTipoItemService.listarItems().subscribe(
       res=>{
-        console.log(res.json());
         this.resultadosItems= res.json();
       }
     );
@@ -330,7 +319,7 @@ export class EmitirFacturaComponent implements OnInit {
           this.cargarCodigoAfip(res.text());  
         }
       )
-    }
+    };
   }
   //Setea el codigo de Afip por el tipo de comprobante y la letra
   public cargarCodigoAfip(letra){
@@ -339,7 +328,7 @@ export class EmitirFacturaComponent implements OnInit {
         this.formulario.get('codigoAfip').setValue(res.text());
         this.cargarNumero(res.text());
       }
-    )
+    );
   }
   //Setea el numero por el punto de venta y el codigo de Afip
   public cargarNumero(codigoAfip){
@@ -364,7 +353,6 @@ export class EmitirFacturaComponent implements OnInit {
     }
     else{
       importeIva = subtotal*(this.formularioItem.get('alicuotaIva').value/100);
-      console.log(importeIva, subtotal, this.formularioItem.get('alicuotaIva').value);
       this.formularioItem.get('subtotalCIva').setValue(importeIva); //guardo en cada item el importe extra (iva)
       let importeIvaTotal= this.formulario.get('importeIva').value + importeIva;
       this.formulario.get('importeIva').setValue(importeIvaTotal); //sumo en el formulario general (cabecera de la factura)
@@ -372,7 +360,6 @@ export class EmitirFacturaComponent implements OnInit {
     this.listaItemViaje.push(this.formularioItem.value);
     this.contador.setValue(this.contador.value+1);
     let importeTotal= this.formulario.get('importeGravado').value + this.formulario.get('importeIva').value;
-    console.log(importeIva, importeTotal);
     this.formulario.get('importeTotal').setValue(importeTotal);
     this.reestablecerFormularioItemViaje();
     this.remitosDisponibles(1, this.listaItemViaje[this.listaItemViaje.length-1].viajeRemito);
@@ -419,7 +406,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Elimina un Contra Reembolso
   public eliminarCR(){
-    console.log(this.formularioCR.value);
     this.soloLecturaCR = false;
     this.formularioCR.get('ordenVenta').disable();
     this.formularioCR.get('alicuotaIva').disable();
@@ -429,11 +415,9 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('importeIva').setValue(this.formulario.get('importeIva').value - subtotalIva);
     let importeTotal=subtotal + subtotalIva;
     this.formulario.get('importeTotal').setValue(this.formulario.get('importeTotal').value - importeTotal);
-    this.listaCR.splice(0, 1);
     this.formularioCR.reset();
-    console.log(this.listaCR);
     this.itemsDisponibles(2, this.listaCR[0].item);
-
+    this.listaCR.splice(0, 1);
   }
   //Habilita y carga los campos una vez que se selecciono el item
   public habilitarCamposItem(){
@@ -595,7 +579,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Completa el input "porcentaje" segun la Orden Venta seleccionada en Contra Reembolso
   public cambioOVtaCR(){
-    console.log(this.formularioCR.value);
     this.formularioCR.get('porcentajeCC').setValue(this.formularioCR.get('ordenVenta').value.comisionCR);
     let comision=(this.formularioCR.get('porcentajeCC').value/100)*this.formularioCR.get('importeContraReembolso').value;
     this.formularioCR.get('pComision').setValue(comision);
@@ -695,7 +678,6 @@ export class EmitirFacturaComponent implements OnInit {
       data: { nota: nota }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      console.log(resultado);
     });
   }
   //Abre un modal ver los Totales de Carga
@@ -718,7 +700,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //METODO PRINCIPAL - EMITE LA FACTURA
   public emitirFactura(){
-    let afipConcepto = this.listaItemViaje[0].get('ventaTipoItem').value.afipConcepto.id; //guardamos el id de afipConcepto del primer item de la tabla
+    let afipConcepto = this.listaItemViaje[0].ventaTipoItem.afipConcepto.id; //guardamos el id de afipConcepto del primer item de la tabla
     this.formulario.get('afipConcepto').setValue({
       id: afipConcepto
     });
@@ -726,8 +708,27 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('esCAEA').setValue(this.appComponent.getEmpresa().feCAEA);
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('ventaComprobanteItemFAs').setValue(this.listaItemViaje);
+    this.formulario.get('ventaComprobanteItemCR').setValue(this.listaCR);
+    this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta);
+    console.log(this.formulario.value);
+    this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
+      res=>{
+        let respuesta= res.json();
+        document.getElementById("idFecha").classList.add('label-error');
+        document.getElementById("idFecha").classList.add('is-invalid');
+        document.getElementById("idFecha").focus();
+        this.toastr.success(respuesta.mensaje);
+      },
+      err=>{
+        var respuesta = err.json();
+        document.getElementById("idFecha").classList.add('label-error');
+        document.getElementById("idFecha").classList.add('is-invalid');
+        document.getElementById("idFecha").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
+    );
   }
-  //-----------------------------------
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
@@ -792,15 +793,13 @@ export class ViajeDialogo{
   public resultadosTramos = [];
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
-
-  constructor(public dialogRef: MatDialogRef<ViajeDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService, 
+  constructor(public dialogRef: MatDialogRef<ViajeDialogo>, @Inject(MAT_DIALOG_DATA) public data,
   private viajePropioTramoService: ViajePropioTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService) {}
    ngOnInit() {
      this.formulario = new FormGroup({
        tramo: new FormControl('', Validators.required)
      });
      //Obtiene la lista de tramos por tipo de item (propio/tercero)
-     console.log(this.data.tipoItem, this.data.idViaje);
      this.listarTramos(this.data.tipoItem, this.data.idViaje);
    }
    //obtiene la lista de tramos por tipo y por el idViaje 
@@ -808,7 +807,6 @@ export class ViajeDialogo{
     if(tipo==1){
       this.viajePropioTramoService.listarTramos(viaje).subscribe(
         res=>{
-          console.log(res.json());
           this.resultadosTramos= res.json();
         }
       );
@@ -816,7 +814,6 @@ export class ViajeDialogo{
     if(tipo==2){
       this.viajeTerceroTramoServicio.listarTramos(viaje).subscribe(
         res=>{
-          console.log(res.json());
           this.resultadosTramos= res.json();
         }
       );
@@ -832,7 +829,6 @@ export class ViajeDialogo{
   onNoClick(): void {
     this.dialogRef.close();
   }
-  
 }
 @Component({
   selector: 'observacion-dialogo',
@@ -845,13 +841,10 @@ export class ObservacionDialogo{
   public check:boolean=false;
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
-
-  constructor(public dialogRef: MatDialogRef<ObservacionDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
-   private servicio: ClienteService) {}
+  constructor(public dialogRef: MatDialogRef<ObservacionDialogo>, @Inject(MAT_DIALOG_DATA) public data) {}
    ngOnInit() {
      this.formulario = new FormGroup({});
      this.observacion = this.data.nota;
-     console.log(this.data.nota);
   }      
   //Controla los checkbox
   public agregarObs($event){
@@ -879,14 +872,12 @@ export class TotalCargaDialogo{
   public formulario:FormGroup;
   //Define la lista completa de registros
   public listaCompleta:any = null;
-
   constructor(public dialogRef: MatDialogRef<TotalCargaDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
    private servicio: ClienteService) {}
    ngOnInit() {
      this.formulario = new FormGroup({});
      this.listaCompleta = this.data.items;
   } 
-  
   onNoClick(): void {
     this.dialogRef.close();
   }
@@ -902,14 +893,11 @@ export class TotalConceptoDialogo{
   public formulario:FormGroup;
   //Define la lista completa de registros
   public listaCompleta:any = null;
-
-  constructor(public dialogRef: MatDialogRef<TotalConceptoDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
-   private servicio: ClienteService) {}
+  constructor(public dialogRef: MatDialogRef<TotalConceptoDialogo>, @Inject(MAT_DIALOG_DATA) public data) {}
    ngOnInit() {
      this.formulario = new FormGroup({});
      this.listaCompleta = this.data.items;
   } 
-  
   onNoClick(): void {
     this.dialogRef.close();
   }
