@@ -16,6 +16,7 @@ import { ViajeEfectivoComponent } from './viaje-efectivo/viaje-efectivo.componen
 import { ViajeGastoComponent } from './viaje-gasto/viaje-gasto.component';
 import { ViajeInsumoComponent } from './viaje-insumo/viaje-insumo.component';
 import { ViajePeajeComponent } from './viaje-peaje/viaje-peaje.component';
+import { ViajeRemitoGSComponent } from './viaje-remito-gs/viaje-remito-gs.component';
 
 @Component({
   selector: 'app-viaje',
@@ -30,6 +31,7 @@ export class ViajeComponent implements OnInit {
   @ViewChild(ViajeGastoComponent) viajeGastoComponente;
   @ViewChild(ViajeInsumoComponent) viajeInsumoComponente;
   @ViewChild(ViajePeajeComponent) viajePeajeComponente;
+  @ViewChild(ViajeRemitoGSComponent) viajeRemitoGSComponente;
   //Define la pestania activa
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
@@ -355,6 +357,7 @@ export class ViajeComponent implements OnInit {
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
     this.formularioViajePropio.get('viajePropioTramos').setValue($event);
+    this.viajeRemitoGSComponente.establecerListaTramos($event);
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {

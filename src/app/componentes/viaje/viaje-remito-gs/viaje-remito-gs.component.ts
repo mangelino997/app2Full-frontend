@@ -3,6 +3,7 @@ import { FormArray, FormGroup } from '@angular/forms';
 import { ViajeRemito } from 'src/app/modelos/viajeRemito';
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
 import { AppComponent } from 'src/app/app.component';
+import { SucursalService } from 'src/app/servicios/sucursal.service';
 
 @Component({
   selector: 'app-viaje-remito-gs',
@@ -18,13 +19,25 @@ export class ViajeRemitoGSComponent implements OnInit {
   public remitos:FormArray;
   //Define la lista de remitos pendientes
   public listaRemitosPendientes:Array<any> = [];
+  //Define la lista de tramos
+  public listaTramos:Array<any> = [];
+  //Defiene la lista de sucursales
+  public sucursales:Array<any> = [];
   //Constructor
   constructor(private viajeRemito: ViajeRemito, private viajeRemitoServicio: ViajeRemitoService,
-    private appComponent: AppComponent) { }
+    private appComponent: AppComponent, private sucursalServicio: SucursalService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje remito
     this.formularioViajeRemito = this.viajeRemito.formulario;
+    //Obtiene la lista de sucursales
+    this.listarSucursales();
+  }
+  //Obtiene el listado de sucursales
+  private listarSucursales() {
+    this.sucursalServicio.listar().subscribe(res => {
+      this.sucursales = res.json();
+    });
   }
   //Obtiene la lista de remitos pendiente por filtro (sucursal, sucursal destino y numero de camion)
   public listarRemitosPorFiltro(): void {
@@ -38,6 +51,7 @@ export class ViajeRemitoGSComponent implements OnInit {
       this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
         let listaRemitosPendientes = res.json();
         for (var i = 0; i < listaRemitosPendientes.length; i++) {
+          listaRemitosPendientes[i].viajePropioTramo = this.formularioViajeRemito.get('tramo').value;
           this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
           this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosPendientes[i]));
         }
@@ -51,6 +65,10 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
     this.dataEvent.emit();
+  }
+  //Establece la lista de tramos cargada en ViajeTramo
+  public establecerListaTramos(tramos): void {
+    this.listaTramos = tramos;
   }
   //Define como se muestran los ceros a la izquierda en tablas
   public mostrarCeros(elemento, string, cantidad) {

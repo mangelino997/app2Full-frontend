@@ -155,6 +155,7 @@ export class ViajeRemitoComponent implements OnInit {
   public establecerFormulario(elemento) {
     this.formulario.patchValue(elemento);
     this.formulario.get('puntoVenta').setValue(this.displayCeros(elemento.puntoVenta, '0000', -5));
+    this.formulario.get('numero').setValue(this.displayCeros(elemento.numero, '0000000', -8));
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
