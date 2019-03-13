@@ -77,7 +77,7 @@ export class ViajeRemitoService {
   }
   //Obtiene una lista de remitos asignados por sucursal, sucursal destino, numero de camion y viaje propio tramo
   public listarAsignadosPorFiltro(idSucursal, idSucursalDestino, numeroCamion, idViajePropioTramo) {
-    return this.http.get(this.url + '/listarPendientesPorFiltro/' + idSucursal
+    return this.http.get(this.url + '/listarAsignadosPorFiltro/' + idSucursal
       + '/' + idSucursalDestino + '/' + numeroCamion + '/' + idViajePropioTramo, this.options);
   }
   //Asigna remitos

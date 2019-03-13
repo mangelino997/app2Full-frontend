@@ -4,6 +4,7 @@ import { ViajeRemito } from 'src/app/modelos/viajeRemito';
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
 import { AppComponent } from 'src/app/app.component';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-viaje-remito-gs',
@@ -25,7 +26,8 @@ export class ViajeRemitoGSComponent implements OnInit {
   public sucursales:Array<any> = [];
   //Constructor
   constructor(private viajeRemito: ViajeRemito, private viajeRemitoServicio: ViajeRemitoService,
-    private appComponent: AppComponent, private sucursalServicio: SucursalService) { }
+    private appComponent: AppComponent, private sucursalServicio: SucursalService,
+    private toast: ToastrService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje remito
@@ -45,8 +47,16 @@ export class ViajeRemitoGSComponent implements OnInit {
     let sucursal = this.appComponent.getUsuario().sucursal;
     let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
     let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
+    let viajePropio = this.formularioViajeRemito.get('tramo').value;
     if(tipo) {
-
+      this.viajeRemitoServicio.listarAsignadosPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion, viajePropio.id).subscribe(res => {
+        let listaRemitosAsignados = res.json();
+        for (var i = 0; i < listaRemitosAsignados.length; i++) {
+          listaRemitosAsignados[i].viajePropioTramo = this.formularioViajeRemito.get('tramo').value;
+          this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
+          this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosAsignados[i]));
+        }
+      })
     } else {
       this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
         let listaRemitosPendientes = res.json();
@@ -58,9 +68,40 @@ export class ViajeRemitoGSComponent implements OnInit {
       });
     }
   }
-  //Asigna los remitos a un tramo
-  public asignarRemitos(): void {
-    console.log(this.formularioViajeRemito.value.remitos);
+  //Asigna o Quita remitos de tramo
+  public cambiarEstadoRemitos(opcion): void {
+    if(opcion) {
+      this.viajeRemitoServicio.quitar(this.formularioViajeRemito.value.remitos).subscribe(
+        res => {
+          let respuesta = res.json();
+          this.reestablecerFormulario();
+          document.getElementById('idTipoRemitoRG').focus();
+          this.toast.success(respuesta.mensaje);
+        },
+        err => {
+          let respuesta = err.json();
+          this.toast.error(respuesta.mensaje);
+        }
+      )
+    } else {
+      this.viajeRemitoServicio.asignar(this.formularioViajeRemito.value.remitos).subscribe(
+        res => {
+          let respuesta = res.json();
+          this.reestablecerFormulario();
+          document.getElementById('idTipoRemitoRG').focus();
+          this.toast.success(respuesta.mensaje);
+        },
+        err => {
+          let respuesta = err.json();
+          this.toast.error(respuesta.mensaje);
+        }
+      )
+    }
+  }
+  //Reestablece el formulario
+  private reestablecerFormulario(): void {
+    this.formularioViajeRemito.get('numeroCamion').setValue(null);
+    this.formularioViajeRemito.get('remitos').reset();
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {

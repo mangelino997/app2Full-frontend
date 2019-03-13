@@ -50,17 +50,20 @@
       <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
         <thead>
           <tr>
+            <th class="text-center" style="width:5%" scope="col">-</th>
             <th class="text-center" style="width:10%" scope="col">Fecha</th>
             <th class="text-center" style="width:15%" scope="col">Tipo de Comprobante</th>
             <th class="text-center" style="width:15%" scope="col">Punto Venta</th>
             <th class="text-center" style="width:15%" scope="col">N° de Comprobante</th>
             <th class="text-center" style="width:20%" scope="col">Remitente</th>
             <th class="text-center" style="width:20%" scope="col">Destinatario</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let a of formularioViajeRemito.get('remitos').controls; let i = index" [formGroupName]="i">
+            <td align="center">
+              <mat-checkbox formControlName="estaPendiente" color="primary"></mat-checkbox>
+            </td>
             <td align="center">
               <span>{{a.value.fecha | date: 'dd/MM/yyyy'}}</span>
             </td>
@@ -79,15 +82,14 @@
             <td align="center">
               <span>{{a.value.clienteDestinatario.razonSocial}}</span>
             </td>
-            <td align="center">
-              <mat-checkbox formControlName="estaPendiente" color="primary"></mat-checkbox>
-            </td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
   <div class="row justify-content-end">
-    <button mat-raised-button color="primary" (click)="asignarRemitos()">Asignar/Quitar</button>
+    <button mat-raised-button color="primary" (click)="cambiarEstadoRemitos(formularioViajeRemito.get('tipoRemito').value)">
+      {{formularioViajeRemito.get('tipoRemito').value ? 'Quitar' : 'Asignar'}}
+    </button>
   </div>
 </form>
