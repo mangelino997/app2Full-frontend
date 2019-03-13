@@ -9,7 +9,11 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idPuntoVenta" class="tamanio-label">Punto de venta</label>
-          <input id="idPuntoVenta" type="number" formControlName="puntoVenta" class="form-control form-control-sm" style="width: 117px;">
+          <mat-select id="idPuntoVenta" class="form-control form-control-sm" style="width: 130px;" formControlName="puntoVenta" [compareWith]="compareFn">
+            <mat-option *ngFor="let itemPuntoVenta of resultadosPuntoVenta" [value]="itemPuntoVenta">
+             {{establecerCerosIzq(itemPuntoVenta.puntoVenta, "0000", -5)}}
+            </mat-option>
+          </mat-select>
         </div>
         <div class="form-group has-float-label">
           <label for="idLetra" class="tamanio-label">Letra</label>
@@ -29,7 +33,11 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idJurisdiccion" class="tamanio-label">Jurisdicción</label>
-          <input id="idJurisdiccion" type="text" formControlName="jurisdiccion" class="form-control form-control-sm" style="width: 99px;">
+          <mat-select id="idJurisdiccion" class="form-control form-control-sm" style="width: 99px;" formControlName="jurisdiccion" [compareWith]="compareFn">
+            <mat-option *ngFor="let itemProvincia of resultadosProvincias" [value]="itemProvincia">
+             {{itemProvincia.nombre}}
+            </mat-option>
+          </mat-select>
         </div>
       </div>
       <hr style="margin-top: 0px; margin-bottom: 10px;">
