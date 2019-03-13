@@ -43,7 +43,7 @@
             <div class="form-group has-float-label">
               <label for="idRemitente" class="tamanio-label">Buscar Remitente</label>
               <input id="idRemitente" type="text" class="form-control form-control-sm" style="width: 522px;" 
-                matInput [formControl]="formulario.get('remitente')" [matAutocomplete]="autoRemitente" autocomplete="off">
+                matInput [formControl]="formulario.get('clienteRemitente')" [matAutocomplete]="autoRemitente" autocomplete="off">
                 <mat-autocomplete #autoRemitente="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="listarSucursalesRemitente()">
                   <mat-option *ngFor="let itemCliente of resultadosReminentes" [value]="itemCliente" >
                     {{itemCliente.alias}}
@@ -98,7 +98,7 @@
             <div class="form-group has-float-label">
               <label for="idDestinatario" class="tamanio-label">Buscar Destinatario</label>
               <input id="idDestinatario" type="text" class="form-control form-control-sm" style="width: 522px;" 
-                matInput [formControl]="formulario.get('destinatario')" [matAutocomplete]="autoDestinatario" autocomplete="off">
+                matInput [formControl]="formulario.get('clienteDestinatario')" [matAutocomplete]="autoDestinatario" autocomplete="off">
                 <mat-autocomplete #autoDestinatario="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="listarSucursalesDestinatario()"> 
                   <mat-option *ngFor="let itemCliente of resultadosDestinatarios" [value]="itemCliente" >
                     {{itemCliente.alias}}
@@ -312,7 +312,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Importe Neto Gravado ($)</label>
-          <input id="idCodigo" type="number" formControlName="importeGravado" (change)="setDecimales($event, 2)" class="form-control form-control-sm" style="width: 189px;">
+          <input id="idCodigo" type="number" formControlName="importeNetoGravado" (change)="setDecimales($event, 2)" class="form-control form-control-sm" style="width: 189px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Importe IVA ($)</label>

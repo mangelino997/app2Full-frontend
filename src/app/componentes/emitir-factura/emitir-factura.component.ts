@@ -121,7 +121,7 @@ export class EmitirFacturaComponent implements OnInit {
       }
     )
     //Autcompletado - Buscar por Remitente
-    this.formulario.get('remitente').valueChanges.subscribe(data => {
+    this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.clienteService.listarPorAlias(data).subscribe(res => {
           this.resultadosReminentes = res;
@@ -129,7 +129,7 @@ export class EmitirFacturaComponent implements OnInit {
       }
     });
     //Autcompletado - Buscar por Destinatario
-    this.formulario.get('destinatario').valueChanges.subscribe(data => {
+    this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.clienteService.listarPorAlias(data).subscribe(res => {
           this.resultadosDestinatarios = res;
@@ -139,7 +139,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene la lista de Puntos de Venta
   public listarPuntoVenta(){
-    this.puntoVentaService.listarPorEmpresaYSucursal(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id).subscribe(
+    this.puntoVentaService.listarPorEmpresaYSucursal(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 1).subscribe(
       res=>{
         this.resultadosPuntoVenta= res.json();
         this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta);
@@ -156,11 +156,11 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene el listado de Sucursales por Remitente
   public listarSucursalesRemitente() {
-    this.formulario.get('rem.domicilio').setValue(this.formulario.get('remitente').value.domicilio);
-    this.formulario.get('rem.localidad').setValue(this.formulario.get('remitente').value.localidad.nombre);
-    this.formulario.get('rem.condicionVenta').setValue(this.formulario.get('remitente').value.condicionVenta.nombre);
-    this.formulario.get('rem.afipCondicionIva').setValue(this.formulario.get('remitente').value.afipCondicionIva.nombre);
-    this.sucursalService.listarPorCliente(this.formulario.get('remitente').value.id).subscribe(
+    this.formulario.get('rem.domicilio').setValue(this.formulario.get('clienteRemitente').value.domicilio);
+    this.formulario.get('rem.localidad').setValue(this.formulario.get('clienteRemitente').value.localidad.nombre);
+    this.formulario.get('rem.condicionVenta').setValue(this.formulario.get('clienteRemitente').value.condicionVenta.nombre);
+    this.formulario.get('rem.afipCondicionIva').setValue(this.formulario.get('clienteRemitente').value.afipCondicionIva.nombre);
+    this.sucursalService.listarPorCliente(this.formulario.get('clienteRemitente').value.id).subscribe(
       res => {
         this.resultadosSucursalesRem = res.json();
         this.formulario.get('rem.sucursal').setValue(this.resultadosSucursalesRem[0]);
@@ -172,11 +172,11 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene el listado de Sucursales por Remitente
   public listarSucursalesDestinatario() {
-    this.formulario.get('des.domicilio').setValue(this.formulario.get('destinatario').value.domicilio);
-    this.formulario.get('des.localidad').setValue(this.formulario.get('destinatario').value.localidad.nombre);
-    this.formulario.get('des.condicionVenta').setValue(this.formulario.get('destinatario').value.condicionVenta.nombre);
-    this.formulario.get('des.afipCondicionIva').setValue(this.formulario.get('destinatario').value.afipCondicionIva.nombre);
-    this.sucursalService.listarPorCliente(this.formulario.get('destinatario').value.id).subscribe(
+    this.formulario.get('des.domicilio').setValue(this.formulario.get('clienteDestinatario').value.domicilio);
+    this.formulario.get('des.localidad').setValue(this.formulario.get('clienteDestinatario').value.localidad.nombre);
+    this.formulario.get('des.condicionVenta').setValue(this.formulario.get('clienteDestinatario').value.condicionVenta.nombre);
+    this.formulario.get('des.afipCondicionIva').setValue(this.formulario.get('clienteDestinatario').value.afipCondicionIva.nombre);
+    this.sucursalService.listarPorCliente(this.formulario.get('clienteDestinatario').value.id).subscribe(
       res => {
         this.resultadosSucursalesDes = res.json();
         this.formulario.get('des.sucursal').setValue(this.resultadosSucursalesDes[0]);
@@ -303,7 +303,9 @@ export class EmitirFacturaComponent implements OnInit {
     if(this.formulario.get('pagoEnOrigen').value==true){
       document.getElementById('Remitente').className="border has-float-label pagaSeleccionado";
       document.getElementById('Destinatario').className="border has-float-label";
-      this.afipComprobanteService.obtenerLetra(this.formulario.get('remitente').value.id).subscribe(
+      this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteRemitente').value.afipCondicionIva);
+      this.formulario.get('cliente').setValue(this.formulario.get('clienteRemitente').value);
+      this.afipComprobanteService.obtenerLetra(this.formulario.get('clienteRemitente').value.id).subscribe(
         res=>{
           this.formulario.get('letra').setValue(res.text());
           this.cargarCodigoAfip(res.text());  
@@ -313,7 +315,9 @@ export class EmitirFacturaComponent implements OnInit {
     else{
       document.getElementById('Remitente').className="border has-float-label";
       document.getElementById('Destinatario').className="border has-float-label pagaSeleccionado";
-      this.afipComprobanteService.obtenerLetra(this.formulario.get('destinatario').value.id).subscribe(
+      this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteDestinatario').value.afipCondicionIva);
+      this.formulario.get('cliente').setValue(this.formulario.get('clienteDestinatario').value);
+      this.afipComprobanteService.obtenerLetra(this.formulario.get('clienteDestinatario').value.id).subscribe(
         res=>{
           this.formulario.get('letra').setValue(res.text());
           this.cargarCodigoAfip(res.text());  
@@ -346,7 +350,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Agrega al Array un item-viaje 
   public agregarItemViaje(){
     let subtotal=this.formularioItem.get('importeNetoGravado').value;
-    this.formulario.get('importeGravado').setValue(this.formulario.get('importeGravado').value + subtotal);
+    this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value + subtotal);
     let importeIva=0;
     if(this.formularioItem.get('alicuotaIva').value==0||this.formularioItem.get('alicuotaIva').value==null){
       this.formularioItem.get('subtotalCIva').setValue(0);
@@ -359,7 +363,7 @@ export class EmitirFacturaComponent implements OnInit {
     }
     this.listaItemViaje.push(this.formularioItem.value);
     this.contador.setValue(this.contador.value+1);
-    let importeTotal= this.formulario.get('importeGravado').value + this.formulario.get('importeIva').value;
+    let importeTotal= this.formulario.get('importeNetoGravado').value + this.formulario.get('importeIva').value;
     this.formulario.get('importeTotal').setValue(importeTotal);
     this.reestablecerFormularioItemViaje();
     this.remitosDisponibles(1, this.listaItemViaje[this.listaItemViaje.length-1].viajeRemito);
@@ -368,11 +372,11 @@ export class EmitirFacturaComponent implements OnInit {
   public eliminarItemViaje(subtotal, subtotalIva, index){
     this.listaItemViaje.splice(index, 1);
     if(this.listaItemViaje.length==0){
-      this.formulario.get('importeGravado').setValue(0.00);
+      this.formulario.get('importeNetoGravado').setValue(0.00);
       this.formulario.get('importeIva').setValue(0.00);
       this.formulario.get('importeTotal').setValue(0.00);
     }else{
-      this.formulario.get('importeGravado').setValue(this.formulario.get('importeGravado').value - subtotal);
+      this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value - subtotal);
       this.formulario.get('importeIva').setValue(this.formulario.get('importeIva').value - subtotalIva);
       let importeTotal=subtotal + subtotalIva;
       this.formulario.get('importeTotal').setValue(this.formulario.get('importeTotal').value - importeTotal);
@@ -398,8 +402,8 @@ export class EmitirFacturaComponent implements OnInit {
         let importeIvaTotal= this.formulario.get('importeIva').value + importeIva;
         this.formulario.get('importeIva').setValue(importeIvaTotal); //sumo en el formulario general (cabecera de la factura)
       }
-      this.formulario.get('importeGravado').setValue(this.formulario.get('importeGravado').value + this.formularioCR.get('importeContraReembolso').value);
-      let importeTotal= this.formulario.get('importeGravado').value + this.formulario.get('importeIva').value;
+      this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value + this.formularioCR.get('importeContraReembolso').value);
+      let importeTotal= this.formulario.get('importeNetoGravado').value + this.formulario.get('importeIva').value;
       this.formulario.get('importeTotal').setValue(importeTotal.toFixed(2));
       this.itemsDisponibles(1, this.listaCR[this.listaCR.length-1].item);
     }
@@ -411,7 +415,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.formularioCR.get('alicuotaIva').disable();
     let subtotal=this.formularioCR.get('importeContraReembolso').value;
     let subtotalIva=this.formularioCR.get('subtotalCIva').value;
-    this.formulario.get('importeGravado').setValue(this.formulario.get('importeGravado').value - subtotal);
+    this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value - subtotal);
     this.formulario.get('importeIva').setValue(this.formulario.get('importeIva').value - subtotalIva);
     let importeTotal=subtotal + subtotalIva;
     this.formulario.get('importeTotal').setValue(this.formulario.get('importeTotal').value - importeTotal);
@@ -462,7 +466,7 @@ export class EmitirFacturaComponent implements OnInit {
   public listarTarifaOVenta(){
     if(this.formulario.get('pagoEnOrigen').value==true) //si paga el remitente
     {
-      this.ordenVentaServicio.listarPorCliente(this.formulario.get('remitente').value.id).subscribe(
+      this.ordenVentaServicio.listarPorCliente(this.formulario.get('clienteRemitente').value.id).subscribe(
         res=>{
           this.resultadosTarifas = res.json();
           if(this.resultadosTarifas.length==0)
@@ -471,7 +475,7 @@ export class EmitirFacturaComponent implements OnInit {
       );
     }
     else{ //si paga el destinatario
-      this.ordenVentaServicio.listarPorCliente(this.formulario.get('destinatario').value.id).subscribe(
+      this.ordenVentaServicio.listarPorCliente(this.formulario.get('clienteDestinatario').value.id).subscribe(
         res=>{
           this.resultadosTarifas = res.json();
           if(this.resultadosTarifas.length==0)
@@ -637,6 +641,9 @@ export class EmitirFacturaComponent implements OnInit {
   //Calcular el Subtotal del item agregado
   public calcularSubtotal($event){
     let subtotal=0;
+    this.formulario.get('importeNoGravado').setValue(0.00);
+    this.formulario.get('importeOtrosTributos').setValue(0.00);
+    this.formulario.get('importeExento').setValue(0.00);
     this.formularioItem.get('importeNetoGravado').setValue(subtotal);
     let vdeclaradoNeto = this.formularioItem.get('valorDeclarado').value*(this.formularioItem.get('importeSeguro').value/1000);
     let descuento = this.formularioItem.get('descuento').value;
@@ -668,10 +675,10 @@ export class EmitirFacturaComponent implements OnInit {
   public abrirObervacion(): void {
     let nota; //guarad la nota de impresion comprobante
     if(this.formulario.get('pagoEnOrigen').value==true){
-      nota= this.formulario.get('remitente').value.notaImpresionComprobante;
+      nota= this.formulario.get('clienteRemitente').value.notaImpresionComprobante;
     }
     else{
-      nota= this.formulario.get('destinatario').value.notaImpresionComprobante;
+      nota= this.formulario.get('clienteDestinatario').value.notaImpresionComprobante;
     }
     const dialogRef = this.dialog.open(ObservacionDialogo, {
       width: '1200px',
@@ -704,6 +711,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('afipConcepto').setValue({
       id: afipConcepto
     });
+    this.formulario.get('importeSaldo').setValue(this.formulario.get('importeTotal').value);
     this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
     this.formulario.get('esCAEA').setValue(this.appComponent.getEmpresa().feCAEA);
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);

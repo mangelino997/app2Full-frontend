@@ -28,9 +28,10 @@ export class EmitirFactura {
             codigoAfip: new FormControl(),
             tipoComprobante: new FormControl(),
             pagoEnOrigen: new FormControl(),
-            remitente: new FormControl(),
             esCAEA: new FormControl(),
-
+            afipCondicionIva: new FormControl(),
+            cliente: new FormControl(),
+            clienteRemitente: new FormControl(),
             rem: new FormGroup({
                 cliente: new FormControl(),
                 domicilio: new FormControl(),
@@ -39,7 +40,7 @@ export class EmitirFactura {
                 condicionVenta: new FormControl(),
                 sucursal: new FormControl()
             }),
-            destinatario: new FormControl(),
+            clienteDestinatario: new FormControl(),
             des: new FormGroup({
                 cliente: new FormControl(),
                 domicilio: new FormControl(),
@@ -51,10 +52,13 @@ export class EmitirFactura {
             ventaComprobanteItemFAs: new FormControl(),
             ventaComprobanteItemCR: new FormControl(),
             total: new FormControl(0.00),
-            importeNoGravado: new FormControl(0.00),
-            importeGravado: new FormControl(0.00),
+            importeNoGravado: new FormControl(),
+            importeExento: new FormControl(),
+            importeNetoGravado: new FormControl(0.00),
             importeIva: new FormControl(0.00),
             importeTotal: new FormControl(0.00),
+            importeOtrosTributos: new FormControl(),
+            importeSaldo: new FormControl(),
             ordenVenta: new FormControl(),
             contrareembolso: new FormControl(),
             porcentajeCC: new FormControl(),

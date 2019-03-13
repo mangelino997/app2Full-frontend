@@ -8,6 +8,8 @@ import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.servi
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { PuntoVentaService } from 'src/app/servicios/punto-venta.service';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
+import { AppService } from 'src/app/servicios/app.service';
+import { ProvinciaService } from 'src/app/servicios/provincia.service';
 
 @Component({
   selector: 'app-emitir-nota-credito',
@@ -30,9 +32,16 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public empresa:FormControl = new FormControl();
   //Define la lista de resultados para Puntos de Venta
   public resultadosPuntoVenta = [];
+  //Define la lista de resultados para Provincias
+  public resultadosProvincias = [];
+  //Define las variables de la cabecera
+  public letra: string;
+  public codigoAfip: string;
+  public numero: string;
 
   constructor(private notaCredito: NotaCredito, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService,private appComponent: AppComponent,
-    private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService, private toastr: ToastrService ) { }
+    private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService, 
+    private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService ) { }
 
   ngOnInit() {
     //Define el formulario y validaciones
@@ -42,8 +51,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario= this.notaCredito.formulario;
     //Reestablece el Formularios
     this.reestablecerFormulario();
-    //Lista los puntos de venta 
+    //Obtiene los puntos de venta 
     this.listarPuntoVenta();
+    //Obtiene las Provincias - origen de la carga 
+    this.listarProvincias(); 
     //Autcompletado - Buscar por Cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -86,10 +97,21 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Obtiene la lista de Puntos de Venta
   public listarPuntoVenta(){
-    this.puntoVentaService.listarPorEmpresaYSucursal(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id).subscribe(
+    this.puntoVentaService.listarPorEmpresaYSucursal(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
       res=>{
         this.resultadosPuntoVenta= res.json();
         this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta);
+      }
+    );
+  }
+  //Obtiene una lista de las Provincias 
+  public listarProvincias(){
+    this.provinciaService.listar().subscribe(
+      res=>{
+        this.resultadosProvincias = res.json();
+      },
+      err=>{
+        this.toastr.error("Error al obtener las Provincias");
       }
     );
   }
@@ -103,26 +125,44 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
     this.establecerCabecera();
   }
-  //Establece Letra, Numero, Codigo Afip
+  //Establece Letra
   public establecerCabecera(){
     this.afipComprobanteService.obtenerLetra(this.formulario.get('cliente').value.id).subscribe(
       res=>{
         this.formulario.get('letra').setValue(res.text());
+        this.establecerCodAfip(res.text());
       }
     );
-    console.log(this.formulario.value, this.formulario.get('letra').value);
-    this.afipComprobanteService.obtenerCodigoAfip(this.formulario.get('ventaComprobante').value.id, this.formulario.get('letra').value).subscribe(
+  }
+  //Establece Numero
+  public establecerCodAfip(letra){
+    this.afipComprobanteService.obtenerCodigoAfip(3, letra).subscribe(
       res=>{
         this.formulario.get('codigoAfip').setValue(res.text());
+        this.establecerNumero(res.text());
       }
     );
-    console.log(this.formulario.get('puntoVenta').value, this.formulario.get('codigoAfip').value, this.appComponent.getUsuario().sucursal.id, this.empresa.value.id);
-
-    this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value, this.formulario.get('codigoAfip').value, this.appComponent.getUsuario().sucursal.id, this.empresa.value.id).subscribe(
+  }
+  //Establece Codigo Afip
+  public establecerNumero(codigoAfip){
+    console.log(this.formulario.value);
+    this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value.puntoVenta, codigoAfip, this.appComponent.getUsuario().sucursal.id, this.empresa.value.id).subscribe(
       res=>{
         this.formulario.get('numero').setValue(res.text());
       }
     );
+  }
+  //Formatea el numero a x decimales
+  public setDecimales(valor, cantidad) {
+    valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+  }
+  //Retorna el numero a x decimales
+  public returnDecimales(valor, cantidad) {
+    return this.appService.setDecimales(valor, cantidad);
+  }
+  //Establece la cantidad de ceros correspondientes a la izquierda del numero
+  public establecerCerosIzq(elemento, string, cantidad) {
+    return (string + elemento).slice(cantidad);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
