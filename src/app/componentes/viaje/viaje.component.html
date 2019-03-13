@@ -127,7 +127,10 @@
             </div>
         </mat-card>
         <br>
-        <mat-horizontal-stepper [linear]="true" #stepper>
+        <mat-horizontal-stepper [linear]="!estadoFormulario" #stepper>
+            <ng-template matStepperIcon="edit" let-index="index">
+                {{index+1}}
+            </ng-template>
             <mat-step [stepControl]="formularioViajePropio">
                 <ng-template matStepLabel>Tramos</ng-template><br>
                 <form [formGroup]="formularioViajePropioTramo">
@@ -179,7 +182,8 @@
         </mat-horizontal-stepper>
         <div class="row" *ngIf="mostrarBoton">
             <div class="centrar">
-                <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="accion()" [disabled]="!formularioViajePropio.valid">
+                <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="accion()" 
+                    [disabled]="obtenerEstadoFormulario(formularioViajePropio.valid, estadoFormulario)">
                     {{pestaniaActual}}
                 </button>
             </div>

@@ -92,6 +92,8 @@ export class ViajeComponent implements OnInit {
   public sucursales:Array<any> = [];
   //Define una bandera para campos solo lectura de componentes hijos
   public banderaSoloLectura:boolean = false;
+  //Define si la lista de tramos tiene registros
+  public estadoFormulario:boolean = false;
   //Constructor
   constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
@@ -356,6 +358,12 @@ export class ViajeComponent implements OnInit {
   }
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
+    this.estadoFormulario = false;
+    for (const key in $event) {
+      if($event[key].id > 0 || $event[key].id == null) {
+        this.estadoFormulario = true;
+      }
+    }
     this.formularioViajePropio.get('viajePropioTramos').setValue($event);
     this.viajeRemitoGSComponente.establecerListaTramos($event);
   }
@@ -442,6 +450,10 @@ export class ViajeComponent implements OnInit {
         this.toastr.error(resultado.mensaje);
       }
     );
+  }
+  //Verifica el estado del formulario
+  public obtenerEstadoFormulario(formulario, estado) {
+    return formulario && estado ? false : true;
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {

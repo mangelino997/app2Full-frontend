@@ -18,8 +18,6 @@ export class ViajeRemitoGSComponent implements OnInit {
   public formularioViajeRemito:FormGroup;
   //Define una lista de remitos
   public remitos:FormArray;
-  //Define la lista de remitos pendientes
-  public listaRemitosPendientes:Array<any> = [];
   //Define la lista de tramos
   public listaTramos:Array<any> = [];
   //Defiene la lista de sucursales
@@ -100,8 +98,14 @@ export class ViajeRemitoGSComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(): void {
-    this.formularioViajeRemito.get('numeroCamion').setValue(null);
-    this.formularioViajeRemito.get('remitos').reset();
+    // this.formularioViajeRemito.get('tipoRemito').reset();
+    // this.formularioViajeRemito.get('tramo').reset();
+    // this.formularioViajeRemito.get('numeroCamion').reset();
+    // this.formularioViajeRemito.get('sucursalDestino').reset();
+    this.formularioViajeRemito.reset();
+    while(this.remitos.length != 0) {
+      this.remitos.removeAt(0);
+    }
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
