@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { Observable, Subscription, BehaviorSubject } from 'rxjs';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
+import { Nodo } from '../componentes/plan-cuenta/plan-cuenta.component';
 
 export class Arbol {
   id: number;
@@ -113,6 +114,11 @@ export class PlanCuentaService {
       padre.hijos.push({ nombre: nombre, padre: p } as Arbol);
       this.listaCompleta.next(this.data);
     }
+  }
+  public eliminarElemento(padre: Arbol, nodo: Nodo) {
+    let indice = padre.hijos.indexOf(nodo);
+    padre.hijos.splice(indice, 1);
+    this.listaCompleta.next(this.data);
   }
   //Agrega un registro
   public agregar(elemento) {
