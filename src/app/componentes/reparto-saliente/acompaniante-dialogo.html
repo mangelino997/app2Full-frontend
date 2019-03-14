@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col-md-12">
+        <form [formGroup]="formulario">
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="form-group has-float-label">
+                        <label for="idAcompaniante">Acompañante</label>
+                        <input id="idAcompaniante" type="text" class="form-control form-control-sm"  
+                        matInput [formControl]="formulario.get('acompaniante')" [matAutocomplete]="auto" autocomplete="off">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" >
+                            <mat-option *ngFor="let itemAcompaniante of resultados" [value]="itemAcompaniante" >
+                                {{itemAcompaniante.nombre}}
+                            </mat-option>
+                        </mat-autocomplete>
+
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <button mat-raised-button color="primary" (click)="agregarAcompaniante()">Agregar</button>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <table class="table table-bordered table-striped table-sm table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 50px" scope="col">Acompañante</th>
+                                <th class="text-center" style="width: 30px" scope="col">-</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let acompaniante of listaAcompaniantes; let i= index">
+                                <td align="center">{{acompaniante.nombre}}</td>
+                                <td align="center" class="cursor-color" (click)="quitarAcompaniante(i)">Quitar</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <!-- <button mat-raised-button color="primary" [disabled]="!formulario.valid" [mat-dialog-close]="formulario.get('tramo').value">Aceptar</button> -->
+                    <button mat-raised-button  color="accent" [mat-dialog-close]="listaAcompaniantes">Cerrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

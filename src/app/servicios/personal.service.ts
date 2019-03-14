@@ -48,6 +48,10 @@ export class PersonalService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros Ordenados 
+  public listarChoferesCortaDistanciaPorAlias(nombre) {
+    return this.http.get(this.url + '/listarChoferesCortaDistanciaPorAlias/' + nombre, this.options);
+  }
   //Obtiene un listado por alias
   public listarPorAlias(alias) {
     return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
@@ -59,6 +63,14 @@ export class PersonalService {
   //Obtiene un listado de choferes por alias
   public listarChoferPorAlias(alias) {
     return this.http.get(this.url + '/listarChoferPorAlias/' + alias, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
+  //Obtiene un listado de acompañantes por alias
+  public listarAcompaniantesPorAlias(alias) {
+    return this.http.get(this.url + '/listarAcompaniantesPorAlias/' + alias, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })

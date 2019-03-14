@@ -231,7 +231,6 @@ import { MonedaComponent, CambiarMonedaPrincipalDialogo } from './componentes/mo
 import { MonedaCotizacionComponent } from './componentes/moneda-cotizacion/moneda-cotizacion.component';
 import { MonedaCuentaContableComponent } from './componentes/moneda-cuenta-contable/moneda-cuenta-contable.component';
 import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autorizado/puntos-venta-autorizado.component';
-import { RepartoComponent } from './componentes/reparto/reparto.component';
 import { CondicionVentaComponent } from './componentes/condicion-venta/condicion-venta.component';
 import { ProductoComponent } from './componentes/producto/producto.component';
 import { UsuarioEmpresasComponent } from './componentes/usuario-empresas/usuario-empresas.component';
@@ -267,6 +266,8 @@ import { AfipAlicuotaIvaService } from './servicios/afip-alicuota-iva.service';
 import { VentaComprobanteService } from './servicios/venta-comprobante.service';
 import { VentaComprobanteItemNCService } from './servicios/venta-comprobante-item-nc.service';
 import { VentaComprobanteItemNDService } from './servicios/venta-comprobante-item-nd.service';
+import { ChequesRechazadosComponent } from './componentes/cheques-rechazados/cheques-rechazados.component';
+import { RepartoComponent, AcompanianteDialogo } from './componentes/reparto-saliente/reparto.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -363,7 +364,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.156:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -492,7 +493,9 @@ const stompConfig: StompConfig = {
     AforoComponent,
     ObservacionDialogo,
     TotalCargaDialogo,
-    TotalConceptoDialogo
+    TotalConceptoDialogo,
+    ChequesRechazadosComponent,
+    AcompanianteDialogo
   ],
   imports: [
     BrowserModule,
@@ -717,7 +720,9 @@ const stompConfig: StompConfig = {
     AforoComponent,
     ObservacionDialogo,
     TotalCargaDialogo,
-    TotalConceptoDialogo
+    TotalConceptoDialogo,
+    ChequesRechazadosComponent,
+    AcompanianteDialogo
   ]
 })
 export class AppModule { }
