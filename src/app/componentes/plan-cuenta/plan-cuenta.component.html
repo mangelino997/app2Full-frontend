@@ -2,15 +2,7 @@
   <div class="row">
     <div class="col-md 12">
       <mat-tree [dataSource]="datos" [treeControl]="treeControl">
-        <!-- <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
-          <button mat-icon-button disabled></button>
-          {{node.nombre}}
-          <button mat-icon-button (click)="deleteNode(node)">
-            <mat-icon>cancel</mat-icon>
-          </button>
-        </mat-tree-node> -->
         <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding>
-          <button mat-icon-button disabled></button>
           <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm"
             #nombre placeholder="Nombre">
           <mat-select id="idImputable" class="form-control form-control-sm" #imputable placeholder="Es Imputable">
@@ -21,7 +13,9 @@
             <mat-option [value]="false">No</mat-option>
             <mat-option [value]="true">Si</mat-option>
           </mat-select>
-          <button mat-raised-button color="primary" (click)="agregar(node, nombre.value, imputable.value, activo.value)">Agregar</button>
+          <button mat-raised-button color="primary" (click)="agregar(node, nombre.value, imputable.value, activo.value)"
+            [disabled]="!obtenerEstadoBoton(nombre, imputable, activo)">Agregar</button>
+          <button mat-raised-button style="background-color: red; color: white" (click)="eliminarNodo(node)">Quitar</button>
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding (mouseover)="activarBotones(node)" (mouseleave)="desactivarBotones(node)">
           <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.filename">

@@ -3,6 +3,7 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 import { AppComponent } from 'src/app/app.component';
+import { FormGroup } from '@angular/forms';
 
 export class Arbol {
   id: number;
@@ -106,6 +107,12 @@ export class PlanCuentaComponent {
     this.planCuentaServicio.agregarElemento(nodoPadre!, '');
     this.treeControl.expand(nodo);
   }
+  //Elimina un nodo
+  public eliminarNodo(nodo: Nodo) {
+    const nodoPadre = this.obtenerNodoPadre(nodo);
+    this.planCuentaServicio.eliminarElemento(nodoPadre!, nodo);
+    // this.treeControl.expand(nodo);
+  }
   //Agrega el nodo
   public agregar(nodo: Nodo, nombre: string, imputable: boolean, activo: boolean) {
     const elementoPadre = this.obtenerNodoPadre(nodo);
@@ -132,5 +139,9 @@ export class PlanCuentaComponent {
   //Desactiva los botones de nuevo y eliminar node
   public desactivarBotones(nodo): void {
     nodo.mostrarBotones = false;
+  }
+  //Obtiene el estado del boton agregar
+  public obtenerEstadoBoton(nombre, imputable, activo) {
+    return nombre.value != null && imputable.value != null && activo.value != null ? true : false;
   }
 }
