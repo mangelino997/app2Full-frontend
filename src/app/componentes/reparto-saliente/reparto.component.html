@@ -1,18 +1,17 @@
-<div class="row container-fluid">
-    <form [formGroup]="formulario">
+<form [formGroup]="formulario">
     <div class="col-md-12">
         <h5 class="text-center">Reparto</h5>
         <div class="tamanio-pantalla">
                 <div class="inline">
                     <div class="form-group has-float-label margin-left">
                         <label for="idTipoViaje" class="tamanio-label">Tipo de Viaje *</label>
-                        <mat-select id="idTipoViaje" class="form-control form-control-sm" formControlName="tipoViaje" style="width: 150px;">
+                        <mat-select id="idTipoViaje" class="form-control form-control-sm" [formControl]="tipoViaje" style="width: 150px;" (selectionChange)="cambioTipoViaje()">
                             <mat-option [value]="1">Propio</mat-option>
                             <mat-option [value]="2">Tercero</mat-option>
                             <mat-option [value]="3">Retiro Depósito</mat-option>
                         </mat-select>
                     </div>
-                    <div class="inline" *ngIf="formulario.get('tipoViaje').value == 1 || formulario.get('tipoViaje').value == 2">
+                    <div class="inline" *ngIf="tipoViaje.value == 1 || tipoViaje.value == 2">
                         <div class="form-group has-float-label">
                             <label for="idZona">Zona</label>
                             <mat-select id="idZona" class="form-control form-control-sm" style="width: 150px;" formControlName="zona" [compareWith]="compareFn">
@@ -52,11 +51,11 @@
                                 </mat-option>
                             </mat-autocomplete>
                         </div>
-                        <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;" *ngIf="formulario.get('tipoViaje').value == 1" (click)="abrirAcompaniante()">
+                        <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;" *ngIf="tipoViaje.value == 1" (click)="abrirAcompaniante()">
                             Acompañantes
                         </button>
                     </div>
-                    <div class="inline" *ngIf="formulario.get('tipoViaje').value == 3">
+                    <div class="inline" *ngIf="tipoViaje.value == 3">
                         <div class="form-group has-float-label">
                             <label for="idTipoDocumento">Tipo de Documento</label>
                             <input id="idTipoDocumento" type="text" class="form-control form-control-sm" formControlName="tipoDocumento" style="width: 220px;">
@@ -80,48 +79,77 @@
                         <label for="idObservaciones">Observaciones</label>
                         <textarea type="text" class="form-control form-control-sm" rows="2" formControlName="observaciones" style="width: 443px; margin-left: 5px;"></textarea>
                     </div>
-                    <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;">Agregar</button>
+                    <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;" [disabled]="!formulario.valid" (click)="agregar()">
+                        Agregar
+                    </button>
                 </div>
         </div>
-        <div style="height: 200px; overflow-y: scroll;">
-            <table class="table table-bordered table-striped table-sm table-condensed">
-                <thead>
-                    <tr>
-                        <th class="text-center" style="width: 50px" scope="col">N° Planilla</th>
-                        <th class="text-center" style="width: 100px" scope="col">Zona</th>
-                        <th class="text-center" style="width: 100px" scope="col">Vehículo</th>
-                        <th class="text-center" style="width: 100px" scope="col">Chofer</th>
-                        <th class="text-center" style="width: 100px" scope="col">Fecha Salida</th>
-                        <th class="text-center" style="width: 100px" scope="col">Hora Salida</th>
-                        <th class="text-center" style="width: 30px" scope="col">-</th>
-                        <th class="text-center" style="width: 30px" scope="col">-</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td align="center">1</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td align="center" class="cursor-color">Cerrar</td>
-                        <td align="center" class="cursor-color">Quitar</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+                <table class="table table-bordered table-striped table-sm table-condensed tabla-reporte">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 30px" scope="col">N° Planilla</th>
+                            <th class="text-center" style="width: 50px" scope="col">Zona</th>
+                            <th class="text-center" style="width: 80px" scope="col">Vehículo</th>
+                            <th class="text-center" style="width: 100px" scope="col">Chofer</th>
+                            <th class="text-center" style="width: 60px" scope="col">Fecha Salida</th>
+                            <th class="text-center" style="width: 60px" scope="col">Hora Salida</th>
+                            <th class="text-center" style="width: 30px" scope="col">-</th>
+                            <th class="text-center" style="width: 30px" scope="col">-</th>
+                        </tr>
+                    </thead>
+                    <tbody *ngIf="planillasPendientesPropio.length>0">
+                        <tr  *ngFor="let itemPlanilla of planillasPendientesPropio; let i=index" id="fila{{i}}" >
+                            <td align="center">{{itemPlanilla.id}}</td>
+                            <td align="center">{{itemPlanilla.zona.nombre}}</td>
+                            <td align="center">{{itemPlanilla.vehiculo.alias}}</td>
+                            <td align="center">{{itemPlanilla.personal.alias}}</td>
+                            <td align="center">{{itemPlanilla.fechaSalida}}</td>
+                            <td align="center">{{itemPlanilla.horaSalida}}</td>
+                            <td align="center" class="cursor-color" (click)="cerrarPlanilla(itemPlanilla.id)">Cerrar</td>
+                            <td align="center" class="cursor-color" (click)="quitarPlanilla(i)">Quitar</td>
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="planillasPendientesTercero.length>0">
+                        <tr  *ngFor="let itemPlanilla of planillasPendientesTercero; let i=index">
+                            <td align="center">{{itemPlanilla.id}}</td>
+                            <td align="center">{{itemPlanilla.zona.nombre}}</td>
+                            <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza: {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
+                            <td align="center">{{itemPlanilla.choferProveedor.nombre}}</td>
+                            <td align="center">{{itemPlanilla.fechaSalida}}</td>
+                            <td align="center">{{itemPlanilla.horaSalida}}</td>
+                            <td align="center" class="cursor-color" (click)="cerrarPlanilla(itemPlanilla.id)">Cerrar</td>
+                            <td align="center" class="cursor-color" (click)="quitarPlanilla(i)">Quitar</td>
+                        </tr>
+                    </tbody>
+                    <tbody *ngIf="planillasPendientesDeposito.length>0">
+                        <tr  *ngFor="let itemPlanilla of planillasPendientesDeposito; let i=index">
+                            <td align="center">{{itemPlanilla.id}}</td>
+                            <td align="center">{{itemPlanilla.zona.nombre}}</td>
+                            <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza: {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
+                            <td align="center">{{itemPlanilla.choferProveedor.nombre}}</td>
+                            <td align="center">{{itemPlanilla.fechaSalida}}</td>
+                            <td align="center">{{itemPlanilla.horaSalida}}</td>
+                            <td align="center" class="cursor-color" (click)="cerrarPlanilla(itemPlanilla.id)">Cerrar</td>
+                            <td align="center" class="cursor-color" (click)="quitarPlanilla(i)">Quitar</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+        
         <div class="inline" style="margin-top: 15px;">
             <div class="form-group has-float-label">
                 <label for="idTipoItem">Tipo Item</label>
-                <mat-select id="idTipoItem" class="form-control form-control-sm" style="width: 160px;" formControlName="tipoItem" [compareWith]="compareFn">
+                <mat-select id="idTipoItem" class="form-control form-control-sm" style="width: 150px;" formControlName="tipoItem" [compareWith]="compareFn">
                     <mat-option [value]="1">Comprobante Propio</mat-option>
                     <mat-option [value]="2">Comprobante Tercero</mat-option>
                 </mat-select>
             </div>
             <div class="form-group has-float-label">
                 <label for="idTipoComprobante">Tipo de Comprobante</label>
-                <mat-select id="idTipoComprobante" class="form-control form-control-sm" style="width: 160px;" formControlName="tipoComprobante" [compareWith]="compareFn">
+                <mat-select id="idTipoComprobante" class="form-control form-control-sm" style="width: 150px;" formControlName="tipoComprobante" [compareWith]="compareFn">
                     <mat-option *ngFor="let itemComprobante of resultadosComprobante" [value]="itemComprobante">
                     {{itemComprobante}}
                     </mat-option>
@@ -129,7 +157,7 @@
             </div>
             <div class="form-group has-float-label">
                 <label for="idPuntoVenta">Punto de Venta</label>
-                <input id="idPuntoVenta" type="text" class="form-control form-control-sm" formControlName="puntoVenta" style="width: 121px;">
+                <input id="idPuntoVenta" type="text" class="form-control form-control-sm" formControlName="puntoVenta" style="width: 110px;">
             </div>
             <div class="form-group has-float-label">
                 <label for="idLetra">Letra</label>
@@ -141,49 +169,51 @@
             </div>
             <div class="form-group has-float-label">
                 <label for="idComprobante">N° de Comprobante</label>
-                <input id="idComprobante" type="text" class="form-control form-control-sm" formControlName="numeroComprobante" style="width: 150px;">
+                <input id="idComprobante" type="text" class="form-control form-control-sm" formControlName="numeroComprobante" style="width: 120px;">
             </div>
             <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;">Agregar</button>
             <span class="spacer"></span>
             <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;">Seleccionar Comprobantes</button>
         </div>
-        <div style="height: 200px; overflow-y: scroll;">
-            <table class="table table-bordered table-striped table-sm table-condensed">
-                <thead>
-                    <tr>
-                        <th class="text-center" style="width: 30px" scope="col">Tipo Cpte.</th>
-                        <th class="text-center" style="width: 30px" scope="col">N° Comprobante</th>
-                        <th class="text-center" style="width: 100px" scope="col">Destinatario</th>
-                        <th class="text-center" style="width: 100px" scope="col">Domicilio</th>
-                        <th class="text-center" style="width: 100px" scope="col">Remitente</th>
-                        <th class="text-center" style="width: 100px" scope="col">Cta.Cte.</th>
-                        <th class="text-center" style="width: 60px" scope="col">Contado</th>
-                        <th class="text-center" style="width: 60px" scope="col">Bultos</th>
-                        <th class="text-center" style="width: 60px" scope="col">ContraReembolso</th>
-                        <th class="text-center" style="width: 50px" scope="col">Kg</th>
-                        <th class="text-center" style="width: 60px" scope="col">-</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td align="center">1</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td align="center" class="cursor-color">Quitar</td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="row">
+            <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
+                <table class="table table-bordered table-striped table-sm table-condensed tabla-reporte">
+                    <thead>
+                        <tr>
+                            <th class="text-center" style="width: 30px" scope="col">Tipo Cpte.</th>
+                            <th class="text-center" style="width: 30px" scope="col">N° Comprobante</th>
+                            <th class="text-center" style="width: 100px" scope="col">Destinatario</th>
+                            <th class="text-center" style="width: 100px" scope="col">Domicilio</th>
+                            <th class="text-center" style="width: 100px" scope="col">Remitente</th>
+                            <th class="text-center" style="width: 100px" scope="col">Cta.Cte.</th>
+                            <th class="text-center" style="width: 60px" scope="col">Contado</th>
+                            <th class="text-center" style="width: 60px" scope="col">Bultos</th>
+                            <th class="text-center" style="width: 60px" scope="col">ContraReembolso</th>
+                            <th class="text-center" style="width: 50px" scope="col">Kg</th>
+                            <th class="text-center" style="width: 60px" scope="col">-</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td align="center">1</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td align="center" class="cursor-color">Quitar</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+        
         <div class="inline">
             <button class="btn btn-primary btn-sm" style="height: 31px;">Reporte</button>
         </div>
     </div>
-    </form>
-</div>
+</form>

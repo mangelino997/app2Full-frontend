@@ -11,6 +11,9 @@ import { PersonalService } from 'src/app/servicios/personal.service';
 import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { FechaService } from 'src/app/servicios/fecha.service';
+import { RepartoPropioService } from 'src/app/servicios/reparto-propio.service';
+import { RepartoTerceroService } from 'src/app/servicios/reparto-tercero.service';
+import { RetiroDepositoService } from 'src/app/servicios/retiro-deposito.service';
 
 @Component({
   selector: 'app-reparto',
@@ -20,6 +23,8 @@ import { FechaService } from 'src/app/servicios/fecha.service';
 export class RepartoComponent implements OnInit {
   //Define el formulario
   public formulario:FormGroup;
+  //Define un formControl
+  public tipoViaje:FormControl = new FormControl();
   //Define la lista de resultados para Zonas, Comprobantes, Letras
   public resultadosZona = [];
   public resultadosComprobante = [];
@@ -30,12 +35,22 @@ export class RepartoComponent implements OnInit {
   public resultadosRemolque = [];
   //Define la lista de resultados para chofer
   public resultadosChofer = [];
+  //Define la lista de que muestra en la primer tabla (planilla pendientes de cerrar)
+  public planillasPendientesPropio = [];
+  public planillasPendientesTercero = [];
+  public planillasPendientesDeposito = [];
+  //Define la lista de acompañantes
+  public listaAcompaniantes = [];
+  //Define una bandera para control
+  public bandera:boolean=false;
   
 
   //Constructor
   constructor(private reparto: Reparto, private zonaService: ZonaService, private toastr: ToastrService, private appService: AppService,
     private appComponent: AppComponent, private vehiculoService: VehiculoService, private vehiculoProveedorService: VehiculoProveedorService,
-    private personalServie: PersonalService, private choferProveedorService: ChoferProveedorService, public dialog: MatDialog, private fechaService: FechaService,
+    private personalServie: PersonalService, private choferProveedorService: ChoferProveedorService, public dialog: MatDialog, 
+    private repartoPropioService: RepartoPropioService, private repartoTerceroService: RepartoTerceroService, private retiroDepositoService: RetiroDepositoService,
+     private fechaService: FechaService
     
     ) { }
 
@@ -50,7 +65,7 @@ export class RepartoComponent implements OnInit {
     this.listarZonas();
     //Autcompletado - Buscar por vehiculo segun tipo de viaje
     this.formulario.get('vehiculo').valueChanges.subscribe(data => {
-      switch(this.formulario.get('tipoViaje').value){
+      switch(this.tipoViaje.value){
         case 1:
           if(typeof data == 'string') {
             this.vehiculoService.listarPorAlias(data).subscribe(res => {
@@ -73,7 +88,7 @@ export class RepartoComponent implements OnInit {
     });
     //Autcompletado - Buscar por remolque segun tipo de viaje
     this.formulario.get('remolque').valueChanges.subscribe(data => {
-      switch(this.formulario.get('tipoViaje').value){
+      switch(this.tipoViaje.value){
         case 1:
           if(typeof data == 'string') {
             this.vehiculoService.listarPorAliasFiltroRemolque(data).subscribe(res => {
@@ -95,7 +110,7 @@ export class RepartoComponent implements OnInit {
     });
     //Autcompletado - Buscar por chofer segun tipo de viaje
     this.formulario.get('chofer').valueChanges.subscribe(data => {
-      switch(this.formulario.get('tipoViaje').value){
+      switch(this.tipoViaje.value){
         case 1:
           if(typeof data == 'string') {
             this.personalServie.listarChoferesCortaDistanciaPorAlias(data).subscribe(res => {
@@ -118,7 +133,59 @@ export class RepartoComponent implements OnInit {
       }
     });
   }
+  //Controla el cambio en Tipo de Viaje
+  public cambioTipoViaje(){
+    this.listarPrimerTabla();
+  }
+  //Obtiene la lista de planillas correspondiente
+  public listarPrimerTabla(){
+    switch(this.tipoViaje.value){
+      case 1:
+        this.repartoPropioService.listarPorEstaCerrada(false).subscribe(
+          res=>{
+            console.log(res.json());
+            this.planillasPendientesTercero = [];
+            this.planillasPendientesDeposito = [];
+            this.planillasPendientesPropio = res.json();
+          },
+          err=>{
+            let error = err.json();
+            this.toastr.error(error.mensaje);
+          }
+        )
+        break;
+      
+      case 2:
+        this.repartoTerceroService.listarPorEstaCerrada(false).subscribe(
+          res=>{
+            console.log(res.json());
+            this.planillasPendientesPropio = [];
+            this.planillasPendientesDeposito = [];
+            this.planillasPendientesTercero = res.json();
+          },
+          err=>{
+            let error = err.json();
+            this.toastr.error(error.mensaje);
+          }
+        )
+        break;
 
+      case 3:
+        this.retiroDepositoService.listarPorEstaCerrada(false).subscribe(
+          res=>{
+            console.log(res.json());
+            this.planillasPendientesPropio = [];
+            this.planillasPendientesTercero = [];
+            this.planillasPendientesDeposito = res.json();
+          },
+          err=>{
+            let error = err.json();
+            this.toastr.error(error.mensaje);
+          }
+        )
+        break;
+    }
+  }
   //Obtiene una lista de Zonas por nombre de la columna 
   private listarZonas(){
     this.zonaService.listarOrdenado('nombre').subscribe(
@@ -148,11 +215,143 @@ export class RepartoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => {
      console.log(resultado);
+     this.listaAcompaniantes = resultado;
     });
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
-    this.formulario.get('tipoViaje').setValue(1);
+    this.fechaService.obtenerFecha().subscribe(res=>{
+      this.formulario.get('fechaSalida').setValue(res.json());
+    });
+    this.fechaService.obtenerHora().subscribe(res=>{
+      let hora = res.json();
+      console.log(hora);
+      this.formatearHora(hora);
+    });
+    this.tipoViaje.setValue(1);
+    this.cambioTipoViaje();
+    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('tipoComprobante').setValue( {id:12});
+
+  }
+  //Formatea la Hora
+  public formatearHora(hora){
+      let split = hora.split(':');
+      let horaFormateada = split[0] + ':' + split[1] + ':00';
+      this.formulario.get('horaSalida').setValue(horaFormateada);
+  }
+  //Metodo principal - Agrega la primera parte 
+  public agregar(){
+
+    switch(this.tipoViaje.value){
+      case 1:
+        //Establezco bien los campos correspondientes a Tipo de Viaje 1 (Propio)
+        this.formulario.get('personal').setValue( this.formulario.get('chofer').value);
+        this.formulario.get('chofer').setValue(null);
+        this.formulario.get('acompaniantes').setValue( this.listaAcompaniantes);
+        console.log(this.formulario.value);
+        this.repartoPropioService.agregar(this.formulario.value).subscribe(
+          res=>{
+            let respuesta = res.json();
+            this.toastr.success(respuesta.mensaje);
+            this.listarPrimerTabla();
+            this.reestablecerFormulario(undefined);
+          },
+          err=>{
+            let error = err.json();
+            this.toastr.error(error.mensaje);
+          }
+        )
+        break;
+
+      case 2:
+          //Establezco bien los campos correspondientes a Tipo de Viaje 1 (Propio)
+          this.formulario.get('choferProveedor').setValue( this.formulario.get('chofer').value);
+          this.formulario.get('chofer').setValue(null);
+          this.formulario.get('vehiculoProveedor').setValue( this.formulario.get('vehiculo').value);
+          this.formulario.get('vehiculo').setValue(null);
+          this.formulario.get('acompaniantes').setValue( this.listaAcompaniantes);
+          console.log(this.formulario.value);
+          this.repartoTerceroService.agregar(this.formulario.value).subscribe(
+            res=>{
+              let respuesta = res.json();
+              this.toastr.success(respuesta.mensaje);
+              this.listarPrimerTabla();
+              this.reestablecerFormulario(undefined);
+            },
+            err=>{
+              let error = err.json();
+              this.toastr.error(error.mensaje);
+            }
+          )
+        break;
+
+      case 3:
+        console.log(this.formulario.value);
+          this.retiroDepositoService.agregar(this.formulario.value).subscribe(
+            res=>{
+              let respuesta = res.json();
+              this.toastr.success(respuesta.mensaje);
+              this.listarPrimerTabla();
+              this.reestablecerFormulario(undefined);
+            },
+            err=>{
+              let error = err.json();
+              this.toastr.error(error.mensaje);
+            }
+          )
+        break;
+    }
+  }
+  //Cierra la planilla seleccionada - cambia "estaCerrada" a "true"
+  public cerrarPlanilla(id){
+    console.log(this.tipoViaje.value);
+    switch(this.tipoViaje.value){
+      case 1:
+        this.repartoPropioService.cerrarReparto(id).subscribe(
+          res=>{
+            let respuesta = res.json();
+            this.toastr.success(respuesta.mensaje);
+            this.listarPrimerTabla();
+          },
+          err=>{  
+            let error = err.json();
+            this.toastr.error(error.mensaje);
+          }
+        )
+        break;
+      
+      case 2:
+        this.repartoTerceroService.cerrarReparto(id).subscribe(
+          res=>{
+            let respuesta = res.json();
+            this.toastr.success(respuesta.mensaje);
+            this.listarPrimerTabla();
+          },
+          err=>{  
+            let error = err.json();
+            this.toastr.error(error.mensaje);
+          }
+        )
+        break;
+
+      case 3:
+        this.retiroDepositoService.cerrarReparto(id).subscribe(
+          res=>{
+            let respuesta = res.json();
+            this.toastr.success(respuesta.mensaje);
+            this.listarPrimerTabla();
+          },
+          err=>{  
+            let error = err.json();
+            this.toastr.error(error.mensaje);
+          }
+        )
+        break;
+    }
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
@@ -207,13 +406,14 @@ export class RepartoComponent implements OnInit {
     this.resultadosVehiculo = [];
     this.resultadosZona = [];
     this.formulario.reset(); 
-    this.fechaService.obtenerFecha().subscribe(res=>{
-      this.formulario.get('fechaSalida').setValue(res.json());
-    });
+    this.planillasPendientesPropio = [];
+    this.planillasPendientesTercero = [];
+    this.planillasPendientesDeposito = [];
     setTimeout(function() {
       document.getElementById('idTipoViaje').focus();
     }, 20);
   }
+  
 }
 @Component({
   selector: 'acompaniante-dialogo',
@@ -228,6 +428,8 @@ export class AcompanianteDialogo{
   public listaAcompaniantes = [];
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
+  //Define una bandera para el control
+  public bandera:boolean=false;
   constructor(private personalService: PersonalService, public dialogRef: MatDialogRef<AcompanianteDialogo>, @Inject(MAT_DIALOG_DATA) public data) {}
    ngOnInit() {
      this.formulario = new FormGroup({
@@ -244,17 +446,32 @@ export class AcompanianteDialogo{
    }
    //Agrega Acompañantes a una lista
    public agregarAcompaniante(){
-    this.listaAcompaniantes.push(this.formulario.get('acompaniante').value);
-    console.log(this.listaAcompaniantes);
-    this.formulario.get('acompaniante').reset();
-    setTimeout(function() {
-      document.getElementById('idAcompaniante').focus();
-    }, 20);
+     for(let i=0; i<this.listaAcompaniantes.length; i++){
+      if(this.formulario.get('acompaniante').value.id==this.listaAcompaniantes[i].id){
+        this.bandera=true;
+      }else{
+        this.bandera=false;
+     }
+    }
+     if(this.bandera==true){
+      this.formulario.get('acompaniante').reset();
+        this.resultados = [];
+        setTimeout(function() {
+          document.getElementById('idAcompaniante').focus();
+        }, 20);
+      this.bandera=false;
+     }else{
+      this.listaAcompaniantes.push(this.formulario.get('acompaniante').value);
+      this.formulario.get('acompaniante').reset();
+      this.resultados = [];
+      setTimeout(function() {
+        document.getElementById('idAcompaniante').focus();
+      }, 20);      
+     }
    }
    //Quita un acompaniante de la lista
    public quitarAcompaniante(indice){
     this.listaAcompaniantes.splice(indice, 1);
-    console.log(this.listaAcompaniantes);
     setTimeout(function() {
       document.getElementById('idAcompaniante').focus();
     }, 20);

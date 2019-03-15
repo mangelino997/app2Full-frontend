@@ -23,3 +23,13 @@ th {
 .margin-left {
     margin-left: 5px;
 }
+.tabla-reporte {
+    width: 1890px !important;
+}
+/* .fila-seleccionada {
+    box-shadow: 0 6px 59px rgba(0, 0, 0, 0.08);
+} */
+tr:hover {
+    background-color:#50A8FA !important;
+    cursor: pointer;
+  }

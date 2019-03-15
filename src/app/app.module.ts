@@ -268,6 +268,9 @@ import { VentaComprobanteItemNCService } from './servicios/venta-comprobante-ite
 import { VentaComprobanteItemNDService } from './servicios/venta-comprobante-item-nd.service';
 import { ChequesRechazadosComponent } from './componentes/cheques-rechazados/cheques-rechazados.component';
 import { RepartoComponent, AcompanianteDialogo } from './componentes/reparto-saliente/reparto.component';
+import { RepartoPropioService } from './servicios/reparto-propio.service';
+import { RepartoTerceroService } from './servicios/reparto-tercero.service';
+import { RetiroDepositoService } from './servicios/retiro-deposito.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -692,6 +695,9 @@ const stompConfig: StompConfig = {
     VentaComprobanteService,
     VentaComprobanteItemNCService,
     VentaComprobanteItemNDService,
+    RepartoPropioService,
+    RepartoTerceroService,
+    RetiroDepositoService,
     Aforo,
     MesService,
     {

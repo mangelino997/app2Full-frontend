@@ -28,7 +28,7 @@ export class FechaService {
     return this.http.get(this.url, this.options);
   }
   //Obtiene la fecha actual
-  public obtenerFechaYHora() {
-    return this.http.get(this.url + '/obtenerFechaYHora', this.options);
+  public obtenerHora() {
+    return this.http.get(this.url + '/obtenerHora', this.options);
   }
 }
