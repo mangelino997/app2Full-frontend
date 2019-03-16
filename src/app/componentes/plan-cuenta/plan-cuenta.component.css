@@ -1,6 +1,5 @@
 .form-control-sm {
     height: calc(1.8125rem + 2px);
-    width: 160px !important;
     padding: .25rem .5rem;
     font-size: .875rem;
     line-height: 1.5;
@@ -10,6 +9,15 @@
 .boton-agregar {
     color: green;
 }
+.boton-editar {
+    color: blue;
+}
 .boton-eliminar {
     color: red;
+}
+.padding-top-5 {
+    padding-top: 5px;
+}
+.form-group {
+    margin-bottom: 0rem !important;
 }

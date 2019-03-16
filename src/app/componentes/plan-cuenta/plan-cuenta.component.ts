@@ -3,7 +3,6 @@ import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 import { AppComponent } from 'src/app/app.component';
-import { FormGroup } from '@angular/forms';
 
 export class Arbol {
   id: number;
@@ -29,6 +28,7 @@ export class Nodo {
   hijos: Arbol[];
   level: number;
   expandable: boolean;
+  editable: boolean;
   mostrarBotones: boolean;
 }
 
@@ -82,6 +82,7 @@ export class PlanCuentaComponent {
     flatNode.usuarioAlta = {};
     flatNode.hijos = node.hijos;
     flatNode.expandable = !!node.hijos;
+    flatNode.editable = false;
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
     return flatNode;
@@ -107,11 +108,14 @@ export class PlanCuentaComponent {
     this.planCuentaServicio.agregarElemento(nodoPadre!, '');
     this.treeControl.expand(nodo);
   }
+  //Actualiza un nodo
+  public editarNodo(nodo: Nodo) {
+    nodo.editable = true;
+  }
   //Elimina un nodo
   public eliminarNodo(nodo: Nodo) {
     const nodoPadre = this.obtenerNodoPadre(nodo);
     this.planCuentaServicio.eliminarElemento(nodoPadre!, nodo);
-    // this.treeControl.expand(nodo);
   }
   //Agrega el nodo
   public agregar(nodo: Nodo, nombre: string, imputable: boolean, activo: boolean) {

@@ -115,6 +115,13 @@ export class PlanCuentaService {
       this.listaCompleta.next(this.data);
     }
   }
+  public editarElemento(nodo) {
+    console.log(nodo);
+    let p = new Arbol();
+    p.id = nodo.id;
+    nodo.hijos.push({ nombre: nodo.nombre, esImputable: nodo.esImputable, estaActivo: nodo.estaActivo, padre: p } as Arbol);
+    this.listaCompleta.next(this.data);
+  }
   public eliminarElemento(padre: Arbol, nodo: Nodo) {
     let indice = padre.hijos.indexOf(nodo);
     padre.hijos.splice(indice, 1);

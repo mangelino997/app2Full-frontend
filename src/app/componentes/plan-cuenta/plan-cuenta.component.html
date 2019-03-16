@@ -2,36 +2,78 @@
   <div class="row">
     <div class="col-md 12">
       <mat-tree [dataSource]="datos" [treeControl]="treeControl">
-        <mat-tree-node *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding>
-          <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm"
-            #nombre placeholder="Nombre">
-          <mat-select id="idImputable" class="form-control form-control-sm" #imputable placeholder="Es Imputable">
-            <mat-option [value]="false">No</mat-option>
-            <mat-option [value]="true">Si</mat-option>
-          </mat-select>
-          <mat-select id="idActivo" class="form-control form-control-sm" #activo placeholder="Esta Activo">
-            <mat-option [value]="false">No</mat-option>
-            <mat-option [value]="true">Si</mat-option>
-          </mat-select>
+        <mat-tree-node class="padding-top-5" *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding>
+          <div class="form-group has-float-label">
+            <label for="idNombre" class="tamanio-label">Nombre *</label>
+            <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm" #nombre
+              style="width: 250px;">
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idImputable" class="tamanio-label">Es Imputable *</label>
+            <mat-select id="idImputable" class="form-control form-control-sm" #imputable style="width: 120px;">
+              <mat-option [value]="false">No</mat-option>
+              <mat-option [value]="true">Si</mat-option>
+            </mat-select>
+          </div>
+          <div class="form-group has-float-label">
+            <label for="idActivo" class="tamanio-label">Esta Activo *</label>
+            <mat-select id="idActivo" class="form-control form-control-sm" #activo style="width: 108px;">
+              <mat-option [value]="false">No</mat-option>
+              <mat-option [value]="true">Si</mat-option>
+            </mat-select>
+          </div>
           <button mat-raised-button color="primary" (click)="agregar(node, nombre.value, imputable.value, activo.value)"
             [disabled]="!obtenerEstadoBoton(nombre, imputable, activo)">Agregar</button>
-          <button mat-raised-button style="background-color: red; color: white" (click)="eliminarNodo(node)">Quitar</button>
+          <button mat-raised-button style="background-color: red; color: white"
+            (click)="eliminarNodo(node)">Quitar</button>
         </mat-tree-node>
-        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding (mouseover)="activarBotones(node)" (mouseleave)="desactivarBotones(node)">
-          <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.filename">
-            <mat-icon class="mat-icon-rtl-mirror">
-              {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-            </mat-icon>
-          </button>
-          <b style="font-size: 16px; margin-right: 5px;">{{node.nombre}}</b>
-          ({{node.esImputable ? 'Imputable' : 'No Imputable'}} - {{node.estaActivo ? 'Activo' : 'No Activo'}})
-          <div *ngIf="node.mostrarBotones">
-            <button class="boton-agregar" mat-icon-button (click)="nuevoNodo(node)">
-              <mat-icon>add_circle</mat-icon>
+        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding (mouseover)="activarBotones(node)"
+          (mouseleave)="desactivarBotones(node)">
+          <div class="row" *ngIf="!node.editable">
+            <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.filename">
+              <mat-icon class="mat-icon-rtl-mirror">
+                {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+              </mat-icon>
             </button>
-            <button class="boton-eliminar" mat-icon-button (click)="eliminar(node, i)">
-              <mat-icon>cancel</mat-icon>
-            </button>
+            <b style="font-size: 16px; margin-right: 5px;">{{node.nombre}}</b>
+            ({{node.esImputable ? 'Imputable' : 'No Imputable'}} - {{node.estaActivo ? 'Activo' : 'No Activo'}})
+            <div *ngIf="node.mostrarBotones">
+              <button class="boton-agregar" mat-icon-button (click)="nuevoNodo(node)">
+                <mat-icon>add_circle</mat-icon>
+              </button>
+              <button class="boton-editar" mat-icon-button (click)="editarNodo(node)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="boton-eliminar" mat-icon-button (click)="eliminar(node, i)">
+                <mat-icon>cancel</mat-icon>
+              </button>
+            </div>
+          </div>
+          <div class="row" *ngIf="node.editable">
+            <div class="form-group has-float-label">
+              <label for="idNombre" class="tamanio-label">Nombre *</label>
+              <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm" #nombre
+                style="width: 250px;">
+            </div>
+            <div class="form-group has-float-label">
+              <label for="idImputable" class="tamanio-label">Es Imputable *</label>
+              <mat-select id="idImputable" class="form-control form-control-sm" #imputable style="width: 120px;">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-select>
+            </div>
+            <div class="form-group has-float-label">
+              <label for="idActivo" class="tamanio-label">Esta Activo *</label>
+              <mat-select id="idActivo" class="form-control form-control-sm" #activo style="width: 108px;">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-select>
+            </div>
+            <button mat-raised-button color="primary"
+              (click)="agregar(node, nombre.value, imputable.value, activo.value)"
+              [disabled]="!obtenerEstadoBoton(nombre, imputable, activo)">Actualizar</button>
+            <button mat-raised-button style="background-color: red; color: white"
+              (click)="eliminarNodo(node)">Cancelar</button>
           </div>
         </mat-tree-node>
       </mat-tree>
