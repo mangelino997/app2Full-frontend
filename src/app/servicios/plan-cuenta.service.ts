@@ -8,13 +8,16 @@ import { Nodo } from '../componentes/plan-cuenta/plan-cuenta.component';
 
 export class Arbol {
   id: number;
+  version: number;
+  empresa: {};
+  padre: Arbol;
   nombre: string;
   esImputable: boolean;
   estaActivo: boolean;
-  padre: Arbol;
-  empresa: {};
-  nivel: number;
   usuarioAlta: {};
+  usuarioMod: {};
+  tipoCuentaContable: {};
+  nivel: number;
   hijos: Arbol[];
 }
 
@@ -77,9 +80,15 @@ export class PlanCuentaService {
   private crearArbol(elemento): Arbol {
     let arbol = new Arbol();
     arbol.id = elemento.id;
+    arbol.version = elemento.version;
+    arbol.empresa = elemento.empresa;
+    arbol.padre = elemento.padre;
     arbol.nombre = elemento.nombre;
     arbol.esImputable = elemento.esImputable;
     arbol.estaActivo = elemento.estaActivo;
+    arbol.usuarioAlta = elemento.usuarioAlta;
+    arbol.usuarioMod = elemento.usuarioMod;
+    arbol.tipoCuentaContable = elemento.tipoCuentaContable;
     arbol.nivel = elemento.nivel;
     arbol.hijos = elemento.hijos;
     for (const i in arbol.hijos) {
@@ -115,13 +124,6 @@ export class PlanCuentaService {
       this.listaCompleta.next(this.data);
     }
   }
-  public editarElemento(nodo) {
-    console.log(nodo);
-    let p = new Arbol();
-    p.id = nodo.id;
-    nodo.hijos.push({ nombre: nodo.nombre, esImputable: nodo.esImputable, estaActivo: nodo.estaActivo, padre: p } as Arbol);
-    this.listaCompleta.next(this.data);
-  }
   public eliminarElemento(padre: Arbol, nodo: Nodo) {
     let indice = padre.hijos.indexOf(nodo);
     padre.hijos.splice(indice, 1);
@@ -143,8 +145,22 @@ export class PlanCuentaService {
     );
   }
   //Actualiza un registro
-  public actualizar(elemento) {
-    return this.http.put(this.url, elemento, this.options);
+  public actualizar(elemento, nodo) {
+    this.http.put(this.url, elemento, this.options).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(res.status == 200) {
+          nodo.version = respuesta.version;
+          nodo.nombre = respuesta.nombre;
+          nodo.esImputable = respuesta.esImputable;
+          nodo.estaActivo = respuesta.estaActivo;
+          this.listaCompleta.next(this.data);
+        }
+      },
+      err => {
+        console.log('ERROR');
+      }
+    );
   }
   //Elimina un registro
   public eliminar(id, nodoPadre) {

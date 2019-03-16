@@ -1,30 +1,37 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 import { AppComponent } from 'src/app/app.component';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 
 export class Arbol {
   id: number;
+  version: number;
+  empresa: {};
+  padre: Arbol;
   nombre: string;
   esImputable: boolean;
   estaActivo: boolean;
-  padre: Arbol;
-  empresa: {};
-  nivel: number;
   usuarioAlta: {};
+  usuarioMod: {};
+  tipoCuentaContable: {};
+  nivel: number;
   hijos: Arbol[];
 }
 
 export class Nodo {
   id: number;
+  version: number;
+  empresa: {};
+  padre: Arbol;
   nombre: string;
   esImputable: boolean;
   estaActivo: boolean;
-  padre: Arbol;
-  empresa: {};
-  nivel: number;
   usuarioAlta: {};
+  usuarioMod: {};
+  tipoCuentaContable: {};
+  nivel: number;
   hijos: Arbol[];
   level: number;
   expandable: boolean;
@@ -37,7 +44,7 @@ export class Nodo {
   templateUrl: './plan-cuenta.component.html',
   styleUrls: ['./plan-cuenta.component.css']
 })
-export class PlanCuentaComponent {
+export class PlanCuentaComponent implements OnInit {
   flatNodeMap = new Map<Nodo, Arbol>();
   nestedNodeMap = new Map<Arbol, Nodo>();
   selectedParent: Nodo | null = null;
@@ -46,6 +53,8 @@ export class PlanCuentaComponent {
   treeFlattener: MatTreeFlattener<Arbol, Nodo>;
   //Defiene los datos del plan de cuenta
   datos: MatTreeFlatDataSource<Arbol, Nodo>;
+  //Define el formulario
+  public formulario:FormGroup;
   //Constructor
   constructor(private planCuentaServicio: PlanCuentaService, private appComponent: AppComponent) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
@@ -54,6 +63,24 @@ export class PlanCuentaComponent {
     this.datos = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
     this.planCuentaServicio.listaCompleta.subscribe(data => {
       this.datos.data = data;
+    });
+  }
+  //Al inicializarse el componente
+  ngOnInit(): void {
+    //Establece el formulario
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      empresa: new FormControl(),
+      padre: new FormControl(),
+      nombre: new FormControl('', Validators.required),
+      esImputable: new FormControl('', Validators.required),
+      estaActivo: new FormControl('', Validators.required),
+      usuarioAlta: new FormControl(),
+      usuarioMod: new FormControl(),
+      tipoCuentaContable: new FormControl(),
+      nivel: new FormControl(),
+      hijos: new FormControl()
     });
   }
 
@@ -73,14 +100,18 @@ export class PlanCuentaComponent {
       ? existingNode
       : new Nodo();
     flatNode.id = node.id;
+    flatNode.version = node.version;
+    flatNode.empresa = node.empresa;
+    flatNode.padre = node.padre;
     flatNode.nombre = node.nombre;
-    flatNode.level = level;
     flatNode.esImputable = node.esImputable;
     flatNode.estaActivo = node.estaActivo;
-    flatNode.empresa = {};
+    flatNode.usuarioAlta = node.usuarioAlta;
+    flatNode.usuarioMod = node.usuarioMod;
+    flatNode.tipoCuentaContable = node.tipoCuentaContable;
     flatNode.nivel = node.nivel;
-    flatNode.usuarioAlta = {};
     flatNode.hijos = node.hijos;
+    flatNode.level = level;
     flatNode.expandable = !!node.hijos;
     flatNode.editable = false;
     this.flatNodeMap.set(flatNode, node);
@@ -111,6 +142,10 @@ export class PlanCuentaComponent {
   //Actualiza un nodo
   public editarNodo(nodo: Nodo) {
     nodo.editable = true;
+    setTimeout(function() {
+      document.getElementById('idNombreF').focus();
+    }, 20);
+    this.formulario.patchValue(nodo);
   }
   //Elimina un nodo
   public eliminarNodo(nodo: Nodo) {
@@ -130,11 +165,32 @@ export class PlanCuentaComponent {
     elemento.usuarioAlta = this.appComponent.getUsuario();
     this.planCuentaServicio.agregar(elemento);
   }
+  //Actualiza un nodo
+  public actualizar(nodo: Nodo) {
+    const aNodo = this.flatNodeMap.get(nodo);
+    const nodoPadre = this.obtenerNodoPadre(nodo);
+    let padre = {
+      id: nodoPadre.id,
+      version: nodoPadre.version
+    }
+    this.formulario.get('padre').setValue(padre);
+    this.planCuentaServicio.actualizar(this.formulario.value, aNodo);
+    nodo.editable = false;
+  }
   //Elimina el nodo
   public eliminar(nodo: Nodo) {
     let aNodo = this.flatNodeMap.get(nodo);
     let pNodo = this.obtenerNodoPadre(nodo);
     this.planCuentaServicio.eliminar(aNodo.id, pNodo);
+  }
+  //Cancela la actualizacion de un nodo
+  public cancelar(nodo: Nodo): void {
+    nodo.editable = false;
+  }
+  //Evento de cambio de select imputable
+  public cambioImputable(imputable, nombre): void {
+    console.log('PSO');
+    nombre = imputable ? nombre.toLowerCase() : nombre.toUpperCase();
   }
   //Activa los botones de nuevo y eliminar node
   public activarBotones(nodo): void {
