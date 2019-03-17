@@ -3,30 +3,35 @@
     <div class="col-md 12">
       <mat-tree [dataSource]="datos" [treeControl]="treeControl">
         <mat-tree-node class="padding-top-5" *matTreeNodeDef="let node; when: hasNoContent" matTreeNodePadding>
-          <div class="form-group has-float-label">
-            <label for="idNombre" class="tamanio-label">Nombre *</label>
-            <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm" #nombre
-              style="width: 250px;">
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idImputable" class="tamanio-label">Es Imputable *</label>
-            <mat-select id="idImputable" class="form-control form-control-sm" #imputable style="width: 120px;"
-              (selectionChange)="cambioImputable(imputable.value, nombre.value)">
-              <mat-option [value]="false">No</mat-option>
-              <mat-option [value]="true">Si</mat-option>
-            </mat-select>
-          </div>
-          <div class="form-group has-float-label">
-            <label for="idActivo" class="tamanio-label">Esta Activo *</label>
-            <mat-select id="idActivo" class="form-control form-control-sm" #activo style="width: 108px;">
-              <mat-option [value]="false">No</mat-option>
-              <mat-option [value]="true">Si</mat-option>
-            </mat-select>
-          </div>
-          <button mat-raised-button color="primary" (click)="agregar(node, nombre.value, imputable.value, activo.value)"
-            [disabled]="!obtenerEstadoBoton(nombre, imputable, activo)">Agregar</button>
-          <button mat-raised-button style="background-color: red; color: white"
-            (click)="eliminarNodo(node)">Quitar</button>
+          <form [formGroup]="formulario">
+            <div class="row">
+              <div class="form-group has-float-label">
+                <label for="idNombre" class="tamanio-label">Nombre *</label>
+                <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm upper-case" 
+                  formControlName="nombre" style="width: 250px;">
+              </div>
+              <div class="form-group has-float-label">
+                <label for="idImputable" class="tamanio-label">Es Imputable *</label>
+                <mat-select id="idImputable" class="form-control form-control-sm"  style="width: 120px;"
+                  formControlName="esImputable" (selectionChange)="cambioImputable()">
+                  <mat-option [value]="false">No</mat-option>
+                  <mat-option [value]="true">Si</mat-option>
+                </mat-select>
+              </div>
+              <div class="form-group has-float-label">
+                <label for="idActivo" class="tamanio-label">Esta Activo *</label>
+                <mat-select id="idActivo" class="form-control form-control-sm"  style="width: 108px;"
+                  formControlName="estaActivo">
+                  <mat-option [value]="false">No</mat-option>
+                  <mat-option [value]="true">Si</mat-option>
+                </mat-select>
+              </div>
+              <button mat-raised-button color="primary" (click)="agregar(node)" 
+                [disabled]="!formulario.valid">Agregar</button>
+              <button mat-raised-button style="background-color: red; color: white"
+                (click)="eliminarNodo(node)">Quitar</button>
+            </div>
+          </form>
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding (mouseover)="activarBotones(node)"
           (mouseleave)="desactivarBotones(node)">
@@ -54,27 +59,30 @@
           <form [formGroup]="formulario">
             <div class="row" *ngIf="node.editable">
               <div class="form-group has-float-label">
-                <label for="idNombreF" class="tamanio-label">Nombre *</label>
-                <input id="idNombreF" type="text" autocomplete="off" class="form-control form-control-sm" formControlName="nombre"
-                  style="width: 250px;">
+                <label for="idNombre" class="tamanio-label">Nombre *</label>
+                <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm upper-case"
+                  formControlName="nombre" style="width: 250px;">
               </div>
               <div class="form-group has-float-label">
-                <label for="idImputableF" class="tamanio-label">Es Imputable *</label>
-                <mat-select id="idImputableF" class="form-control form-control-sm" style="width: 120px;"
-                  formControlName="esImputable" (selectionChange)="cambioImputable(imputable.value, nombre.value)">
+                <label for="idImputable" class="tamanio-label">Es Imputable *</label>
+                <mat-select id="idImputable" class="form-control form-control-sm" style="width: 120px;"
+                  formControlName="esImputable" (selectionChange)="cambioImputable()">
                   <mat-option [value]="false">No</mat-option>
                   <mat-option [value]="true">Si</mat-option>
                 </mat-select>
               </div>
               <div class="form-group has-float-label">
-                <label for="idActivoF" class="tamanio-label">Esta Activo *</label>
-                <mat-select id="idActivoF" class="form-control form-control-sm" style="width: 108px;" formControlName="estaActivo">
+                <label for="idActivo" class="tamanio-label">Esta Activo *</label>
+                <mat-select id="idActivo" class="form-control form-control-sm" style="width: 108px;"
+                  formControlName="estaActivo">
                   <mat-option [value]="false">No</mat-option>
                   <mat-option [value]="true">Si</mat-option>
                 </mat-select>
               </div>
-              <button mat-raised-button color="primary" [disabled]="!formulario.valid" (click)="actualizar(node)">Actualizar</button>
-              <button mat-raised-button style="background-color: red; color: white" (click)="cancelar(node)">Cancelar</button>
+              <button mat-raised-button color="primary" [disabled]="!formulario.valid"
+                (click)="actualizar(node)">Actualizar</button>
+              <button mat-raised-button style="background-color: red; color: white"
+                (click)="cancelar(node)">Cancelar</button>
             </div>
           </form>
         </mat-tree-node>

@@ -135,6 +135,11 @@ export class PlanCuentaComponent implements OnInit {
   }
   //Crea un nuevo nodo
   public nuevoNodo(nodo: Nodo) {
+    this.formulario.reset();
+    setTimeout(function() {
+      document.getElementById('idNombre').focus();
+    }, 20);
+    this.formulario.get('esImputable').setValue(false);
     const nodoPadre = this.flatNodeMap.get(nodo);
     this.planCuentaServicio.agregarElemento(nodoPadre!, '');
     this.treeControl.expand(nodo);
@@ -143,9 +148,25 @@ export class PlanCuentaComponent implements OnInit {
   public editarNodo(nodo: Nodo) {
     nodo.editable = true;
     setTimeout(function() {
-      document.getElementById('idNombreF').focus();
+      document.getElementById('idNombre').focus();
+      if(imputable) {
+        document.getElementById('idNombre').classList.remove('upper-case')
+        nombre.toLowerCase();
+      } else {
+        document.getElementById('idNombre').classList.add('upper-case');
+        nombre.toUpperCase();
+      }
     }, 20);
     this.formulario.patchValue(nodo);
+    let nombre = this.formulario.get('nombre').value;
+    let imputable = this.formulario.get('esImputable').value;
+    if(imputable) {
+      this.formulario.get('estaActivo').setValue(true);
+      this.formulario.get('estaActivo').disable();
+    } else {
+      this.formulario.get('estaActivo').setValue(true);
+      this.formulario.get('estaActivo').enable();
+    }
   }
   //Elimina un nodo
   public eliminarNodo(nodo: Nodo) {
@@ -153,12 +174,13 @@ export class PlanCuentaComponent implements OnInit {
     this.planCuentaServicio.eliminarElemento(nodoPadre!, nodo);
   }
   //Agrega el nodo
-  public agregar(nodo: Nodo, nombre: string, imputable: boolean, activo: boolean) {
+  public agregar(nodo: Nodo) {
+    this.formulario.get('estaActivo').enable();
     const elementoPadre = this.obtenerNodoPadre(nodo);
     const elemento = this.flatNodeMap.get(nodo);
-    elemento.nombre = nombre;
-    elemento.esImputable = imputable;
-    elemento.estaActivo = activo;
+    elemento.nombre = this.formulario.get('nombre').value;
+    elemento.esImputable = this.formulario.get('esImputable').value;
+    elemento.estaActivo = this.formulario.get('estaActivo').value;
     elemento.nivel = elementoPadre.nivel+1;
     elemento.hijos = [];
     elemento.empresa = this.appComponent.getEmpresa();
@@ -167,6 +189,7 @@ export class PlanCuentaComponent implements OnInit {
   }
   //Actualiza un nodo
   public actualizar(nodo: Nodo) {
+    this.formulario.get('estaActivo').enable();
     const aNodo = this.flatNodeMap.get(nodo);
     const nodoPadre = this.obtenerNodoPadre(nodo);
     let padre = {
@@ -185,12 +208,24 @@ export class PlanCuentaComponent implements OnInit {
   }
   //Cancela la actualizacion de un nodo
   public cancelar(nodo: Nodo): void {
+    this.formulario.reset();
     nodo.editable = false;
   }
   //Evento de cambio de select imputable
-  public cambioImputable(imputable, nombre): void {
-    console.log('PSO');
-    nombre = imputable ? nombre.toLowerCase() : nombre.toUpperCase();
+  public cambioImputable(): void {
+    let nombre = this.formulario.get('nombre').value;
+    let imputable = this.formulario.get('esImputable').value;
+    if(imputable) {
+      document.getElementById('idNombre').classList.remove('upper-case')
+      nombre.toLowerCase();
+      this.formulario.get('estaActivo').setValue(true);
+      this.formulario.get('estaActivo').disable();
+    } else {
+      document.getElementById('idNombre').classList.add('upper-case');
+      nombre.toUpperCase();
+      this.formulario.get('estaActivo').setValue(true);
+      this.formulario.get('estaActivo').enable();
+    }
   }
   //Activa los botones de nuevo y eliminar node
   public activarBotones(nodo): void {
