@@ -14,6 +14,10 @@ import { FechaService } from 'src/app/servicios/fecha.service';
 import { RepartoPropioService } from 'src/app/servicios/reparto-propio.service';
 import { RepartoTerceroService } from 'src/app/servicios/reparto-tercero.service';
 import { RetiroDepositoService } from 'src/app/servicios/retiro-deposito.service';
+import { RepartoPropioComprobanteService } from 'src/app/servicios/reparto-propio-comprobante.service';
+import { RepartoTerceroComprobanteService } from 'src/app/servicios/reparto-tercero-comprobante.service';
+import { RetiroDepositoComprobanteService } from 'src/app/servicios/retiro-deposito-comprobante.service';
+import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 
 @Component({
   selector: 'app-reparto',
@@ -23,8 +27,10 @@ import { RetiroDepositoService } from 'src/app/servicios/retiro-deposito.service
 export class RepartoComponent implements OnInit {
   //Define el formulario
   public formulario:FormGroup;
-  //Define un formControl
+  //Define como un formControl
   public tipoViaje:FormControl = new FormControl();
+  //Define como un formControl
+  public tipoItem:FormControl = new FormControl();
   //Define la lista de resultados para Zonas, Comprobantes, Letras
   public resultadosZona = [];
   public resultadosComprobante = [];
@@ -39,8 +45,14 @@ export class RepartoComponent implements OnInit {
   public planillasPendientesPropio = [];
   public planillasPendientesTercero = [];
   public planillasPendientesDeposito = [];
+  //Define la lista de comprobantes para la planilla seleccionada
+  public comprobantesPropio = [];
+  public comprobantesTercero = [];
+  public comprobantesDeposito = [];
   //Define la lista de acompañantes
   public listaAcompaniantes = [];
+  //Define la lista de tipo comprobantes Activos 
+  public listaTipoComprobantes = [];
   //Define una bandera para control
   public bandera:boolean=false;
   
@@ -50,7 +62,8 @@ export class RepartoComponent implements OnInit {
     private appComponent: AppComponent, private vehiculoService: VehiculoService, private vehiculoProveedorService: VehiculoProveedorService,
     private personalServie: PersonalService, private choferProveedorService: ChoferProveedorService, public dialog: MatDialog, 
     private repartoPropioService: RepartoPropioService, private repartoTerceroService: RepartoTerceroService, private retiroDepositoService: RetiroDepositoService,
-     private fechaService: FechaService
+    private fechaService: FechaService, private repartoPropioComp: RepartoPropioComprobanteService, private repartoTerceroComp: RepartoTerceroComprobanteService,
+    private retiroDepositoComp: RetiroDepositoComprobanteService, private tipoComp: TipoComprobanteService
     
     ) { }
 
@@ -230,11 +243,12 @@ export class RepartoComponent implements OnInit {
     });
     this.tipoViaje.setValue(1);
     this.cambioTipoViaje();
+    
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    this.formulario.get('tipoComprobante').setValue( {id:12});
+    // this.formulario.get('tipoComprobante').setValue( {id:12});
 
   }
   //Formatea la Hora
@@ -353,6 +367,104 @@ export class RepartoComponent implements OnInit {
         break;
     }
   }
+  //Controla el cambio de Planillas en la primer tabla
+  public cambioPlanilla(id){
+    let fila='fila'+id;
+    let filaSeleccionada=document.getElementsByClassName('planilla-seleccionada');
+    for(let i=0; i< filaSeleccionada.length; i++){
+      filaSeleccionada[i].className="planilla-no-seleccionada";
+    }
+    document.getElementById(fila).className="planilla-seleccionada";
+    this.listarSegundaTabla(id);
+  }
+  //Lista la segunda tabla segun la planilla seleccionada y el tipo de Viaje
+  private listarSegundaTabla(id){
+    switch(this.tipoViaje.value){
+      case 1:
+        for(let i=0; i< this.planillasPendientesPropio.length;i++){
+          if(id==i){
+            console.log(this.planillasPendientesPropio[i].id);
+            this.repartoPropioComp.listarComprobantes(this.planillasPendientesPropio[i].id).subscribe(
+              res=>{
+                console.log(res.json());
+                this.comprobantesPropio = res.json();
+                this.comprobantesTercero = [];
+                this.comprobantesDeposito = [];
+              },
+              err=>{
+                let error= err.json();
+                this.toastr.error(error.mensaje);
+              }
+            );
+          }
+        }
+        break;
+      
+      case 2:
+        this.repartoTerceroComp.listarComprobantes(id).subscribe(
+          res=>{
+            this.comprobantesPropio = [];
+            this.comprobantesTercero = res.json();
+            this.comprobantesDeposito = [];          
+          },
+          err=>{
+            let error= err.json();
+            this.toastr.error(error.mensaje);
+          }
+        );
+        break;
+      
+      case 3:
+        this.retiroDepositoComp.listarComprobantes(id).subscribe(
+          res=>{
+            this.comprobantesPropio = [];
+            this.comprobantesTercero = [];
+            this.comprobantesDeposito = res.json();          
+          },
+          err=>{
+            let error= err.json();
+            this.toastr.error(error.mensaje);
+          }
+        );
+        break;
+    }
+  }
+  //Controla el cambio en el campo TipoItem, lista los activos dependiendo el tipo de item
+  public cambioTipoItem(){
+    // 1=compr propio,  2=comp tercero
+    this.listaTipoComprobantes = [];
+    switch(this.tipoItem.value){
+      case 1:
+      this.tipoComp.listarPorEstaRepartoTrue().subscribe(
+        res=>{
+          this.listaTipoComprobantes = res.json();
+          console.log(this.listaTipoComprobantes);
+        },
+        err=>{
+          let error= err;
+          this.toastr.error(error.mensaje);
+        }
+      )
+      case 2:
+        this.tipoComp.listarPorEstaActivoIngresoCargaTrue().subscribe(
+          res=>{
+            this.listaTipoComprobantes = res.json();
+            console.log(this.listaTipoComprobantes);
+
+          },
+          err=>{
+            let error= err;
+            this.toastr.error(error.mensaje);
+          }
+        );
+        break;
+    }
+  }
+  //Controla el cambio en el tipo de comprobante, si el tipoComprobantes=13 deshabilita el campo siguiente (Punto de Venta)
+  public cambioTipoComp(){
+    if(this.formulario.get('tipoComprobante').value.id==13)
+      this.formulario.get('puntoVenta').disable();
+  }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
     return (string + elemento).slice(cantidad);
@@ -409,6 +521,9 @@ export class RepartoComponent implements OnInit {
     this.planillasPendientesPropio = [];
     this.planillasPendientesTercero = [];
     this.planillasPendientesDeposito = [];
+    this.comprobantesPropio = [];
+    this.comprobantesTercero = [];
+    this.comprobantesDeposito = [];
     setTimeout(function() {
       document.getElementById('idTipoViaje').focus();
     }, 20);

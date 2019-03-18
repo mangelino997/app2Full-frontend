@@ -271,6 +271,9 @@ import { RepartoComponent, AcompanianteDialogo } from './componentes/reparto-sal
 import { RepartoPropioService } from './servicios/reparto-propio.service';
 import { RepartoTerceroService } from './servicios/reparto-tercero.service';
 import { RetiroDepositoService } from './servicios/retiro-deposito.service';
+import { RepartoPropioComprobanteService } from './servicios/reparto-propio-comprobante.service';
+import { RepartoTerceroComprobanteService } from './servicios/reparto-tercero-comprobante.service';
+import { RetiroDepositoComprobanteService } from './servicios/retiro-deposito-comprobante.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -367,7 +370,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.156:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -698,6 +701,9 @@ const stompConfig: StompConfig = {
     RepartoPropioService,
     RepartoTerceroService,
     RetiroDepositoService,
+    RepartoTerceroComprobanteService,
+    RepartoPropioComprobanteService,
+    RetiroDepositoComprobanteService,
     Aforo,
     MesService,
     {

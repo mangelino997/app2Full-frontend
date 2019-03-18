@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class TipoComprobanteService {
+export class RetiroDepositoComprobanteService {
   //Define la ruta al servicio web
-  private ruta:string = "/tipocomprobante";
+  private ruta:string = "/retirodepositocomprobante";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -46,29 +46,17 @@ export class TipoComprobanteService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
-  //Obtiene registros por id
-  public obtenerPorId(id) {
-    return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
+  //Obtiene lista de comprobantes por id
+  public listarComprobantes(id) {
+    return this.http.get(this.url + '/listarComprobantes/' + id, this.options);
+  }
+  //Quita la lista de un comprobante por id
+  public quitarComprobantes(id) {
+    return this.http.get(this.url + '/quitarComprobante/' + id, this.options);
   }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
-  }
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
-  }
-  //Obtiene una lista por esta activo ingreso carga igual true
-  public listarPorEstaActivoIngresoCargaTrue() {
-    return this.http.get(this.url + '/listarPorEstaActivoIngresoCargaTrue', this.options);
-  }
-  //Obtiene una lista por esta activo reparto igual true
-  public listarPorEstaRepartoTrue() {
-    return this.http.get(this.url + '/listarPorEstaRepartoTrue', this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

@@ -100,7 +100,7 @@
                         </tr>
                     </thead>
                     <tbody *ngIf="planillasPendientesPropio.length>0">
-                        <tr  *ngFor="let itemPlanilla of planillasPendientesPropio; let i=index" id="fila{{i}}" >
+                        <tr  *ngFor="let itemPlanilla of planillasPendientesPropio; let i=index" id="fila{{i}}" (click)="cambioPlanilla(i)">
                             <td align="center">{{itemPlanilla.id}}</td>
                             <td align="center">{{itemPlanilla.zona.nombre}}</td>
                             <td align="center">{{itemPlanilla.vehiculo.alias}}</td>
@@ -112,7 +112,7 @@
                         </tr>
                     </tbody>
                     <tbody *ngIf="planillasPendientesTercero.length>0">
-                        <tr  *ngFor="let itemPlanilla of planillasPendientesTercero; let i=index">
+                        <tr  *ngFor="let itemPlanilla of planillasPendientesTercero; let i=index" (click)="cambioPlanilla(i)">
                             <td align="center">{{itemPlanilla.id}}</td>
                             <td align="center">{{itemPlanilla.zona.nombre}}</td>
                             <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza: {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
@@ -124,7 +124,7 @@
                         </tr>
                     </tbody>
                     <tbody *ngIf="planillasPendientesDeposito.length>0">
-                        <tr  *ngFor="let itemPlanilla of planillasPendientesDeposito; let i=index">
+                        <tr  *ngFor="let itemPlanilla of planillasPendientesDeposito; let i=index" (click)="cambioPlanilla(i)">
                             <td align="center">{{itemPlanilla.id}}</td>
                             <td align="center">{{itemPlanilla.zona.nombre}}</td>
                             <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza: {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
@@ -142,29 +142,30 @@
         <div class="inline" style="margin-top: 15px;">
             <div class="form-group has-float-label">
                 <label for="idTipoItem">Tipo Item</label>
-                <mat-select id="idTipoItem" class="form-control form-control-sm" style="width: 150px;" formControlName="tipoItem" [compareWith]="compareFn">
+                <mat-select id="idTipoItem" class="form-control form-control-sm" style="width: 150px;" [formControl]="tipoItem" (selectionChange)="cambioTipoItem()" [compareWith]="compareFn">
                     <mat-option [value]="1">Comprobante Propio</mat-option>
                     <mat-option [value]="2">Comprobante Tercero</mat-option>
                 </mat-select>
             </div>
             <div class="form-group has-float-label">
                 <label for="idTipoComprobante">Tipo de Comprobante</label>
-                <mat-select id="idTipoComprobante" class="form-control form-control-sm" style="width: 150px;" formControlName="tipoComprobante" [compareWith]="compareFn">
-                    <mat-option *ngFor="let itemComprobante of resultadosComprobante" [value]="itemComprobante">
-                    {{itemComprobante}}
+                <mat-select id="idTipoComprobante" class="form-control form-control-sm" style="width: 180px;" formControlName="tipoComprobante" (selectionChange)="cambioTipoComp()" [compareWith]="compareFn">
+                    <mat-option *ngFor="let itemComprobante of listaTipoComprobantes" [value]="itemComprobante">
+                    {{itemComprobante.nombre}}
                     </mat-option>
                 </mat-select>
             </div>
             <div class="form-group has-float-label">
                 <label for="idPuntoVenta">Punto de Venta</label>
-                <input id="idPuntoVenta" type="text" class="form-control form-control-sm" formControlName="puntoVenta" style="width: 110px;">
+                <input id="idPuntoVenta" type="text" class="form-control form-control-sm" formControlName="puntoVenta" style="width: 150px;">
             </div>
             <div class="form-group has-float-label">
                 <label for="idLetra">Letra</label>
-                <mat-select id="idLetra" class="form-control form-control-sm" style="width: 60px;" formControlName="letra" [compareWith]="compareFn">
-                    <mat-option *ngFor="let itemLetra of resultadosLetra" [value]="itemLetra">
-                    {{itemLetra}}
-                    </mat-option>
+                <mat-select id="idLetra" class="form-control form-control-sm" style="width: 70px;" formControlName="letra" [compareWith]="compareFn">
+                    <mat-option [value]="A">A</mat-option>
+                    <mat-option [value]="B">B</mat-option>
+                    <mat-option [value]="R">R</mat-option>
+                    <mat-option [value]="X">X</mat-option>
                 </mat-select>
             </div>
             <div class="form-group has-float-label">
@@ -185,29 +186,88 @@
                             <th class="text-center" style="width: 100px" scope="col">Destinatario</th>
                             <th class="text-center" style="width: 100px" scope="col">Domicilio</th>
                             <th class="text-center" style="width: 100px" scope="col">Remitente</th>
-                            <th class="text-center" style="width: 100px" scope="col">Cta.Cte.</th>
-                            <th class="text-center" style="width: 60px" scope="col">Contado</th>
+                            <th class="text-center" style="width: 100px" scope="col" >Cta.Cte.</th>
+                            <th class="text-center" style="width: 60px" scope="col" >Contado</th>
                             <th class="text-center" style="width: 60px" scope="col">Bultos</th>
                             <th class="text-center" style="width: 60px" scope="col">ContraReembolso</th>
                             <th class="text-center" style="width: 50px" scope="col">Kg</th>
                             <th class="text-center" style="width: 60px" scope="col">-</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <td align="center">1</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td align="center" class="cursor-color">Quitar</td>
+                    <tbody *ngIf="comprobantesPropio.length>0">
+                        <ng-container *ngFor="let itemComprobante of comprobantesPropio; let i=index">
+                            <tr  *ngIf="itemComprobante.ordenRecoleccion!=null">
+                                <td align="center">{{itemComprobante.ordenRecoleccion.tipoComprobante.nombre}}</td>
+                                <td align="center">{{itemComprobante.id}}</td>
+                                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.razonSocial}}</td>
+                                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.domicilio}}</td>
+                                <td align="center">{{itemComprobante.ordenRecoleccion.empresa.razonSocial}}</td>
+                                <td align="center"></td>
+                                <td align="center">{{itemComprobante.ordenRecoleccion.importeRetiro}}</td>
+                                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
+                                <td align="center"></td>
+                                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
+                                <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
+                            </tr>
+                            <tr *ngIf="itemComprobante.viajeRemito!=null">
+                                <td align="center">{{itemComprobante.viajeRemito.tipoComprobante.nombre}}</td>
+                                <td align="center">{{itemComprobante.id}}</td>
+                                <td align="center">{{itemComprobante.viajeRemito.clienteDestinatario.razonSocial}}</td>
+                                <td align="center">{{itemComprobante.viajeRemito.clienteDestinatario.domicilio}}</td>
+                                <td align="center">{{itemComprobante.viajeRemito.clienteRemitente.razonSocial}}</td>
+                                <td align="center"></td>
+                                <td align="center">{{itemComprobante.viajeRemito.importeRetiro}}</td>
+                                <td align="center">{{itemComprobante.viajeRemito.bultos}}</td>
+                                <td align="center"></td>
+                                <td align="center">{{itemComprobante.viajeRemito.kilosEfectivo}}</td>
+                                <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
+                            </tr>
+                            <tr *ngIf="itemComprobante.ventaComprobante!=null">
+                                <td align="center">{{itemComprobante.ventaComprobante.tipoComprobante.nombre}}</td>
+                                <td align="center">{{itemComprobante.id}}</td>
+                                <td align="center">{{itemComprobante.ventaComprobante.clienteDestinatario.razonSocial}}</td>
+                                <td align="center">{{itemComprobante.ventaComprobante.clienteDestinatario.domicilio}}</td>
+                                <td align="center">{{itemComprobante.ventaComprobante.clienteRemitente.razonSocial}}</td>
+                                <td align="center">Si</td>
+                                <td align="center">{{itemComprobante.ventaComprobante.importeTotal}}</td>
+                                <td align="center">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.bultos}}</td>
+                                <td align="center">Si</td>
+                                <td align="center">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.kilosEfectivo}}</td>
+                                <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
+                            </tr> 
+                        </ng-container>
+                                                   
+                    </tbody>
+                    <!-- <tbody *ngIf="comprobantesTercero.length>0">
+                        <tr  *ngFor="let itemComprobante of comprobantesTercero; let i=index">
+                            <td align="center">{{itemComprobante.ordenRecoleccion.tipoComprobante.nombre}}</td>
+                            <td align="center">{{itemComprobante.id}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.razonSocial}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.domicilio}}</td>
+                            <td align="center">{{itemComprobante.repartoPropio.empresa.razonSocial}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.esCuentaCorriente? 'Si' : 'No'}}</td>
+                            <td align="center">{{itemComprobante.personal.alias}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.pagoEnOrigen? 'Si' : 'No'}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
+                            <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
                         </tr>
                     </tbody>
+                    <tbody *ngIf="comprobantesDeposito.length>0">
+                        <tr  *ngFor="let itemComprobante of comprobantesDeposito; let i=index">
+                            <td align="center">{{itemComprobante.ordenRecoleccion.tipoComprobante.nombre}}</td>
+                            <td align="center">{{itemComprobante.id}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.razonSocial}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.domicilio}}</td>
+                            <td align="center">{{itemComprobante.repartoPropio.empresa.razonSocial}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.esCuentaCorriente? 'Si' : 'No'}}</td>
+                            <td align="center">{{itemComprobante.personal.alias}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.pagoEnOrigen? 'Si' : 'No'}}</td>
+                            <td align="center">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
+                            <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
+                        </tr>
+                    </tbody> -->
                 </table>
             </div>
         </div>
