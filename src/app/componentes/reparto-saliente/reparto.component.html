@@ -23,7 +23,7 @@
                         </div>
                         <div class="form-group has-float-label">
                             <label for="idVehiculo">Vehículo</label>
-                            <input id="idVehiculo" class="form-control form-control-sm color-busqueda" type="text" matInput
+                            <input id="idVehiculo" class="form-control form-control-sm " type="text" matInput
                             [formControl]="formulario.get('vehiculo')" [matAutocomplete]="autoVehiculo" autocomplete="off" style="width: 150px;">
                             <mat-autocomplete #autoVehiculo="matAutocomplete" [displayWith]="displayF.bind(this)">
                                 <mat-option *ngFor="let itemVehiculo of resultadosVehiculo" [value]="itemVehiculo">
@@ -33,7 +33,7 @@
                         </div>
                         <div class="form-group has-float-label">
                             <label for="idRemolque">Remolque</label>
-                            <input id="idRemolque" class="form-control form-control-sm color-busqueda" type="text" matInput
+                            <input id="idRemolque" class="form-control form-control-sm " type="text" matInput
                             [formControl]="formulario.get('remolque')" [matAutocomplete]="autoRemolque" autocomplete="off" style="width: 290px;">
                             <mat-autocomplete #autoRemolque="matAutocomplete" [displayWith]="displayF.bind(this)">
                                 <mat-option *ngFor="let itemRemolque of resultadosVehiculo" [value]="itemRemolque">
@@ -43,9 +43,9 @@
                         </div>
                         <div class="form-group has-float-label">
                             <label for="idChofer">Chofer</label>
-                            <input id="idChofer" class="form-control form-control-sm color-busqueda" type="text" matInput
+                            <input id="idChofer" class="form-control form-control-sm" type="text" matInput
                             [formControl]="formulario.get('chofer')" [matAutocomplete]="autoChofer" autocomplete="off" style="width: 290px;">
-                            <mat-autocomplete #autoChofer="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                            <mat-autocomplete #autoChofer="matAutocomplete" [displayWith]="displayF.bind(this)">
                                 <mat-option *ngFor="let itemChofer of resultadosChofer" [value]="itemChofer">
                                     {{itemChofer.nombre}}
                                 </mat-option>
@@ -100,7 +100,7 @@
                         </tr>
                     </thead>
                     <tbody *ngIf="planillasPendientesPropio.length>0">
-                        <tr  *ngFor="let itemPlanilla of planillasPendientesPropio; let i=index" id="fila{{i}}" (click)="cambioPlanilla(i)">
+                        <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesPropio; let i=index" id="fila{{i}}" (click)="cambioPlanilla(i)">
                             <td align="center">{{itemPlanilla.id}}</td>
                             <td align="center">{{itemPlanilla.zona.nombre}}</td>
                             <td align="center">{{itemPlanilla.vehiculo.alias}}</td>
@@ -112,7 +112,7 @@
                         </tr>
                     </tbody>
                     <tbody *ngIf="planillasPendientesTercero.length>0">
-                        <tr  *ngFor="let itemPlanilla of planillasPendientesTercero; let i=index" (click)="cambioPlanilla(i)">
+                        <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesTercero; let i=index" (click)="cambioPlanilla(i)">
                             <td align="center">{{itemPlanilla.id}}</td>
                             <td align="center">{{itemPlanilla.zona.nombre}}</td>
                             <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza: {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
@@ -124,7 +124,7 @@
                         </tr>
                     </tbody>
                     <tbody *ngIf="planillasPendientesDeposito.length>0">
-                        <tr  *ngFor="let itemPlanilla of planillasPendientesDeposito; let i=index" (click)="cambioPlanilla(i)">
+                        <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesDeposito; let i=index" (click)="cambioPlanilla(i)">
                             <td align="center">{{itemPlanilla.id}}</td>
                             <td align="center">{{itemPlanilla.zona.nombre}}</td>
                             <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza: {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
@@ -138,44 +138,48 @@
                 </table>
             </div>
         </div>
+        <form [formGroup]="formularioComprobante">
+            <div class="inline" style="margin-top: 15px;" >
+                <div class="form-group has-float-label">
+                    <label for="idTipoItem">Tipo Item</label>
+                    <mat-select id="idTipoItem" class="form-control form-control-sm" style="width: 150px;" [formControl]="tipoItem" (selectionChange)="cambioTipoItem()" [compareWith]="compareFn">
+                        <mat-option [value]="1">Comprobante Propio</mat-option>
+                        <mat-option [value]="2">Comprobante Tercero</mat-option>
+                    </mat-select>
+                </div>
+                <div class="form-group has-float-label">
+                    <label for="idTipoComprobante">Tipo de Comprobante</label>
+                    <mat-select id="idTipoComprobante" class="form-control form-control-sm" style="width: 180px;" formControlName="tipoComprobante" (selectionChange)="cambioTipoComp()" [compareWith]="compareFn">
+                        <mat-option *ngFor="let itemComprobante of listaTipoComprobantes" [value]="itemComprobante">
+                        {{itemComprobante.nombre}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+                <div class="form-group has-float-label">
+                    <label for="idPuntoVenta">Punto de Venta</label>
+                    <input id="idPuntoVenta" type="text" class="form-control form-control-sm" formControlName="puntoVenta" style="width: 150px;">
+                </div>
+                <div class="form-group has-float-label">
+                    <label for="idLetra">Letra</label>
+                    <mat-select id="idLetra" class="form-control form-control-sm" style="width: 80px;" formControlName="letra">
+                        <mat-option value="A">A</mat-option>
+                        <mat-option value="B">B</mat-option>
+                        <mat-option value="R">R</mat-option>
+                        <mat-option value="X">X</mat-option>
+                    </mat-select>
+                </div>
+                <div class="form-group has-float-label">
+                    <label for="idComprobante">N° Comprobante</label>
+                    <input id="idComprobante" type="text" class="form-control form-control-sm" formControlName="numeroComprobante" style="width: 150px;">
+                </div>
+                <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;" (click)="agregarComrpobante()" [disabled]="!formularioComprobante.valid">
+                    Agregar
+                </button>
+                <span class="spacer"></span>
+                <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;">Seleccionar Comprobantes</button>
+            </div>
+        </form>
         
-        <div class="inline" style="margin-top: 15px;">
-            <div class="form-group has-float-label">
-                <label for="idTipoItem">Tipo Item</label>
-                <mat-select id="idTipoItem" class="form-control form-control-sm" style="width: 150px;" [formControl]="tipoItem" (selectionChange)="cambioTipoItem()" [compareWith]="compareFn">
-                    <mat-option [value]="1">Comprobante Propio</mat-option>
-                    <mat-option [value]="2">Comprobante Tercero</mat-option>
-                </mat-select>
-            </div>
-            <div class="form-group has-float-label">
-                <label for="idTipoComprobante">Tipo de Comprobante</label>
-                <mat-select id="idTipoComprobante" class="form-control form-control-sm" style="width: 180px;" formControlName="tipoComprobante" (selectionChange)="cambioTipoComp()" [compareWith]="compareFn">
-                    <mat-option *ngFor="let itemComprobante of listaTipoComprobantes" [value]="itemComprobante">
-                    {{itemComprobante.nombre}}
-                    </mat-option>
-                </mat-select>
-            </div>
-            <div class="form-group has-float-label">
-                <label for="idPuntoVenta">Punto de Venta</label>
-                <input id="idPuntoVenta" type="text" class="form-control form-control-sm" formControlName="puntoVenta" style="width: 150px;">
-            </div>
-            <div class="form-group has-float-label">
-                <label for="idLetra">Letra</label>
-                <mat-select id="idLetra" class="form-control form-control-sm" style="width: 70px;" formControlName="letra" [compareWith]="compareFn">
-                    <mat-option [value]="A">A</mat-option>
-                    <mat-option [value]="B">B</mat-option>
-                    <mat-option [value]="R">R</mat-option>
-                    <mat-option [value]="X">X</mat-option>
-                </mat-select>
-            </div>
-            <div class="form-group has-float-label">
-                <label for="idComprobante">N° de Comprobante</label>
-                <input id="idComprobante" type="text" class="form-control form-control-sm" formControlName="numeroComprobante" style="width: 120px;">
-            </div>
-            <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;">Agregar</button>
-            <span class="spacer"></span>
-            <button class="btn btn-primary btn-sm" style="margin-left: 5px; height: 31px;">Seleccionar Comprobantes</button>
-        </div>
         <div class="row">
             <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
                 <table class="table table-bordered table-striped table-sm table-condensed tabla-reporte">
@@ -207,7 +211,7 @@
                                 <td align="center">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
                                 <td align="center"></td>
                                 <td align="center">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
-                                <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
+                                <td align="center" class="cursor-color" (click)="quitarComprobante('propio', itemComprobante.id)">Quitar</td>
                             </tr>
                             <tr *ngIf="itemComprobante.viajeRemito!=null">
                                 <td align="center">{{itemComprobante.viajeRemito.tipoComprobante.nombre}}</td>
@@ -220,7 +224,7 @@
                                 <td align="center">{{itemComprobante.viajeRemito.bultos}}</td>
                                 <td align="center"></td>
                                 <td align="center">{{itemComprobante.viajeRemito.kilosEfectivo}}</td>
-                                <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
+                                <td align="center" class="cursor-color" (click)="quitarComprobante('propio', itemComprobante.id)">Quitar</td>
                             </tr>
                             <tr *ngIf="itemComprobante.ventaComprobante!=null">
                                 <td align="center">{{itemComprobante.ventaComprobante.tipoComprobante.nombre}}</td>
@@ -233,12 +237,12 @@
                                 <td align="center">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.bultos}}</td>
                                 <td align="center">Si</td>
                                 <td align="center">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.kilosEfectivo}}</td>
-                                <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
+                                <td align="center" class="cursor-color" (click)="quitarComprobante('propio', itemComprobante.id)">Quitar</td>
                             </tr> 
                         </ng-container>
                                                    
                     </tbody>
-                    <!-- <tbody *ngIf="comprobantesTercero.length>0">
+                    <tbody *ngIf="comprobantesTercero.length>0">
                         <tr  *ngFor="let itemComprobante of comprobantesTercero; let i=index">
                             <td align="center">{{itemComprobante.ordenRecoleccion.tipoComprobante.nombre}}</td>
                             <td align="center">{{itemComprobante.id}}</td>
@@ -250,7 +254,7 @@
                             <td align="center">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
                             <td align="center">{{itemComprobante.ordenRecoleccion.cliente.pagoEnOrigen? 'Si' : 'No'}}</td>
                             <td align="center">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
-                            <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
+                            <td align="center" class="cursor-color" (click)="quitarComprobante('tercero', itemComprobante.id)">Quitar</td>
                         </tr>
                     </tbody>
                     <tbody *ngIf="comprobantesDeposito.length>0">
@@ -265,9 +269,9 @@
                             <td align="center">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
                             <td align="center">{{itemComprobante.ordenRecoleccion.cliente.pagoEnOrigen? 'Si' : 'No'}}</td>
                             <td align="center">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
-                            <td align="center" class="cursor-color" (click)="quitarComprobante(i)">Quitar</td>
+                            <td align="center" class="cursor-color" (click)="quitarComprobante('retiro', itemComprobante.id)">Quitar</td>
                         </tr>
-                    </tbody> -->
+                    </tbody>
                 </table>
             </div>
         </div>

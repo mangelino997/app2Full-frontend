@@ -19,10 +19,16 @@ export class RepartoPropioService {
   private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
+  //Define la subcripcion
+  private subcripcionComp: Subscription;
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
-  //Define la lista completa
+  //Define el mensaje de respuesta a la subcripcion
+  private mensajeComp: Observable<Message>;
+  //Define la lista completa para la primera tabla
   public listaCompleta:Subject<any> = new Subject<any>();
+  //Define la lista completa para la segunda tabla (comprobantes)
+  public listaCompletaComp:Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -34,13 +40,20 @@ export class RepartoPropioService {
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
     this.options = new RequestOptions({headers: headers});
-    //Subcribe al usuario a la lista completa
+    //Subcribe al usuario a la lista completa de Planillas
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
+    //Subcribe al usuario a la lista completa de Planillas
+    this.mensajeComp = this.stompService.subscribe(this.topic + this.ruta + '/listarComprobantes');
+    this.subcripcionComp = this.mensajeComp.subscribe(this.subscribirseComp);
   }
   //Resfresca la lista completa si hay cambios
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));
+  }
+  //Resfresca la lista completa si hay cambios
+  public subscribirseComp = (m: Message) => {
+    this.listaCompletaComp.next(JSON.parse(m.body));
   }
   //Obtiene el siguiente id
   public obtenerSiguienteId() {

@@ -35,7 +35,7 @@ export class RepartoPropioComprobanteService {
     headers.append('Authorization', localStorage.getItem('token'));
     this.options = new RequestOptions({headers: headers});
     //Subcribe al usuario a la lista completa
-    this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
+    this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/listarComprobantes');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
   }
   //Resfresca la lista completa si hay cambios

@@ -7,7 +7,7 @@
                         <label for="idAcompaniante">Acompañante</label>
                         <input id="idAcompaniante" type="text" class="form-control form-control-sm"  
                         matInput [formControl]="formulario.get('acompaniante')" [matAutocomplete]="auto" autocomplete="off">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" >
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)" >
                             <mat-option *ngFor="let itemAcompaniante of resultados" [value]="itemAcompaniante" >
                                 {{itemAcompaniante.nombre}}
                             </mat-option>

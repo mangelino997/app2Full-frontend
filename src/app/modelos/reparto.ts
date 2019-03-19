@@ -3,8 +3,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class Reparto {
     //define un formulario FormGroup
     public formulario: FormGroup;
-    public formularioPrimero: FormGroup;
-    public formularioSegundo: FormGroup;
+    public formularioComprobante: FormGroup;
     //constructor
     constructor() {
         // crear el formulario para la seccion de modulos
@@ -27,15 +26,18 @@ export class Reparto {
             horaSalida: new FormControl('', Validators.required),
             observaciones: new FormControl(),
             tipoItem: new FormControl(),
-            tipoComprobante: new FormControl(),
             tipoDocumento: new FormControl(),
             vehiculoProveedor: new FormControl(),
             choferProveedor: new FormControl(),
+            numeroDocumento: new FormControl(),
+            tipoComprobante: new FormControl('', Validators.required)
+
+        });
+        this.formularioComprobante = new FormGroup({
+            tipoComprobante: new FormControl('', Validators.required),
             puntoVenta: new FormControl(),
             letra: new FormControl(),
-            numeroComprobante: new FormControl(),
-            numeroDocumento: new FormControl()
-        });
-        
+            numeroComprobante: new FormControl('', Validators.required)
+        })
     }
 }

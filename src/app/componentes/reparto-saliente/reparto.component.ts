@@ -18,6 +18,7 @@ import { RepartoPropioComprobanteService } from 'src/app/servicios/reparto-propi
 import { RepartoTerceroComprobanteService } from 'src/app/servicios/reparto-tercero-comprobante.service';
 import { RetiroDepositoComprobanteService } from 'src/app/servicios/retiro-deposito-comprobante.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
+import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 
 @Component({
   selector: 'app-reparto',
@@ -25,8 +26,12 @@ import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.servi
   styleUrls: ['./reparto.component.css']
 })
 export class RepartoComponent implements OnInit {
-  //Define el formulario
+  //Define el formulario General
   public formulario:FormGroup;
+  //Define el formulario Comrpobante
+  public formularioComprobante:FormGroup;
+  //Define el Id de la Planilla seleccionada en la primer Tabla
+  public idPlanillaSeleciconada: number;
   //Define como un formControl
   public tipoViaje:FormControl = new FormControl();
   //Define como un formControl
@@ -63,13 +68,36 @@ export class RepartoComponent implements OnInit {
     private personalServie: PersonalService, private choferProveedorService: ChoferProveedorService, public dialog: MatDialog, 
     private repartoPropioService: RepartoPropioService, private repartoTerceroService: RepartoTerceroService, private retiroDepositoService: RetiroDepositoService,
     private fechaService: FechaService, private repartoPropioComp: RepartoPropioComprobanteService, private repartoTerceroComp: RepartoTerceroComprobanteService,
-    private retiroDepositoComp: RetiroDepositoComprobanteService, private tipoComp: TipoComprobanteService
+    private retiroDepositoComp: RetiroDepositoComprobanteService, private tipoComp: TipoComprobanteService, private ventaComprobante: VentaComprobanteService
     
-    ) { }
+    ) {
+      //Se subscribe al servicio de lista de registros de la Primera Tabla
+      this.repartoPropioService.listaCompleta.subscribe(res => {
+        this.planillasPendientesPropio = res;
+      });
+      this.repartoTerceroService.listaCompleta.subscribe(res => {
+        this.planillasPendientesTercero = res;
+      });
+      this.retiroDepositoService.listaCompleta.subscribe(res => {
+        this.planillasPendientesDeposito = res;
+      });
+      //Se subscribe al servicio de lista de registros de la Segunda Tabla
+      this.repartoPropioComp.listaCompleta.subscribe(res => {
+        this.comprobantesPropio = res;
+      });
+      this.repartoTerceroComp.listaCompleta.subscribe(res => {
+        this.comprobantesTercero = res;
+      });
+      this.retiroDepositoComp.listaCompleta.subscribe(res => {
+        this.comprobantesDeposito = res;
+      });
+     }
 
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.reparto.formulario;
+    this.formularioComprobante = this.reparto.formularioComprobante;
+
     //Reestablece los valores
     this.reestablecerFormulario(undefined);
     //Establece los valores por defecto
@@ -248,7 +276,7 @@ export class RepartoComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    // this.formulario.get('tipoComprobante').setValue( {id:12});
+    this.formulario.get('tipoComprobante').setValue( {id:12});
 
   }
   //Formatea la Hora
@@ -271,7 +299,6 @@ export class RepartoComponent implements OnInit {
           res=>{
             let respuesta = res.json();
             this.toastr.success(respuesta.mensaje);
-            this.listarPrimerTabla();
             this.reestablecerFormulario(undefined);
           },
           err=>{
@@ -384,6 +411,7 @@ export class RepartoComponent implements OnInit {
         for(let i=0; i< this.planillasPendientesPropio.length;i++){
           if(id==i){
             console.log(this.planillasPendientesPropio[i].id);
+            this.idPlanillaSeleciconada = this.planillasPendientesPropio[i].id;
             this.repartoPropioComp.listarComprobantes(this.planillasPendientesPropio[i].id).subscribe(
               res=>{
                 console.log(res.json());
@@ -462,8 +490,116 @@ export class RepartoComponent implements OnInit {
   }
   //Controla el cambio en el tipo de comprobante, si el tipoComprobantes=13 deshabilita el campo siguiente (Punto de Venta)
   public cambioTipoComp(){
-    if(this.formulario.get('tipoComprobante').value.id==13)
-      this.formulario.get('puntoVenta').disable();
+    if(this.formularioComprobante.get('tipoComprobante').value.id==13){
+      this.formularioComprobante.get('puntoVenta').disable();
+      this.formularioComprobante.get('letra').disable();
+
+    }
+  }
+  //Agrega un comprobante
+  public agregarComrpobante(){
+    if(this.planillasPendientesPropio.length>0){
+      let comprobante;
+      switch(this.formularioComprobante.get('tipoComprobante').value.id){
+        case 1: //Factura- ventaComprobante
+        comprobante = {
+          "repartoPropio":{
+            "id": this.idPlanillaSeleciconada
+          },
+          "ventaComprobante":{
+            "puntoVenta": this.formularioComprobante.get('puntoVenta').value,
+            "letra": this.formularioComprobante.get('letra').value,
+            "numero": this.formularioComprobante.get('numeroComprobante').value
+          }
+        }
+        console.log(comprobante);
+        break
+
+        case 13: //orden Recolecicon
+        comprobante = {
+          "repartoPropio":{
+            "id": this.idPlanillaSeleciconada
+          },
+          "ordenRecoleccion":{
+            "id": this.formularioComprobante.get('numeroComprobante').value
+          }
+        }
+        break;
+
+        case 5: //viaje Remito
+        comprobante = {
+          "repartoPropio":{
+            "id": this.idPlanillaSeleciconada
+          },
+          "viajeRemito":{
+            "puntoVenta": this.formularioComprobante.get('puntoVenta').value,
+            "letra": this.formularioComprobante.get('letra').value,
+            "numero": this.formularioComprobante.get('numeroComprobante').value
+          }
+        }
+        break;
+      }      
+      this.repartoPropioComp.agregar(comprobante).subscribe(
+        res=>{
+          let respuesta = res.json();
+          this.toastr.success(respuesta.mensaje);
+        },
+        err=>{
+          let error= err.json();
+          this.toastr.error(error.mensaje);
+        }
+      );
+    }
+    // if(this.planillasPendientesTercero.length>0){
+
+    // }
+    // if(this.planillasPendientesDeposito.length>0){
+
+    // }
+  }
+  //Quita un comprobante de la segunda tabla
+  public quitarComprobante(tipoViaje, idComprobante){
+    switch(tipoViaje){
+      case 'propio':
+        this.repartoPropioComp.quitarComprobantes(idComprobante).subscribe(
+          res=>{
+            let respuesta= res.json();
+            this.toastr.success(respuesta.mensaje);
+          },
+          err=>{
+            let error= err.json();
+            this.toastr.error(error.mensaje);
+          }
+        );
+        break;
+
+      case 'tercero':
+        this.repartoTerceroComp.quitarComprobantes(idComprobante).subscribe(
+          res=>{
+            let respuesta= res.json();
+            this.toastr.success(respuesta.mensaje);
+          },
+          err=>{
+            let error= err.json();
+            this.toastr.error(error.mensaje);
+          }
+        );
+        break;
+
+      case 'retiro':
+        this.retiroDepositoComp.quitarComprobantes(idComprobante).subscribe(
+          res=>{
+            let respuesta= res.json();
+            this.toastr.success(respuesta.mensaje);
+          },
+          err=>{
+            let error= err.json();
+            this.toastr.error(error.mensaje);
+          }
+        );
+        break;
+
+    }
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
@@ -524,6 +660,7 @@ export class RepartoComponent implements OnInit {
     this.comprobantesPropio = [];
     this.comprobantesTercero = [];
     this.comprobantesDeposito = [];
+    this.idPlanillaSeleciconada = null;
     setTimeout(function() {
       document.getElementById('idTipoViaje').focus();
     }, 20);
@@ -599,9 +736,9 @@ export class AcompanianteDialogo{
     }
   }
   //Define como se muestra los datos en el autcompletado a
-  public displayFn(elemento) {
+  public displayF(elemento) {
     if(elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
+      return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
     }

@@ -23,6 +23,8 @@ export class RepartoTerceroService {
   private mensaje: Observable<Message>;
   //Define la lista completa
   public listaCompleta:Subject<any> = new Subject<any>();
+  //Define la lista completa para la segunda tabla (comprobantes)
+  public listaCompletaComp:Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -37,10 +39,17 @@ export class RepartoTerceroService {
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
+    //Subcribe al usuario a la lista completa de Planillas
+    this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/listarComprobantes');
+    this.subcripcion = this.mensaje.subscribe(this.subscribirseComp);
   }
   //Resfresca la lista completa si hay cambios
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));
+  }
+  //Resfresca la lista completa si hay cambios
+  public subscribirseComp = (m: Message) => {
+    this.listaCompletaComp.next(JSON.parse(m.body));
   }
   //Obtiene el siguiente id
   public obtenerSiguienteId() {
