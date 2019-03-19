@@ -274,6 +274,7 @@ import { RetiroDepositoService } from './servicios/retiro-deposito.service';
 import { RepartoPropioComprobanteService } from './servicios/reparto-propio-comprobante.service';
 import { RepartoTerceroComprobanteService } from './servicios/reparto-tercero-comprobante.service';
 import { RetiroDepositoComprobanteService } from './servicios/retiro-deposito-comprobante.service';
+import { RepartoEntrante } from './modelos/repartoEntrante';
 
 //Rutas
 const appRoutes: Routes = [
@@ -656,6 +657,7 @@ const stompConfig: StompConfig = {
     ViajePropioGasto,
     ViajePropioPeaje,
     Reparto,
+    RepartoEntrante,
     UsuarioEmpresa,
     OpcionService,
     MonedaService,

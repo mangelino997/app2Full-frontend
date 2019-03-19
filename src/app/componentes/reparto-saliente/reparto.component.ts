@@ -601,6 +601,52 @@ export class RepartoComponent implements OnInit {
 
     }
   }
+  //Quitar - Cerrar Reparto
+  public cerrarReparto(idReparto){
+    switch(this.tipoViaje.value){
+      case 1:
+        this.repartoPropioService.cerrarReparto(idReparto).subscribe(
+        res=>{
+            let respuesta= res.json();
+            this.toastr.success(respuesta.mensaje);
+            this.comprobantesPropio = [];
+            },
+            err=>{
+              let error= err.json();
+              this.toastr.error(error.mensaje);
+            }
+          );
+        break;
+      
+      case 2:
+        this.repartoTerceroService.cerrarReparto(idReparto).subscribe(
+          res=>{
+            let respuesta= res.json();
+            this.toastr.success(respuesta.mensaje);
+            this.comprobantesTercero = [];          
+          },
+          err=>{
+            let error= err.json();
+            this.toastr.error(error.mensaje);
+          }
+        );
+        break;
+      
+      case 3:
+        this.retiroDepositoService.cerrarReparto(idReparto).subscribe(
+          res=>{
+            let respuesta= res.json();
+            this.toastr.success(respuesta.mensaje); 
+            this.comprobantesDeposito = [];       
+          },
+          err=>{
+            let error= err.json();
+            this.toastr.error(error.mensaje);
+          }
+        );
+        break;
+    }
+  } 
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
     return (string + elemento).slice(cantidad);

@@ -108,11 +108,11 @@
                             <td align="center">{{itemPlanilla.fechaSalida}}</td>
                             <td align="center">{{itemPlanilla.horaSalida}}</td>
                             <td align="center" class="cursor-color" (click)="cerrarPlanilla(itemPlanilla.id)">Cerrar</td>
-                            <td align="center" class="cursor-color" (click)="quitarPlanilla(i)">Quitar</td>
+                            <td align="center" class="cursor-color" (click)="cerrarReparto(itemPlanilla.id)">Quitar</td>
                         </tr>
                     </tbody>
                     <tbody *ngIf="planillasPendientesTercero.length>0">
-                        <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesTercero; let i=index" (click)="cambioPlanilla(i)">
+                        <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesTercero; let i=index" id="fila{{i}}" (click)="cambioPlanilla(i)">
                             <td align="center">{{itemPlanilla.id}}</td>
                             <td align="center">{{itemPlanilla.zona.nombre}}</td>
                             <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza: {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
@@ -120,11 +120,11 @@
                             <td align="center">{{itemPlanilla.fechaSalida}}</td>
                             <td align="center">{{itemPlanilla.horaSalida}}</td>
                             <td align="center" class="cursor-color" (click)="cerrarPlanilla(itemPlanilla.id)">Cerrar</td>
-                            <td align="center" class="cursor-color" (click)="quitarPlanilla(i)">Quitar</td>
+                            <td align="center" class="cursor-color" (click)="cerrarReparto(itemPlanilla.id)">Quitar</td>
                         </tr>
                     </tbody>
                     <tbody *ngIf="planillasPendientesDeposito.length>0">
-                        <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesDeposito; let i=index" (click)="cambioPlanilla(i)">
+                        <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesDeposito; let i=index" id="fila{{i}}" (click)="cambioPlanilla(i)">
                             <td align="center">{{itemPlanilla.id}}</td>
                             <td align="center">{{itemPlanilla.zona.nombre}}</td>
                             <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza: {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
@@ -132,7 +132,7 @@
                             <td align="center">{{itemPlanilla.fechaSalida}}</td>
                             <td align="center">{{itemPlanilla.horaSalida}}</td>
                             <td align="center" class="cursor-color" (click)="cerrarPlanilla(itemPlanilla.id)">Cerrar</td>
-                            <td align="center" class="cursor-color" (click)="quitarPlanilla(i)">Quitar</td>
+                            <td align="center" class="cursor-color" (click)="cerrarReparto(itemPlanilla.id)">Quitar</td>
                         </tr>
                     </tbody>
                 </table>
