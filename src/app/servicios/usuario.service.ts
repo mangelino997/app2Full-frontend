@@ -67,8 +67,8 @@ export class UsuarioService {
     return this.http.get(this.url + '/listarPorRol/' + idRol, this.options);
   }
   //Obtiene una lista de usuarios por Empresa
-  public listarUsuariosPorEmpresa(empresa) {
-    return this.http.get(this.url + '/listarUsuariosPorEmpresa/' + empresa, this.options);
+  public listarPorEmpresa(idEmpresa) {
+    return this.http.get(this.url + '/listarPorEmpresa/' + idEmpresa, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

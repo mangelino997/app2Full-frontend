@@ -20,10 +20,11 @@ export class Empresa {
             logoBin: new FormControl(),
             estaActiva: new FormControl('', Validators.required),
             inicioActividad: new FormControl(),
-            // feCaea: new FormControl(),
-            // feModo: new FormControl(),
-            // certificadoReal: new FormControl(),
-            // certificadoPrueba: new FormControl()
+            fe: new FormControl(),
+            feCAEA: new FormControl(),
+            feModo: new FormControl(),
+            certificadoReal: new FormControl(),
+            certificadoPrueba: new FormControl()
         })
     }
 }

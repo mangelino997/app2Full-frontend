@@ -9,9 +9,8 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Empresa } from 'src/app/modelos/empresa';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
-
 
 @Component({
   selector: 'app-empresa',
@@ -20,58 +19,58 @@ import { UsuarioService } from 'src/app/servicios/usuario.service';
 })
 export class EmpresaComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
-  public mostrarUsuarios:boolean = null;
+  public mostrarBoton: boolean = null;
+  public mostrarUsuarios: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta: Array<any> = [];
   //Define la lista de condiciones de iva
-  public condicionesIva:Array<any> = [];
+  public condicionesIva: Array<any> = [];
   //Define el form control para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de barrio
-  public resultadosBarrios:Array<any> = [];
+  public resultadosBarrios: Array<any> = [];
   //Define la lista de resultados de busqueda de barrio
-  public resultadosLocalidades:Array<any> = [];
+  public resultadosLocalidades: Array<any> = [];
   //Constructor
   constructor(private servicio: EmpresaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private barrioServicio: BarrioService, private localidadServicio: LocalidadService, 
-    private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa, public dialog: MatDialog,) {
+    private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
+    private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa, public dialog: MatDialog, ) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.servicio.listarPorRazonSocial(data).subscribe(response =>{
+      if (typeof data == 'string') {
+        this.servicio.listarPorRazonSocial(data).subscribe(response => {
           this.resultados = response;
           console.log(this.resultados);
         })
@@ -86,7 +85,7 @@ export class EmpresaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.barrioServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBarrios = response;
         })
@@ -94,7 +93,7 @@ export class EmpresaComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -109,7 +108,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    
+
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -143,7 +142,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('afipCondicionIva').enable();
       this.formulario.get('estaActiva').enable();
     } else {
@@ -156,7 +155,7 @@ export class EmpresaComponent implements OnInit {
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -225,9 +224,9 @@ export class EmpresaComponent implements OnInit {
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idRazonSocial').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -243,9 +242,9 @@ export class EmpresaComponent implements OnInit {
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -270,11 +269,11 @@ export class EmpresaComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    if(respuesta.codigo == 11006) {
+    if (respuesta.codigo == 11006) {
       document.getElementById("labelRazonSocial").classList.add('label-error');
       document.getElementById("idRazonSocial").classList.add('is-invalid');
       document.getElementById("idRazonSocial").focus();
-    } else if(respuesta.codigo == 11007) {
+    } else if (respuesta.codigo == 11007) {
       document.getElementById("labelCUIT").classList.add('label-error');
       document.getElementById("idCUIT").classList.add('is-invalid');
       document.getElementById("idCUIT").focus();
@@ -301,13 +300,13 @@ export class EmpresaComponent implements OnInit {
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.razonSocial ? elemento.razonSocial : elemento;
     } else {
       return elemento;
@@ -315,7 +314,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -323,7 +322,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
         + ', ' + elemento.provincia.pais.nombre : elemento;
     } else {
@@ -333,20 +332,21 @@ export class EmpresaComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
   }
   //Abre un Modal con la lista de Usuarios de la Empresa seleccionada
-  public verActivos(datos){
-    console.log(datos);
+  public verActivos(empresa) {
     const dialogRef = this.dialog.open(ListaUsuariosDialogo, {
-      width: '1000px',
-      data: {empresa: datos},
+      width: '1400px',
+      data: {
+        empresa: empresa
+      },
     });
     dialogRef.afterClosed().subscribe(result => {
       // var listaSocioDedudas= result;
@@ -357,28 +357,27 @@ export class EmpresaComponent implements OnInit {
   selector: 'lista-usuarios-dialogo',
   templateUrl: 'lista-usuarios-dialogo.html',
 })
-export class ListaUsuariosDialogo{
+export class ListaUsuariosDialogo {
   //Define la empresa 
-  public empresa: string;
+  public empresa = null;
   //Define la lista de usuarios activos de la empresa
-  public listaUsuarios:Array<any> = [];
-
-  constructor(public dialogRef: MatDialogRef<ListaUsuariosDialogo>, @Inject(MAT_DIALOG_DATA) public data, private usuarioServicio: UsuarioService, private toastr: ToastrService) {}
-   ngOnInit() {
-     this.empresa=this.data.empresa;
-     console.log(this.empresa['id']);
-    this.usuarioServicio.listarUsuariosPorEmpresa(this.empresa['id']).subscribe(
-      res=>{
-        this.listaUsuarios=res.json();
+  public listaUsuarios: Array<any> = [];
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<ListaUsuariosDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private usuarioServicio: UsuarioService, private toastr: ToastrService) { }
+  //Al inicializarse el componente
+  ngOnInit() {
+    this.empresa = this.data.empresa;
+    this.usuarioServicio.listarPorEmpresa(this.empresa.id).subscribe(
+      res => {
+        this.listaUsuarios = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error(err.json().mensaje);
       }
     );
-   }
+  }
   onNoClick(): void {
     this.dialogRef.close();
   }
-  
 }
-

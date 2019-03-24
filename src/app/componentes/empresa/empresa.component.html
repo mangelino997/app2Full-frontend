@@ -128,7 +128,8 @@
             </div>
           </div>
           <div class="col-md-2">
-            <button id="idBotonUsrActivos" *ngIf="mostrarUsuarios" mat-raised-button color="primary" (click)="verActivos(appComponent.empresa)" >
+            <button id="idBotonUsrActivos" *ngIf="mostrarUsuarios" mat-raised-button color="primary" 
+              (click)="verActivos(autocompletado.value)">
               Usuarios Activos
             </button>
           </div>

@@ -46,7 +46,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="labelUsername" for="idUsername" class="tamanio-label">Usuario *</label>
+              <label id="labelUsername" for="idUsername" class="tamanio-label">Nombre de Usuario *</label>
               <input id="idUsername" type="text" formControlName="username" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -60,7 +60,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idPasswordRepeat" class="tamanio-label">Repetir Contraseña</label>
+              <label for="idPasswordRepeat" class="tamanio-label">Repetir Contraseña *</label>
               <input id="idPasswordRepeat" type="password" [formControl]="passwordRepeat" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -99,7 +99,7 @@
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

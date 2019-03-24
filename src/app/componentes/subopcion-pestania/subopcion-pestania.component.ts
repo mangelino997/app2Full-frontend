@@ -10,9 +10,9 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class SubopcionPestaniaComponent implements OnInit {
   //Constructor
-  constructor(public dialog: MatDialog) { }
-  ngOnInit() {
-  }
+  constructor(public dialog: MatDialog) {}
+  //Al inicializarse el componente
+  ngOnInit() {}
   //Abre el dialogo
   openDialog(): void {
     const dialogRef = this.dialog.open(SubopcionPestaniaDialog, {
@@ -20,7 +20,7 @@ export class SubopcionPestaniaComponent implements OnInit {
     });
   }
 }
-
+//Componente SubopcionPestaniaDialogo
 @Component({
   selector: 'subopcion-pestania-dialog',
   templateUrl: 'subopcion-pestania-dialog.html',

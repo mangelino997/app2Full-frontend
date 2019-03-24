@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -10,9 +10,9 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class UsuarioEmpresaComponent implements OnInit {
   //Constructor
-  constructor(public dialog: MatDialog) { }
-  ngOnInit() {
-  }
+  constructor(public dialog: MatDialog) {}
+  //Al inicializarse el componente
+  ngOnInit() {}
   //Abre el dialogo
   openDialog(): void {
     const dialogRef = this.dialog.open(UsuarioEmpresaDialog, {
@@ -20,7 +20,7 @@ export class UsuarioEmpresaComponent implements OnInit {
     });
   }
 }
-
+//UsuarioEmpresa Dialogo
 @Component({
   selector: 'usuario-empresa-dialog',
   templateUrl: 'usuario-empresa-dialog.html',

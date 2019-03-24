@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
-import { FormGroup, FormBuilder, Validators, FormArray, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { UsuarioEmpresa } from 'src/app/modelos/usuarioEmpresa';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { ToastrService } from 'ngx-toastr';
@@ -43,7 +43,11 @@ export class UsuarioEmpresasComponent implements OnInit {
           this.resultadosUsuarios = res;
         })
       }
-    })
+    });
+    //Establece el foco en usuario
+    setTimeout(function() {
+      document.getElementById('idUsuario').focus();
+    }, 20);
   }
   //Crea el elemento B (form) para la segunda tabla
   private crearEmpresa(elemento): FormGroup {
@@ -61,6 +65,14 @@ export class UsuarioEmpresasComponent implements OnInit {
     this.indiceSeleccionado = indice;
     //Establece la pestania activa
     this.pestaniaActiva = pestania;
+    //Establece el foco
+    switch(indice) {
+      case 0:
+        document.getElementById('idUsuario').focus();
+        break;
+      default:
+        break;
+    }
   }
   //Obtiene las empresas del usuario
   public obtenerEmpresas(): void {

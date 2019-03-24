@@ -113,6 +113,20 @@ import { AfipConceptoService } from './servicios/afip-concepto.service';
 import { OrdenVentaTramoService } from './servicios/orden-venta-tramo.service';
 import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
 import { OrdenRecoleccionService } from './servicios/orden-recoleccion.service';
+import { RepartoPropioService } from './servicios/reparto-propio.service';
+import { RepartoTerceroService } from './servicios/reparto-tercero.service';
+import { RetiroDepositoService } from './servicios/retiro-deposito.service';
+import { RepartoPropioComprobanteService } from './servicios/reparto-propio-comprobante.service';
+import { RepartoTerceroComprobanteService } from './servicios/reparto-tercero-comprobante.service';
+import { RetiroDepositoComprobanteService } from './servicios/retiro-deposito-comprobante.service';
+import { AfipAlicuotaIvaService } from './servicios/afip-alicuota-iva.service';
+import { VentaComprobanteService } from './servicios/venta-comprobante.service';
+import { VentaComprobanteItemNCService } from './servicios/venta-comprobante-item-nc.service';
+import { VentaComprobanteItemNDService } from './servicios/venta-comprobante-item-nd.service';
+import { VentaConfigService } from './servicios/venta-config.service';
+import { ViajePropioTramoService } from './servicios/viaje-propio-tramo.service';
+import { ViajeTerceroTramoService } from './servicios/viaje-tercero-tramo.service';
+import { VentaItemConceptoService } from './servicios/venta-item-concepto.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -152,6 +166,10 @@ import { VentaTipoItem } from './modelos/venta-tipo-item';
 import { ViajeUnidadNegocio } from './modelos/viajeUnidadNegocio';
 import { ActualizacionPrecios } from './modelos/actualizacionPrecios'
 import { OrdenRecoleccion } from './modelos/ordenRecoleccion';
+import { RepartoEntrante } from './modelos/repartoEntrante';
+import { Aforo } from './modelos/aforo';
+import { ClienteEventual } from './modelos/clienteEventual';
+import { EmitirFactura } from './modelos/emitirFactura';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -254,27 +272,9 @@ import { EjercicioComponent } from './componentes/ejercicio/ejercicio.component'
 import { VentaTipoComponent } from './componentes/venta-tipo/venta-tipo.component';
 import { OrdenRecoleccionComponent } from './componentes/orden-recoleccion/orden-recoleccion.component';
 import { ClienteEventualComponent } from './componentes/cliente-eventual/cliente-eventual.component';
-import { ClienteEventual } from './modelos/clienteEventual';
-import { EmitirFactura } from './modelos/emitirFactura';
-import { ViajePropioTramoService } from './servicios/viaje-propio-tramo.service';
-import { ViajeTerceroTramoService } from './servicios/viaje-tercero-tramo.service';
-import { VentaItemConceptoService } from './servicios/venta-item-concepto.service';
 import { AforoComponent } from './componentes/aforo/aforo.component';
-import { VentaConfigService } from './servicios/venta-config.service';
-import { Aforo } from './modelos/aforo';
-import { AfipAlicuotaIvaService } from './servicios/afip-alicuota-iva.service';
-import { VentaComprobanteService } from './servicios/venta-comprobante.service';
-import { VentaComprobanteItemNCService } from './servicios/venta-comprobante-item-nc.service';
-import { VentaComprobanteItemNDService } from './servicios/venta-comprobante-item-nd.service';
 import { ChequesRechazadosComponent } from './componentes/cheques-rechazados/cheques-rechazados.component';
 import { RepartoComponent, AcompanianteDialogo } from './componentes/reparto-saliente/reparto.component';
-import { RepartoPropioService } from './servicios/reparto-propio.service';
-import { RepartoTerceroService } from './servicios/reparto-tercero.service';
-import { RetiroDepositoService } from './servicios/retiro-deposito.service';
-import { RepartoPropioComprobanteService } from './servicios/reparto-propio-comprobante.service';
-import { RepartoTerceroComprobanteService } from './servicios/reparto-tercero-comprobante.service';
-import { RetiroDepositoComprobanteService } from './servicios/retiro-deposito-comprobante.service';
-import { RepartoEntrante } from './modelos/repartoEntrante';
 
 //Rutas
 const appRoutes: Routes = [
@@ -371,7 +371,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.156:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
