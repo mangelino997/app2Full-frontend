@@ -6,7 +6,7 @@ import { LocalidadService } from '../../servicios/localidad.service';
 import { AfipCondicionIvaService } from '../../servicios/afip-condicion-iva.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Empresa } from 'src/app/modelos/empresa';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
@@ -72,7 +72,6 @@ export class EmpresaComponent implements OnInit {
       if (typeof data == 'string') {
         this.servicio.listarPorRazonSocial(data).subscribe(response => {
           this.resultados = response;
-          console.log(this.resultados);
         })
       }
     })
@@ -105,6 +104,10 @@ export class EmpresaComponent implements OnInit {
     this.listarCondicionesIva();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
+  }
+  //Establece el formulario al seleccionar item de autocompletado
+  public establecerFormulario(): void {
+    this.formulario.setValue(this.autocompletado.value);
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
