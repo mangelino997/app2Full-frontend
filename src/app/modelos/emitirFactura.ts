@@ -33,7 +33,7 @@ export class EmitirFactura {
             cliente: new FormControl(),
             clienteRemitente: new FormControl(),
             rem: new FormGroup({
-                cliente: new FormControl(),
+                // cliente: new FormControl(),
                 domicilio: new FormControl(),
                 localidad: new FormControl(),
                 afipCondicionIva: new FormControl(),
@@ -42,7 +42,7 @@ export class EmitirFactura {
             }),
             clienteDestinatario: new FormControl(),
             des: new FormGroup({
-                cliente: new FormControl(),
+                // cliente: new FormControl(),
                 domicilio: new FormControl(),
                 localidad: new FormControl(),
                 afipCondicionIva: new FormControl(),

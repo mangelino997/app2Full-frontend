@@ -2,39 +2,67 @@
   <div class="col-md-12 text-center">
     <h5>Emitir Factura</h5>
     <form [formGroup]="formulario" class="contenedor">
-      <div class="tamanio-pantalla inline">
-        <div class="form-group has-float-label">
-          <label for="idFecha" class="tamanio-label">Fecha</label>
-          <input id="idFecha" type="date" formControlName="fechaEmision" class="form-control form-control-sm" min="{{fechaActual}}" style="width: 150px;">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idFecha" class="tamanio-label">Fecha</label>
+                <input id="idFecha" type="date" formControlName="fechaEmision" class="form-control form-control-sm" min="{{fechaActual}}">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label for="idPuntoVenta" class="tamanio-label">Punto de venta</label>
+                <mat-select id="idPuntoVenta" class="form-control form-control-sm" formControlName="puntoVenta" [compareWith]="compareFn" 
+                (selectionChange)="comprobarCodAfip()">
+                  <mat-option *ngFor="let itemPuntoVenta of resultadosPuntoVenta" [value]="itemPuntoVenta">
+                  {{establecerCerosIzq(itemPuntoVenta.puntoVenta, "0000", -5)}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group has-float-label inline">
+                <label for="idItem" class="tamanio-label">Item *</label>
+                <mat-select id="idItem" class="form-control form-control-sm" [formControl]="item"  [compareWith]="compareFn" 
+                 (selectionChange)="cambioItem()">
+                  <mat-option *ngFor="let item of resultadosItems" [value]="item">
+                  {{item.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="form-group has-float-label">
-          <label for="idPuntoVenta" class="tamanio-label">Punto de venta</label>
-          <mat-select id="idPuntoVenta" class="form-control form-control-sm" style="width: 130px;" formControlName="puntoVenta" [compareWith]="compareFn" 
-          (selectionChange)="comprobarCodAfip()">
-            <mat-option *ngFor="let itemPuntoVenta of resultadosPuntoVenta" [value]="itemPuntoVenta">
-             {{establecerCerosIzq(itemPuntoVenta.puntoVenta, "0000", -5)}}
-            </mat-option>
-          </mat-select>
+        <div class="col-md-4"></div>
+        <div class="col-md-1">
+          <div class="form-group has-float-label">
+            <label for="idLetra" class="tamanio-label">Letra</label>
+            <input id="idLetra" type="text" formControlName="letra" class="form-control form-control-sm" readonly >
+          </div>
         </div>
-        <div class="form-group has-float-label">
-          <label for="idLetra" class="tamanio-label">Letra</label>
-          <input id="idLetra" type="text" formControlName="letra" class="form-control form-control-sm" readonly style="width: 60px;">
+        <div class="col-md-1">
+          <div class="form-group has-float-label">
+            <label for="idNumero" class="tamanio-label">Número</label>
+            <input id="idNumero" type="number" formControlName="numero" class="form-control form-control-sm" readonly >
+          </div>
         </div>
-        <div class="form-group has-float-label">
-          <label for="idNumero" class="tamanio-label">Número</label>
-          <input id="idNumero" type="number" formControlName="numero" class="form-control form-control-sm" readonly style="width: 80px;">
+        <div class="col-md-1">
+          <div class="form-group has-float-label">
+            <label for="idCodigoAfip" class="tamanio-label">Código Afip</label>
+            <input id="idCodigoAfip" type="text" formControlName="codigoAfip" class="form-control form-control-sm" readonly >
+          </div>
         </div>
-        <div class="form-group has-float-label">
-          <label for="idCodigoAfip" class="tamanio-label">Código Afip</label>
-          <input id="idCodigoAfip" type="text" formControlName="codigoAfip" class="form-control form-control-sm" readonly style="width: 105px;">
+        <div class="col-md-2">
+          <div class="form-group has-float-label">
+            <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante</label>
+            <input id="idTipoComprobante" type="text" [formControl]="tipoComprobante" class="form-control form-control-sm" readonly >
+          </div>
         </div>
-        <div class="form-group has-float-label">
-          <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante</label>
-          <input id="idTipoComprobante" type="text" [formControl]="tipoComprobante" class="form-control form-control-sm" readonly style="width: 175px;">
-        </div>
-        <div class="form-group has-float-label col-md-3"></div>
-        
-      </div>
+      </div >
       <hr style="margin-top: 10px; margin-bottom: 20px;">
       <div class="tamanio-pantalla inline">
         <div class="border has-float-label" id="Remitente" style="margin-right: 5px;">
@@ -159,7 +187,7 @@
       <hr style="margin-top: 10px; margin-bottom: 20px;">
       <form [formGroup]="formularioItem" >
       <div class="row" >
-        <div class="form-group has-float-label inline">
+        <!-- <div class="form-group has-float-label inline">
           <label for="idItem" class="tamanio-label">Item *</label>
           <mat-select id="idItem" class="form-control form-control-sm" style="width: 130px;" formControlName="ventaTipoItem" [compareWith]="compareFn" 
           style="width: 85px;" (selectionChange)="habilitarCamposItem()">
@@ -167,19 +195,20 @@
              {{item.nombre}}
             </mat-option>
           </mat-select>
-        </div>
+        </div> -->
         <div class="form-group has-float-label">
           <label for="idViaje" class="tamanio-label">N° Viaje*</label>
           <input id="idViaje" type="number" formControlName="numeroViaje" [readOnly]="soloLectura" class="form-control form-control-sm" style="width: 78px;" (blur)="abrirDialogoTramo()"> 
         </div>
         <div class="form-group has-float-label ">
           <label for="idRemito" class="tamanio-label">N° Remito*</label>
-          <mat-select id="idRemito" class="form-control form-control-sm"  formControlName="viajeRemito" style="width: 100px;" 
+          <input id="idRemito" type="number" formControlName="viajeRemito" [readOnly]="soloLectura" class="form-control form-control-sm" style="width: 100px;"> 
+          <!-- <mat-select id="idRemito" class="form-control form-control-sm"  formControlName="viajeRemito" style="width: 100px;" 
           [compareWith]="compareFn"(selectionChange)="cambioRemito()" > 
               <mat-option *ngFor="let itemRemito of resultadosRemitos" [value]="itemRemito">
               {{itemRemito.id}} 
               </mat-option>
-          </mat-select>  
+          </mat-select>   -->
         </div>
         <div class="form-group has-float-label">
           <label for="idBultos" class="tamanio-label">Bultos</label>

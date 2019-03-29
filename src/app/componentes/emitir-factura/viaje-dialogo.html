@@ -1,27 +1,55 @@
 <div class="row">
         <div class="col-md-12">
             <form [formGroup]="formulario">
-                <h5 class="text-center">Lista de Tramos</h5>
-                <h6 class="text-center">Item {{this.data.tipoItem==1? 'Propio' : 'Tercero'}} - Id viaje {{this.data.idViaje}}</h6>
-
+                <h5 class="text-center">Lista de Remitos</h5>
                 <br>
                 <div class="row justify-content-center">
-                    <div class="col-md-6">
+                    <div class="col-md-4">
                         <div class="form-group has-float-label">
-                            <label for="idTramo" class="tamanio-label">Tramos</label>
-                            <mat-select id="idTramo" class="form-control form-control-sm"  formControlName="tramo"
-                            [compareWith]="compareFn" > 
-                                <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">
-                                Origen: {{itemTramo.tramo.origen.nombre}} | destino: {{itemTramo.tramo.destino.nombre}} | Precio: {{itemTramo.precioUnitario}} 
-                                </mat-option>
-                            </mat-select>
+                            <label for="idViaje" class="tamanio-label">N° Viaje*</label>
+                            <input id="idViaje" type="number" formControlName="viaje" [readOnly]="soloLectura" class="form-control form-control-sm"> 
                         </div>
+                    </div>
+                    <div class="col-md-1">
+                        <button class="btn btn-sm btn-custom margin-left-button" (click)="listarTramos()">Consultar</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="width: 100%; height: 150px; overflow-y: scroll; overflow-x: scroll;">
+                        <table class="table table-bordered table-striped table-condensed">
+                            <thead>
+                            <tr>
+                                <th class="text-center">Tramo</th>
+                                <th class="text-center">N° de Remito</th>
+                                <th class="text-center">Bultos</th>
+                                <th class="text-center">Fecha</th>
+                                <th class="text-center">N° de Viaje</th>
+                                <th class="text-center">Remitente</th>
+                                <th class="text-center">Destinatario</th>
+                                <th class="text-center">Suc. Entrega</th>
+                                <th class="text-center">Observaciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let remito of resultadosTramos; let i=index" id="fila{{i}}" class="planilla-no-seleccionada" (click)="cambioRemito(i, remito)">
+                                <td>Origen: {{tramo.origen.nombre}} - Destino: {{tramo.destino.nombre}}</td>
+                                <td>{{remito.id}}</td>
+                                <td>{{remito.bultos}}</td>
+                                <td>{{remito.fecha}}</td>
+                                <td>{{remito.numero}}</td>
+                                <td>{{remito.clienteRemitente.alias}}</td>
+                                <td>{{remito.clienteDestinatario.razonSocial}}</td>
+                                <td>{{remito.sucursalDestino.domicilio}}</td>
+                                <td></td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <button mat-raised-button color="primary" [disabled]="!formulario.valid" [mat-dialog-close]="formulario.get('tramo').value">Aceptar</button>
-                        <button mat-raised-button  color="accent" [mat-dialog-close]="formulario.get('tramo').value">Cerrar</button>
+                        <button mat-raised-button color="primary" [disabled]="!formulario.valid" [mat-dialog-close]="formulario.value">Aceptar</button>
+                        <button mat-raised-button  color="accent" [mat-dialog-close]="formulario.value">Cerrar</button>
                     </div>
                 </div>
             </form>

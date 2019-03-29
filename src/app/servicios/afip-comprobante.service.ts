@@ -47,8 +47,8 @@ export class AfipComprobanteService {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
   //Obtiene letra por id de quien paga
-  public obtenerLetra(id) {
-    return this.http.get(this.url + '/obtenerLetra/' + id, this.options);
+  public obtenerLetra(condicionIva, idTipoComprobante) {
+    return this.http.get(this.url + '/obtenerLetra/' + condicionIva + "/" + idTipoComprobante, this.options);
   }
   //Obtiene CodigoAfip por id de tipoComprobante y letra
   public obtenerCodigoAfip(idTipoComprobante, letra) {

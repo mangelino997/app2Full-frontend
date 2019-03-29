@@ -48,6 +48,8 @@ export class EmitirFacturaComponent implements OnInit {
   public resultados = [];
   //Define el form control para las busquedas cliente
   public buscarCliente:FormControl = new FormControl();
+  //Define el combo de items como un formControl
+  public item: FormControl = new FormControl();
   //Define el form control para los combos de Sucursales Remitente y Destinatario
   public sucursalDestinatario:FormControl = new FormControl();
   public sucursalRemitente:FormControl = new FormControl();
@@ -154,6 +156,116 @@ export class EmitirFacturaComponent implements OnInit {
       }
     );
   }
+  //Maneja el cambio en el combo Items
+  public cambioItem(){
+    console.log(this.item.value.id);
+    switch(this.item.value.id){
+      case 4: //el item con id=4 es Contrareembolso
+        this.manejarContrareembolso();
+      break;
+
+      case 1: 
+      case 2:
+        this.abrirDialogoTramo();
+        this.manejarItems();
+        break;
+
+      case 4: 
+      case 5:
+        this.manejarItems();
+        break;
+    }
+  }
+  //Maneja los cambios cuando el item seleccionado es Contrareembolso
+  private manejarContrareembolso(){
+    this.soloLecturaCR = false;
+      this.soloLectura=true;
+      this.formularioItem.get('viajeRemito').disable();
+      this.formularioItem.get('ordenVenta').disable();
+      this.formularioItem.get('conceptosVarios').disable();
+      this.formularioItem.get('importeVentaItemConcepto').disable();
+      this.formularioItem.get('alicuotaIva').disable();
+      this.formularioCR.get('ordenVenta').enable();
+      this.formularioCR.get('alicuotaIva').enable();
+      this.formularioCR.get('item').setValue(this.formularioItem.get('ventaTipoItem').value);
+      this.formularioItem.get('ventaTipoItem').setValue(null); //reestablece
+      setTimeout(function() {
+        document.getElementById('idContraReembolso').focus();
+      }, 20);
+  }
+  //Maneja los cambios cuando el item seleccionado es diferente de Contrareembolso
+  private manejarItems(){
+    this.soloLecturaCR = true;
+    this.soloLectura=false;
+    this.formularioItem.get('viajeRemito').enable();
+    this.formularioItem.get('ordenVenta').enable();
+    this.formularioItem.get('conceptosVarios').enable();
+    this.formularioItem.get('importeVentaItemConcepto').enable();
+    this.formularioItem.get('alicuotaIva').enable();
+    this.formularioCR.get('ordenVenta').disable();
+    this.formularioCR.get('alicuotaIva').disable();
+    this.listarConceptos();
+    // setTimeout(function() {
+    //   document.getElementById('idViaje').focus();
+    // }, 20);
+  }
+  //Abre el dialogo para seleccionar un Tramo
+  public abrirDialogoTramo(): void {
+    const dialogRef = this.dialog.open(ViajeDialogo, {
+      width: '1200px',
+      data: {
+        tipoItem: this.item.value.id //le pasa 1 si es propio, 2 si es de tercero
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      //setea los valores en cliente remitente
+      console.log(resultado);
+      this.formulario.get('clienteRemitente').setValue(resultado.remito.clienteRemitente);
+      this.listarSucursalesRemitente();
+      this.formulario.get('rem.sucursal').setValue(resultado.remito.clienteRemitente.sucursalLugarPago);
+      //setea los valores en cliente destinatario
+      this.formulario.get('clienteDestinatario').setValue(resultado.remito.clienteDestinatario);
+      this.listarSucursalesDestinatario();
+      this.formulario.get('des.sucursal').setValue(resultado.remito.clienteDestinatario.sucursalLugarPago);      
+      //Setea los valores en el formulario item
+      this.formularioItem.get('viajeRemito').setValue(resultado.remito);
+      this.formularioItem.get('bultos').setValue(resultado.remito.bultos);
+      this.formularioItem.get('kilosEfectivo').setValue(resultado.remito.kilosEfectivo);
+      this.formularioItem.get('kilosAforado').setValue(resultado.remito.kilosAforado);
+      this.formularioItem.get('m3').setValue(resultado.remito.m3);
+      this.formularioItem.get('valorDeclarado').setValue(resultado.remito.valorDeclarado);
+      this.formularioItem.get('importeRetiro').setValue(resultado.remito.importeRetiro);
+      this.formularioItem.get('importeEntrega').setValue(resultado.remito.importeEntrega);
+      this.formularioItem.get('numeroViaje').setValue(resultado.viaje);
+      this.formularioItem.get('viajeRemito').setValue(resultado.remito.id);
+      setTimeout(function() {
+        document.getElementById('idPagoOrigen').focus();
+      }, 20);
+      // this.listarRemitos();
+    });
+    //Primero comprobar que ese numero de viaje exista y depsues abrir la ventana emergente
+    // this.viajePropioTramoService.listarTramos(this.formularioItem.get('numeroViaje').value).subscribe(
+    //   res=>{
+    //     const dialogRef = this.dialog.open(ViajeDialogo, {
+    //       width: '1200px',
+    //       data: {
+    //         tipoItem: this.formularioItem.get('ventaTipoItem').value.id, //le pasa 1 si es propio, 2 si es de tercero
+    //         idViaje: this.formularioItem.get('numeroViaje').value
+    //       }
+    //     });
+    //     dialogRef.afterClosed().subscribe(resultado => {
+    //       this.formularioItem.get('idTramo').setValue(resultado);
+    //       setTimeout(function() {
+    //         document.getElementById('idRemito').focus();
+    //       }, 20);
+    //       this.listarRemitos();
+    //     });
+    //   },
+    // err=>{
+    //   this.toastr.error("No existen Tramos para el N° de viaje ingresado.");
+    // }
+    // );
+  }
   //Obtiene el listado de Sucursales por Remitente
   public listarSucursalesRemitente() {
     this.formulario.get('rem.domicilio').setValue(this.formulario.get('clienteRemitente').value.domicilio);
@@ -163,6 +275,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.sucursalService.listarPorCliente(this.formulario.get('clienteRemitente').value.id).subscribe(
       res => {
         this.resultadosSucursalesRem = res.json();
+        console.log(res.json());
         this.formulario.get('rem.sucursal').setValue(this.resultadosSucursalesRem[0]);
       },
       err => {
@@ -305,10 +418,12 @@ export class EmitirFacturaComponent implements OnInit {
       document.getElementById('Destinatario').className="border has-float-label";
       this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteRemitente').value.afipCondicionIva);
       this.formulario.get('cliente').setValue(this.formulario.get('clienteRemitente').value);
-      this.afipComprobanteService.obtenerLetra(this.formulario.get('clienteRemitente').value.id).subscribe(
+      this.afipComprobanteService.obtenerLetra(this.formulario.get('clienteRemitente').value.afipCondicionIva.id, 1).subscribe(
         res=>{
           this.formulario.get('letra').setValue(res.text());
           this.cargarCodigoAfip(res.text());  
+          this.listarTarifaOVenta();
+
         }
       )
     }
@@ -317,10 +432,12 @@ export class EmitirFacturaComponent implements OnInit {
       document.getElementById('Destinatario').className="border has-float-label pagaSeleccionado";
       this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteDestinatario').value.afipCondicionIva);
       this.formulario.get('cliente').setValue(this.formulario.get('clienteDestinatario').value);
-      this.afipComprobanteService.obtenerLetra(this.formulario.get('clienteDestinatario').value.id).subscribe(
+      this.afipComprobanteService.obtenerLetra(this.formulario.get('clienteDestinatario').value.afipCondicionIva.id, 1).subscribe(
         res=>{
           this.formulario.get('letra').setValue(res.text());
-          this.cargarCodigoAfip(res.text());  
+          this.cargarCodigoAfip(res.text());
+          this.listarTarifaOVenta();
+  
         }
       )
     };
@@ -437,7 +554,6 @@ export class EmitirFacturaComponent implements OnInit {
       this.formularioCR.get('alicuotaIva').enable();
       this.formularioCR.get('item').setValue(this.formularioItem.get('ventaTipoItem').value);
       this.formularioItem.get('ventaTipoItem').setValue(null); //reestablece
-      this.listarTarifaOVenta();
       setTimeout(function() {
         document.getElementById('idContraReembolso').focus();
       }, 20);
@@ -451,7 +567,6 @@ export class EmitirFacturaComponent implements OnInit {
       this.formularioItem.get('alicuotaIva').enable();
       this.formularioCR.get('ordenVenta').disable();
       this.formularioCR.get('alicuotaIva').disable();
-      this.listarTarifaOVenta();
       this.listarConceptos();
       setTimeout(function() {
         document.getElementById('idViaje').focus();
@@ -516,31 +631,31 @@ export class EmitirFacturaComponent implements OnInit {
       }
     )
   }
-  //Abre el dialogo para seleccionar un Tramo
-  public abrirDialogoTramo(): void {
-    //Primero comprobar que ese numero de viaje exista y depsues abrir la ventana emergente
-    this.viajePropioTramoService.listarTramos(this.formularioItem.get('numeroViaje').value).subscribe(
-      res=>{
-        const dialogRef = this.dialog.open(ViajeDialogo, {
-          width: '1200px',
-          data: {
-            tipoItem: this.formularioItem.get('ventaTipoItem').value.id, //le pasa 1 si es propio, 2 si es de tercero
-            idViaje: this.formularioItem.get('numeroViaje').value
-          }
-        });
-        dialogRef.afterClosed().subscribe(resultado => {
-          this.formularioItem.get('idTramo').setValue(resultado);
-          setTimeout(function() {
-            document.getElementById('idRemito').focus();
-          }, 20);
-          this.listarRemitos();
-        });
-      },
-    err=>{
-      this.toastr.error("No existen Tramos para el N° de viaje ingresado.");
-    }
-    );
-  }
+  // //Abre el dialogo para seleccionar un Tramo
+  // public abrirDialogoTramo(): void {
+  //   //Primero comprobar que ese numero de viaje exista y depsues abrir la ventana emergente
+  //   this.viajePropioTramoService.listarTramos(this.formularioItem.get('numeroViaje').value).subscribe(
+  //     res=>{
+  //       const dialogRef = this.dialog.open(ViajeDialogo, {
+  //         width: '1200px',
+  //         data: {
+  //           tipoItem: this.formularioItem.get('ventaTipoItem').value.id, //le pasa 1 si es propio, 2 si es de tercero
+  //           idViaje: this.formularioItem.get('numeroViaje').value
+  //         }
+  //       });
+  //       dialogRef.afterClosed().subscribe(resultado => {
+  //         this.formularioItem.get('idTramo').setValue(resultado);
+  //         setTimeout(function() {
+  //           document.getElementById('idRemito').focus();
+  //         }, 20);
+  //         this.listarRemitos();
+  //       });
+  //     },
+  //   err=>{
+  //     this.toastr.error("No existen Tramos para el N° de viaje ingresado.");
+  //   }
+  //   );
+  // }
   //Obtiene la Lista de Remitos por el id del tramo seleccionado
   public listarRemitos(){
     this.viajeRemitoServicio.listarRemitos(this.formularioItem.get('idTramo').value.id, this.formularioItem.get('ventaTipoItem').value.id).subscribe(
@@ -793,40 +908,88 @@ export class EmitirFacturaComponent implements OnInit {
 @Component({
   selector: 'viaje-dialogo',
   templateUrl: 'viaje-dialogo.html',
+  styleUrls: ['./emitir-factura.component.css']
+
 })
 export class ViajeDialogo{
   //Define la empresa 
   public empresa: string;
+  //Define el Tram y Remito
+  public tramo: any;
+  public remito: any;
+  //Define la lista de remitos
+  public resultadosRemitos = [];
   //Define la lista de tramos
   public resultadosTramos = [];
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   constructor(public dialogRef: MatDialogRef<ViajeDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-  private viajePropioTramoService: ViajePropioTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService) {}
+  private viajePropioTramoService: ViajePropioTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService,
+  private viajeRemitoServicio: ViajeRemitoService, private toastr: ToastrService) {}
    ngOnInit() {
      this.formulario = new FormGroup({
+       viaje: new FormControl('', Validators.required),
+       remito: new FormControl('', Validators.required),
        tramo: new FormControl('', Validators.required)
      });
-     //Obtiene la lista de tramos por tipo de item (propio/tercero)
-     this.listarTramos(this.data.tipoItem, this.data.idViaje);
    }
    //obtiene la lista de tramos por tipo y por el idViaje 
-   public listarTramos(tipo, viaje){
-    if(tipo==1){
-      this.viajePropioTramoService.listarTramos(viaje).subscribe(
+   public listarTramos(){
+     let item = this.data.tipoItem;
+    if(item==1){
+      this.viajePropioTramoService.listarTramos(this.formulario.get('viaje').value).subscribe(
         res=>{
-          this.resultadosTramos= res.json();
+          let respuesta= res.json();
+          this.resultadosTramos= respuesta[0].viajeRemitos;
+          this.formulario.get('tramo').setValue(respuesta[0].tramo);
+          this.tramo = respuesta[0].tramo;
         }
       );
     }
-    if(tipo==2){
-      this.viajeTerceroTramoServicio.listarTramos(viaje).subscribe(
+    if(item==2){
+      this.viajeTerceroTramoServicio.listarTramos(this.formulario.get('viaje').value).subscribe(
         res=>{
-          this.resultadosTramos= res.json();
-        }
+          let respuesta= res.json();
+          this.resultadosTramos= respuesta[0].viajeRemitos;
+          this.formulario.get('tramo').setValue(respuesta[0].tramo);
+          this.tramo = respuesta[0].tramo;        }
       );
     }
    }
+  //Controla la seleccion en tabla
+  public cambioRemito(idFila ,remito){
+    let fila='fila'+idFila;
+    let filaSeleccionada=document.getElementsByClassName('planilla-seleccionada');
+    for(let i=0; i< filaSeleccionada.length; i++){
+      filaSeleccionada[i].className="planilla-no-seleccionada";
+    }
+    document.getElementById(fila).className="planilla-seleccionada";
+    console.log("remito seleccionado "+ remito);
+    this.formulario.get('remito').setValue(remito);
+  }
+  //Obtiene la Lista de Remitos por el id del tramo seleccionado
+  // public listarRemitos(item){
+  //   this.viajeRemitoServicio.listarRemitos(this.formulario.get('tramo').value.id, item).subscribe(
+  //     res=>{
+  //       this.resultadosRemitos = res.json();
+  //       if(this.resultadosRemitos.length==0){
+  //         this.toastr.error("No existen Remitos para el Tramo seleccionado.");
+  //         // setTimeout(function() {
+  //         //   document.getElementById('idViaje').focus();
+  //         // }, 20);
+  //       }else{
+  //         this.formulario.get('tramo').setValue(this.resultadosRemitos[0].id);
+  //       }
+  //     },
+  //     err=>{
+  //       // this.formularioItem.get('idTramo').setValue(null);
+  //       // this.formularioItem.get('numeroViaje').setValue(null);
+  //       // setTimeout(function() {
+  //       //   document.getElementById('idViaje').focus();
+  //       // }, 20);
+  //     }
+  //   );
+  // }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
