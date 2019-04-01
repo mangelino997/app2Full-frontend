@@ -54,7 +54,7 @@ export class EmitirFactura {
             total: new FormControl(0.00),
             importeNoGravado: new FormControl(),
             importeExento: new FormControl(),
-            importeNetoGravado: new FormControl(0.00),
+            importeNetoGravado: new FormControl(),
             importeIva: new FormControl(0.00),
             importeTotal: new FormControl(0.00),
             importeOtrosTributos: new FormControl(),
@@ -68,8 +68,8 @@ export class EmitirFactura {
         this.formularioViaje = new FormGroup({
             ventaTipoItem: new FormControl('', Validators.required),
             numeroViaje: new FormControl('', Validators.required),
-            idTramo: new FormControl('', Validators.required),
-            viajeRemito: new FormControl(),
+            // idTramo: new FormControl('', Validators.required),
+            viajeRemito: new FormControl('', Validators.required),
             bultos: new FormControl(0.00),
             kilosEfectivo: new FormControl(0.00),
             kilosAforado: new FormControl(0.00),
@@ -86,7 +86,7 @@ export class EmitirFactura {
             importeEntrega: new FormControl(0.00),
             conceptosVarios: new FormControl(),
             importeVentaItemConcepto: new FormControl(0.00),
-            importeNetoGravado: new FormControl(0.00, Validators.required),
+            importeNetoGravado: new FormControl(0, Validators.required),
             alicuotaIva: new FormControl(0.00),
             afipAlicuotaIva: new FormControl(''),
             subtotalCIva: new FormControl(0.00)

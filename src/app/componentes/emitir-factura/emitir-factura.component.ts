@@ -158,7 +158,8 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Maneja el cambio en el combo Items
   public cambioItem(){
-    console.log(this.item.value.id);
+    this.resetearItem();
+    this.formularioItem.get('ventaTipoItem').setValue(this.item.value);
     switch(this.item.value.id){
       case 4: //el item con id=4 es Contrareembolso
         this.manejarContrareembolso();
@@ -166,6 +167,7 @@ export class EmitirFacturaComponent implements OnInit {
 
       case 1: 
       case 2:
+        this.resetearItem();
         this.abrirDialogoTramo();
         this.manejarItems();
         break;
@@ -175,6 +177,23 @@ export class EmitirFacturaComponent implements OnInit {
         this.manejarItems();
         break;
     }
+  }
+  //Con cada click sobre la lista "Item *" se debe resetear 
+  private resetearItem(){
+
+    this.formulario.get('rem').reset();
+    this.formulario.get('clienteRemitente').setValue(null);
+    this.formulario.get('des').reset();
+    this.formulario.get('clienteDestinatario').setValue(null);
+    this.formulario.get('clienteDestinatario').reset();
+    this.formulario.get('pagoEnOrigen').reset();
+    this.formulario.get('letra').reset();
+    this.formulario.get('numero').reset();
+    this.formulario.get('codigoAfip').reset();
+    if(this.formularioItem!=null){
+      this.reestablecerFormularioItemViaje();
+    }
+    
   }
   //Maneja los cambios cuando el item seleccionado es Contrareembolso
   private manejarContrareembolso(){
@@ -354,6 +373,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.formularioItem.get('valorDeclarado').reset();
     this.formularioItem.get('flete').reset();
     this.formularioItem.get('descuento').reset();
+    this.formularioItem.get('importeSeguro').reset();
     this.formularioItem.get('importeRetiro').reset();
     this.formularioItem.get('importeEntrega').reset();
     this.formularioItem.get('importeVentaItemConcepto').reset();
@@ -437,7 +457,7 @@ export class EmitirFacturaComponent implements OnInit {
           this.formulario.get('letra').setValue(res.text());
           this.cargarCodigoAfip(res.text());
           this.listarTarifaOVenta();
-  
+
         }
       )
     };
@@ -466,37 +486,40 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Agrega al Array un item-viaje 
   public agregarItemViaje(){
-    let subtotal=this.formularioItem.get('importeNetoGravado').value;
+    console.log(this.formulario.value, this.formularioItem.value, this.formularioItem.get('importeNetoGravado').value);
+    let subtotal=0;
+    subtotal=this.formularioItem.get('importeNetoGravado').value;
     this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value + subtotal);
     let importeIva=0;
     if(this.formularioItem.get('alicuotaIva').value==0||this.formularioItem.get('alicuotaIva').value==null){
       this.formularioItem.get('subtotalCIva').setValue(0);
     }
     else{
-      importeIva = subtotal*(this.formularioItem.get('alicuotaIva').value/100);
-      this.formularioItem.get('subtotalCIva').setValue(importeIva); //guardo en cada item el importe extra (iva)
+      importeIva =subtotal*(this.formularioItem.get('alicuotaIva').value/100);
+      this.formularioItem.get('subtotalCIva').setValue(this.returnDecimales(importeIva, 2) ); //guardo en cada item el importe extra (iva)
       let importeIvaTotal= this.formulario.get('importeIva').value + importeIva;
-      this.formulario.get('importeIva').setValue(importeIvaTotal); //sumo en el formulario general (cabecera de la factura)
+      this.formulario.get('importeIva').setValue(this.returnDecimales(importeIvaTotal, 2)); //sumo en el formulario general (cabecera de la factura)
     }
     this.listaItemViaje.push(this.formularioItem.value);
     this.contador.setValue(this.contador.value+1);
     let importeTotal= this.formulario.get('importeNetoGravado').value + this.formulario.get('importeIva').value;
-    this.formulario.get('importeTotal').setValue(importeTotal);
+    this.formulario.get('importeTotal').setValue(this.returnDecimales(importeTotal, 2));
     this.reestablecerFormularioItemViaje();
     this.remitosDisponibles(1, this.listaItemViaje[this.listaItemViaje.length-1].viajeRemito);
   }
   //eliminar un item del Array item-viaje 
   public eliminarItemViaje(subtotal, subtotalIva, index){
     this.listaItemViaje.splice(index, 1);
+    console.log(subtotal, subtotalIva);
     if(this.listaItemViaje.length==0){
       this.formulario.get('importeNetoGravado').setValue(0.00);
       this.formulario.get('importeIva').setValue(0.00);
       this.formulario.get('importeTotal').setValue(0.00);
     }else{
-      this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value - subtotal);
-      this.formulario.get('importeIva').setValue(this.formulario.get('importeIva').value - subtotalIva);
+      this.formulario.get('importeNetoGravado').setValue(this.returnDecimales(this.formulario.get('importeNetoGravado').value - subtotal, 2));
+      this.formulario.get('importeIva').setValue(this.returnDecimales(this.formulario.get('importeIva').value - subtotalIva, 2));
       let importeTotal=subtotal + subtotalIva;
-      this.formulario.get('importeTotal').setValue(this.formulario.get('importeTotal').value - importeTotal);
+      this.formulario.get('importeTotal').setValue(this.returnDecimales(this.formulario.get('importeTotal').value - importeTotal, 2));
       this.remitosDisponibles(2, this.listaItemViaje[index].viajeRemito);
     }
     this.contador.setValue(this.contador.value-1);
@@ -579,6 +602,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene la lista de Tarifas Orden Venta por Cliente
   public listarTarifaOVenta(){
+    console.log(this.formulario.get('pagoEnOrigen').value, this.formulario.get('clienteRemitente').value.id);
     if(this.formulario.get('pagoEnOrigen').value==true) //si paga el remitente
     {
       this.ordenVentaServicio.listarPorCliente(this.formulario.get('clienteRemitente').value.id).subscribe(
@@ -773,7 +797,8 @@ export class EmitirFacturaComponent implements OnInit {
     let entrega = this.formularioItem.get('importeEntrega').value;
     let concepto = this.formularioItem.get('importeVentaItemConcepto').value;
     subtotal = vdeclaradoNeto + flete + retiro + entrega + concepto;
-    this.formularioItem.get('importeNetoGravado').setValue(subtotal);
+    console.log("subtotal: " + this.returnDecimales(subtotal, 2));
+    this.formularioItem.get('importeNetoGravado').setValue(this.returnDecimales(subtotal, 2));
     this.setDecimales($event, 2);
   }
   //Abre un modal para agregar un aforo
@@ -857,7 +882,7 @@ export class EmitirFacturaComponent implements OnInit {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
   }
   //Retorna el numero a x decimales
-  public returnDecimales(valor, cantidad) {
+  public returnDecimales(valor: number, cantidad: number) {
     return this.appService.setDecimales(valor, cantidad);
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
