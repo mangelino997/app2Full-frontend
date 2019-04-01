@@ -73,8 +73,8 @@
               <input id="idCorreoelectronico" type="email" formControlName="correoelectronico" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura"
                 (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
-                pattern="^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$"
-                (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$', 'correoelectronico')">
+                pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
+                (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoelectronico')">
             </div>
           </div>
           <div class="col-md-8">
@@ -91,7 +91,7 @@
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

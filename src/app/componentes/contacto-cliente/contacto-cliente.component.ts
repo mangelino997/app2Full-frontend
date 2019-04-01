@@ -59,10 +59,6 @@ export class ContactoClienteComponent implements OnInit {
         console.log(err);
       }
     );
-    //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -81,8 +77,6 @@ export class ContactoClienteComponent implements OnInit {
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    this.listar();
     //Obtiene la lista de tipos de contactos
     this.listarTiposContactos();
     //Autocompletado Cliente - Buscar por alias
@@ -160,6 +154,13 @@ export class ContactoClienteComponent implements OnInit {
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idCliente');
         break;
+      case 5:
+        this.contactos = [];
+        this.autocompletado.reset();
+        this.formulario.reset();
+        setTimeout(function() {
+          document.getElementById('idCliente').focus();
+        }, 20);
       default:
         break;
     }
@@ -303,7 +304,6 @@ export class ContactoClienteComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    var opcion = this.opcionSeleccionada;
     if(keycode == 113) {
       if(indice < this.pestanias.length) {
         this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);

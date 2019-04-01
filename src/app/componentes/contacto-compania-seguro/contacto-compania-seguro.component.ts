@@ -7,6 +7,7 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { TipoDocumentoComponent } from '../tipo-documento/tipo-documento.component';
 
 @Component({
   selector: 'app-contacto-compania-seguro',
@@ -157,6 +158,10 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
         break;
+      case 5:
+        setTimeout(function() {
+          document.getElementById('idCompaniaSeguro').focus();
+        }, 20);
       default:
         break;
     }
