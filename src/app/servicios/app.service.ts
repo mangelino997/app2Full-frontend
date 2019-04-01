@@ -62,6 +62,7 @@ export class AppService {
   }
   //Formatear numero a x decimales
   public setDecimales(valor, cantidad) {
-    return Number(valor).toFixed(cantidad);
+    if(valor!=undefined)
+      return parseFloat((valor).toFixed(cantidad));
   }
 }

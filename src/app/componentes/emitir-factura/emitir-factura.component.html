@@ -291,7 +291,7 @@
             </mat-option>
           </mat-select>
         </div>
-        <button class="btn btn-warning btn-custom margin-left-button" (click)="agregarItemViaje()" [disabled]="!formularioItem.valid">Agregar</button>
+        <button class="btn btn-warning btn-custom margin-left-button" [disabled]="!formularioItem.valid" (click)="agregarItemViaje()" >Agregar</button> <!---->
       </div>
     </form>
       <div class="inline">
@@ -314,15 +314,15 @@
             <tbody>
               <tr *ngFor="let item of listaItemViaje; let i=index">
                 <td>{{item.numeroViaje}}</td>
-                <td>{{item.numeroRemito}}</td>
+                <td>{{item.viajeRemito}}</td>
                 <td>{{item.bultos}}</td>
-                <td>{{item.kiloEfectivo}}</td>
+                <td>{{item.kilosEfectivo}}</td>
                 <td>{{item.valorDeclarado}}</td>
                 <td>{{item.flete}}</td>
                 <td>{{item.importeNetoGravado}}</td>
                 <td>{{item.alicuotaIva}}</td>
                 <td>{{item.subtotalCIva}}</td>
-                <td class="cursor-color" (click)="eliminarItemViaje(item.subtotal, item.subtotalCIva, i)">X</td>
+                <td class="cursor-color" (click)="eliminarItemViaje(item.importeNetoGravado, item.subtotalCIva, i)">X</td>
               </tr>
             </tbody>
           </table>
