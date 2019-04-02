@@ -641,7 +641,7 @@ export class PersonalComponent implements OnInit {
         }
       },
       err => {
-        this.lanzarError(err);
+        this.lanzarError(err.json());
       }
     );
   }
@@ -663,7 +663,7 @@ export class PersonalComponent implements OnInit {
         }
       },
       err => {
-        this.lanzarError(err);
+        this.lanzarError(err.json());
       }
     );
   }
@@ -681,7 +681,7 @@ export class PersonalComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    var respuesta = err;
     if(respuesta.codigo == 11010) {
       document.getElementById("labelNumeroDocumento").classList.add('label-error');
       document.getElementById("idNumeroDocumento").classList.add('is-invalid');
@@ -741,6 +741,36 @@ export class PersonalComponent implements OnInit {
           document.getElementById("idCorreoelectronico").classList.add('is-invalid');
           this.toastr.error('Correo Electronico incorrecto');
         }
+      }
+    }
+  }
+  //Validad el numero de documento
+  public validarDocumento(): void {
+    let documento = this.formulario.get('numeroDocumento').value;
+    let tipoDocumento = this.formulario.get('tipoDocumento').value;
+    if(documento) {
+      switch(tipoDocumento.id) {
+        case 1:
+          let respuesta = this.appServicio.validarCUIT(documento.toString());
+          if(!respuesta) {
+            let err = {codigo: 11010, mensaje: 'CUIT Incorrecto!'};
+            this.lanzarError(err);
+          }
+          break;
+        case 2:
+          let respuesta2 = this.appServicio.validarCUIT(documento.toString());
+          if(!respuesta2) {
+            let err = {codigo: 11010, mensaje: 'CUIL Incorrecto!'};
+            this.lanzarError(err);
+          }
+          break;
+        case 8:
+          let respuesta8 = this.appServicio.validarDNI(documento.toString());
+          if(!respuesta8) {
+            let err = {codigo: 11010, mensaje: 'DNI Incorrecto!'};
+            this.lanzarError(err);
+          }
+          break;
       }
     }
   }

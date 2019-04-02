@@ -65,4 +65,28 @@ export class AppService {
     if(valor!=undefined)
       return parseFloat((valor).toFixed(cantidad));
   }
+  //Valida el CUIT/CUIL
+  public validarCUIT(cuit) {
+    if (cuit.length != 11) {
+      return false;
+    }
+    var acumulado = 0;
+    var digitos = cuit.split('');
+    var digito = digitos.pop();
+    for (var i = 0; i < digitos.length; i++) {
+        acumulado += digitos[9 - i] * (2 + (i % 6));
+    }
+    var verif = 11 - (acumulado % 11);
+    if (verif == 11) {
+        verif = 0;
+    }
+    return digito == verif;
+  }
+  //Valida el dni
+  public validarDNI(dni) {
+    if(dni.length != 8) {
+      return false
+    }
+    return true;
+  }
 }

@@ -57,7 +57,7 @@
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate (click)="accion(indiceSeleccionado)"
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" formnovalidate (click)="accion(indiceSeleccionado)"
           [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

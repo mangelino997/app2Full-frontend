@@ -171,7 +171,7 @@
                       <div class="form-group has-float-label">
                         <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento *</label>
                         <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura"
+                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarDocumento()"
                           (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
                       </div>
                     </div>
@@ -282,7 +282,7 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idNumeroCBU" class="tamanio-label">N° de CBU</label>
-                        <input id="idNumeroCBU" type="number" formControlName="numeroCBU" autocomplete="off"
+                        <input id="idNumeroCBU" type="text" formControlName="numeroCBU" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
@@ -334,7 +334,7 @@
                 </div>
                 <div class="row">
                   <div class="centrar">
-                    <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+                    <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary"
                       formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
                       {{pestaniaActual}}
                     </button>
