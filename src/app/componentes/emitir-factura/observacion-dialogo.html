@@ -9,17 +9,17 @@
                         <thead>
                           <tr>
                             <th class="text-center" style="width:50%" scope="col">Observación</th>
-                            <th class="text-center" style="width:50%" scope="col">Añadir a Factura</th>
+                            <!-- <th class="text-center" style="width:50%" scope="col">Añadir a Factura</th> -->
                           </tr>
                         </thead>
                         <tbody>
                           <tr >
                             <td align="center">
-                              <span>{{observacion? 'observacion' : 'El Cliente que paga no tiene asignada una Nota Impresiónn de Comprobante'}}</span>
+                              <span>{{observacion}}</span>
                             </td>
-                            <td align="center">
+                            <!-- <td align="center">
                                 <mat-checkbox class="checkNotBoxSelected" id="check" (change)="agregarObs($event)"></mat-checkbox>
-                            </td>
+                            </td> -->
                         </tr>
                         </tbody>
                     </table>

@@ -26,6 +26,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public listaComprobante = [];
   //Define como un FormControl
   public tipoComprobante:FormControl = new FormControl();
+  //Define al campo puntoVenta (de solo lectura) como un FormControl
+  public puntoVenta:FormControl = new FormControl();
   //Define la lista de resultados de busqueda para clientes
   public resultadosClientes = [];
   //Define los datos de la Empresa
@@ -151,6 +153,13 @@ export class EmitirNotaCreditoComponent implements OnInit {
         this.formulario.get('numero').setValue(res.text());
       }
     );
+  }
+  //Comprueba si ya existe un codigo de afip entonces vuelve a llamar a la funcion que obtiene el valor del campo Numero
+  public comprobarCodAfip(){
+    let puntoVentaCeros = this.establecerCerosIzq(this.formulario.get('puntoVenta').value.puntoVenta, "0000", -5);
+    this.puntoVenta.setValue(puntoVentaCeros);
+    if(this.formulario.get('codigoAfip').value!=null || this.formulario.get('codigoAfip').value>0)
+      this.establecerNumero(this.formulario.get('codigoAfip').value);
   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
