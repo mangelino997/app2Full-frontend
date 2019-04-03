@@ -3,7 +3,7 @@
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CONTACTO BANCO</a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
           (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
@@ -13,11 +13,11 @@
       <h5>{{pestaniaActual}} Contacto de Banco</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-8">
             <div class="form-group has-float-label">
               <label for="idSucursalBanco" class="tamanio-label">Banco-Sucursal *</label>
-              <input id="idSucursalBanco" class="form-control form-control-sm" type="text" matInput [formControl]="formulario.get('sucursalBanco')"
-                [matAutocomplete]="auto" autocomplete="off">
+              <input id="idSucursalBanco" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('sucursalBanco')" [matAutocomplete]="auto" autocomplete="off">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemSucursalBanco of resultadosSucursalesBancos" [value]="itemSucursalBanco"
                   (onSelectionChange)="listarPorSucursalBanco(itemSucursalBanco)">
@@ -42,8 +42,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTipoContacto" class="tamanio-label">Tipo de Contacto *</label>
-              <mat-select id="idTipoContacto" class="form-control form-control-sm" 
-                formControlName="tipoContacto" [compareWith]="compareFn">
+              <mat-select id="idTipoContacto" class="form-control form-control-sm" formControlName="tipoContacto"
+                [compareWith]="compareFn">
                 <mat-option *ngFor="let itemTipoContacto of tiposContactos" [value]="itemTipoContacto">
                   {{itemTipoContacto.nombre}}
                 </mat-option>
@@ -53,8 +53,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNombre" class="tamanio-label">Nombre del Contacto *</label>
-              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -62,15 +62,15 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
-              <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
+              <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil</label>
-              <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
+              <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
@@ -78,13 +78,15 @@
               <label id="labelCorreoelectronico" for="idCorreoelectronico" class="tamanio-label">
                 Correo Electrónico</label>
               <input id="idCorreoelectronico" type="email" formControlName="correoelectronico" autocomplete="off"
-                [readonly]="soloLectura" class="form-control form-control-sm" 
-                (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')">
+                [readonly]="soloLectura" class="form-control form-control-sm"
+                (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
+                pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
+                (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoelectronico')">
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate (click)="accion(indiceSeleccionado)"
-          [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
       </form>
@@ -92,6 +94,21 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-8">
+          <div class="form-group has-float-label">
+            <label for="idSucursalBanco" class="tamanio-label">Banco-Sucursal *</label>
+            <input id="idSucursalBanco" class="form-control form-control-sm" type="text" matInput
+              [formControl]="formulario.get('sucursalBanco')" [matAutocomplete]="auto" autocomplete="off">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+              <mat-option *ngFor="let itemSucursalBanco of resultadosSucursalesBancos" [value]="itemSucursalBanco"
+                (onSelectionChange)="listarPorSucursalBanco(itemSucursalBanco)">
+                {{itemSucursalBanco.banco.nombre}} - {{itemSucursalBanco.nombre}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
+      </div>
       <table class="table table-bordered table-striped table-sm">
         <thead>
           <tr>
@@ -108,7 +125,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let l of listaCompleta">
+          <tr *ngFor="let l of contactos">
             <td align="center">
               <span>{{l.id}}</span>
             </td>

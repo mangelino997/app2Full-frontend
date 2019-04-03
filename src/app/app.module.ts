@@ -170,6 +170,7 @@ import { RepartoEntrante } from './modelos/repartoEntrante';
 import { Aforo } from './modelos/aforo';
 import { ClienteEventual } from './modelos/clienteEventual';
 import { EmitirFactura } from './modelos/emitirFactura';
+import { AfipCondicionIva } from './modelos/afipCondicionIva';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -275,6 +276,7 @@ import { ClienteEventualComponent } from './componentes/cliente-eventual/cliente
 import { AforoComponent } from './componentes/aforo/aforo.component';
 import { ChequesRechazadosComponent } from './componentes/cheques-rechazados/cheques-rechazados.component';
 import { RepartoComponent, AcompanianteDialogo } from './componentes/reparto-saliente/reparto.component';
+import { AfipCondicionIvaComponent } from './componentes/afip-condicion-iva/afip-condicion-iva.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -354,7 +356,7 @@ const appRoutes: Routes = [
   { path: 'facturacionnotasdedebito', component: EmitirNotaDebitoComponent, canActivate: [GuardiaService] },
   { path: 'contablemonedas', component: MonedaComponent, canActivate: [GuardiaService] },
   { path: 'contablemonedascotizacion', component: MonedaCotizacionComponent, canActivate: [GuardiaService] },
-  { path: 'contablemonedasplandecuentas', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] },
+  { path: 'contablemonedascuentacontable', component: MonedaCuentaContableComponent, canActivate: [GuardiaService] },
   { path: 'webservicesafipconsultarpuntosdevtaautorizados', component: PuntosVentaAutorizadoComponent, canActivate: [GuardiaService] },
   { path: 'repartosplanillassalientes', component: RepartoComponent, canActivate: [GuardiaService] },
   { path: 'repartosplanillasentrantes', component: RepartoEntranteComponent, canActivate: [GuardiaService] },
@@ -374,7 +376,9 @@ const appRoutes: Routes = [
   { path: 'configuracionventasconceptos', component: VentaConceptoComponent, canActivate: [GuardiaService] },
   { path: 'configuracionventatipoitem', component: VentaTipoComponent, canActivate: [GuardiaService] },
   { path: 'configuracionviajeunidadnegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
-  { path: 'recoleccionesadministrar', component: OrdenRecoleccionComponent, canActivate: [GuardiaService] }
+  { path: 'recoleccionesadministrar', component: OrdenRecoleccionComponent, canActivate: [GuardiaService] },
+  { path: 'logisticaunidadesdenegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
+  { path: 'contablecondicionesdeiva', component: AfipCondicionIvaComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
@@ -509,7 +513,8 @@ const stompConfig: StompConfig = {
     TotalCargaDialogo,
     TotalConceptoDialogo,
     ChequesRechazadosComponent,
-    AcompanianteDialogo
+    AcompanianteDialogo,
+    AfipCondicionIvaComponent
   ],
   imports: [
     BrowserModule,
@@ -714,6 +719,7 @@ const stompConfig: StompConfig = {
     RepartoPropioComprobanteService,
     RetiroDepositoComprobanteService,
     Aforo,
+    AfipCondicionIva,
     MesService,
     {
       provide: StompConfig,

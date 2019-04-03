@@ -180,9 +180,11 @@ export class VehiculoProveedorComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('estaActivo').enabled;
+      this.formulario.get('tipoVehiculo').enable();
+      this.formulario.get('marcaVehiculo').enable();
     } else {
-      this.formulario.get('estaActivo').disabled;
+      this.formulario.get('tipoVehiculo').disable();
+      this.formulario.get('marcaVehiculo').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas

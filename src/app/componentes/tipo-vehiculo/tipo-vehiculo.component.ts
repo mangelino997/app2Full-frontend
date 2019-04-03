@@ -77,9 +77,9 @@ export class TipoVehiculoComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('esRemolque').enabled;
+      this.formulario.get('esRemolque').enable();
     } else {
-      this.formulario.get('esRemolque').disabled;
+      this.formulario.get('esRemolque').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas

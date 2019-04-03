@@ -79,7 +79,7 @@
                     <div class="form-group has-float-label">
                         <label for="idBarrio" class="tamanio-label">Barrio</label>
                         <input id="idBarrio" class="form-control form-control-sm" type="text" matInput [formControl]="formulario.get('barrio')"
-                            [matAutocomplete]="autoBarrio" autocomplete="off" [readonly]="soloLectura">
+                            [matAutocomplete]="autoBarrio" autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('barrio'))">
                         <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFa.bind(this)">
                             <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
                                 {{itemBarrio.nombre}}

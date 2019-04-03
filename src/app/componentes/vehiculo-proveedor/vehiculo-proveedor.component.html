@@ -33,7 +33,7 @@
               <label for="idProveedor" class="tamanio-label">Proveedor *</label>
               <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor"
-                autocomplete="off">
+                autocomplete="off" [readonly]="soloLectura">
               <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
                   {{itemProveedor.alias}}

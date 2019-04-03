@@ -89,8 +89,6 @@ export class ContactoBancoComponent implements OnInit {
     })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    this.listar();
     //Obtiene la lista de tipos de contactos
     this.listarTiposContactos();
   }
@@ -159,6 +157,13 @@ export class ContactoBancoComponent implements OnInit {
       case 4:
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursalBanco');
+        break;
+      case 5:
+        this.contactos = [];
+        this.mostrarAutocompletado = true;
+        setTimeout(function() {
+          document.getElementById('idSucursalBanco').focus();
+        }, 20);
         break;
       default:
         break;
@@ -277,6 +282,28 @@ export class ContactoBancoComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
+  }
+  //Manejo de colores de campos y labels con patron erroneo
+  public validarPatron(patron, campo) {
+    let valor = this.formulario.get(campo).value;
+    if(valor != undefined && valor != null && valor != '') {
+      var patronVerificador = new RegExp(patron);
+      if (!patronVerificador.test(valor)) {
+        if(campo == 'telefonoFijo') {
+          document.getElementById("labelTelefonoFijo").classList.add('label-error');
+          document.getElementById("idTelefonoFijo").classList.add('is-invalid');
+          this.toastr.error('Telefono Fijo Incorrecto');
+        } else if(campo == 'telefonoMovil') {
+          document.getElementById("labelTelefonoMovil").classList.add('label-error');
+          document.getElementById("idTelefonoMovil").classList.add('is-invalid');
+          this.toastr.error('Telefono Movil Incorrecto');
+        } else if(campo == 'correoelectronico') {
+          document.getElementById("labelCorreoelectronico").classList.add('label-error');
+          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+          this.toastr.error('Correo Electronico Incorrecto');
+        }
+      }
+    }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {

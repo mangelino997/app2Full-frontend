@@ -12,7 +12,7 @@
       <h5>{{pestaniaActual}} Condición de Venta</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar Cliente</label>
+          <label for="idAutocompletado" class="tamanio-label">Buscar</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
             type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
@@ -25,7 +25,7 @@
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label for="idMoneda" class="tamanio-label">Código</label>
+              <label for="idMoneda" class="tamanio-label">Código *</label>
               <input id="idMoneda" type="number" formControlName="id" class="form-control form-control-sm" readonly>
             </div>
           </div>
@@ -33,7 +33,7 @@
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre*</label>
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
@@ -43,14 +43,14 @@
             <div class="form-group has-float-label">
               <label id="labelEsContado" for="idEsContado" class="tamanio-label">Es Contado *</label>
               <mat-select class="form-control form-control-sm" formControlName="esContado">
-                <mat-option [value]="true"> Sí</mat-option>
-                <mat-option [value]="false"> No</mat-option>
+                <mat-option [value]="true">Sí</mat-option>
+                <mat-option [value]="false">No</mat-option>
               </mat-select>
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate (click)="accion(indiceSeleccionado)"
-          [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate 
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
       </form>

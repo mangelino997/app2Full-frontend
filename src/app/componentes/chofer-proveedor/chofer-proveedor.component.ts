@@ -124,8 +124,6 @@ export class ChoferProveedorComponent implements OnInit {
           })
         }
     })
-    //Obtiene la lista completa de registros
-    this.listar();
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
   }
@@ -169,6 +167,13 @@ export class ChoferProveedorComponent implements OnInit {
         break;
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
+        break;
+      case 5:
+        this.resultados = [];
+        this.mostrarAutocompletado = true;
+        setTimeout(function() {
+          document.getElementById('idProveedor').focus();
+        }, 20);
         break;
       default:
         break;
@@ -349,6 +354,12 @@ export class ChoferProveedorComponent implements OnInit {
           }
           break;
       }
+    }
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar

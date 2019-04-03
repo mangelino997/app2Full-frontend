@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CondicionCompra } from 'src/app/modelos/condicion-compra';
 import { CondicionCompraService } from 'src/app/servicios/condicion-compra.service';
@@ -12,57 +12,53 @@ import { CondicionCompraService } from 'src/app/servicios/condicion-compra.servi
   styleUrls: ['./condicion-compra.component.css']
 })
 export class CondicionCompraComponent implements OnInit {
-   //Define la pestania activa
-   public activeLink:any = null;
-   //Define el indice seleccionado de pestania
-   public indiceSeleccionado:number = null;
-   //Define la pestania actual seleccionada
-   public pestaniaActual:string = null;
-   //Define si mostrar el autocompletado
-   public mostrarAutocompletado:boolean = null;
-   //Define si el campo es de solo lectura
-   public soloLectura:boolean = false;
-   //Define si mostrar el boton
-   public mostrarBoton:boolean = null;
-   //Define la lista de pestanias
-   public pestanias:Array<any> = [];
-   //Define un formulario para validaciones de campos
-   public formulario:FormGroup;
-   //Define la lista completa de registros
-   public listaCompleta:Array<any> = [];
-   //Define el autocompletado
-   public autocompletado:FormControl = new FormControl();
-   //Define empresa para las busquedas
-   public empresaBusqueda:FormControl = new FormControl();
-   //Define la lista de resultados de busqueda
-   public resultados:Array<any> = [];
-   //Define la lista de resultados de busqueda companias seguros
-   public resultadosCompaniasSeguros:Array<any> = [];
-   //Defien la lista de empresas
-   public empresas:Array<any> = [];
-   // public compereFn:any;
-   //Constructor
-  constructor(private servicio: CondicionCompraService ,private condicionCompra: CondicionCompra, private appComponent: AppComponent, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+  //Define la pestania activa
+  public activeLink: any = null;
+  //Define el indice seleccionado de pestania
+  public indiceSeleccionado: number = null;
+  //Define la pestania actual seleccionada
+  public pestaniaActual: string = null;
+  //Define si mostrar el autocompletado
+  public mostrarAutocompletado: boolean = null;
+  //Define si el campo es de solo lectura
+  public soloLectura: boolean = false;
+  //Define si mostrar el boton
+  public mostrarBoton: boolean = null;
+  //Define la lista de pestanias
+  public pestanias: Array<any> = [];
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta: Array<any> = [];
+  //Define el autocompletado
+  public autocompletado: FormControl = new FormControl();
+  //Define empresa para las busquedas
+  public empresaBusqueda: FormControl = new FormControl();
+  //Define la lista de resultados de busqueda
+  public resultados: Array<any> = [];
+  //Define la lista de resultados de busqueda companias seguros
+  public resultadosCompaniasSeguros: Array<any> = [];
+  //Defien la lista de empresas
+  public empresas: Array<any> = [];
+  //Constructor
+  constructor(private servicio: CondicionCompraService, private condicionCompra: CondicionCompra,
+    private appComponent: AppComponent, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
+      .subscribe(res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-      }
-    );
+      });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
       }
     });
-   }
-
+  }
+  //Al inicializarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
     this.formulario = this.condicionCompra.formulario;
@@ -99,11 +95,7 @@ export class CondicionCompraComponent implements OnInit {
     this.listar();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -131,7 +123,7 @@ export class CondicionCompraComponent implements OnInit {
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('esContado').enable();
     } else {
       this.formulario.get('esContado').disable();
@@ -169,9 +161,9 @@ export class CondicionCompraComponent implements OnInit {
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -179,7 +171,7 @@ export class CondicionCompraComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11002) {
+        if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
@@ -193,9 +185,9 @@ export class CondicionCompraComponent implements OnInit {
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -203,7 +195,7 @@ export class CondicionCompraComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11002) {
+        if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
@@ -236,7 +228,6 @@ export class CondicionCompraComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
@@ -244,9 +235,9 @@ export class CondicionCompraComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
@@ -255,13 +246,13 @@ export class CondicionCompraComponent implements OnInit {
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;

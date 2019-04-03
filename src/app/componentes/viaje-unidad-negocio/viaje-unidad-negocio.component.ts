@@ -12,75 +12,64 @@ import { ViajeUnidadNegocio } from 'src/app/modelos/viajeUnidadNegocio';
   styleUrls: ['./viaje-unidad-negocio.component.css']
 })
 export class ViajeUnidadNegocioComponent implements OnInit {
-//Define la pestania activa
-public activeLink:any = null;
-//Define el indice seleccionado de pestania
-public indiceSeleccionado:number = null;
-//Define la pestania actual seleccionada
-public pestaniaActual:string = null;
-//Define si mostrar el autocompletado
-public mostrarAutocompletado:boolean = null;
-//Define si el campo es de solo lectura
-public soloLectura:boolean = false;
-//Define si mostrar el boton
-public mostrarBoton:boolean = null;
-//Define la lista de pestanias
-public pestanias:Array<any> = [];
-//Define un formulario para validaciones de campos
-public formulario:FormGroup;
-//Define la lista completa de registros
-public listaCompleta:Array<any> = [];
-//Define el autocompletado
-public autocompletado:FormControl = new FormControl();
-//Define empresa para las busquedas
-public empresaBusqueda:FormControl = new FormControl();
-//Define la lista de resultados de busqueda
-public resultados:Array<any> = [];
-//Defien la lista de empresas
-public empresas:Array<any> = [];
-//Constructor
-
-  constructor(private servicio: ViajeUnidadNegocioService, private ventaConcepto: ViajeUnidadNegocio, private appComponent: AppComponent, 
+  //Define la pestania activa
+  public activeLink: any = null;
+  //Define el indice seleccionado de pestania
+  public indiceSeleccionado: number = null;
+  //Define la pestania actual seleccionada
+  public pestaniaActual: string = null;
+  //Define si mostrar el autocompletado
+  public mostrarAutocompletado: boolean = null;
+  //Define si el campo es de solo lectura
+  public soloLectura: boolean = false;
+  //Define si mostrar el boton
+  public mostrarBoton: boolean = null;
+  //Define la lista de pestanias
+  public pestanias: Array<any> = [];
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta: Array<any> = [];
+  //Define el autocompletado
+  public autocompletado: FormControl = new FormControl();
+  //Define empresa para las busquedas
+  public empresaBusqueda: FormControl = new FormControl();
+  //Define la lista de resultados de busqueda
+  public resultados: Array<any> = [];
+  //Defien la lista de empresas
+  public empresas: Array<any> = [];
+  //Constructor
+  constructor(private servicio: ViajeUnidadNegocioService, private ventaConcepto: ViajeUnidadNegocio, private appComponent: AppComponent,
     private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
+      .subscribe(res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-      }
-    );
+      });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
-          console.log(res);
         })
       }
     })
-   }
+  }
+  //Al inicializarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
     this.formulario = this.ventaConcepto.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
-    this.listar(); 
+    this.listar();
   }
   //Obtiene el listado de registros
   private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        console.log(res.json());
-        this.listaCompleta = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.servicio.listar().subscribe(res => {
+      this.listaCompleta = res.json();
+    });
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -98,11 +87,7 @@ public empresas:Array<any> = [];
     this.listar();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -145,9 +130,9 @@ public empresas:Array<any> = [];
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -158,19 +143,18 @@ public empresas:Array<any> = [];
         document.getElementById("labelNombre").classList.add('label-error');
         document.getElementById("idNombre").classList.add('is-invalid');
         document.getElementById("idNombre").focus();
-        this.toastr.error(respuesta.mensaje);      
+        this.toastr.error(respuesta.mensaje);
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -191,14 +175,9 @@ public empresas:Array<any> = [];
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.servicio.obtenerSiguienteId().subscribe(res => {
+      this.formulario.get('id').setValue(res.json());
+    });
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -226,7 +205,7 @@ public empresas:Array<any> = [];
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -235,16 +214,16 @@ public empresas:Array<any> = [];
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }

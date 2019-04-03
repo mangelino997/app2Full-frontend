@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
@@ -9,9 +9,8 @@ import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-pol
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
 import { PersonalService } from '../../servicios/personal.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatAutocompleteTrigger } from '@angular/material';
 import { Vehiculo } from 'src/app/modelos/vehiculo';
 
 @Component({

@@ -89,8 +89,6 @@ export class ContactoProveedorComponent implements OnInit {
     })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    this.listar();
     //Obtiene la lista de tipos de contactos
     this.listarTiposContactos();
   }
@@ -160,6 +158,12 @@ export class ContactoProveedorComponent implements OnInit {
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
         break;
+      case 5:
+        this.contactos = [];
+        this.mostrarAutocompletado = true;
+        setTimeout(function() {
+          document.getElementById('idProveedor').focus();
+        }, 20); 
       default:
         break;
     }
@@ -263,6 +267,28 @@ export class ContactoProveedorComponent implements OnInit {
     this.autocompletado.setValue(undefined);
     this.vaciarListas();
   }
+  //Manejo de colores de campos y labels con patron erroneo
+  public validarPatron(patron, campo) {
+    let valor = this.formulario.get(campo).value;
+    if(valor != undefined && valor != null && valor != '') {
+      var patronVerificador = new RegExp(patron);
+      if (!patronVerificador.test(valor)) {
+        if(campo == 'telefonoFijo') {
+          document.getElementById("labelTelefonoFijo").classList.add('label-error');
+          document.getElementById("idTelefonoFijo").classList.add('is-invalid');
+          this.toastr.error('Telefono Fijo Incorrecto');
+        } else if(campo == 'telefonoMovil') {
+          document.getElementById("labelTelefonoMovil").classList.add('label-error');
+          document.getElementById("idTelefonoMovil").classList.add('is-invalid');
+          this.toastr.error('Telefono Movil Incorrecto');
+        } else if(campo == 'correoelectronico') {
+          document.getElementById("labelCorreoelectronico").classList.add('label-error');
+          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+          this.toastr.error('Correo Electrónico Incorrecto');
+        }
+      }
+    }
+  }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
@@ -326,7 +352,6 @@ export class ContactoProveedorComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    var opcion = this.opcionSeleccionada;
     if(keycode == 113) {
       if(indice < this.pestanias.length) {
         this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);

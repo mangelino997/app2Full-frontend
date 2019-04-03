@@ -3,7 +3,8 @@
     <div class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>INSUMO PRODUCTO</a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -14,7 +15,7 @@
         <div class="row">
           <div class="col-md-8">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-              <label for="idAutocompletado" class="tamanio-label">Buscar </label>
+              <label for="idAutocompletado" class="tamanio-label">Buscar</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
                 type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
@@ -29,7 +30,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label">Código</label>
+              <label for="idCodigo" class="tamanio-label">Código *</label>
               <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
               readonly>
             </div>
@@ -38,7 +39,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre</label>
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
@@ -46,7 +47,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idRubro" class="rubro-label">Rubro </label>
+              <label for="idRubro" class="rubro-label">Rubro *</label>
                 <mat-select id="idRubro" class="form-control form-control-sm" formControlName="rubroProducto" 
                   [compareWith]="compareFn">
                   <mat-option *ngFor="let rubro of rubros" [value]="rubro">
@@ -57,7 +58,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idMarca" class="tamanio-label">Marca</label>
+              <label for="idMarca" class="tamanio-label">Marca *</label>
                 <mat-select id="idMarca" class="form-control form-control-sm" formControlName="marcaProducto" 
                   [compareWith]="compareFn">
                   <mat-option *ngFor="let marca of marcas" [value]="marca">
@@ -68,7 +69,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="labelUnidadMedida" for="idUnidadMedida" class="tamanio-label">Unidad Medida</label>
+              <label id="labelUnidadMedida" for="idUnidadMedida" class="tamanio-label">Unidad Medida *</label>
               <mat-select id="idUnidadMedida" class="form-control form-control-sm" formControlName="unidadMedida" 
               [compareWith]="compareFn">
               <mat-option *ngFor="let medida of unidadesMedidas" [value]="medida">
@@ -89,7 +90,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="labelEsAsignable" for="idEsAsignable" class="tamanio-label">Es Asignable</label>
+              <label id="labelEsAsignable" for="idEsAsignable" class="tamanio-label">Es Asignable *</label>
               <mat-select class="form-control form-control-sm" formControlName="esAsignable">
                 <mat-option [value]="true">Sí</mat-option>
                 <mat-option [value]="false">No</mat-option>
@@ -98,7 +99,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="labelEsSerializable" for="idEsSerializable" class="tamanio-label">Es Serializable</label>
+              <label id="labelEsSerializable" for="idEsSerializable" class="tamanio-label">Es Serializable *</label>
               <mat-select class="form-control form-control-sm" formControlName="esSerializable">
                 <mat-option [value]="true">Sí</mat-option>
                 <mat-option [value]="false">No</mat-option>
@@ -107,7 +108,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label id="labelEsCritico" for="idEsCritico" class="tamanio-label">Es Crítico</label>
+              <label id="labelEsCritico" for="idEsCritico" class="tamanio-label">Es Crítico *</label>
               <mat-select class="form-control form-control-sm" formControlName="esCritico">
                 <mat-option [value]="true">Sí</mat-option>
                 <mat-option [value]="false">No</mat-option>
@@ -140,8 +141,8 @@
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate (click)="accion(indiceSeleccionado)"
-          [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" 
+          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
       </form>

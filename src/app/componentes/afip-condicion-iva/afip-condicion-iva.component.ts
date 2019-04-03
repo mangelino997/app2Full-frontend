@@ -3,18 +3,15 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { ProductoService } from 'src/app/servicios/producto.service';
-import { Producto } from 'src/app/modelos/producto';
-import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
-import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
-import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
+import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
+import { AfipCondicionIva } from 'src/app/modelos/afipCondicionIva';
 
 @Component({
-  selector: 'app-producto',
-  templateUrl: './producto.component.html',
-  styleUrls: ['./producto.component.css']
+  selector: 'app-afip-condicion-iva',
+  templateUrl: './afip-condicion-iva.component.html',
+  styleUrls: ['./afip-condicion-iva.component.css']
 })
-export class ProductoComponent implements OnInit {
+export class AfipCondicionIvaComponent implements OnInit {
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -33,12 +30,6 @@ export class ProductoComponent implements OnInit {
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta: Array<any> = [];
-  //Define la lista completa de rubros
-  public rubros: Array<any> = [];
-  //Define la lista completa de marcas
-  public marcas: Array<any> = [];
-  //Define la lista completa de unidades de medida
-  public unidadesMedidas: Array<any> = [];
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define empresa para las busquedas
@@ -50,9 +41,8 @@ export class ProductoComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Constructor
-  constructor(private appComponent: AppComponent, private producto: Producto, private servicio: ProductoService,
-    private subopcionPestaniaService: SubopcionPestaniaService, private rubrosServicio: RubroProductoService,
-    private unidadMedidaServicio: UnidadMedidaService, private marcaServicio: MarcaProductoService, private toastr: ToastrService) {
+  constructor(private servicio: AfipCondicionIvaService, private afipCondicionIva: AfipCondicionIva,
+    private appComponent: AppComponent, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
       .subscribe(res => {
@@ -71,56 +61,17 @@ export class ProductoComponent implements OnInit {
   //Al inicializarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = this.producto.formulario;
+    this.formulario = this.afipCondicionIva.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
-    //Obtiene los rubros
-    this.listarRubros();
-    //Obtiene las marcas
-    this.listarMarcas();
-    //Obtiene las unidades de medida
-    this.listarUnidadesMedida();
   }
   //Obtiene el listado de registros
   private listar() {
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de rubros
-  private listarRubros() {
-    this.rubrosServicio.listar().subscribe(
-      res => {
-        this.rubros = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de marcas
-  private listarMarcas() {
-    this.marcaServicio.listar().subscribe(
-      res => {
-        this.marcas = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de unidades de medida
-  private listarUnidadesMedida() {
-    this.unidadMedidaServicio.listar().subscribe(
-      res => {
-        this.unidadesMedidas = res.json();
       },
       err => {
         console.log(err);
@@ -150,19 +101,15 @@ export class ProductoComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
-        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       default:
@@ -179,24 +126,6 @@ export class ProductoComponent implements OnInit {
         console.log(err);
       }
     );
-  }
-  //Habilita o deshabilita los campos dependiendo de la pestaña
-  private establecerEstadoCampos(estado) {
-    if (estado) {
-      this.formulario.get('rubroProducto').enable();
-      this.formulario.get('marcaProducto').enable();
-      this.formulario.get('unidadMedida').enable();
-      this.formulario.get('esAsignable').enable();
-      this.formulario.get('esSerializable').enable();
-      this.formulario.get('esCritico').enable();
-    } else {
-      this.formulario.get('rubroProducto').disable();
-      this.formulario.get('marcaProducto').disable();
-      this.formulario.get('unidadMedida').disable();
-      this.formulario.get('esAsignable').disable();
-      this.formulario.get('esSerializable').disable();
-      this.formulario.get('esCritico').disable();
-    }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
@@ -216,7 +145,6 @@ export class ProductoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('usuario').setValue(this.appComponent.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -300,13 +228,6 @@ export class ProductoComponent implements OnInit {
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
-    }
-  }
-  //Funcion para comparar y mostrar elemento de campo select
-  public compareFn = this.compararFn.bind(this);
-  private compararFn(a, b) {
-    if (a != null && b != null) {
-      return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
