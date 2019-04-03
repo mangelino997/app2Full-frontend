@@ -37,7 +37,13 @@
             </div>
           </div>
         </div>
-        <div class="col-md-4"></div>
+        <div class="col-md-3"></div>
+        <div class="col-md-1">
+          <div class="form-group has-float-label">
+            <label for="idLetra" class="tamanio-label">P. Venta</label>
+            <input id="idLetra" type="text" [formControl]="puntoVenta" class="form-control form-control-sm" readonly >
+          </div>
+        </div>
         <div class="col-md-1">
           <div class="form-group has-float-label">
             <label for="idLetra" class="tamanio-label">Letra</label>
@@ -198,11 +204,11 @@
         </div> -->
         <div class="form-group has-float-label">
           <label for="idViaje" class="tamanio-label">N° Viaje*</label>
-          <input id="idViaje" type="number" formControlName="numeroViaje" [readOnly]="soloLectura" class="form-control form-control-sm" style="width: 78px;" (blur)="abrirDialogoTramo()"> 
+          <input id="idViaje" type="number" formControlName="numeroViaje" [readOnly]="soloLectura" class="form-control form-control-sm" style="width: 78px;" > <!--(blur)="abrirDialogoTramo()"-->
         </div>
         <div class="form-group has-float-label ">
           <label for="idRemito" class="tamanio-label">N° Remito*</label>
-          <input id="idRemito" type="number" formControlName="viajeRemito" [readOnly]="soloLectura" class="form-control form-control-sm" style="width: 100px;"> 
+          <input id="idRemito" type="number" [formControl]="viajeRemito" [readOnly]="soloLectura" class="form-control form-control-sm" style="width: 100px;" (blur)="cambioRemito()"> 
           <!-- <mat-select id="idRemito" class="form-control form-control-sm"  formControlName="viajeRemito" style="width: 100px;" 
           [compareWith]="compareFn"(selectionChange)="cambioRemito()" > 
               <mat-option *ngFor="let itemRemito of resultadosRemitos" [value]="itemRemito">
@@ -314,14 +320,14 @@
             <tbody>
               <tr *ngFor="let item of listaItemViaje; let i=index">
                 <td>{{item.numeroViaje}}</td>
-                <td>{{item.viajeRemito}}</td>
+                <td>{{item.viajeRemito.id}}</td>
                 <td>{{item.bultos}}</td>
                 <td>{{item.kilosEfectivo}}</td>
                 <td>{{item.valorDeclarado}}</td>
                 <td>{{item.flete}}</td>
                 <td>{{item.importeNetoGravado}}</td>
                 <td>{{item.alicuotaIva}}</td>
-                <td>{{item.subtotalCIva}}</td>
+                <td>{{item.importeIva}}</td>
                 <td class="cursor-color" (click)="eliminarItemViaje(item.importeNetoGravado, item.subtotalCIva, i)">X</td>
               </tr>
             </tbody>

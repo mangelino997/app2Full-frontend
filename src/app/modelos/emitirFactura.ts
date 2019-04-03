@@ -33,7 +33,6 @@ export class EmitirFactura {
             cliente: new FormControl(),
             clienteRemitente: new FormControl(),
             rem: new FormGroup({
-                // cliente: new FormControl(),
                 domicilio: new FormControl(),
                 localidad: new FormControl(),
                 afipCondicionIva: new FormControl(),
@@ -42,7 +41,6 @@ export class EmitirFactura {
             }),
             clienteDestinatario: new FormControl(),
             des: new FormGroup({
-                // cliente: new FormControl(),
                 domicilio: new FormControl(),
                 localidad: new FormControl(),
                 afipCondicionIva: new FormControl(),
@@ -63,18 +61,21 @@ export class EmitirFactura {
             contrareembolso: new FormControl(),
             porcentajeCC: new FormControl(),
             comision: new FormControl(),
-            alicuotaIva: new FormControl('')            
+            alicuotaIva: new FormControl(''),
+            condicionVenta: new FormControl('', Validators.required),
+            tipoDocumento: new FormControl('', Validators.required),
+            numeroDocumento: new FormControl('', Validators.required),           
+            cobrador: new FormControl('', Validators.required)           
+
         });
         this.formularioViaje = new FormGroup({
             ventaTipoItem: new FormControl('', Validators.required),
             numeroViaje: new FormControl('', Validators.required),
-            // idTramo: new FormControl('', Validators.required),
             viajeRemito: new FormControl('', Validators.required),
             bultos: new FormControl(0.00),
             kilosEfectivo: new FormControl(0.00),
             kilosAforado: new FormControl(0.00),
             m3: new FormControl(),
-
             ordenVenta: new FormControl('', Validators.required),
             descripcionCarga: new FormControl(),
             valorDeclarado: new FormControl(0.00),
@@ -86,10 +87,13 @@ export class EmitirFactura {
             importeEntrega: new FormControl(0.00),
             conceptosVarios: new FormControl(),
             importeVentaItemConcepto: new FormControl(0.00),
-            importeNetoGravado: new FormControl(0, Validators.required),
+            importeNetoGravado: new FormControl(0.00, Validators.required),
+            importeNoGravado: new FormControl(0.00),
+            importeIva: new FormControl(0, Validators.required),
             alicuotaIva: new FormControl(0.00),
+            importeExento: new FormControl(0.00),
             afipAlicuotaIva: new FormControl(''),
-            subtotalCIva: new FormControl(0.00)
+            provincia: new FormControl(0.00),
         });
         this.formularioContraReembolso = new FormGroup({
             item: new FormControl('', Validators.required),
@@ -98,8 +102,7 @@ export class EmitirFactura {
             importeContraReembolso: new FormControl('', Validators.required),
             pComision: new FormControl('', Validators.required),
             alicuotaIva: new FormControl('', Validators.required),
-            subtotalCIva: new FormControl(0.00)
-
+            importeIva: new FormControl(0.00)
         });
     }
 }

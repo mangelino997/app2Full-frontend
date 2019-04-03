@@ -32,15 +32,18 @@
                             </thead>
                             <tbody>
                             <tr *ngFor="let remito of resultadosTramos; let i=index" id="fila{{i}}" class="planilla-no-seleccionada" (click)="cambioRemito(i, remito)">
-                                <td>Origen: {{tramo.origen.nombre}} - Destino: {{tramo.destino.nombre}}</td>
-                                <td>{{remito.id}}</td>
-                                <td>{{remito.bultos}}</td>
-                                <td>{{remito.fecha}}</td>
-                                <td>{{remito.numero}}</td>
-                                <td>{{remito.clienteRemitente.alias}}</td>
-                                <td>{{remito.clienteDestinatario.razonSocial}}</td>
-                                <td>{{remito.sucursalDestino.domicilio}}</td>
-                                <td></td>
+                                <td align="center">Origen: {{tramo.origen.nombre}} - Destino: {{tramo.destino.nombre}}</td>
+                                <td align="center">{{remito.id}}</td>
+                                <td align="center">{{remito.bultos}}</td>
+                                <td align="center">{{remito.fecha}}</td>
+                                <td align="center">{{remito.numero}}</td>
+                                <td align="center">{{remito.clienteRemitente.alias}}</td>
+                                <td align="center">{{remito.clienteDestinatario.razonSocial}}</td>
+                                <td align="center">{{remito.sucursalDestino.domicilio}}</td>
+                                <td *ngIf="remito.observaciones!=null" align="center">
+                                    <a (click)="verObservaciones(remito.observaciones)" style="font-weight: 700; color:red;">Ver</a>
+                                </td>
+                                <td *ngIf="remito.observaciones==null" align="center"></td>
                             </tr>
                             </tbody>
                         </table>
