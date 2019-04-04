@@ -11,13 +11,13 @@ export class OrdenVentaTramo {
             version: new FormControl(),
             ordenVenta: new FormControl(),
             tramo: new FormControl(),
-            kmTramo: new FormControl('0'),
+            kmTramo: new FormControl(),
             kmPactado: new FormControl(),
-            importeFijoSeco: new FormControl('0.00'),
+            importeFijoSeco: new FormControl(),
             importeFijoRef: new FormControl(),
-            precioUnitarioSeco: new FormControl('0.00'),
+            precioUnitarioSeco: new FormControl(),
             precioUnitarioRef: new FormControl(),
-            precioDesde: new FormControl()
+            preciosDesde: new FormControl()
         })
     }
 }
