@@ -6,7 +6,7 @@ import {
   MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
   MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
-  MatProgressBarModule, MatStepperModule, MatTreeModule} from '@angular/material';
+  MatProgressBarModule, MatStepperModule, MatTreeModule, MatSortModule} from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -539,6 +539,7 @@ const stompConfig: StompConfig = {
     MatProgressBarModule,
     MatStepperModule,
     MatTreeModule,
+    MatSortModule,
     ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
     ToastrModule.forRoot({
       timeOut: 4000,
@@ -561,7 +562,8 @@ const stompConfig: StompConfig = {
     MatSidenavModule,
     MatTabsModule,
     MatToolbarModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSortModule
   ],
   providers: [
     AppService,

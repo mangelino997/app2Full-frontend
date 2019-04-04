@@ -51,21 +51,38 @@
       </form>
     </div>
   </div>
-  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+  <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
     <div class="col-md-6">
-      <div class="form-group has-float-label">
-        <label for="idProvincia" class="tamanio-label">Provincia</label>
-        <input id="idProvincia" class="form-control form-control-sm" type="text" matInput
-          [formControl]="formulario.get('provincia')" [matAutocomplete]="autoProvincia"
-          autocomplete="off" (blur)="vaciarListas()">
-        <mat-autocomplete #autoProvincia="matAutocomplete" [displayWith]="displayFa.bind(this)">
-          <mat-option *ngFor="let itemProvincia of resultadosProvincias" [value]="itemProvincia"
-            (onSelectionChange)="listarPorProvincia(itemProvincia)">
-            {{itemProvincia.nombre}}, {{itemProvincia.pais.nombre}}
-          </mat-option>
-        </mat-autocomplete>
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-float-label">
+            <label for="idProvincia" class="tamanio-label">Provincia</label>
+            <input id="idProvincia" class="form-control form-control-sm" type="text" matInput
+              [formControl]="formulario.get('provincia')" [matAutocomplete]="autoProvincia"
+              autocomplete="off">
+            <mat-autocomplete #autoProvincia="matAutocomplete" [displayWith]="displayFa.bind(this)">
+              <mat-option *ngFor="let itemProvincia of resultadosProvincias" [value]="itemProvincia"
+                (onSelectionChange)="listarPorProvincia(itemProvincia)">
+                {{itemProvincia.nombre}}, {{itemProvincia.pais.nombre}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
       </div>
-      <table class="table table-bordered table-striped table-sm">
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z8">
+        <ng-container matColumnDef="id" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+        </ng-container>
+        <ng-container matColumnDef="nombre" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+      <!-- <table class="table table-bordered table-striped table-sm">
         <thead>
           <tr>
             <th class="text-center" style="width:10%" scope="col">id</th>
@@ -90,7 +107,7 @@
             </td>
           </tr>
         </tbody>
-      </table>
+      </table> -->
     </div>
   </div>
 </div>
