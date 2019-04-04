@@ -71,8 +71,8 @@ export class OrdenVentaComponent implements OnInit{
   public resultados = [];
   //Define el form control para las busquedas cliente
   public buscarCliente:FormControl = new FormControl();
-  //Define el form control para el fechaDesde de cada registro
-  public fechaDesde:FormControl = new FormControl();
+  //Define el form control para el precioDesde de cada registro
+  public precioDesde:FormControl = new FormControl();
   //Define la lista de resultados de busqueda cliente
   public resultadosClientes = [];
   //Define el form control para las busquedas vendedor
@@ -140,7 +140,7 @@ export class OrdenVentaComponent implements OnInit{
     //Define el formulario de orden venta
     this.formulario = this.ordenVenta.formulario;
     //Obtiene la lista de tipos de tarifas
-    this.listarTiposTarifas();
+    // this.listarTiposTarifas();
     //Define el formulario de orden venta escala
     this.formularioEscala = this.ordenVentaEscala.formulario;
     //Define el formulario de orden venta tramo
@@ -154,6 +154,8 @@ export class OrdenVentaComponent implements OnInit{
     this.listarEscalaTarifa();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
+    this.seleccionarPestania(1, 'Agregar', 0);
+    this.listar();
     //Autocompletado Tramo - Buscar por nombre
     this.formularioTramo.get('tramo').valueChanges
       .subscribe(data => {
@@ -163,14 +165,10 @@ export class OrdenVentaComponent implements OnInit{
           })
         }
     });
-    //Establece los valores de la primera pestania activa una vez que  this.formulario.get('tipoTarifa').value.porEscala es diferente de null
-    if(this.formulario.get('tipoTarifa').value.porEscala!=null){
-      this.seleccionarPestania(1, 'Agregar', 0);
-      console.log(this.formulario.value, this.formularioEscala.value);
-    }
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
+    console.log("entra");
     this.formulario.get('tipoOrdenVenta').setValue(true);
     this.formulario.get('seguro').setValue(0.00);
     this.formulario.get('comisionCR').setValue(0.00);
@@ -181,6 +179,8 @@ export class OrdenVentaComponent implements OnInit{
     this.formularioTramo.get('precioUnitarioSeco').setValue(0.00);
     this.formularioTramo.get('importeFijoRef').setValue(0.00);
     this.formularioTramo.get('precioUnitarioRef').setValue(0.00);
+    this.listarTiposTarifas();
+
   }
   //Obtiene la lista de empresas
   private listarEmpresas() {
@@ -195,11 +195,12 @@ export class OrdenVentaComponent implements OnInit{
   }
   //Obtiene la lista de tipos de tarifas
   private listarTiposTarifas() {
+    console.log("entra a tarifa");
     this.tipoTarifaServicio.listar().subscribe(
       res => {
         this.tiposTarifas = res.json();  
         this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
-      
+        console.log(this.formulario.get('tipoTarifa').value.porEscala);
       },
       err => {
         console.log(err);
@@ -218,7 +219,6 @@ export class OrdenVentaComponent implements OnInit{
   }
   //Obtiene una lista de escalas tarifas
   private listarEscalaTarifa() {
-    console.log("entra");
     this.escalaTarifaServicio.listar().subscribe(
       res => {
         this.escalas=res.json();
@@ -372,15 +372,16 @@ export class OrdenVentaComponent implements OnInit{
   }
   //Agrega una Escala a listaDeEscalas
   public agregarEscalaLista(){
+    console.log(this.indiceSeleccionado);
     this.formulario.disable();
-    this.fechaDesde.disable();
+    this.precioDesde.disable();
     if(this.idModEscala!=null){
-      this.formularioEscala.get('fechaDesde').setValue(this.fechaDesde.value);
+      this.formularioEscala.get('precioDesde').setValue(this.precioDesde.value);
       this.listaDeEscalas[this.idModEscala]=this.formularioEscala.value;
       this.formularioEscala.reset();
       this.idModEscala=null;
     }else{
-      this.formularioEscala.get('fechaDesde').setValue(this.fechaDesde.value);
+      this.formularioEscala.get('precioDesde').setValue(this.precioDesde.value);
       this.listaDeEscalas.push(this.formularioEscala.value);
       this.formularioEscala.reset();
     }
@@ -436,14 +437,14 @@ export class OrdenVentaComponent implements OnInit{
   //Agrega un Tramo a listaDeTramos
   public agregarTramoLista(){
     this.formulario.disable();
-    this.fechaDesde.disable();
+    this.precioDesde.disable();
     if(this.idModTramo!=null){
-      this.formularioTramo.get('fechaDesde').setValue(this.fechaDesde.value);
+      this.formularioTramo.get('precioDesde').setValue(this.precioDesde.value);
       this.listaDeTramos[this.idModTramo]=this.formularioTramo.value;
       this.formularioTramo.reset();
       this.idModTramo=null;
     }else{
-      this.formularioTramo.get('fechaDesde').setValue(this.fechaDesde.value);
+      this.formularioTramo.get('precioDesde').setValue(this.precioDesde.value);
       this.listaDeTramos.push(this.formularioTramo.value);
       this.formularioTramo.reset();
     }
@@ -526,7 +527,7 @@ export class OrdenVentaComponent implements OnInit{
     }else{
       this.listaDeTramos=this.ordenventa.value.ordenesVentasTramos;
     }
-    this.fechaDesde.setValue(this.ordenventa.value.activaDesde);
+    this.precioDesde.setValue(this.ordenventa.value.activaDesde);
   }
   //Reestablecer campos
   private reestablecerCampos(){
@@ -535,7 +536,7 @@ export class OrdenVentaComponent implements OnInit{
     this.formularioTramo.reset();
     this.listaDeEscalas=[];
     this.listaDeTramos=[];
-    this.fechaDesde.setValue(null);
+    this.precioDesde.setValue(null);
     this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
 
     }
