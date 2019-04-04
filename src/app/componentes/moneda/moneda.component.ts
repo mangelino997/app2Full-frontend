@@ -67,6 +67,10 @@ export class MonedaComponent implements OnInit {
         })
       }
     });
+    //Se subscribe al servicio de lista de registros
+    this.monedaServicio.listaCompleta.subscribe(res => {
+      this.listaCompleta = res;
+    });
   }
   //Al inicializarse el componente
   ngOnInit() {
@@ -74,14 +78,9 @@ export class MonedaComponent implements OnInit {
     this.formulario = this.moneda.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //El campo codigo del formulario siempre se mantiene deshabilitado
-    this.formulario.get('codigo').disable();
-    //Obtenemos el siguiente Id y lo mostramos
-    this.obtenerSiguienteId();
     //Cargamos la lista de Monedas
     this.listar();
   }
-
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -104,7 +103,7 @@ export class MonedaComponent implements OnInit {
     }
     switch (id) {
       case 1:
-        // this.obtenerSiguienteId();
+        this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
@@ -140,7 +139,7 @@ export class MonedaComponent implements OnInit {
   public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar();
+        this.verificarPrincipal();
         break;
       case 3:
         this.actualizar();
@@ -156,7 +155,7 @@ export class MonedaComponent implements OnInit {
   private obtenerSiguienteId() {
     this.monedaServicio.obtenerSiguienteId().subscribe(
       res => {
-        this.id.setValue(res.json());
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -175,44 +174,33 @@ export class MonedaComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar() {
-    this.monedaServicio.listarPorNombre(this.formulario.get('nombre').value).subscribe(
+  private verificarPrincipal() {
+   if (this.formulario.get('porDefecto').value == "true") {
+    this.monedaServicio.obtenerPorDefecto().subscribe(
       res => {
-        if (res.json().length >= 1) {
-          this.toastr.error("Ya existe la moneda que se desea cargar");
-          this.reestablecerFormulario(undefined);
-        } else {
-          if (this.formulario.get('porDefecto').value == "true") {
-            this.monedaServicio.obtenerPorDefecto().subscribe(
-              res => {
-                var respuesta = res.json();
-                //open modal reemplazar moneda
-                this.cambiarPrincipal(respuesta, this.formulario.value);
-              },
-              err => {
-                this.toastr.error(err.json().mensaje);
-              }
-            );
-          }
-          else {
-            this.monedaServicio.agregar(this.formulario.value).subscribe(
-              res => {
-                var respuesta = res.json();
-                this.reestablecerFormulario(respuesta.id);
-                setTimeout(function () {
-                  document.getElementById('idNombre').focus();
-                }, 20);
-                this.toastr.success(respuesta.mensaje);
-              },
-              err => {
-                this.toastr.error(err.json().mensaje);
-              }
-            );
-          }
+        var respuesta = res.json();
+        //open modal reemplazar moneda
+        this.cambiarPrincipal(respuesta, this.formulario.value);
         }
+      );
+    }
+    else {
+      this.agregar(this.formulario.value);
+    }
+  }
+  //Metodo Agregar Moneda
+  private agregar(moneda){
+    this.monedaServicio.agregar(moneda).subscribe(
+      res => {
+        var respuesta = res.json();
+        this.reestablecerFormulario(respuesta.id);
+          setTimeout(function () {
+            document.getElementById('idNombre').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
       },
       err => {
-        this.toastr.error(err.json().mensaje);
+        this.lanzarError(err);
       }
     );
   }
@@ -241,15 +229,11 @@ export class MonedaComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    // if(respuesta.codigo == 11006) {
-    //   document.getElementById("labelRazonSocial").classList.add('label-error');
-    //   document.getElementById("idRazonSocial").classList.add('is-invalid');
-    //   document.getElementById("idRazonSocial").focus();
-    // } else if(respuesta.codigo == 11007) {
-    //   document.getElementById("labelCUIT").classList.add('label-error');
-    //   document.getElementById("idCUIT").classList.add('is-invalid');
-    //   document.getElementById("idCUIT").focus();
-    // }
+    if(respuesta.codigo == 11002) {
+      document.getElementById("labelNombre").classList.add('label-error');
+      document.getElementById("idNombre").classList.add('is-invalid');
+      document.getElementById("idNombre").focus();
+    } 
     this.toastr.error(respuesta.mensaje);
   }
   //Reestablece los campos formularios
@@ -279,15 +263,12 @@ export class MonedaComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-    this.id.setValue(elemento.id);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-    this.id.setValue(elemento.id);
-
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -307,7 +288,8 @@ export class MonedaComponent implements OnInit {
       data: { monedaPrincipal: monedaPrincipal, monedaAgregar: monedaAgregar },
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.reestablecerFormulario(undefined);
+      this.formulario.get('porDefecto').setValue(result);
+      this.agregar(this.formulario.value);
     });
   }
   //Define el mostrado de datos y comparacion en campo select
@@ -333,6 +315,8 @@ export class MonedaComponent implements OnInit {
 export class CambiarMonedaPrincipalDialogo {
   //Define la moneda que se desea agregar
   public monedaAgregar: string;
+  //Define el resultado devuelto
+  public result: any;
   //Define la moneda principal actual
   public monedaPrincipal: string;
   constructor(public dialogRef: MatDialogRef<CambiarMonedaPrincipalDialogo>, @Inject(MAT_DIALOG_DATA) public data, private monedaServicio: MonedaService,
@@ -340,27 +324,6 @@ export class CambiarMonedaPrincipalDialogo {
   ngOnInit() {
     this.monedaAgregar = this.data.monedaAgregar;
     this.monedaPrincipal = this.data.monedaPrincipal;
-  }
-  //La nueva Moneda cambia a Principal
-  public agregar(cambiaPorDefecto) {
-    if (cambiaPorDefecto == true) {
-      this.monedaAgregar['porDefecto'] = "true";
-    } else {
-      this.monedaAgregar['porDefecto'] = "false";
-    }
-    this.monedaServicio.agregar(this.monedaAgregar).subscribe(
-      res => {
-        var respuesta = res.json();
-        setTimeout(function () {
-          document.getElementById('idNombre').focus();
-        }, 20);
-        this.toastr.success(respuesta.mensaje);
-        this.dialogRef.close();
-      },
-      err => {
-        this.toastr.error(err.respuesta);
-      }
-    );
   }
   onNoClick(): void {
     this.dialogRef.close();

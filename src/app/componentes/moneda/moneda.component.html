@@ -26,8 +26,8 @@
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label for="idCodigo" class="tamanio-label">Código *</label>
-              <input id="idCodigo" type="number" [formControl]="id" [readonly]="soloLectura"
+              <label id="labelCodigo" for="idCodigo" class="codigo-label">Código *</label>
+              <input id="idCodigo" type="number" formControlName="id" readonly
                 class="form-control form-control-sm">
             </div>
           </div>
@@ -35,9 +35,9 @@
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
+              <label id="labelNombre" for="idNombre" class="nombre-label">Nombre *</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" [readonly]="soloLectura"
-                class="form-control form-control-sm">
+                class="form-control form-control-sm" (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
             </div>
           </div>
         </div>
@@ -107,7 +107,7 @@
         <tbody>
           <tr *ngFor="let l of listaCompleta; let i=index">
             <td>
-              <span text-align="center">{{i+1}}</span>
+              <span text-align="center">{{l.id}}</span>
             </td>
             <td>
               <span text-align="center">{{l.nombre}}</span>

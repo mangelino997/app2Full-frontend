@@ -61,11 +61,11 @@ export class AppService {
     this.empresa = empresa;
   }
    //Formatear numero a x decimales
-   public setDecimalesEvent(valor, cantidad) {
+   public setDecimales(valor, cantidad) {
       return Number(valor).toFixed(cantidad);
   }
   //Formatear numero a x decimales
-  public setDecimales(valor, cantidad) {
+  public parseaDecimales(valor, cantidad) {
     if(valor!=undefined)
       return parseFloat((valor).toFixed(cantidad));
   }
