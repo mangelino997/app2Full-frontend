@@ -19,8 +19,8 @@
         </div>
         <mat-divider></mat-divider>
         <h5>¿Cambiar la Moneda Principal por la nueva Moneda?  </h5>
-        <button id="idBoton" mat-raised-button color="primary" (click)="agregar(true)">Si</button>
-        <button id="idBoton" mat-raised-button color="secondary" (click)="agregar(false)">No</button>
-        <button id="idBoton" mat-raised-button color="secondary" (click)="dialogRef.close()">Cancelar</button>
+        <button id="idBoton" mat-raised-button color="primary" (click)="dialogRef.close(true)" >Si</button>
+        <button id="idBoton" mat-raised-button color="secondary" (click)="dialogRef.close(false)" >No</button>
+        <!-- <button id="idBoton" mat-raised-button color="secondary" (click)="dialogRef.close()">Cancelar</button> -->
     </div>
 </div>
