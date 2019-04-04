@@ -1,4 +1,4 @@
-<div id="ordenventa" class="container-fluid">
+<div id="ordenventa" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
@@ -79,7 +79,7 @@
                 </mat-select>
               </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-5">
               <div class="form-group has-float-label">
                 <label for="idTipoTarifa" class="tamanio-label">Tarifa *</label>
                 <mat-select id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
@@ -122,8 +122,8 @@
           <div class="row">
             <div class="col-md-3">
               <div class="form-group has-float-label">
-                <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
-                <input id="idPreciosDesde" type="date" [formControl]="precioDesde" autocomplete="off"
+                <label for="idPreciosDesde" class="tamanio-label">Fecha Desde *</label>
+                <input id="idPreciosDesde" type="date" [formControl]="fechaDesde" autocomplete="off"
                   class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
             </div>
@@ -133,7 +133,7 @@
     </form>
     <div class="row justify-content-center contenedor">
       <div class="col-md-12 text-center">
-        <div *ngIf="formulario.get('tipoTarifa').value.porEscala">
+        <div *ngIf="formulario.get('tipoTarifa').value.porEscala"> <!---->
           <form [formGroup]="formularioEscala">
             <div class="row">
               <div class="col-md-2">
@@ -151,7 +151,7 @@
                 <div class="form-group has-float-label">
                   <label for="idImporteFijo" class="tamanio-label">Precio Fijo *</label>
                   <input id="idImporteFijo" [formControl]="formularioEscala.get('importeFijo')" type="number" autocomplete="off"
-                    class="form-control form-control-sm" min="1" maxlength="4"  (keydown)="controlPrecios(1)" (blur)="establecerCeros(formularioEscala.get('importeFijo'))"
+                    class="form-control form-control-sm" min="0.00" maxlength="4"  (keydown)="controlPrecios(1)" (blur)="establecerCeros(formularioEscala.get('importeFijo'))"
                     [readonly]="formulario.get('tipoTarifa').value.porPorcentaje">
                 </div>
               </div>
@@ -159,7 +159,7 @@
                 <div class="form-group has-float-label">
                   <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
                   <input id="idPrecioUnitario" [formControl]="formularioEscala.get('precioUnitario')" type="number" autocomplete="off"
-                    class="form-control form-control-sm" min="1" maxlength="4"  (keydown)="controlPrecios(2)" (blur)="establecerCeros(formularioEscala.get('precioUnitario'))"
+                    class="form-control form-control-sm" min="0.00" maxlength="4"  (keydown)="controlPrecios(2)" (blur)="establecerCeros(formularioEscala.get('precioUnitario'))"
                     [readonly]="formulario.get('tipoTarifa').value.porPorcentaje">
                 </div>
               </div>
@@ -175,7 +175,7 @@
                 <div class="form-group has-float-label">
                   <label for="idMinimo" class="tamanio-label">Mínimo </label>
                   <input id="idMinimo" [formControl]="formularioEscala.get('minimo')" type="number" autocomplete="off" (blur)="establecerCeros(formularioEscala.get('minimo'))"
-                    class="form-control form-control-sm" min="1" maxlength="4">
+                    class="form-control form-control-sm" min="0.00" maxlength="4">
                 </div>
               </div>
               <div class="col-md-2">
