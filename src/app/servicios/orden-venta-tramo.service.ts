@@ -59,6 +59,10 @@ export class OrdenVentaTramoService {
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
   }
+  //Agrega una lista como registro
+  public agregarLista(elemento) {
+    return this.http.post(this.url + '/agregarLista', elemento, this.options);
+  }
   //Actualiza un registro
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
