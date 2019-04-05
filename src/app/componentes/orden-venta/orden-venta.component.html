@@ -87,12 +87,10 @@
                 <label for="idTipoTarifa" class="tamanio-label">Tarifa *</label>
                 <mat-select id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
                   [compareWith]="compareFn">
-                  <mat-option disabled><span class="espacioNombre">Nombre</span> | <span class="espacio">Por
-                      Porcentaje</span> | <span class="espacio">Por Escala</span></mat-option>
                   <mat-option *ngFor="let itemTipoTarifa of tiposTarifas" [value]="itemTipoTarifa">
-                    <span class="espacioNombre">{{itemTipoTarifa.nombre}}</span> | <span
-                      class="centrado">{{itemTipoTarifa.porPorcentaje ? 'Sí': 'No'}}</span> | <span
-                      class="centrado">{{itemTipoTarifa.porEscala ? 'Sí': 'No'}}</span>
+                    <span>{{itemTipoTarifa.nombre}} - </span>
+                    <span>(P/Porcentaje: {{itemTipoTarifa.porPorcentaje ? 'Sí': 'No'}}) - </span>
+                    <span>(P/Escala: {{itemTipoTarifa.porEscala ? 'Sí': 'No'}})</span>
                   </mat-option>
                 </mat-select>
               </div>
