@@ -18,10 +18,9 @@
               <label for="idAutocompletado" class="tamanio-label">Cliente </label>
               <input id="idAutocompletado" class="form-control form-control-sm " autocomplete="off"
                 type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cargarTabla(0, item.id)"
-                  > <!--(onSelectionChange)=""-->
-                  {{item.nombre}}
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cargarTabla(0, item.id)"> 
+                  {{item.alias}}
                 </mat-option>
               </mat-autocomplete>
             </div>
@@ -54,7 +53,8 @@
                 </tr>
               </thead>
               <tbody>
-                  <tr *ngFor="let l of listaCompleta; let i= index">
+                <ng-container *ngFor="let l of listaCompleta; let i= index">
+                  <tr *ngIf="l.tipoTarifa.porPorcentaje==false">
                     <td align="center">
                       <span>{{l.nombre}}</span>
                     </td>
@@ -80,6 +80,33 @@
                       <mat-checkbox class="" (change)="ordenSeleccionada(i, $event)"></mat-checkbox>
                     </td>
                   </tr>
+                  <tr *ngIf="l.tipoTarifa.porPorcentaje==true" class="fila-bloqueada">
+                    <td align="center">
+                      <span>{{l.nombre}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.vendedor.nombre}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.tipoTarifa.nombre}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.seguro}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.comisionCR}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.estaActiva? 'Sí':'No'}}</span>
+                    </td>
+                    <td align="center">
+                      <span>{{l.observaciones}}</span>
+                    </td>
+                    <td align="center">
+                      <mat-checkbox class="" disabled="true" ></mat-checkbox>
+                    </td>
+                  </tr>
+                </ng-container>
               </tbody>
             </table>
           </div>
@@ -88,8 +115,13 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idPrecioDesde" class="tamanio-label">Precio Desde</label>
-              <input id="idPrecioDesde" type="text" formControlName="fechaDesde" autocomplete="off"
-                class="form-control form-control-sm" readonly>
+              <!-- <input id="idPrecioDesde" type="date" formControlName="fechaDesde" autocomplete="off"
+                class="form-control form-control-sm" > -->
+              <mat-select class="form-control form-control-sm" formControlName="fechaDesde" >
+                <mat-option *ngFor="let itemOrdenVta of ordenVenta" [value]="itemOrdenVta.preciosDesde">
+                  {{itemOrdenVta.preciosDesde}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-3">
@@ -126,7 +158,7 @@
             <div class="form-group has-float-label">
               <label for="idNuevoPrecioDesde" class="tamanio-label">Nuevos Precios Desde</label>
               <input id="idNuevoPrecioDesde" type="date" formControlName="precioDesde" autocomplete="off"
-                class="form-control form-control-sm" (blur)="validarNuevaFechaDesde()">
+                class="form-control form-control-sm" (blur)="validarNuevaFechaDesde()" (change)="validarNuevaFechaDesde()">
             </div>
           </div>
           <div class="col-md-3">

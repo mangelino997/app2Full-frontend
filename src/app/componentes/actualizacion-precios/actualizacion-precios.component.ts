@@ -11,6 +11,8 @@ import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
 import { OrdenVentaTramoService } from 'src/app/servicios/orden-venta-tramo.service';
 import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { ClienteService } from 'src/app/servicios/cliente.service';
+import { AppService } from 'src/app/servicios/app.service';
 
 
 @Component({
@@ -23,6 +25,8 @@ export class ActualizacionPreciosComponent implements OnInit {
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
   public indiceSeleccionado:number = null;
+  //Define el id de la Orden Venta seleccionada
+  public idOrdenVta:number = null;
   //Define la pestania actual seleccionada
   public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
@@ -49,7 +53,8 @@ export class ActualizacionPreciosComponent implements OnInit {
   public autocompletado:FormControl = new FormControl();
   //Define como formControl
   public precioDesde:FormControl = new FormControl();
-  
+  //Define el porcentaje como 
+  public porcentaje: any;
   //Define el campo como un formControl
   public buscarPor:FormControl = new FormControl();
   //Define el campo como un formControl
@@ -63,17 +68,24 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Define los resultados de autocompletado localidad
   public resultadosLocalidades:Array<any> = [];
   //Constructor
-  constructor(private servicio: OrdenVentaService, private actualizacionPrecios: ActualizacionPrecios,
+  constructor(private servicio: OrdenVentaService, private actualizacionPrecios: ActualizacionPrecios, private clienteService: ClienteService, private appService: AppService,
     private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService, private empresaServicio: EmpresaService, private ordenVentaServicio: OrdenVentaService,
     private toastr: ToastrService, public dialog: MatDialog) {
     //Defiene autocompletado de Clientes
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.servicio.listarPorNombre(data).subscribe(res => {
+        this.clienteService.listarPorAlias(data).subscribe(res => {
           this.resultados = res;
         })
       }
     })
+    // this.autocompletado.valueChanges.subscribe(data => {
+    //   if(typeof data == 'string') {
+    //     this.servicio.listarPorNombre(data).subscribe(res => {
+    //       this.resultados = res;
+    //     })
+    //   }
+    // })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -99,31 +111,6 @@ export class ActualizacionPreciosComponent implements OnInit {
       }
     );
   }
-  //Actualiza un registro
-  public actualizar() {
-  
-  // this.servicio.actualizar(this.formulario.value).subscribe(
-  //   res => {
-  //     var respuesta = res.json();
-  //     if(respuesta.codigo == 200) {
-  //       this.reestablecerFormulario(undefined);
-  //       setTimeout(function() {
-  //         document.getElementById('idAutocompletado').focus();
-  //       }, 20);
-  //       this.toastr.success(respuesta.mensaje);
-  //     }
-  //   },
-  //   err => {
-  //     var respuesta = err.json();
-  //     if(respuesta.codigo == 11002) {
-  //       document.getElementById("labelNombre").classList.add('label-error');
-  //       document.getElementById("idNombre").classList.add('is-invalid');
-  //       document.getElementById("idNombre").focus();
-  //       this.toastr.error(respuesta.mensaje);
-  //     }
-  //   }
-  // );
-  }
   //Realiza el cambio de campo a buscar
   public cambioDeCampo(){
     if(this.buscarPor.value==0){
@@ -136,6 +123,7 @@ export class ActualizacionPreciosComponent implements OnInit {
   public cargarTabla(opcion, id){
     this.listaCompleta=[];
     if(opcion==0){
+      console.log(id);
       this.ordenVentaServicio.listarPorCliente(id).subscribe(
         res=>{
           this.listaCompleta= res.json();
@@ -155,6 +143,7 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Controla los checkbox
   public ordenSeleccionada(indice, $event){
+    this.indiceSeleccionado = indice;
     let checkboxs=document.getElementsByTagName('mat-checkbox');
     for(let i=0; i<checkboxs.length; i++){
       let id="mat-checkbox-"+(i+1);
@@ -179,7 +168,7 @@ export class ActualizacionPreciosComponent implements OnInit {
         res=>{
           this.ordenVenta=res.json();
           this.formulario.get('fechaDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
-          this.filtrarPorPrecioDesde(this.ordenVenta);
+          this.filtrarSiEsPorcentaje(this.ordenVenta);
         },
         err=>{
         }
@@ -189,7 +178,7 @@ export class ActualizacionPreciosComponent implements OnInit {
         res=>{
           this.ordenVenta=res.json();
           this.formulario.get('fechaDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
-          this.filtrarPorPrecioDesde(this.ordenVenta);
+          this.filtrarSiEsPorcentaje(this.ordenVenta);
         },
         err=>{
         }
@@ -198,11 +187,12 @@ export class ActualizacionPreciosComponent implements OnInit {
     
   }
   //Filtra las ordenes de venta y carga en la lista los de la fecha de precioDesde
-  public filtrarPorPrecioDesde(ordenesDeVenta){
+  // Antes filtrabamos por fechaDesde ---> public filtrarPorPrecioDesde(ordenesDeVenta){
+  public filtrarSiEsPorcentaje(ordenesDeVenta){
     this.listaFiltrada=[];
-    let fechaFiltro= this.formulario.get('fechaDesde').value;
+    // let fechaFiltro= this.formulario.get('fechaDesde').value;
     for(let i=0; i< ordenesDeVenta.length;i++){
-      if(ordenesDeVenta[i].preciosDesde==fechaFiltro)
+      if(ordenesDeVenta[i].porcentaje==null||ordenesDeVenta[i].porcentaje==0)
       this.listaFiltrada.push(ordenesDeVenta[i]);
     }
   }
@@ -210,7 +200,7 @@ export class ActualizacionPreciosComponent implements OnInit {
   public listaDePrecios(){
     const dialogRef = this.dialog.open(ListaPreciosDialogo, {
       width: '1100px',
-      data: {fecha: this.formulario.get('fechaDesde').value, listaFiltrada: this.listaFiltrada, porEscala: this.porEscala},
+      data: {fecha: this.formulario.get('fechaDesde').value, listaFiltrada: this.listaFiltrada, porEscala: this.porEscala}, 
     });
     dialogRef.afterClosed().subscribe(result => {
     });
@@ -221,12 +211,14 @@ export class ActualizacionPreciosComponent implements OnInit {
       width: '1100px',
       data: {
         formulario: this.ordenVenta, 
-        porEscala: this.porEscala
+        porEscala: this.porEscala,
+        ordenVenta: this.listaCompleta[this.indiceSeleccionado]
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.formulario.get('fechaDesde').setValue(this.formulario.get('precioDesde').value);
-      this.reestablecerFormulario(undefined);
+      if(result==1){
+        this.reestablecerFormulario(undefined);
+      }
     });
   }
   //Reestablece el formulario
@@ -240,60 +232,100 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Realiza la actualizacion del precio de la orden seleccionada
   public aplicarActualizacion(){
-    switch(this.aumento.value){
-      case 0:
-        this.aplicarAnulacion();
-        break;
-      case 1:
-        this.aplicarAumento();
-        break;
+    if(this.formulario.get('porcentaje').value<0){
+      this.toastr.error('El porcentaje no puede ser un valor Negativo');
+      this.formulario.get('porcentaje').reset();
+      document.getElementById('idPorcentaje').focus();
+    }else{
+      switch(this.aumento.value){
+        case 0:
+          this.aplicarAnulacion();
+          break;
+        case 1:
+          this.aplicarAumento();
+          break;
+      }
     }
   }
   //Aplica un aumento de porcentaje en los precios de la orden venta seleccionada
   public aplicarAumento(){
-    let porcentaje=this.formulario.get('porcentaje').value;
+    this.formulario.get('porcentaje').setValue(this.returnDecimales(this.formulario.get('porcentaje').value, 2));
+    let porcentaje =this.formulario.get('porcentaje').value;
     if(this.porEscala==true){
       for(let i=0; i< this.ordenVenta.length; i++){
         if(this.ordenVenta[i].importeFijo!=0&&this.ordenVenta[i].importeFijo!=null)
-          this.ordenVenta[i].importeFijo=this.ordenVenta[i].importeFijo+this.ordenVenta[i].importeFijo*(porcentaje/100);
+          this.ordenVenta[i].importeFijo=this.returnDecimales(this.ordenVenta[i].importeFijo+this.ordenVenta[i].importeFijo*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].importeFijo=0;
+
         if(this.ordenVenta[i].precioUnitario!=0&&this.ordenVenta[i].precioUnitario!=null)
-        this.ordenVenta[i].precioUnitario=this.ordenVenta[i].precioUnitario+this.ordenVenta[i].precioUnitario*(porcentaje/100);
+          this.ordenVenta[i].precioUnitario=this.returnDecimales(this.ordenVenta[i].precioUnitario+this.ordenVenta[i].precioUnitario*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].precioUnitario=0;
       }
     }
     else{
       for(let i=0; i< this.ordenVenta.length; i++){
         if(this.ordenVenta[i].importeFijoSeco!=0&&this.ordenVenta[i].importeFijoSeco!=null)
-        this.ordenVenta[i].importeFijoSeco=this.ordenVenta[i].importeFijoSeco+this.ordenVenta[i].importeFijoSeco*(porcentaje/100);
+          this.ordenVenta[i].importeFijoSeco=this.returnDecimales(this.ordenVenta[i].importeFijoSeco+this.ordenVenta[i].importeFijoSeco*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].importeFijoSeco=0;
+
         if(this.ordenVenta[i].importeFijoRef!=0&&this.ordenVenta[i].importeFijoRef!=null)
-        this.ordenVenta[i].importeFijoRef=this.ordenVenta[i].importeFijoRef+this.ordenVenta[i].importeFijoRef*(porcentaje/100);
+          this.ordenVenta[i].importeFijoRef=this.returnDecimales(this.ordenVenta[i].importeFijoRef+this.ordenVenta[i].importeFijoRef*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].importeFijoRef=0;
+
         if(this.ordenVenta[i].precioUnitarioRef!=0&&this.ordenVenta[i].precioUnitarioRef!=null)
-        this.ordenVenta[i].precioUnitarioRef=this.ordenVenta[i].precioUnitarioRef+this.ordenVenta[i].precioUnitarioRef*(porcentaje/100);
+          this.ordenVenta[i].precioUnitarioRef=this.returnDecimales(this.ordenVenta[i].precioUnitarioRef+this.ordenVenta[i].precioUnitarioRef*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].precioUnitarioRef=0;
+
         if(this.ordenVenta[i].precioUnitarioSeco!=0&&this.ordenVenta[i].precioUnitarioSeco!=null)
-        this.ordenVenta[i].precioUnitarioSeco=this.ordenVenta[i].precioUnitarioSeco+this.ordenVenta[i].precioUnitarioSeco*(porcentaje/100);
+          this.ordenVenta[i].precioUnitarioSeco=this.returnDecimales(this.ordenVenta[i].precioUnitarioSeco+this.ordenVenta[i].precioUnitarioSeco*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].precioUnitarioSeco=0;
       }
     }
   }
   //Aplica una anulacion de porcentaje en los precios de la orden de venta seleccionada
   public aplicarAnulacion(){
-    let porcentaje=this.formulario.get('porcentaje').value;
+    this.formulario.get('porcentaje').setValue(this.returnDecimales(this.formulario.get('porcentaje').value, 2));
+    let porcentaje =this.formulario.get('porcentaje').value;
     if(this.porEscala==true){
       for(let i=0; i< this.ordenVenta.length; i++){
         if(this.ordenVenta[i].importeFijo!=0&&this.ordenVenta[i].importeFijo!=null)
-          this.ordenVenta[i].importeFijo=this.ordenVenta[i].importeFijo-this.ordenVenta[i].importeFijo*(porcentaje/100);
+          this.ordenVenta[i].importeFijo=this.returnDecimales(this.ordenVenta[i].importeFijo-this.ordenVenta[i].importeFijo*(porcentaje/100), 2);
+        else
+          this.ordenVenta[i].importeFijo=0;
+
         if(this.ordenVenta[i].precioUnitario!=0&&this.ordenVenta[i].precioUnitario!=null)
-        this.ordenVenta[i].precioUnitario=this.ordenVenta[i].precioUnitario-this.ordenVenta[i].precioUnitario*(porcentaje/100);
+          this.ordenVenta[i].precioUnitario=this.returnDecimales(this.ordenVenta[i].precioUnitario-this.ordenVenta[i].precioUnitario*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].precioUnitario=0;
       }
     }
     else{
       for(let i=0; i< this.ordenVenta.length; i++){
         if(this.ordenVenta[i].importeFijoSeco!=0&&this.ordenVenta[i].importeFijoSeco!=null)
-        this.ordenVenta[i].importeFijoSeco=this.ordenVenta[i].importeFijoSeco-this.ordenVenta[i].importeFijoSeco*(porcentaje/100);
+          this.ordenVenta[i].importeFijoSeco=this.returnDecimales(this.ordenVenta[i].importeFijoSeco-this.ordenVenta[i].importeFijoSeco*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].importeFijoSeco=0;
+
         if(this.ordenVenta[i].importeFijoRef!=0&&this.ordenVenta[i].importeFijoRef!=null)
-        this.ordenVenta[i].importeFijoRef=this.ordenVenta[i].importeFijoRef-this.ordenVenta[i].importeFijoRef*(porcentaje/100);
+          this.ordenVenta[i].importeFijoRef=this.returnDecimales(this.ordenVenta[i].importeFijoRef-this.ordenVenta[i].importeFijoRef*(porcentaje/100),2);
+        else
+            this.ordenVenta[i].importeFijoRef=0;
+
         if(this.ordenVenta[i].precioUnitarioRef!=0&&this.ordenVenta[i].precioUnitarioRef!=null)
-        this.ordenVenta[i].precioUnitarioRef=this.ordenVenta[i].precioUnitarioRef-this.ordenVenta[i].precioUnitarioRef*(porcentaje/100);
+          this.ordenVenta[i].precioUnitarioRef=this.returnDecimales(this.ordenVenta[i].precioUnitarioRef-this.ordenVenta[i].precioUnitarioRef*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].precioUnitarioRef=0;
+
         if(this.ordenVenta[i].precioUnitarioSeco!=0&&this.ordenVenta[i].precioUnitarioSeco!=null)
-        this.ordenVenta[i].precioUnitarioSeco=this.ordenVenta[i].precioUnitarioSeco-this.ordenVenta[i].precioUnitarioSeco*(porcentaje/100);
+          this.ordenVenta[i].precioUnitarioSeco=this.returnDecimales(this.ordenVenta[i].precioUnitarioSeco-this.ordenVenta[i].precioUnitarioSeco*(porcentaje/100),2);
+        else
+          this.ordenVenta[i].precioUnitarioSeco=0;
       }
     }
   }
@@ -341,6 +373,10 @@ export class ActualizacionPreciosComponent implements OnInit {
       return a.id === b.id;
     }
   }
+  //Retorna el numero a x decimales
+  public returnDecimales(valor: number, cantidad: number) {
+    return this.appService.setDecimales(valor, cantidad);
+  }
 }
 @Component({
   selector: 'lista-precios-dialogo',
@@ -374,20 +410,30 @@ export class ConfimarDialogo{
   public formulario:Array<any> = [];
   //Define la variable como un booleano
   public porEscala: boolean;
+  //Define la Orden Venta seleccionada
+  public ordenVenta: FormControl= new FormControl();
 
   constructor(public dialogRef: MatDialogRef<ConfimarDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
   private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService) {}
    ngOnInit() {
     this.formulario=this.data.formulario;
     this.porEscala= this.data.porEscala; //controlo que tabla muestro en el modal
-    console.log(this.data.formulario);
+    this.ordenVenta.setValue(this.data.ordenVenta);
    }
    public actualizar(){
+    for(let i=0; i<this.formulario.length; i++){ //Agrega a cada registro los datos de la orden venta seleccionada
+      this.formulario[i]['ordenVenta'] = this.ordenVenta.value;
+      this.formulario[i]['id'] = 0;
+      this.formulario[i]['version'] = 0;
+
+    }
+    console.log(this.formulario);
+
     if(this.porEscala==true){
-      this.ordenVentaEscalaServicio.agregar(this.formulario).subscribe(
+      this.ordenVentaEscalaServicio.agregarLista(this.formulario).subscribe(
         res => {
           var respuesta = res.json();
-          if(respuesta.codigo == 200) {
+          if(respuesta.codigo == 201) {
             setTimeout(function() {
               document.getElementById('idAutocompletado').focus();
             }, 20);
@@ -405,10 +451,10 @@ export class ConfimarDialogo{
         }
       );
     }else{
-      this.ordenVentaTramoServicio.agregar(this.formulario).subscribe(
+      this.ordenVentaTramoServicio.agregarLista(this.formulario).subscribe(
         res => {
           var respuesta = res.json();
-          if(respuesta.codigo == 200) {
+          if(respuesta.codigo == 201) {
             setTimeout(function() {
               document.getElementById('idAutocompletado').focus();
             }, 20);
@@ -429,6 +475,6 @@ export class ConfimarDialogo{
    }
   onNoClick(): void {
     this.dialogRef.close();
-    document.getElementById('idActualizacion').focus();
+    // document.getElementById('idActualizacion').focus();
   } 
 }
