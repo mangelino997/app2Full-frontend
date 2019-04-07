@@ -460,7 +460,7 @@ export class OrdenVentaComponent implements OnInit {
         if (respuesta.codigo == 201) {
           this.reestablecerCampos();
           setTimeout(function () {
-            document.getElementById('idNombre').focus();
+            document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -510,6 +510,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Reestablecer campos
   private reestablecerCampos() {
+    this.formulario.enable();
     this.formulario.reset();
     this.formularioEscala.reset();
     this.formularioTramo.reset();
