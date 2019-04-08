@@ -113,6 +113,7 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Realiza el cambio de campo a buscar
   public cambioDeCampo(){
+    this.reestablecerFormulario(undefined);
     if(this.buscarPor.value==0){
       this.buscarPorCliente=true;
     }else{
@@ -141,34 +142,48 @@ export class ActualizacionPreciosComponent implements OnInit {
       );
     }
   }
-  //Controla los checkbox
-  public ordenSeleccionada(indice, $event){
+  //Controla el cambio de estilos al seleccionar una orden Venta de la tabla
+  public seleccionOrdenVta(indice, idOrdenVta){
+    let fila='fila'+indice;
     this.indiceSeleccionado = indice;
-    let checkboxs=document.getElementsByTagName('mat-checkbox');
-    for(let i=0; i<checkboxs.length; i++){
-      let id="mat-checkbox-"+(i+1);
-      if(i==indice&&$event.checked==true){
-        document.getElementById(id).className="checkBoxSelected";
-        this.buscarPorOrdenPrecios(i);
-      }
-      else{
-        document.getElementById(id).className="checkBoxNotSelected";
-        document.getElementById(id)['checked'] = false;
-      }
+    this.idOrdenVta = idOrdenVta;
+    console.log(idOrdenVta);
+    let filaSeleccionada=document.getElementsByClassName('ordenVta-seleccionada');
+    for(let i=0; i< filaSeleccionada.length; i++){
+      filaSeleccionada[i].className="ordenVta-no-seleccionada";
     }
+    document.getElementById(fila).className="ordenVta-seleccionada";
+    this.buscarPorOrdenPrecios(indice);
   }
+  //Controla los checkbox
+  // public ordenSeleccionada(indice, $event){
+  //   this.indiceSeleccionado = indice;
+  //   let checkboxs=document.getElementsByTagName('mat-checkbox');
+  //   for(let i=0; i<checkboxs.length; i++){
+  //     let id="mat-checkbox-"+(i+1);
+  //     if(i==indice&&$event.checked==true){
+  //       document.getElementById(id).className="checkBoxSelected";
+  //       this.buscarPorOrdenPrecios(i);
+  //     }
+  //     else{
+  //       document.getElementById(id).className="checkBoxNotSelected";
+  //       document.getElementById(id)['checked'] = false;
+  //     }
+  //   }
+  // }
   //Busca los datos segun la Orden seleccionada
   public buscarPorOrdenPrecios(indice){
     this.ordenVenta=[];
     this.porEscala=this.listaCompleta[indice].tipoTarifa.porEscala; //true o false
     this.indiceSeleccionado=indice;
-    
+    console.log(this.listaCompleta[indice].id);
     if(this.listaCompleta[indice].tipoTarifa.porEscala==true){
-      this.ordenVentaEscalaServicio.listarPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
+      //ANTES:this.ordenVentaEscalaServicio.listarPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
+      this.ordenVentaEscalaServicio.listarFechasPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
         res=>{
           this.ordenVenta=res.json();
           this.formulario.get('fechaDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
-          this.filtrarSiEsPorcentaje(this.ordenVenta);
+          // this.filtrarSiEsPorcentaje(this.ordenVenta);
         },
         err=>{
         }
@@ -178,7 +193,7 @@ export class ActualizacionPreciosComponent implements OnInit {
         res=>{
           this.ordenVenta=res.json();
           this.formulario.get('fechaDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
-          this.filtrarSiEsPorcentaje(this.ordenVenta);
+          // this.filtrarSiEsPorcentaje(this.ordenVenta);
         },
         err=>{
         }
@@ -188,16 +203,38 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Filtra las ordenes de venta y carga en la lista los de la fecha de precioDesde
   // Antes filtrabamos por fechaDesde ---> public filtrarPorPrecioDesde(ordenesDeVenta){
-  public filtrarSiEsPorcentaje(ordenesDeVenta){
+  // public filtrarSiEsPorcentaje(ordenesDeVenta){
+  //   this.listaFiltrada=[];
+  //   let fechaFiltro= this.formulario.get('fechaDesde').value;
+  //   this.ordenVentaEscalaServicio.listarPorOrdenVentaYPreciosDesde(this.idOrdenVta, this.formulario.get('fechaDesde').value).subscribe(
+  //     res=>{
+  //       let respuesta = res.json();
+  //       this.listaFiltrada = respuesta;
+  //       console.log(this.listaFiltrada);
+  //     }
+  //   );
+  //   // for(let i=0; i< ordenesDeVenta.length;i++){
+  //   //   if(ordenesDeVenta[i].porcentaje==null||ordenesDeVenta[i].porcentaje==0)
+  //   //   this.listaFiltrada.push(ordenesDeVenta[i]);
+  //   // }
+  // }
+  public filtrarPorPrecioDesde(){
     this.listaFiltrada=[];
-    // let fechaFiltro= this.formulario.get('fechaDesde').value;
-    for(let i=0; i< ordenesDeVenta.length;i++){
-      if(ordenesDeVenta[i].porcentaje==null||ordenesDeVenta[i].porcentaje==0)
-      this.listaFiltrada.push(ordenesDeVenta[i]);
-    }
+    this.ordenVentaEscalaServicio.listarPorOrdenVentaYPreciosDesde(this.idOrdenVta, this.formulario.get('fechaDesde').value).subscribe(
+      res=>{
+        let respuesta = res.json();
+        this.listaFiltrada = respuesta;
+        console.log(this.listaFiltrada);
+      }
+    );
+    // for(let i=0; i< ordenesDeVenta.length;i++){
+    //   if(ordenesDeVenta[i].porcentaje==null||ordenesDeVenta[i].porcentaje==0)
+    //   this.listaFiltrada.push(ordenesDeVenta[i]);
+    // }
   }
   //Abre un Modal con la lista de precios para la fecha de precioDesde
   public listaDePrecios(){
+    this.filtrarPorPrecioDesde();
     const dialogRef = this.dialog.open(ListaPreciosDialogo, {
       width: '1100px',
       data: {fecha: this.formulario.get('fechaDesde').value, listaFiltrada: this.listaFiltrada, porEscala: this.porEscala}, 
@@ -224,6 +261,8 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.listaCompleta=[];
+    this.listaFiltrada=[];
+    this.formulario.reset();
     this.formulario.get('precioDesde').setValue(null);
     this.formulario.get('porcentaje').setValue(null);
     this.empresa.setValue(null);

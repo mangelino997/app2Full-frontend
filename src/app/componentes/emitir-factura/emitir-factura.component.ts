@@ -1011,6 +1011,7 @@ export class ViajeDialogo{
    //obtiene la lista de tramos por tipo y por el idViaje 
    public listarTramos(){
      let item = this.data.tipoItem;
+     console.log("item "+ item);
     if(item==1){
       this.viajePropioTramoService.listarTramos(this.formulario.get('viaje').value).subscribe(
         res=>{
@@ -1018,6 +1019,8 @@ export class ViajeDialogo{
           this.resultadosTramos= respuesta[0].viajeRemitos;
           this.formulario.get('tramo').setValue(respuesta[0].tramo);
           this.tramo = respuesta[0].tramo;
+          console.log(respuesta);
+
         }
       );
     }
@@ -1027,7 +1030,9 @@ export class ViajeDialogo{
           let respuesta= res.json();
           this.resultadosTramos= respuesta[0].viajeRemitos;
           this.formulario.get('tramo').setValue(respuesta[0].tramo);
-          this.tramo = respuesta[0].tramo;        }
+          this.tramo = respuesta[0].tramo;      
+          console.log(respuesta);
+        }
       );
     }
    }

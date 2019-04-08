@@ -10,6 +10,7 @@ import { PuntoVentaService } from 'src/app/servicios/punto-venta.service';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
+import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 
 @Component({
   selector: 'app-emitir-nota-credito',
@@ -23,11 +24,14 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public formulario: FormGroup;
   //Define las listas 
   public listaCuenta = [];
-  public listaComprobante = [];
+  //Datos con los que se cargan las tablas
+  public listaComprobantes = [];
   //Define como un FormControl
   public tipoComprobante:FormControl = new FormControl();
   //Define al campo puntoVenta (de solo lectura) como un FormControl
   public puntoVenta:FormControl = new FormControl();
+  //Define la opcion elegida como un formControl
+  public opcionCheck:FormControl = new FormControl();
   //Define la lista de resultados de busqueda para clientes
   public resultadosClientes = [];
   //Define los datos de la Empresa
@@ -43,7 +47,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
   constructor(private notaCredito: NotaCredito, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService,private appComponent: AppComponent,
     private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService, 
-    private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService ) { }
+    private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService, private ventaComprobanteService: VentaComprobanteService ) { }
 
   ngOnInit() {
     //Define el formulario y validaciones
@@ -66,18 +70,41 @@ export class EmitirNotaCreditoComponent implements OnInit {
       }
     });
   }
-  public cambiarTablaCuenta(){
-    this.tablaVisible=false;
+  public cambioTabla(opcion){
+    console.log(this.opcionCheck.value);
+    switch(opcion){
+      case 1:
+        this.tablaVisible=true;
+        this.cargarTabla();
+        break;
+
+      case 2:
+        this.tablaVisible=false;
+        this.cargarTabla();
+        break;
+    }
+    
   }
-  public cambiarTablaComp(){
-    this.tablaVisible=true;
+  // Carga datos (filas) en la tabla correspondiente
+  private cargarTabla(){
+    this.ventaComprobanteService.listarPorClienteYEmpresa(this.formulario.get('cliente').value.id, this.empresa.value.id).subscribe(
+      res=>{
+        console.log(res.json());
+        let respuesta = res.json();
+        this.listaComprobantes = respuesta;
+      }
+    );
   }
+
+  // public cambiarTablaComp(){
+  //   this.tablaVisible=true;
+  // }
   //Reestablece el formulario completo
   public reestablecerFormulario(){
     this.formulario.reset(); 
     this.resultadosClientes = [];
     this.empresa.setValue(this.appComponent.getEmpresa());
-
+    this.opcionCheck.setValue('1');
     //Establece la fecha actual
     this.fechaService.obtenerFecha().subscribe(res=>{
       this.formulario.get('fechaEmision').setValue(res.json());
@@ -126,6 +153,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario.get('cli.tipoDocumento').setValue(this.formulario.get('cliente').value.tipoDocumento.abreviatura);
     this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
     this.establecerCabecera();
+    this.cambioTabla(1)
   }
   //Establece Letra
   public establecerCabecera(){
