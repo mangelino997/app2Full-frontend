@@ -42,19 +42,22 @@
             <table class="table table-bordered table-striped table-sm">
               <thead>
                 <tr>
+                  <th class="text-center" style="width:5%" scope="col">Id</th>
                   <th class="text-center" style="width:15%" scope="col">Nombre</th>
-                  <th class="text-center" style="width:15%" scope="col">Vendedor</th>
+                  <th class="text-center" style="width:10%" scope="col">Vendedor</th>
                   <th class="text-center" style="width:10%" scope="col">Tarifa</th>
                   <th class="text-center" style="width:10%" scope="col">% Seguro</th>
                   <th class="text-center" style="width:10%" scope="col">% Com. C.R.</th>
                   <th class="text-center" style="width:10%" scope="col">Activa</th>
                   <th class="text-center" style="width:20%" scope="col">Observaciones</th>
-                  <th class="text-center" style="width:20%" scope="col">Seleccionar</th>
                 </tr>
               </thead>
               <tbody>
                 <ng-container *ngFor="let l of listaCompleta; let i= index">
-                  <tr *ngIf="l.tipoTarifa.porPorcentaje==false">
+                  <tr class="ordenVta-no-seleccionada" *ngIf="l.tipoTarifa.porPorcentaje==false" id="fila{{i}}" (click)="seleccionOrdenVta(i, l.id)">
+                    <td align="center">
+                      <span>{{l.id}}</span>
+                    </td>
                     <td align="center">
                       <span>{{l.nombre}}</span>
                     </td>
@@ -75,9 +78,6 @@
                     </td>
                     <td align="center">
                       <span>{{l.observaciones}}</span>
-                    </td>
-                    <td align="center">
-                      <mat-checkbox class="" (change)="ordenSeleccionada(i, $event)"></mat-checkbox>
                     </td>
                   </tr>
                   <tr *ngIf="l.tipoTarifa.porPorcentaje==true" class="fila-bloqueada">
@@ -115,18 +115,16 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idPrecioDesde" class="tamanio-label">Precio Desde</label>
-              <!-- <input id="idPrecioDesde" type="date" formControlName="fechaDesde" autocomplete="off"
-                class="form-control form-control-sm" > -->
               <mat-select class="form-control form-control-sm" formControlName="fechaDesde" >
                 <mat-option *ngFor="let itemOrdenVta of ordenVenta" [value]="itemOrdenVta.preciosDesde">
-                  {{itemOrdenVta.preciosDesde}}
+                  {{itemOrdenVta.preciosDesde | date: 'dd-MM-yyyy'}}
                 </mat-option>
               </mat-select>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group left">
-              <button class="btn btn-primary btn-sm" type="button" (click)="listaDePrecios()">Consultar Lista de Precios</button>
+              <button class="btn btn-primary btn-sm" type="button" (click)="filtrarPorPrecioDesde()">Consultar Lista de Precios</button>
             </div>
           </div>
         </div>
@@ -134,7 +132,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idActualizacion" class="tamanio-label">Actualización de Precios</label>
-              <mat-select class="form-control form-control-sm" [formControl]="aumento" >
+              <mat-select class="form-control form-control-sm" [formControl]="aumento" id="idActualizacion" >
                 <mat-option [value]="0">Anulación aumento de precio</mat-option>
                 <mat-option [value]="1">Aumento de precio</mat-option>
               </mat-select>  

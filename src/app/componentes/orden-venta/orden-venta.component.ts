@@ -250,10 +250,22 @@ export class OrdenVentaComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
+    if(this.soloLectura){
+      this.establecerComboLectura();
+    }
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
   };
+  //Establece los combos de seleccion a solo lectura cuando se encuentra en la pestaña Consultar y Eliminar
+  private establecerComboLectura(){
+    this.formulario.get('tipoOrdenVenta').disable();
+    this.formulario.get('empresa').disable();
+    this.formulario.get('cliente').disable();
+    this.ordenventa.disable();
+    this.formulario.get('vendedor').disable();
+    this.formulario.get('tipoTarifa').disable();
+  }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.indiceSeleccionado = id;
@@ -310,10 +322,18 @@ export class OrdenVentaComponent implements OnInit {
         this.ordenventa.enable();
         this.formulario.get('vendedor').enable();
         this.formulario.get('tipoTarifa').enable();
+        this.formulario.get('observaciones').enable();
         this.formularioEscala.enable();
         this.formularioTramo.enable();
         break;
       case 2:
+        this.formulario.get('tipoOrdenVenta').disable();
+        this.formulario.get('empresa').disable();
+        this.formulario.get('cliente').disable();
+        this.ordenventa.disable();
+        this.formulario.get('vendedor').disable();
+        this.formulario.get('tipoTarifa').disable();
+        break;
       case 4:
         this.formulario.get('tipoOrdenVenta').enable();
         this.formulario.get('empresa').enable();

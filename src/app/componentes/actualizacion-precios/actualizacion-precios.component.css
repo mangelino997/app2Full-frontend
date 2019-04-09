@@ -14,3 +14,17 @@
 .fila-bloqueada{
     color: #EAEAE4;
 }
+/* Estilos para seleccion de ila orden venta*/
+tr.ordenVta-no-seleccionada:hover {
+    background-color:#50A8FA !important;
+    cursor: pointer;
+}
+.ordenVta-seleccionada {
+    background-color:#50A8FA !important;
+}
+th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0; 
+    background-color: #FFF;
+}

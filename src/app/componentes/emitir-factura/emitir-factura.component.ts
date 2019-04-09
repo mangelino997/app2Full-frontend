@@ -22,6 +22,7 @@ import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.
 import { AforoComponent } from '../aforo/aforo.component';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
+import { isNumber } from 'util';
 @Component({
   selector: 'app-emitir-factura',
   templateUrl: './emitir-factura.component.html',
@@ -236,39 +237,44 @@ export class EmitirFacturaComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      //setea los valores en cliente remitente
-      console.log(resultado);
-      this.formulario.get('clienteRemitente').setValue(resultado.remito.clienteRemitente);
-      this.listarSucursalesRemitente();
-      this.formulario.get('rem.sucursal').setValue(resultado.remito.clienteRemitente.sucursalLugarPago);
-      //setea los valores en cliente destinatario
-      this.formulario.get('clienteDestinatario').setValue(resultado.remito.clienteDestinatario);
-      this.listarSucursalesDestinatario();
-      this.formulario.get('des.sucursal').setValue(resultado.remito.clienteDestinatario.sucursalLugarPago);      
-      //Setea los valores en el formulario item
-      this.formularioItem.get('viajeRemito').setValue(resultado.remito);
-      this.formularioItem.get('bultos').setValue(resultado.remito.bultos);
-      this.formularioItem.get('kilosEfectivo').setValue(resultado.remito.kilosEfectivo);
-      this.formularioItem.get('kilosAforado').setValue(resultado.remito.kilosAforado);
-      this.formularioItem.get('m3').setValue(resultado.remito.m3);
-      this.formularioItem.get('valorDeclarado').setValue(resultado.remito.valorDeclarado);
-      if(resultado.remito.importeRetiro!=null){
-        this.formularioItem.get('importeRetiro').setValue(resultado.remito.importeRetiro);
+      if(resultado!=undefined || resultado!=null){
+        //setea los valores en cliente remitente
+        this.formulario.get('clienteRemitente').setValue(resultado.remito.clienteRemitente);
+        this.listarSucursalesRemitente();
+        this.formulario.get('rem.sucursal').setValue(resultado.remito.clienteRemitente.sucursalLugarPago);
+        //setea los valores en cliente destinatario
+        this.formulario.get('clienteDestinatario').setValue(resultado.remito.clienteDestinatario);
+        this.listarSucursalesDestinatario();
+        this.formulario.get('des.sucursal').setValue(resultado.remito.clienteDestinatario.sucursalLugarPago);      
+        //Setea los valores en el formulario item
+        this.formularioItem.get('viajeRemito').setValue(resultado.remito);
+        this.formularioItem.get('bultos').setValue(resultado.remito.bultos);
+        this.formularioItem.get('kilosEfectivo').setValue(resultado.remito.kilosEfectivo);
+        this.formularioItem.get('kilosAforado').setValue(resultado.remito.kilosAforado);
+        this.formularioItem.get('m3').setValue(resultado.remito.m3);
+        this.formularioItem.get('valorDeclarado').setValue(resultado.remito.valorDeclarado);
+        if(resultado.remito.importeRetiro!=null){
+          this.formularioItem.get('importeRetiro').setValue(resultado.remito.importeRetiro);
+        }else{
+          this.formularioItem.get('importeRetiro').setValue(0);
+        }
+        if(resultado.remito.importeEntrega!=null){
+          this.formularioItem.get('importeEntrega').setValue(resultado.remito.importeEntrega);
+        }else{
+          this.formularioItem.get('importeEntrega').setValue(0);
+        }
+        this.formularioItem.get('numeroViaje').setValue(resultado.viaje);
+        this.formularioItem.get('viajeRemito').setValue({id: resultado.remito.id});
+        this.viajeRemito.setValue(resultado.remito.id);
+        setTimeout(function() {
+          document.getElementById('idPagoOrigen').focus();
+        }, 20);
       }else{
-        this.formularioItem.get('importeRetiro').setValue(0);
+        this.item.reset();
+        setTimeout(function() {
+          document.getElementById('idItem').focus();
+        }, 20);
       }
-      if(resultado.remito.importeEntrega!=null){
-        this.formularioItem.get('importeEntrega').setValue(resultado.remito.importeEntrega);
-      }else{
-        this.formularioItem.get('importeEntrega').setValue(0);
-      }
-      this.formularioItem.get('numeroViaje').setValue(resultado.viaje);
-      this.formularioItem.get('viajeRemito').setValue({id: resultado.remito.id});
-      this.viajeRemito.setValue(resultado.remito.id);
-      setTimeout(function() {
-        document.getElementById('idPagoOrigen').focus();
-      }, 20);
-      // this.listarRemitos();
     });
     //Primero comprobar que ese numero de viaje exista y depsues abrir la ventana emergente
     // this.viajePropioTramoService.listarTramos(this.formularioItem.get('numeroViaje').value).subscribe(
@@ -295,7 +301,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene el listado de Sucursales por Remitente
   public listarSucursalesRemitente() {
-    console.log(this.formulario.get('clienteRemitente').value);
     this.formulario.get('rem.domicilio').setValue(this.formulario.get('clienteRemitente').value.domicilio);
     this.formulario.get('rem.localidad').setValue(this.formulario.get('clienteRemitente').value.localidad.nombre);
     this.formulario.get('rem.condicionVenta').setValue(this.formulario.get('clienteRemitente').value.condicionVenta.nombre);
@@ -303,7 +308,6 @@ export class EmitirFacturaComponent implements OnInit {
     this.sucursalService.listarPorCliente(this.formulario.get('clienteRemitente').value.id).subscribe(
       res => {
         this.resultadosSucursalesRem = res.json();
-        console.log(res.json());
         this.formulario.get('rem.sucursal').setValue(this.resultadosSucursalesRem[0]);
       },
       err => {
@@ -517,25 +521,29 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Agrega al Array un item-viaje 
   public agregarItemViaje(){
-    console.log(this.formulario.value);
     this.formularioItem.get('provincia').setValue(this.formulario.get('clienteRemitente').value.localidad.provincia); //guardo el idProvincia del Remitente
     this.formularioItem.get('importeExento').setValue(0.00);
-    this.formularioItem.get('importeNoGravado').setValue(0.00);
+    //al principio el "importeNetoGravado" estara en null y no podra sumar un null a un valor numerico
+    if(this.formulario.get('importeNetoGravado').value==null || this.formulario.get('importeNetoGravado').value== undefined)
+      this.formulario.get('importeNetoGravado').setValue(0);
+
     if(this.formularioItem.get('importeEntrega').value==null)
       this.formularioItem.get('importeEntrega').setValue(0);
+
     if(this.formularioItem.get('importeRetiro').value==null)
       this.formularioItem.get('importeRetiro').setValue(0);
 
     let subtotal=0;
     subtotal=this.formularioItem.get('importeNetoGravado').value;
     this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value + subtotal);
+   
     let importeIva=0;
     if(this.formularioItem.get('alicuotaIva').value==0||this.formularioItem.get('alicuotaIva').value==null){
       this.formularioItem.get('importeIva').setValue(0.00);
     }
     else{
       importeIva =subtotal*(this.formularioItem.get('alicuotaIva').value/100);
-      this.formularioItem.get('importeIva').setValue(this.returnDecimales(importeIva, 2) ); //guardo en cada item el importe extra (iva)
+      this.formularioItem.get('importeIva').setValue(this.returnDecimales(importeIva, 2)); //guardo en cada item el importe extra (iva)
       let importeIvaTotal= this.formulario.get('importeIva').value + importeIva;
       this.formulario.get('importeIva').setValue(this.returnDecimales(importeIvaTotal, 2)); //sumo en el formulario general (cabecera de la factura)
     }
@@ -545,11 +553,11 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('importeTotal').setValue(this.returnDecimales(importeTotal, 2));
     this.reestablecerFormularioItemViaje();
     this.remitosDisponibles(1, this.listaItemViaje[this.listaItemViaje.length-1].viajeRemito);
+
   }
   //eliminar un item del Array item-viaje 
   public eliminarItemViaje(subtotal, subtotalIva, index){
     this.listaItemViaje.splice(index, 1);
-    console.log(subtotal, subtotalIva);
     if(this.listaItemViaje.length==0){
       this.formulario.get('importeNetoGravado').setValue(0.00);
       this.formulario.get('importeIva').setValue(0.00);
@@ -645,7 +653,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene la lista de Tarifas Orden Venta por Cliente
   public listarTarifaOVenta(){
-    console.log(this.formulario.get('pagoEnOrigen').value, this.formulario.get('clienteRemitente').value.id);
     if(this.formulario.get('pagoEnOrigen').value==true) //si paga el remitente
     {
       this.ordenVentaServicio.listarPorCliente(this.formulario.get('clienteRemitente').value.id).subscribe(
@@ -828,11 +835,13 @@ export class EmitirFacturaComponent implements OnInit {
   //Calcular el Subtotal del item agregado
   public calcularSubtotal($event){
     let subtotal=0;
+    this.formularioItem.get('importeNetoGravado').setValue(0.00);
+    this.formulario.get('importeTotal').setValue(0.00);
+
     this.formulario.get('importeNoGravado').setValue(0.00);
     this.formulario.get('importeExento').setValue(0.00);
     this.formulario.get('importeOtrosTributos').setValue(0.00);
-    this.formulario.get('importeExento').setValue(0.00);
-    this.formularioItem.get('importeNetoGravado').setValue(subtotal);
+    // this.formularioItem.get('importeNetoGravado').setValue(subtotal);
     let vdeclaradoNeto = this.formularioItem.get('valorDeclarado').value*(this.formularioItem.get('importeSeguro').value/1000);
     let descuento = this.formularioItem.get('descuento').value;
     let flete = this.formularioItem.get('flete').value;
@@ -846,9 +855,7 @@ export class EmitirFacturaComponent implements OnInit {
     let entrega = this.formularioItem.get('importeEntrega').value;
     let concepto = this.formularioItem.get('importeVentaItemConcepto').value;
     subtotal = vdeclaradoNeto + flete + retiro + entrega + concepto;
-    console.log("subtotal: " + this.returnDecimales(subtotal, 2));
     this.formularioItem.get('importeNetoGravado').setValue(this.returnDecimales(subtotal, 2));
-    this.setDecimales($event, 2);
   }
   //Abre un modal para agregar un aforo
   public agregarAforo(): void {
@@ -908,13 +915,9 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('ventaComprobanteItemFAs').setValue(this.listaItemViaje);
     this.formulario.get('ventaComprobanteItemCR').setValue(this.listaCR);
     this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta);
-    console.log(this.formulario.value);
     this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
       res=>{
         let respuesta= res.json();
-        // document.getElementById("idFecha").classList.add('label-error');
-        // document.getElementById("idFecha").classList.add('is-invalid');
-        // document.getElementById("idFecha").focus();
         this.abrirDialogoTramo();
         this.toastr.success(respuesta.mensaje);
       },
@@ -933,7 +936,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Retorna el numero a x decimales
   public returnDecimales(valor: number, cantidad: number) {
-    return this.appService.setDecimales(valor, cantidad);
+    return Number(this.appService.setDecimales(valor, cantidad));
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
@@ -1027,7 +1030,8 @@ export class ViajeDialogo{
           let respuesta= res.json();
           this.resultadosTramos= respuesta[0].viajeRemitos;
           this.formulario.get('tramo').setValue(respuesta[0].tramo);
-          this.tramo = respuesta[0].tramo;        }
+          this.tramo = respuesta[0].tramo;      
+        }
       );
     }
    }
@@ -1039,32 +1043,8 @@ export class ViajeDialogo{
       filaSeleccionada[i].className="planilla-no-seleccionada";
     }
     document.getElementById(fila).className="planilla-seleccionada";
-    console.log("remito seleccionado "+ remito);
     this.formulario.get('remito').setValue(remito);
   }
-  //Obtiene la Lista de Remitos por el id del tramo seleccionado
-  // public listarRemitos(item){
-  //   this.viajeRemitoServicio.listarRemitos(this.formulario.get('tramo').value.id, item).subscribe(
-  //     res=>{
-  //       this.resultadosRemitos = res.json();
-  //       if(this.resultadosRemitos.length==0){
-  //         this.toastr.error("No existen Remitos para el Tramo seleccionado.");
-  //         // setTimeout(function() {
-  //         //   document.getElementById('idViaje').focus();
-  //         // }, 20);
-  //       }else{
-  //         this.formulario.get('tramo').setValue(this.resultadosRemitos[0].id);
-  //       }
-  //     },
-  //     err=>{
-  //       // this.formularioItem.get('idTramo').setValue(null);
-  //       // this.formularioItem.get('numeroViaje').setValue(null);
-  //       // setTimeout(function() {
-  //       //   document.getElementById('idViaje').focus();
-  //       // }, 20);
-  //     }
-  //   );
-  // }
   //Abre un modal para mostrar las Observaciones
   public verObservaciones(observacion): void {
     const dialogRef = this.dialog.open(ObservacionDialogo, {
