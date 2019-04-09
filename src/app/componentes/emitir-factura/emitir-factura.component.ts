@@ -236,39 +236,45 @@ export class EmitirFacturaComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      //setea los valores en cliente remitente
-      console.log(resultado);
-      this.formulario.get('clienteRemitente').setValue(resultado.remito.clienteRemitente);
-      this.listarSucursalesRemitente();
-      this.formulario.get('rem.sucursal').setValue(resultado.remito.clienteRemitente.sucursalLugarPago);
-      //setea los valores en cliente destinatario
-      this.formulario.get('clienteDestinatario').setValue(resultado.remito.clienteDestinatario);
-      this.listarSucursalesDestinatario();
-      this.formulario.get('des.sucursal').setValue(resultado.remito.clienteDestinatario.sucursalLugarPago);      
-      //Setea los valores en el formulario item
-      this.formularioItem.get('viajeRemito').setValue(resultado.remito);
-      this.formularioItem.get('bultos').setValue(resultado.remito.bultos);
-      this.formularioItem.get('kilosEfectivo').setValue(resultado.remito.kilosEfectivo);
-      this.formularioItem.get('kilosAforado').setValue(resultado.remito.kilosAforado);
-      this.formularioItem.get('m3').setValue(resultado.remito.m3);
-      this.formularioItem.get('valorDeclarado').setValue(resultado.remito.valorDeclarado);
-      if(resultado.remito.importeRetiro!=null){
-        this.formularioItem.get('importeRetiro').setValue(resultado.remito.importeRetiro);
+      if(resultado!=undefined || resultado!=null){
+        //setea los valores en cliente remitente
+        console.log(resultado);
+        this.formulario.get('clienteRemitente').setValue(resultado.remito.clienteRemitente);
+        this.listarSucursalesRemitente();
+        this.formulario.get('rem.sucursal').setValue(resultado.remito.clienteRemitente.sucursalLugarPago);
+        //setea los valores en cliente destinatario
+        this.formulario.get('clienteDestinatario').setValue(resultado.remito.clienteDestinatario);
+        this.listarSucursalesDestinatario();
+        this.formulario.get('des.sucursal').setValue(resultado.remito.clienteDestinatario.sucursalLugarPago);      
+        //Setea los valores en el formulario item
+        this.formularioItem.get('viajeRemito').setValue(resultado.remito);
+        this.formularioItem.get('bultos').setValue(resultado.remito.bultos);
+        this.formularioItem.get('kilosEfectivo').setValue(resultado.remito.kilosEfectivo);
+        this.formularioItem.get('kilosAforado').setValue(resultado.remito.kilosAforado);
+        this.formularioItem.get('m3').setValue(resultado.remito.m3);
+        this.formularioItem.get('valorDeclarado').setValue(resultado.remito.valorDeclarado);
+        if(resultado.remito.importeRetiro!=null){
+          this.formularioItem.get('importeRetiro').setValue(resultado.remito.importeRetiro);
+        }else{
+          this.formularioItem.get('importeRetiro').setValue(0);
+        }
+        if(resultado.remito.importeEntrega!=null){
+          this.formularioItem.get('importeEntrega').setValue(resultado.remito.importeEntrega);
+        }else{
+          this.formularioItem.get('importeEntrega').setValue(0);
+        }
+        this.formularioItem.get('numeroViaje').setValue(resultado.viaje);
+        this.formularioItem.get('viajeRemito').setValue({id: resultado.remito.id});
+        this.viajeRemito.setValue(resultado.remito.id);
+        setTimeout(function() {
+          document.getElementById('idPagoOrigen').focus();
+        }, 20);
       }else{
-        this.formularioItem.get('importeRetiro').setValue(0);
+        this.item.reset();
+        setTimeout(function() {
+          document.getElementById('idItem').focus();
+        }, 20);
       }
-      if(resultado.remito.importeEntrega!=null){
-        this.formularioItem.get('importeEntrega').setValue(resultado.remito.importeEntrega);
-      }else{
-        this.formularioItem.get('importeEntrega').setValue(0);
-      }
-      this.formularioItem.get('numeroViaje').setValue(resultado.viaje);
-      this.formularioItem.get('viajeRemito').setValue({id: resultado.remito.id});
-      this.viajeRemito.setValue(resultado.remito.id);
-      setTimeout(function() {
-        document.getElementById('idPagoOrigen').focus();
-      }, 20);
-      // this.listarRemitos();
     });
     //Primero comprobar que ese numero de viaje exista y depsues abrir la ventana emergente
     // this.viajePropioTramoService.listarTramos(this.formularioItem.get('numeroViaje').value).subscribe(
@@ -1020,7 +1026,6 @@ export class ViajeDialogo{
           this.formulario.get('tramo').setValue(respuesta[0].tramo);
           this.tramo = respuesta[0].tramo;
           console.log(respuesta);
-
         }
       );
     }

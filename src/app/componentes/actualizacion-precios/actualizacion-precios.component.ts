@@ -103,11 +103,9 @@ export class ActualizacionPreciosComponent implements OnInit {
   private listarEmpresas() {
     this.empresaServicio.listar().subscribe(
       res => {
-        console.log(res.json());
         this.empresas = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -124,7 +122,6 @@ export class ActualizacionPreciosComponent implements OnInit {
   public cargarTabla(opcion, id){
     this.listaCompleta=[];
     if(opcion==0){
-      console.log(id);
       this.ordenVentaServicio.listarPorCliente(id).subscribe(
         res=>{
           this.listaCompleta= res.json();
@@ -147,7 +144,6 @@ export class ActualizacionPreciosComponent implements OnInit {
     let fila='fila'+indice;
     this.indiceSeleccionado = indice;
     this.idOrdenVta = idOrdenVta;
-    console.log(idOrdenVta);
     let filaSeleccionada=document.getElementsByClassName('ordenVta-seleccionada');
     for(let i=0; i< filaSeleccionada.length; i++){
       filaSeleccionada[i].className="ordenVta-no-seleccionada";
@@ -155,35 +151,16 @@ export class ActualizacionPreciosComponent implements OnInit {
     document.getElementById(fila).className="ordenVta-seleccionada";
     this.buscarPorOrdenPrecios(indice);
   }
-  //Controla los checkbox
-  // public ordenSeleccionada(indice, $event){
-  //   this.indiceSeleccionado = indice;
-  //   let checkboxs=document.getElementsByTagName('mat-checkbox');
-  //   for(let i=0; i<checkboxs.length; i++){
-  //     let id="mat-checkbox-"+(i+1);
-  //     if(i==indice&&$event.checked==true){
-  //       document.getElementById(id).className="checkBoxSelected";
-  //       this.buscarPorOrdenPrecios(i);
-  //     }
-  //     else{
-  //       document.getElementById(id).className="checkBoxNotSelected";
-  //       document.getElementById(id)['checked'] = false;
-  //     }
-  //   }
-  // }
   //Busca los datos segun la Orden seleccionada
   public buscarPorOrdenPrecios(indice){
     this.ordenVenta=[];
     this.porEscala=this.listaCompleta[indice].tipoTarifa.porEscala; //true o false
     this.indiceSeleccionado=indice;
-    console.log(this.listaCompleta[indice].id);
     if(this.listaCompleta[indice].tipoTarifa.porEscala==true){
-      //ANTES:this.ordenVentaEscalaServicio.listarPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
       this.ordenVentaEscalaServicio.listarFechasPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
         res=>{
           this.ordenVenta=res.json();
           this.formulario.get('fechaDesde').setValue(this.ordenVenta[this.ordenVenta.length-1].preciosDesde);
-          // this.filtrarSiEsPorcentaje(this.ordenVenta);
         },
         err=>{
         }
@@ -199,47 +176,30 @@ export class ActualizacionPreciosComponent implements OnInit {
         }
       );
     }
-    
   }
-  //Filtra las ordenes de venta y carga en la lista los de la fecha de precioDesde
-  // Antes filtrabamos por fechaDesde ---> public filtrarPorPrecioDesde(ordenesDeVenta){
-  // public filtrarSiEsPorcentaje(ordenesDeVenta){
-  //   this.listaFiltrada=[];
-  //   let fechaFiltro= this.formulario.get('fechaDesde').value;
-  //   this.ordenVentaEscalaServicio.listarPorOrdenVentaYPreciosDesde(this.idOrdenVta, this.formulario.get('fechaDesde').value).subscribe(
-  //     res=>{
-  //       let respuesta = res.json();
-  //       this.listaFiltrada = respuesta;
-  //       console.log(this.listaFiltrada);
-  //     }
-  //   );
-  //   // for(let i=0; i< ordenesDeVenta.length;i++){
-  //   //   if(ordenesDeVenta[i].porcentaje==null||ordenesDeVenta[i].porcentaje==0)
-  //   //   this.listaFiltrada.push(ordenesDeVenta[i]);
-  //   // }
-  // }
+  //Abre un Modal con la lista de precios para la fecha de precioDesde
   public filtrarPorPrecioDesde(){
     this.listaFiltrada=[];
     this.ordenVentaEscalaServicio.listarPorOrdenVentaYPreciosDesde(this.idOrdenVta, this.formulario.get('fechaDesde').value).subscribe(
       res=>{
         let respuesta = res.json();
         this.listaFiltrada = respuesta;
-        console.log(this.listaFiltrada);
+        this.openListaPrecioDialogo();
       }
     );
-    // for(let i=0; i< ordenesDeVenta.length;i++){
-    //   if(ordenesDeVenta[i].porcentaje==null||ordenesDeVenta[i].porcentaje==0)
-    //   this.listaFiltrada.push(ordenesDeVenta[i]);
-    // }
   }
-  //Abre un Modal con la lista de precios para la fecha de precioDesde
-  public listaDePrecios(){
-    this.filtrarPorPrecioDesde();
+  //Modal Lista de Precios para determinada Fecha
+  private openListaPrecioDialogo(){
     const dialogRef = this.dialog.open(ListaPreciosDialogo, {
       width: '1100px',
-      data: {fecha: this.formulario.get('fechaDesde').value, listaFiltrada: this.listaFiltrada, porEscala: this.porEscala}, 
+      data: {fecha: this.formulario.get('fechaDesde').value, 
+            listaFiltrada: this.listaFiltrada, 
+            porEscala: this.porEscala}, 
     });
     dialogRef.afterClosed().subscribe(result => {
+      setTimeout(function() {
+        document.getElementById('idActualizacion').focus();
+      }, 20);
     });
   }
   //Abre un modal con los datos actualizados antes de confirmar 
@@ -247,7 +207,8 @@ export class ActualizacionPreciosComponent implements OnInit {
     const dialogRef = this.dialog.open(ConfimarDialogo, {
       width: '1100px',
       data: {
-        formulario: this.ordenVenta, 
+        // formulario: this.ordenVenta, 
+        formulario: this.listaFiltrada,
         porEscala: this.porEscala,
         ordenVenta: this.listaCompleta[this.indiceSeleccionado]
       },
@@ -291,39 +252,39 @@ export class ActualizacionPreciosComponent implements OnInit {
     this.formulario.get('porcentaje').setValue(this.returnDecimales(this.formulario.get('porcentaje').value, 2));
     let porcentaje =this.formulario.get('porcentaje').value;
     if(this.porEscala==true){
-      for(let i=0; i< this.ordenVenta.length; i++){
-        if(this.ordenVenta[i].importeFijo!=0&&this.ordenVenta[i].importeFijo!=null)
-          this.ordenVenta[i].importeFijo=this.returnDecimales(this.ordenVenta[i].importeFijo+this.ordenVenta[i].importeFijo*(porcentaje/100),2);
+      for(let i=0; i< this.listaFiltrada.length; i++){
+        if(this.listaFiltrada[i].importeFijo!=0&&this.listaFiltrada[i].importeFijo!=null)
+          this.listaFiltrada[i].importeFijo=this.returnDecimales(this.listaFiltrada[i].importeFijo+this.listaFiltrada[i].importeFijo*(porcentaje/100),2);
         else
-          this.ordenVenta[i].importeFijo=0;
+          this.listaFiltrada[i].importeFijo=0;
 
-        if(this.ordenVenta[i].precioUnitario!=0&&this.ordenVenta[i].precioUnitario!=null)
-          this.ordenVenta[i].precioUnitario=this.returnDecimales(this.ordenVenta[i].precioUnitario+this.ordenVenta[i].precioUnitario*(porcentaje/100),2);
+        if(this.listaFiltrada[i].precioUnitario!=0&&this.listaFiltrada[i].precioUnitario!=null)
+          this.listaFiltrada[i].precioUnitario=this.returnDecimales(this.listaFiltrada[i].precioUnitario+this.listaFiltrada[i].precioUnitario*(porcentaje/100),2);
         else
-          this.ordenVenta[i].precioUnitario=0;
+          this.listaFiltrada[i].precioUnitario=0;
       }
     }
     else{
-      for(let i=0; i< this.ordenVenta.length; i++){
-        if(this.ordenVenta[i].importeFijoSeco!=0&&this.ordenVenta[i].importeFijoSeco!=null)
-          this.ordenVenta[i].importeFijoSeco=this.returnDecimales(this.ordenVenta[i].importeFijoSeco+this.ordenVenta[i].importeFijoSeco*(porcentaje/100),2);
+      for(let i=0; i< this.listaFiltrada.length; i++){
+        if(this.listaFiltrada[i].importeFijoSeco!=0&&this.listaFiltrada[i].importeFijoSeco!=null)
+          this.listaFiltrada[i].importeFijoSeco=this.returnDecimales(this.listaFiltrada[i].importeFijoSeco+this.listaFiltrada[i].importeFijoSeco*(porcentaje/100),2);
         else
-          this.ordenVenta[i].importeFijoSeco=0;
+          this.listaFiltrada[i].importeFijoSeco=0;
 
-        if(this.ordenVenta[i].importeFijoRef!=0&&this.ordenVenta[i].importeFijoRef!=null)
-          this.ordenVenta[i].importeFijoRef=this.returnDecimales(this.ordenVenta[i].importeFijoRef+this.ordenVenta[i].importeFijoRef*(porcentaje/100),2);
+        if(this.listaFiltrada[i].importeFijoRef!=0&&this.listaFiltrada[i].importeFijoRef!=null)
+          this.listaFiltrada[i].importeFijoRef=this.returnDecimales(this.listaFiltrada[i].importeFijoRef+this.listaFiltrada[i].importeFijoRef*(porcentaje/100),2);
         else
-          this.ordenVenta[i].importeFijoRef=0;
+          this.listaFiltrada[i].importeFijoRef=0;
 
-        if(this.ordenVenta[i].precioUnitarioRef!=0&&this.ordenVenta[i].precioUnitarioRef!=null)
-          this.ordenVenta[i].precioUnitarioRef=this.returnDecimales(this.ordenVenta[i].precioUnitarioRef+this.ordenVenta[i].precioUnitarioRef*(porcentaje/100),2);
+        if(this.listaFiltrada[i].precioUnitarioRef!=0&&this.listaFiltrada[i].precioUnitarioRef!=null)
+          this.listaFiltrada[i].precioUnitarioRef=this.returnDecimales(this.listaFiltrada[i].precioUnitarioRef+this.listaFiltrada[i].precioUnitarioRef*(porcentaje/100),2);
         else
-          this.ordenVenta[i].precioUnitarioRef=0;
+          this.listaFiltrada[i].precioUnitarioRef=0;
 
-        if(this.ordenVenta[i].precioUnitarioSeco!=0&&this.ordenVenta[i].precioUnitarioSeco!=null)
-          this.ordenVenta[i].precioUnitarioSeco=this.returnDecimales(this.ordenVenta[i].precioUnitarioSeco+this.ordenVenta[i].precioUnitarioSeco*(porcentaje/100),2);
+        if(this.listaFiltrada[i].precioUnitarioSeco!=0&&this.listaFiltrada[i].precioUnitarioSeco!=null)
+          this.listaFiltrada[i].precioUnitarioSeco=this.returnDecimales(this.listaFiltrada[i].precioUnitarioSeco+this.listaFiltrada[i].precioUnitarioSeco*(porcentaje/100),2);
         else
-          this.ordenVenta[i].precioUnitarioSeco=0;
+          this.listaFiltrada[i].precioUnitarioSeco=0;
       }
     }
   }
@@ -332,54 +293,54 @@ export class ActualizacionPreciosComponent implements OnInit {
     this.formulario.get('porcentaje').setValue(this.returnDecimales(this.formulario.get('porcentaje').value, 2));
     let porcentaje =this.formulario.get('porcentaje').value;
     if(this.porEscala==true){
-      for(let i=0; i< this.ordenVenta.length; i++){
-        if(this.ordenVenta[i].importeFijo!=0&&this.ordenVenta[i].importeFijo!=null)
-          this.ordenVenta[i].importeFijo=this.returnDecimales(this.ordenVenta[i].importeFijo-this.ordenVenta[i].importeFijo*(porcentaje/100), 2);
+      for(let i=0; i< this.listaFiltrada.length; i++){
+        if(this.listaFiltrada[i].importeFijo!=0&&this.listaFiltrada[i].importeFijo!=null)
+          this.listaFiltrada[i].importeFijo=this.returnDecimales(this.listaFiltrada[i].importeFijo-this.listaFiltrada[i].importeFijo*(porcentaje/100), 2);
         else
-          this.ordenVenta[i].importeFijo=0;
+          this.listaFiltrada[i].importeFijo=0;
 
-        if(this.ordenVenta[i].precioUnitario!=0&&this.ordenVenta[i].precioUnitario!=null)
-          this.ordenVenta[i].precioUnitario=this.returnDecimales(this.ordenVenta[i].precioUnitario-this.ordenVenta[i].precioUnitario*(porcentaje/100),2);
+        if(this.listaFiltrada[i].precioUnitario!=0&&this.listaFiltrada[i].precioUnitario!=null)
+          this.listaFiltrada[i].precioUnitario=this.returnDecimales(this.listaFiltrada[i].precioUnitario-this.listaFiltrada[i].precioUnitario*(porcentaje/100),2);
         else
-          this.ordenVenta[i].precioUnitario=0;
+          this.listaFiltrada[i].precioUnitario=0;
       }
     }
     else{
-      for(let i=0; i< this.ordenVenta.length; i++){
-        if(this.ordenVenta[i].importeFijoSeco!=0&&this.ordenVenta[i].importeFijoSeco!=null)
-          this.ordenVenta[i].importeFijoSeco=this.returnDecimales(this.ordenVenta[i].importeFijoSeco-this.ordenVenta[i].importeFijoSeco*(porcentaje/100),2);
+      for(let i=0; i< this.listaFiltrada.length; i++){
+        if(this.listaFiltrada[i].importeFijoSeco!=0&&this.listaFiltrada[i].importeFijoSeco!=null)
+          this.listaFiltrada[i].importeFijoSeco=this.returnDecimales(this.listaFiltrada[i].importeFijoSeco-this.listaFiltrada[i].importeFijoSeco*(porcentaje/100),2);
         else
-          this.ordenVenta[i].importeFijoSeco=0;
+          this.listaFiltrada[i].importeFijoSeco=0;
 
-        if(this.ordenVenta[i].importeFijoRef!=0&&this.ordenVenta[i].importeFijoRef!=null)
-          this.ordenVenta[i].importeFijoRef=this.returnDecimales(this.ordenVenta[i].importeFijoRef-this.ordenVenta[i].importeFijoRef*(porcentaje/100),2);
+        if(this.listaFiltrada[i].importeFijoRef!=0&&this.listaFiltrada[i].importeFijoRef!=null)
+          this.listaFiltrada[i].importeFijoRef=this.returnDecimales(this.listaFiltrada[i].importeFijoRef-this.listaFiltrada[i].importeFijoRef*(porcentaje/100),2);
         else
-            this.ordenVenta[i].importeFijoRef=0;
+            this.listaFiltrada[i].importeFijoRef=0;
 
-        if(this.ordenVenta[i].precioUnitarioRef!=0&&this.ordenVenta[i].precioUnitarioRef!=null)
-          this.ordenVenta[i].precioUnitarioRef=this.returnDecimales(this.ordenVenta[i].precioUnitarioRef-this.ordenVenta[i].precioUnitarioRef*(porcentaje/100),2);
+        if(this.listaFiltrada[i].precioUnitarioRef!=0&&this.listaFiltrada[i].precioUnitarioRef!=null)
+          this.listaFiltrada[i].precioUnitarioRef=this.returnDecimales(this.listaFiltrada[i].precioUnitarioRef-this.listaFiltrada[i].precioUnitarioRef*(porcentaje/100),2);
         else
-          this.ordenVenta[i].precioUnitarioRef=0;
+          this.listaFiltrada[i].precioUnitarioRef=0;
 
-        if(this.ordenVenta[i].precioUnitarioSeco!=0&&this.ordenVenta[i].precioUnitarioSeco!=null)
-          this.ordenVenta[i].precioUnitarioSeco=this.returnDecimales(this.ordenVenta[i].precioUnitarioSeco-this.ordenVenta[i].precioUnitarioSeco*(porcentaje/100),2);
+        if(this.listaFiltrada[i].precioUnitarioSeco!=0&&this.listaFiltrada[i].precioUnitarioSeco!=null)
+          this.listaFiltrada[i].precioUnitarioSeco=this.returnDecimales(this.listaFiltrada[i].precioUnitarioSeco-this.listaFiltrada[i].precioUnitarioSeco*(porcentaje/100),2);
         else
-          this.ordenVenta[i].precioUnitarioSeco=0;
+          this.listaFiltrada[i].precioUnitarioSeco=0;
       }
     }
   }
   //Valida que la nueva fechaDesde sea mayor a la de precioDesde
   public validarNuevaFechaDesde(){
-    if(this.formulario.get('precioDesde').value>this.formulario.get('fechaDesde').value){
+    if(Date.parse(this.formulario.get('precioDesde').value) > Date.parse(this.formulario.get('fechaDesde').value)){
       document.getElementById('btn-confirm').focus();
       if(this.porEscala==true){
-        for(let i=0;i<this.ordenVenta.length; i++){
-          this.ordenVenta[i].preciosDesde=this.formulario.get('precioDesde').value;
+        for(let i=0;i<this.listaFiltrada.length; i++){
+          this.listaFiltrada[i].preciosDesde=this.formulario.get('precioDesde').value;
         }
       }
       else{
-        for(let i=0;i<this.ordenVenta.length; i++){
-          this.ordenVenta[i].preciosDesde=this.formulario.get('precioDesde').value;
+        for(let i=0;i<this.listaFiltrada.length; i++){
+          this.listaFiltrada[i].preciosDesde=this.formulario.get('precioDesde').value;
         }
       }
     }
@@ -466,8 +427,6 @@ export class ConfimarDialogo{
       this.formulario[i]['version'] = 0;
 
     }
-    console.log(this.formulario);
-
     if(this.porEscala==true){
       this.ordenVentaEscalaServicio.agregarLista(this.formulario).subscribe(
         res => {

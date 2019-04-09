@@ -117,14 +117,14 @@
               <label for="idPrecioDesde" class="tamanio-label">Precio Desde</label>
               <mat-select class="form-control form-control-sm" formControlName="fechaDesde" >
                 <mat-option *ngFor="let itemOrdenVta of ordenVenta" [value]="itemOrdenVta.preciosDesde">
-                  {{itemOrdenVta.preciosDesde}}
+                  {{itemOrdenVta.preciosDesde | date: 'dd-MM-yyyy'}}
                 </mat-option>
               </mat-select>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group left">
-              <button class="btn btn-primary btn-sm" type="button" (click)="listaDePrecios()">Consultar Lista de Precios</button>
+              <button class="btn btn-primary btn-sm" type="button" (click)="filtrarPorPrecioDesde()">Consultar Lista de Precios</button>
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idActualizacion" class="tamanio-label">Actualización de Precios</label>
-              <mat-select class="form-control form-control-sm" [formControl]="aumento" >
+              <mat-select class="form-control form-control-sm" [formControl]="aumento" id="idActualizacion" >
                 <mat-option [value]="0">Anulación aumento de precio</mat-option>
                 <mat-option [value]="1">Aumento de precio</mat-option>
               </mat-select>  
