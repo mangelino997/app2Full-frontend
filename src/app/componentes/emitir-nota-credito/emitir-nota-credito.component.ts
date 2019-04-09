@@ -11,6 +11,7 @@ import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.servi
 import { AppService } from 'src/app/servicios/app.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
+import { isNumber } from 'util';
 
 @Component({
   selector: 'app-emitir-nota-credito',
@@ -75,18 +76,31 @@ export class EmitirNotaCreditoComponent implements OnInit {
     switch(opcion){
       case 1:
         this.tablaVisible=true;
-        this.cargarTabla();
+        this.limpiarCliente();
         break;
 
       case 2:
         this.tablaVisible=false;
-        this.cargarTabla();
+        this.limpiarCliente();
         break;
     }
-    
+  }
+  //Limpia los campos correspondientes al Cliente
+  private limpiarCliente(){
+    this.formulario.get('cli').reset();
+    this.formulario.get('cliente').reset();
+    this.formulario.get('letra').reset();
+    this.formulario.get('codigoAfip').reset();
+    this.formulario.get('numero').reset();
+    this.resultadosClientes = [];
+    setTimeout(function() {
+      document.getElementById('idCliente').focus();
+    }, 20);
   }
   // Carga datos (filas) en la tabla correspondiente
   private cargarTabla(){
+    console.log("entra");
+    console.log(this.formulario.get('cliente').value.id, this.empresa.value.id);
     this.ventaComprobanteService.listarPorClienteYEmpresa(this.formulario.get('cliente').value.id, this.empresa.value.id).subscribe(
       res=>{
         console.log(res.json());
@@ -95,10 +109,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
       }
     );
   }
-
-  // public cambiarTablaComp(){
-  //   this.tablaVisible=true;
-  // }
   //Reestablece el formulario completo
   public reestablecerFormulario(){
     this.formulario.reset(); 
@@ -153,7 +163,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario.get('cli.tipoDocumento').setValue(this.formulario.get('cliente').value.tipoDocumento.abreviatura);
     this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
     this.establecerCabecera();
-    this.cambioTabla(1)
+    if(this.formulario.get('numero').value>0){
+      console.log("entra");
+      this.cambioTabla(1);
+    }
   }
   //Establece Letra
   public establecerCabecera(){
@@ -169,7 +182,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.afipComprobanteService.obtenerCodigoAfip(3, letra).subscribe(
       res=>{
         this.formulario.get('codigoAfip').setValue(res.text());
-        this.establecerNumero(res.text());
+        this.comprobarCodAfip();
       }
     );
   }
@@ -179,6 +192,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value.puntoVenta, codigoAfip, this.appComponent.getUsuario().sucursal.id, this.empresa.value.id).subscribe(
       res=>{
         this.formulario.get('numero').setValue(res.text());
+        this.cargarTabla();
       }
     );
   }
