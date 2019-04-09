@@ -69,7 +69,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       marcaVehiculo: new FormControl('', Validators.required),
       modelo: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       descripcion: new FormControl('', Validators.maxLength(100)),
-      cantidadEjes: new FormControl('', [Validators.required, Validators.maxLength(2)]),
+      cantidadEjes: new FormControl('', [Validators.required]),
       capacidadCarga: new FormControl('', [Validators.required, Validators.maxLength(5)]),
       tara: new FormControl('', Validators.maxLength(5)),
       altura: new FormControl('', Validators.maxLength(5)),
@@ -110,9 +110,9 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('cantidadEjes').enabled;
+      this.formulario.get('cantidadEjes').enable();
     } else {
-      this.formulario.get('cantidadEjes').disabled;
+      this.formulario.get('cantidadEjes').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -249,8 +249,8 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario() {
-    this.formulario.reset();
     this.autocompletado.setValue(undefined);
+    this.formulario.reset();
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {

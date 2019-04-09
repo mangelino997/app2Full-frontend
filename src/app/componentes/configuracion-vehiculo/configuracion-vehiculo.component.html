@@ -16,7 +16,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
               <mat-select id="idTipoVehiculo" class="form-control form-control-sm" formControlName="tipoVehiculo"
-                [compareWith]="compareFn" (optionSelected)="listarPorTipoVehiculoMarcaVehiculo()">
+                [compareWith]="compareFn" (selectionChange)="listarPorTipoVehiculoMarcaVehiculo()">
                 <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
                   {{itemTipoVehiculo.nombre}}
                 </mat-option>
@@ -27,7 +27,7 @@
             <div class="form-group has-float-label">
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
               <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo"
-                [compareWith]="compareFn" (optionSelected)="listarPorTipoVehiculoMarcaVehiculo()">
+                [compareWith]="compareFn" (selectionChange)="listarPorTipoVehiculoMarcaVehiculo()">
                 <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                   {{itemMarcaVehiculo.nombre}}
                 </mat-option>
@@ -39,7 +39,7 @@
               <div class="form-group has-float-label">
                 <label for="idAutocompletado" class="tamanio-label">Lista de Configuraciones</label>
                 <mat-select id="idAutocompletado" class="form-control form-control-sm" 
-                  formControlName="autocompletado" compareWith]="compareFn">
+                  [formControl]="autocompletado" [compareWith]="compareFn">
                   <mat-option *ngFor="let item of configuraciones" [value]="item" 
                     (onSelectionChange)="formulario.setValue(item)">
                     Modelo: <b>{{item.modelo}}</b> - Cantidad Ejes: <b>{{item.cantidadEjes}}</b>
@@ -73,10 +73,10 @@
             <div class="form-group has-float-label">
               <label for="idCantidadEjes" class="tamanio-label">Cantidad de Ejes *</label>
               <mat-select id="idCantidadEjes" class="form-control form-control-sm" 
-                formControlName="cantidadEjes" [compareWith]="compareFn">
+                formControlName="cantidadEjes">
                 <mat-option [value]="1">1</mat-option>
                 <mat-option [value]="2">2</mat-option>
-                <mat-option [value]="3">4</mat-option>
+                <mat-option [value]="3">3</mat-option>
                 <mat-option [value]="4">4</mat-option>
               </mat-select>
             </div>
