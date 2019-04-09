@@ -67,6 +67,8 @@ export class VehiculoComponent implements OnInit {
   public configuracion:FormControl = new FormControl();
   //Defiene la lista de compania seguro poliza
   public companiasSegurosPolizas:Array<any> = [];
+  //Define si el tipo de vehiculo seleccionado es remolque
+  public esVehiculoRemolque:boolean = false;
   //Constructor
   constructor(private servicio: VehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
@@ -269,10 +271,12 @@ export class VehiculoComponent implements OnInit {
   public listarConfiguracionesPorTipoVehiculoMarcaVehiculo() {
     let tipoVehiculo = this.tipoVehiculo.value;
     let marcaVehiculo = this.marcaVehiculo.value;
+    this.esVehiculoRemolque = tipoVehiculo.esRemolque ? true : false;
     if(tipoVehiculo != null && marcaVehiculo != null) {
       this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id)
         .subscribe(
           res => {
+            this.formulario.get('configuracionVehiculo').setValue(res.json());
             this.configuracionesVehiculos = res.json();
           },
           err => {
@@ -283,7 +287,6 @@ export class VehiculoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
@@ -352,6 +355,7 @@ export class VehiculoComponent implements OnInit {
     this.autocompletado.setValue(undefined);
     this.tipoVehiculo.setValue(undefined);
     this.marcaVehiculo.setValue(undefined);
+    this.configuracion.setValue(undefined);
     this.vaciarLista();
   }
   /*
