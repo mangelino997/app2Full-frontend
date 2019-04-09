@@ -43,7 +43,7 @@ export class EscalaTarifaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.formulario.get('valor').setValue('0.00');
+    // this.formulario.get('valor').setValue('0.00');
   }
   //Obtiene el listado de registros
   private listar() {
@@ -107,19 +107,19 @@ export class EscalaTarifaComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
+    this.establecerHasta(this.formulario.get('valor'));
   }
   //Establece el valor del campo descripcion al perder foco el campo valor
-  public establecerHasta(valor) {
-    if(valor.target.value != undefined && valor.target.value != '') {
-      this.formulario.get('descripcion').setValue('Hasta ' + valor.target.value);
-
+  private establecerHasta(valor) {
+    if(valor.value != undefined && valor.value != '') {
+      this.formulario.get('descripcion').setValue('Hasta ' + valor.value);
     } else {
       this.formulario.get('descripcion').setValue(undefined);
     }
-    valor.target.value = this.setDecimales(valor.target.value, 2);
   }
   //Formatea el numero a x decimales
-  private setDecimales(valor, cantidad) {
-    return this.appServicio.setDecimales(valor, cantidad);
+  public setDecimales(valor, cantidad) {
+    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
+    this.formulario.get('descripcion').setValue('Hasta ' + valor.target.value);
   }
 }

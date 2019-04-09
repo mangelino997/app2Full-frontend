@@ -9,8 +9,8 @@
         <div id="divValor" class="form-group has-float-label">
           <label id="labelValor" for="idValor" class="tamanio-label">Valor *</label>
           <input id="idValor" type="number" formControlName="valor" autocomplete="off"
-          class="form-control form-control-sm"
-          (ngModelChange)="cambioCampo('idValor', 'labelValor')" (keypress)="establecerHasta($event)" >
+          class="form-control form-control-sm" (ngModelChange)="cambioCampo('idValor', 'labelValor')"
+          (blur)="setDecimales($event, 2)" placeholder="0.00">
         </div>
       </div>
       <div class="col-md-4">
@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="col-md-1">
-        <button id="idBoton" class="btn btn-primary" type="button"
+        <button id="idBoton" mat-raised-button color="primary"
           formnovalidate (click)="agregar(elemento)" [disabled]="!formulario.valid">
           Agregar
         </button>
