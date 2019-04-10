@@ -51,8 +51,8 @@ export class VentaTipoItemService {
     return this.http.get(this.url, this.options);
   }
   //Obtiene la lista de registros-Items
-  public listarItems() {
-    return this.http.get(this.url + '/listarItems', this.options);
+  public listarItems(idComprobante) {
+    return this.http.get(this.url + '/listarItems/' + idComprobante, this.options);
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {

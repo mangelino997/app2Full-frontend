@@ -146,7 +146,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene la lista de Puntos de Venta
   public listarPuntoVenta(){
-    this.puntoVentaService.listarPorEmpresaYSucursal(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 1).subscribe(
+    this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 1).subscribe(
       res=>{
         this.resultadosPuntoVenta= res.json();
         this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta);
@@ -155,7 +155,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene la lista de Items
   public listarItems(){
-    this.ventaTipoItemService.listarItems().subscribe(
+    this.ventaTipoItemService.listarItems(1).subscribe(
       res=>{
         this.resultadosItems= res.json();
       }

@@ -22,4 +22,31 @@ input {
 .table {
   width: 1860px;
 }
-  
+/* Estilos para seleccion de ila orden venta*/
+tr.ordenVta-no-seleccionada:hover {
+  background-color:#50A8FA ;
+  cursor: pointer;
+}
+/* tr > td > #checks:hover {
+  background-color:#FFF !important;
+} */
+.ordenVta-seleccionada {
+  background-color:#50A8FA !important;
+}
+th {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0; 
+  background-color: #FFF;
+}
+/* Estilos para el checkbox */
+.checkBoxSelected {
+  padding: 1px;
+  background-color: #85ce36;
+  color: black;
+}
+.checkBoxNotSelected {
+  background-color: #ffffff;
+  color: #ffffff;
+  padding: 1px;
+}

@@ -133,57 +133,107 @@
         </div>
       </div><br>
       <div class="row">
-        <div class="col-md-12" style="height: 200px; overflow-y: scroll;" *ngIf="tablaVisible">
-          <table class="table table-bordered table-striped table-sm table-condensed" id="tablaComprobante">
-            <thead>
-              <tr>
-                <th class="text-center" style="width:10%;" scope="col">Tipo Abrev.</th>
-                <th class="text-center" style="width:10%" scope="col">N° de Comprobante</th>
-                <th class="text-center" style="width:5%" scope="col">Fecha</th>
-                <th class="text-center" style="width:5%" scope="col">Importe</th>
-                <th class="text-center" style="width:5%" scope="col">Saldo</th>
-                <th class="text-center" style="width:10%" scope="col">Seleccionar</th>
-                <th class="text-center" style="width:10%" scope="col">Concepto</th>
-                <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
-                <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
-                <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="col-md-12" *ngIf="tablaVisible">
+          <form [formGroup]="formularioComprobante">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label for="idMotivo" class="tamanio-label">Motivo</label>
+                  <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo" [compareWith]="compareFn">
+                    <mat-option *ngFor="let item of resultadosItems" [value]="item">
+                    {{item.nombre}}
+                    </mat-option>
+                  </mat-select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label for="idSubtotalNC" class="tamanio-label">Subtotal N.C.</label>
+                  <input id="idSubtotalNC" type="number" formControlName="subtotalNC" class="form-control form-control-sm" readonly >
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
+                  <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" (selectionChange)="calcularSubtotalNC()">
+                    <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota" >
+                      {{returnDecimales(itemAlicuota.alicuota, 2)}} 
+                    </mat-option>
+                  </mat-select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
+                  <input id="idSubtotalCIVA" type="number" formControlName="importeSaldo" class="form-control form-control-sm" (change)="calcularSubtotalNC()" >
+                </div>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-primary btn-sm" type="button" (click)="modificarComprobante()">Aceptar</button>
+              </div>
+            </div>
+          </form>
+          <div style="height: 200px; overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-sm table-condensed" id="tablaComprobante"  >
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:5%;" scope="col">Seleccionar</th>
+                  <th class="text-center" style="width:10%;" scope="col">Tipo (Abrev).</th>
+                  <th class="text-center" style="width:10%" scope="col">N° de Comprobante</th>
+                  <th class="text-center" style="width:5%" scope="col">Fecha</th>
+                  <th class="text-center" style="width:5%" scope="col">Importe</th>
+                  <th class="text-center" style="width:5%" scope="col">Saldo</th>
+                  <th class="text-center" style="width:10%" scope="col">Item Tipo</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
+                  <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let comprobante of listaComprobantes; let i= index">
+                  <tr class="ordenVta-no-seleccionada" id="fila{{i}}" (click)="seleccionarComprobante(i, comprobante)">
+                    <td align="center" style=" background-color:#FFF !important; cursor: unset !important;" *ngIf="comprobante.checked!=true">
+                      <mat-checkbox class="checkBoxNotSelected"  id="mat-checkbox-{{i}}" ></mat-checkbox>
+                    </td>
+                    <td align="center" *ngIf="comprobante.checked==true">
+                      <mat-checkbox class="checkBoxSelected"  id="mat-checkbox-{{i}}" [checked]="comprobante.checked==true"></mat-checkbox>
+                    </td>
+                    <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td>
+                    <td align="center">{{comprobante.puntoVenta}} - {{comprobante.numero}} - {{comprobante.numero}}</td>
+                    <td align="center">{{comprobante.fechaEmision}}</td>
+                    <td align="center">{{comprobante.importeTotal}}</td>
+                    <td align="center">{{comprobante.importeSaldo}}</td>
+                    <td align="center">?</td>
+                    <td align="center">?</td>
+                    <td align="center"></td>
+                    <td align="center">{{comprobante.importeIva}}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </div>
         </div><br>
-        <div class="col-md-12" style=" height: 200px; overflow-y: scroll;" *ngIf="!tablaVisible">
-          <table class="table table-bordered table-striped table-sm table-condensed" id="tablaCuenta">
-            <thead>
-              <tr>
-                <th class="text-center" style="width:10%" scope="col">Concepto</th>
-                <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
-                <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
-                <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>1</td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="col-md-12" *ngIf="!tablaVisible">
+          <div style=" height: 200px; overflow-y: scroll;">
+            <table class="table table-bordered table-striped table-sm table-condensed" id="tablaCuenta"  >
+              <thead>
+                <tr>
+                  <th class="text-center" style="width:10%" scope="col">Concepto</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
+                  <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
       <br>

@@ -3,8 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class NotaCredito{
     //define un formulario FormGroup
     public formulario: FormGroup;
-    //define un formulario 
-    public f: FormGroup;
+    //define un formulario para modificar el comprobante
+    public formularioComprobante: FormGroup;
     //constructor
     constructor() {
         // crear el formulario para la seccion de modulos
@@ -46,6 +46,39 @@ export class NotaCredito{
             observaciones: new FormControl(),
 
         });
-        
+        // crear el formulario para modificar datos
+        this.formularioComprobante = new FormGroup({
+            id: new FormControl(),
+            version: new FormControl(),
+            fechaEmision: new FormControl('', Validators.required),
+            puntoVenta: new FormControl('', Validators.required),
+            tipoComprobante: new FormControl(),
+            letra: new FormControl(),
+            numero: new FormControl(),
+            codigoAfip: new FormControl('', Validators.required),
+            ventaComprobante: new FormControl(),
+            ventaTipoItem: new FormControl('', Validators.required),
+            jurisdiccion: new FormControl('', Validators.required),
+            cliente: new FormControl(),
+            clienteRemitente: new FormControl(),
+            numeroDocumento: new FormControl('', Validators.required),
+            domicilio: new FormControl(),
+            condicionIVA: new FormControl('', Validators.required),
+            afipAlicuotaIva: new FormControl(),
+            alicuotaIva: new FormControl(),
+            importeIva: new FormControl(),
+            importeNoGravado: new FormControl(),
+            importeNetoGravado: new FormControl(),
+            importeTotal: new FormControl(),
+            subtotalNC: new FormControl(),
+            checked: new FormControl(false),
+            importeExento: new FormControl(),
+            importeSaldo: new FormControl(),
+            provincia: new FormControl(),
+            ventaComprobanteAplicado: new FormControl(),
+            comprobanteAplicado: new FormControl(),
+            observaciones: new FormControl(),
+            itemTipo: new FormControl() //Guarda el motivo por el cual se realizo el cambio 
+        });
     }
 }

@@ -59,8 +59,8 @@ export class PuntoVentaService {
     return this.http.get(this.url + '/listarPorSucursal/' + id, this.options);
   }
   //Obtiene una lista por empresa y sucursal
-  public listarPorEmpresaYSucursal(idEmpresa, idSucursal, idTipoComprobante) {
-    return this.http.get(this.url + '/listarPorEmpresaYSucursal/' + idEmpresa + '/' + idSucursal + '/' + idTipoComprobante, this.options);
+  public listarPorEmpresaYSucursalYTipoComprobante(idEmpresa, idSucursal, idTipoComprobante) {
+    return this.http.get(this.url + '/listarPorEmpresaYSucursalYTipoComprobante/' + idEmpresa + '/' + idSucursal + '/' + idTipoComprobante, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
