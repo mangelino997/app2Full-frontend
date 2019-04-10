@@ -155,7 +155,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Obtiene la lista de Items
   public listarItems(){
-    this.ventaTipoItemService.listarItems().subscribe(
+    this.ventaTipoItemService.listarItems(1).subscribe(
       res=>{
         this.resultadosItems= res.json();
       }

@@ -12,6 +12,9 @@ import { AppService } from 'src/app/servicios/app.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { isNumber } from 'util';
+import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
+import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
+import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 
 @Component({
   selector: 'app-emitir-nota-credito',
@@ -23,6 +26,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public checkboxCuenta: boolean=null;
   public tablaVisible: boolean=null;
   public formulario: FormGroup;
+  public formularioComprobante: FormGroup;
   //Define las listas 
   public listaCuenta = [];
   //Datos con los que se cargan las tablas
@@ -33,6 +37,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public puntoVenta:FormControl = new FormControl();
   //Define la opcion elegida como un formControl
   public opcionCheck:FormControl = new FormControl();
+  //Define el Comprobante seleccionado de la tabla
+  public comprobanteSeleccionado = 0;
   //Define la lista de resultados de busqueda para clientes
   public resultadosClientes = [];
   //Define los datos de la Empresa
@@ -41,6 +47,14 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public resultadosPuntoVenta = [];
   //Define la lista de resultados para Provincias
   public resultadosProvincias = [];
+  //Define la lista de items tipo
+  public resultadosItems = [];
+  //Define la lista de Alicuotas Afip Iva que estan activas
+  public resultadosAlicuotasIva = [];
+  //Define el check
+  public check:boolean=false;
+  //Define el subtotal c/iva del comprobante seleccionado
+  public subtotalCIVA = 0;
   //Define las variables de la cabecera
   public letra: string;
   public codigoAfip: string;
@@ -48,7 +62,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
 
   constructor(private notaCredito: NotaCredito, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService,private appComponent: AppComponent,
     private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService, 
-    private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService, private ventaComprobanteService: VentaComprobanteService ) { }
+    private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService, private ventaComprobanteService: VentaComprobanteService,
+    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService ) { }
 
   ngOnInit() {
     //Define el formulario y validaciones
@@ -56,12 +71,18 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.checkboxComp=true;   
     //inicializa el formulario y sus elementos
     this.formulario= this.notaCredito.formulario;
+    this.formularioComprobante= this.notaCredito.formularioComprobante;
+    
     //Reestablece el Formularios
     this.reestablecerFormulario();
     //Obtiene los puntos de venta 
     this.listarPuntoVenta();
     //Obtiene las Provincias - origen de la carga 
     this.listarProvincias(); 
+    //Obtiene los Motivos por el cual se desea modificar el comprobante
+    this.listarItemsTipo();
+    //Lista las alicuotas afip iva
+    this.listarAlicuotaIva();
     //Autcompletado - Buscar por Cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -105,7 +126,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       res=>{
         console.log(res.json());
         let respuesta = res.json();
-        this.listaComprobantes = respuesta;
+        this.listaComprobantes = respuesta; //Filtramos por comprobanteItemFAs -> respuesta.comprobanteItemFAs
       }
     );
   }
@@ -134,6 +155,14 @@ export class EmitirNotaCreditoComponent implements OnInit {
       document.getElementById('idFecha').focus();
     }, 20);
   }
+  //Obtiene una lista de Conceptos Varios
+  public listarItemsTipo(){
+    this.ventaTipoItemervice.listarItems(3).subscribe(
+      res=>{
+        this.resultadosItems = res.json();
+      }
+    );
+  }
   //Obtiene la lista de Puntos de Venta
   public listarPuntoVenta(){
     this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
@@ -151,6 +180,20 @@ export class EmitirNotaCreditoComponent implements OnInit {
       },
       err=>{
         this.toastr.error("Error al obtener las Provincias");
+      }
+    );
+  }
+  //Obtiene una lista con las Alicuotas Iva
+  public listarAlicuotaIva(){
+    this.alicuotasIvaService.listarActivas().subscribe(
+      res=>{
+        this.resultadosAlicuotasIva = res.json();
+        for(let i=0; i<this.resultadosAlicuotasIva.length; i++){
+          if(this.resultadosAlicuotasIva[i].porDefecto==true){
+            this.formularioComprobante.get('alicuotaIva').setValue(this.resultadosAlicuotasIva[i].alicuota);
+            this.formularioComprobante.get('afipAlicuotaIva').setValue(this.resultadosAlicuotasIva[i]);
+          }
+        }
       }
     );
   }
@@ -202,6 +245,93 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.puntoVenta.setValue(puntoVentaCeros);
     if(this.formulario.get('codigoAfip').value!=null || this.formulario.get('codigoAfip').value>0)
       this.establecerNumero(this.formulario.get('codigoAfip').value);
+  }
+  //Controla el cambio de estilos al seleccionar un Comprobante de la tabla
+  public seleccionarComprobante(indice, comprobante){
+    let fila='fila'+indice;
+    console.log(comprobante);
+    this.comprobanteSeleccionado = indice;
+    let filaSeleccionada=document.getElementsByClassName('ordenVta-seleccionada');
+    for(let i=0; i< filaSeleccionada.length; i++){
+      filaSeleccionada[i].className="ordenVta-no-seleccionada";
+    }
+    document.getElementById(fila).className="ordenVta-seleccionada";
+    console.log(comprobante);
+    this.formularioComprobante.patchValue(comprobante);
+    this.subtotalCIVA = this.formularioComprobante.get('importeSaldo').value;
+    setTimeout(function() {
+      document.getElementById('idMotivo').focus();
+    }, 20);
+  }
+  //Agrega el cambio a la lista de Comprobantes
+  public modificarComprobante(){
+    this.formularioComprobante.get('checked').setValue(true);
+    this.listaComprobantes[this.comprobanteSeleccionado] = this.formularioComprobante.value;
+    // this.formularioComprobante.get('checked').setValue(true);
+    console.log(this.listaComprobantes);
+
+    this.reestablecerFormularioComprobante();
+  }
+  //METODO PRINCIPAL - EMITIR NOTA DE CREDITO
+  public emitir(){
+    let afipConcepto = this.listaComprobantes[0].afipConcepto.id; //guardamos el id de afipConcepto del primer item de la tabla
+
+  }
+  //Controla los checkbox
+  public controlCheckbox($event, indice){
+    // if($event.checked==true){
+    //   console.log("esta check");
+    //   this.check=true;
+    //   document.getElementById('check').className="checkBoxSelected";
+    // }
+    // else{
+    //   console.log("no esta check");
+    //   this.check=false;
+    //   document.getElementById('check').className="checkBoxNotSelected";
+    // }
+
+    var checkboxs = document.getElementsByTagName('mat-checkbox');
+        for (var i = 0; i < checkboxs.length; i++) {
+            var id = "mat-checkbox-" + (i);
+            if (i == indice && $event.checked == true) {
+                document.getElementById(id).className = "checkBoxSelected";
+            }
+            else {
+                document.getElementById(id).className = "checkBoxNotSelected";
+                document.getElementById(id)['checked'] = false;
+            }
+        }
+
+
+  }
+  //Calcula el campo SubtotalNC del comprobante que se modifica
+  public calcularSubtotalNC(){
+    if(this.subtotalCIVA< this.formularioComprobante.get('importeSaldo').value){
+      this.formularioComprobante.get('importeSaldo').setValue(this.subtotalCIVA);
+      setTimeout(function() {
+        document.getElementById('idSubtotalCIVA').focus();
+      }, 20);
+      this.toastr.error("El SUBTOTAL C/IVA ingresado debe ser MENOR");
+    }
+    let iva= String(this.formularioComprobante.get('alicuotaIva').value).split('.');
+    console.log(iva);
+    let ivaDisvisor = "1.";
+    for(let i=0; i< iva.length; i++){
+      ivaDisvisor = ivaDisvisor + iva[i];
+    }
+    console.log(ivaDisvisor);
+
+    let subtotal = this.formularioComprobante.get('importeSaldo').value/Number(ivaDisvisor); 
+    this.formularioComprobante.get('subtotalNC').setValue(subtotal);
+    
+
+  }
+  //Reestablece el formulario de modificar Comprobante
+  private reestablecerFormularioComprobante(){
+    this.comprobanteSeleccionado = 0;
+    this.formularioComprobante.reset();
+    this.listarItemsTipo();
+    this.listarAlicuotaIva();
   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {

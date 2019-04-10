@@ -236,7 +236,7 @@
             </table>
           </form>
         </div>
-        <div *ngIf="formulario.get('tipoTarifa').value ? !formulario.get('tipoTarifa').value.porEscala : flase">
+        <div *ngIf="formulario.get('tipoTarifa').value ? !formulario.get('tipoTarifa').value.porEscala : false">
           <form [formGroup]="formularioTramo">
             <div class="row">
               <div class="col-md-3-5">
