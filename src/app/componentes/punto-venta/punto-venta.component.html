@@ -17,22 +17,9 @@
             <div class="form-group has-float-label">
               <label for="idSucursal" class="tamanio-label">Sucursal *</label>
               <mat-select id="idSucursal" class="form-control form-control-sm" 
-                formControlName="sucursal" [compareWith]="compareFn">
-                <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal"
-                  (onSelectionChange)="listarPorSucursal(itemSucursal)">
+                formControlName="sucursal" [compareWith]="compareFn" (selectionChange)="listarPorSucursalYEmpresa()">
+                <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal">
                   {{itemSucursal.nombre}}
-                </mat-option>
-              </mat-select>
-            </div>
-          </div>
-          <div class="col-md-6" *ngIf="mostrarAutocompletado">
-            <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Punto de Venta</label>
-              <mat-select id="idAutocompletado" class="form-control form-control-sm" 
-                formControlName="autocompletado" [compareWith]="compareFn">
-                <mat-option *ngFor="let item of puntosVentas" [value]="item"
-                  (onSelectionChange)="establecerFormulario(item)">
-                  {{displayFb(item)}}
                 </mat-option>
               </mat-select>
             </div>
@@ -41,9 +28,20 @@
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Empresa *</label>
               <mat-select id="idEmpresa" class="form-control form-control-sm" 
-                formControlName="empresa" [compareWith]="compareFn">
+                formControlName="empresa" [compareWith]="compareFn" (selectionChange)="listarPorSucursalYEmpresa()">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                   {{itemEmpresa.razonSocial}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3" *ngIf="mostrarAutocompletado">
+            <div class="form-group has-float-label">
+              <label for="idAutocompletado" class="tamanio-label">Punto de Venta</label>
+              <mat-select id="idAutocompletado" class="form-control form-control-sm" 
+                [formControl]="autocompletado" [compareWith]="compareFn" (selectionChange)="establecerFormulario()">
+                <mat-option *ngFor="let item of puntosVentas" [value]="item">
+                  {{displayFb(item)}}
                 </mat-option>
               </mat-select>
             </div>
@@ -54,7 +52,8 @@
             <div class="form-group has-float-label">
               <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
               <input id="idPuntoVenta" type="number" formControlName="puntoVenta" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura"
+                (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '000', -4)">
             </div>
           </div>
           <div class="col-md-3">
@@ -152,6 +151,36 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label for="idSucursal" class="tamanio-label">Sucursal *</label>
+            <mat-select id="idSucursal" class="form-control form-control-sm" [formControl]="sucursal"
+              [compareWith]="compareFn">
+              <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal">
+                {{itemSucursal.nombre}}
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label for="idEmpresa" class="tamanio-label">Empresa *</label>
+            <mat-select id="idEmpresa" class="form-control form-control-sm" [formControl]="empresa"
+              [compareWith]="compareFn">
+              <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
+                {{itemEmpresa.razonSocial}}
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <button id="idBoton" mat-raised-button color="primary" formnovalidate
+            (click)="listarPorSucursalYEmpresaLista(sucursal, empresa)">
+            Buscar
+          </button>
+        </div>
+      </div>
       <table class="table table-bordered table-striped table-sm">
         <thead>
           <tr>
@@ -165,7 +194,8 @@
             <th class="text-center" style="width:10%" scope="col">Ultimo Número</th>
             <th class="text-center" style="width:5%" scope="col">Copias</th>
             <th class="text-center" style="width:5%" scope="col">Imprime</th>
-            <th class="text-center" style="width:10%" scope="col">Esta Habilitado</th>
+            <th class="text-center" style="width:5%" scope="col">Esta Habilitado</th>
+            <th class="text-center" style="width:5%" scope="col">Por Defecto</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
             <th class="text-center" style="width:5%" scope="col">-</th>
           </tr>
@@ -204,6 +234,9 @@
             </td>
             <td align="center">
               <span>{{l.estaHabilitado ? 'Si' : 'No'}}</span>
+            </td>
+            <td align="center">
+              <span>{{l.porDefecto ? 'Si' : 'No'}}</span>
             </td>
             <td align="center">
               <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>

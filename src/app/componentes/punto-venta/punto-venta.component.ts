@@ -8,6 +8,7 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatAutocompleteTrigger } from '@angular/material';
+import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 
 @Component({
   selector: 'app-punto-venta',
@@ -44,9 +45,13 @@ export class PuntoVentaComponent implements OnInit {
   public puntosVentas:Array<any> = [];
   //Define la lista de puntos de ventas como autocompletado
   public autocompletado:FormControl = new FormControl();
+  //Define sucursal para la lista
+  public sucursal:FormControl = new FormControl();
+  //Define empresa para la lista
+  public empresa:FormControl = new FormControl();
   //Constructor
   constructor(private servicio: PuntoVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
+    private appComponent: AppComponent, private toastr: ToastrService,
     private sucursalServicio: SucursalService, private empresaServicio: EmpresaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -82,12 +87,11 @@ export class PuntoVentaComponent implements OnInit {
       copias: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(3)]),
       imprime: new FormControl('', Validators.required),
       estaHabilitado: new FormControl('', Validators.required),
-      porDefecto: new FormControl()
+      porDefecto: new FormControl(),
+      usointerno: new FormControl()
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    this.listar();
     //Obtiene la lista de sucursales
     this.listarSucursales();
     //Obtiene la lista de empresas
@@ -116,28 +120,27 @@ export class PuntoVentaComponent implements OnInit {
     );
   }
   //Establece el formulario al seleccionar elemento de autocompletado
-  public establecerFormulario(elemento) {
+  public establecerFormulario() {
+    let elemento = this.autocompletado.value;
     this.formulario.setValue(elemento);
-    this.formulario.get('puntoVenta').setValue(this.displayFb(elemento));
+    this.formulario.get('puntoVenta').setValue(this.displayFe(elemento));
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('empresa').enabled;
-      this.formulario.get('fe').enabled;
-      this.formulario.get('feEnLinea').enabled;
-      this.formulario.get('feCAEA').enabled;
-      this.formulario.get('esCuentaOrden').enabled;
-      this.formulario.get('imprime').enabled;
-      this.formulario.get('estaHabilitado').enabled;
+      this.formulario.get('fe').enable();
+      this.formulario.get('feEnLinea').enable();
+      this.formulario.get('feCAEA').enable();
+      this.formulario.get('esCuentaOrden').enable();
+      this.formulario.get('imprime').enable();
+      this.formulario.get('estaHabilitado').enable();
     } else {
-      this.formulario.get('empresa').disabled;
-      this.formulario.get('fe').disabled;
-      this.formulario.get('feEnLinea').disabled;
-      this.formulario.get('feCAEA').disabled;
-      this.formulario.get('esCuentaOrden').disabled;
-      this.formulario.get('imprime').disabled;
-      this.formulario.get('estaHabilitado').disabled;
+      this.formulario.get('fe').disable();
+      this.formulario.get('feEnLinea').disable();
+      this.formulario.get('feCAEA').disable();
+      this.formulario.get('esCuentaOrden').disable();
+      this.formulario.get('imprime').disable();
+      this.formulario.get('estaHabilitado').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -213,29 +216,23 @@ export class PuntoVentaComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene la lista por sucursal
-  public listarPorSucursal(elemento) {
+  //Obtiene la lista por sucursal y empresa
+  public listarPorSucursalYEmpresa() {
     if(this.mostrarAutocompletado) {
-      this.servicio.listarPorSucursal(elemento.id).subscribe(
-        res => {
+      let sucursal = this.formulario.get('sucursal').value;
+      let empresa = this.formulario.get('empresa').value;
+      if(sucursal && empresa) {
+        this.servicio.listarPorSucursalYEmpresaLetra(sucursal.id, empresa.id).subscribe(res => {
           this.puntosVentas = res.json();
-        },
-        err => {
-          console.log(err);
-        }
-      )
+        });
+      }
     }
+  }
+  //Obtiene la lista por sucursal y empresa
+  public listarPorSucursalYEmpresaLista(sucursal, empresa) {
+    this.servicio.listarPorSucursalYEmpresaLetra(sucursal.value.id, empresa.value.id).subscribe(res => {
+      this.listaCompleta = res.json();
+    });
   }
   //Agrega un registro
   private agregar() {
@@ -277,10 +274,14 @@ export class PuntoVentaComponent implements OnInit {
   private eliminar() {
     console.log();
   }
+  //Establece la cantidad de ceros correspondientes a la izquierda del numero
+  public establecerCerosIzq(elemento, string, cantidad) {
+    elemento.setValue((string + elemento.value).slice(cantidad));
+  }
   //Reestablece el formulario
   private reestablecerFormulario() {
-    this.formulario.reset();
     this.autocompletado.setValue(undefined);
+    this.formulario.reset();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -327,7 +328,8 @@ export class PuntoVentaComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
     if(elemento != undefined) {
-      return elemento.puntoVenta ? ("00000" + elemento.puntoVenta).slice(-5) : elemento;
+      return elemento.puntoVenta ? ('00000' + elemento.puntoVenta).slice(-5) 
+      + ' | ' + elemento.codigoAfip + ' | ' + elemento.usointerno : elemento;
     } else {
       return elemento;
     }
@@ -344,6 +346,14 @@ export class PuntoVentaComponent implements OnInit {
   public displayFd(elemento) {
     if(elemento != undefined) {
       return elemento ? 'Si' : 'No';
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado b
+  public displayFe(elemento) {
+    if(elemento != undefined) {
+      return elemento.puntoVenta ? ('00000' + elemento.puntoVenta).slice(-5) : elemento;
     } else {
       return elemento;
     }

@@ -50,6 +50,10 @@ export class AfipComprobanteService {
   public obtenerLetra(condicionIva, idTipoComprobante) {
     return this.http.get(this.url + '/obtenerLetra/' + condicionIva + "/" + idTipoComprobante, this.options);
   }
+  //Obtiene letra por codigo de afip
+  public obtenerLetraPorCodigoAfip(codigoAfip) {
+    return this.http.get(this.url + '/obtenerLetraPorCodigoAfip/' + codigoAfip, this.options);
+  }
   //Obtiene CodigoAfip por id de tipoComprobante y letra
   public obtenerCodigoAfip(idTipoComprobante, letra) {
     return this.http.get(this.url + '/obtenerCodigoAfip/' + idTipoComprobante + '/' + letra , this.options);

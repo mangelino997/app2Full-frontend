@@ -15,8 +15,6 @@ export class PuntoVentaService {
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -48,7 +46,8 @@ export class PuntoVentaService {
   }
   //Obtiene el Numero por PuntoVenta y codigoAfip
   public obtenerNumero(punto, codigo, sucursal, empresa) {
-    return this.http.get(this.url + '/obtenerNumero/' + punto + '/' + codigo + '/' + sucursal + '/' + empresa, this.options);
+    return this.http.get(this.url + '/obtenerNumero/' + punto + '/' + codigo + '/' 
+      + sucursal + '/' + empresa, this.options);
   }
   //Obtiene la lista de registros
   public listar() {
@@ -58,9 +57,18 @@ export class PuntoVentaService {
   public listarPorSucursal(id) {
     return this.http.get(this.url + '/listarPorSucursal/' + id, this.options);
   }
-  //Obtiene una lista por empresa y sucursal
-  public listarPorEmpresaYSucursal(idEmpresa, idSucursal, idTipoComprobante) {
-    return this.http.get(this.url + '/listarPorEmpresaYSucursal/' + idEmpresa + '/' + idSucursal + '/' + idTipoComprobante, this.options);
+  //Obtiene una lista por sucursal y empresa
+  public listarPorSucursalYEmpresa(idSucursal, idEmpresa) {
+    return this.http.get(this.url + '/listarPorSucursalYEmpresa/' + idSucursal + '/' + idEmpresa, this.options);
+  }
+  //Obtiene una lista por sucursal y empresa y letra asignada
+  public listarPorSucursalYEmpresaLetra(idSucursal, idEmpresa) {
+    return this.http.get(this.url + '/listarPorSucursalYEmpresaLetra/' + idSucursal + '/' + idEmpresa, this.options);
+  }
+  //Obtiene una lista por empresa, sucursal y tipo de comprobante
+  public listarPorEmpresaYSucursalYTipoComprobante(idEmpresa, idSucursal, idTipoComprobante) {
+    return this.http.get(this.url + '/listarPorEmpresaYSucursalYTipoComprobante/' 
+      + idEmpresa + '/' + idSucursal + '/' + idTipoComprobante, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
