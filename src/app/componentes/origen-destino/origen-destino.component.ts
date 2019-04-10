@@ -38,7 +38,7 @@ export class OrigenDestinoComponent implements OnInit {
   //Define la lista de provincias
   public resultadosProvincias:Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre'];
+  public columnas:string[] = ['id', 'nombre', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
