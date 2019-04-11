@@ -21,7 +21,7 @@
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="formulario.setValue(item)">
-                  {{item.origen.nombre}} -> {{item.origen.provincia.nombre}}
+                  {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}}, {{item.destino.provincia.nombre}}
                 </mat-option>
               </mat-autocomplete>
             </div>
@@ -98,7 +98,7 @@
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
@@ -107,10 +107,38 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-12">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group has-float-label">
+            <label for="idAutocompletado" class="tamanio-label">Buscar por Origen</label>
+            <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
+              [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+              (focus)="resetFormulario()" (blur)="vaciarListas()">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)" (optionSelected)="establecerTabla()">
+              <mat-option *ngFor="let item of resultados" [value]="item">
+                  {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}}, {{item.destino.provincia.nombre}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group has-float-label">
+            <label for="idAutocompletadoDestino" class="tamanio-label">Buscar por Destino</label>
+            <input id="idAutocompletadoDestino" class="form-control form-control-sm" type="text" matInput
+              [formControl]="autocompletadoDestino" [matAutocomplete]="autoDestino" autocomplete="off"
+              (focus)="resetFormulario()" (blur)="vaciarListas()">
+            <mat-autocomplete #autoDestino="matAutocomplete" [displayWith]="displayFa.bind(this)" (optionSelected)="establecerTabla()">
+              <mat-option *ngFor="let item of resultados" [value]="item">
+                  {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}}, {{item.destino.provincia.nombre}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
+      </div>
       <table class="table table-bordered table-striped table-sm">
         <thead>
           <tr>
-            <th class="text-center" style="width:5%" scope="col">id</th>
+            <th class="text-center" style="width:5%" scope="col">#</th>
             <th class="text-center" style="width:20%" scope="col">Origen</th>
             <th class="text-center" style="width:20%" scope="col">Destino</th>
             <th class="text-center" style="width:10%" scope="col">km</th>

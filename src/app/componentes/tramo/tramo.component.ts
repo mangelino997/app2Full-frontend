@@ -30,8 +30,10 @@ export class TramoComponent implements OnInit {
   public formulario:FormGroup;
   //Define la lista completa de registros
   public listaCompleta:Array<any> = [];
-  //Define el autocompletado para las busquedas
+  //Define el autocompletado para las busquedas Origen
   public autocompletado:FormControl = new FormControl();
+  //Define el autocompletado para las busquedas Destino
+  public autocompletadoDestino:FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
   public resultados:Array<any> = [];
   //Define la lista de resultados de origenes destinos
@@ -59,6 +61,14 @@ export class TramoComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string') {
         this.servicio.listarPorOrigen(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    })
+    //Autocompletado - Buscar por nombre
+    this.autocompletadoDestino.valueChanges.subscribe(data => {
+      if(typeof data == 'string') {
+        this.servicio.listarPorDestino(data).subscribe(res => {
           this.resultados = res;
         })
       }
@@ -95,22 +105,27 @@ export class TramoComponent implements OnInit {
     })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    this.listar();
+    //Establece los valores por defecto
+    this.establecerValoresPorDefecto();
   }
   //Vacia las listas de resultados
   public vaciarListas() {
     this.resultados = [];
     this.resultadosOrigenesDestinos = [];
   }
+  //Establece los valores por defecto
+  private establecerValoresPorDefecto(): void {
+    this.formulario.get('excluirLiqChofer').setValue(false);
+    this.formulario.get('estaActivo').setValue(true);
+  }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('excluirLiqChofer').enabled;
-      this.formulario.get('estaActivo').enabled;
+      this.formulario.get('excluirLiqChofer').enable();
+      this.formulario.get('estaActivo').enable();
     } else {
-      this.formulario.get('excluirLiqChofer').disabled;
-      this.formulario.get('estaActivo').disabled;
+      this.formulario.get('excluirLiqChofer').disable();
+      this.formulario.get('estaActivo').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -129,7 +144,8 @@ export class TramoComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if(opcion == 0) {
-      this.autocompletado.setValue(undefined);
+      this.autocompletado.reset();
+      this.autocompletadoDestino.reset();
       this.resultados = [];
     }
     switch (id) {
@@ -149,6 +165,11 @@ export class TramoComponent implements OnInit {
       case 4:
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        setTimeout(function() {
+          document.getElementById('idAutocompletado').focus();
+        }, 20);
         break;
       default:
         break;
@@ -175,17 +196,6 @@ export class TramoComponent implements OnInit {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
         this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
       },
       err => {
         console.log(err);
@@ -232,11 +242,21 @@ export class TramoComponent implements OnInit {
   private eliminar() {
     console.log();
   }
+  //Establece la tabla al seleccion elemento de autocompletado
+  public establecerTabla(): void {
+    this.listaCompleta = this.resultados;
+  }
+  public resetFormulario(): void {
+    this.listaCompleta = [];
+    this.autocompletado.reset();
+    this.autocompletadoDestino.reset();
+  }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
+    this.autocompletadoDestino.reset();
     this.vaciarListas();
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar

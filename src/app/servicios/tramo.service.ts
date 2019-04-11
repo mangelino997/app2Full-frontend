@@ -15,8 +15,6 @@ export class TramoService {
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -53,6 +51,14 @@ export class TramoService {
   //Obtiene un listado por origen
   public listarPorOrigen(origen) {
     return this.http.get(this.url + '/listarPorOrigen/' + origen, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
+  //Obtiene un listado por destino
+  public listarPorDestino(destino) {
+    return this.http.get(this.url + '/listarPorDestino/' + destino, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })
