@@ -455,13 +455,13 @@ th {
 }
 //Define los colores del mat-check cuando es seleccionado
 .checkBoxSelected {
-  padding: 1px;
-  background-color: #85ce36;
-  color: black;
+  padding: 1px !important;
+  background-color: #85ce36 !important;
+  color: black !important;
 }
 .checkBoxNotSelected {
-  background-color: #ffffff;
-  color: #ffffff;
+  background-color: #ffffff !important;
+  color: black !important;
   padding: 1px;
 }
 .mat-step-icon-state-edit {
