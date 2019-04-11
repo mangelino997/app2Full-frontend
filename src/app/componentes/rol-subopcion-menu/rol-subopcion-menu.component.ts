@@ -9,6 +9,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-rol-subopcion-menu',
@@ -42,7 +43,8 @@ export class RolSubopcionMenuComponent implements OnInit {
   constructor(private servicio: RolSubopcionService, private fb: FormBuilder,
     private rolServicio: RolService, private moduloServicio: ModuloService,
     private submoduloServicio: SubmoduloService, private toastr: ToastrService,
-    public dialog: MatDialog, private subopcionPestaniaServicio: SubopcionPestaniaService) { }
+    public dialog: MatDialog, private subopcionPestaniaServicio: SubopcionPestaniaService,
+    private appComponent: AppComponent) { }
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.fb.group({
@@ -77,12 +79,20 @@ export class RolSubopcionMenuComponent implements OnInit {
   private listarRoles(): void {
     this.rolServicio.listar().subscribe(res => {
       this.roles = res.json();
+      let rol = this.appComponent.getRol();
+      if(rol != 1) {
+        this.roles.splice(0, 1);
+      }
     })
   }
   //Obtiene la lista de modulos
   private listarModulos(): void {
     this.moduloServicio.listar().subscribe(res => {
       this.modulos = res.json();
+      let rol = this.appComponent.getRol();
+      if(rol != 1) {
+        this.modulos.splice(0, 1);
+      }
     })
   }
   //Al seleccionar un modulo

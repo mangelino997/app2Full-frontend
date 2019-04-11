@@ -18,8 +18,8 @@
       </div>
       <div class="col-md-2">
         <div class="inline">
-          <button class="btn btn-primary btn-sm" (click)="verUsuariosDeRol()" [disabled]="!botonActivo">Usuario</button>
-          <button class="btn btn-primary btn-sm" style="margin-left: 5px;" (click)="verVistaPrevia()" [disabled]="!botonActivo">Vista Previa</button>
+          <button mat-raised-button color="primary" (click)="verUsuariosDeRol()" [disabled]="!botonActivo">Usuarios</button>
+          <button mat-raised-button color="primary" style="margin-left: 5px;" (click)="verVistaPrevia()" [disabled]="!botonActivo">Vista Previa</button>
         </div>
       </div>
     </div>
@@ -87,7 +87,7 @@
             </div>
             <br>
             <div class="row justify-content-center container-fluid">
-              <button class="btn btn-primary" (click)="actualizar()" [disabled]="!btnActualizarActivo">Actualizar</button>
+              <button mat-raised-button color="primary" (click)="actualizar()" [disabled]="!btnActualizarActivo">Actualizar</button>
             </div>
           </mat-sidenav-content>
         </mat-sidenav-container>

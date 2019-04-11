@@ -25,7 +25,10 @@
                         </tr>
                     </tbody>
                 </table>
-                <button class="btn btn-primary" (click)="actualizar()">Actualizar</button>
+                <div class="row justify-content-center">
+                    <button mat-raised-button color="primary" (click)="actualizar()">Actualizar</button>
+                    <button mat-raised-button color="accent" (click)="onNoClick()">Cerrar</button>
+                </div>
             </div>
         </div>
     </form>
