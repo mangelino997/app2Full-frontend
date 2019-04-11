@@ -162,17 +162,6 @@ export class OrigenDestinoComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.servicio.agregar(this.formulario.value).subscribe(
