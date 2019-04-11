@@ -160,7 +160,7 @@
             </div>
           </div>
           <div class="col-md-1 button-input">
-            <button mat-raised-button>Aforar</button>
+            <button mat-raised-button (click)="agregarAforo()">Aforar</button>
           </div>
         </div>
         <div class="row">
@@ -202,7 +202,7 @@
             <!-- Flete por Entrega -->
             <div class="form-group has-float-label">
               <label for="idImporteEntrega" class="tamanio-label">Flete por Entrega</label>
-              <input id="idImporteEntrega" type="number" formControlName="importeRetiro" 
+              <input id="idImporteEntrega" type="number" formControlName="importeEntrega" 
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>

@@ -40,8 +40,8 @@ export class AforoComponent implements OnInit {
     let alto = this.formulario.get('alto').value;
     let ancho = this.formulario.get('ancho').value;
     let largo = this.formulario.get('largo').value;
-    total= aforo * cantidad* alto * ancho * largo;
-    this.formulario.get('kiloAforadoTotal').setValue(total);
+    total= aforo * cantidad * alto * ancho * largo;
+    this.formulario.get('kiloAforadoTotal').setValue(this.appService.setDecimales(total, 2));
     this.data.formulario = this.formulario.get('kiloAforadoTotal').value;
   }
   //Formatea el numero a x decimales

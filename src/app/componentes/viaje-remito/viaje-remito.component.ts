@@ -17,6 +17,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { ClienteEventual } from 'src/app/modelos/clienteEventual';
+import { FechaService } from 'src/app/servicios/fecha.service';
+import { AforoComponent } from '../aforo/aforo.component';
 
 @Component({
   selector: 'app-viaje-remito',
@@ -58,11 +60,14 @@ export class ViajeRemitoComponent implements OnInit {
   public letras:Array<any> = [];
   //Define el estado de la letra
   public estadoLetra:boolean = false;
+  //Define la fecha actual
+  public fechaActual:any;
   //Constructor
   constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private sucursalServicio: SucursalService, private clienteServicio: ClienteService,
-    private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog) {
+    private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog,
+    private fechaServicio: FechaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -139,15 +144,19 @@ export class ViajeRemitoComponent implements OnInit {
           this.resultadosClienteDestinatario = response;
         })
       }
-    })
+    });
+    //Obtiene la fecha actual
+    this.fechaServicio.obtenerFecha().subscribe(res => {
+      this.fechaActual = res.json();
+      //Establece valores por defecto
+      this.establecerValoresPorDefecto(null, null);
+    });
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene la lista de condiciones de iva
     this.listarSucursales();
     //Obtiene la lista de tipos de comprobantes
     this.listarTiposComprobantes();
-    //Establece valores por defecto
-    this.establecerValoresPorDefecto();
     //Crea la lista de letras
     this.letras = ['A', 'B', 'C'];
   }
@@ -158,8 +167,10 @@ export class ViajeRemitoComponent implements OnInit {
     this.formulario.get('numero').setValue(this.displayCeros(elemento.numero, '0000000', -8));
   }
   //Establece los valores por defecto
-  private establecerValoresPorDefecto() {
-    this.formulario.get('fecha').setValue(new Date().toISOString().substring(0, 10));
+  private establecerValoresPorDefecto(numeroCamion, sucursalDestino) {
+    this.formulario.get('fecha').setValue(this.fechaActual);
+    this.formulario.get('numeroCamion').setValue(numeroCamion);
+    this.formulario.get('sucursalDestino').setValue(sucursalDestino);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -231,7 +242,7 @@ export class ViajeRemitoComponent implements OnInit {
       case 1:
         this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
-        this.establecerValoresPorDefecto();
+        this.establecerValoresPorDefecto(null, null);
         this.establecerValoresPestania(nombre, false, false, true, 'idFecha');
         break;
       case 2:
@@ -290,6 +301,8 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    var numeroCamion = this.formulario.get('numeroCamion').value;
+    var sucursalDestino = this.formulario.get('sucursalDestino').value;
     this.formulario.get('letra').enable();
     this.formulario.get('sucursalEmision').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('empresaEmision').setValue(this.appComponent.getEmpresa());
@@ -299,7 +312,7 @@ export class ViajeRemitoComponent implements OnInit {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          this.establecerValoresPorDefecto();
+          this.establecerValoresPorDefecto(numeroCamion, sucursalDestino);
           this.establecerTipoComprobantePorDefecto();
           setTimeout(function() {
             document.getElementById('idFecha').focus();
@@ -402,6 +415,16 @@ export class ViajeRemitoComponent implements OnInit {
       })
     });
   }
+  //Abre un modal para agregar un aforo
+  public agregarAforo(): void {
+    const dialogRef = this.dialog.open(AforoComponent, {
+      width: '1200px',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      this.formulario.get('kilosAforado').setValue(this.appServicio.setDecimales(resultado, 2));
+    });
+  }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
@@ -452,7 +475,7 @@ export class ViajeRemitoComponent implements OnInit {
 //Componente Cliente Eventual
 @Component({
   selector: 'cliente-eventual-dialogo',
-  templateUrl: '../cliente/cliente-eventual.component.html'
+  templateUrl: '../cliente-eventual/cliente-eventual.component.html'
 })
 export class ClienteEventualDialogo {
   //Define un formulario para validaciones de campos
@@ -566,12 +589,10 @@ export class ClienteEventualDialogo {
   }
   onNoClick(): void {
     this.data.formulario = this.formulario;
-    console.log(this.data.formulario);
     this.dialogRef.close();
   }
   public cerrar(): void {
     this.data.formulario = this.formulario;
-    console.log(this.data.formulario);
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -603,6 +624,12 @@ export class ClienteEventualDialogo {
         this.lanzarError(err);
       }
     )
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
