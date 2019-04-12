@@ -235,7 +235,7 @@ import { SucursalClienteComponent } from './componentes/sucursal-cliente/sucursa
 import { VehiculoComponent } from './componentes/vehiculo/vehiculo.component'; //Probado
 import { VehiculoProveedorComponent } from './componentes/vehiculo-proveedor/vehiculo-proveedor.component'; //Probado
 import { CompaniaSeguroPolizaComponent } from './componentes/compania-seguro-poliza/compania-seguro-poliza.component';
-import { ViajeRemitoComponent, ClienteEventualDialogo } from './componentes/viaje-remito/viaje-remito.component';
+import { ViajeRemitoComponent } from './componentes/viaje-remito/viaje-remito.component';
 import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-subopcion/rol-subopcion.component'; //Probado
 import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component'; //Probado
 import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
@@ -382,7 +382,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.156:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -485,7 +485,6 @@ const stompConfig: StompConfig = {
     VentaConceptoComponent,
     ViajeUnidadNegocioComponent,
     OpcionComponent,
-    ClienteEventualDialogo,
     DadorDestinatarioDialogo,
     DadorDestTablaDialogo,
     ObservacionesDialogo,
@@ -736,7 +735,6 @@ const stompConfig: StompConfig = {
     UsuarioDialogo,
     VistaPreviaDialogo,
     PestaniaDialogo,
-    ClienteEventualDialogo,
     DadorDestinatarioDialogo,
     DadorDestTablaDialogo,
     ObservacionesDialogo,

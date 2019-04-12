@@ -157,7 +157,6 @@ export class ClienteEventualComponent implements OnInit {
             document.getElementById('idCondicionIva').focus();
           }, 20);
           this.data.formulario = respuesta.id - 1;
-          console.log(this.data.formulario);
           this.toastr.success(respuesta.mensaje);
         }
       },
@@ -224,7 +223,7 @@ export class ClienteEventualComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    var respuesta = err;
     if (respuesta.codigo == 11006) {
       document.getElementById("labelRazonSocial").classList.add('label-error');
       document.getElementById("idRazonSocial").classList.add('is-invalid');
