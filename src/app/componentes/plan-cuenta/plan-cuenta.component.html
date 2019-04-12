@@ -7,13 +7,13 @@
             <div class="row">
               <div class="form-group has-float-label">
                 <label for="idNombre" class="tamanio-label">Nombre *</label>
-                <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm upper-case" 
+                <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm" 
                   formControlName="nombre" style="width: 250px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idImputable" class="tamanio-label">Es Imputable *</label>
                 <mat-select id="idImputable" class="form-control form-control-sm"  style="width: 120px;"
-                  formControlName="esImputable" (selectionChange)="cambioImputable()">
+                  formControlName="esImputable" (selectionChange)="cambioImputable()" [disabled]="!formulario.valid">
                   <mat-option [value]="false">No</mat-option>
                   <mat-option [value]="true">Si</mat-option>
                 </mat-select>
@@ -21,7 +21,7 @@
               <div class="form-group has-float-label">
                 <label for="idActivo" class="tamanio-label">Esta Activo *</label>
                 <mat-select id="idActivo" class="form-control form-control-sm"  style="width: 108px;"
-                  formControlName="estaActivo">
+                  formControlName="estaActivo" [disabled]="!formulario.valid">
                   <mat-option [value]="false">No</mat-option>
                   <mat-option [value]="true">Si</mat-option>
                 </mat-select>
@@ -45,10 +45,10 @@
               </b> ({{node.esImputable ? 'Imputable' : 'No Imputable'}} - {{node.estaActivo ? 'Activo' : 'No Activo'}})
             </span>
             <div *ngIf="node.mostrarBotones">
-              <button class="boton-agregar" mat-icon-button (click)="nuevoNodo(node)">
+              <button *ngIf="!node.esImputable" class="boton-agregar" mat-icon-button (click)="nuevoNodo(node)">
                 <mat-icon>add_circle</mat-icon>
               </button>
-              <button class="boton-editar" mat-icon-button (click)="editarNodo(node)">
+              <button *ngIf="node.esImputable" class="boton-editar" mat-icon-button (click)="editarNodo(node)">
                 <mat-icon>edit</mat-icon>
               </button>
               <button class="boton-eliminar" mat-icon-button (click)="eliminar(node, i)">

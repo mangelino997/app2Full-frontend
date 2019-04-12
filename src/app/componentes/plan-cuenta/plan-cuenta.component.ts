@@ -83,6 +83,11 @@ export class PlanCuentaComponent implements OnInit {
       hijos: new FormControl()
     });
   }
+  //Establece valores por defecto
+  private establecerValoresPorDefecto(): void {
+    this.formulario.get('esImputable').setValue(true);
+    this.formulario.get('estaActivo').setValue(true);
+  }
 
   getLevel = (node: Nodo) => node.level;
 
@@ -139,7 +144,7 @@ export class PlanCuentaComponent implements OnInit {
     setTimeout(function() {
       document.getElementById('idNombre').focus();
     }, 20);
-    this.formulario.get('esImputable').setValue(false);
+    this.establecerValoresPorDefecto();
     const nodoPadre = this.flatNodeMap.get(nodo);
     this.planCuentaServicio.agregarElemento(nodoPadre!, '');
     this.treeControl.expand(nodo);
@@ -178,13 +183,14 @@ export class PlanCuentaComponent implements OnInit {
     this.formulario.get('estaActivo').enable();
     const elementoPadre = this.obtenerNodoPadre(nodo);
     const elemento = this.flatNodeMap.get(nodo);
-    elemento.nombre = this.formulario.get('nombre').value;
     elemento.esImputable = this.formulario.get('esImputable').value;
     elemento.estaActivo = this.formulario.get('estaActivo').value;
+    elemento.nombre = elemento.esImputable ? this.formulario.get('nombre').value : this.formulario.get('nombre').value.toUpperCase();
     elemento.nivel = elementoPadre.nivel+1;
     elemento.hijos = [];
     elemento.empresa = this.appComponent.getEmpresa();
     elemento.usuarioAlta = this.appComponent.getUsuario();
+    elemento.tipoCuentaContable = elementoPadre.tipoCuentaContable;
     this.planCuentaServicio.agregar(elemento);
   }
   //Actualiza un nodo
@@ -219,12 +225,12 @@ export class PlanCuentaComponent implements OnInit {
       document.getElementById('idNombre').classList.remove('upper-case')
       nombre.toLowerCase();
       this.formulario.get('estaActivo').setValue(true);
-      this.formulario.get('estaActivo').disable();
+      this.formulario.get('estaActivo').enable();
     } else {
       document.getElementById('idNombre').classList.add('upper-case');
       nombre.toUpperCase();
       this.formulario.get('estaActivo').setValue(true);
-      this.formulario.get('estaActivo').enable();
+      this.formulario.get('estaActivo').disable();
     }
   }
   //Activa los botones de nuevo y eliminar node
