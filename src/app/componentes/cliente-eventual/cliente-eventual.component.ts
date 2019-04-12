@@ -12,6 +12,7 @@ import { FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ClienteEventual } from 'src/app/modelos/clienteEventual';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-cliente-eventual',
@@ -43,7 +44,8 @@ export class ClienteEventualComponent implements OnInit {
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
     private cobradorServicio: CobradorService, private zonaServicio: ZonaService,
     private rubroServicio: RubroService, private sucursalServicio: SucursalService,
-    private clienteServicio: ClienteService, private toastr: ToastrService, public clienteEventual: ClienteEventual) {
+    private clienteServicio: ClienteService, private toastr: ToastrService, public clienteEventual: ClienteEventual,
+    private appServicio: AppService) {
     this.dialogRef.disableClose = true;
   }
   //Al inicializarse el componente
@@ -168,6 +170,36 @@ export class ClienteEventualComponent implements OnInit {
   public verificarSeleccion(valor): void {
     if(typeof valor.value != 'object') {
       valor.setValue(null);
+    }
+  }
+  //Validad el numero de documento
+  public validarDocumento(): void {
+    let documento = this.formulario.get('numeroDocumento').value;
+    let tipoDocumento = this.formulario.get('tipoDocumento').value;
+    if(documento) {
+      switch(tipoDocumento.id) {
+        case 1:
+          let respuesta = this.appServicio.validarCUIT(documento.toString());
+          if(!respuesta) {
+            let err = {codigo: 11010, mensaje: 'CUIT Incorrecto!'};
+            this.lanzarError(err);
+          }
+          break;
+        case 2:
+          let respuesta2 = this.appServicio.validarCUIT(documento.toString());
+          if(!respuesta2) {
+            let err = {codigo: 11010, mensaje: 'CUIL Incorrecto!'};
+            this.lanzarError(err);
+          }
+          break;
+        case 8:
+          let respuesta8 = this.appServicio.validarDNI(documento.toString());
+          if(!respuesta8) {
+            let err = {codigo: 11010, mensaje: 'DNI Incorrecto!'};
+            this.lanzarError(err);
+          }
+          break;
+      }
     }
   }
   //Reestablece el formulario

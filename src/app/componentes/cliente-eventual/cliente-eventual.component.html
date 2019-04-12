@@ -37,10 +37,9 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group has-float-label">
-                        <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento
-                            *</label>
+                        <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento *</label>
                         <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
-                            class="form-control form-control-sm" [readonly]="soloLectura"
+                            class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarDocumento()"
                             (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
                     </div>
                 </div>

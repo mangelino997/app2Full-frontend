@@ -63,7 +63,7 @@ export class AppService {
   //Formatear numero a x decimales
   public setDecimales(valor, cantidad) {
     if(valor) {
-      return Number(parseFloat(valor).toFixed(cantidad));
+      return parseFloat(valor).toFixed(cantidad);
     }
   }
   //Valida el CUIT/CUIL
