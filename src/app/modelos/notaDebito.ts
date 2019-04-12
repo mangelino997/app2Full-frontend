@@ -3,6 +3,8 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class NotaDebito{
     //define un formulario FormGroup
     public formulario: FormGroup;
+    //define el formulario como FormGroup
+    public formularioComprobante: FormGroup;
     //constructor
     constructor() {
         // crear el formulario para la seccion de modulos
@@ -40,6 +42,34 @@ export class NotaDebito{
             ventaComprobanteAplicado: new FormControl(),
             comprobanteAplicado: new FormControl(),
             observaciones: new FormControl(),
+        });
+        // crear el formulario para modificar datos
+        this.formularioComprobante = new FormGroup({
+            id: new FormControl(),
+            version: new FormControl(),
+            fechaEmision: new FormControl(),
+            puntoVenta: new FormControl(),
+            numero: new FormControl(),
+            letra: new FormControl(),
+            ventaComprobante: new FormControl(),
+            ventaTipoItem: new FormControl(),
+            condicionIVA: new FormControl('', Validators.required),
+            afipAlicuotaIva: new FormControl(),
+            alicuotaIva: new FormControl(),
+            importeIva: new FormControl(),
+            tipoComprobante: new FormControl(),
+            importeNoGravado: new FormControl(),
+            importeNetoGravado: new FormControl(),
+            importeTotal: new FormControl(),
+            subtotalND: new FormControl(),
+            checked: new FormControl(false),
+            importeExento: new FormControl(),
+            importeSaldo: new FormControl(),
+            provincia: new FormControl(),
+            ventaComprobanteAplicado: new FormControl(),
+            comprobanteAplicado: new FormControl(),
+            itemTipo: new FormControl(), //Guarda el motivo por el cual se realizo el cambio 
+            concepto: new FormControl()
         });
         
     }

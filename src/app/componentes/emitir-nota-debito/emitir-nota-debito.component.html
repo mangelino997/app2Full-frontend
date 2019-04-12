@@ -119,6 +119,45 @@
       </div>
       <br>
       <div class="row">
+        <form [formGroup]="formularioItem">
+            <div class="row">
+              <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label for="idMotivo" class="tamanio-label">Motivo</label>
+                  <mat-select id="idMotivo" class="form-control form-control-sm" formControlName="itemTipo" [compareWith]="compareFn">
+                    <mat-option *ngFor="let item of resultadosItems" [value]="item">
+                    {{item.nombre}}
+                    </mat-option>
+                  </mat-select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label for="idSubtotalNC" class="tamanio-label">Subtotal N.D.</label>
+                  <input id="idSubtotalNC" type="number" formControlName="subtotalND" class="form-control form-control-sm" (selectionChange)="calcularSubtotalND()">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
+                  <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" (selectionChange)="calcularSubtotalND()">
+                    <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota" >
+                      {{returnDecimales(itemAlicuota.alicuota, 2)}} 
+                    </mat-option>
+                  </mat-select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
+                  <input id="idSubtotalCIVA" type="number" formControlName="importeTotal" class="form-control form-control-sm" readonly >
+                </div>
+              </div>
+              <div class="col-md-2">
+                <button class="btn btn-primary btn-sm" type="button" (click)="modificarComprobante()">Aceptar</button>
+              </div>
+            </div>
+          </form>
         <div class="col-md-7" style="height: 200px; overflow-y: scroll;">
           <table class="table table-bordered table-striped table-sm table-condensed primera-tabla" id="tablaComprobante">
             <thead>
@@ -148,6 +187,7 @@
                 <th class="text-center" style="width:10%" scope="col">Concepto</th>
                 <th class="text-center" style="width:10%" scope="col">Subtotal N.D.</th>
                 <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                <th class="text-center" style="width:10%" scope="col">Importe IVA</th>
                 <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
               </tr>
             </thead>

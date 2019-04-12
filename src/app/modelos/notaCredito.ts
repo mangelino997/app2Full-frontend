@@ -47,6 +47,10 @@ export class NotaCredito{
         this.formularioComprobante = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
+            fechaEmision: new FormControl(),
+            puntoVenta: new FormControl(),
+            numero: new FormControl(),
+            letra: new FormControl(),
             ventaComprobante: new FormControl(),
             ventaTipoItem: new FormControl(),
             condicionIVA: new FormControl('', Validators.required),
