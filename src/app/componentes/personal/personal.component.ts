@@ -190,7 +190,7 @@ export class PersonalComponent implements OnInit {
       conCoberturaSCVO: new FormControl('', Validators.required),
       recibeAdelanto: new FormControl('', Validators.required),
       recibePrestamo: new FormControl('', Validators.required),
-      cuotasPrestamo: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(2)]),
+      cuotasPrestamo: new FormControl('', [Validators.min(1), Validators.maxLength(2)]),
       usuarioAlta: new FormControl(),
       usuarioBaja: new FormControl(),
       usuarioMod: new FormControl(),
@@ -350,11 +350,12 @@ export class PersonalComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.formulario.get('aporteAdicObraSocial').setValue('0.00');
-    this.formulario.get('contribAdicObraSocial').setValue('0.00');
-    this.formulario.get('aporteAdicSegSoc').setValue('0.00');
-    this.formulario.get('aporteDifSegSoc').setValue('0.00');
-    this.formulario.get('contribTareaDifSegSoc').setValue('0.00');
+    this.formulario.get('esAcompReparto').setValue(false);
+    this.formulario.get('recibeAdelanto').setValue(false);
+    this.formulario.get('recibePrestamo').setValue(false);
+    this.formulario.get('cuotasPrestamo').setValue(1);
+    this.formulario.get('esChofer').setValue(false);
+    this.formulario.get('esChoferLargaDistancia').setValue(false);
   }
   //Obtiene el listado de sexos
   private listarSexos() {
@@ -383,6 +384,7 @@ export class PersonalComponent implements OnInit {
     this.tipoDocumentoServicio.listar().subscribe(
       res => {
         this.tiposDocumentos = res.json();
+        this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
       },
       err => {
         console.log(err);
@@ -828,6 +830,14 @@ export class PersonalComponent implements OnInit {
   public displayFc(elemento) {
     if(elemento != undefined) {
       return elemento ? 'Si' : 'No';
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado a
+  public displayFd(elemento) {
+    if(elemento != undefined) {
+      return elemento.nombre ? elemento.codigoAfip + ' - ' + elemento.nombre : elemento;
     } else {
       return elemento;
     }

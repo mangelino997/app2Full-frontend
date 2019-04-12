@@ -56,7 +56,7 @@
                     <div class="col-md-2">
                       <div class="form-group has-float-label">
                         <label for="idCodigo" class="tamanio-label-titulo">N° de Legajo</label>
-                        <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm"readonly>
+                        <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm" readonly>
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -302,7 +302,7 @@
                       <div class="form-group has-float-label">
                         <label id="labelCuil" for="idCuil" class="tamanio-label">CUIL *</label>
                         <input id="idCuil" type="number" formControlName="cuil" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura"
+                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarDocumento()"
                           (ngModelChange)="cambioCampo('idCuil', 'labelCuil')">
                       </div>
                     </div>
@@ -347,9 +347,9 @@
                         <input id="idAfipSituacion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipSituacion')" [matAutocomplete]="autoAfipSituacion"
                           autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoAfipSituacion="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-autocomplete #autoAfipSituacion="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipSituacion of resultadosAfipSituaciones" [value]="itemAfipSituacion">
-                            {{itemAfipSituacion.nombre}}
+                            {{itemAfipSituacion.codigoAfip}} - {{itemAfipSituacion.nombre}}
                           </mat-option>
                         </mat-autocomplete>
                       </div>
@@ -360,9 +360,9 @@
                         <input id="idAfipCondicion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipCondicion')" [matAutocomplete]="autoAfipCondicion"
                           autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoAfipCondicion="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-autocomplete #autoAfipCondicion="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipCondicion of resultadosAfipCondiciones" [value]="itemAfipCondicion">
-                            {{itemAfipCondicion.nombre}}
+                            {{itemAfipCondicion.codigoAfip}} - {{itemAfipCondicion.nombre}}
                           </mat-option>
                         </mat-autocomplete>
                       </div>
@@ -373,9 +373,9 @@
                         <input id="idAfipActividad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipActividad')" [matAutocomplete]="autoAfipActividad"
                           autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoAfipActividad="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-autocomplete #autoAfipActividad="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipActividad of resultadosAfipActividades" [value]="itemAfipActividad">
-                            {{itemAfipActividad.nombre}}
+                            {{itemAfipActividad.codigoAfip}} - {{itemAfipActividad.nombre}}
                           </mat-option>
                         </mat-autocomplete>
                       </div>
@@ -388,10 +388,10 @@
                         <input id="idAfipModContratacion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipModContratacion')" [matAutocomplete]="autoAfipModContratacion"
                           autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoAfipModContratacion="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-autocomplete #autoAfipModContratacion="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipModContratacion of resultadosAfipModContrataciones"
                             [value]="itemAfipModContratacion">
-                            {{itemAfipModContratacion.nombre}}
+                            {{itemAfipModContratacion.codigoAfip}} - {{itemAfipModContratacion.nombre}}
                           </mat-option>
                         </mat-autocomplete>
                       </div>
@@ -402,10 +402,10 @@
                         <input id="idAfipSiniestrado" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipSiniestrado')" [matAutocomplete]="autoAfipSiniestrado"
                           autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoAfipSiniestrado="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-autocomplete #autoAfipSiniestrado="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipSiniestrado of resultadosAfipSiniestrados"
                             [value]="itemAfipSiniestrado">
-                            {{itemAfipSiniestrado.nombre}}
+                            {{itemAfipSiniestrado.codigoAfip}} - {{itemAfipSiniestrado.nombre}}
                           </mat-option>
                         </mat-autocomplete>
                       </div>
@@ -416,10 +416,10 @@
                         <input id="idAfipLocalidad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipLocalidad')" [matAutocomplete]="autoAfipLocalidad"
                           autocomplete="off" [readonly]="soloLectura">
-                        <mat-autocomplete #autoAfipLocalidad="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-autocomplete #autoAfipLocalidad="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipLocalidad of resultadosAfipLocalidades"
                             [value]="itemAfipLocalidad">
-                            {{itemAfipLocalidad.nombre}}
+                            {{itemAfipLocalidad.codigoAfip}} - {{itemAfipLocalidad.nombre}}
                           </mat-option>
                         </mat-autocomplete>
                       </div>
@@ -430,28 +430,28 @@
                       <div class="form-group has-float-label">
                         <label for="idAporteAdicSegSoc" class="tamanio-label">Aporte Adicional S.S. %</label>
                         <input id="idAporteAdicSegSoc" type="number" formControlName="aporteAdicSegSoc" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAporteDifSegSoc" class="tamanio-label">Aporte Diferencial S.S. %</label>
                         <input id="idAporteDifSegSoc" type="number" formControlName="aporteDifSegSoc"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idContribTareaDifSegSoc" class="tamanio-label">Contribución Tarea Dif. S.S. %</label>
                         <input id="idContribTareaDifSegSoc" type="number" formControlName="contribTareaDifSegSoc"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
                       </div>
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idObraSocial" class="tamanio-label">Obra Social</label>
+                        <label for="idObraSocial" class="tamanio-label">Obra Social *</label>
                         <input id="idObraSocial" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('obraSocial')" [matAutocomplete]="autoObraSocial"
                           autocomplete="off" [readonly]="soloLectura">
@@ -466,21 +466,21 @@
                       <div class="form-group has-float-label">
                         <label for="idAdherenteObraSocial" class="tamanio-label">Cant. de Adher. Obra Social</label>
                         <input id="idAdherenteObraSocial" type="number" formControlName="adherenteObraSocial"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAporteAdicObraSocial" class="tamanio-label">Aporte Adicional O.S.</label>
                         <input id="idAporteAdicObraSocial" type="number" formControlName="aporteAdicObraSocial"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idContribAdicObraSocial" class="tamanio-label">Contribución Adicional O.S.</label>
                         <input id="idContribAdicObraSocial" type="number" formControlName="contribAdicObraSocial"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
                       </div>
                     </div>
                   </div>
@@ -491,7 +491,7 @@
                       <div class="form-group has-float-label">
                         <label for="idRecibeAdelanto" class="tamanio-label">Recibe Adelanto *</label>
                         <mat-select id="idRecibeAdelanto" class="form-control form-control-sm" 
-                          formControlName="recibeAdelanto" [compareWith]="compareFn">
+                          formControlName="recibeAdelanto">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -503,7 +503,7 @@
                       <div class="form-group has-float-label">
                         <label for="idRecibePrestamo" class="tamanio-label">Recibe Préstamo *</label>
                         <mat-select id="idRecibePrestamo" class="form-control form-control-sm" 
-                          formControlName="recibePrestamo" [compareWith]="compareFn">
+                          formControlName="recibePrestamo">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -526,7 +526,7 @@
                       <div class="form-group has-float-label">
                         <label for="idEsChofer" class="tamanio-label">Es Chofer *</label>
                         <mat-select id="idEsChofer" class="form-control form-control-sm" 
-                          formControlName="esChofer" [compareWith]="compareFn">
+                          formControlName="esChofer">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -536,7 +536,7 @@
                       <div class="form-group has-float-label">
                         <label for="idEsChoferLargaDistancia" class="tamanio-label">Es Chofer Larga Distancia *</label>
                         <mat-select id="idEsChoferLargaDistancia" class="form-control form-control-sm" 
-                          formControlName="esChoferLargaDistancia" [compareWith]="compareFn">
+                          formControlName="esChoferLargaDistancia">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -636,7 +636,7 @@
                       <div class="form-group has-float-label">
                         <label for="idTurnoRotativo" class="tamanio-label">Turno Rotativo</label>
                         <mat-select id="idTurnoRotativo" class="form-control form-control-sm" 
-                          formControlName="turnoRotativo" [compareWith]="compareFn">
+                          formControlName="turnoRotativo">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -646,7 +646,7 @@
                       <div class="form-group has-float-label">
                         <label for="idTurnoFueraConvenio" class="tamanio-label">Fuera de Convenio</label>
                         <mat-select id="idTurnoFueraConvenio" class="form-control form-control-sm" 
-                          formControlName="turnoFueraConvenio" [compareWith]="compareFn">
+                          formControlName="turnoFueraConvenio">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -757,7 +757,7 @@
                 </div>
                 <div class="row">
                   <div class="centrar">
-                    <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+                    <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary"
                       formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
                       {{pestaniaActual}}
                     </button>
@@ -775,7 +775,7 @@
       <table class="table table-bordered table-striped table-sm">
         <thead>
           <tr>
-            <th class="text-center" style="width:5%" scope="col">N° Cuenta</th>
+            <th class="text-center" style="width:5%" scope="col">Id</th>
             <th class="text-center" style="width:15%" scope="col">Nombre</th>
             <th class="text-center" style="width:15%" scope="col">Tipo Documento</th>
             <th class="text-center" style="width:15%" scope="col">N° Documento</th>
