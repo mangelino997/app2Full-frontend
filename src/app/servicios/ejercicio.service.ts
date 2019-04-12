@@ -45,16 +45,16 @@ export class EjercicioService {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
   //Obtiene la lista de registros
-  public listar() {
-    return this.http.get(this.url, this.options);
+  public listar(idEmpresa) {
+    return this.http.get(this.url + '/' + idEmpresa, this.options);
   }
   //Obtiene la lista de Años
   public listarAnios() {
     return this.http.get(this.url + '/listarAnios', this.options);
   }
   //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
+  public listarPorNombre(nombre, idEmpresa) {
+    return this.http.get(this.url + '/listarPorNombre/' + nombre + '/' + idEmpresa, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })
