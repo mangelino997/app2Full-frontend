@@ -12,6 +12,8 @@ import { AppService } from 'src/app/servicios/app.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { ChequesRechazadosComponent } from '../cheques-rechazados/cheques-rechazados.component';
+import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
+import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 
 
 @Component({
@@ -24,9 +26,9 @@ export class EmitirNotaDebitoComponent implements OnInit {
   public checkboxCuenta: boolean=null;
   public tablaVisible: boolean=null;
   public formulario: FormGroup;
+  public formularioItem: FormGroup;
   //Define las listas 
-  public listaCuenta = [];
-  public listaComprobante = [];
+  public listaItem = [];
   //Define como un FormControl
   public tipoComprobante:FormControl = new FormControl();
   //Define el campo puntoVenta (el de solo lectura) como un FormControl
@@ -39,6 +41,10 @@ export class EmitirNotaDebitoComponent implements OnInit {
   public resultadosPuntoVenta = [];
   //Define la lista de resultados para Provincias
   public resultadosProvincias = [];
+  //Define la lista de Alicuotas Afip Iva que estan activas
+  public resultadosAlicuotasIva = [];
+  //Define la lista de items tipo
+  public resultadosItems = [];
   //Define las variables de la cabecera
   public letra: string;
   public codigoAfip: string;
@@ -47,7 +53,8 @@ export class EmitirNotaDebitoComponent implements OnInit {
 
   constructor(private notaCredito: NotaCredito, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService,private appComponent: AppComponent,
     private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService, 
-    private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService, public dialog: MatDialog) { 
+    private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService, public dialog: MatDialog, 
+    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService) { 
     
   }
 
@@ -57,6 +64,7 @@ export class EmitirNotaDebitoComponent implements OnInit {
     this.checkboxComp=true;   
     //inicializa el formulario y sus elementos
     this.formulario= this.notaCredito.formulario;
+    this.formularioItem= this.notaCredito.formularioComprobante;
     //Reestablece el Formularios
     this.reestablecerFormulario();
     //Obtiene los puntos de venta 
@@ -84,13 +92,13 @@ export class EmitirNotaDebitoComponent implements OnInit {
     this.formulario.reset(); 
     this.resultadosClientes = [];
     this.empresa.setValue(this.appComponent.getEmpresa());
-
+    this.listaItem = [];
     //Establece la fecha actual
     this.fechaService.obtenerFecha().subscribe(res=>{
       this.formulario.get('fechaEmision').setValue(res.json());
     });
     //Establece el Tipo de Comprobante
-    this.tipoComprobanteService.obtenerPorId(3).subscribe(
+    this.tipoComprobanteService.obtenerPorId(2).subscribe(
       res=>{
         let respuesta = res.json();
         this.formulario.get('ventaComprobante').setValue(res.json());
@@ -121,6 +129,28 @@ export class EmitirNotaDebitoComponent implements OnInit {
       },
       err=>{
         this.toastr.error("Error al obtener las Provincias");
+      }
+    );
+  }
+  //Obtiene una lista de Conceptos Varios
+  public listarItemsTipo(){
+    this.ventaTipoItemervice.listarItems(2).subscribe(
+      res=>{
+        this.resultadosItems = res.json();
+      }
+    );
+  }
+  //Obtiene una lista con las Alicuotas Iva
+  public listarAlicuotaIva(){
+    this.alicuotasIvaService.listarActivas().subscribe(
+      res=>{
+        this.resultadosAlicuotasIva = res.json();
+        for(let i=0; i<this.resultadosAlicuotasIva.length; i++){
+          if(this.resultadosAlicuotasIva[i].porDefecto==true){
+            this.formularioItem.get('alicuotaIva').setValue(this.resultadosAlicuotasIva[i].alicuota);
+            this.formularioItem.get('afipAlicuotaIva').setValue(this.resultadosAlicuotasIva[i]);
+          }
+        }
       }
     );
   }
@@ -168,6 +198,15 @@ export class EmitirNotaDebitoComponent implements OnInit {
     if(this.formulario.get('codigoAfip').value!=null || this.formulario.get('codigoAfip').value>0)
       this.establecerNumero(this.formulario.get('codigoAfip').value);
   }
+  //Calcula el campo SubtotalND del item que se agrega
+  public calcularSubtotalND(){
+    let ivaDisvisor=this.formularioItem.get('alicuotaIva').value/100;
+    let importeIva= this.returnDecimales(this.formularioItem.get('subtotalND').value*Number(ivaDisvisor), 2)
+    let importeTotal = this.returnDecimales(this.formularioItem.get('subtotalND').value + importeIva, 2); 
+    this.formularioItem.get('importeIva').setValue(importeIva);
+    this.formularioItem.get('importeTotal').setValue(importeTotal);
+
+   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);

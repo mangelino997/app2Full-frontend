@@ -165,7 +165,7 @@
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
-                  <input id="idSubtotalCIVA" type="number" formControlName="importeSaldo" class="form-control form-control-sm" (change)="calcularSubtotalNC()" >
+                  <input id="idSubtotalCIVA" type="number" formControlName="importeTotal" class="form-control form-control-sm" (change)="calcularSubtotalNC()" >
                 </div>
               </div>
               <div class="col-md-2">
@@ -187,6 +187,7 @@
                   <th class="text-center" style="width:10%" scope="col">Item Tipo</th>
                   <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
                   <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Importe IVA</th>
                   <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
                 </tr>
               </thead>
@@ -201,14 +202,15 @@
                     </td>
                     <!-- <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td> -->
                     <td align="center">{{comprobante.tipoComprobante.abreviatura}}</td>
-                    <td align="center">{{comprobante.puntoVenta}} - {{comprobante.numero}} - {{comprobante.numero}}</td>
+                    <td align="center">{{comprobante.puntoVenta}} - {{comprobante.numero}} - {{comprobante.letra}}</td>
                     <td align="center">{{comprobante.fechaEmision}}</td>
-                    <td align="center">{{comprobante.importeTotal}}</td>
-                    <td align="center">{{comprobante.importeSaldo}}</td>
+                    <td align="center">{{returnDecimales(comprobante.importeSaldo, 2)}}</td>
+                    <td align="center">{{returnDecimales(comprobante.importeSaldo, 2)}}</td>
                     <td align="center">{{comprobante.itemTipo!=null? comprobante.itemTipo.nombre : ''}}</td>
-                    <td align="center">{{comprobante.subtotalNC}}</td>
-                    <td align="center">{{comprobante.alicuotaIva}}</td>
-                    <td align="center">{{comprobante.importeIva}}</td>
+                    <td align="center">{{returnDecimales(comprobante.subtotalNC, 2)}}</td>
+                    <td align="center">{{returnDecimales(comprobante.alicuotaIva, 2)}}</td>
+                    <td align="center">{{returnDecimales(comprobante.importeIva, 2)}}</td>
+                    <td align="center">{{returnDecimales(comprobante.importeTotal, 2)}}</td>
                   </tr>
                 </ng-container>
               </tbody>
@@ -237,7 +239,7 @@
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
-                  <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" (selectionChange)="calcularSubtotalNC()">
+                  <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" (selectionChange)="calcularSubtotalNCC()">
                     <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota" >
                       {{returnDecimales(itemAlicuota.alicuota, 2)}} 
                     </mat-option>
@@ -247,7 +249,7 @@
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
-                  <input id="idSubtotalCIVA" type="number" formControlName="importeSaldo" class="form-control form-control-sm" (change)="calcularSubtotalNC()" >
+                  <input id="idSubtotalCIVA" type="number" formControlName="importeTotal" class="form-control form-control-sm" (change)="calcularSubtotalNCC()" >
                 </div>
               </div>
               <div class="col-md-2">
@@ -264,6 +266,7 @@
                   <th class="text-center" style="width:10%" scope="col">Concepto</th>
                   <th class="text-center" style="width:10%" scope="col">Subtotal N.C.</th>
                   <th class="text-center" style="width:10%" scope="col">Alicuota IVA</th>
+                  <th class="text-center" style="width:10%" scope="col">Importe IVA</th>
                   <th class="text-center" style="width:10%" scope="col">Subtotal c/IVA</th>
                 </tr>
               </thead>
@@ -273,12 +276,13 @@
                       <span class="cursor-color" (click)="seleccionarCuenta(i, cuenta)">Editar</span>
                     </td>
                     <td align="center" >
-                      <span class="cursor-color" (click)="seleccionarCuenta(i, cuenta)">Eliminar</span>
+                      <span class="cursor-color" (click)="eliminarCuenta(i, cuenta)">Eliminar</span>
                     </td>
                     <td align="center">{{cuenta.itemTipo!=null? cuenta.itemTipo.nombre : ''}}</td>
-                    <td align="center">{{cuenta.subtotalNC}}</td>
-                    <td align="center">{{cuenta.alicuotaIva}}</td>
-                    <td align="center">{{cuenta.importeIva}}</td>
+                    <td align="center">{{returnDecimales(cuenta.subtotalNC, 2)}}</td>
+                    <td align="center">{{returnDecimales(cuenta.alicuotaIva, 2)}}</td>
+                    <td align="center">{{returnDecimales(cuenta.importeIva, 2)}}</td>
+                    <td align="center">{{returnDecimales(cuenta.importeTotal, 2)}}</td>
                   </tr>
               </tbody>
             </table>

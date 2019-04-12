@@ -31,6 +31,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   
   //Datos con los que se carga la tabla de Aplica a Comprobante
   public listaComprobantes = [];
+
   //Datos con lo que se carga la tabla de Aplica a la Cuenta
   public listaCuenta = [];
   //Define como un FormControl
@@ -40,9 +41,9 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //Define la opcion elegida como un formControl
   public opcionCheck:FormControl = new FormControl();
   //Define el Comprobante seleccionado de la tabla Aplica a Comprobante
-  public comprobanteSeleccionado = 0;
+  public comprobanteSeleccionado = null;
   //Define la Cuenta seleccionada de la tabla Aplica a Cuenta
-  public cuentaSeleccionada = 0;
+  public cuentaSeleccionada = null;
   //Define la lista de resultados de busqueda para clientes
   public resultadosClientes = [];
   //Define los datos de la Empresa
@@ -77,7 +78,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario= this.notaCredito.formulario;
     this.formularioComprobante= this.notaCredito.formularioComprobante;
     this.formularioCuenta= this.notaCredito.formularioComprobante;
-
     //Reestablece el Formularios
     this.reestablecerFormulario();
     //Obtiene los puntos de venta 
@@ -98,38 +98,38 @@ export class EmitirNotaCreditoComponent implements OnInit {
     });
   }
   public cambioTabla(opcion){
-    console.log(this.opcionCheck.value);
     switch(opcion){
       case 1:
         this.tablaVisible=true;
-        this.limpiarCliente();
+        this.limpiarClienteYTabla();
         break;
 
       case 2:
         this.tablaVisible=false;
-        this.limpiarCliente();
+        this.limpiarClienteYTabla();
         break;
     }
   }
   //Limpia los campos correspondientes al Cliente
-  private limpiarCliente(){
+  private limpiarClienteYTabla(){
     this.formulario.get('cli').reset();
     this.formulario.get('cliente').reset();
     this.formulario.get('letra').reset();
     this.formulario.get('codigoAfip').reset();
     this.formulario.get('numero').reset();
     this.resultadosClientes = [];
+    this.listaComprobantes = [];
+    this.listaCuenta = [];
+    this.reestablecerFormularioComprobante();
+    this.reestablecerFormularioCuenta();
     setTimeout(function() {
       document.getElementById('idCliente').focus();
     }, 20);
   }
   // Carga datos (filas) en la tabla correspondiente
   private cargarTabla(){
-    console.log("entra");
-    console.log(this.formulario.get('cliente').value.id, this.empresa.value.id);
     this.ventaComprobanteService.listarPorClienteYEmpresa(this.formulario.get('cliente').value.id, this.empresa.value.id).subscribe(
       res=>{
-        console.log(res.json());
         let respuesta = res.json();
         this.listaComprobantes = respuesta; //Filtramos por comprobanteItemFAs -> respuesta.comprobanteItemFAs
       }
@@ -138,10 +138,13 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //Reestablece el formulario completo
   public reestablecerFormulario(){
     this.formulario.reset();
-    this.formulario.get('importeIva').setValue(this.returnDecimales(0, 2));
-    this.formulario.get('importeNoGravado').setValue(this.returnDecimales(0, 2)); 
-    this.formulario.get('importeExento').setValue(this.returnDecimales(0, 2)); 
- 
+    this.reestablecerFormularioComprobante();
+    this.reestablecerFormularioCuenta();
+    let valorDefecto= '0';
+    this.formulario.get('importeIva').setValue(this.returnDecimales(valorDefecto, 2));
+    this.formulario.get('importeNoGravado').setValue(this.returnDecimales(valorDefecto, 2));
+    this.formulario.get('importeExento').setValue(this.returnDecimales(valorDefecto, 2));
+    this.formulario.get('importeNetoGravado').setValue(this.returnDecimales(valorDefecto, 2));
     this.resultadosClientes = [];
     this.empresa.setValue(this.appComponent.getEmpresa());
     this.opcionCheck.setValue('1');
@@ -168,9 +171,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public listarItemsTipo(){
     this.ventaTipoItemervice.listarItems(3).subscribe(
       res=>{
-        console.log(res.json());
         this.resultadosItems = res.json();
-        // this.formulario.get().setValue(res.json);
       }
     );
   }
@@ -179,7 +180,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
       res=>{
         this.resultadosPuntoVenta= res.json();
-        console.log(res.json());
         this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]['puntoVenta']);
       }
     );
@@ -219,7 +219,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
     this.establecerCabecera();
     if(this.formulario.get('numero').value>0){
-      console.log("entra");
       this.cambioTabla(1);
     }
   }
@@ -243,7 +242,6 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Establece Codigo Afip
   public establecerNumero(codigoAfip){
-    console.log(this.formulario.value);
     this.puntoVentaService.obtenerNumero(this.formulario.get('puntoVenta').value.puntoVenta, codigoAfip, this.appComponent.getUsuario().sucursal.id, this.empresa.value.id).subscribe(
       res=>{
         this.formulario.get('numero').setValue(res.text());
@@ -260,59 +258,66 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Controla el cambio de estilos al seleccionar un Comprobante de la tabla
   public seleccionarComprobante(indice, comprobante){
-    console.log(comprobante);
     this.comprobanteSeleccionado = indice;
-    
-    console.log(comprobante);
     this.formularioComprobante.patchValue(comprobante);
-    this.subtotalCIVA = this.formularioComprobante.get('importeSaldo').value;
+    this.subtotalCIVA = this.formularioComprobante.get('importeTotal').value;
     setTimeout(function() {
       document.getElementById('idMotivo').focus();
     }, 20);
   }
   //Controla el cambio de estilos al seleccionar un Comprobante de la tabla
   public seleccionarCuenta(indice, comprobante){
-    console.log(comprobante);
-    this.comprobanteSeleccionado = indice;
+    this.cuentaSeleccionada = indice;
     this.formularioCuenta.patchValue(comprobante);
-    this.subtotalCIVA = this.formularioCuenta.get('importeSaldo').value;
+    this.subtotalCIVA = this.formularioCuenta.get('importeTotal').value;
     setTimeout(function() {
       document.getElementById('idMotivo').focus();
     }, 20);
   }
+  //Elimina una cuenta de la lista (tabla)
+  public eliminarCuenta(indice){
+    this.listaCuenta.splice(indice, 1);
+    this.calcularImportesCuenta(indice);
+  }
   //Agrega el cambio a la lista de Comprobantes
   public modificarComprobante(){
     this.formularioComprobante.get('checked').setValue(true);
-    console.log(this.comprobanteSeleccionado);
-    console.log(this.formularioComprobante.value);
     let indice= this.comprobanteSeleccionado;
     var id = "mat-checkbox-" + indice;
     document.getElementById(id).className = "checkBoxSelected";
     this.listaComprobantes[this.comprobanteSeleccionado] = this.formularioComprobante.value;
-    console.log(this.listaComprobantes);
-    this.reestablecerFormularioComprobante();
     this.calcularImportesComprobante(indice);
+    this.reestablecerFormularioComprobante();
   }
-  //Agrega el cambio a la lista de Cuenta
+  //Agrega un item a la Nota de Credito (aplica a la cuenta)
   public modificarCuenta(){
-    // this.formularioComprobante.get('checked').setValue(true);
     if(this.cuentaSeleccionada!=null){
       this.listaCuenta[this.cuentaSeleccionada] = this.formularioCuenta.value;
-      console.log(this.listaCuenta);
+      this.calcularImportesCuenta(this.listaCuenta.length-1);
       this.reestablecerFormularioCuenta();
-      this.calcularImportesCuenta(this.cuentaSeleccionada);
     }else{
       this.listaCuenta.push(this.formularioCuenta.value);
-      console.log(this.listaCuenta);
-      this.reestablecerFormularioCuenta();
       this.calcularImportesCuenta(this.listaCuenta.length-1);
+      this.reestablecerFormularioCuenta();
     }
-    
   }
   //METODO PRINCIPAL - EMITIR NOTA DE CREDITO
   public emitir(){
     this.formulario.get('puntoVenta').setValue(this.formulario.get('puntoVenta').value.puntoVenta);
-    this.formulario.get('ventaComprobanteItemNC').setValue(this.listaComprobantes);
+    if(this.listaComprobantes.length>0){
+      let listaCompCheckeados = [];
+      for(let i =0; i< this.listaComprobantes.length; i++){
+        if(this.listaComprobantes[i]['checked']==true)
+        listaCompCheckeados.push(this.listaComprobantes[i]);
+      }
+      console.log(this.listaComprobantes);
+      console.log(listaCompCheckeados);
+      this.formulario.get('ventaComprobanteItemNC').setValue(listaCompCheckeados);
+    }
+    if(this.listaCuenta.length>0){
+      this.formulario.get('ventaComprobanteItemNC').setValue(this.listaCuenta);
+      console.log(this.listaCuenta);
+    }
     this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
@@ -322,6 +327,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       res=>{
         let respuesta= res.json();
         this.toastr.success(respuesta.mensaje);
+        this.reestablecerFormulario();
       },
       err=>{
         // var respuesta = err.json();
@@ -335,79 +341,88 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Calcula los Importes del pie de la transaccion
   private calcularImportesComprobante(indice){
-    this.formulario.get('importeExento').setValue(0.00);
-    //al principio el "importeNetoGravado" estara en null y no podra sumar un null a un valor numerico
-    if(this.formulario.get('importeNetoGravado').value==null || this.formulario.get('importeNetoGravado').value== undefined)
-      this.formulario.get('importeNetoGravado').setValue(0);
-
-    // if(this.formularioItem.get('importeEntrega').value==null)
-    //   this.formularioItem.get('importeEntrega').setValue(0);
-
-    // if(this.formularioItem.get('importeRetiro').value==null)
-    //   this.formularioItem.get('importeRetiro').setValue(0);
-
-    let subtotal=0;
-    subtotal=this.listaComprobantes[indice]['subtotalNC'];
-    this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value + subtotal);
-   
-    let importeIva=0;
-    // if(this.formularioItem.get('alicuotaIva').value==0||this.formularioItem.get('alicuotaIva').value==null){
-    //   this.formularioItem.get('importeIva').setValue(0.00);
-    // }
-    // else{
-    //   importeIva =subtotal*(this.formularioItem.get('alicuotaIva').value/100);
-    //   this.formularioItem.get('importeIva').setValue(this.returnDecimales(importeIva, 2)); //guardo en cada item el importe extra (iva)
-    //   let importeIvaTotal= this.formulario.get('importeIva').value + importeIva;
-    //   this.formulario.get('importeIva').setValue(this.returnDecimales(importeIvaTotal, 2)); //sumo en el formulario general (cabecera de la factura)
-    // }
-    let importeTotal= this.formulario.get('importeNetoGravado').value ; // + + this.formulario.get('importeIva').value
+    let importeNetoGravado=0;
+    let importeIvaTotal=0;
+    let importeTotal=0;
+    for(let i=0; i<this.listaComprobantes.length; i++){
+      importeNetoGravado= this.returnDecimales(importeNetoGravado + this.listaComprobantes[i]['subtotalNC'],2);
+    }
+    for(let i=0; i<this.listaComprobantes.length; i++){
+      importeIvaTotal= this.returnDecimales(importeIvaTotal + this.listaComprobantes[i]['importeIva'],2);
+    }
+    for(let i=0; i<this.listaComprobantes.length; i++){
+      importeTotal= this.returnDecimales(importeTotal + this.listaComprobantes[i]['importeTotal'],2);
+    }
+    this.formulario.get('importeNetoGravado').setValue(this.returnDecimales(importeNetoGravado, 2));
+    this.formulario.get('importeIva').setValue(this.returnDecimales(importeIvaTotal, 2));
     this.formulario.get('importeTotal').setValue(this.returnDecimales(importeTotal, 2));
-    // this.reestablecerFormularioItemViaje();
   }
   //Calcula los Importes del pie de la transaccion
   private calcularImportesCuenta(indice){
-
+    let importeNetoGravado=0;
+    let importeIvaTotal=0;
+    let importeTotal=0;
+    for(let i=0; i<this.listaCuenta.length; i++){
+      importeNetoGravado= this.returnDecimales((importeNetoGravado + this.listaCuenta[i]['subtotalNC']), 2);
+    }
+    for(let i=0; i<this.listaCuenta.length; i++){
+      importeIvaTotal= this.returnDecimales((importeIvaTotal + this.listaCuenta[i]['importeIva']), 2);
+    }
+    for(let i=0; i<this.listaCuenta.length; i++){
+      importeTotal= this.returnDecimales((importeTotal + this.listaCuenta[i]['importeTotal']), 2);
+    }
+    this.formulario.get('importeNetoGravado').setValue(this.returnDecimales(importeNetoGravado, 2));
+    this.formulario.get('importeIva').setValue(this.returnDecimales(importeIvaTotal, 2));
+    this.formulario.get('importeTotal').setValue(this.returnDecimales(importeTotal, 2));
   }
   //Controla los checkbox
   public controlCheckbox($event, comprobante, indice){
-    console.log($event.checked );
     var id = "mat-checkbox-" + indice;
     if($event.checked==true){
       document.getElementById(id).className = "checkBoxSelected";
       this.listaComprobantes[indice]['checked']=true;
+      this.calcularImportesComprobante(indice);
     }else{
       document.getElementById(id).className = "checkBoxNotSelected";
       this.listaComprobantes[indice]['checked']=false;
-      //Resta al Importe Neto Gravado de la Nota de Credito el valor correspondiente al comprobante descheckeado
-      let subtotal=0;
-      subtotal=this.listaComprobantes[indice]['subtotalNC'];
+      //Resta los Importes, de la Nota de Credito, el valor correspondiente al comprobante descheckeado
+      let subtotal=this.listaComprobantes[indice]['subtotalNC'];
+      let importeIva=this.listaComprobantes[indice]['importeIva'];
+      let importeTotal= this.listaComprobantes[indice]['importeTotal']; 
+      this.formulario.get('importeIva').setValue(this.formulario.get('importeIva').value - importeIva);
+      this.formulario.get('importeTotal').setValue(this.formulario.get('importeTotal').value - importeTotal);
       this.formulario.get('importeNetoGravado').setValue(this.formulario.get('importeNetoGravado').value - subtotal);
-      //Resta al importe total de la Nota de Credito
-      let importeTotal= this.formulario.get('importeNetoGravado').value - subtotal // + + this.formulario.get('importeIva').value
-      this.formulario.get('importeTotal').setValue(this.returnDecimales(importeTotal, 2));
     }
   }
   //Calcula el campo SubtotalNC del comprobante que se modifica
   public calcularSubtotalNC(){
-    if(this.subtotalCIVA< this.formularioComprobante.get('importeSaldo').value){
-      this.formularioComprobante.get('importeSaldo').setValue(this.subtotalCIVA);
+    if(this.subtotalCIVA< this.formularioComprobante.get('importeTotal').value){
       setTimeout(function() {
         document.getElementById('idSubtotalCIVA').focus();
       }, 20);
       this.toastr.error("El SUBTOTAL C/IVA ingresado debe ser MENOR");
     }
     let iva= String(this.formularioComprobante.get('alicuotaIva').value).split('.');
-    console.log(iva);
     let ivaDisvisor = "1.";
     for(let i=0; i< iva.length; i++){
       ivaDisvisor = ivaDisvisor + iva[i];
     }
-    console.log(ivaDisvisor);
-
-    let subtotal = this.returnDecimales(this.formularioComprobante.get('importeSaldo').value/Number(ivaDisvisor), 2); 
-    this.formularioComprobante.get('subtotalNC').setValue(subtotal, 2);
-    
-
+    let subtotal = this.returnDecimales(this.formularioComprobante.get('importeTotal').value/Number(ivaDisvisor), 2); 
+    this.formularioComprobante.get('subtotalNC').setValue(subtotal);
+    let importeIva=this.returnDecimales(subtotal*(this.formularioComprobante.get('alicuotaIva').value/100), 2);
+    this.formularioComprobante.get('importeIva').setValue(importeIva);
+  }
+  //Calcula el campo SubtotalNC del comprobante que se modifica
+  public calcularSubtotalNCC(){
+    let iva= String(this.formularioCuenta.get('alicuotaIva').value).split('.');
+    let ivaDisvisor = "1.";
+    for(let i=0; i< iva.length; i++){
+      ivaDisvisor = ivaDisvisor + iva[i];
+    }
+    let subtotal = this.returnDecimales(this.formularioCuenta.get('importeTotal').value/Number(ivaDisvisor), 2); 
+    this.formularioCuenta.get('subtotalNC').setValue(subtotal);
+    let importeIva=this.returnDecimales(subtotal*(this.formularioCuenta.get('alicuotaIva').value/100), 2);
+    this.formularioCuenta.get('importeIva').setValue(importeIva);
   }
   //Reestablece el formulario de aplica a Comprobante
   private reestablecerFormularioComprobante(){
@@ -429,7 +444,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Retorna el numero a x decimales
   public returnDecimales(valor, cantidad) {
-    return this.appService.setDecimales(valor, cantidad);
+    return Number(this.appService.setDecimales(valor, cantidad));
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
