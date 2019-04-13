@@ -11,6 +11,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
+import { TextMaskModule } from 'angular2-text-mask';
 
 //Servicios
 import { AppService } from './servicios/app.service';
@@ -539,6 +540,7 @@ const stompConfig: StompConfig = {
     MatStepperModule,
     MatTreeModule,
     MatSortModule,
+    TextMaskModule,
     ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
     ToastrModule.forRoot({
       timeOut: 4000,

@@ -18,7 +18,6 @@ export class OrdenVenta {
             seguro: new FormControl('', Validators.required),
             comisionCR: new FormControl(),
             observaciones: new FormControl(),
-            descripcion: new FormControl(),
             estaActiva: new FormControl(),
             activaDesde: new FormControl(),
             tipoOrdenVenta: new FormControl(false, Validators.required),

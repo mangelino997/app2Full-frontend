@@ -8,12 +8,13 @@ import { TipoTarifaService } from '../../servicios/tipo-tarifa.service';
 import { EscalaTarifaService } from '../../servicios/escala-tarifa.service';
 import { TramoService } from '../../servicios/tramo.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from '../../servicios/app.service';
 import { OrdenVenta } from 'src/app/modelos/ordenVenta';
 import { OrdenVentaEscala } from 'src/app/modelos/ordenVentaEscala';
 import { OrdenVentaTramo } from 'src/app/modelos/ordenVentaTramo';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
 @Component({
   selector: 'app-orden-venta',
@@ -89,6 +90,7 @@ export class OrdenVentaComponent implements OnInit {
   public vendedores: Array<any> = [];
   //Define la lista de escalas
   public escalas: Array<any> = [];
+  public amountMask:any;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, 
@@ -158,6 +160,20 @@ export class OrdenVentaComponent implements OnInit {
         })
       }
     });
+    this.amountMask = {
+      mask: createNumberMask({
+        prefix: '$ ',
+        suffix: '',
+        thousandsSeparatorSymbol: '.',
+        requireDecimal: true,
+        allowDecimal: true,
+        decimalLimit: 2,
+        decimalSymbol: ',',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
@@ -174,9 +190,9 @@ export class OrdenVentaComponent implements OnInit {
   }
   private establecerValoresPorDefecto2() {
     let valor = '0';
-    this.formularioEscala.get('importeFijo').setValue(parseFloat(valor).toFixed(2));
+    // this.formularioEscala.get('importeFijo').setValue(0);
     this.formularioEscala.get('precioUnitario').setValue(parseFloat(valor).toFixed(2));
-    this.formularioEscala.get('porcentaje').setValue(parseFloat(valor).toFixed(2));
+    this.formularioEscala.get('porcentaje').setValue(0);
     this.formularioEscala.get('minimo').setValue(parseFloat(valor).toFixed(2));
   }
   //Obtiene la lista de empresas
@@ -401,11 +417,15 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Modifica una Escala de listaDeEscalas
   public modificarEscalaLista(escala, indice) {
-    this.formularioEscala.patchValue(escala);
+    this.formularioEscala.get('escalaTarifa').setValue(escala.escalaTarifa);
+    this.formularioEscala.get('importeFijo').setValue(Number(escala.importeFijo).toFixed(2));
+    this.formularioEscala.get('precioUnitario').setValue(Number(escala.precioUnitario).toFixed(2));
+    this.formularioEscala.get('porcentaje').setValue(escala.porcentaje);
+    this.formularioEscala.get('minimo').setValue(Number(escala.minimo).toFixed(2));
+    this.idModEscala = indice;
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
-    this.idModEscala = indice;
   }
   //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA TRAMO
   public controlPreciosTramo(tipoPrecio) {
@@ -552,9 +572,10 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioTramo.get('kmTramo').setValue(this.formularioTramo.get('tramo').value.km);
   }
   //Formatea el numero a x decimales
-  public setDecimales(valor, cantidad) {
-    if(valor.target.value != '') {
-      valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+  public setDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
   //Formatea el numero a x decimales

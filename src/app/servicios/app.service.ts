@@ -66,6 +66,17 @@ export class AppService {
       return parseFloat(valor).toFixed(cantidad);
     }
   }
+  //Formatear numero a x decimales
+  public establecerDecimales(valor, cantidad) {
+    if(valor) {
+      valor = valor.replace('$ ', '');
+      valor = valor.replace(/\./g, '');
+      valor = valor.replace(',', '.');
+      valor = parseFloat(valor).toFixed(cantidad);
+      valor = valor.replace('.', ',');
+      return valor;
+    }
+  }
   //Valida el CUIT/CUIL
   public validarCUIT(cuit) {
     if (cuit.length != 11) {
