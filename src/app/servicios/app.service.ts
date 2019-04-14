@@ -3,6 +3,7 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
+import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
 @Injectable()
 export class AppService {
@@ -74,8 +75,8 @@ export class AppService {
       valor = valor.replace(',', '.');
       valor = parseFloat(valor).toFixed(cantidad);
       valor = valor.replace('.', ',');
-      return valor;
     }
+    return valor;
   }
   //Valida el CUIT/CUIL
   public validarCUIT(cuit) {
@@ -100,5 +101,53 @@ export class AppService {
       return false
     }
     return true;
+  }
+  //Obtiene la mascara de importe
+  public mascararImporte() {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '$ ',
+        suffix: '',
+        thousandsSeparatorSymbol: '.',
+        requireDecimal: true,
+        allowDecimal: true,
+        decimalLimit: 2,
+        decimalSymbol: ',',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
+  //Obtiene la mascara de porcentaje
+  public mascararPorcentaje() {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '% ',
+        suffix: '',
+        thousandsSeparatorSymbol: '.',
+        integerLimit: 2,
+        requireDecimal: true,
+        allowDecimal: true,
+        decimalLimit: 2,
+        decimalSymbol: ',',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
+  //Desenmascara el porcentaje
+  public desenmascararPorcentaje(valor, cantidad) {
+    if(valor) {
+      valor = valor.replace('%', '');
+      valor = valor.replace(/\./g, '');
+      valor = valor.replace(',', '.');
+      valor = parseFloat(valor).toFixed(cantidad);
+      valor = valor.replace('.', ',');
+    }
+    return valor;
   }
 }

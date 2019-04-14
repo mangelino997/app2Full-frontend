@@ -14,7 +14,6 @@ import { AppService } from '../../servicios/app.service';
 import { OrdenVenta } from 'src/app/modelos/ordenVenta';
 import { OrdenVentaEscala } from 'src/app/modelos/ordenVentaEscala';
 import { OrdenVentaTramo } from 'src/app/modelos/ordenVentaTramo';
-import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
 @Component({
   selector: 'app-orden-venta',
@@ -90,7 +89,10 @@ export class OrdenVentaComponent implements OnInit {
   public vendedores: Array<any> = [];
   //Define la lista de escalas
   public escalas: Array<any> = [];
-  public amountMask:any;
+  //Define la mascara de importe
+  public importeMascara:any;
+  //Define la mascara de porcentaje
+  public porcentajeMascara:any;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, 
@@ -151,7 +153,6 @@ export class OrdenVentaComponent implements OnInit {
     this.listarTiposTarifas();
     //Selecciona la pestania agregar por defecto
     this.seleccionarPestania(1, 'Agregar', 0);
-    // this.listar();
     //Autocompletado Tramo - Buscar por nombre
     this.formularioTramo.get('tramo').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -160,20 +161,26 @@ export class OrdenVentaComponent implements OnInit {
         })
       }
     });
-    this.amountMask = {
-      mask: createNumberMask({
-        prefix: '$ ',
-        suffix: '',
-        thousandsSeparatorSymbol: '.',
-        requireDecimal: true,
-        allowDecimal: true,
-        decimalLimit: 2,
-        decimalSymbol: ',',
-        allowLeadingZeroes: true,
-      }),
-      guide: false,
-      keepCharPositions: true
-    };
+    //Obtiene la mascara de importe
+    this.importeMascara = this.appService.mascararImporte();
+    //Obtiene la mascara de porcentaje
+    this.porcentajeMascara = this.appService.mascararPorcentaje();
+  }
+  //Cambio tipo tarifa
+  public cambioTipoTarifa(): void {
+    let tipoTarifa = this.formulario.get('tipoTarifa').value;
+    if(!tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
+      this.formularioEscala.get('porcentaje').setValue(null);
+      this.formularioEscala.get('importeFijo').enable();
+      this.formularioEscala.get('precioUnitario').enable();
+      this.formularioEscala.get('porcentaje').disable();
+    } else if(tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
+      this.formularioEscala.get('importeFijo').setValue(null);
+      this.formularioEscala.get('precioUnitario').setValue(null);
+      this.formularioEscala.get('importeFijo').disable();
+      this.formularioEscala.get('precioUnitario').disable();
+      this.formularioEscala.get('porcentaje').enable();
+    }
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
@@ -186,14 +193,8 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioTramo.get('precioUnitarioSeco').setValue(parseFloat(valor).toFixed(2));
     this.formularioTramo.get('importeFijoRef').setValue(parseFloat(valor).toFixed(2));
     this.formularioTramo.get('precioUnitarioRef').setValue(parseFloat(valor).toFixed(2));
-    this.establecerValoresPorDefecto2();
-  }
-  private establecerValoresPorDefecto2() {
-    let valor = '0';
-    // this.formularioEscala.get('importeFijo').setValue(0);
-    this.formularioEscala.get('precioUnitario').setValue(parseFloat(valor).toFixed(2));
-    this.formularioEscala.get('porcentaje').setValue(0);
-    this.formularioEscala.get('minimo').setValue(parseFloat(valor).toFixed(2));
+    //Establece estado campos formularioEscala
+    this.cambioTipoTarifa();
   }
   //Obtiene la lista de empresas
   private listarEmpresas() {
@@ -363,28 +364,25 @@ export class OrdenVentaComponent implements OnInit {
     }
     this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
-      },
-      err => {
-      }
-    );
-  }
   //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA ESCALA
   public controlPrecios(tipoPrecio) {
-    let valor = '0';
+    let importeFijo = this.formularioEscala.get('importeFijo').value;
+    importeFijo = this.appService.establecerDecimales(importeFijo, 2);
+    let precioUnitario = this.formularioEscala.get('precioUnitario').value;
+    precioUnitario = this.appService.establecerDecimales(precioUnitario, 2);
     switch (tipoPrecio) {
       case 1:
-        if (this.formularioEscala.get('importeFijo').value > 0) {
-          this.formularioEscala.get('precioUnitario').setValue(this.appService.setDecimales(valor, 2));
+        if (importeFijo != null) {
+          this.formularioEscala.get('importeFijo').setValidators([Validators.required]);
+          this.formularioEscala.get('precioUnitario').setValidators([]);
+          this.formularioEscala.get('precioUnitario').setValue(null);
         }
         break;
       case 2:
-        if (this.formularioEscala.get('precioUnitario').value > 0) {
-          this.formularioEscala.get('importeFijo').setValue(this.appService.setDecimales(valor, 2));
+        if (precioUnitario != null) {
+          this.formularioEscala.get('precioUnitario').setValidators([Validators.required]);
+          this.formularioEscala.get('importeFijo').setValidators([]);
+          this.formularioEscala.get('importeFijo').setValue(null);
         }
         break;
     }
@@ -393,17 +391,19 @@ export class OrdenVentaComponent implements OnInit {
   public agregarEscalaLista() {
     this.formulario.disable();
     this.preciosDesde.disable();
-    if (this.idModEscala != null) {
-      this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
-      this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
-      this.formularioEscala.reset();
-      this.idModEscala = null;
-    } else {
-      this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
-      this.listaDeEscalas.push(this.formularioEscala.value);
-      this.formularioEscala.reset();
-    }
-    this.establecerValoresPorDefecto2();
+    this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
+    this.listaDeEscalas.push(this.formularioEscala.value);
+    // if (this.idModEscala != null) {
+    //   this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
+    //   this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
+    //   this.formularioEscala.reset();
+    //   this.idModEscala = null;
+    // } else {
+    //   this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
+    //   this.listaDeEscalas.push(this.formularioEscala.value);
+    //   this.formularioEscala.reset();
+    // }
+    this.formularioEscala.reset();
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -583,6 +583,10 @@ export class OrdenVentaComponent implements OnInit {
     if(valor != '') {
       return this.appService.setDecimales(valor, cantidad);
     }
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(formulario, cantidad): void {
+    formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
   }
   //Habilita el boton agregar a tabla
   public habilitarBoton(formA, formB):boolean {
