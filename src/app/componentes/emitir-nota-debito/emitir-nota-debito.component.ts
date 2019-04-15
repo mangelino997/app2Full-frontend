@@ -2,7 +2,6 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { NotaCredito } from 'src/app/modelos/notaCredito';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
@@ -14,6 +13,8 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { ChequesRechazadosComponent } from '../cheques-rechazados/cheques-rechazados.component';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
+import { NotaDebito } from 'src/app/modelos/notaDebito';
+import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 
 
 @Component({
@@ -45,16 +46,20 @@ export class EmitirNotaDebitoComponent implements OnInit {
   public resultadosAlicuotasIva = [];
   //Define la lista de items tipo
   public resultadosItems = [];
+  //Define el Item seleccionadao de la segunda tabla
+  public itemSeleccionado = null;
+  //Define el subtotal c/iva del item seleccionado
+  public subtotalCIVA = 0;
   //Define las variables de la cabecera
   public letra: string;
   public codigoAfip: string;
   public numero: string;
 
 
-  constructor(private notaCredito: NotaCredito, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService,private appComponent: AppComponent,
+  constructor(private notaDebito: NotaDebito, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService,private appComponent: AppComponent,
     private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService, 
     private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService, public dialog: MatDialog, 
-    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService) { 
+    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService, private ventaComprobanteService: VentaComprobanteService) { 
     
   }
 
@@ -63,14 +68,18 @@ export class EmitirNotaDebitoComponent implements OnInit {
     this.tablaVisible=true;
     this.checkboxComp=true;   
     //inicializa el formulario y sus elementos
-    this.formulario= this.notaCredito.formulario;
-    this.formularioItem= this.notaCredito.formularioComprobante;
+    this.formulario= this.notaDebito.formulario;
+    this.formularioItem= this.notaDebito.formularioComprobante;
     //Reestablece el Formularios
     this.reestablecerFormulario();
     //Obtiene los puntos de venta 
     this.listarPuntoVenta();
     //Obtiene las Provincias - origen de la carga 
     this.listarProvincias(); 
+    //Obtiene los motivos 
+    this.listarItemsTipo();
+    //Obtiene la lista de alcuotas iva
+    this.listarAlicuotaIva();
     //Autcompletado - Buscar por Cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -89,7 +98,10 @@ export class EmitirNotaDebitoComponent implements OnInit {
   }
   //Reestablece el formulario completo
   public reestablecerFormulario(){
+    let defecto = '0';
     this.formulario.reset(); 
+    this.formulario.get('importeExento').setValue(this.appService.setDecimales(defecto, 2));
+    this.formulario.get('importeNoGravado').setValue(this.appService.setDecimales(defecto, 2));
     this.resultadosClientes = [];
     this.empresa.setValue(this.appComponent.getEmpresa());
     this.listaItem = [];
@@ -102,7 +114,7 @@ export class EmitirNotaDebitoComponent implements OnInit {
       res=>{
         let respuesta = res.json();
         this.formulario.get('ventaComprobante').setValue(res.json());
-        this.tipoComprobante.setValue(respuesta.abreviatura);
+        this.tipoComprobante.setValue(respuesta.nombre);
       },
       err=>{
         this.toastr.error('Error al obtener el Tipo de Comprobante');
@@ -136,6 +148,7 @@ export class EmitirNotaDebitoComponent implements OnInit {
   public listarItemsTipo(){
     this.ventaTipoItemervice.listarItems(2).subscribe(
       res=>{
+        console.log(res.json());
         this.resultadosItems = res.json();
       }
     );
@@ -200,20 +213,110 @@ export class EmitirNotaDebitoComponent implements OnInit {
   }
   //Calcula el campo SubtotalND del item que se agrega
   public calcularSubtotalND(){
+    let subtotalND = Number(this.appService.setDecimales(this.formularioItem.get('subtotalND').value, 2));
+    this.formularioItem.get('subtotalND').setValue(subtotalND);
     let ivaDisvisor=this.formularioItem.get('alicuotaIva').value/100;
-    let importeIva= this.returnDecimales(this.formularioItem.get('subtotalND').value*Number(ivaDisvisor), 2)
-    let importeTotal = this.returnDecimales(this.formularioItem.get('subtotalND').value + importeIva, 2); 
-    this.formularioItem.get('importeIva').setValue(importeIva);
-    this.formularioItem.get('importeTotal').setValue(importeTotal);
-
+    let importeIva= this.returnDecimales(this.formularioItem.get('subtotalND').value * Number(ivaDisvisor), 2)
+    let importeTotal = this.returnDecimales((this.formularioItem.get('subtotalND').value + Number(importeIva)), 2); 
+    this.formularioItem.get('importeIva').setValue(Number(this.appService.setDecimales(importeIva,2)));
+    this.formularioItem.get('importeTotal').setValue(Number(this.appService.setDecimales(importeTotal, 2)));
+    this.formularioItem.get('importeNetoGravado').setValue(this.formularioItem.get('subtotalND').value);
    }
+  //Agrega un item a la Lista de Items 
+  public agregarItem(){
+    if(this.itemSeleccionado!=null){
+      this.listaItem[this.itemSeleccionado] = this.formularioItem.value;
+      this.calcularImportesItem();
+      this.reestablecerFormularioItem();
+    }else{
+      this.listaItem.push(this.formularioItem.value);
+      this.calcularImportesItem();
+      this.reestablecerFormularioItem();
+    }
+    console.log(this.listaItem);
+  }
+  //Calcula los Importes Totales de los Items que se agregan mediante el formulario
+  private calcularImportesItem(){
+    let importeNetoGravado=0;
+    let importeIvaTotal=0;
+    let importeTotal=0;
+    for(let i=0; i<this.listaItem.length; i++){
+      importeNetoGravado= importeNetoGravado + this.listaItem[i]['subtotalND'];
+    }
+    for(let i=0; i<this.listaItem.length; i++){
+      importeIvaTotal= importeIvaTotal + this.listaItem[i]['importeIva'];
+    }
+    for(let i=0; i<this.listaItem.length; i++){
+      importeTotal= importeTotal + this.listaItem[i]['importeTotal'];
+    }
+    this.formulario.get('importeNetoGravado').setValue(this.appService.setDecimales(importeNetoGravado, 2));
+    this.formulario.get('importeIva').setValue(this.appService.setDecimales(importeIvaTotal, 2));
+    this.formulario.get('importeTotal').setValue(this.appService.setDecimales(importeTotal, 2));
+  }
+  //Reestablece el formulario de aplica a Comprobante
+  private reestablecerFormularioItem(){
+    this.formularioItem.reset();
+    this.formularioItem.get('importeExento').setValue(this.appService.setDecimales('0', 2));
+    this.formularioItem.get('subtotalND').setValue(this.appService.setDecimales('0', 2));
+    this.listarItemsTipo();
+    this.listarAlicuotaIva();
+    this.itemSeleccionado = null;
+    this.subtotalCIVA = 0;
+  }
+
+  //Carga en el formulario item el item seleccionado de la tabla (para modificarlo)
+  public seleccionarItem(indice, item){
+    this.itemSeleccionado = indice;
+    this.formularioItem.patchValue(item);
+    this.subtotalCIVA = this.formularioItem.get('importeTotal').value;
+    setTimeout(function() {
+      document.getElementById('idMotivo').focus();
+    }, 20);
+  }
+  //Eliminar un item de la Lista de items
+  public eliminarItem(indice){
+    this.listaItem.splice(indice, 1);
+    if(this.listaItem.length==0){
+      console.log("entra");
+      let defecto= "0";
+      this.formulario.get('importeNetoGravado').setValue(this.appService.setDecimales(defecto, 2));
+      this.formulario.get('importeIva').setValue(this.appService.setDecimales(defecto, 2));
+      this.formulario.get('importeTotal').setValue(this.appService.setDecimales(defecto, 2));
+    }else{
+      this.calcularImportesItem();
+    }
+  }
+  //METODO PRINCIPAL - EMITIR NOTA DE CREDITO
+  public emitir(){
+    this.formulario.get('puntoVenta').setValue(this.formulario.get('puntoVenta').value.puntoVenta);
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('ventaComprobanteItem').setValue(this.listaItem);
+    this.formulario.get('afipConcepto').setValue({id: this.listaItem[0].itemTipo.afipConcepto.id}); //guardamos el id de afipConcepto del primer item de la tabla
+    console.log(this.formulario.value);
+    this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
+      res=>{
+        let respuesta= res.json();
+        this.toastr.success(respuesta.mensaje);
+        this.reestablecerFormulario();
+      },
+      err=>{
+        var respuesta = err.json();
+        document.getElementById("idCliente").classList.add('label-error');
+        document.getElementById("idCliente").classList.add('is-invalid');
+        document.getElementById("idCliente").focus();
+        this.toastr.error(respuesta.mensaje);
+      }
+    );
+  }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
   }
   //Retorna el numero a x decimales
   public returnDecimales(valor, cantidad) {
-    return this.appService.setDecimales(valor, cantidad);
+    return Number(this.appService.setDecimales(valor, cantidad));
   }
   //Abre un modal para agregar un ver los Cheques Rechazados
   public verChequesRechazados(): void {

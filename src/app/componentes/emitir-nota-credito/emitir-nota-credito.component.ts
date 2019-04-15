@@ -141,10 +141,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.reestablecerFormularioComprobante();
     this.reestablecerFormularioCuenta();
     let valorDefecto= '0';
-    this.formulario.get('importeIva').setValue(this.returnDecimales(valorDefecto, 2));
-    this.formulario.get('importeNoGravado').setValue(this.returnDecimales(valorDefecto, 2));
-    this.formulario.get('importeExento').setValue(this.returnDecimales(valorDefecto, 2));
-    this.formulario.get('importeNetoGravado').setValue(this.returnDecimales(valorDefecto, 2));
+    this.formulario.get('importeIva').setValue(this.appService.setDecimales(valorDefecto, 2));
+    this.formulario.get('importeNoGravado').setValue(this.appService.setDecimales(valorDefecto, 2));
+    this.formulario.get('importeExento').setValue(this.appService.setDecimales(valorDefecto, 2));
+    this.formulario.get('importeNetoGravado').setValue(this.appService.setDecimales(valorDefecto, 2));
     this.resultadosClientes = [];
     this.empresa.setValue(this.appComponent.getEmpresa());
     this.opcionCheck.setValue('1');
@@ -157,7 +157,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       res=>{
         let respuesta = res.json();
         this.formulario.get('tipoComprobante').setValue(res.json());
-        this.tipoComprobante.setValue(respuesta.abreviatura);
+        this.tipoComprobante.setValue(respuesta.nombre);
       },
       err=>{
         this.toastr.error('Error al obtener el Tipo de Comprobante');
@@ -310,18 +310,15 @@ export class EmitirNotaCreditoComponent implements OnInit {
         if(this.listaComprobantes[i]['checked']==true)
         listaCompCheckeados.push(this.listaComprobantes[i]);
       }
-      console.log(this.listaComprobantes);
-      console.log(listaCompCheckeados);
       this.formulario.get('ventaComprobanteItemNC').setValue(listaCompCheckeados);
     }
     if(this.listaCuenta.length>0){
       this.formulario.get('ventaComprobanteItemNC').setValue(this.listaCuenta);
-      console.log(this.listaCuenta);
     }
     this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    // let afipConcepto = this.listaComprobantes[0].afipConcepto.id; //guardamos el id de afipConcepto del primer item de la tabla
+    this.formulario.get('afipConcepto').setValue({id: this.listaComprobantes[0].afipConcepto.id});  //guardamos el id de afipConcepto del primer item de la tabla
     console.log(this.formulario.value);
     this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
       res=>{
@@ -357,7 +354,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario.get('importeIva').setValue(this.returnDecimales(importeIvaTotal, 2));
     this.formulario.get('importeTotal').setValue(this.returnDecimales(importeTotal, 2));
   }
-  //Calcula los Importes del pie de la transaccion
+  //Calcula los Importes Totales
   private calcularImportesCuenta(indice){
     let importeNetoGravado=0;
     let importeIvaTotal=0;
