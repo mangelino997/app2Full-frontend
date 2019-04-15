@@ -39,8 +39,8 @@
           <div class="row">
             <div class="col-md-3">
               <div class="form-group has-float-label">
-                <label for="idLetra" class="tamanio-label">Punto de Venta</label>
-                <input id="idLetra" type="text" [formControl]="puntoVenta" class="form-control form-control-sm" readonly >
+                <label for="idPuntoVenta" class="tamanio-label">Punto de Venta</label>
+                <input id="idPuntoVenta" type="text" [formControl]="puntoVenta" class="form-control form-control-sm" readonly >
               </div>
             </div>
             <div class="col-md-1">
@@ -115,7 +115,7 @@
         </div>
       <hr style="margin-top: 0px; margin-bottom: 10px;">
       <div class="inline">
-        <button class="btn btn-primary btn-sm" type="button" (click)="verChequesRechazados()">Cheques Rechazados</button>
+        <button class="btn btn-primary btn-sm" type="button" (click)="verChequesRechazados()" disabled>Cheques Rechazados</button>
       </div>
       <br>
         <form [formGroup]="formularioItem">
@@ -141,7 +141,7 @@
                   <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
                   <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" (selectionChange)="calcularSubtotalND()">
                     <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota" >
-                      {{returnDecimales(itemAlicuota.alicuota, 2)}} 
+                      {{appService.setDecimales(itemAlicuota.alicuota, 2)}} 
                     </mat-option>
                   </mat-select>
                 </div>

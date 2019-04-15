@@ -39,8 +39,8 @@
           <div class="row">
             <div class="col-md-3">
               <div class="form-group has-float-label">
-                <label for="idLetra" class="tamanio-label">Punto de Venta</label>
-                <input id="idLetra" type="text" [formControl]="puntoVenta" class="form-control form-control-sm" readonly >
+                <label for="idPuntoVenta" class="tamanio-label">Punto de Venta</label>
+                <input id="idPuntoVenta" type="text" [formControl]="puntoVenta" class="form-control form-control-sm" readonly >
               </div>
             </div>
             <div class="col-md-1">
@@ -70,16 +70,6 @@
           </div>
         </div>
       </div>
-
-        
-        
-        
-        
-        
-        
-        
-
-
       <hr style="margin-top: 0px; margin-bottom: 10px;">
       <div class="tamanio-pantalla inline contenedor" formGroupName="cli">
         <div class="">
@@ -157,7 +147,7 @@
                   <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
                   <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva" class="form-control form-control-sm" (selectionChange)="calcularSubtotalNC()">
                     <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota" >
-                      {{returnDecimales(itemAlicuota.alicuota, 2)}} 
+                      {{appService.setDecimales(itemAlicuota.alicuota, 2)}} 
                     </mat-option>
                   </mat-select>
                 </div>
@@ -165,7 +155,7 @@
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
-                  <input id="idSubtotalCIVA" type="number" formControlName="importeTotal" class="form-control form-control-sm" (change)="calcularSubtotalNC()" >
+                  <input id="idSubtotalCIVA" type="number" formControlName="importeTotal" class="form-control form-control-sm" (blur)="setDecimales($event, 2)" (change)="calcularSubtotalNC()" >
                 </div>
               </div>
               <div class="col-md-2">
@@ -210,7 +200,7 @@
                     <td align="center">{{returnDecimales(comprobante.subtotalNC, 2)}}</td>
                     <td align="center">{{returnDecimales(comprobante.alicuotaIva, 2)}}</td>
                     <td align="center">{{returnDecimales(comprobante.importeIva, 2)}}</td>
-                    <td align="center">{{returnDecimales(comprobante.importeTotal, 2)}}</td>
+                    <td align="center">{{appService.setDecimales(comprobante.importeTotal, 2)}}</td>
                   </tr>
                 </ng-container>
               </tbody>
@@ -282,7 +272,7 @@
                     <td align="center">{{returnDecimales(cuenta.subtotalNC, 2)}}</td>
                     <td align="center">{{returnDecimales(cuenta.alicuotaIva, 2)}}</td>
                     <td align="center">{{returnDecimales(cuenta.importeIva, 2)}}</td>
-                    <td align="center">{{returnDecimales(cuenta.importeTotal, 2)}}</td>
+                    <td align="center">{{appService.setDecimales(cuenta.importeTotal, 2)}}</td>
                   </tr>
               </tbody>
             </table>

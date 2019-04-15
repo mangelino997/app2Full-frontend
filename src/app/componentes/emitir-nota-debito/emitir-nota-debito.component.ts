@@ -120,6 +120,10 @@ export class EmitirNotaDebitoComponent implements OnInit {
         this.toastr.error('Error al obtener el Tipo de Comprobante');
       }
     );
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formulario.get('jurisdiccion').setValue(this.appComponent.getUsuario().sucursal['localidad']['provincia']);
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());    
     setTimeout(function() {
       document.getElementById('idFecha').focus();
     }, 20);
@@ -129,7 +133,7 @@ export class EmitirNotaDebitoComponent implements OnInit {
     this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
       res=>{
         this.resultadosPuntoVenta= res.json();
-        this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta);
+        // this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta); 
       }
     );
   }
@@ -169,13 +173,23 @@ export class EmitirNotaDebitoComponent implements OnInit {
   }
   //Establece los datos del cliente seleccionado
   public cargarDatosCliente(){
-    this.formulario.get('cli.domicilio').setValue(this.formulario.get('cliente').value.domicilio);
-    this.formulario.get('cli.localidad').setValue(this.formulario.get('cliente').value.localidad.nombre);
-    this.formulario.get('cli.condicionVenta').setValue(this.formulario.get('cliente').value.condicionVenta.nombre);
-    this.formulario.get('cli.afipCondicionIva').setValue(this.formulario.get('cliente').value.afipCondicionIva.nombre);
-    this.formulario.get('cli.tipoDocumento').setValue(this.formulario.get('cliente').value.tipoDocumento.abreviatura);
-    this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
-    this.establecerCabecera();
+    if(this.formulario.get('puntoVenta').value!=null || this.formulario.get('puntoVenta').value>0){
+      this.formulario.get('cli.domicilio').setValue(this.formulario.get('cliente').value.domicilio);
+      this.formulario.get('cli.localidad').setValue(this.formulario.get('cliente').value.localidad.nombre);
+      this.formulario.get('cli.condicionVenta').setValue(this.formulario.get('cliente').value.condicionVenta.nombre);
+      this.formulario.get('cli.afipCondicionIva').setValue(this.formulario.get('cliente').value.afipCondicionIva.nombre);
+      this.formulario.get('cli.tipoDocumento').setValue(this.formulario.get('cliente').value.tipoDocumento.abreviatura);
+      this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
+      this.establecerCabecera();
+    }
+    else{
+      this.formulario.get('cliente').setValue(null);
+      this.resultadosClientes = [];
+      this.toastr.error('Debe seleccionar un PUNTO DE VENTA');
+      setTimeout(function() {
+        document.getElementById('idPuntoVenta').focus();
+      }, 20);  
+    }
   }
   //Establece Letra
   public establecerCabecera(){
@@ -289,9 +303,6 @@ export class EmitirNotaDebitoComponent implements OnInit {
   //METODO PRINCIPAL - EMITIR NOTA DE CREDITO
   public emitir(){
     this.formulario.get('puntoVenta').setValue(this.formulario.get('puntoVenta').value.puntoVenta);
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
-    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.formulario.get('ventaComprobanteItem').setValue(this.listaItem);
     this.formulario.get('afipConcepto').setValue({id: this.listaItem[0].itemTipo.afipConcepto.id}); //guardamos el id de afipConcepto del primer item de la tabla
     console.log(this.formulario.value);

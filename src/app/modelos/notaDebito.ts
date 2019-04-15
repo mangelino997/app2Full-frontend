@@ -44,7 +44,7 @@ export class NotaDebito{
             importeExento: new FormControl(),
             provincia: new FormControl(),
             ventaComprobanteAplicado: new FormControl(),
-            ventaComprobanteItemND: new FormControl(),
+            ventaComprobanteItem: new FormControl(),
             comprobanteAplicado: new FormControl(),
             observaciones: new FormControl(),
         });
