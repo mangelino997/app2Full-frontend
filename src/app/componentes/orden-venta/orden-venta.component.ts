@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, isDevMode } from '@angular/core';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { EmpresaService } from '../../servicios/empresa.service';
@@ -51,8 +51,6 @@ export class OrdenVentaComponent implements OnInit {
   public elemAutocompletado: any = null;
   //Define el siguiente id
   public siguienteId: number = null;
-  //Define el id de la Escala que se quiere modificar
-  public idModEscala: number = null;
   //Define el id del Tramo que se quiere modificar
   public idModTramo: number = null;
   //Define la lista completa de registros
@@ -93,6 +91,10 @@ export class OrdenVentaComponent implements OnInit {
   public importeMascara:any;
   //Define la mascara de porcentaje
   public porcentajeMascara:any;
+  //Define el estado de tipo tarifa
+  public tipoTarifaEstado:boolean = false;
+  //Define el id de la tabla escala para las actualizaciones
+  public idModEscala:any;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, 
@@ -174,25 +176,21 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioEscala.get('importeFijo').enable();
       this.formularioEscala.get('precioUnitario').enable();
       this.formularioEscala.get('porcentaje').disable();
+      this.tipoTarifaEstado = false;
     } else if(tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
       this.formularioEscala.get('importeFijo').setValue(null);
       this.formularioEscala.get('precioUnitario').setValue(null);
       this.formularioEscala.get('importeFijo').disable();
       this.formularioEscala.get('precioUnitario').disable();
       this.formularioEscala.get('porcentaje').enable();
+      this.tipoTarifaEstado = true;
     }
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    let valor = '0';
-    let valor2 = '8';
     this.formulario.get('tipoOrdenVenta').setValue(true);
-    this.formulario.get('seguro').setValue(parseFloat(valor2).toFixed(2));
-    this.formulario.get('comisionCR').setValue(parseFloat(valor).toFixed(2));
-    this.formularioTramo.get('importeFijoSeco').setValue(parseFloat(valor).toFixed(2));
-    this.formularioTramo.get('precioUnitarioSeco').setValue(parseFloat(valor).toFixed(2));
-    this.formularioTramo.get('importeFijoRef').setValue(parseFloat(valor).toFixed(2));
-    this.formularioTramo.get('precioUnitarioRef').setValue(parseFloat(valor).toFixed(2));
+    this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
+    this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
     //Establece estado campos formularioEscala
     this.cambioTipoTarifa();
   }
@@ -389,21 +387,29 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Agrega una Escala a listaDeEscalas
   public agregarEscalaLista() {
+    this.idModEscala = null;
     this.formulario.disable();
     this.preciosDesde.disable();
     this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
     this.listaDeEscalas.push(this.formularioEscala.value);
-    // if (this.idModEscala != null) {
-    //   this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
-    //   this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
-    //   this.formularioEscala.reset();
-    //   this.idModEscala = null;
-    // } else {
-    //   this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
-    //   this.listaDeEscalas.push(this.formularioEscala.value);
-    //   this.formularioEscala.reset();
-    // }
     this.formularioEscala.reset();
+    setTimeout(function () {
+      document.getElementById('idEscala').focus();
+    }, 20);
+  }
+  //Actualiza una Escala a listaDeEscalas
+  public actualizarEscalaLista() {
+    this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
+    this.formularioEscala.reset();
+    this.idModEscala = null;
+    setTimeout(function () {
+      document.getElementById('idEscala').focus();
+    }, 20);
+  }
+  //Cancela una Escala a listaDeEscalas
+  public cancelarEscalaLista() {
+    this.formularioEscala.reset();
+    this.idModEscala = null;
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -416,13 +422,13 @@ export class OrdenVentaComponent implements OnInit {
     }
   }
   //Modifica una Escala de listaDeEscalas
-  public modificarEscalaLista(escala, indice) {
+  public modificarEscalaLista(escala, id) {
+    this.idModEscala = id;
     this.formularioEscala.get('escalaTarifa').setValue(escala.escalaTarifa);
-    this.formularioEscala.get('importeFijo').setValue(Number(escala.importeFijo).toFixed(2));
-    this.formularioEscala.get('precioUnitario').setValue(Number(escala.precioUnitario).toFixed(2));
+    this.formularioEscala.get('importeFijo').setValue(escala.importeFijo);
+    this.formularioEscala.get('precioUnitario').setValue(escala.precioUnitario);
     this.formularioEscala.get('porcentaje').setValue(escala.porcentaje);
-    this.formularioEscala.get('minimo').setValue(Number(escala.minimo).toFixed(2));
-    this.idModEscala = indice;
+    this.formularioEscala.get('minimo').setValue(escala.minimo);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);

@@ -100,17 +100,17 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idSeguro" class="tamanio-label">Seguro(%) *</label>
-                <input id="idSeguro" type="number" formControlName="seguro" autocomplete="off"
-                  class="form-control form-control-sm" min="1" maxlength="4" [readonly]="soloLectura"
-                  (blur)="setDecimales($event, 2)" placeholder="8.00">
+                <input id="idSeguro" [textMask]="porcentajeMascara" type="text" formControlName="seguro" autocomplete="off"
+                  class="form-control form-control-sm" [readonly]="soloLectura" placeholder="% 8.00"
+                  (blur)="establecerPorcentaje(formularioEscala.get('porcentaje'), 2)">
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idComisionCR" class="tamanio-label">Comisión Contra Reembolso(%)</label>
-                <input id="idComisionCR" type="number" formControlName="comisionCR" autocomplete="off"
-                  class="form-control form-control-sm" min="1" maxlength="4" [readonly]="soloLectura"
-                  (blur)="setDecimales($event, 2)" placeholder="0.00">
+                <input id="idComisionCR" [textMask]="importeMascara" type="text" formControlName="comisionCR" autocomplete="off"
+                  class="form-control form-control-sm" [readonly]="soloLectura" placeholder="$ 0.00"
+                  (blur)="setDecimales(formularioEscala.get('comisionCR'), 2)">
               </div>
             </div>
           </div>
@@ -153,7 +153,8 @@
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
-                  <label for="idImporteFijo" class="tamanio-label">Precio Fijo *</label>
+                  <label for="idImporteFijo" class="tamanio-label">Precio Fijo <span
+                      *ngIf="!(formularioEscala.get('precioUnitario').value) && !tipoTarifaEstado">*</span></label>
                   <input id="idImporteFijo" [textMask]="importeMascara" class="form-control form-control-sm"
                     formControlName="importeFijo" placeholder="$ 0.00" type="text" autocomplete="off"
                     (blur)="setDecimales(formularioEscala.get('importeFijo'), 2)" (ngModelChange)="controlPrecios(1)">
@@ -161,7 +162,8 @@
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
-                  <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
+                  <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario <span
+                      *ngIf="!(formularioEscala.get('importeFijo').value) && !tipoTarifaEstado">*</span></label>
                   <input id="idPrecioUnitario" [textMask]="importeMascara" formControlName="precioUnitario" type="text"
                     autocomplete="off" class="form-control form-control-sm" (ngModelChange)="controlPrecios(2)"
                     (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)" placeholder="$ 0.00">
@@ -169,7 +171,8 @@
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
-                  <label for="idSegunTarifa" class="tamanio-label">% Según Tarifa *</label>
+                  <label for="idSegunTarifa" class="tamanio-label">% Según Tarifa <span
+                      *ngIf="tipoTarifaEstado">*</span></label>
                   <input id="idSegunTarifa" [textMask]="porcentajeMascara" formControlName="porcentaje" type="text"
                     autocomplete="off" class="form-control form-control-sm" placeholder="% 00.00"
                     (blur)="establecerPorcentaje(formularioEscala.get('porcentaje'), 2)">
@@ -183,9 +186,15 @@
                     class="form-control form-control-sm" placeholder="$ 0.00">
                 </div>
               </div>
-              <div class="col-md-2">
+              <div class="col-md-1">
                 <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid"
-                  (click)="agregarEscalaLista()">Agregar</button>
+                  (click)="agregarEscalaLista()" *ngIf="idModEscala == null">Agregar</button>
+                <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid"
+                  (click)="actualizarEscalaLista()" *ngIf="idModEscala != null">Actualizar</button>
+              </div>
+              <div class="col-md-1">
+                <button mat-raised-button color="accent" (click)="cancelarEscalaLista()" 
+                  *ngIf="idModEscala != null">Cancelar</button>
               </div>
             </div>
             <table class="table table-bordered table-sm">
@@ -212,7 +221,7 @@
                     <span>{{l.escalaTarifa.valor}}</span>
                   </td>
                   <td align="center">
-                    <span>$ {{l.importeFijo ? l.importe : '0.00'}}</span>
+                    <span>$ {{l.importeFijo ? l.importeFijo : '0.00'}}</span>
                   </td>
                   <td align="center">
                     <span>$ {{l.precioUnitario ? l.precioUnitario : '0.00'}}</span>
