@@ -87,8 +87,6 @@ export class OrdenVentaComponent implements OnInit {
   public vendedores: Array<any> = [];
   //Define la lista de escalas
   public escalas: Array<any> = [];
-  //Define la mascara de importe
-  public importeMascara:any;
   //Define la mascara de porcentaje
   public porcentajeMascara:any;
   //Define el estado de tipo tarifa
@@ -163,10 +161,16 @@ export class OrdenVentaComponent implements OnInit {
         })
       }
     });
-    //Obtiene la mascara de importe
-    this.importeMascara = this.appService.mascararImporte();
     //Obtiene la mascara de porcentaje
     this.porcentajeMascara = this.appService.mascararPorcentaje();
+  }
+  //Obtiene la mascara de importe
+  public obtenerMascaraImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite);
+  }
+  //Obtiene la mascara de km
+  public obtenerMascaraKm(intLimite) {
+    return this.appService.mascararKm(intLimite);
   }
   //Cambio tipo tarifa
   public cambioTipoTarifa(): void {
@@ -420,63 +424,89 @@ export class OrdenVentaComponent implements OnInit {
     if (this.listaDeEscalas.length == 0) {
       this.formulario.enable();
     }
+    setTimeout(function () {
+      document.getElementById('idEscala').focus();
+    }, 20);
   }
   //Modifica una Escala de listaDeEscalas
   public modificarEscalaLista(escala, id) {
     this.idModEscala = id;
-    this.formularioEscala.get('escalaTarifa').setValue(escala.escalaTarifa);
-    this.formularioEscala.get('importeFijo').setValue(escala.importeFijo);
-    this.formularioEscala.get('precioUnitario').setValue(escala.precioUnitario);
-    this.formularioEscala.get('porcentaje').setValue(escala.porcentaje);
-    this.formularioEscala.get('minimo').setValue(escala.minimo);
+    this.formularioEscala.patchValue(escala);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
   }
   //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA TRAMO
   public controlPreciosTramo(tipoPrecio) {
+    let importeFijoSeco = this.formularioTramo.get('importeFijoSeco').value;
+    importeFijoSeco = this.appService.establecerDecimales(importeFijoSeco, 2);
+    let precioUnitarioSeco = this.formularioTramo.get('precioUnitarioSeco').value;
+    precioUnitarioSeco = this.appService.establecerDecimales(precioUnitarioSeco, 2);
     switch (tipoPrecio) {
       case 1:
-        if (this.formularioTramo.get('importeFijoSeco').value > 0) {
-          this.formularioTramo.get('precioUnitarioSeco').setValue('0.00');
+        if (importeFijoSeco != null) {
+          this.formularioTramo.get('importeFijoSeco').setValidators([Validators.required]);
+          this.formularioTramo.get('precioUnitarioSeco').setValidators([]);
+          this.formularioTramo.get('precioUnitarioSeco').setValue(null);
         }
         break;
       case 2:
-        if (this.formularioTramo.get('precioUnitarioSeco').value > 0) {
-          this.formularioTramo.get('importeFijoSeco').setValue('0.00');
+        if (precioUnitarioSeco != null) {
+          this.formularioTramo.get('precioUnitarioSeco').setValidators([Validators.required]);
+          this.formularioTramo.get('importeFijoSeco').setValidators([]);
+          this.formularioTramo.get('importeFijoSeco').setValue(null);
         }
         break;
     }
   }
   //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA TRAMO
   public controlPreciosTramoRef(tipoPrecio) {
+    let importeFijoRef = this.formularioTramo.get('importeFijoRef').value;
+    importeFijoRef = this.appService.establecerDecimales(importeFijoRef, 2);
+    let precioUnitarioRef = this.formularioTramo.get('precioUnitarioRef').value;
+    precioUnitarioRef = this.appService.establecerDecimales(precioUnitarioRef, 2);
     switch (tipoPrecio) {
       case 1:
-        if (this.formularioTramo.get('importeFijoRef').value > 0) {
-          this.formularioTramo.get('precioUnitarioRef').setValue('0.00');
+        if (importeFijoRef != null) {
+          this.formularioTramo.get('importeFijoRef').setValidators([Validators.required]);
+          this.formularioTramo.get('precioUnitarioRef').setValidators([]);
+          this.formularioTramo.get('precioUnitarioRef').setValue(null);
         }
         break;
       case 2:
-        if (this.formularioTramo.get('precioUnitarioRef').value > 0) {
-          this.formularioTramo.get('importeFijoRef').setValue('0.00');
+        if (precioUnitarioRef != null) {
+          this.formularioTramo.get('precioUnitarioRef').setValidators([Validators.required]);
+          this.formularioTramo.get('importeFijoRef').setValidators([]);
+          this.formularioTramo.get('importeFijoRef').setValue(null);
         }
         break;
     }
   }
   //Agrega un Tramo a listaDeTramos
   public agregarTramoLista() {
+    this.idModTramo = null;
     this.formulario.disable();
     this.preciosDesde.disable();
-    if (this.idModTramo != null) {
-      this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
-      this.listaDeTramos[this.idModTramo] = this.formularioTramo.value;
-      this.formularioTramo.reset();
-      this.idModTramo = null;
-    } else {
-      this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
-      this.listaDeTramos.push(this.formularioTramo.value);
-      this.formularioTramo.reset();
-    }
+    this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
+    this.listaDeTramos.push(this.formularioTramo.value);
+    this.formularioTramo.reset();
+    setTimeout(function () {
+      document.getElementById('idTramo').focus();
+    }, 20);
+  }
+  //Actualiza un tramo de lista de tramos
+  public actualizarTramoLista() {
+    this.listaDeTramos[this.idModTramo] = this.formularioTramo.value;
+    this.formularioTramo.reset();
+    this.idModTramo = null;
+    setTimeout(function () {
+      document.getElementById('idTramo').focus();
+    }, 20);
+  }
+  //Cancela una Escala a listaDeEscalas
+  public cancelaTramoLista() {
+    this.formularioTramo.reset();
+    this.idModTramo = null;
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
@@ -487,14 +517,17 @@ export class OrdenVentaComponent implements OnInit {
     if (this.listaDeTramos.length == 0) {
       this.formulario.enable();
     }
+    setTimeout(function () {
+      document.getElementById('idTramo').focus();
+    }, 20);
   }
   //Modifica un Tramo de listaDeTramos
   public modificarTramoLista(tramo, indice) {
+    this.idModTramo = indice;
     this.formularioTramo.patchValue(tramo);
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
-    this.idModTramo = indice;
   }
   //Agrega un registro
   private agregar() {
@@ -636,7 +669,8 @@ export class OrdenVentaComponent implements OnInit {
   //Muestra el valor en los autocompletados c
   public displayFc(elemento) {
     if (elemento != undefined) {
-      return elemento.origen ? elemento.origen.nombre + ' - ' + elemento.destino.nombre : elemento;
+      return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre 
+        + ' - ' + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre : elemento;
     } else {
       return elemento;
     }

@@ -71,10 +71,9 @@ export class AppService {
   public establecerDecimales(valor, cantidad) {
     if(valor) {
       valor = valor.replace('$ ', '');
-      valor = valor.replace(/\./g, '');
-      valor = valor.replace(',', '.');
+      valor = valor.replace(' km', '');
+      valor = valor.replace(/\,/g, '');
       valor = parseFloat(valor).toFixed(cantidad);
-      valor = valor.replace('.', ',');
     }
     return valor;
   }
@@ -103,16 +102,17 @@ export class AppService {
     return true;
   }
   //Obtiene la mascara de importe
-  public mascararImporte() {
+  public mascararImporte(intLimite) {
     let mascara = {
       mask: createNumberMask({
         prefix: '$ ',
         suffix: '',
-        thousandsSeparatorSymbol: '.',
+        thousandsSeparatorSymbol: ',',
+        integerLimit: intLimite,
         requireDecimal: true,
         allowDecimal: true,
         decimalLimit: 2,
-        decimalSymbol: ',',
+        decimalSymbol: '.',
         allowLeadingZeroes: true,
       }),
       guide: false,
@@ -126,12 +126,12 @@ export class AppService {
       mask: createNumberMask({
         prefix: '% ',
         suffix: '',
-        thousandsSeparatorSymbol: '.',
+        thousandsSeparatorSymbol: ',',
         integerLimit: 2,
         requireDecimal: true,
         allowDecimal: true,
         decimalLimit: 2,
-        decimalSymbol: ',',
+        decimalSymbol: '.',
         allowLeadingZeroes: true,
       }),
       guide: false,
@@ -143,10 +143,34 @@ export class AppService {
   public desenmascararPorcentaje(valor, cantidad) {
     if(valor) {
       valor = valor.replace('%', '');
-      valor = valor.replace(/\./g, '');
-      valor = valor.replace(',', '.');
+      valor = valor.replace(/\,/g, '');
       valor = parseFloat(valor).toFixed(cantidad);
-      valor = valor.replace('.', ',');
+    }
+    return valor;
+  }
+  //Obtiene la mascara de km
+  public mascararKm(intLimite) {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '',
+        suffix: ' km',
+        thousandsSeparatorSymbol: ',',
+        integerLimit: intLimite,
+        requireDecimal: false,
+        allowDecimal: false,
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
+  //Desenmascara el km
+  public desenmascararKm(valor, cantidad) {
+    if(valor) {
+      valor = valor.replace(' km', '');
+      valor = valor.replace(/\,/g, '');
+      valor = parseFloat(valor).toFixed(cantidad);
     }
     return valor;
   }
