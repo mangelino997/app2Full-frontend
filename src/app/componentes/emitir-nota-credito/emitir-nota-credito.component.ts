@@ -141,10 +141,10 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.reestablecerFormularioComprobante();
     this.reestablecerFormularioCuenta();
     let valorDefecto= '0';
-    this.formulario.get('importeIva').setValue(this.returnDecimales(valorDefecto, 2));
-    this.formulario.get('importeNoGravado').setValue(this.returnDecimales(valorDefecto, 2));
-    this.formulario.get('importeExento').setValue(this.returnDecimales(valorDefecto, 2));
-    this.formulario.get('importeNetoGravado').setValue(this.returnDecimales(valorDefecto, 2));
+    this.formulario.get('importeIva').setValue(this.appService.setDecimales(valorDefecto, 2));
+    this.formulario.get('importeNoGravado').setValue(this.appService.setDecimales(valorDefecto, 2));
+    this.formulario.get('importeExento').setValue(this.appService.setDecimales(valorDefecto, 2));
+    this.formulario.get('importeNetoGravado').setValue(this.appService.setDecimales(valorDefecto, 2));
     this.resultadosClientes = [];
     this.empresa.setValue(this.appComponent.getEmpresa());
     this.opcionCheck.setValue('1');
@@ -157,12 +157,16 @@ export class EmitirNotaCreditoComponent implements OnInit {
       res=>{
         let respuesta = res.json();
         this.formulario.get('tipoComprobante').setValue(res.json());
-        this.tipoComprobante.setValue(respuesta.abreviatura);
+        this.tipoComprobante.setValue(respuesta.nombre);
       },
       err=>{
         this.toastr.error('Error al obtener el Tipo de Comprobante');
       }
     );
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+    this.formulario.get('provincia').setValue(this.appComponent.getUsuario().sucursal['localidad']['provincia']);
+    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     setTimeout(function() {
       document.getElementById('idFecha').focus();
     }, 20);
@@ -180,7 +184,8 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
       res=>{
         this.resultadosPuntoVenta= res.json();
-        this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]['puntoVenta']);
+        console.log(res.json());
+        // this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]['puntoVenta'].value);
       }
     );
   }
@@ -211,13 +216,24 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Establece los datos del cliente seleccionado
   public cargarDatosCliente(){
-    this.formulario.get('cli.domicilio').setValue(this.formulario.get('cliente').value.domicilio);
-    this.formulario.get('cli.localidad').setValue(this.formulario.get('cliente').value.localidad.nombre);
-    this.formulario.get('cli.condicionVenta').setValue(this.formulario.get('cliente').value.condicionVenta.nombre);
-    this.formulario.get('cli.afipCondicionIva').setValue(this.formulario.get('cliente').value.afipCondicionIva.nombre);
-    this.formulario.get('cli.tipoDocumento').setValue(this.formulario.get('cliente').value.tipoDocumento.abreviatura);
-    this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
-    this.establecerCabecera();
+    if(this.formulario.get('puntoVenta').value!=null || this.formulario.get('puntoVenta').value>0){
+      this.formulario.get('cli.domicilio').setValue(this.formulario.get('cliente').value.domicilio);
+      this.formulario.get('cli.localidad').setValue(this.formulario.get('cliente').value.localidad.nombre);
+      this.formulario.get('cli.condicionVenta').setValue(this.formulario.get('cliente').value.condicionVenta.nombre);
+      this.formulario.get('cli.afipCondicionIva').setValue(this.formulario.get('cliente').value.afipCondicionIva.nombre);
+      this.formulario.get('cli.tipoDocumento').setValue(this.formulario.get('cliente').value.tipoDocumento.abreviatura);
+      this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
+      this.establecerCabecera();
+    }
+    else{
+      this.formulario.get('cliente').setValue(null);
+      this.resultadosClientes = [];
+      this.toastr.error('Debe seleccionar un PUNTO DE VENTA');
+      setTimeout(function() {
+        document.getElementById('idPuntoVenta').focus();
+      }, 20);
+    }
+
     if(this.formulario.get('numero').value>0){
       this.cambioTabla(1);
     }
@@ -310,18 +326,12 @@ export class EmitirNotaCreditoComponent implements OnInit {
         if(this.listaComprobantes[i]['checked']==true)
         listaCompCheckeados.push(this.listaComprobantes[i]);
       }
-      console.log(this.listaComprobantes);
-      console.log(listaCompCheckeados);
       this.formulario.get('ventaComprobanteItemNC').setValue(listaCompCheckeados);
     }
     if(this.listaCuenta.length>0){
       this.formulario.get('ventaComprobanteItemNC').setValue(this.listaCuenta);
-      console.log(this.listaCuenta);
     }
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
-    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    // let afipConcepto = this.listaComprobantes[0].afipConcepto.id; //guardamos el id de afipConcepto del primer item de la tabla
+    // this.formulario.get('afipConcepto').setValue({id: this.formulario.get('ventaComprobanteItemNC').value.afipConcepto.id});  //guardamos el id de afipConcepto del primer item de la tabla
     console.log(this.formulario.value);
     this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
       res=>{
@@ -353,11 +363,11 @@ export class EmitirNotaCreditoComponent implements OnInit {
     for(let i=0; i<this.listaComprobantes.length; i++){
       importeTotal= this.returnDecimales(importeTotal + this.listaComprobantes[i]['importeTotal'],2);
     }
-    this.formulario.get('importeNetoGravado').setValue(this.returnDecimales(importeNetoGravado, 2));
-    this.formulario.get('importeIva').setValue(this.returnDecimales(importeIvaTotal, 2));
-    this.formulario.get('importeTotal').setValue(this.returnDecimales(importeTotal, 2));
+    this.formulario.get('importeNetoGravado').setValue(this.appService.setDecimales(importeNetoGravado, 2));
+    this.formulario.get('importeIva').setValue(this.appService.setDecimales(importeIvaTotal, 2));
+    this.formulario.get('importeTotal').setValue(this.appService.setDecimales(importeTotal, 2));
   }
-  //Calcula los Importes del pie de la transaccion
+  //Calcula los Importes Totales
   private calcularImportesCuenta(indice){
     let importeNetoGravado=0;
     let importeIvaTotal=0;
