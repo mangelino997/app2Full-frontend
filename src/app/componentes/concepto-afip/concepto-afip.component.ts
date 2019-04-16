@@ -5,6 +5,7 @@ import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular
 import { ToastrService } from 'ngx-toastr';
 import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
 import { ConceptoAfip } from 'src/app/modelos/concepto-afip';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-concepto-afip',
@@ -29,7 +30,7 @@ public pestanias:Array<any> = [];
 //Define un formulario para validaciones de campos
 public formulario:FormGroup;
 //Define la lista completa de registros
-public listaCompleta:Array<any> = [];
+public listaCompleta=new MatTableDataSource([]);
 //Define el autocompletado
 public autocompletado:FormControl = new FormControl();
 //Define empresa para las busquedas
@@ -40,6 +41,10 @@ public resultados:Array<any> = [];
 public resultadosCompaniasSeguros:Array<any> = [];
 //Defien la lista de empresas
 public empresas:Array<any> = [];
+//Define las columnas de la tabla
+public columnas:string[] = ['id', 'nombre', 'código afip', 'ver', 'mod'];
+//Define la matSort
+@ViewChild(MatSort) sort: MatSort;
 // public compereFn:any;
 //Constructor
 
@@ -77,8 +82,8 @@ public empresas:Array<any> = [];
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        console.log(res.json());
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
       },
       err => {
         console.log(err);

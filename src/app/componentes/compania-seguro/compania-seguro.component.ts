@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-compania-seguro',
@@ -28,11 +29,16 @@ export class CompaniaSeguroComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Define la matSort
   //Constructor
   constructor(private servicio: CompaniaSeguroService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService) {
@@ -141,7 +147,8 @@ export class CompaniaSeguroComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;      
       },
       err => {
         console.log(err);

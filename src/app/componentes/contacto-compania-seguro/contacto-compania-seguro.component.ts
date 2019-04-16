@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactoCompaniaSeguroService } from '../../servicios/contacto-compania-seguro.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
@@ -7,7 +7,8 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { TipoDocumentoComponent } from '../tipo-documento/tipo-documento.component';
+import { MatSort, MatTableDataSource } from '@angular/material';
+
 
 @Component({
   selector: 'app-contacto-compania-seguro',
@@ -32,7 +33,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada:number = null;
   //Define la lista de tipos de contactos
@@ -43,6 +44,10 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda companias seguros
   public resultadosCompaniasSeguros:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico' , 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ContactoCompaniaSeguroService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -74,7 +79,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       telefonoFijo: new FormControl('', Validators.maxLength(45)),
       telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      correoelectronico: new FormControl('', Validators.maxLength(30)),
+      correoelectronico: new FormControl('', Validators.maxLength(60)),
       usuarioAlta: new FormControl(),
       usuarioMod: new FormControl()
     });
@@ -111,6 +116,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultadosCompaniasSeguros = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -159,6 +165,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
         break;
       case 5:
+        this.mostrarAutocompletado = true;
         setTimeout(function() {
           document.getElementById('idCompaniaSeguro').focus();
         }, 20);
@@ -206,11 +213,13 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   }
   //Obtiene la lista por compania seguro
   public listarPorCompaniaSeguro(elemento) {
-    this.contactos = [];
-    if(this.mostrarAutocompletado) {
+    this.listaCompleta = new MatTableDataSource([]);
+      if(this.mostrarAutocompletado) {
       this.servicio.listarPorCompaniaSeguro(elemento.id).subscribe(
         res => {
-          this.contactos = res.json();
+          console.log(res.json());
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;        
         },
         err => {
           console.log(err);

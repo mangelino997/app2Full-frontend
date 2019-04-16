@@ -286,7 +286,7 @@ const appRoutes: Routes = [
   { path: 'home', component: HomeComponent, canActivate: [GuardiaService] },
   { path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService] },
   { path: 'generalesagendatelefonica', component: AgendaTelefonicaComponent, canActivate: [GuardiaService] },
-  { path: 'area', component: AreaComponent, canActivate: [GuardiaService] },
+  { path: 'legajosareas', component: AreaComponent, canActivate: [GuardiaService] },
   { path: 'contablebancos', component: BancoComponent, canActivate: [GuardiaService] },
   { path: 'generalesbarrios', component: BarrioComponent, canActivate: [GuardiaService] },
   { path: 'categoriasadministrar', component: CategoriaComponent, canActivate: [GuardiaService] },

@@ -7,6 +7,7 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CompaniaSeguroPoliza } from 'src/app/modelos/companiaSeguroPoliza';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -31,7 +32,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado:FormControl = new FormControl();
   //Define empresa para las busquedas
@@ -42,6 +43,10 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public resultadosCompaniasSeguros:Array<any> = [];
   //Defien la lista de empresas
   public empresas:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'empresa', 'número póliza', 'vto póliza', 'ver', 'mod', 'eliminar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   // public compereFn:any;
   //Constructor
   constructor(private servicio: CompaniaSeguroPolizaService, private subopcionPestaniaService: SubopcionPestaniaService,
@@ -89,7 +94,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Vacia la listas de resultados autocompletados
   private vaciarListas() {
-    this.listaCompleta = [];
+    this.listaCompleta =new MatTableDataSource([]);
     this.resultadosCompaniasSeguros = [];
   }
   //Funcion para establecer los valores de las pestañas
@@ -228,7 +233,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public listarPorCompaniaSeguro() {
     let companiaSeguro = this.formulario.get('companiaSeguro').value;
     this.servicio.listarPorCompaniaSeguro(companiaSeguro.id).subscribe(res => {
-      this.listaCompleta = res.json();
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
     })
   }
   //Obtiene un listado por compania de seguro
