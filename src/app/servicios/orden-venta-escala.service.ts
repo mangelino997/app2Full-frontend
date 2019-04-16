@@ -15,14 +15,18 @@ export class OrdenVentaEscalaService {
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
   public listaCompleta:Subject<any> = new Subject<any>();
+  //Define la subcripcion
+  private subcripcionEscala: Subscription;
+  //Define el mensaje de respuesta a la subcripcion
+  private mensajeEscala: Observable<Message>;
+  //Define la lista de escalas
+  public listaEscalas:Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -37,10 +41,17 @@ export class OrdenVentaEscalaService {
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
+    //Subcribe al usuario a la lista de escalas
+    this.mensajeEscala = this.stompService.subscribe(this.topic + this.ruta + '/listaEscalas');
+    this.subcripcionEscala = this.mensajeEscala.subscribe(this.subscribirseEscala);
   }
   //Resfresca la lista completa si hay cambios
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));
+  }
+  //Resfresca la lista de escalas si hay cambios
+  public subscribirseEscala = (m: Message) => {
+    this.listaEscalas.next(JSON.parse(m.body));
   }
   //Obtiene el siguiente id
   public obtenerSiguienteId() {
@@ -84,7 +95,7 @@ export class OrdenVentaEscalaService {
     return this.http.put(this.url, elemento, this.options);
   }
   //Elimina un registro
-  public eliminar(id) {
-    return this.http.delete(this.url + '/' + id, this.options);
+  public eliminar(elemento) {
+    return this.http.put(this.url + '/eliminar', elemento, this.options);
   }
 }

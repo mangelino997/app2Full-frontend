@@ -70,6 +70,7 @@ export class AppService {
   //Formatear numero a x decimales
   public establecerDecimales(valor, cantidad) {
     if(valor) {
+      valor = valor + '';
       valor = valor.replace('$ ', '');
       valor = valor.replace(' km', '');
       valor = valor.replace(/\,/g, '');

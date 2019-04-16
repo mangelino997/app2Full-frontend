@@ -14,6 +14,7 @@ import { AppService } from '../../servicios/app.service';
 import { OrdenVenta } from 'src/app/modelos/ordenVenta';
 import { OrdenVentaEscala } from 'src/app/modelos/ordenVentaEscala';
 import { OrdenVentaTramo } from 'src/app/modelos/ordenVentaTramo';
+import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
 
 @Component({
   selector: 'app-orden-venta',
@@ -100,7 +101,8 @@ export class OrdenVentaComponent implements OnInit {
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService,
     private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
     private tramoServicio: TramoService, private ordenVenta: OrdenVenta, private ordenVentaServicio: OrdenVentaService,
-    private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo) {
+    private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo,
+    private ordenVentaEscalaServicio: OrdenVentaEscalaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
       .subscribe(
@@ -115,6 +117,10 @@ export class OrdenVentaComponent implements OnInit {
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
+    });
+    //Se subscribe al servicio de lista por orden venta
+    this.ordenVentaEscalaServicio.listaEscalas.subscribe(res => {
+      this.listaDeEscalas = res;
     });
     //Autocompletado - Buscar por nombre
     this.buscar.valueChanges
@@ -288,16 +294,19 @@ export class OrdenVentaComponent implements OnInit {
       case 2:
         this.establecerCamposSoloLectura(2);
         this.establecerValoresPorDefecto();
+        this.cambioTipoTarifa();
         this.establecerValoresPestania(nombre, true, true, false, 'idTipoOrdenVenta');
         break;
       case 3:
         this.establecerCamposSoloLectura(3);
         this.establecerValoresPorDefecto();
+        this.cambioTipoTarifa();
         this.establecerValoresPestania(nombre, true, false, true, 'idTipoOrdenVenta');
         break;
       case 4:
         this.establecerCamposSoloLectura(4);
         this.establecerValoresPorDefecto();
+        this.cambioTipoTarifa();
         this.establecerValoresPestania(nombre, true, true, true, 'idTipoOrdenVenta');
         break;
       default:
@@ -357,14 +366,14 @@ export class OrdenVentaComponent implements OnInit {
     precioUnitario = this.appService.establecerDecimales(precioUnitario, 2);
     switch (tipoPrecio) {
       case 1:
-        if (importeFijo != null) {
+        if (importeFijo) {
           this.formularioEscala.get('importeFijo').setValidators([Validators.required]);
           this.formularioEscala.get('precioUnitario').setValidators([]);
           this.formularioEscala.get('precioUnitario').setValue(null);
         }
         break;
       case 2:
-        if (precioUnitario != null) {
+        if (precioUnitario) {
           this.formularioEscala.get('precioUnitario').setValidators([Validators.required]);
           this.formularioEscala.get('importeFijo').setValidators([]);
           this.formularioEscala.get('importeFijo').setValue(null);
@@ -378,8 +387,14 @@ export class OrdenVentaComponent implements OnInit {
     this.formulario.disable();
     this.preciosDesde.disable();
     this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
-    this.listaDeEscalas.push(this.formularioEscala.value);
-    this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1)
+    if(this.indiceSeleccionado == 3) {
+      this.ordenventa.disable();
+      this.formularioEscala.get('ordenVenta').setValue({id: this.ordenventa.value.id});
+      this.ordenVentaEscalaServicio.agregar(this.formularioEscala.value).subscribe(res => {});
+    } else {
+      this.listaDeEscalas.push(this.formularioEscala.value);
+      this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1)
+    }
     this.formularioEscala.reset();
     setTimeout(function () {
       document.getElementById('idEscala').focus();
@@ -387,7 +402,11 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Actualiza una Escala a listaDeEscalas
   public actualizarEscalaLista() {
-    this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
+    if(this.indiceSeleccionado == 3) {
+      this.ordenVentaEscalaServicio.actualizar(this.formularioEscala.value).subscribe(res => {});
+    } else {
+      this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
+    }
     this.formularioEscala.reset();
     this.idModEscala = null;
     setTimeout(function () {
@@ -403,11 +422,17 @@ export class OrdenVentaComponent implements OnInit {
     }, 20);
   }
   //Elimina una Escala a listaDeEscalas
-  public eliminarEscalaLista(indice) {
-    this.listaDeEscalas.splice(indice, 1);
-    if (this.listaDeEscalas.length == 0) {
+  public eliminarEscalaLista(indice, elemento) {
+    if(this.indiceSeleccionado == 3) {
+      elemento.ordenVenta = {id: this.ordenventa.value.id};
+      this.ordenVentaEscalaServicio.eliminar(elemento).subscribe(res => {});
+    } else {
+      this.listaDeEscalas.splice(indice, 1);
+    }
+    if(this.listaDeEscalas.length == 0) {
       this.preciosDesde.enable();
       this.formulario.enable();
+      this.ordenventa.enable();
     }
     setTimeout(function () {
       document.getElementById('idEscala').focus();
@@ -416,7 +441,17 @@ export class OrdenVentaComponent implements OnInit {
   //Modifica una Escala de listaDeEscalas
   public modificarEscalaLista(escala, id) {
     this.idModEscala = id;
+    escala.ordenVenta = {id: this.ordenventa.value.id};
     this.formularioEscala.patchValue(escala);
+    if(escala.importeFijo != 0) {
+      this.formularioEscala.get('importeFijo').setValue(parseFloat(escala.importeFijo).toFixed(2));
+      this.formularioEscala.get('precioUnitario').setValue(null);
+    } else {
+      this.formularioEscala.get('precioUnitario').setValue(parseFloat(escala.precioUnitario).toFixed(2));
+      this.formularioEscala.get('importeFijo').setValue(null);
+    }
+    this.formularioEscala.get('porcentaje').setValue(parseFloat(escala.porcentaje).toFixed(2));
+    this.formularioEscala.get('minimo').setValue(parseFloat(escala.minimo).toFixed(2));
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -542,13 +577,16 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar() {
+    this.formulario.get('ordenesVentasEscalas').setValue(this.listaDeEscalas);
+    this.formulario.get('ordenesVentasTramos').setValue(this.listaDeTramos);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.formulario.reset();
+          this.reestablecerCampos();
+          this.establecerValoresPorDefecto();
           setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
@@ -582,6 +620,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formulario.reset();
     this.formularioEscala.reset();
     this.formularioTramo.reset();
+    this.ordenventa.reset();
     this.listaDeEscalas = [];
     this.listaDeTramos = [];
     this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
