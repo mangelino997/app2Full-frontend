@@ -58,14 +58,14 @@ export class NotaDebito{
             letra: new FormControl(),
             ventaComprobante: new FormControl(),
             ventaTipoItem: new FormControl(),
-            condicionIVA: new FormControl('', Validators.required),
+            condicionIVA: new FormControl(),
             afipAlicuotaIva: new FormControl(),
             alicuotaIva: new FormControl(),
             importeIva: new FormControl(),
             tipoComprobante: new FormControl(),
             importeNoGravado: new FormControl(),
             importeNetoGravado: new FormControl(),
-            importeTotal: new FormControl(),
+            importeTotal: new FormControl('', Validators.required),
             subtotalND: new FormControl(),
             checked: new FormControl(false),
             importeExento: new FormControl(),
@@ -73,7 +73,7 @@ export class NotaDebito{
             provincia: new FormControl(),
             ventaComprobanteAplicado: new FormControl(),
             comprobanteAplicado: new FormControl(),
-            itemTipo: new FormControl(), //Guarda el motivo por el cual se realizo el cambio 
+            itemTipo: new FormControl('', Validators.required), //Guarda el motivo por el cual se realizo el cambio 
             concepto: new FormControl()
         });
         

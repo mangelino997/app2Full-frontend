@@ -100,8 +100,11 @@ export class EmitirNotaDebitoComponent implements OnInit {
   public reestablecerFormulario(){
     let defecto = '0';
     this.formulario.reset(); 
+    this.reestablecerFormularioItem();
     this.formulario.get('importeExento').setValue(this.appService.setDecimales(defecto, 2));
     this.formulario.get('importeNoGravado').setValue(this.appService.setDecimales(defecto, 2));
+    this.formulario.get('importeTotal').setValue(this.appService.setDecimales(defecto, 2));
+    this.formulario.get('importeNetoGravado').setValue(this.appService.setDecimales(defecto, 2));
     this.resultadosClientes = [];
     this.empresa.setValue(this.appComponent.getEmpresa());
     this.listaItem = [];
@@ -181,6 +184,9 @@ export class EmitirNotaDebitoComponent implements OnInit {
       this.formulario.get('cli.tipoDocumento').setValue(this.formulario.get('cliente').value.tipoDocumento.abreviatura);
       this.formulario.get('cli.numeroDocumento').setValue(this.formulario.get('cliente').value.numeroDocumento);
       this.establecerCabecera();
+      setTimeout(function() {
+        document.getElementById('idMotivo').focus();
+      }, 20);
     }
     else{
       this.formulario.get('cliente').setValue(null);
@@ -242,12 +248,17 @@ export class EmitirNotaDebitoComponent implements OnInit {
       this.listaItem[this.itemSeleccionado] = this.formularioItem.value;
       this.calcularImportesItem();
       this.reestablecerFormularioItem();
+      setTimeout(function() {
+        document.getElementById('idMotivo').focus();
+      }, 20);
     }else{
       this.listaItem.push(this.formularioItem.value);
       this.calcularImportesItem();
       this.reestablecerFormularioItem();
+      setTimeout(function() {
+        document.getElementById('idMotivo').focus();
+      }, 20);
     }
-    console.log(this.listaItem);
   }
   //Calcula los Importes Totales de los Items que se agregan mediante el formulario
   private calcularImportesItem(){
@@ -291,7 +302,6 @@ export class EmitirNotaDebitoComponent implements OnInit {
   public eliminarItem(indice){
     this.listaItem.splice(indice, 1);
     if(this.listaItem.length==0){
-      console.log("entra");
       let defecto= "0";
       this.formulario.get('importeNetoGravado').setValue(this.appService.setDecimales(defecto, 2));
       this.formulario.get('importeIva').setValue(this.appService.setDecimales(defecto, 2));
@@ -305,7 +315,6 @@ export class EmitirNotaDebitoComponent implements OnInit {
     this.formulario.get('puntoVenta').setValue(this.formulario.get('puntoVenta').value.puntoVenta);
     this.formulario.get('ventaComprobanteItem').setValue(this.listaItem);
     this.formulario.get('afipConcepto').setValue({id: this.listaItem[0].itemTipo.afipConcepto.id}); //guardamos el id de afipConcepto del primer item de la tabla
-    console.log(this.formulario.value);
     this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
       res=>{
         let respuesta= res.json();
