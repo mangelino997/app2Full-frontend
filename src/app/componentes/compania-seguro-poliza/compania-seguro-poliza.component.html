@@ -84,42 +84,37 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <table class="table table-bordered table-striped table-sm">
-            <thead>
-              <tr>
-                <th class="text-center" style="width:5%" scope="col">#</th>
-                <th class="text-center" style="width:30%" scope="col">Empresa</th>
-                <th class="text-center" style="width:30%" scope="col">Número de Póliza</th>
-                <th class="text-center" style="width:25%" scope="col">Vto. Póliza</th>
-                <th *ngIf="indiceSeleccionado == 5 || indiceSeleccionado == 4" class="text-center" style="width:5%" scope="col">-</th>
-                <th *ngIf="indiceSeleccionado == 5" class="text-center" style="width:5%" scope="col">-</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let l of listaCompleta">
-                <td align="center">
-                  <span>{{l.id}}</span>
-                </td>
-                <td align="center">
-                  <span>{{l.empresa.razonSocial}}</span>
-                </td>
-                <td align="center">
-                  <span>{{l.numeroPoliza}}</span>
-                </td>
-                <td align="center">
-                  <span>{{l.vtoPoliza | date: 'dd/MM/yyyy'}}</span>
-                </td>
-                <td *ngIf="indiceSeleccionado == 5" align="center">
-                  <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
-                </td>
-                <td *ngIf="indiceSeleccionado == 5" align="center">
-                  <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
-                </td>
-                <td *ngIf="indiceSeleccionado == 4" align="center">
-                  <span class="cursor-color">X</span>
-                </td>
-              </tr>
-            </tbody>
+          <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+            <ng-container matColumnDef="id" sticky>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+            </ng-container>
+            <ng-container matColumnDef="empresa" sticky>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
+            </ng-container>
+            <ng-container matColumnDef="número póliza" sticky>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Póliza</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.numeroPoliza}}</td>
+            </ng-container>
+            <ng-container matColumnDef="vto póliza" sticky>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Póliza</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.vtoPoliza | date: 'dd/MM/yyyy'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="ver" sticky >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header [hidden]="indiceSeleccionado != 5">-</th>
+              <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)" [hidden]="indiceSeleccionado != 5"><span class="cursor-color">ver</span></td>
+            </ng-container>
+            <ng-container matColumnDef="mod" sticky >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header [hidden]="indiceSeleccionado != 5">-</th>
+              <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)" [hidden]="indiceSeleccionado != 5"><span class="cursor-color">mod</span></td>
+            </ng-container>
+            <ng-container matColumnDef="eliminar" sticky >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header [hidden]="indiceSeleccionado != 4">-</th>
+              <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)" [hidden]="indiceSeleccionado != 4"><span class="cursor-color">X</span></td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
           </table>
         </div>
       </div>

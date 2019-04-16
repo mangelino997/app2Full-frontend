@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactoBancoService } from '../../servicios/contacto-banco.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { SucursalBancoService } from '../../servicios/sucursal-banco.service';
@@ -7,6 +7,7 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-contacto-banco',
@@ -31,7 +32,7 @@ export class ContactoBancoComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada:number = null;
   //Define la lista de tipos de contactos
@@ -44,6 +45,10 @@ export class ContactoBancoComponent implements OnInit {
   public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda de sucursales bancos
   public resultadosSucursalesBancos:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'banco', 'sucursal', 'nombre contacto', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico' , 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ContactoBancoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -75,7 +80,7 @@ export class ContactoBancoComponent implements OnInit {
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       telefonoFijo: new FormControl('', Validators.maxLength(45)),
       telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      correoelectronico: new FormControl('', Validators.maxLength(30)),
+      correoelectronico: new FormControl('', Validators.maxLength(60)),
       usuarioAlta: new FormControl(),
       usuarioMod: new FormControl()
     });
@@ -110,6 +115,7 @@ export class ContactoBancoComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultados = [];
+    this.listaCompleta = new MatTableDataSource([]);
     this.resultadosSucursalesBancos = [];
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
@@ -159,7 +165,8 @@ export class ContactoBancoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursalBanco');
         break;
       case 5:
-        this.contactos = [];
+        this.contactos =[];
+        this.listaCompleta = new MatTableDataSource([]);
         this.mostrarAutocompletado = true;
         setTimeout(function() {
           document.getElementById('idSucursalBanco').focus();
@@ -196,23 +203,13 @@ export class ContactoBancoComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
   //Obtiene la lista de contactos por sucursal banco
   public listarPorSucursalBanco(elemento) {
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorSucursalBanco(elemento.id).subscribe(
         res => {
-          this.contactos = res.json();
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;  
         },
         err => {
           console.log(err);

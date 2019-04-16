@@ -4,7 +4,8 @@ import { ToastrService } from 'ngx-toastr';
 import { VentaConfigService } from 'src/app/servicios/venta-config.service';
 import { Aforo } from 'src/app/modelos/aforo';
 import { AppService } from 'src/app/servicios/app.service';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatSort, MatTableDataSource  } from '@angular/material';
+
 
 @Component({
   selector: 'app-aforo',

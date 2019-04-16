@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
@@ -6,6 +6,7 @@ import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-configuracion-vehiculo',
@@ -32,13 +33,17 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   //Define el autocompletado
   public autocompletado:FormControl = new FormControl();
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la lista de configuraciones de vehiculo
   public configuraciones:Array<any> = [];
   //Define la lista de tipos de vehiculos
   public tiposVehiculos:Array<any> = [];
   //Define la lista de marcas de vehiculos
   public marcasVehiculos:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'tipo vehículo', 'marca vehículo', 'modelo', 'cantidad ejes', 'capacidad carga', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ConfiguracionVehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService,
@@ -183,8 +188,8 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
-      },
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;      },
       err => {
         console.log(err);
       }

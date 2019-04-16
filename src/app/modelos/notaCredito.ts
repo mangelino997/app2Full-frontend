@@ -20,6 +20,7 @@ export class NotaCredito{
             puntoVenta: new FormControl('', Validators.required),
             letra: new FormControl(),
             numero: new FormControl(),
+            afipConcepto: new FormControl('', Validators.required),
             codigoAfip: new FormControl('', Validators.required),
             tipoComprobante: new FormControl(),
             provincia: new FormControl('', Validators.required),
@@ -53,14 +54,14 @@ export class NotaCredito{
             letra: new FormControl(),
             ventaComprobante: new FormControl(),
             ventaTipoItem: new FormControl(),
-            condicionIVA: new FormControl('', Validators.required),
+            condicionIVA: new FormControl(),
             afipAlicuotaIva: new FormControl(),
             alicuotaIva: new FormControl(),
             importeIva: new FormControl(),
             tipoComprobante: new FormControl(),
             importeNoGravado: new FormControl(),
             importeNetoGravado: new FormControl(),
-            importeTotal: new FormControl(),
+            importeTotal: new FormControl('', Validators.required),
             subtotalNC: new FormControl(),
             checked: new FormControl(false),
             importeExento: new FormControl(),
@@ -68,7 +69,7 @@ export class NotaCredito{
             provincia: new FormControl(),
             ventaComprobanteAplicado: new FormControl(),
             comprobanteAplicado: new FormControl(),
-            itemTipo: new FormControl() //Guarda el motivo por el cual se realizo el cambio 
+            itemTipo: new FormControl('', Validators.required) //Guarda el motivo por el cual se realizo el cambio 
         });
         
     }

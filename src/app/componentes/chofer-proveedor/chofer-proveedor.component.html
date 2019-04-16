@@ -169,7 +169,65 @@
       </form>
     </div>
   </div>
-  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+
+  <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+    <div class="col-md-8">
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group has-float-label">
+            <label for="idProveedor" class="tamanio-label">Proveedor *</label>
+            <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
+              [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off">
+            <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)">
+              <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor"
+                (onSelectionChange)="listarPorProveedor(itemProveedor)">
+                {{itemProveedor.alias}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
+      </div>
+      <table mat-table [dataSource]="resultados" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="id" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+        </ng-container>
+        <ng-container matColumnDef="nombre" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="proveedor" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.proveedor.razonSocial}}</td>
+        </ng-container>
+        <ng-container matColumnDef="tipo documento" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.tipoDocumento.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="numero documento" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.numeroDocumento}}</td>
+        </ng-container>
+        <ng-container matColumnDef="localidad" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}}, {{elemento.localidad.provincia.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="ver" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span class="cursor-color">ver</span></td>
+        </ng-container>
+        <ng-container matColumnDef="mod" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span class="cursor-color">editar</span></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-12">
       <div class="row">
         <div class="col-md-4">
@@ -229,5 +287,5 @@
         </tbody>
       </table>
     </div>
-  </div>
+  </div> -->
 </div>

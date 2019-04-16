@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ChoferProveedorService } from '../../servicios/chofer-proveedor.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
@@ -9,6 +9,7 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-chofer-proveedor',
@@ -33,19 +34,23 @@ export class ChoferProveedorComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la lista de tipos de documentos
   public tiposDocumentos:Array<any> = [];
   //Define el form control para las busquedas
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados=new MatTableDataSource([]);
   //Define la lista de resultados de busqueda de barrio
   public resultadosBarrios:Array<any> = [];
   //Define la lista de resultados de busqueda de localidad
   public resultadosLocalidades:Array<any> = [];
   //Define la lista de resultados de proveedores
   public resultadosProveedores:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'proveedor', 'tipo documento', 'numero documento', 'localidad', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ChoferProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService,
@@ -129,7 +134,7 @@ export class ChoferProveedorComponent implements OnInit {
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarLista() {
-    this.resultados = [];
+    this.resultados = new MatTableDataSource([]);
     this.resultadosProveedores = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
@@ -169,7 +174,7 @@ export class ChoferProveedorComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
         break;
       case 5:
-        this.resultados = [];
+        this.resultados = new MatTableDataSource([]);
         this.mostrarAutocompletado = true;
         setTimeout(function() {
           document.getElementById('idProveedor').focus();
@@ -211,7 +216,8 @@ export class ChoferProveedorComponent implements OnInit {
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorProveedor(proveedor.id).subscribe(
         res => {
-          this.resultados = res.json();
+          this.resultados = new MatTableDataSource(res.json());
+          this.resultados.sort = this.sort;
         },
         err => {
           console.log(err);
@@ -234,7 +240,8 @@ export class ChoferProveedorComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
       },
       err => {
         console.log(err);

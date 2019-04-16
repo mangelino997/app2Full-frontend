@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactoClienteService } from '../../servicios/contacto-cliente.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ClienteService } from '../../servicios/cliente.service';
@@ -7,6 +7,7 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-contacto-cliente',
@@ -31,7 +32,7 @@ export class ContactoClienteComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada:number = null;
   //Define la lista de tipos de contactos
@@ -44,6 +45,10 @@ export class ContactoClienteComponent implements OnInit {
   public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda sucursales clientes
   public resultadosClientes:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico' , 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ContactoClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -71,7 +76,7 @@ export class ContactoClienteComponent implements OnInit {
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       telefonoFijo: new FormControl('', Validators.maxLength(45)),
       telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      correoelectronico: new FormControl('', Validators.maxLength(45)),
+      correoelectronico: new FormControl('', Validators.maxLength(60)),
       usuarioAlta: new FormControl(),
       usuarioMod: new FormControl()
     });
@@ -107,6 +112,7 @@ export class ContactoClienteComponent implements OnInit {
   public vaciarListas() {
     this.resultados = [];
     this.resultadosClientes = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -184,25 +190,15 @@ export class ContactoClienteComponent implements OnInit {
   //Obtiene la lista de contactos de un cliente
   public listarPorCliente(elemento) {
     this.servicio.listarPorCliente(elemento.id).subscribe(res => {
-      this.contactos = res.json();
-    })
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
+        })
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
         this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
       },
       err => {
         console.log(err);
