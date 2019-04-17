@@ -10,6 +10,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { ChoferProveedor } from 'src/app/modelos/choferProveedor';
 
 @Component({
   selector: 'app-chofer-proveedor',
@@ -53,7 +54,7 @@ export class ChoferProveedorComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ChoferProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService,
+    private choferProveedor: ChoferProveedor, private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService,
     private proveedorServicio: ProveedorService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private tipoDocumentoServicio: TipoDocumentoService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -75,31 +76,7 @@ export class ChoferProveedorComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
-      proveedor: new FormControl('', Validators.required),
-      barrio: new FormControl(),
-      localidad: new FormControl('', Validators.required),
-      tipoDocumento: new FormControl('', Validators.required),
-      numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      fechaNacimiento: new FormControl('', Validators.required),
-      telefonoFijo: new FormControl('', Validators.maxLength(45)),
-      telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      vtoCarnet: new FormControl('', Validators.required),
-      vtoCurso: new FormControl('', Validators.required),
-      vtoLNH: new FormControl('', Validators.required),
-      vtoLibretaSanidad: new FormControl(),
-      usuarioAlta: new FormControl(),
-      fechaAlta: new FormControl(),
-      usuarioMod: new FormControl(),
-      fechaUltimaMod: new FormControl(),
-      usuarioBaja: new FormControl(),
-      fechaBaja: new FormControl(),
-      alias: new FormControl()
-    });
+    this.formulario = this.choferProveedor.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Proveedor - Buscar por nombre

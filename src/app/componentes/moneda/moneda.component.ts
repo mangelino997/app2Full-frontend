@@ -1,10 +1,10 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MonedaService } from 'src/app/servicios/moneda.service';
 import { Moneda } from 'src/app/modelos/moneda';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-moneda',
@@ -29,7 +29,7 @@ export class MonedaComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta: Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define el id que se muestra en el campo Codigo
@@ -42,6 +42,10 @@ export class MonedaComponent implements OnInit {
   public resultadosCompaniasSeguros: Array<any> = [];
   //Defien la lista de empresas
   public empresas: Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'esta activo', 'moneda principal', 'codigo afip', 'simbolo', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private moneda: Moneda, private monedaServicio: MonedaService, 
     private subopcionPestaniaService: SubopcionPestaniaService,
@@ -166,8 +170,8 @@ export class MonedaComponent implements OnInit {
   private listar() {
     this.monedaServicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
-      },
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;      },
       err => {
         console.log(err);
       }

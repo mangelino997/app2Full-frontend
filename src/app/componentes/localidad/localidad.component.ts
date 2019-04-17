@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProvinciaService } from '../../servicios/provincia.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-localidad',
@@ -29,7 +30,7 @@ export class LocalidadComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la lista de provincias
   public provincias:Array<any> = [];
   //Define el form control para las busquedas
@@ -38,6 +39,10 @@ export class LocalidadComponent implements OnInit {
   public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda provincia
   public resultadosProvincias:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: LocalidadService, private subopcionPestaniaService: SubopcionPestaniaService,
     private provinciaServicio: ProvinciaService, private appComponent: AppComponent, private toastr: ToastrService) {
@@ -169,17 +174,6 @@ export class LocalidadComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
     this.servicio.agregar(this.formulario.value).subscribe(
@@ -242,7 +236,9 @@ export class LocalidadComponent implements OnInit {
   //Obtiene la lista de localidades por provincia
   public listarPorProvincia(provincia) {
     this.servicio.listarPorProvincia(provincia.id).subscribe(res => {
-      this.listaCompleta = res.json();
+      console.log(provincia);
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
     })
   }
   //Manejo de colores de campos y labels

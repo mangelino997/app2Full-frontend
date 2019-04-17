@@ -8,6 +8,7 @@ import { MonedaCuentaContableService } from 'src/app/servicios/moneda-cuenta-con
 import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-moneda-cuenta-contable',
@@ -32,7 +33,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la lista de Monedas
   public listaMonedas:Array<any> = [];
   //Define la lista de Empresas
@@ -47,6 +48,10 @@ export class MonedaCuentaContableComponent implements OnInit {
   public resultadosCompaniasSeguros:Array<any> = [];
   //Defien la lista de empresas
   public empresas:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['moneda', 'empresa', 'cuenta contable'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   // public compereFn:any;
   //Constructor
 
@@ -91,8 +96,8 @@ export class MonedaCuentaContableComponent implements OnInit {
   private listar() {
     this.monedaCuentaContableServicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
-      },
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;      },
       err => {
         console.log(err);
       }

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-marca-vehiculo',
@@ -32,7 +33,11 @@ export class MarcaVehiculoComponent implements OnInit {
   //Defiene el resultado de las busquedas
   public resultados:Array<any> = [];
   //Define la lista completa de registros
-  public listaCompleta:any = null;
+  public listaCompleta=new MatTableDataSource([]);
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: MarcaVehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService) {
@@ -141,7 +146,8 @@ export class MarcaVehiculoComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
       },
       err => {
         console.log(err);

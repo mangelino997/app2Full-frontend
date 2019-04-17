@@ -66,6 +66,10 @@ export class TipoComprobanteService {
   public listarPorEstaActivoIngresoCargaTrue() {
     return this.http.get(this.url + '/listarPorEstaActivoIngresoCargaTrue', this.options);
   }
+  //Obtiene una lista 
+  public listarPorNumeracionPuntoVentaTrue() {
+    return this.http.get(this.url + '/listarPorNumeracionPuntoVentaTrue', this.options);
+  }
   //Obtiene una lista por esta activo reparto igual true
   public listarPorEstaRepartoTrue() {
     return this.http.get(this.url + '/listarPorEstaRepartoTrue', this.options);
