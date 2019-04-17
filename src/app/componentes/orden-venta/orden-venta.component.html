@@ -18,7 +18,7 @@
               <div class="form-group has-float-label">
                 <label for="idTipoOrdenVenta" class="tamanio-label">Tipo *</label>
                 <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta" class="form-control form-control-sm"
-                  required>
+                  (selectionChange)="reestablecerCampos()" required>
                   <mat-option [value]="false">Por Empresa</mat-option>
                   <mat-option [value]="true">Por Cliente</mat-option>
                 </mat-select>

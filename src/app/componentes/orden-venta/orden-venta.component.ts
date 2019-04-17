@@ -149,14 +149,14 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioEscala = this.ordenVentaEscala.formulario;
     //Define el formulario de orden venta tramo
     this.formularioTramo = this.ordenVentaTramo.formulario;
+    //Obtiene la lista de tipos de tarifa
+    this.listarTiposTarifas();
     //Obtiene la lista de empresas
     this.listarEmpresas();
     //Obtiene la lista de Vendedores
     this.listarVendedores();
     //Obtiene la lista de escalas tarifas
     this.listarEscalaTarifa();
-    //Obtiene la lista de tipos de tarifa
-    this.listarTiposTarifas();
     //Selecciona la pestania agregar por defecto
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Tramo - Buscar por nombre
@@ -181,19 +181,21 @@ export class OrdenVentaComponent implements OnInit {
   //Cambio tipo tarifa
   public cambioTipoTarifa(): void {
     let tipoTarifa = this.formulario.get('tipoTarifa').value;
-    if(!tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
-      this.formularioEscala.get('porcentaje').setValue(null);
-      this.formularioEscala.get('importeFijo').enable();
-      this.formularioEscala.get('precioUnitario').enable();
-      this.formularioEscala.get('porcentaje').disable();
-      this.tipoTarifaEstado = false;
-    } else if(tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
-      this.formularioEscala.get('importeFijo').setValue(null);
-      this.formularioEscala.get('precioUnitario').setValue(null);
-      this.formularioEscala.get('importeFijo').disable();
-      this.formularioEscala.get('precioUnitario').disable();
-      this.formularioEscala.get('porcentaje').enable();
-      this.tipoTarifaEstado = true;
+    if(tipoTarifa) {
+      if(!tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
+        this.formularioEscala.get('porcentaje').setValue(null);
+        this.formularioEscala.get('importeFijo').enable();
+        this.formularioEscala.get('precioUnitario').enable();
+        this.formularioEscala.get('porcentaje').disable();
+        this.tipoTarifaEstado = false;
+      } else if(tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
+        this.formularioEscala.get('importeFijo').setValue(null);
+        this.formularioEscala.get('precioUnitario').setValue(null);
+        this.formularioEscala.get('importeFijo').disable();
+        this.formularioEscala.get('precioUnitario').disable();
+        this.formularioEscala.get('porcentaje').enable();
+        this.tipoTarifaEstado = true;
+      }
     }
   }
   //Establece los valores por defecto
@@ -289,6 +291,8 @@ export class OrdenVentaComponent implements OnInit {
     switch (id) {
       case 1:
         this.establecerCamposSoloLectura(1);
+        this.establecerValoresPorDefecto();
+        this.cambioTipoTarifa();
         this.establecerValoresPestania(nombre, false, false, true, 'idTipoOrdenVenta');
         break;
       case 2:
@@ -346,7 +350,7 @@ export class OrdenVentaComponent implements OnInit {
         break;
       case 3:
         this.formulario.get('vendedor').enable();
-        this.formulario.get('tipoTarifa').enable();
+        this.formulario.get('tipoTarifa').disable();
         this.formularioEscala.enable();
         this.formularioTramo.enable();
         break;
@@ -624,6 +628,19 @@ export class OrdenVentaComponent implements OnInit {
     this.listaDeEscalas = [];
     this.listaDeTramos = [];
     this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
+  }
+  //Reestablecer formulario
+  private reestablecerFormulario() {
+    let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
+    this.preciosDesde.reset();
+    this.formulario.reset();
+    this.formularioEscala.reset();
+    this.formularioTramo.reset();
+    this.ordenventa.reset();
+    this.listaDeEscalas = [];
+    this.listaDeTramos = [];
+    this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
+    this.formulario.get('tipoOrdenVenta').setValue(tipoOrdenVenta);
   }
   //Elimina un registro
   private eliminar() {
