@@ -15,6 +15,7 @@ import { OrdenVenta } from 'src/app/modelos/ordenVenta';
 import { OrdenVentaEscala } from 'src/app/modelos/ordenVentaEscala';
 import { OrdenVentaTramo } from 'src/app/modelos/ordenVentaTramo';
 import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
+import { OrdenVentaTramoService } from 'src/app/servicios/orden-venta-tramo.service';
 
 @Component({
   selector: 'app-orden-venta',
@@ -94,6 +95,8 @@ export class OrdenVentaComponent implements OnInit {
   public tipoTarifaEstado:boolean = false;
   //Define el id de la tabla escala para las actualizaciones
   public idModEscala:any;
+  //Define la lista de precios desde
+  public preciosDesdeLista:Array<any> = [];
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, 
@@ -102,7 +105,7 @@ export class OrdenVentaComponent implements OnInit {
     private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
     private tramoServicio: TramoService, private ordenVenta: OrdenVenta, private ordenVentaServicio: OrdenVentaService,
     private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo,
-    private ordenVentaEscalaServicio: OrdenVentaEscalaService) {
+    private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ordenVentaTramoServicio: OrdenVentaTramoService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
       .subscribe(
@@ -177,6 +180,38 @@ export class OrdenVentaComponent implements OnInit {
   //Obtiene la mascara de km
   public obtenerMascaraKm(intLimite) {
     return this.appService.mascararKm(intLimite);
+  }
+  //Obtiene la lista de precios desde
+  private obtenerPreciosDesde() {
+    let opcion = this.formulario.get('tipoTarifa').value.porEscala;
+    if (opcion) {
+      this.ordenVentaEscalaServicio.listarFechasPorOrdenVenta(this.ordenventa.value.id).subscribe(
+        res => {
+          this.preciosDesdeLista = res.json();
+        }
+      );
+    } else {
+      this.ordenVentaTramoServicio.listarPorOrdenVenta(this.ordenventa.value.id).subscribe(
+        res => {
+          this.preciosDesdeLista = res.json();
+        }
+      );
+    }
+  }
+  //Obtiene la lista de orden venta escala o orden venta tramo
+  public cambioPreciosDesde(): void {
+    let tipoTarifa = this.formulario.get('tipoTarifa').value.porEscala;
+    let ordenVenta = this.ordenventa.value.id;
+    let precioDesde = this.preciosDesde.value;
+    if(tipoTarifa) {
+      this.ordenVentaEscalaServicio.listarPorOrdenVentaYPreciosDesde(ordenVenta, precioDesde).subscribe(res => {
+        this.listaDeEscalas = res.json();
+      });
+    } else {
+      this.ordenVentaTramoServicio.listarPorOrdenVentaYPreciosDesde(ordenVenta, precioDesde).subscribe(res => {
+        this.listaDeTramos = res.json();
+      });
+    }
   }
   //Cambio tipo tarifa
   public cambioTipoTarifa(): void {
@@ -512,7 +547,13 @@ export class OrdenVentaComponent implements OnInit {
     this.formulario.disable();
     this.preciosDesde.disable();
     this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
-    this.listaDeTramos.push(this.formularioTramo.value);
+    if(this.indiceSeleccionado == 3) {
+      this.ordenventa.disable();
+      this.formularioTramo.get('ordenVenta').setValue({id: this.ordenventa.value.id});
+      this.ordenVentaTramoServicio.agregar(this.formularioTramo.value).subscribe(res => {});
+    } else {
+      this.listaDeTramos.push(this.formularioTramo.value);
+    }
     this.formularioTramo.reset();
     setTimeout(function () {
       document.getElementById('idTramo').focus();
@@ -520,7 +561,11 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Actualiza un tramo de lista de tramos
   public actualizarTramoLista() {
-    this.listaDeTramos[this.idModTramo] = this.formularioTramo.value;
+    if(this.indiceSeleccionado == 3) {
+      this.ordenVentaTramoServicio.actualizar(this.formularioTramo.value).subscribe(res => {});
+    } else {
+      this.listaDeTramos[this.idModTramo] = this.formularioTramo.value;
+    }
     this.formularioTramo.reset();
     this.idModTramo = null;
     setTimeout(function () {
@@ -528,7 +573,7 @@ export class OrdenVentaComponent implements OnInit {
     }, 20);
   }
   //Cancela una Escala a listaDeEscalas
-  public cancelaTramoLista() {
+  public cancelarTramoLista() {
     this.formularioTramo.reset();
     this.idModTramo = null;
     setTimeout(function () {
@@ -536,11 +581,17 @@ export class OrdenVentaComponent implements OnInit {
     }, 20);
   }
   //Elimina un Tramo a listaDeTramos
-  public eliminarTramoLista(indice) {
-    this.listaDeTramos.splice(indice, 1);
+  public eliminarTramoLista(indice, elemento) {
+    if(this.indiceSeleccionado == 3) {
+      elemento.ordenVenta = {id: this.ordenventa.value.id};
+      this.ordenVentaTramoServicio.eliminar(elemento).subscribe(res => {});
+    } else {
+      this.listaDeTramos.splice(indice, 1);
+    }
     if (this.listaDeTramos.length == 0) {
       this.formulario.enable();
       this.preciosDesde.enable();
+      this.ordenventa.enable();
     }
     setTimeout(function () {
       document.getElementById('idTramo').focus();
@@ -611,12 +662,10 @@ export class OrdenVentaComponent implements OnInit {
     this.formulario.patchValue(orden);
     this.formulario.get('seguro').setValue(parseFloat(orden.seguro).toFixed(2));
     this.formulario.get('comisionCR').setValue(parseFloat(orden.comisionCR).toFixed(2));
-    this.preciosDesde.setValue(orden.activaDesde);
-    if (this.formulario.get('tipoTarifa').value.porEscala == true) {
-      this.listaDeEscalas = orden.ordenesVentasEscalas;
-    } else {
-      this.listaDeTramos = orden.ordenesVentasTramos;
-    }
+    this.preciosDesde.reset();
+    this.listaDeEscalas = [];
+    this.listaDeTramos = [];
+    this.obtenerPreciosDesde();
   }
   //Reestablecer campos
   private reestablecerCampos() {
@@ -670,6 +719,10 @@ export class OrdenVentaComponent implements OnInit {
   //Establece los decimales de porcentaje
   public establecerPorcentaje(formulario, cantidad): void {
     formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
+  }
+  //Desenmascara km
+  public establecerKm(formulario, cantidad): void {
+    formulario.setValue(this.appService.desenmascararKm(formulario.value, cantidad));
   }
   //Habilita el boton agregar a tabla
   public habilitarBoton(formA, formB):boolean {

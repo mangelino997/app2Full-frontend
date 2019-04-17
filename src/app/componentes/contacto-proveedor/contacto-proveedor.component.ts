@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ContactoProveedorService } from '../../servicios/contacto-proveedor.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProveedorService } from '../../servicios/proveedor.service';
@@ -7,6 +7,7 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-contacto-proveedor',
@@ -31,7 +32,7 @@ export class ContactoProveedorComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada:number = null;
   //Define la lista de tipos de contactos
@@ -44,6 +45,10 @@ export class ContactoProveedorComponent implements OnInit {
   public resultados:Array<any> = [];
   //Define la lista de resultados de busqueda de sucursales bancos
   public resultadosProveedores:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'proveedor', 'nombre contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico' , 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ContactoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -111,6 +116,7 @@ export class ContactoProveedorComponent implements OnInit {
   public vaciarListas() {
     this.resultados = [];
     this.resultadosProveedores = [];
+    this.listaCompleta=new MatTableDataSource([]);
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -159,7 +165,7 @@ export class ContactoProveedorComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
         break;
       case 5:
-        this.contactos = [];
+        this.listaCompleta=new MatTableDataSource([]);        
         this.mostrarAutocompletado = true;
         setTimeout(function() {
           document.getElementById('idProveedor').focus();
@@ -195,24 +201,13 @@ export class ContactoProveedorComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
   //Obtiene la lista de contactos por proveedor
   public listarPorProveedor(elemento) {
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorProveedor(elemento.id).subscribe(
         res => {
-          this.contactos = res.json();
-        },
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;        },
         err => {
           console.log(err);
         }

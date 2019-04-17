@@ -114,7 +114,7 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idPrecioDesde" class="tamanio-label">Precio Desde</label>
+              <label for="idPrecioDesde" class="tamanio-label">Precios Desde</label>
               <mat-select class="form-control form-control-sm" formControlName="fechaDesde" >
                 <mat-option *ngFor="let itemOrdenVta of ordenVenta" [value]="itemOrdenVta.preciosDesde">
                   {{itemOrdenVta.preciosDesde | date: 'dd-MM-yyyy'}}

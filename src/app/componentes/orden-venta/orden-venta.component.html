@@ -124,11 +124,22 @@
             </div>
           </div>
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-3" *ngIf="indiceSeleccionado == 1">
               <div class="form-group has-float-label">
-                <label for="idPreciosDesde" class="tamanio-label">Fecha Desde *</label>
+                <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
                 <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" autocomplete="off"
                   class="form-control form-control-sm" [readonly]="soloLectura">
+              </div>
+            </div>
+            <div class="col-md-3" *ngIf="indiceSeleccionado != 1">
+              <div class="form-group has-float-label">
+                <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
+                <mat-select id="idPreciosDesde" class="form-control form-control-sm" [formControl]="preciosDesde"
+                  [compareWith]="compareFn" (selectionChange)="cambioPreciosDesde()">
+                  <mat-option *ngFor="let itemPreciosDesde of preciosDesdeLista" [value]="itemPreciosDesde.preciosDesde">
+                    <span>{{itemPreciosDesde.preciosDesde | date: 'dd-MM-yyyy'}}</span>
+                  </mat-option>
+                </mat-select>
               </div>
             </div>
           </div>
@@ -268,7 +279,8 @@
               <div class="form-group has-float-label">
                 <label for="idKmPactado" class="tamanio-label">Km Pactado</label>
                 <input id="idKmPactado" class="form-control form-control-sm margin-left-5 number-right" formControlName="kmPactado" type="text"
-                  autocomplete="off" [textMask]="obtenerMascaraKm(5)" placeholder="0 km" style="width: 106px;">
+                  autocomplete="off" [textMask]="obtenerMascaraKm(5)" placeholder="0 km" style="width: 106px;"
+                  (blur)="establecerKm(formularioTramo.get('kmPactado'), 0)">
               </div>
               <div class="form-group has-float-label">
                 <label for="idImporteFijoSeco" class="tamanio-label">Imp. Fijo Seco <span
@@ -298,7 +310,7 @@
                     *ngIf="!(formularioTramo.get('importeFijoRef').value) && !tipoTarifaEstado">*</span></label>
                 <input id="idPrecioUnitarioRef" [textMask]="obtenerMascaraImporte(10)" class="form-control form-control-sm margin-left-5 number-right"
                   (ngModelChange)="controlPreciosTramoRef(2)" type="text" autocomplete="off"
-                  (blur)="setDecimales(formularioTramo.get('importeFijoRef'), 2)" formControlName="precioUnitarioRef"
+                  (blur)="setDecimales(formularioTramo.get('precioUnitarioRef'), 2)" formControlName="precioUnitarioRef"
                   placeholder="$ 0.00" style="width: 137px;">
               </div>
               <div class="col-md-1">
@@ -342,7 +354,7 @@
                     <span>{{l.tramo.km}} km</span>
                   </td>
                   <td align="right">
-                    <span>{{l.kmPactado}}</span>
+                    <span>{{l.kmPactado}} km</span>
                   </td>
                   <td align="right">
                     <span>$ {{(l.importeFijoSeco ? l.importeFijoSeco : '0.00') | number: '1.2-2'}}</span>

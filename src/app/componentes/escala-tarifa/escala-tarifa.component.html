@@ -27,29 +27,25 @@
         </button>
       </div>
     </div>
-    <div class="row justify-content-center">
-      <div class="col-md-4">
-        <table class="table table-bordered table-striped table-sm">
-          <thead>
-            <tr>
-              <th class="text-center" style="width:30%" scope="col">-</th>
-              <th class="text-center" style="width:40%" scope="col">Valor</th>
-              <th class="text-center" style="width:20%" scope="col">-</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let l of listaCompleta">
-              <td align="center">
-                <span>Hasta</span>
-              </td>
-              <td align="right">
-                <span>{{l.valor | number:'1.2-2'}}</span>
-              </td>
-              <td align="center">
-                <span class="cursor-color" (click)="eliminar(l.id)">Eliminar</span>
-              </td>
-            </tr>
-          </tbody>
+
+    <div class="row justify-content-center contenedor" >
+      <div class="col-md-6">
+        <br>
+        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+          <ng-container matColumnDef="hasta" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+            <td mat-cell *matCellDef="let elemento">Hasta</td>
+          </ng-container>
+          <ng-container matColumnDef="valor" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.valor | number:'1.2-2'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="eliminar" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+            <td mat-cell *matCellDef="let elemento"><span class="cursor-color" (click)="eliminar(elemento.id)">Eliminar</span></td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
         </table>
       </div>
     </div>

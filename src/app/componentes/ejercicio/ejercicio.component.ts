@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EjercicioService } from 'src/app/servicios/ejercicio.service';
 import { Ejercicio } from 'src/app/modelos/ejercicio';
 import { MesService } from 'src/app/servicios/mes.service';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-ejercicio',
@@ -30,7 +31,7 @@ export class EjercicioComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta: Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la lista completa de años
   public anios: Array<any> = [];
   //Define la lista completa de meses
@@ -39,6 +40,10 @@ export class EjercicioComponent implements OnInit {
   public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
   public resultados: Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'anio', 'mes', 'cantidad meses', 'predeterminado' , 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: EjercicioService, private subopcionPestaniaService: SubopcionPestaniaService, private mesService: MesService,
     private ejercicio: Ejercicio, private appComponent: AppComponent, private toastr: ToastrService) {
@@ -168,8 +173,8 @@ export class EjercicioComponent implements OnInit {
     let empresa = this.appComponent.getEmpresa();
     this.servicio.listar(empresa.id).subscribe(
       res => {
-        this.listaCompleta = res.json();
-      },
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;       },
       err => {
         console.log(err);
       }

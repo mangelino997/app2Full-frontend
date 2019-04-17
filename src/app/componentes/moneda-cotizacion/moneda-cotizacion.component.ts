@@ -7,6 +7,8 @@ import { MonedaCotizacionService } from 'src/app/servicios/moneda-cotizacion.ser
 import { MonedaService } from 'src/app/servicios/moneda.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
+import { MatSort, MatTableDataSource } from '@angular/material';
+
 @Component({
   selector: 'app-moneda-cotizacion',
   templateUrl: './moneda-cotizacion.component.html',
@@ -38,7 +40,7 @@ export class MonedaCotizacionComponent implements OnInit {
   //Define la lista completa de Monedas
   public listaMonedas: Array<any> = [];
   //Define la lista completa de Monedas
-  public listaMonedaCotizacion: Array<any> = [];
+  public listaMonedaCotizacion=new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define el id que se muestra en el campo Codigo
@@ -51,6 +53,10 @@ export class MonedaCotizacionComponent implements OnInit {
   public resultadosCompaniasSeguros: Array<any> = [];
   //Defien la lista de empresas
   public empresas: Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['moneda', 'fecha', 'valor', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   // public compereFn:any;
   //Constructor
   constructor(private appComponent: AppComponent, private monedaCotizacion: MonedaCotizacion, private monedaCotizacionServicio: MonedaCotizacionService, private monedaServicio: MonedaService,
@@ -142,8 +148,8 @@ export class MonedaCotizacionComponent implements OnInit {
     console.log(this.formulario.value);
     this.monedaCotizacionServicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(
       res=>{
-        this.listaMonedaCotizacion=res.json();
-        console.log(res.json());
+        this.listaMonedaCotizacion = new MatTableDataSource(res.json());
+        this.listaMonedaCotizacion.sort = this.sort;
       },
       err=>{
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { PersonalService } from '../../servicios/personal.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
@@ -23,6 +23,8 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { Personal } from 'src/app/modelos/personal';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-personal',
@@ -48,7 +50,7 @@ export class PersonalComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada:number = null;
   //Define la lista de sexos
@@ -93,8 +95,12 @@ export class PersonalComponent implements OnInit {
   public resultadosAfipSiniestrados:Array<any> = [];
   //Define la lista de resultados de busqueda de afip situacion
   public resultadosAfipSituaciones:Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'tipo documento', 'documento', 'telefono movil', 'domicilio', 'localidad',  'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, private personal: Personal,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private sexoServicio: SexoService,
@@ -128,7 +134,8 @@ export class PersonalComponent implements OnInit {
     );
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
@@ -142,95 +149,7 @@ export class PersonalComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-      apellido: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-      nombreCompleto: new FormControl('', [Validators.maxLength(40)]),
-      tipoDocumento: new FormControl('', Validators.required),
-      numeroDocumento: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(11)]),
-      cuil: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(11)]),
-      empresa: new FormControl(),
-      barrio: new FormControl(),
-      localidad: new FormControl('', Validators.required),
-      localidadNacimiento: new FormControl('', Validators.required),
-      fechaNacimiento: new FormControl('', Validators.required),
-      telefonoFijo: new FormControl('', Validators.maxLength(45)),
-      telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      estadoCivil: new FormControl('', Validators.required),
-      correoelectronico: new FormControl('', Validators.maxLength(30)),
-      sexo: new FormControl('', Validators.required),
-      sucursal: new FormControl('', Validators.required),
-      area: new FormControl('', Validators.required),
-      fechaInicio: new FormControl('', Validators.required),
-      fechaFin: new FormControl(),
-      antiguedadAntAnio: new FormControl('', [Validators.min(1), Validators.maxLength(5)]),
-      antiguedadAntMes: new FormControl('', [Validators.min(1), Validators.maxLength(5)]),
-      domicilio: new FormControl('', [Validators.required, Validators.maxLength(60)]),
-      esJubilado: new FormControl(),
-      esMensualizado: new FormControl(),
-      categoria: new FormControl('', Validators.required),
-      obraSocial: new FormControl('', Validators.required),
-      sindicato: new FormControl('', Validators.required),
-      seguridadSocial: new FormControl('', Validators.required),
-      afipSituacion: new FormControl('', Validators.required),
-      afipCondicion: new FormControl('', Validators.required),
-      afipActividad: new FormControl('', Validators.required),
-      afipModContratacion: new FormControl('', Validators.required),
-      afipLocalidad: new FormControl('', Validators.required),
-      afipSiniestrado: new FormControl('', Validators.required),
-      adherenteObraSocial: new FormControl('', [Validators.min(1), Validators.maxLength(2)]),
-      aporteAdicObraSocial: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
-      contribAdicObraSocial: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
-      aporteAdicSegSoc: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
-      aporteDifSegSoc: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
-      contribTareaDifSegSoc: new FormControl('', [Validators.min(1), Validators.maxLength(4)]),
-      enConvenioColectivo: new FormControl('', Validators.required),
-      conCoberturaSCVO: new FormControl('', Validators.required),
-      recibeAdelanto: new FormControl('', Validators.required),
-      recibePrestamo: new FormControl('', Validators.required),
-      cuotasPrestamo: new FormControl('', [Validators.min(1), Validators.maxLength(2)]),
-      usuarioAlta: new FormControl(),
-      usuarioBaja: new FormControl(),
-      usuarioMod: new FormControl(),
-      vtoLicenciaConducir: new FormControl(),
-      vtoCursoCNRT: new FormControl(),
-      vtoLNH: new FormControl(),
-      vtoLibretaSanidad: new FormControl(),
-      usuarioModLC: new FormControl(),
-      usuarioModCNRT: new FormControl(),
-      usuarioModLNH: new FormControl(),
-      usuarioModLS: new FormControl(),
-      fechaModLC: new FormControl(),
-      fechaModCNRT: new FormControl(),
-      fechaModLNH: new FormControl(),
-      fechaModLS: new FormControl(),
-      talleCamisa: new FormControl('', Validators.maxLength(20)),
-      tallePantalon: new FormControl('', Validators.maxLength(20)),
-      talleCalzado: new FormControl('', Validators.maxLength(20)),
-      turnoMEntrada: new FormControl(),
-      turnoMSalida: new FormControl(),
-      turnoTEntrada: new FormControl(),
-      turnoTSalida: new FormControl(),
-      turnoNEntrada: new FormControl(),
-      turnoNSalida: new FormControl(),
-      turnoSEntrada: new FormControl(),
-      turnoSSalida: new FormControl(),
-      turnoDEntrada: new FormControl(),
-      turnoDSalida: new FormControl(),
-      turnoRotativo: new FormControl(),
-      turnoFueraConvenio: new FormControl(),
-      telefonoMovilEmpresa: new FormControl('', Validators.maxLength(45)),
-      telefonoMovilFechaEntrega: new FormControl(),
-      telefonoMovilFechaDevolucion: new FormControl(),
-      telefonoMovilObservacion: new FormControl('', Validators.maxLength(100)),
-      esChofer: new FormControl('', Validators.required),
-      esChoferLargaDistancia: new FormControl('', Validators.required),
-      esAcompReparto: new FormControl('', Validators.required),
-      observaciones: new FormControl('', Validators.maxLength(200)),
-      alias: new FormControl('', Validators.maxLength(100))
-    });
+    this.formulario = this.personal.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
@@ -487,11 +406,14 @@ export class PersonalComponent implements OnInit {
    if(elemAutocompletado.vtoLicenciaConducir != null) {
      this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
    }
-   if(elemAutocompletado.vtoCursoCNRT != null) {
-     this.formulario.get('vtoCursoCNRT').setValue(elemAutocompletado.vtoCursoCNRT.substring(0, 10));
+   if(elemAutocompletado.vtoCurso != null) {
+     this.formulario.get('vtoCurso').setValue(elemAutocompletado.vtoCurso.substring(0, 10));
    }
-   if(elemAutocompletado.vtoLNH != null) {
-     this.formulario.get('vtoLNH').setValue(elemAutocompletado.vtoLNH.substring(0, 10));
+   if(elemAutocompletado.vtoCursoCargaPeligrosa != null) {
+    this.formulario.get('vtoCursoCargaPeligrosa').setValue(elemAutocompletado.vtoCursoCargaPeligrosa.substring(0, 10));
+  }
+   if(elemAutocompletado.vtoLINTI != null) {
+     this.formulario.get('vtoLINTI').setValue(elemAutocompletado.vtoLINTI.substring(0, 10));
    }
    if(elemAutocompletado.vtoLibretaSanidad != null) {
      this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
@@ -618,7 +540,8 @@ export class PersonalComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
       },
       err => {
         console.log(err);

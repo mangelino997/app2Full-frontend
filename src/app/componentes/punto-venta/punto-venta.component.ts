@@ -9,6 +9,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatAutocompleteTrigger } from '@angular/material';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
+import { PuntoVenta } from 'src/app/modelos/puntoVenta';
+import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-punto-venta',
@@ -36,11 +39,15 @@ export class PuntoVentaComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta= new MatTableDataSource([]);
+  //Define la lista completa de registros Codigos de Afip
+  public listaAfipComprobante:Array<any> = [];
   //Define la lista de sucursales
   public sucursales:Array<any> = [];
   //Define la lista de empresas
   public empresas:Array<any> = [];
+  //Define la lista de Tipos de comprobantes
+  public tipoComprobante:Array<any> = [];
   //Define la lista de puntos de ventas de sucursal
   public puntosVentas:Array<any> = [];
   //Define la lista de puntos de ventas como autocompletado
@@ -49,10 +56,15 @@ export class PuntoVentaComponent implements OnInit {
   public sucursal:FormControl = new FormControl();
   //Define empresa para la lista
   public empresa:FormControl = new FormControl();
+  //Define las columnas de la tabla
+  public columnas:string[] = ['sucursal', 'empresa', 'punto venta', 'fe', 'fe en linea', 'cae', 'cuenta orden', 'numero', 'copia', 'imprime', 'habilitada', 'defecto', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: PuntoVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
-    private sucursalServicio: SucursalService, private empresaServicio: EmpresaService) {
+    private appComponent: AppComponent, private toastr: ToastrService, private puntoVenta: PuntoVenta,
+    private sucursalServicio: SucursalService, private empresaServicio: EmpresaService, private afipComprobanteService: AfipComprobanteService,
+    private tipoComprobanteService: TipoComprobanteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -72,30 +84,15 @@ export class PuntoVentaComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      sucursal: new FormControl('', Validators.required),
-      empresa: new FormControl('', Validators.required),
-      puntoVenta: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(5)]),
-      fe: new FormControl('', Validators.required),
-      codigoAfip: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(3)]),
-      feEnLinea: new FormControl('', Validators.required),
-      feCAEA: new FormControl('', Validators.required),
-      esCuentaOrden: new FormControl('', Validators.required),
-      ultimoNumero: new FormControl(),
-      copias: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(3)]),
-      imprime: new FormControl('', Validators.required),
-      estaHabilitado: new FormControl('', Validators.required),
-      porDefecto: new FormControl(),
-      usointerno: new FormControl()
-    });
+    this.formulario = this.puntoVenta.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista de sucursales
     this.listarSucursales();
     //Obtiene la lista de empresas
     this.listarEmpresas();
+    //Obtiene la lista de tipos de comprobantes
+    this.listarTiposComprobantes();
   }
   //Obtiene el listado de sucursales
   private listarSucursales() {
@@ -118,6 +115,28 @@ export class PuntoVentaComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+  //Obtiene el listado de tipos de comprobantes
+  private listarTiposComprobantes(){
+    this.tipoComprobanteService.listarPorNumeracionPuntoVentaTrue().subscribe(
+      res => {
+        console.log(res.json());
+        this.tipoComprobante = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Establece el Codigo de Afip
+  public establecerCodigoAfip(){
+    console.log(this.formulario.get('tipoComprobante').value.id);
+    this.afipComprobanteService.listarPorTipoComprobante(this.formulario.get('tipoComprobante').value.id).subscribe(
+      res=>{
+        console.log(res.json());
+        this.listaAfipComprobante = res.json();
+      }
+    )
   }
   //Establece el formulario al seleccionar elemento de autocompletado
   public establecerFormulario() {
@@ -186,6 +205,7 @@ export class PuntoVentaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursal');
         break;
       default:
+        this.listaCompleta= new MatTableDataSource([]);
         break;
     }
   }
@@ -231,8 +251,9 @@ export class PuntoVentaComponent implements OnInit {
   //Obtiene la lista por sucursal y empresa
   public listarPorSucursalYEmpresaLista(sucursal, empresa) {
     this.servicio.listarPorSucursalYEmpresaLetra(sucursal.value.id, empresa.value.id).subscribe(res => {
-      this.listaCompleta = res.json();
-    });
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
+   });
   }
   //Agrega un registro
   private agregar() {
@@ -282,6 +303,7 @@ export class PuntoVentaComponent implements OnInit {
   private reestablecerFormulario() {
     this.autocompletado.setValue(undefined);
     this.formulario.reset();
+    this.listaAfipComprobante = [];
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

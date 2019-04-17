@@ -278,6 +278,10 @@ import { AforoComponent } from './componentes/aforo/aforo.component';
 import { ChequesRechazadosComponent } from './componentes/cheques-rechazados/cheques-rechazados.component';
 import { RepartoComponent, AcompanianteDialogo } from './componentes/reparto-saliente/reparto.component';
 import { AfipCondicionIvaComponent } from './componentes/afip-condicion-iva/afip-condicion-iva.component';
+import { ChoferProveedor } from './modelos/choferProveedor';
+import { Personal } from './modelos/personal';
+import { PuntoVenta } from './modelos/puntoVenta';
+import { Categoria } from './modelos/categoria';
 
 //Rutas
 const appRoutes: Routes = [
@@ -315,7 +319,7 @@ const appRoutes: Routes = [
   { path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdecuentasbancarias', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipodecuentascontables', component: TipoCuentaContableComponent, canActivate: [GuardiaService] },
-  { path: 'configuraciongruposdecuentascontables', component: GrupoCuentaContableComponent, canActivate: [GuardiaService] },
+  // { path: 'configuraciongruposdecuentascontables', component: GrupoCuentaContableComponent, canActivate: [GuardiaService] },
   { path: 'ejerciciosadministrar', component: EjercicioComponent, canActivate: [GuardiaService] },  
   { path: 'tipodocumento', component: TipoDocumentoComponent, canActivate: [GuardiaService] },
   { path: 'tipoproveedor', component: TipoProveedorComponent, canActivate: [GuardiaService] },
@@ -722,6 +726,10 @@ const stompConfig: StompConfig = {
     RepartoPropioComprobanteService,
     RetiroDepositoComprobanteService,
     Aforo,
+    ChoferProveedor,
+    Personal,
+    PuntoVenta,
+    Categoria,
     AfipCondicionIva,
     MesService,
     {

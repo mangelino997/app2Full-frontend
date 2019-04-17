@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { EmpresaService } from '../../servicios/empresa.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { BarrioService } from '../../servicios/barrio.service';
@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Empresa } from 'src/app/modelos/empresa';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-empresa',
@@ -36,7 +37,7 @@ export class EmpresaComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta: Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
   //Define la lista de condiciones de iva
   public condicionesIva: Array<any> = [];
   //Define el form control para las busquedas
@@ -47,6 +48,10 @@ export class EmpresaComponent implements OnInit {
   public resultadosBarrios: Array<any> = [];
   //Define la lista de resultados de busqueda de barrio
   public resultadosLocalidades: Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'razon social', 'domicilio', 'barrio', 'localidad', 'cuit', 'inicio actividad', 'esta activa', 'usuarios', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: EmpresaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
@@ -215,7 +220,8 @@ export class EmpresaComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
       },
       err => {
         console.log(err);
