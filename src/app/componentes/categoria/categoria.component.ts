@@ -6,6 +6,7 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { Categoria } from 'src/app/modelos/categoria';
 
 @Component({
   selector: 'app-categoria',
@@ -38,12 +39,12 @@ export class CategoriaComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'básico', 'adicional vacaciones', 'tope adelantos', 'días laborables', 'horas laborables', 'ver', 'mod'];
+  public columnas:string[] = ['id', 'nombre', 'adicional vacaciones', 'tope adelantos', 'días laborables', 'horas laborables', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: CategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService) {
+    private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService, private categoria: Categoria) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -71,16 +72,7 @@ export class CategoriaComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      basico: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(13)]),
-      adicionalBasicoVacaciones: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(5)]),
-      topeBasicoAdelantos: new FormControl('',[Validators.required, Validators.min(1), Validators.maxLength(5)]),
-      diasLaborables: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(2)]),
-      horasLaborables: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(2)])
-    });
+    this.formulario = this.categoria.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
@@ -90,14 +82,12 @@ export class CategoriaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.formulario.get('basico').setValue('0.00');
     this.formulario.get('adicionalBasicoVacaciones').setValue('0.00');
     this.formulario.get('topeBasicoAdelantos').setValue('0.00');
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
     this.formulario.setValue(elemento);
-    this.formulario.get('basico').setValue(elemento.basico.toFixed(2));
     this.formulario.get('adicionalBasicoVacaciones').setValue(elemento.adicionalBasicoVacaciones.toFixed(2));
     this.formulario.get('topeBasicoAdelantos').setValue(elemento.topeBasicoAdelantos.toFixed(2));
   }

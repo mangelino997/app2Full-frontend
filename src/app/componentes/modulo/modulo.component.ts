@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModuloService } from '../../servicios/modulo.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-modulo',
@@ -32,7 +33,11 @@ export class ModuloComponent implements OnInit {
   //Define la lista de resultados del autocompletado
   public resultados:Array<any> = [];
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
+  //Define las columnas de la tabla
+  public columnas:string[] = ['id', 'nombre', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ModuloService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService) {
@@ -141,8 +146,8 @@ export class ModuloComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
-      },
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;      },
       err => {
         console.log(err);
       }

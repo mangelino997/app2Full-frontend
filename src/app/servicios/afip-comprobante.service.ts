@@ -62,6 +62,10 @@ export class AfipComprobanteService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros
+  public listarPorTipoComprobante(idTipoComprobante) {
+    return this.http.get(this.url + '/listarPorTipoComprobante/' + idTipoComprobante, this.options);
+  }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
     return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {

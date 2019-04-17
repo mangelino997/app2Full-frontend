@@ -217,7 +217,6 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       if(this.mostrarAutocompletado) {
       this.servicio.listarPorCompaniaSeguro(elemento.id).subscribe(
         res => {
-          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;        
         },

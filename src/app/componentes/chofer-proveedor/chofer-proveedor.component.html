@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-    <div class="col-md-8 text-center">
+    <div class="col-md-10 text-center">
       <h5>{{pestaniaActual}} Chofer de Proveedor</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
@@ -136,27 +136,34 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idVtoCarnet" class="tamanio-label">Vto. Licencia de Conducir *</label>
-              <input id="idVtoCarnet" type="date" formControlName="vtoCarnet" autocomplete="off" 
+              <input id="idVtoCarnet" type="date" formControlName="vtoLicenciaConducir" autocomplete="off" 
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idVtoCurso" class="tamanio-label">Vto. Curso CNRT *</label>
+              <label for="idVtoCurso" class="tamanio-label">Vto. Curso *</label>
               <input id="idVtoCurso" type="date" formControlName="vtoCurso" autocomplete="off" 
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idVtoLNH" class="tamanio-label">Vto. LNH *</label>
-              <input id="idVtoLNH" type="date" formControlName="vtoLNH" autocomplete="off" 
+              <label for="idVtoCurso" class="tamanio-label">Vto. Curso Carga Peligrosa</label>
+              <input id="idVtoCurso" type="date" formControlName="vtoCursoCargaPeligrosa" autocomplete="off" 
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idVtoLibretaSanidad" class="tamanio-label">Vto. Libreta de Sanidad</label>
+              <label for="idVtoLNH" class="tamanio-label">Vto. LINTI *</label>
+              <input id="idVtoLNH" type="date" formControlName="vtoLINTI" autocomplete="off" 
+                class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idVtoLibretaSanidad" class="tamanio-label">Vto. Lib. Sanidad</label>
               <input id="idVtoLibretaSanidad" type="date" formControlName="vtoLibretaSanidad" autocomplete="off" 
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -226,66 +233,4 @@
       </table>
     </div>
   </div>
-
-  <!-- <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-12">
-      <div class="row">
-        <div class="col-md-4">
-          <div class="form-group has-float-label">
-            <label for="idProveedor" class="tamanio-label">Proveedor *</label>
-            <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
-              [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off">
-            <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)">
-              <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor"
-                (onSelectionChange)="listarPorProveedor(itemProveedor)">
-                {{itemProveedor.alias}}
-              </mat-option>
-            </mat-autocomplete>
-          </div>
-        </div>
-      </div>
-      <table class="table table-bordered table-striped table-sm">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:5%" scope="col">id</th>
-            <th class="text-center" style="width:20%" scope="col">Nombre</th>
-            <th class="text-center" style="width:20%" scope="col">Proveedor</th>
-            <th class="text-center" style="width:10%" scope="col">Tipo Documento</th>
-            <th class="text-center" style="width:15%" scope="col">N° Documento</th>
-            <th class="text-center" style="width:20%" scope="col">Localidad</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let l of resultados">
-            <td align="center">
-              <span>{{l.id}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.proveedor.razonSocial}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.tipoDocumento.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.numeroDocumento}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.localidad.nombre}}, {{l.localidad.provincia.nombre}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 </div>

@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { EscalaTarifaService } from '../../servicios/escala-tarifa.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-escala-tarifa',
@@ -14,7 +15,11 @@ export class EscalaTarifaComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta=new MatTableDataSource([]);
+  //Define las columnas de la tabla
+  public columnas:string[] = ['hasta', 'valor', 'eliminar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: EscalaTarifaService, private appComponent: AppComponent, 
     private toastr: ToastrService, private appServicio: AppService) {
@@ -49,8 +54,8 @@ export class EscalaTarifaComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
-      },
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;      },
       err => {
         console.log(err);
       }
