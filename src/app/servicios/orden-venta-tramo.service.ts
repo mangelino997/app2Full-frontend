@@ -8,21 +8,19 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class OrdenVentaTramoService {
   //Define la ruta al servicio web
-  private ruta:string = "/ordenventatramo";
+  private ruta: string = "/ordenventatramo";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -33,7 +31,7 @@ export class OrdenVentaTramoService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -50,10 +48,13 @@ export class OrdenVentaTramoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-   //Obtiene una lista por id de Orden Venta
-   public listarPorOrdenVenta(id) {
-     console.log("entra");
+  //Obtiene una lista por id de Orden Venta
+  public listarPorOrdenVenta(id) {
     return this.http.get(this.url + '/listarPorOrdenVenta/' + id, this.options);
+  }
+  //Obtiene una lista por id de Orden Venta y precio Desde (fecha)
+  public listarPorOrdenVentaYPreciosDesde(idOrdenVta, precioDesde) {
+    return this.http.get(this.url + '/listarPorOrdenVentaYPreciosDesde/' + idOrdenVta + '/' + precioDesde, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
