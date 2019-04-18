@@ -18,7 +18,7 @@
               <div class="form-group has-float-label">
                 <label for="idTipoOrdenVenta" class="tamanio-label">Tipo *</label>
                 <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta" class="form-control form-control-sm"
-                  (selectionChange)="reestablecerCampos()" required>
+                  (selectionChange)="reestablecerCampos(null, null)" required>
                   <mat-option [value]="false">Por Empresa</mat-option>
                   <mat-option [value]="true">Por Cliente</mat-option>
                 </mat-select>
@@ -39,8 +39,8 @@
             <div class="col-md-3" *ngIf="formulario.get('tipoOrdenVenta').value == true">
               <div class="form-group has-float-label">
                 <label for="idCliente" class="tamanio-label">Cliente *</label>
-                <input id="idCliente" class="form-control form-control-sm" formControlName="cliente" type="text"
-                  matInput [formControl]="buscarCliente" [matAutocomplete]="autoCliente" autocomplete="off"
+                <input id="idCliente" class="form-control form-control-sm" type="text"
+                  matInput [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
                   [required]="formulario.get('tipoOrdenVenta').value == true">
                 <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
                   (optionSelected)="listarOrdenesVentas('cliente')">
@@ -335,8 +335,10 @@
                   <th class="text-center" style="width:10%" scope="col">Precio Unitario Seco</th>
                   <th class="text-center" style="width:10%" scope="col">Precio Fijo Refrigerado</th>
                   <th class="text-center" style="width:10%" scope="col">Precio Unitario Refrigerado</th>
-                  <th class="text-center" style="width:5%" scope="col">-</th>
-                  <th class="text-center" style="width:5%" scope="col">-</th>
+                  <th class="text-center" style="width:5%" scope="col"
+                    *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">-</th>
+                  <th class="text-center" style="width:5%" scope="col"
+                    *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">-</th>
                 </tr>
               </thead>
               <tbody>
@@ -368,10 +370,10 @@
                   <td align="right">
                     <span>$ {{(l.precioUnitarioRef ? l.precioUnitarioRef : '0.00') | number: '1.2-2'}}</span>
                   </td>
-                  <td align="center">
+                  <td align="center" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
                     <span class="cursor-color" (click)="modificarTramoLista(l, i)">Mod</span>
                   </td>
-                  <td align="center">
+                  <td align="center" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
                     <span class="cursor-color" (click)="eliminarTramoLista(i)">X</span>
                   </td>
                 </tr>

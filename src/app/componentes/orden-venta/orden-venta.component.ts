@@ -1,4 +1,4 @@
-import { Component, OnInit, isDevMode } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { EmpresaService } from '../../servicios/empresa.service';
@@ -67,18 +67,12 @@ export class OrdenVentaComponent implements OnInit {
   public buscar: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados = [];
-  //Define el form control para las busquedas cliente
-  public buscarCliente: FormControl = new FormControl();
   //Define el form control para el preciosDesde de cada registro
   public preciosDesde: FormControl = new FormControl('', Validators.required);
   //Define la lista de resultados de busqueda cliente
   public resultadosClientes = [];
-  //Define el form control para las busquedas vendedor
-  public buscarVendedor: FormControl = new FormControl();
   //Define la lista de resultados de busqueda vendedor
   public resultadosVendedores = [];
-  //Define el form control para las busquedas tramo
-  public buscarTramo: FormControl = new FormControl();
   //Define el form control para el combo ordenes de venta
   public ordenventa: FormControl = new FormControl();
   //Define la lista de ordenes de ventas
@@ -90,16 +84,16 @@ export class OrdenVentaComponent implements OnInit {
   //Define la lista de escalas
   public escalas: Array<any> = [];
   //Define la mascara de porcentaje
-  public porcentajeMascara:any;
+  public porcentajeMascara: any;
   //Define el estado de tipo tarifa
-  public tipoTarifaEstado:boolean = false;
+  public tipoTarifaEstado: boolean = false;
   //Define el id de la tabla escala para las actualizaciones
-  public idModEscala:any;
+  public idModEscala: any;
   //Define la lista de precios desde
-  public preciosDesdeLista:Array<any> = [];
+  public preciosDesdeLista: Array<any> = [];
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, 
+    private appComponent: AppComponent, private toastr: ToastrService,
     private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService,
     private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
@@ -126,23 +120,13 @@ export class OrdenVentaComponent implements OnInit {
       this.listaDeEscalas = res;
     });
     //Autocompletado - Buscar por nombre
-    this.buscar.valueChanges
-      .subscribe(data => {
-        if (typeof data == 'string') {
-          this.servicio.listarPorNombre(data).subscribe(response => {
-            this.resultados = response;
-          })
-        }
-      })
-    //Autocompletado - Buscar por nombre cliente
-    this.buscarCliente.valueChanges
-      .subscribe(data => {
-        if (typeof data == 'string') {
-          this.clienteServicio.listarPorAlias(data).subscribe(response => {
-            this.resultadosClientes = response;
-          })
-        }
-      })
+    this.buscar.valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        this.servicio.listarPorNombre(data).subscribe(response => {
+          this.resultados = response;
+        })
+      }
+    });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -158,10 +142,16 @@ export class OrdenVentaComponent implements OnInit {
     this.listarEmpresas();
     //Obtiene la lista de Vendedores
     this.listarVendedores();
-    //Obtiene la lista de escalas tarifas
-    this.listarEscalaTarifa();
     //Selecciona la pestania agregar por defecto
     this.seleccionarPestania(1, 'Agregar', 0);
+    //Autocompletado - Buscar por nombre cliente
+    this.formulario.get('cliente').valueChanges.subscribe(data => {
+      if (typeof data == 'string') {
+        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosClientes = response;
+        })
+      }
+    });
     //Autocompletado Tramo - Buscar por nombre
     this.formularioTramo.get('tramo').valueChanges.subscribe(data => {
       if (typeof data == 'string') {
@@ -203,9 +193,12 @@ export class OrdenVentaComponent implements OnInit {
     let tipoTarifa = this.formulario.get('tipoTarifa').value.porEscala;
     let ordenVenta = this.ordenventa.value.id;
     let precioDesde = this.preciosDesde.value;
-    if(tipoTarifa) {
+    if (tipoTarifa) {
       this.ordenVentaEscalaServicio.listarPorOrdenVentaYPreciosDesde(ordenVenta, precioDesde).subscribe(res => {
         this.listaDeEscalas = res.json();
+        for(let i = 0 ; i < this.listaDeEscalas.length ; i++) {
+          this.eliminarElementoEscalas(this.listaDeEscalas[i].escalaTarifa.valor);
+        }
       });
     } else {
       this.ordenVentaTramoServicio.listarPorOrdenVentaYPreciosDesde(ordenVenta, precioDesde).subscribe(res => {
@@ -216,14 +209,14 @@ export class OrdenVentaComponent implements OnInit {
   //Cambio tipo tarifa
   public cambioTipoTarifa(): void {
     let tipoTarifa = this.formulario.get('tipoTarifa').value;
-    if(tipoTarifa) {
-      if(!tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
+    if (tipoTarifa) {
+      if (!tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
         this.formularioEscala.get('porcentaje').setValue(null);
         this.formularioEscala.get('importeFijo').enable();
         this.formularioEscala.get('precioUnitario').enable();
         this.formularioEscala.get('porcentaje').disable();
         this.tipoTarifaEstado = false;
-      } else if(tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
+      } else if (tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
         this.formularioEscala.get('importeFijo').setValue(null);
         this.formularioEscala.get('precioUnitario').setValue(null);
         this.formularioEscala.get('importeFijo').disable();
@@ -280,6 +273,7 @@ export class OrdenVentaComponent implements OnInit {
   public listarOrdenesVentas(tipo) {
     switch (tipo) {
       case 'empresa':
+        this.reestablecerCampos(this.formulario.get('empresa').value, null);
         this.ordenVentaServicio.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
@@ -287,9 +281,10 @@ export class OrdenVentaComponent implements OnInit {
         );
         break;
       case 'cliente':
-        this.formulario.get('cliente').setValue(this.buscarCliente.value);
+        this.reestablecerCampos(null, this.formulario.get('cliente').value);
+        this.formulario.get('cliente').setValue(this.formulario.get('cliente').value);
         this.formulario.get('empresa').setValue(null);
-        this.ordenVentaServicio.listarPorCliente(this.buscarCliente.value.id).subscribe(
+        this.ordenVentaServicio.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
           }
@@ -316,13 +311,14 @@ export class OrdenVentaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerCampos();
+    this.reestablecerCampos(null, null);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
       this.elemAutocompletado = null;
       this.resultados = [];
     }
+    this.listarEscalaTarifa();
     switch (id) {
       case 1:
         this.establecerCamposSoloLectura(1);
@@ -333,7 +329,7 @@ export class OrdenVentaComponent implements OnInit {
       case 2:
         this.establecerCamposSoloLectura(2);
         this.establecerValoresPorDefecto();
-        this.cambioTipoTarifa();
+        // this.cambioTipoTarifa();
         this.establecerValoresPestania(nombre, true, true, false, 'idTipoOrdenVenta');
         break;
       case 3:
@@ -370,7 +366,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Establece campos solo lectura
   private establecerCamposSoloLectura(pestania): void {
-    switch(pestania) {
+    switch (pestania) {
       case 1:
         this.formulario.get('vendedor').enable();
         this.formulario.get('tipoTarifa').enable();
@@ -420,19 +416,35 @@ export class OrdenVentaComponent implements OnInit {
         break;
     }
   }
+  //Agrega un elemento a la lista de escalas
+  private agregarElementoEscalas(elemento): void {
+    this.escalas.push(elemento);
+    this.escalas.sort((a, b) => (a.valor > b.valor) ? 1 : -1);
+  }
+  //Elimina un elemento de la lista de escalas
+  private eliminarElementoEscalas(valor): void {
+    for(let i = 0 ; i < this.escalas.length ; i++) {
+      if(this.escalas[i].valor == valor) {
+        this.escalas.splice(i, 1);
+        break;
+      }
+    }
+  }
   //Agrega una Escala a listaDeEscalas
   public agregarEscalaLista() {
     this.idModEscala = null;
-    this.formulario.disable();
-    this.preciosDesde.disable();
+    this.eliminarElementoEscalas(this.formularioEscala.get('escalaTarifa').value.valor);
+    if (this.indiceSeleccionado != 3) {
+      this.formulario.disable();
+      this.preciosDesde.disable();
+    }
     this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
-    if(this.indiceSeleccionado == 3) {
-      this.ordenventa.disable();
-      this.formularioEscala.get('ordenVenta').setValue({id: this.ordenventa.value.id});
-      this.ordenVentaEscalaServicio.agregar(this.formularioEscala.value).subscribe(res => {});
+    if (this.indiceSeleccionado == 3) {
+      this.formularioEscala.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
+      this.ordenVentaEscalaServicio.agregar(this.formularioEscala.value).subscribe(res => { });
     } else {
       this.listaDeEscalas.push(this.formularioEscala.value);
-      this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1)
+      this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1);
     }
     this.formularioEscala.reset();
     setTimeout(function () {
@@ -441,8 +453,8 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Actualiza una Escala a listaDeEscalas
   public actualizarEscalaLista() {
-    if(this.indiceSeleccionado == 3) {
-      this.ordenVentaEscalaServicio.actualizar(this.formularioEscala.value).subscribe(res => {});
+    if (this.indiceSeleccionado == 3) {
+      this.ordenVentaEscalaServicio.actualizar(this.formularioEscala.value).subscribe(res => { });
     } else {
       this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
     }
@@ -462,13 +474,14 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Elimina una Escala a listaDeEscalas
   public eliminarEscalaLista(indice, elemento) {
-    if(this.indiceSeleccionado == 3) {
-      elemento.ordenVenta = {id: this.ordenventa.value.id};
-      this.ordenVentaEscalaServicio.eliminar(elemento).subscribe(res => {});
+    this.agregarElementoEscalas(elemento.escalaTarifa);
+    if (this.indiceSeleccionado == 3) {
+      elemento.ordenVenta = { id: this.ordenventa.value.id };
+      this.ordenVentaEscalaServicio.eliminar(elemento).subscribe(res => { });
     } else {
       this.listaDeEscalas.splice(indice, 1);
     }
-    if(this.listaDeEscalas.length == 0) {
+    if (this.listaDeEscalas.length == 0) {
       this.preciosDesde.enable();
       this.formulario.enable();
       this.ordenventa.enable();
@@ -480,9 +493,9 @@ export class OrdenVentaComponent implements OnInit {
   //Modifica una Escala de listaDeEscalas
   public modificarEscalaLista(escala, id) {
     this.idModEscala = id;
-    escala.ordenVenta = {id: this.ordenventa.value.id};
+    escala.ordenVenta = { id: this.ordenventa.value.id };
     this.formularioEscala.patchValue(escala);
-    if(escala.importeFijo != 0) {
+    if (escala.importeFijo != 0) {
       this.formularioEscala.get('importeFijo').setValue(parseFloat(escala.importeFijo).toFixed(2));
       this.formularioEscala.get('precioUnitario').setValue(null);
     } else {
@@ -544,13 +557,14 @@ export class OrdenVentaComponent implements OnInit {
   //Agrega un Tramo a listaDeTramos
   public agregarTramoLista() {
     this.idModTramo = null;
-    this.formulario.disable();
-    this.preciosDesde.disable();
+    if (this.indiceSeleccionado != 3) {
+      this.formulario.disable();
+      this.preciosDesde.disable();
+    }
     this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
-    if(this.indiceSeleccionado == 3) {
-      this.ordenventa.disable();
-      this.formularioTramo.get('ordenVenta').setValue({id: this.ordenventa.value.id});
-      this.ordenVentaTramoServicio.agregar(this.formularioTramo.value).subscribe(res => {});
+    if (this.indiceSeleccionado == 3) {
+      this.formularioTramo.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
+      this.ordenVentaTramoServicio.agregar(this.formularioTramo.value).subscribe(res => { });
     } else {
       this.listaDeTramos.push(this.formularioTramo.value);
     }
@@ -561,8 +575,8 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Actualiza un tramo de lista de tramos
   public actualizarTramoLista() {
-    if(this.indiceSeleccionado == 3) {
-      this.ordenVentaTramoServicio.actualizar(this.formularioTramo.value).subscribe(res => {});
+    if (this.indiceSeleccionado == 3) {
+      this.ordenVentaTramoServicio.actualizar(this.formularioTramo.value).subscribe(res => { });
     } else {
       this.listaDeTramos[this.idModTramo] = this.formularioTramo.value;
     }
@@ -582,9 +596,9 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Elimina un Tramo a listaDeTramos
   public eliminarTramoLista(indice, elemento) {
-    if(this.indiceSeleccionado == 3) {
-      elemento.ordenVenta = {id: this.ordenventa.value.id};
-      this.ordenVentaTramoServicio.eliminar(elemento).subscribe(res => {});
+    if (this.indiceSeleccionado == 3) {
+      elemento.ordenVenta = { id: this.ordenventa.value.id };
+      this.ordenVentaTramoServicio.eliminar(elemento).subscribe(res => { });
     } else {
       this.listaDeTramos.splice(indice, 1);
     }
@@ -613,7 +627,8 @@ export class OrdenVentaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
-          this.reestablecerCampos();
+          this.reestablecerCampos(null, null);
+          this.listarEscalaTarifa();
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
@@ -638,7 +653,7 @@ export class OrdenVentaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerCampos();
+          this.reestablecerCampos(null, null);
           this.establecerValoresPorDefecto();
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
@@ -658,6 +673,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Carga los datos de la orden de venta seleccionada en los input
   public cargarDatosOrden() {
+    this.listarEscalaTarifa();
     let orden = this.ordenventa.value;
     this.formulario.patchValue(orden);
     this.formulario.get('seguro').setValue(parseFloat(orden.seguro).toFixed(2));
@@ -668,20 +684,11 @@ export class OrdenVentaComponent implements OnInit {
     this.obtenerPreciosDesde();
   }
   //Reestablecer campos
-  private reestablecerCampos() {
-    this.preciosDesde.reset();
-    this.formulario.reset();
-    this.formularioEscala.reset();
-    this.formularioTramo.reset();
-    this.ordenventa.reset();
-    this.listaDeEscalas = [];
-    this.listaDeTramos = [];
-    this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
-  }
-  //Reestablecer formulario
-  private reestablecerFormulario() {
+  private reestablecerCampos(empresa, cliente) {
     let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
+    this.preciosDesde.enable();
     this.preciosDesde.reset();
+    this.formulario.enable();
     this.formulario.reset();
     this.formularioEscala.reset();
     this.formularioTramo.reset();
@@ -690,6 +697,16 @@ export class OrdenVentaComponent implements OnInit {
     this.listaDeTramos = [];
     this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
     this.formulario.get('tipoOrdenVenta').setValue(tipoOrdenVenta);
+    this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
+    this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
+    if(empresa != null) {
+      this.formulario.get('empresa').setValue(empresa);
+    } else {
+      this.formulario.get('cliente').setValue(cliente);
+    }
+    if(this.indiceSeleccionado != 1) {
+      this.formulario.get('tipoTarifa').disable();
+    }
   }
   //Elimina un registro
   private eliminar() {
@@ -706,13 +723,13 @@ export class OrdenVentaComponent implements OnInit {
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {
     let valor = formulario.value;
-    if(valor != '') {
+    if (valor != '') {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
   //Formatea el numero a x decimales
   public establecerDecimales(valor, cantidad) {
-    if(valor != '') {
+    if (valor != '') {
       return this.appService.setDecimales(valor, cantidad);
     }
   }
@@ -725,8 +742,8 @@ export class OrdenVentaComponent implements OnInit {
     formulario.setValue(this.appService.desenmascararKm(formulario.value, cantidad));
   }
   //Habilita el boton agregar a tabla
-  public habilitarBoton(formA, formB):boolean {
-    if(this.listaDeEscalas.length != 0) {
+  public habilitarBoton(formA, formB): boolean {
+    if (this.listaDeEscalas.length != 0) {
       return formB;
     } else {
       return formA && formB;
@@ -766,7 +783,7 @@ export class OrdenVentaComponent implements OnInit {
   //Muestra el valor en los autocompletados c
   public displayFc(elemento) {
     if (elemento != undefined) {
-      return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre 
+      return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre
         + ' - ' + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre : elemento;
     } else {
       return elemento;
