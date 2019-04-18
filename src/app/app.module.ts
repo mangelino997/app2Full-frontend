@@ -388,11 +388,10 @@ const appRoutes: Routes = [
   { path: 'logisticaunidadesdenegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
   { path: 'contablecondicionesdeiva', component: AfipCondicionIvaComponent, canActivate: [GuardiaService] },
   { path: 'categoriasbasico', component: BasicoCategoriaComponent, canActivate: [GuardiaService] }
-
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.156:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
