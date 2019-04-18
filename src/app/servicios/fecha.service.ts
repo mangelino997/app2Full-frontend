@@ -31,4 +31,8 @@ export class FechaService {
   public obtenerHora() {
     return this.http.get(this.url + '/obtenerHora', this.options);
   }
+  //Obtiene una lista de Años (+15)
+  public listarAnios(){
+    return this.http.get(this.url + '/listarAnios', this.options);
+  }
 }

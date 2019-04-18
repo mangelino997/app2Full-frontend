@@ -282,6 +282,9 @@ import { ChoferProveedor } from './modelos/choferProveedor';
 import { Personal } from './modelos/personal';
 import { PuntoVenta } from './modelos/puntoVenta';
 import { Categoria } from './modelos/categoria';
+import { BasicoCategoriaComponent } from './componentes/basico-categoria/basico-categoria.component';
+import { BasicoCategoria } from './modelos/basicoCategoria';
+import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -383,11 +386,13 @@ const appRoutes: Routes = [
   { path: 'configuracionviajeunidadnegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
   { path: 'recoleccionesadministrar', component: OrdenRecoleccionComponent, canActivate: [GuardiaService] },
   { path: 'logisticaunidadesdenegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
-  { path: 'contablecondicionesdeiva', component: AfipCondicionIvaComponent, canActivate: [GuardiaService] }
+  { path: 'contablecondicionesdeiva', component: AfipCondicionIvaComponent, canActivate: [GuardiaService] },
+  { path: 'categoriasbasico', component: BasicoCategoriaComponent, canActivate: [GuardiaService] }
+
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.156:8080/jitws/socket',
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -518,7 +523,8 @@ const stompConfig: StompConfig = {
     TotalConceptoDialogo,
     ChequesRechazadosComponent,
     AcompanianteDialogo,
-    AfipCondicionIvaComponent
+    AfipCondicionIvaComponent,
+    BasicoCategoriaComponent
   ],
   imports: [
     BrowserModule,
@@ -722,6 +728,7 @@ const stompConfig: StompConfig = {
     RepartoPropioService,
     RepartoTerceroService,
     RetiroDepositoService,
+    BasicoCategoriaService,
     RepartoTerceroComprobanteService,
     RepartoPropioComprobanteService,
     RetiroDepositoComprobanteService,
@@ -730,6 +737,7 @@ const stompConfig: StompConfig = {
     Personal,
     PuntoVenta,
     Categoria,
+    BasicoCategoria,
     AfipCondicionIva,
     MesService,
     {
