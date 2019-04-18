@@ -45,9 +45,26 @@ export class AforoComponent implements OnInit {
     this.formulario.get('kiloAforadoTotal').setValue(this.appService.setDecimales(total, 2));
     this.data.formulario = this.formulario.get('kiloAforadoTotal').value;
   }
+  //Obtiene la mascara de enteros SIN decimales
+  public obtenerMascaraEnteroSinDecimales(intLimite) {
+    return this.appService.mascararEnterosSinDecimales(intLimite);
+  }
+  //Obtiene la mascara de enteros CON decimales
+  public obtenerMascaraEnteroConDecimales(intLimite) {
+    return this.appService.mascararEterosConDecimales(intLimite);
+  }
   //Formatea el numero a x decimales
-  public setDecimales(valor, cantidad) {
-    valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+  public setDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
+  }
+  //Formatea el numero a x decimales
+  public establecerDecimales(valor, cantidad) {
+    if(valor != '') {
+      return this.appService.setDecimales(valor, cantidad);
+    }
   }
   //Reestablece el formulario
   public reestablecerFormulario() {

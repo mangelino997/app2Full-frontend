@@ -94,7 +94,7 @@ export class ClienteComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
+    private appComponent: AppComponent, private appService: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private cobradorServicio: CobradorService,
     private vendedorServicio: VendedorService, private zonaServicio: ZonaService,
@@ -242,8 +242,6 @@ export class ClienteComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.formulario.get('creditoLimite').setValue('0.00');
-    this.formulario.get('descuentoFlete').setValue('0.00');
     this.formulario.get('esSeguroPropio').setValue(false);
     this.formulario.get('imprimirControlDeuda').setValue(false);
     this.formulario.get('companiaSeguro').disable();
@@ -535,8 +533,11 @@ export class ClienteComponent implements OnInit {
     document.getElementById(label).classList.remove('label-error');
   }
   //Formatea el numero a x decimales
-  public setDecimales(valor, cantidad) {
-    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
+  public setDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
   }
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
@@ -559,21 +560,21 @@ export class ClienteComponent implements OnInit {
     if(documento) {
       switch(tipoDocumento.id) {
         case 1:
-          let respuesta = this.appServicio.validarCUIT(documento.toString());
+          let respuesta = this.appService.validarCUIT(documento.toString());
           if(!respuesta) {
             let err = {codigo: 11010, mensaje: 'CUIT Incorrecto!'};
             this.lanzarError(err);
           }
           break;
         case 2:
-          let respuesta2 = this.appServicio.validarCUIT(documento.toString());
+          let respuesta2 = this.appService.validarCUIT(documento.toString());
           if(!respuesta2) {
             let err = {codigo: 11010, mensaje: 'CUIL Incorrecto!'};
             this.lanzarError(err);
           }
           break;
         case 8:
-          let respuesta8 = this.appServicio.validarDNI(documento.toString());
+          let respuesta8 = this.appService.validarDNI(documento.toString());
           if(!respuesta8) {
             let err = {codigo: 11010, mensaje: 'DNI Incorrecto!'};
             this.lanzarError(err);
@@ -628,6 +629,18 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('vencimientoPolizaSeguro').disable();
       this.formulario.get('vencimientoPolizaSeguro').clearValidators();
     }
+  }
+  //Obtiene la mascara de enteros CON decimales
+  public obtenerMascaraEnteroSinDecimales(intLimite) {
+    return this.appService.mascararEnterosSinDecimales(intLimite);
+  }
+  //Obtiene la mascara de enteros CON decimales
+  public obtenerMascaraEnteroConDecimales(intLimite) {
+    return this.appService.mascararEterosConDecimales(intLimite);
+  }
+  //Obtiene la mascara de importe
+  public obtenerMascaraImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

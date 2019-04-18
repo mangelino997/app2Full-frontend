@@ -8,7 +8,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-    <div class="col-md-8 text-center">
+    <div class="col-md-10 text-center">
       <h5>{{pestaniaActual}} Configuración de Vehículo</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
@@ -84,15 +84,15 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCapacidadCarga" class="tamanio-label">Capacidad Total de Carga(Tn) *</label>
-              <input id="idCapacidadCarga" type="number" formControlName="capacidadCarga" autocomplete="off" 
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idCapacidadCarga" type="text" formControlName="capacidadCarga" autocomplete="off" [textMask]="obtenerMascaraEnteroSinDecimales(10)"
+                placeholder="00" (blur)="desenmascararEnteros(formulario.get('capacidadCarga'), 2)"  class="form-control form-control-sm number-right"  [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idTara" class="tamanio-label">Tara(Tn)</label>
-              <input id="idTara" type="number" formControlName="tara" autocomplete="off" 
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idTara" type="text" formControlName="tara" autocomplete="off"  
+                placeholder="00" (blur)="desenmascararEnteros(formulario.get('tara'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -100,29 +100,29 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idAltura" class="tamanio-label">Altura(m)</label>
-              <input id="idAltura" type="number" formControlName="altura" autocomplete="off" 
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idAltura" type="text" formControlName="altura" autocomplete="off"  
+                placeholder="00" (blur)="desenmascararEnteros(formulario.get('altura'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idLargo" class="tamanio-label">Largo(m)</label>
-              <input id="idLargo" type="number" formControlName="largo" autocomplete="off" 
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idLargo" type="text" formControlName="largo" autocomplete="off"  
+                placeholder="00" (blur)="desenmascararEnteros(formulario.get('largo'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idAncho" class="tamanio-label">Ancho(m)</label>
-              <input id="idAncho" type="number" formControlName="ancho" autocomplete="off" 
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idAncho" type="text" formControlName="ancho" autocomplete="off"  
+                placeholder="00" (blur)="desenmascararEnteros(formulario.get('ancho'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idM3" class="tamanio-label">M3(m)</label>
-              <input id="idM3" type="number" formControlName="m3" autocomplete="off" 
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idM3" type="text" formControlName="m3" autocomplete="off"  
+                placeholder="00" (blur)="desenmascararEnteros(formulario.get('m3'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
             </div>
           </div>
         </div>

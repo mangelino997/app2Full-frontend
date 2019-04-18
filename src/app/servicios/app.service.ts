@@ -67,6 +67,14 @@ export class AppService {
       return parseFloat(valor).toFixed(cantidad);
     }
   }
+  //Formatear los enteros (saca las comas en los 'miles')
+  public establecerEnteros(valor, cantidad){
+    if(valor) {
+      valor = valor + '';
+      valor = valor.replace(/\,/g, '');
+    }
+    return valor;
+  }
   //Formatear numero a x decimales
   public establecerDecimales(valor, cantidad) {
     if(valor) {
@@ -114,6 +122,43 @@ export class AppService {
         allowDecimal: true,
         decimalLimit: 2,
         decimalSymbol: '.',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
+  //Obtiene la mascara de altura, ancho, largo, m3, kg CON decimales
+  public mascararEterosConDecimales(intLimite) {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '',
+        suffix: '',
+        thousandsSeparatorSymbol: ',',
+        integerLimit: intLimite,
+        requireDecimal: true,
+        allowDecimal: true,
+        decimalLimit: 2,
+        decimalSymbol: '.',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
+  //Obtiene la mascara de enteros SIN decimales
+  public mascararEnterosSinDecimales(intLimite) {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '',
+        suffix: '',
+        thousandsSeparatorSymbol: ',',
+        integerLimit: intLimite,
+        requireDecimal: false,
+        allowDecimal: false,
+        decimalSymbol: '',
         allowLeadingZeroes: true,
       }),
       guide: false,

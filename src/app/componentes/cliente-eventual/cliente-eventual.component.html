@@ -46,8 +46,9 @@
                 <div class="col-md-3">
                     <div class="form-group has-float-label">
                         <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
-                        <input id="idNumeroIIBB" type="number" formControlName="numeroIIBB" autocomplete="off"
-                            class="form-control form-control-sm" [readonly]="soloLectura">
+                        <input id="idNumeroIIBB" type="text" placeholder="$ 0.00" formControlName="numeroIIBB" autocomplete="off"
+                        [textMask]="obtenerMascaraImporte(10)" (blur)="setDecimales(formulario.get('numeroIIBB'), 2)"
+                        class="form-control form-control-sm number-right" [readonly]="soloLectura">
                     </div>
                 </div>
             </div>

@@ -7,6 +7,7 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-configuracion-vehiculo',
@@ -46,7 +47,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ConfiguracionVehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
+    private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -75,12 +76,12 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       modelo: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       descripcion: new FormControl('', Validators.maxLength(100)),
       cantidadEjes: new FormControl('', [Validators.required]),
-      capacidadCarga: new FormControl('', [Validators.required, Validators.maxLength(5)]),
-      tara: new FormControl('', Validators.maxLength(5)),
-      altura: new FormControl('', Validators.maxLength(5)),
-      largo: new FormControl('', Validators.maxLength(5)),
-      ancho: new FormControl('', Validators.maxLength(5)),
-      m3: new FormControl('', Validators.maxLength(5))
+      capacidadCarga: new FormControl('', Validators.required),
+      tara: new FormControl(),
+      altura: new FormControl(),
+      largo: new FormControl(),
+      ancho: new FormControl(),
+      m3: new FormControl()
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
@@ -269,11 +270,28 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
+  //Obtiene la mascara de enteros CON decimales
+  public obtenerMascaraEnteroSinDecimales(intLimite) {
+    return this.appService.mascararEnterosSinDecimales(intLimite);
+  }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
     if(a != null && b != null) {
       return a.id === b.id;
+    }
+  }
+  //Formatea el numero a x decimales
+  public desenmascararEnteros(formulario, cantidad) {
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.establecerEnteros(valor, cantidad));
+    }
+  }
+  //Formatea el numero a x decimales
+  public establecerEnteros(valor, cantidad) {
+    if(valor != '') {
+      return this.appService.setDecimales(valor, cantidad);
     }
   }
   //Define como se muestra los datos en el autcompletado a

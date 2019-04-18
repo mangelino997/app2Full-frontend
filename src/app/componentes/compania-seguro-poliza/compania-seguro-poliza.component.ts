@@ -8,6 +8,7 @@ import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular
 import { ToastrService } from 'ngx-toastr';
 import { CompaniaSeguroPoliza } from 'src/app/modelos/companiaSeguroPoliza';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -50,7 +51,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   // public compereFn:any;
   //Constructor
   constructor(private servicio: CompaniaSeguroPolizaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
+    private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService,
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaModelo: CompaniaSeguroPoliza) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -277,6 +278,10 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.empresaBusqueda.setValue(elemento.empresa);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+  }
+  //Obtiene la mascara de enteros CON decimales
+  public obtenerMascaraEnteroSinDecimales(intLimite) {
+    return this.appService.mascararEnterosSinDecimales(intLimite);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

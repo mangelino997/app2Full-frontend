@@ -219,8 +219,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
-                        <input id="idNumeroIIBB" type="number" formControlName="numeroIIBB" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                        <input id="idNumeroIIBB" placeholder="$ 0.00" type="text" formControlName="numeroIIBB" autocomplete="off" [textMask]="obtenerMascaraEnteroSinDecimales(10)"
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura">
                       </div>
                     </div>
                   </div>
@@ -282,9 +282,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idLimiteCredito" class="tamanio-label">Límite de Crédito</label>
-                        <input id="idLimiteCredito" type="number" formControlName="creditoLimite"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
-                          (blur)="setDecimales($event, 2)">
+                        <input id="idLimiteCredito" type="text" formControlName="creditoLimite"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
+                          [textMask]="obtenerMascaraImporte(10)" (blur)="setDecimales(formulario.get('creditoLimite'), 2)">
                       </div>
                     </div>
                   </div>
@@ -305,9 +305,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idDescuentoFlete" class="tamanio-label">Descuento en Flete</label>
-                        <input id="idDescuentoFlete" type="number" formControlName="descuentoFlete"
-                          autocomplete="off" class="form-control form-control-sm" step="0.1"
-                          [readonly]="soloLectura" (blur)="setDecimales($event, 2)">
+                        <input id="idDescuentoFlete" type="text" formControlName="descuentoFlete"
+                          autocomplete="off"  class="form-control form-control-sm number-right" step="0.1" placeholder="$ 0.00"
+                          [readonly]="soloLectura" [textMask]="obtenerMascaraImporte(10)" (blur)="setDecimales(formulario.get('descuentoFlete'), 2)">
                       </div>
                     </div>
                     <div class="col-md-3">

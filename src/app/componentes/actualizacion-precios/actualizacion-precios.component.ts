@@ -63,6 +63,8 @@ export class ActualizacionPreciosComponent implements OnInit {
   public resultados: Array<any> = [];
   //Define los resultados de autocompletado localidad
   public resultadosLocalidades: Array<any> = [];
+  //Define la mascara de porcentaje
+  public porcentajeMascara:any;
   //Constructor
   constructor(private servicio: OrdenVentaService, private actualizacionPrecios: ActualizacionPrecios, private clienteService: ClienteService, private appService: AppService,
     private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService, private empresaServicio: EmpresaService, private ordenVentaServicio: OrdenVentaService,
@@ -93,6 +95,8 @@ export class ActualizacionPreciosComponent implements OnInit {
     this.listarEmpresas();
     //Setea por defecto que el combo sea un aumento de precio
     this.aumento.setValue(1);
+    //Obtiene la mascara de porcentaje
+    this.porcentajeMascara = this.appService.mascararPorcentaje();
   }
 
   //Obtiene el listado de registros
@@ -229,6 +233,7 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Realiza la actualizacion del precio de la orden seleccionada
   public aplicarActualizacion() {
+    this.establecerPorcentaje(this.formulario.get('porcentaje'), 2)
     if (this.formulario.get('porcentaje').value < 0) {
       this.toastr.error('El porcentaje no puede ser un valor Negativo');
       this.formulario.get('porcentaje').reset();
@@ -246,17 +251,16 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Aplica un aumento de porcentaje en los precios de la orden venta seleccionada
   public aplicarAumento() {
-    this.formulario.get('porcentaje').setValue(this.returnDecimales(this.formulario.get('porcentaje').value, 2));
     let porcentaje = this.formulario.get('porcentaje').value;
     if (this.porEscala == true) {
       for (let i = 0; i < this.listaFiltrada.length; i++) {
         if (this.listaFiltrada[i].importeFijo != 0 && this.listaFiltrada[i].importeFijo != null)
-          this.listaFiltrada[i].importeFijo = this.returnDecimales(this.listaFiltrada[i].importeFijo + this.listaFiltrada[i].importeFijo * (porcentaje / 100), 2);
+          this.listaFiltrada[i].importeFijo = this.listaFiltrada[i].importeFijo + this.listaFiltrada[i].importeFijo * (porcentaje / 100);
         else
           this.listaFiltrada[i].importeFijo = 0;
 
         if (this.listaFiltrada[i].precioUnitario != 0 && this.listaFiltrada[i].precioUnitario != null)
-          this.listaFiltrada[i].precioUnitario = this.returnDecimales(this.listaFiltrada[i].precioUnitario + this.listaFiltrada[i].precioUnitario * (porcentaje / 100), 2);
+          this.listaFiltrada[i].precioUnitario = this.listaFiltrada[i].precioUnitario + this.listaFiltrada[i].precioUnitario * (porcentaje / 100);
         else
           this.listaFiltrada[i].precioUnitario = 0;
       }
@@ -264,22 +268,22 @@ export class ActualizacionPreciosComponent implements OnInit {
     else {
       for (let i = 0; i < this.listaFiltrada.length; i++) {
         if (this.listaFiltrada[i].importeFijoSeco != 0 && this.listaFiltrada[i].importeFijoSeco != null)
-          this.listaFiltrada[i].importeFijoSeco = this.returnDecimales(this.listaFiltrada[i].importeFijoSeco + this.listaFiltrada[i].importeFijoSeco * (porcentaje / 100), 2);
+          this.listaFiltrada[i].importeFijoSeco = this.listaFiltrada[i].importeFijoSeco + this.listaFiltrada[i].importeFijoSeco * (porcentaje / 100);
         else
           this.listaFiltrada[i].importeFijoSeco = 0;
 
         if (this.listaFiltrada[i].importeFijoRef != 0 && this.listaFiltrada[i].importeFijoRef != null)
-          this.listaFiltrada[i].importeFijoRef = this.returnDecimales(this.listaFiltrada[i].importeFijoRef + this.listaFiltrada[i].importeFijoRef * (porcentaje / 100), 2);
+          this.listaFiltrada[i].importeFijoRef = this.listaFiltrada[i].importeFijoRef + this.listaFiltrada[i].importeFijoRef * (porcentaje / 100);
         else
           this.listaFiltrada[i].importeFijoRef = 0;
 
         if (this.listaFiltrada[i].precioUnitarioRef != 0 && this.listaFiltrada[i].precioUnitarioRef != null)
-          this.listaFiltrada[i].precioUnitarioRef = this.returnDecimales(this.listaFiltrada[i].precioUnitarioRef + this.listaFiltrada[i].precioUnitarioRef * (porcentaje / 100), 2);
+          this.listaFiltrada[i].precioUnitarioRef = this.listaFiltrada[i].precioUnitarioRef + this.listaFiltrada[i].precioUnitarioRef * (porcentaje / 100);
         else
           this.listaFiltrada[i].precioUnitarioRef = 0;
 
         if (this.listaFiltrada[i].precioUnitarioSeco != 0 && this.listaFiltrada[i].precioUnitarioSeco != null)
-          this.listaFiltrada[i].precioUnitarioSeco = this.returnDecimales(this.listaFiltrada[i].precioUnitarioSeco + this.listaFiltrada[i].precioUnitarioSeco * (porcentaje / 100), 2);
+          this.listaFiltrada[i].precioUnitarioSeco = this.listaFiltrada[i].precioUnitarioSeco + this.listaFiltrada[i].precioUnitarioSeco * (porcentaje / 100);
         else
           this.listaFiltrada[i].precioUnitarioSeco = 0;
       }
@@ -287,17 +291,16 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Aplica una anulacion de porcentaje en los precios de la orden de venta seleccionada
   public aplicarAnulacion() {
-    this.formulario.get('porcentaje').setValue(this.returnDecimales(this.formulario.get('porcentaje').value, 2));
     let porcentaje = this.formulario.get('porcentaje').value;
     if (this.porEscala == true) {
       for (let i = 0; i < this.listaFiltrada.length; i++) {
         if (this.listaFiltrada[i].importeFijo != 0 && this.listaFiltrada[i].importeFijo != null)
-          this.listaFiltrada[i].importeFijo = this.returnDecimales(this.listaFiltrada[i].importeFijo - this.listaFiltrada[i].importeFijo * (porcentaje / 100), 2);
+          this.listaFiltrada[i].importeFijo = this.listaFiltrada[i].importeFijo - this.listaFiltrada[i].importeFijo * (porcentaje / 100);
         else
           this.listaFiltrada[i].importeFijo = 0;
 
         if (this.listaFiltrada[i].precioUnitario != 0 && this.listaFiltrada[i].precioUnitario != null)
-          this.listaFiltrada[i].precioUnitario = this.returnDecimales(this.listaFiltrada[i].precioUnitario - this.listaFiltrada[i].precioUnitario * (porcentaje / 100), 2);
+          this.listaFiltrada[i].precioUnitario = this.listaFiltrada[i].precioUnitario - this.listaFiltrada[i].precioUnitario * (porcentaje / 100);
         else
           this.listaFiltrada[i].precioUnitario = 0;
       }
@@ -305,22 +308,22 @@ export class ActualizacionPreciosComponent implements OnInit {
     else {
       for (let i = 0; i < this.listaFiltrada.length; i++) {
         if (this.listaFiltrada[i].importeFijoSeco != 0 && this.listaFiltrada[i].importeFijoSeco != null)
-          this.listaFiltrada[i].importeFijoSeco = this.returnDecimales(this.listaFiltrada[i].importeFijoSeco - this.listaFiltrada[i].importeFijoSeco * (porcentaje / 100), 2);
+          this.listaFiltrada[i].importeFijoSeco = this.listaFiltrada[i].importeFijoSeco - this.listaFiltrada[i].importeFijoSeco * (porcentaje / 100);
         else
           this.listaFiltrada[i].importeFijoSeco = 0;
 
         if (this.listaFiltrada[i].importeFijoRef != 0 && this.listaFiltrada[i].importeFijoRef != null)
-          this.listaFiltrada[i].importeFijoRef = this.returnDecimales(this.listaFiltrada[i].importeFijoRef - this.listaFiltrada[i].importeFijoRef * (porcentaje / 100), 2);
+          this.listaFiltrada[i].importeFijoRef = this.listaFiltrada[i].importeFijoRef - this.listaFiltrada[i].importeFijoRef * (porcentaje / 100);
         else
           this.listaFiltrada[i].importeFijoRef = 0;
 
         if (this.listaFiltrada[i].precioUnitarioRef != 0 && this.listaFiltrada[i].precioUnitarioRef != null)
-          this.listaFiltrada[i].precioUnitarioRef = this.returnDecimales(this.listaFiltrada[i].precioUnitarioRef - this.listaFiltrada[i].precioUnitarioRef * (porcentaje / 100), 2);
+          this.listaFiltrada[i].precioUnitarioRef = this.listaFiltrada[i].precioUnitarioRef - this.listaFiltrada[i].precioUnitarioRef * (porcentaje / 100);
         else
           this.listaFiltrada[i].precioUnitarioRef = 0;
 
         if (this.listaFiltrada[i].precioUnitarioSeco != 0 && this.listaFiltrada[i].precioUnitarioSeco != null)
-          this.listaFiltrada[i].precioUnitarioSeco = this.returnDecimales(this.listaFiltrada[i].precioUnitarioSeco - this.listaFiltrada[i].precioUnitarioSeco * (porcentaje / 100), 2);
+          this.listaFiltrada[i].precioUnitarioSeco = this.listaFiltrada[i].precioUnitarioSeco - this.listaFiltrada[i].precioUnitarioSeco * (porcentaje / 100);
         else
           this.listaFiltrada[i].precioUnitarioSeco = 0;
       }
@@ -346,6 +349,10 @@ export class ActualizacionPreciosComponent implements OnInit {
       document.getElementById('idNuevoPrecioDesde').focus();
       this.toastr.error("¡La nueva fecha debe ser mayor a la anterior!");
     }
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(formulario, cantidad): void {
+    formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

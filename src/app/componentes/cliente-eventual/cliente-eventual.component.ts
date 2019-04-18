@@ -45,7 +45,7 @@ export class ClienteEventualComponent implements OnInit {
     private cobradorServicio: CobradorService, private zonaServicio: ZonaService,
     private rubroServicio: RubroService, private sucursalServicio: SucursalService,
     private clienteServicio: ClienteService, private toastr: ToastrService, public clienteEventual: ClienteEventual,
-    private appServicio: AppService) {
+    private appService: AppService) {
     this.dialogRef.disableClose = true;
   }
   //Al inicializarse el componente
@@ -178,21 +178,21 @@ export class ClienteEventualComponent implements OnInit {
     if(documento) {
       switch(tipoDocumento.id) {
         case 1:
-          let respuesta = this.appServicio.validarCUIT(documento.toString());
+          let respuesta = this.appService.validarCUIT(documento.toString());
           if(!respuesta) {
             let err = {codigo: 11010, mensaje: 'CUIT Incorrecto!'};
             this.lanzarError(err);
           }
           break;
         case 2:
-          let respuesta2 = this.appServicio.validarCUIT(documento.toString());
+          let respuesta2 = this.appService.validarCUIT(documento.toString());
           if(!respuesta2) {
             let err = {codigo: 11010, mensaje: 'CUIL Incorrecto!'};
             this.lanzarError(err);
           }
           break;
         case 8:
-          let respuesta8 = this.appServicio.validarDNI(documento.toString());
+          let respuesta8 = this.appService.validarDNI(documento.toString());
           if(!respuesta8) {
             let err = {codigo: 11010, mensaje: 'DNI Incorrecto!'};
             this.lanzarError(err);
@@ -238,6 +238,17 @@ export class ClienteEventualComponent implements OnInit {
       document.getElementById("idNumeroDocumento").focus();
     }
     this.toastr.error(respuesta.mensaje);
+  }
+  //Obtiene la mascara de importe
+  public obtenerMascaraImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite);
+  }
+  //Formatea el numero a x decimales
+  public setDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

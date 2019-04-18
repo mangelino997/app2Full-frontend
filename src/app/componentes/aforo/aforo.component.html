@@ -10,35 +10,37 @@
         <div class="row">
           <div class="form-group has-float-label col-md-2">
             <label for="idCodigo" class="tamanio-label">Aforo kg/m3</label>
-            <input id="idCodigo" type="number" formControlName="aforo" class="form-control form-control-sm" readonly>
+            <input id="idCodigo" type="number" formControlName="aforo" class="form-control form-control-sm number-right" 
+            [textMask]="obtenerMascaraEnteroConDecimales(10)" (blur)="setDecimales(formulario.get('aforo'), 2)" readonly>
           </div>
         </div>
         <div class="row">
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">Cantidad</label>
-              <input id="idCodigo" type="number" formControlName="cantidad" class="form-control form-control-sm">
+              <input id="idCodigo" type="text" formControlName="cantidad" placeholder="00" class="form-control form-control-sm number-right"
+              [textMask]="obtenerMascaraEnteroSinDecimales(10)" >
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">Alto (m)</label>
-              <input id="idCodigo" type="number" formControlName="alto" class="form-control form-control-sm"
-                (blur)="setDecimales($event, 2)">
+              <input id="idCodigo" type="text" formControlName="alto" placeholder="0.00" class="form-control form-control-sm number-right"
+                [textMask]="obtenerMascaraEnteroConDecimales(10)" (blur)="setDecimales(formulario.get('alto'), 2)">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">Ancho (m)</label>
-              <input id="idCodigo" type="number" formControlName="ancho" class="form-control form-control-sm"
-                (blur)="setDecimales($event, 2)">
+              <input id="idCodigo" type="text" formControlName="ancho" placeholder="0.00" class="form-control form-control-sm number-right"
+                [textMask]="obtenerMascaraEnteroConDecimales(10)" (blur)="setDecimales(formulario.get('ancho'), 2)" >
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">Largo (m)</label>
-              <input id="idCodigo" type="number" formControlName="largo" class="form-control form-control-sm"
-                (blur)="setDecimales($event, 2)">
+              <input id="idCodigo" type="text" formControlName="largo" placeholder="0.00" class="form-control form-control-sm number-right"
+                [textMask]="obtenerMascaraEnteroConDecimales(10)" (blur)="setDecimales(formulario.get('largo'), 2)">
             </div>
           </div>
           <div class="col-md-1">

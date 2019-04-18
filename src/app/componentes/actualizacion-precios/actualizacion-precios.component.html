@@ -68,10 +68,10 @@
                       <span>{{l.tipoTarifa.nombre}}</span>
                     </td>
                     <td align="center">
-                      <span>{{l.seguro}}</span>
+                      <span>{{l.seguro}} %</span>
                     </td>
                     <td align="center">
-                      <span>{{l.comisionCR}}</span>
+                      <span>{{l.comisionCR}} %</span>
                     </td>
                     <td align="center">
                       <span>{{l.estaActiva? 'Sí':'No'}}</span>
@@ -94,7 +94,7 @@
                       <span>{{l.seguro}}</span>
                     </td>
                     <td align="center">
-                      <span>{{l.comisionCR}}</span>
+                      <span>{{l.comisionCR}} %</span>
                     </td>
                     <td align="center">
                       <span>{{l.estaActiva? 'Sí':'No'}}</span>
@@ -141,8 +141,9 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idPorcentaje" class="tamanio-label">Porcentaje(%)</label>
-              <input id="idPorcentaje" type="number" formControlName="porcentaje" autocomplete="off"
-                class="form-control form-control-sm" (blur)="aplicarActualizacion()">
+              <input id="idPorcentaje" type="text" formControlName="porcentaje" autocomplete="off" [textMask]="porcentajeMascara"
+                class="form-control form-control-sm" (blur)="aplicarActualizacion()" placeholder="% 00.00"
+                class="form-control form-control-sm number-right">
             </div>
           </div>
           <div class="col-md-3">
