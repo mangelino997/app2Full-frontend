@@ -202,12 +202,15 @@ export class ContactoProveedorComponent implements OnInit {
     );
   }
   //Obtiene la lista de contactos por proveedor
-  public listarPorProveedor(elemento) {
+  public listarPorProveedor() {
+    let elemento = this.formulario.get('proveedor').value;
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorProveedor(elemento.id).subscribe(
         res => {
+          this.contactos = res.json();
           this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;        },
+          this.listaCompleta.sort = this.sort;
+        },
         err => {
           console.log(err);
         }
@@ -301,14 +304,14 @@ export class ContactoProveedorComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.listarPorProveedor(elemento.proveedor);
+    this.listarPorProveedor();
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.listarPorProveedor(elemento.proveedor);
+    this.listarPorProveedor();
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
