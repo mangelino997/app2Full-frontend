@@ -41,13 +41,15 @@ export class ChoferProveedorComponent implements OnInit {
   //Define el form control para las busquedas
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados=new MatTableDataSource([]);
+  public resultados:any;
   //Define la lista de resultados de busqueda de barrio
   public resultadosBarrios:Array<any> = [];
   //Define la lista de resultados de busqueda de localidad
   public resultadosLocalidades:Array<any> = [];
   //Define la lista de resultados de proveedores
   public resultadosProveedores:Array<any> = [];
+  //Define la lista de resultados de choferes
+  public resultadosChoferes:Array<any> = [];
   //Define las columnas de la tabla
   public columnas:string[] = ['id', 'nombre', 'proveedor', 'tipo documento', 'numero documento', 'localidad', 'ver', 'mod'];
   //Define la matSort
@@ -108,6 +110,10 @@ export class ChoferProveedorComponent implements OnInit {
     })
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
+  }
+  //Establece los valores al seleccionar un elemento del autocompletado
+  public establecerValores(): void {
+    this.formulario.patchValue(this.autocompletado.value);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarLista() {
@@ -189,10 +195,12 @@ export class ChoferProveedorComponent implements OnInit {
     );
   }
   //Obtiene una lista de choferes por proveedor
-  public listarPorProveedor(proveedor) {
+  public listarPorProveedor() {
+    let proveedor = this.formulario.get('proveedor').value;
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorProveedor(proveedor.id).subscribe(
         res => {
+          this.resultadosChoferes = res.json();
           this.resultados = new MatTableDataSource(res.json());
           this.resultados.sort = this.sort;
         },
