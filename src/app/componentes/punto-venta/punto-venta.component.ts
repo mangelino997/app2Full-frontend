@@ -3,15 +3,15 @@ import { PuntoVentaService } from '../../servicios/punto-venta.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { EmpresaService } from '../../servicios/empresa.service';
-import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatAutocompleteTrigger } from '@angular/material';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { PuntoVenta } from 'src/app/modelos/puntoVenta';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-punto-venta',
@@ -57,14 +57,15 @@ export class PuntoVentaComponent implements OnInit {
   //Define empresa para la lista
   public empresa:FormControl = new FormControl();
   //Define las columnas de la tabla
-  public columnas:string[] = ['sucursal', 'empresa', 'punto venta', 'fe', 'fe en linea', 'cae', 'cuenta orden', 'numero', 'copia', 'imprime', 'habilitada', 'defecto', 'ver', 'mod'];
+  public columnas:string[] = ['sucursal', 'empresa', 'puntoVenta', 'fe', 'feLinea', 
+    'cae', 'cuentaOrden', 'numero', 'copia', 'imprime', 'habilitada', 'defecto', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: PuntoVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private puntoVenta: PuntoVenta,
     private sucursalServicio: SucursalService, private empresaServicio: EmpresaService, private afipComprobanteService: AfipComprobanteService,
-    private tipoComprobanteService: TipoComprobanteService) {
+    private tipoComprobanteService: TipoComprobanteService, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -94,6 +95,10 @@ export class PuntoVentaComponent implements OnInit {
     //Obtiene la lista de tipos de comprobantes
     this.listarTiposComprobantes();
   }
+  //Obtiene la mascara de enteros
+  public obtenerMascaraEnteros(intLimite) {
+    return this.appService.mascararEnteros(intLimite);
+  }
   //Obtiene el listado de sucursales
   private listarSucursales() {
     this.sucursalServicio.listar().subscribe(
@@ -120,7 +125,6 @@ export class PuntoVentaComponent implements OnInit {
   private listarTiposComprobantes(){
     this.tipoComprobanteService.listarPorNumeracionPuntoVentaTrue().subscribe(
       res => {
-        console.log(res.json());
         this.tipoComprobante = res.json();
       },
       err => {
@@ -129,11 +133,9 @@ export class PuntoVentaComponent implements OnInit {
     );
   }
   //Establece el Codigo de Afip
-  public establecerCodigoAfip(){
-    console.log(this.formulario.get('tipoComprobante').value.id);
+  public establecerCodigoAfip() {
     this.afipComprobanteService.listarPorTipoComprobante(this.formulario.get('tipoComprobante').value.id).subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.listaAfipComprobante = res.json();
       }
     )
@@ -153,6 +155,8 @@ export class PuntoVentaComponent implements OnInit {
       this.formulario.get('esCuentaOrden').enable();
       this.formulario.get('imprime').enable();
       this.formulario.get('estaHabilitado').enable();
+      this.formulario.get('tipoComprobante').enable();
+      this.formulario.get('codigoAfip').enable();
     } else {
       this.formulario.get('fe').disable();
       this.formulario.get('feEnLinea').disable();
@@ -160,6 +164,8 @@ export class PuntoVentaComponent implements OnInit {
       this.formulario.get('esCuentaOrden').disable();
       this.formulario.get('imprime').disable();
       this.formulario.get('estaHabilitado').disable();
+      this.formulario.get('tipoComprobante').disable();
+      this.formulario.get('codigoAfip').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -351,7 +357,8 @@ export class PuntoVentaComponent implements OnInit {
   public displayFb(elemento) {
     if(elemento != undefined) {
       return elemento.puntoVenta ? ('00000' + elemento.puntoVenta).slice(-5) 
-      + ' | ' + elemento.codigoAfip + ' | ' + elemento.usointerno : elemento;
+      + ' | ' + elemento.codigoAfip + ' | ' + elemento.usointerno 
+      + ' | ' + elemento.tipoComprobante.abreviatura : elemento;
     } else {
       return elemento;
     }

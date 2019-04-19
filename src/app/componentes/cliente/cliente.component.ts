@@ -636,7 +636,7 @@ export class ClienteComponent implements OnInit {
   }
   //Obtiene la mascara de enteros CON decimales
   public obtenerMascaraEnteroConDecimales(intLimite) {
-    return this.appService.mascararEterosConDecimales(intLimite);
+    return this.appService.mascararEnterosConDecimales(intLimite);
   }
   //Obtiene la mascara de importe
   public obtenerMascaraImporte(intLimite) {

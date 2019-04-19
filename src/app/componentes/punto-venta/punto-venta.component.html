@@ -16,8 +16,8 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idSucursal" class="tamanio-label">Sucursal *</label>
-              <mat-select id="idSucursal" class="form-control form-control-sm" 
-                formControlName="sucursal" [compareWith]="compareFn" (selectionChange)="listarPorSucursalYEmpresa()">
+              <mat-select id="idSucursal" class="form-control form-control-sm" formControlName="sucursal"
+                [compareWith]="compareFn" (selectionChange)="listarPorSucursalYEmpresa()">
                 <mat-option *ngFor="let itemSucursal of sucursales" [value]="itemSucursal">
                   {{itemSucursal.nombre}}
                 </mat-option>
@@ -27,8 +27,8 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-              <mat-select id="idEmpresa" class="form-control form-control-sm" 
-                formControlName="empresa" [compareWith]="compareFn" (selectionChange)="listarPorSucursalYEmpresa()">
+              <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
+                [compareWith]="compareFn" (selectionChange)="listarPorSucursalYEmpresa()">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                   {{itemEmpresa.razonSocial}}
                 </mat-option>
@@ -38,8 +38,8 @@
           <div class="col-md-3" *ngIf="mostrarAutocompletado">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Punto de Venta</label>
-              <mat-select id="idAutocompletado" class="form-control form-control-sm" 
-                [formControl]="autocompletado" [compareWith]="compareFn" (selectionChange)="establecerFormulario()">
+              <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="autocompletado"
+                [compareWith]="compareFn" (selectionChange)="establecerFormulario()">
                 <mat-option *ngFor="let item of puntosVentas" [value]="item">
                   {{displayFb(item)}}
                 </mat-option>
@@ -51,15 +51,15 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
-              <input id="idPuntoVenta" type="number" formControlName="puntoVenta" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura"
-                (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '000', -4)">
+              <input id="idPuntoVenta" [textMask]="obtenerMascaraEnteros(5)" type="text" formControlName="puntoVenta"
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                placeholder="00000" (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante</label>
-              <mat-select id="idTipoComprobante" class="form-control form-control-sm" [formControl]="formulario.get('tipoComprobante')"
+              <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
                 [compareWith]="compareFn" (selectionChange)="establecerCodigoAfip()">
                 <mat-option *ngFor="let itemTipoComprobante of tipoComprobante" [value]="itemTipoComprobante">
                   {{itemTipoComprobante.nombre}}
@@ -70,9 +70,10 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCodigoAfip" class="tamanio-label">Código de Afip *</label>
-              <mat-select id="idTipoComprobante" class="form-control form-control-sm" [formControl]="formulario.get('codigoAfip')"
+              <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="codigoAfip"
                 [compareWith]="compareFn">
-                <mat-option *ngFor="let itemAfipComprobante of listaAfipComprobante" [value]="itemAfipComprobante.codigoAfip">
+                <mat-option *ngFor="let itemAfipComprobante of listaAfipComprobante"
+                  [value]="itemAfipComprobante.codigoAfip">
                   {{itemAfipComprobante.codigoAfip}} - {{itemAfipComprobante.letra}}
                 </mat-option>
               </mat-select>
@@ -83,8 +84,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idFe" class="tamanio-label">Es Comprobante Electrónico *</label>
-              <mat-select id="idFe" class="form-control form-control-sm" 
-                formControlName="fe" [compareWith]="compareFn">
+              <mat-select id="idFe" class="form-control form-control-sm" formControlName="fe" [compareWith]="compareFn">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -93,8 +93,8 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idFeEnLinea" class="tamanio-label">Es Punto de Venta en Línea *</label>
-              <mat-select id="idFeEnLinea" class="form-control form-control-sm" 
-                formControlName="feEnLinea" [compareWith]="compareFn">
+              <mat-select id="idFeEnLinea" class="form-control form-control-sm" formControlName="feEnLinea"
+                [compareWith]="compareFn">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -103,8 +103,8 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idFeCAEA" class="tamanio-label">Es CAE Anticipado *</label>
-              <mat-select id="idFeCAEA" class="form-control form-control-sm" 
-                formControlName="feCAEA" [compareWith]="compareFn">
+              <mat-select id="idFeCAEA" class="form-control form-control-sm" formControlName="feCAEA"
+                [compareWith]="compareFn">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -113,8 +113,8 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCuentaOrden" class="tamanio-label">Es por Cuenta y Orden *</label>
-              <mat-select id="idCuentaOrden" class="form-control form-control-sm" 
-                formControlName="esCuentaOrden" [compareWith]="compareFn">
+              <mat-select id="idCuentaOrden" class="form-control form-control-sm" formControlName="esCuentaOrden"
+                [compareWith]="compareFn">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -139,8 +139,8 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idImprime" class="tamanio-label">Imprime *</label>
-              <mat-select id="idImprime" class="form-control form-control-sm" 
-                formControlName="imprime" [compareWith]="compareFn">
+              <mat-select id="idImprime" class="form-control form-control-sm" formControlName="imprime"
+                [compareWith]="compareFn">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -149,22 +149,21 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idEstaHabilitado" class="tamanio-label">Habilitado *</label>
-              <mat-select id="idEstaHabilitado" class="form-control form-control-sm" 
-                formControlName="estaHabilitado" [compareWith]="compareFn">
+              <mat-select id="idEstaHabilitado" class="form-control form-control-sm" formControlName="estaHabilitado"
+                [compareWith]="compareFn">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
       </form>
     </div>
   </div>
-
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
     <div class="col-md-12">
       <br>
@@ -198,66 +197,72 @@
           </button>
         </div>
       </div>
-      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="sucursal" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="empresa" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
-        </ng-container>
-        <ng-container matColumnDef="punto venta" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
-          <td mat-cell *matCellDef="let elemento"></td>
-        </ng-container>
-        <ng-container matColumnDef="fe" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Es FE</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.fe ? 'Si' : 'No'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="fe en linea" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Es FE en Línea</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.feEnLinea ? 'Si' : 'No'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="cae" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Es CAE</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.feCAEA ? 'Si' : 'No'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="cuenta orden" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Es CUENTA y ORDEN</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.esCuentaOrden ? 'Si' : 'No'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="numero" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Último Número</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.ultimoNumero}}</td>
-        </ng-container>
-        <ng-container matColumnDef="copia" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Copias</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.copias}}</td>
-        </ng-container>
-        <ng-container matColumnDef="imprime" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Imprime</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.imprime ? 'Si' : 'No'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="habilitada" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Esta Habilitado</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.estaHabilitado ? 'Si' : 'No'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="defecto" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Defecto</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.porDefecto ? 'Si' : 'No'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="ver" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span class="cursor-color">ver</span></td>
-        </ng-container>
-        <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span class="cursor-color">editar</span></td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-      </table>
+      <div class="tabla">
+        <div class="tabla-ancho">
+          <table mat-table [dataSource]="listaCompleta" matSort>
+            <ng-container matColumnDef="sucursal">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
+            </ng-container>
+            <ng-container matColumnDef="empresa">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
+            </ng-container>
+            <ng-container matColumnDef="puntoVenta">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
+              <td mat-cell *matCellDef="let elemento">{{displayFb(elemento)}}</td>
+            </ng-container>
+            <ng-container matColumnDef="fe">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Es FE</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.fe ? 'Si' : 'No'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="feLinea">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Es FE en Línea</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.feEnLinea ? 'Si' : 'No'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="cae">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Es CAE</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.feCAEA ? 'Si' : 'No'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="cuentaOrden">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Es CUENTA y ORDEN</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.esCuentaOrden ? 'Si' : 'No'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="numero">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Último Número</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.ultimoNumero}}</td>
+            </ng-container>
+            <ng-container matColumnDef="copia">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Copias</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.copias}}</td>
+            </ng-container>
+            <ng-container matColumnDef="imprime">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Imprime</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.imprime ? 'Si' : 'No'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="habilitada">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Esta Habilitado</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.estaHabilitado ? 'Si' : 'No'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="defecto">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Defecto</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.porDefecto ? 'Si' : 'No'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="ver">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+              <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+                  class="cursor-color">ver</span></td>
+            </ng-container>
+            <ng-container matColumnDef="mod">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+              <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+                  class="cursor-color">editar</span></td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnas; sticky: true"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 </div>

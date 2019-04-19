@@ -51,7 +51,7 @@ export class AforoComponent implements OnInit {
   }
   //Obtiene la mascara de enteros CON decimales
   public obtenerMascaraEnteroConDecimales(intLimite) {
-    return this.appService.mascararEterosConDecimales(intLimite);
+    return this.appService.mascararEnterosConDecimales(intLimite);
   }
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {

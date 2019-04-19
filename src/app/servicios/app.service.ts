@@ -130,7 +130,7 @@ export class AppService {
     return mascara;
   }
   //Obtiene la mascara de altura, ancho, largo, m3, kg CON decimales
-  public mascararEterosConDecimales(intLimite) {
+  public mascararEnterosConDecimales(intLimite) {
     let mascara = {
       mask: createNumberMask({
         prefix: '',
@@ -155,6 +155,24 @@ export class AppService {
         prefix: '',
         suffix: '',
         thousandsSeparatorSymbol: ',',
+        integerLimit: intLimite,
+        requireDecimal: false,
+        allowDecimal: false,
+        decimalSymbol: '',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '',
+        suffix: '',
+        thousandsSeparatorSymbol: '',
         integerLimit: intLimite,
         requireDecimal: false,
         allowDecimal: false,
