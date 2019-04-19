@@ -38,9 +38,9 @@
                         <label for="idAutocompletado" class="tamanio-label">Buscar Proveedor</label>
                         <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                           [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
-                          <mat-option *ngFor="let item of resultados" [value]="item"
-                            (onSelectionChange)="formulario.setValue(item)">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)" 
+                          (optionSelected)="establecerValores()">
+                          <mat-option *ngFor="let item of resultados" [value]="item">
                             {{item.alias}}
                           </mat-option>
                         </mat-autocomplete>
@@ -229,7 +229,7 @@
                       <div class="form-group has-float-label">
                         <label for="idEstaActivo" class="tamanio-label">Estado *</label>
                         <mat-select id="idEstaActivo" class="form-control form-control-sm" 
-                          formControlName="estaActivo" [compareWith]="compareFn">
+                          formControlName="estaActivo">
                           <mat-option [value]="true">Activa</mat-option>
                           <mat-option [value]="false">Suspendida</mat-option>
                         </mat-select>

@@ -211,8 +211,12 @@ export class ProveedorComponent implements OnInit {
       }
     );
   }
+  //Establece los valores al seleccionar elemento de autocompletado
+  public establecerValores(): void {
+    this.formulario.patchValue(this.autocompletado.value);
+  }
   //Establece valores por defecto
-  private establecerValoresPorDefecto() {
+  private establecerValoresPorDefecto(): void {
     this.formulario.get('estaActivo').setValue(true);
   }
   //Vacia la lista de resultados de autocompletados
@@ -225,19 +229,19 @@ export class ProveedorComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('tipoProveedor').enabled;
-      this.formulario.get('afipCondicionIva').enabled;
-      this.formulario.get('tipoDocumento').enabled;
-      this.formulario.get('condicionCompra').enabled;
-      this.formulario.get('estaActivo').enabled;
-      this.formulario.get('tipoCuentaBancaria').enabled;
+      this.formulario.get('tipoProveedor').enable();
+      this.formulario.get('afipCondicionIva').enable();
+      this.formulario.get('tipoDocumento').enable();
+      this.formulario.get('condicionCompra').enable();
+      this.formulario.get('estaActivo').enable();
+      this.formulario.get('tipoCuentaBancaria').enable();
     } else {
-      this.formulario.get('tipoProveedor').disabled;
-      this.formulario.get('afipCondicionIva').disabled;
-      this.formulario.get('tipoDocumento').disabled;
-      this.formulario.get('condicionCompra').disabled;
-      this.formulario.get('estaActivo').disabled;
-      this.formulario.get('tipoCuentaBancaria').disabled;
+      this.formulario.get('tipoProveedor').disable();
+      this.formulario.get('afipCondicionIva').disable();
+      this.formulario.get('tipoDocumento').disable();
+      this.formulario.get('condicionCompra').disable();
+      this.formulario.get('estaActivo').disable();
+      this.formulario.get('tipoCuentaBancaria').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
