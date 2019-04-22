@@ -134,7 +134,7 @@ export class PersonalComponent implements OnInit {
     );
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta = new MatTableDataSource(res);
       this.listaCompleta.sort = this.sort;
     });
     //Autocompletado - Buscar por alias
@@ -201,7 +201,7 @@ export class PersonalComponent implements OnInit {
     //Autocompletado Afip Actividad - Buscar por nombre
     this.formulario.get('afipActividad').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.afipActividadServicio.listarPorNombre(data).subscribe(response => {
+        this.afipActividadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipActividades = response;
         })
       }
@@ -209,7 +209,7 @@ export class PersonalComponent implements OnInit {
     //Autocompletado Afip Condicion - Buscar por nombre
     this.formulario.get('afipCondicion').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.afipCondicionServicio.listarPorNombre(data).subscribe(response => {
+        this.afipCondicionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipCondiciones = response;
         })
       }
@@ -217,7 +217,7 @@ export class PersonalComponent implements OnInit {
     //Autocompletado Afip Localidad - Buscar por nombre
     this.formulario.get('afipLocalidad').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.afipLocalidadServicio.listarPorNombre(data).subscribe(response => {
+        this.afipLocalidadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipLocalidades = response;
         })
       }
@@ -225,7 +225,7 @@ export class PersonalComponent implements OnInit {
     //Autocompletado Afip Mod Contratacion - Buscar por nombre
     this.formulario.get('afipModContratacion').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.afipModContratacionServicio.listarPorNombre(data).subscribe(response => {
+        this.afipModContratacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipModContrataciones = response;
         })
       }
@@ -233,7 +233,7 @@ export class PersonalComponent implements OnInit {
     //Autocompletado Afip Siniestrado - Buscar por nombre
     this.formulario.get('afipSiniestrado').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.afipSiniestradoServicio.listarPorNombre(data).subscribe(response => {
+        this.afipSiniestradoServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSiniestrados = response;
         })
       }
@@ -241,7 +241,7 @@ export class PersonalComponent implements OnInit {
     //Autocompletado Afip Situacion - Buscar por nombre
     this.formulario.get('afipSituacion').valueChanges.subscribe(data => {
       if(typeof data == 'string') {
-        this.afipSituacionServicio.listarPorNombre(data).subscribe(response => {
+        this.afipSituacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSituaciones = response;
         })
       }
@@ -267,6 +267,10 @@ export class PersonalComponent implements OnInit {
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
   }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
+    return this.appServicio.mascararEnteros(intLimite);
+  }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
     this.formulario.get('esAcompReparto').setValue(false);
@@ -275,6 +279,8 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('cuotasPrestamo').setValue(1);
     this.formulario.get('esChofer').setValue(false);
     this.formulario.get('esChoferLargaDistancia').setValue(false);
+    this.formulario.get('enConvenioColectivo').setValue(true);
+    this.formulario.get('conCoberturaSCVO').setValue(true);
   }
   //Obtiene el listado de sexos
   private listarSexos() {
@@ -361,37 +367,37 @@ export class PersonalComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if(estado) {
-      this.formulario.get('sexo').enabled;
-      this.formulario.get('estadoCivil').enabled;
-      this.formulario.get('tipoDocumento').enabled;
-      this.formulario.get('sucursal').enabled;
-      this.formulario.get('area').enabled;
-      this.formulario.get('sindicato').enabled;
-      this.formulario.get('esAcompReparto').enabled;
-      this.formulario.get('enConvenioColectivo').enabled;
-      this.formulario.get('conCoberturaSCVO').enabled;
-      this.formulario.get('recibeAdelanto').enabled;
-      this.formulario.get('recibePrestamo').enabled;
-      this.formulario.get('esChofer').enabled;
-      this.formulario.get('esChoferLargaDistancia').enabled;
-      this.formulario.get('turnoRotativo').enabled;
-      this.formulario.get('turnoFueraConvenio').enabled;
+      this.formulario.get('sexo').enable();
+      this.formulario.get('estadoCivil').enable();
+      this.formulario.get('tipoDocumento').enable();
+      this.formulario.get('sucursal').enable();
+      this.formulario.get('area').enable();
+      this.formulario.get('sindicato').enable();
+      this.formulario.get('esAcompReparto').enable();
+      this.formulario.get('enConvenioColectivo').enable();
+      this.formulario.get('conCoberturaSCVO').enable();
+      this.formulario.get('recibeAdelanto').enable();
+      this.formulario.get('recibePrestamo').enable();
+      this.formulario.get('esChofer').enable();
+      this.formulario.get('esChoferLargaDistancia').enable();
+      this.formulario.get('turnoRotativo').enable();
+      this.formulario.get('turnoFueraConvenio').enable();
     } else {
-      this.formulario.get('sexo').disabled;
-      this.formulario.get('estadoCivil').disabled;
-      this.formulario.get('tipoDocumento').disabled;
-      this.formulario.get('sucursal').disabled;
-      this.formulario.get('area').disabled;
-      this.formulario.get('sindicato').disabled;
-      this.formulario.get('esAcompReparto').disabled;
-      this.formulario.get('enConvenioColectivo').disabled;
-      this.formulario.get('conCoberturaSCVO').disabled;
-      this.formulario.get('recibeAdelanto').disabled;
-      this.formulario.get('recibePrestamo').disabled;
-      this.formulario.get('esChofer').disabled;
-      this.formulario.get('esChoferLargaDistancia').disabled;
-      this.formulario.get('turnoRotativo').disabled;
-      this.formulario.get('turnoFueraConvenio').disabled;
+      this.formulario.get('sexo').disable();
+      this.formulario.get('estadoCivil').disable();
+      this.formulario.get('tipoDocumento').disable();
+      this.formulario.get('sucursal').disable();
+      this.formulario.get('area').disable();
+      this.formulario.get('sindicato').disable();
+      this.formulario.get('esAcompReparto').disable();
+      this.formulario.get('enConvenioColectivo').disable();
+      this.formulario.get('conCoberturaSCVO').disable();
+      this.formulario.get('recibeAdelanto').disable();
+      this.formulario.get('recibePrestamo').disable();
+      this.formulario.get('esChofer').disable();
+      this.formulario.get('esChoferLargaDistancia').disable();
+      this.formulario.get('turnoRotativo').disable();
+      this.formulario.get('turnoFueraConvenio').disable();
     }
   }
   //Cambio en elemento autocompletado
@@ -696,6 +702,17 @@ export class PersonalComponent implements OnInit {
             this.lanzarError(err);
           }
           break;
+      }
+    }
+  }
+  //Valida el CUIL
+  public validarCUIL(): void {
+    let cuil = this.formulario.get('cuil').value;
+    if(cuil) {
+      let respuesta = this.appServicio.validarCUIT(cuil+'');
+      if (!respuesta) {
+        let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
+        this.lanzarError(err);
       }
     }
   }

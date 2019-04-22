@@ -302,7 +302,7 @@
                       <div class="form-group has-float-label">
                         <label id="labelCuil" for="idCuil" class="tamanio-label">CUIL *</label>
                         <input id="idCuil" type="number" formControlName="cuil" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarDocumento()"
+                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarCUIL()"
                           (ngModelChange)="cambioCampo('idCuil', 'labelCuil')">
                       </div>
                     </div>
@@ -323,7 +323,7 @@
                       <div class="form-group has-float-label">
                         <label for="idEnConvenioColectivo" class="tamanio-label">Trabajador en Convenio Colectivo *</label>
                         <mat-select id="idEnConvenioColectivo" class="form-control form-control-sm" 
-                          formControlName="enConvenioColectivo" [compareWith]="compareFn">
+                          formControlName="enConvenioColectivo">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -333,7 +333,7 @@
                       <div class="form-group has-float-label">
                         <label for="idConCoberturaSCVO" class="tamanio-label">Con Cobertura de S.V.O *</label>
                         <mat-select id="idConCoberturaSCVO" class="form-control form-control-sm" 
-                          formControlName="conCoberturaSCVO" [compareWith]="compareFn">
+                          formControlName="conCoberturaSCVO">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -465,8 +465,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAdherenteObraSocial" class="tamanio-label">Cant. de Adher. Obra Social</label>
-                        <input id="idAdherenteObraSocial" type="number" formControlName="adherenteObraSocial"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0">
+                        <input id="idAdherenteObraSocial" [textMask]="mascararEnteros(2)" type="text" formControlName="adherenteObraSocial"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -553,22 +553,22 @@
                     </div>
                     <div class="col-md-2">
                       <div class="form-group has-float-label">
-                        <label for="idVtoCursoCNRT" class="tamanio-label">Vto. Curso *</label>
-                        <input id="idVtoCursoCNRT" type="date" formControlName="vtoCurso"
+                        <label for="idVtoCurso" class="tamanio-label">Vto. Curso *</label>
+                        <input id="idVtoCurso" type="date" formControlName="vtoCurso"
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idVtoCursoCNRT" class="tamanio-label">Vto. Curso Carga Peligrosa</label>
-                        <input id="idVtoCursoCNRT" type="date" formControlName="vtoCursoCargaPeligrosa"
+                        <label for="idVtoCursoCP" class="tamanio-label">Vto. Curso Carga Peligrosa</label>
+                        <input id="idVtoCursoCP" type="date" formControlName="vtoCursoCargaPeligrosa"
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-2">
                       <div class="form-group has-float-label">
-                        <label for="idVtoLNH" class="tamanio-label">Vto. LINTI</label>
-                        <input id="idVtoLNH" type="date" formControlName="vtoLINTI"
+                        <label for="idVtoLINTI" class="tamanio-label">Vto. LINTI</label>
+                        <input id="idVtoLINTI" type="date" formControlName="vtoLINTI"
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
@@ -756,8 +756,8 @@
                         <input id="idCorreoelectronico" type="email" formControlName="correoelectronico" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura"
                           (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
-                          pattern="^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$"
-                          (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$', 'correoelectronico')">
+                          pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
+                          (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoelectronico')">
                       </div>
                     </div>
                   </div>

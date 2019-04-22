@@ -50,9 +50,9 @@ export class AfipActividadService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
+  //Obtiene un listado por alias
+  public listarPorAlias(alias) {
+    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })
