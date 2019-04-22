@@ -176,10 +176,17 @@ export class ViajeRemitoComponent implements OnInit {
     return this.appService.mascararEnterosConDecimales(intLimite);
   }
   //Establece el formulario al seleccionar elemento de autocompletado
-  public establecerFormulario(elemento) {
+  public establecerFormulario() {
+    let elemento = this.autocompletado.value;
     this.formulario.patchValue(elemento);
     this.formulario.get('puntoVenta').setValue(this.displayCeros(elemento.puntoVenta, '0000', -5));
     this.formulario.get('numero').setValue(this.displayCeros(elemento.numero, '0000000', -8));
+    this.formulario.get('kilosEfectivo').setValue(this.appService.establecerDecimales(elemento.kilosEfectivo, 2));
+    this.formulario.get('kilosAforado').setValue(this.appService.establecerDecimales(elemento.kilosAforado, 2));
+    this.formulario.get('m3').setValue(this.appService.establecerDecimales(elemento.m3, 2));
+    this.formulario.get('valorDeclarado').setValue(this.appService.establecerDecimales(elemento.valorDeclarado, 2));
+    this.formulario.get('importeRetiro').setValue(this.appService.establecerDecimales(elemento.importeRetiro, 2));
+    this.formulario.get('importeEntrega').setValue(this.appService.establecerDecimales(elemento.importeEntrega, 2));
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(numeroCamion, sucursalDestino) {
@@ -404,7 +411,7 @@ export class ViajeRemitoComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.establecerFormulario(elemento);
+    this.establecerFormulario();
     this.establecerEstadoCampos(false);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
@@ -412,7 +419,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.establecerEstadoCampos(true);
     this.autocompletado.setValue(elemento);
-    this.establecerFormulario(elemento);
+    this.establecerFormulario();
   }
   //Abre el dialogo para agregar un cliente eventual
   public agregarCliente(tipo): void {
