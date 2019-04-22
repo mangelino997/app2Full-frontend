@@ -21,7 +21,7 @@ import { AfipSiniestradoService } from '../../servicios/afip-siniestrado.service
 import { AfipSituacionService } from '../../servicios/afip-situacion.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Personal } from 'src/app/modelos/personal';
 import { MatSort, MatTableDataSource } from '@angular/material';
@@ -32,71 +32,71 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 })
 export class PersonalComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define la lista de opciones
-  public opciones:Array<any> = [];
+  public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
-  public opcionSeleccionada:number = null;
+  public opcionSeleccionada: number = null;
   //Define la lista de sexos
-  public sexos:Array<any> = [];
+  public sexos: Array<any> = [];
   //Define la lista de estados civiles
-  public estadosCiviles:Array<any> = [];
+  public estadosCiviles: Array<any> = [];
   //Define la lista de tipos de documentos
-  public tiposDocumentos:Array<any> = [];
+  public tiposDocumentos: Array<any> = [];
   //Define la lista de sucursales
-  public sucursales:Array<any> = [];
+  public sucursales: Array<any> = [];
   //Define la lista de areas
-  public areas:Array<any> = [];
+  public areas: Array<any> = [];
   //Define la lista de sindicatos
-  public sindicatos:Array<any> = [];
+  public sindicatos: Array<any> = [];
   //Define la opcion activa
-  public botonOpcionActivo:boolean = null;
+  public botonOpcionActivo: boolean = null;
   //Define la nacionalidad de nacimiento
-  public nacionalidadNacimiento:FormControl = new FormControl();
+  public nacionalidadNacimiento: FormControl = new FormControl();
   //Define el form control para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de barrios
-  public resultadosBarrios:Array<any> = [];
+  public resultadosBarrios: Array<any> = [];
   //Define la lista de resultados de busqueda de localidades
-  public resultadosLocalidades:Array<any> = [];
+  public resultadosLocalidades: Array<any> = [];
   //Define la lista de resultados de busqueda de categorias
-  public resultadosCategorias:Array<any> = [];
+  public resultadosCategorias: Array<any> = [];
   //Define la lista de resultados de busqueda de seguridad social
-  public resultadosSeguridadesSociales:Array<any> = [];
+  public resultadosSeguridadesSociales: Array<any> = [];
   //Define la lista de resultados de busqueda de obra social
-  public resultadosObrasSociales:Array<any> = [];
+  public resultadosObrasSociales: Array<any> = [];
   //Define la lista de resultados de busqueda de afip actividad
-  public resultadosAfipActividades:Array<any> = [];
+  public resultadosAfipActividades: Array<any> = [];
   //Define la lista de resultados de busqueda de afip condicion
-  public resultadosAfipCondiciones:Array<any> = [];
+  public resultadosAfipCondiciones: Array<any> = [];
   //Define la lista de resultados de busqueda de afip localidad
-  public resultadosAfipLocalidades:Array<any> = [];
+  public resultadosAfipLocalidades: Array<any> = [];
   //Define la lista de resultados de busqueda de afip mod contratacion
-  public resultadosAfipModContrataciones:Array<any> = [];
+  public resultadosAfipModContrataciones: Array<any> = [];
   //Define la lista de resultados de busqueda de afip siniestrado
-  public resultadosAfipSiniestrados:Array<any> = [];
+  public resultadosAfipSiniestrados: Array<any> = [];
   //Define la lista de resultados de busqueda de afip situacion
-  public resultadosAfipSituaciones:Array<any> = [];
+  public resultadosAfipSituaciones: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'tipo documento', 'documento', 'telefono movil', 'domicilio', 'localidad',  'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'tipo documento', 'documento', 'telefono movil', 'domicilio', 'localidad', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -113,25 +113,25 @@ export class PersonalComponent implements OnInit {
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Obtiene la lista de opciones por rol y subopcion
     this.rolOpcionServicio.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.opciones = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.opciones = res.json();
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res);
@@ -139,8 +139,8 @@ export class PersonalComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
-        this.servicio.listarPorAlias(data).subscribe(response =>{
+      if (typeof data == 'string') {
+        this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
       }
@@ -152,7 +152,7 @@ export class PersonalComponent implements OnInit {
     this.formulario = this.personal.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.barrioServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBarrios = response;
         })
@@ -160,7 +160,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -168,7 +168,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Localidad Nacimiento - Buscar por nombre
     this.formulario.get('localidadNacimiento').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -176,7 +176,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Categoria - Buscar por nombre
     this.formulario.get('categoria').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.categoriaServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosCategorias = response;
         })
@@ -184,7 +184,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Seguridad Social - Buscar por nombre
     this.formulario.get('seguridadSocial').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.seguridadSocialServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosSeguridadesSociales = response;
         })
@@ -192,7 +192,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Obra Social - Buscar por nombre
     this.formulario.get('obraSocial').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.obraSocialServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosObrasSociales = response;
         })
@@ -200,7 +200,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Actividad - Buscar por nombre
     this.formulario.get('afipActividad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.afipActividadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipActividades = response;
         })
@@ -208,7 +208,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Condicion - Buscar por nombre
     this.formulario.get('afipCondicion').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.afipCondicionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipCondiciones = response;
         })
@@ -216,7 +216,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Localidad - Buscar por nombre
     this.formulario.get('afipLocalidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.afipLocalidadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipLocalidades = response;
         })
@@ -224,7 +224,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Mod Contratacion - Buscar por nombre
     this.formulario.get('afipModContratacion').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.afipModContratacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipModContrataciones = response;
         })
@@ -232,7 +232,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Siniestrado - Buscar por nombre
     this.formulario.get('afipSiniestrado').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.afipSiniestradoServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSiniestrados = response;
         })
@@ -240,7 +240,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Situacion - Buscar por nombre
     this.formulario.get('afipSituacion').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.afipSituacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSituaciones = response;
         })
@@ -270,6 +270,32 @@ export class PersonalComponent implements OnInit {
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
     return this.appServicio.mascararEnteros(intLimite);
+  }
+  //Obtiene la mascara de importe
+  public mascararImporte(intLimite) {
+    return this.appServicio.mascararImporte(intLimite);
+  }
+  //Obtiene la mascara de porcentaje
+  public mascararPorcentaje() {
+    return this.appServicio.mascararPorcentaje();
+  }
+  //Obtiene la mascara de hora-minuto
+  public mascararHora() {
+    return this.appServicio.mascararHora();
+  }
+  //Formatea el numero a x decimales
+  public establecerDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appServicio.establecerDecimales(valor, cantidad));
+    }
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(formulario, cantidad): void {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appServicio.desenmascararPorcentaje(valor, cantidad));
+    }
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
@@ -366,7 +392,7 @@ export class PersonalComponent implements OnInit {
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('sexo').enable();
       this.formulario.get('estadoCivil').enable();
       this.formulario.get('tipoDocumento').enable();
@@ -401,35 +427,42 @@ export class PersonalComponent implements OnInit {
     }
   }
   //Cambio en elemento autocompletado
-  public cambioAutocompletado(elemAutocompletado) {
-   this.formulario.setValue(elemAutocompletado);
-   this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
-   this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
-   this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
-   if(elemAutocompletado.fechaFin != null) {
-     this.formulario.get('fechaFin').setValue(elemAutocompletado.fechaFin.substring(0, 10));
-   }
-   if(elemAutocompletado.vtoLicenciaConducir != null) {
-     this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
-   }
-   if(elemAutocompletado.vtoCurso != null) {
-     this.formulario.get('vtoCurso').setValue(elemAutocompletado.vtoCurso.substring(0, 10));
-   }
-   if(elemAutocompletado.vtoCursoCargaPeligrosa != null) {
-    this.formulario.get('vtoCursoCargaPeligrosa').setValue(elemAutocompletado.vtoCursoCargaPeligrosa.substring(0, 10));
-  }
-   if(elemAutocompletado.vtoLINTI != null) {
-     this.formulario.get('vtoLINTI').setValue(elemAutocompletado.vtoLINTI.substring(0, 10));
-   }
-   if(elemAutocompletado.vtoLibretaSanidad != null) {
-     this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
-   }
-   if(elemAutocompletado.telefonoMovilFechaEntrega != null) {
-     this.formulario.get('telefonoMovilFechaEntrega').setValue(elemAutocompletado.telefonoMovilFechaEntrega.substring(0, 10));
-   }
-   if(elemAutocompletado.telefonoMovilFechaDevolucion != null) {
-     this.formulario.get('telefonoMovilFechaDevolucion').setValue(elemAutocompletado.telefonoMovilFechaDevolucion.substring(0, 10));
-   }
+  public cambioAutocompletado() {
+    let elemAutocompletado = this.autocompletado.value;
+    this.formulario.setValue(elemAutocompletado);
+    this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
+    this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
+    this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
+    this.formulario.get('aporteAdicObraSocial').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteAdicObraSocial, 2));
+    this.formulario.get('contribAdicObraSocial').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribAdicObraSocial, 2));
+    this.formulario.get('aporteAdicSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteAdicSegSoc, 2));
+    this.formulario.get('aporteDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteDifSegSoc, 2));
+    this.formulario.get('contribTareaDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
+    this.formulario.get('contribTareaDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
+    if (elemAutocompletado.fechaFin != null) {
+      this.formulario.get('fechaFin').setValue(elemAutocompletado.fechaFin.substring(0, 10));
+    }
+    if (elemAutocompletado.vtoLicenciaConducir != null) {
+      this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
+    }
+    if (elemAutocompletado.vtoCurso != null) {
+      this.formulario.get('vtoCurso').setValue(elemAutocompletado.vtoCurso.substring(0, 10));
+    }
+    if (elemAutocompletado.vtoCursoCargaPeligrosa != null) {
+      this.formulario.get('vtoCursoCargaPeligrosa').setValue(elemAutocompletado.vtoCursoCargaPeligrosa.substring(0, 10));
+    }
+    if (elemAutocompletado.vtoLINTI != null) {
+      this.formulario.get('vtoLINTI').setValue(elemAutocompletado.vtoLINTI.substring(0, 10));
+    }
+    if (elemAutocompletado.vtoLibretaSanidad != null) {
+      this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
+    }
+    if (elemAutocompletado.telefonoMovilFechaEntrega != null) {
+      this.formulario.get('telefonoMovilFechaEntrega').setValue(elemAutocompletado.telefonoMovilFechaEntrega.substring(0, 10));
+    }
+    if (elemAutocompletado.telefonoMovilFechaDevolucion != null) {
+      this.formulario.get('telefonoMovilFechaDevolucion').setValue(elemAutocompletado.telefonoMovilFechaDevolucion.substring(0, 10));
+    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -447,7 +480,7 @@ export class PersonalComponent implements OnInit {
     this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -477,7 +510,7 @@ export class PersonalComponent implements OnInit {
   public seleccionarOpcion(opcion, indice) {
     this.opcionSeleccionada = opcion;
     this.botonOpcionActivo = indice;
-    switch(opcion) {
+    switch (opcion) {
       case 15:
         setTimeout(function () {
           document.getElementById('idApellido').focus();
@@ -563,9 +596,9 @@ export class PersonalComponent implements OnInit {
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idApellido').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -585,9 +618,9 @@ export class PersonalComponent implements OnInit {
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -613,27 +646,27 @@ export class PersonalComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err;
-    if(respuesta.codigo == 11010) {
+    if (respuesta.codigo == 11010) {
       document.getElementById("labelNumeroDocumento").classList.add('label-error');
       document.getElementById("idNumeroDocumento").classList.add('is-invalid');
       document.getElementById("idNumeroDocumento").focus();
-    } else if(respuesta.codigo == 11012) {
+    } else if (respuesta.codigo == 11012) {
       document.getElementById("labelCuil").classList.add('label-error');
       document.getElementById("idCuil").classList.add('is-invalid');
       document.getElementById("idCuil").focus();
-    } else if(respuesta.codigo == 11013) {
+    } else if (respuesta.codigo == 11013) {
       document.getElementById("labelTelefonoFijo").classList.add('label-error');
       document.getElementById("idTelefonoFijo").classList.add('is-invalid');
       document.getElementById("idTelefonoFijo").focus();
-    } else if(respuesta.codigo == 11014) {
+    } else if (respuesta.codigo == 11014) {
       document.getElementById("labelTelefonoMovil").classList.add('label-error');
       document.getElementById("idTelefonoMovil").classList.add('is-invalid');
       document.getElementById("idTelefonoMovil").focus();
-    } else if(respuesta.codigo == 11003) {
+    } else if (respuesta.codigo == 11003) {
       document.getElementById("labelCorreoelectronico").classList.add('label-error');
       document.getElementById("idCorreoelectronico").classList.add('is-invalid');
       document.getElementById("idCorreoelectronico").focus();
-    } else if(respuesta.codigo == 11015) {
+    } else if (respuesta.codigo == 11015) {
       document.getElementById("labelTelefonoMovilEmpresa").classList.add('label-error');
       document.getElementById("idTelefonoMovilEmpresa").classList.add('is-invalid');
       document.getElementById("idTelefonoMovilEmpresa").focus();
@@ -652,22 +685,22 @@ export class PersonalComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined && valor != null && valor != '') {
+    if (valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
-        if(campo == 'telefonoFijo') {
+        if (campo == 'telefonoFijo') {
           document.getElementById("labelTelefonoFijo").classList.add('label-error');
           document.getElementById("idTelefonoFijo").classList.add('is-invalid');
           this.toastr.error('Telefono Fijo incorrecto');
-        } else if(campo == 'telefonoMovil') {
+        } else if (campo == 'telefonoMovil') {
           document.getElementById("labelTelefonoMovil").classList.add('label-error');
           document.getElementById("idTelefonoMovil").classList.add('is-invalid');
           this.toastr.error('Telefono Movil incorrecto');
-        } else if(campo == 'telefonoMovilEmpresa') {
+        } else if (campo == 'telefonoMovilEmpresa') {
           document.getElementById("labelTelefonoMovilEmpresa").classList.add('label-error');
           document.getElementById("idTelefonoMovilEmpresa").classList.add('is-invalid');
           this.toastr.error('Telefono Movil Empresa incorrecto');
-        } else if(campo == 'correoelectronico') {
+        } else if (campo == 'correoelectronico') {
           document.getElementById("labelCorreoelectronico").classList.add('label-error');
           document.getElementById("idCorreoelectronico").classList.add('is-invalid');
           this.toastr.error('Correo Electronico incorrecto');
@@ -679,26 +712,26 @@ export class PersonalComponent implements OnInit {
   public validarDocumento(): void {
     let documento = this.formulario.get('numeroDocumento').value;
     let tipoDocumento = this.formulario.get('tipoDocumento').value;
-    if(documento) {
-      switch(tipoDocumento.id) {
+    if (documento) {
+      switch (tipoDocumento.id) {
         case 1:
           let respuesta = this.appServicio.validarCUIT(documento.toString());
-          if(!respuesta) {
-            let err = {codigo: 11010, mensaje: 'CUIT Incorrecto!'};
+          if (!respuesta) {
+            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 2:
           let respuesta2 = this.appServicio.validarCUIT(documento.toString());
-          if(!respuesta2) {
-            let err = {codigo: 11010, mensaje: 'CUIL Incorrecto!'};
+          if (!respuesta2) {
+            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 8:
           let respuesta8 = this.appServicio.validarDNI(documento.toString());
-          if(!respuesta8) {
-            let err = {codigo: 11010, mensaje: 'DNI Incorrecto!'};
+          if (!respuesta8) {
+            let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
             this.lanzarError(err);
           }
           break;
@@ -708,8 +741,8 @@ export class PersonalComponent implements OnInit {
   //Valida el CUIL
   public validarCUIL(): void {
     let cuil = this.formulario.get('cuil').value;
-    if(cuil) {
-      let respuesta = this.appServicio.validarCUIT(cuil+'');
+    if (cuil) {
+      let respuesta = this.appServicio.validarCUIT(cuil + '');
       if (!respuesta) {
         let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
         this.lanzarError(err);
@@ -737,13 +770,13 @@ export class PersonalComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -751,7 +784,7 @@ export class PersonalComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -759,7 +792,7 @@ export class PersonalComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
         + ', ' + elemento.provincia.pais.nombre : elemento;
     } else {
@@ -768,7 +801,7 @@ export class PersonalComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado c
   public displayFc(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento ? 'Si' : 'No';
     } else {
       return elemento;
@@ -776,7 +809,7 @@ export class PersonalComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado a
   public displayFd(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.codigoAfip + ' - ' + elemento.nombre : elemento;
     } else {
       return elemento;
@@ -786,15 +819,15 @@ export class PersonalComponent implements OnInit {
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
     var opcion = this.opcionSeleccionada;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
-    } else if(keycode == 115) {
-      if(opcion < this.opciones[(this.opciones.length-1)].id) {
-        this.seleccionarOpcion(opcion+1, opcion-14);
+    } else if (keycode == 115) {
+      if (opcion < this.opciones[(this.opciones.length - 1)].id) {
+        this.seleccionarOpcion(opcion + 1, opcion - 14);
       } else {
         this.seleccionarOpcion(15, 0);
       }

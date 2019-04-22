@@ -38,9 +38,9 @@
                         <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
                         <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                           [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
-                          <mat-option *ngFor="let item of resultados" [value]="item"
-                            (onSelectionChange)="cambioAutocompletado(item)">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
+                          (optionSelected)="cambioAutocompletado()">
+                          <mat-option *ngFor="let item of resultados" [value]="item">
                             {{item.alias}}
                           </mat-option>
                         </mat-autocomplete>
@@ -247,15 +247,17 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAntiguedadAntAnio" class="tamanio-label">Antiguedad Ant. Años</label>
-                        <input id="idAntiguedadAntAnio" type="number" formControlName="antiguedadAntAnio"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                        <input id="idAntiguedadAntAnio" [textMask]="mascararEnteros(2)" type="text" formControlName="antiguedadAntAnio"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                          placeholder="0">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAntiguedadAntMes" class="tamanio-label">Antiguedad Ant. Meses</label>
-                        <input id="idAntiguedadAntMes" type="number" formControlName="antiguedadAntMes"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                        <input id="idAntiguedadAntMes" [textMask]="mascararEnteros(2)" type="text" formControlName="antiguedadAntMes"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                          placeholder="0">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -288,7 +290,7 @@
                       <div class="form-group has-float-label">
                         <label for="idEsAcompReparto" class="tamanio-label">Es Acompañante en Repartos *</label>
                         <mat-select id="idEsAcompReparto" class="form-control form-control-sm" 
-                          formControlName="esAcompReparto" [compareWith]="compareFn">
+                          formControlName="esAcompReparto">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
@@ -429,22 +431,25 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAporteAdicSegSoc" class="tamanio-label">Aporte Adicional S.S. %</label>
-                        <input id="idAporteAdicSegSoc" type="number" formControlName="aporteAdicSegSoc" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
+                        <input id="idAporteAdicSegSoc" [textMask]="mascararPorcentaje()" type="text" formControlName="aporteAdicSegSoc"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" 
+                          placeholder="% 00.00" (blur)="establecerPorcentaje(formulario.get('aporteAdicSegSoc'), 2)">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAporteDifSegSoc" class="tamanio-label">Aporte Diferencial S.S. %</label>
-                        <input id="idAporteDifSegSoc" type="number" formControlName="aporteDifSegSoc"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
+                        <input id="idAporteDifSegSoc" [textMask]="mascararPorcentaje()" type="text" formControlName="aporteDifSegSoc"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" 
+                          placeholder="% 00.00" (blur)="establecerPorcentaje(formulario.get('aporteDifSegSoc'), 2)">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idContribTareaDifSegSoc" class="tamanio-label">Contribución Tarea Dif. S.S. %</label>
-                        <input id="idContribTareaDifSegSoc" type="number" formControlName="contribTareaDifSegSoc"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
+                        <input id="idContribTareaDifSegSoc" [textMask]="mascararPorcentaje()" type="text" formControlName="contribTareaDifSegSoc"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="% 00.00"
+                          (blur)="establecerPorcentaje(formulario.get('contribTareaDifSegSoc'), 2)">
                       </div>
                     </div>
                   </div>
@@ -472,15 +477,17 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAporteAdicObraSocial" class="tamanio-label">Aporte Adicional O.S.</label>
-                        <input id="idAporteAdicObraSocial" type="number" formControlName="aporteAdicObraSocial"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
+                        <input id="idAporteAdicObraSocial" [textMask]="mascararImporte(8)" type="text" formControlName="aporteAdicObraSocial"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
+                          (blur)="establecerDecimales(formulario.get('aporteAdicObraSocial'), 2)">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idContribAdicObraSocial" class="tamanio-label">Contribución Adicional O.S.</label>
-                        <input id="idContribAdicObraSocial" type="number" formControlName="contribAdicObraSocial"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00">
+                        <input id="idContribAdicObraSocial" [textMask]="mascararImporte(8)" type="text" formControlName="contribAdicObraSocial"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
+                          (blur)="establecerDecimales(formulario.get('contribAdicObraSocial'), 2)">
                       </div>
                     </div>
                   </div>
@@ -514,8 +521,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCuotasPrestamo" class="tamanio-label">Cuotas Préstamo *</label>
-                        <input id="idCuotasPrestamo" type="number" formControlName="cuotasPrestamo"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                        <input id="idCuotasPrestamo" [textMask]="mascararEnteros(2)" type="text" formControlName="cuotasPrestamo"
+                          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura">
                       </div>
                     </div>
                   </div>
@@ -664,32 +671,32 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoMEntrada" class="tamanio-label">Turno Mañana Entrada</label>
-                        <input id="idTurnoMEntrada" type="time" formControlName="turnoMEntrada"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoMEntrada" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoMEntrada"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoMSalida" class="tamanio-label">Turno Mañana Salida</label>
-                        <input id="idTurnoMSalida" type="time" formControlName="turnoMSalida"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoMSalida" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoMSalida"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoTEntrada" class="tamanio-label">Turno Tarde Entrada</label>
-                        <input id="idTurnoTEntrada" type="time" formControlName="turnoTEntrada"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoTEntrada" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoTEntrada"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoNSalida" class="tamanio-label">Turno Tarde Salida</label>
-                        <input id="idTurnoNSalida" type="time" formControlName="turnoNSalida"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoNSalida" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoNSalida"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>
@@ -698,16 +705,16 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoNEntrada" class="tamanio-label">Turno Noche Entrada</label>
-                        <input id="idTurnoNEntrada" type="time" formControlName="turnoNEntrada"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoNEntrada" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoNEntrada"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoNSalida" class="tamanio-label">Turno Noche Salida</label>
-                        <input id="idTurnoNSalida" type="time" formControlName="turnoNSalida"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoNSalida" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoNSalida"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>
@@ -716,32 +723,32 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoSEntrada" class="tamanio-label">Turno Sábado Entrada</label>
-                        <input id="idTurnoSEntrada" type="time" formControlName="turnoSEntrada"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoSEntrada" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoSEntrada"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoSSalida" class="tamanio-label">Turno Sábado Salida</label>
-                        <input id="idTurnoSSalida" type="time" formControlName="turnoSSalida"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoSSalida" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoSSalida"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoDEntrada" class="tamanio-label">Turno Domingo Entrada</label>
-                        <input id="idTurnoDEntrada" type="time" formControlName="turnoDEntrada"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoDEntrada" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoDEntrada"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTurnoDSalida" class="tamanio-label">Turno Domingo Salida</label>
-                        <input id="idTurnoDSalida" type="time" formControlName="turnoDSalida"
-                          autocomplete="off" class="form-control form-control-sm" min="00:00" max="24:00"
+                        <input id="idTurnoDSalida" [textMask]="{mask: mascararHora()}" type="text" formControlName="turnoDSalida"
+                          autocomplete="off" class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
                     </div>

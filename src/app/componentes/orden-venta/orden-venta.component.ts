@@ -83,8 +83,6 @@ export class OrdenVentaComponent implements OnInit {
   public vendedores: Array<any> = [];
   //Define la lista de escalas
   public escalas: Array<any> = [];
-  //Define la mascara de porcentaje
-  public porcentajeMascara: any;
   //Define el estado de tipo tarifa
   public tipoTarifaEstado: boolean = false;
   //Define el id de la tabla escala para las actualizaciones
@@ -160,12 +158,14 @@ export class OrdenVentaComponent implements OnInit {
         })
       }
     });
-    //Obtiene la mascara de porcentaje
-    this.porcentajeMascara = this.appService.mascararPorcentaje();
   }
   //Obtiene la mascara de importe
   public obtenerMascaraImporte(intLimite) {
     return this.appService.mascararImporte(intLimite);
+  }
+  //Obtiene la mascara de porcentaje
+  public mascararPorcentaje() {
+    return this.appService.mascararPorcentaje();
   }
   //Obtiene la mascara de km
   public obtenerMascaraKm(intLimite) {

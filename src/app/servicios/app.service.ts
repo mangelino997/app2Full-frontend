@@ -238,4 +238,8 @@ export class AppService {
     }
     return valor;
   }
+  //Obtiene la mascara de hora-minuto
+  public mascararHora() {
+    return [/[0-2]/, /[0-9]/, ':', /[0-5]/, /[0-9]/, ' hs'];
+  }
 }
