@@ -67,8 +67,8 @@ export class AppService {
       return parseFloat(valor).toFixed(cantidad);
     }
   }
-  //Formatear los enteros (saca las comas en los 'miles')
-  public establecerEnteros(valor, cantidad){
+  //Formatear los enteros (quita las comas en los 'miles')
+  public establecerEnteros(valor) {
     if(valor) {
       valor = valor + '';
       valor = valor.replace(/\,/g, '');

@@ -387,7 +387,7 @@ const appRoutes: Routes = [
   { path: 'recoleccionesadministrar', component: OrdenRecoleccionComponent, canActivate: [GuardiaService] },
   { path: 'logisticaunidadesdenegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
   { path: 'contablecondicionesdeiva', component: AfipCondicionIvaComponent, canActivate: [GuardiaService] },
-  { path: 'categoriasbasico', component: BasicoCategoriaComponent, canActivate: [GuardiaService] }
+  { path: 'categoriasbasicos', component: BasicoCategoriaComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {

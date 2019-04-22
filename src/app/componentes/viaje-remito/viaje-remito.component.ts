@@ -1,22 +1,14 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ViajeRemitoService } from '../../servicios/viaje-remito.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ClienteService } from '../../servicios/cliente.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { TipoComprobanteService } from '../../servicios/tipo-comprobante.service';
-import { AfipCondicionIvaService } from '../../servicios/afip-condicion-iva.service';
-import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
-import { BarrioService } from '../../servicios/barrio.service';
-import { LocalidadService } from '../../servicios/localidad.service';
-import { CobradorService } from '../../servicios/cobrador.service';
-import { ZonaService } from '../../servicios/zona.service';
-import { RubroService } from '../../servicios/rubro.service';
 import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { ClienteEventual } from 'src/app/modelos/clienteEventual';
+import { MatDialog } from '@angular/material';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AforoComponent } from '../aforo/aforo.component';
 import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.component';
@@ -68,7 +60,7 @@ export class ViajeRemitoComponent implements OnInit {
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
     private sucursalServicio: SucursalService, private clienteServicio: ClienteService,
     private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog,
-    private fechaServicio: FechaService) {
+    private fechaServicio: FechaService, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -160,6 +152,28 @@ export class ViajeRemitoComponent implements OnInit {
     this.listarTiposComprobantes();
     //Crea la lista de letras
     this.letras = ['A', 'B', 'C'];
+  }
+  //Establece los enteros
+  public establecerEnteros(formulario): void {
+    let valor = formulario.value;
+    formulario.setValue(this.appService.establecerEnteros(valor));
+  }
+  //Establece los decimales
+  public establecerDecimales(formulario, cantidad): void {
+    let valor = formulario.value;
+    formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+  }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
+    return this.appService.mascararEnteros(intLimite);
+  }
+  //Obtiene la mascara de enteros con separador de miles
+  public mascararEnterosSinDecimales(intLimite) {
+    return this.appService.mascararEnterosSinDecimales(intLimite);
+  }
+  //Obtiene la mascara de importe
+  public mascararEnterosConDecimales(intLimite) {
+    return this.appService.mascararEnterosConDecimales(intLimite);
   }
   //Establece el formulario al seleccionar elemento de autocompletado
   public establecerFormulario(elemento) {
@@ -302,6 +316,7 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    var tipoComprobante = this.formulario.get('tipoComprobante').value;
     var numeroCamion = this.formulario.get('numeroCamion').value;
     var sucursalDestino = this.formulario.get('sucursalDestino').value;
     this.formulario.get('letra').enable();
@@ -314,7 +329,9 @@ export class ViajeRemitoComponent implements OnInit {
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto(numeroCamion, sucursalDestino);
-          this.establecerTipoComprobantePorDefecto();
+          this.formulario.get('tipoComprobante').setValue(tipoComprobante);
+          this.cambioTipoComprobante();
+          // this.establecerTipoComprobantePorDefecto();
           setTimeout(function() {
             document.getElementById('idFecha').focus();
           }, 20);
@@ -334,6 +351,7 @@ export class ViajeRemitoComponent implements OnInit {
         var respuesta = res.json();
         if(respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
+          this.establecerTipoComprobantePorDefecto();
           setTimeout(function() {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -371,8 +389,8 @@ export class ViajeRemitoComponent implements OnInit {
   public cambioTipoComprobante(): void {
     let id = this.formulario.get('tipoComprobante').value.id;
     if(id == 5) {
-      this.formulario.get('letra').setValue('R');
       this.estadoLetra = false;
+      this.formulario.get('letra').setValue('R');
     } else {
       this.estadoLetra = true;
       this.formulario.get('letra').setValue(this.letras[0]);

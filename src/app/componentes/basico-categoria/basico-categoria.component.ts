@@ -1,78 +1,77 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
-import { Categoria } from 'src/app/modelos/categoria';
 import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.service';
 import { BasicoCategoria } from 'src/app/modelos/basicoCategoria';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { MesService } from 'src/app/servicios/mes.service';
 import { CategoriaService } from 'src/app/servicios/categoria.service';
+
 @Component({
   selector: 'app-basico-categoria',
   templateUrl: './basico-categoria.component.html',
   styleUrls: ['./basico-categoria.component.css']
 })
 export class BasicoCategoriaComponent implements OnInit {
-//Define la pestania activa
-public activeLink:any = null;
-//Define el indice seleccionado de pestania
-public indiceSeleccionado:number = null;
-//Define la pestania actual seleccionada
-public pestaniaActual:string = null;
-//Define si mostrar el autocompletado
-public mostrarAutocompletado:boolean = null;
-//Define si el campo es de solo lectura
-public soloLectura:boolean = false;
-//Define si mostrar el boton
-public mostrarBoton:boolean = null;
-//Define una lista para guardar las categorias
-public categorias:Array<any> = [];
-//Define una lista de meses
-public meses:Array<any> = [];
-//Define una lista de anios
-public anios:Array<any> = [];
-//Define la lista de pestanias
-public pestanias:Array<any> = [];
-//Define un formulario para validaciones de campos
-public formulario:FormGroup;
-//Define la lista completa de registros
-public listaCompleta=new MatTableDataSource([]);
-//Define el autocompletado
-public autocompletado:FormControl = new FormControl();
-//Define la lista de resultados de busqueda
-public resultados:Array<any> = [];
-//Define las columnas de la tabla
-public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', 'mod'];
-//Define la matSort
-@ViewChild(MatSort) sort: MatSort;
-//Constructor
+  //Define la pestania activa
+  public activeLink: any = null;
+  //Define el indice seleccionado de pestania
+  public indiceSeleccionado: number = null;
+  //Define la pestania actual seleccionada
+  public pestaniaActual: string = null;
+  //Define si mostrar el autocompletado
+  public mostrarAutocompletado: boolean = null;
+  //Define si el campo es de solo lectura
+  public soloLectura: boolean = false;
+  //Define si mostrar el boton
+  public mostrarBoton: boolean = null;
+  //Define una lista para guardar las categorias
+  public categorias: Array<any> = [];
+  //Define una lista de meses
+  public meses: Array<any> = [];
+  //Define una lista de anios
+  public anios: Array<any> = [];
+  //Define la lista de pestanias
+  public pestanias: Array<any> = [];
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define el autocompletado
+  public autocompletado: FormControl = new FormControl();
+  //Define la lista de resultados de busqueda
+  public resultados: Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Constructor
   constructor(private servicio: BasicoCategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService, private basicoCategoria: BasicoCategoria,
-    private anio: FechaService, private mes: MesService, private categoriaService: CategoriaService) { 
-       //Obtiene la lista de pestania por rol y subopcion
+    private anio: FechaService, private mes: MesService, private categoriaService: CategoriaService) {
+    //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     this.servicio.listaCompleta.subscribe(res => {
       this.listaCompleta = res;
     });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if (typeof data == 'string') {
         this.servicio.listarPorCategoriaNombre(data).subscribe(res => {
-          console.log(res);
           this.resultados = res;
         })
       }
@@ -94,28 +93,25 @@ public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', '
     this.listar();
   }
   //Obtiene la lista de categorias
-  public listarCategorias(){
+  public listarCategorias() {
     this.categoriaService.listar().subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.categorias = res.json();
       }
     );
   }
   //Obtiene la lista de meses
-  private listarMeses(){
+  private listarMeses() {
     this.mes.listar().subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.meses = res.json();
       }
     );
   }
   //Obtiene la lista de años
-  private listarAnios(){
+  private listarAnios() {
     this.anio.listarAnios().subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.anios = res.json();
       }
     );
@@ -139,7 +135,7 @@ public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', '
     this.formulario.reset();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -206,9 +202,9 @@ public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', '
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idCategoria').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -216,7 +212,7 @@ public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', '
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11002) {
+        if (respuesta.codigo == 11002) {
           document.getElementById("idCategoria").classList.add('label-error');
           document.getElementById("idCategoria").classList.add('is-invalid');
           document.getElementById("idCategoria").focus();
@@ -231,9 +227,9 @@ public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', '
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -241,7 +237,7 @@ public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', '
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11002) {
+        if (respuesta.codigo == 11002) {
           document.getElementById("idCategoria").classList.add('label-error');
           document.getElementById("idCategoria").classList.add('is-invalid');
           document.getElementById("idCategoria").focus();
@@ -264,7 +260,7 @@ public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', '
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {
     let valor = formulario.value;
-    if(valor != '') {
+    if (valor != '') {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
@@ -292,15 +288,15 @@ public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', '
     return this.appService.mascararImporte(intLimite);
   }
   //Setear el json del mes correspoendiente (solo para mostrarlo en el consultar y actualizar)
-  private setMes(idMes){
-    for(let i=0; i< this.meses.length; i++){
-      if(this.meses[i].id == idMes)
+  private setMes(idMes) {
+    for (let i = 0; i < this.meses.length; i++) {
+      if (this.meses[i].id == idMes)
         this.formulario.get('mes').setValue(this.meses[i]);
     }
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.categoria.nombre ? elemento.categoria.nombre : elemento;
     } else {
       return elemento;
@@ -309,16 +305,16 @@ public columnas:string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', '
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }

@@ -42,8 +42,8 @@
             <!-- Numero de Camion -->
             <div class="form-group has-float-label">
               <label for="idNumeroCamion" class="tamanio-label">Número de Camión *</label>
-              <input id="idNumeroCamion" type="number" formControlName="numeroCamion" autocomplete="off" 
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNumeroCamion" [textMask]="mascararEnteros(3)" type="text" formControlName="numeroCamion" 
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
@@ -75,9 +75,9 @@
             <!-- Punto de Venta -->
             <div class="form-group has-float-label">
               <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
-              <input id="idPuntoVenta" type="number" formControlName="puntoVenta" 
-                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
-                (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '000', -4)">
+              <input id="idPuntoVenta" [textMask]="mascararEnteros(5)" type="text" formControlName="puntoVenta" 
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)">
             </div>
           </div>
           <div class="col-md-3">
@@ -102,8 +102,8 @@
             <!-- Numero de Comprobante -->
             <div class="form-group has-float-label">
               <label for="idNumero" class="tamanio-label">N° Comprobante *</label>
-              <input id="idNumero" type="number" formControlName="numero" 
-                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
+              <input id="idNumero" [textMask]="mascararEnteros(8)" type="text" formControlName="numero" 
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
                 (blur)="establecerCerosIzq(formulario.get('numero'), '0000000', -8)">
             </div>
           </div>
@@ -147,16 +147,18 @@
             <!-- Kilos Efectivo -->
             <div class="form-group has-float-label">
               <label for="idKilosEfectivo" class="tamanio-label">Kg Efectivo</label>
-              <input id="idKilosEfectivo" type="number" formControlName="kilosEfectivo" autocomplete="off" 
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idKilosEfectivo" [textMask]="mascararEnterosConDecimales(8)" type="text" formControlName="kilosEfectivo" 
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                (blur)="establecerDecimales(formulario.get('kilosEfectivo'), 2)" placeholder="0.00">
             </div>
           </div>
           <div class="col-md-3 input-button">
             <!-- Kilos Aforado -->
             <div class="form-group has-float-label">
               <label for="idKilosAforado" class="tamanio-label">Kg Aforado</label>
-              <input id="idKilosAforado" type="number" formControlName="kilosAforado" autocomplete="off" 
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idKilosAforado" [textMask]="mascararEnterosConDecimales(8)" type="text" formControlName="kilosAforado" 
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                (blur)="establecerDecimales(formulario.get('kilosAforado'), 2)" placeholder="0.00">
             </div>
           </div>
           <div class="col-md-1 button-input">
@@ -168,25 +170,27 @@
             <!-- Bultos -->
             <div class="form-group has-float-label">
               <label for="idBultos" class="tamanio-label">Bultos *</label>
-              <input id="idBultos" type="number" formControlName="bultos" 
-                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idBultos" [textMask]="mascararEnterosSinDecimales(6)" type="text" formControlName="bultos" 
+                autocomplete="off" class="form-control form-control-sm number-right" 
+                [readonly]="soloLectura" placeholder="0" (blur)="establecerEnteros(formulario.get('bultos'))">
             </div>
           </div>
           <div class="col-md-4">
             <!-- M3 -->
             <div class="form-group has-float-label">
               <label for="idM3" class="tamanio-label">M3</label>
-              <input id="idM3" type="number" formControlName="m3" 
-                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idM3" [textMask]="mascararEnterosConDecimales(3)" type="text" formControlName="m3" 
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                (blur)="establecerDecimales(formulario.get('m3'), 2)" placeholder="0.00">
             </div>
           </div>
           <div class="col-md-4">
             <!-- Valor Declarado -->
             <div class="form-group has-float-label">
               <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
-              <input id="idValorDeclarado" type="number" formControlName="valorDeclarado" 
-                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
-                (blur)="setDecimales($event, 2)">
+              <input id="idValorDeclarado" [textMask]="mascararEnterosConDecimales(10)" type="text" 
+                formControlName="valorDeclarado" autocomplete="off" class="form-control form-control-sm number-right" 
+                [readonly]="soloLectura" (blur)="establecerDecimales(formulario.get('valorDeclarado'), 2)" placeholder="0.00">
             </div>
           </div>
         </div>
@@ -195,18 +199,18 @@
             <!-- Flete por Retiro -->
             <div class="form-group has-float-label">
               <label for="idImporteRetiro" class="tamanio-label">Flete por Retiro</label>
-              <input id="idImporteRetiro" type="number" formControlName="importeRetiro" 
-                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
-                (blur)="setDecimales($event, 2)">
+              <input id="idImporteRetiro" [textMask]="mascararEnterosConDecimales(10)" type="text" 
+                formControlName="importeRetiro" autocomplete="off" class="form-control form-control-sm number-right" 
+                [readonly]="soloLectura" (blur)="establecerDecimales(formulario.get('importeRetiro'), 2)" placeholder="0.00">
             </div>
           </div>
           <div class="col-md-4">
             <!-- Flete por Entrega -->
             <div class="form-group has-float-label">
               <label for="idImporteEntrega" class="tamanio-label">Flete por Entrega</label>
-              <input id="idImporteEntrega" type="number" formControlName="importeEntrega" 
-                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
-                (blur)="setDecimales($event, 2)">
+              <input id="idImporteEntrega" [textMask]="mascararEnterosConDecimales(10)" type="text" 
+                formControlName="importeEntrega" autocomplete="off" class="form-control form-control-sm number-right" 
+                [readonly]="soloLectura" (blur)="establecerDecimales(formulario.get('importeEntrega'), 2)" placeholder="0.00">
             </div>
           </div>
         </div>

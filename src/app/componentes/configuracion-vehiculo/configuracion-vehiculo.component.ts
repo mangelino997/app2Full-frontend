@@ -285,7 +285,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public desenmascararEnteros(formulario, cantidad) {
     let valor = formulario.value;
     if(valor != '') {
-      formulario.setValue(this.appService.establecerEnteros(valor, cantidad));
+      formulario.setValue(this.appService.establecerEnteros(valor));
     }
   }
   //Formatea el numero a x decimales
