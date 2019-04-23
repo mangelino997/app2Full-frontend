@@ -160,10 +160,12 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (data && typeof data == 'string' && data.length > 3) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
-        })
+        });
+      } else {
+        this.resultadosLocalidades = [];
       }
     })
     //Autocompletado Localidad Nacimiento - Buscar por nombre
@@ -599,6 +601,7 @@ export class PersonalComponent implements OnInit {
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto();
+          this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
           setTimeout(function () {
             document.getElementById('idApellido').focus();
           }, 20);
