@@ -59,9 +59,9 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante</label>
-              <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
-                [compareWith]="compareFn" (selectionChange)="establecerCodigoAfip()">
-                <mat-option *ngFor="let itemTipoComprobante of tipoComprobante" [value]="itemTipoComprobante">
+              <mat-select id="idTipoComprobante" class="form-control form-control-sm" [formControl]="tipoComprobante"
+                [compareWith]="compareFn" (selectionChange)="obtenerAfipComprobantes()">
+                <mat-option *ngFor="let itemTipoComprobante of tipoComprobantes" [value]="itemTipoComprobante">
                   {{itemTipoComprobante.nombre}}
                 </mat-option>
               </mat-select>
@@ -70,9 +70,9 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCodigoAfip" class="tamanio-label">Código de Afip *</label>
-              <mat-select id="idCodigoAfip" class="form-control form-control-sm" formControlName="codigoAfip"
-                [compareWith]="compareFa">
-                <mat-option *ngFor="let itemAfipComprobante of listaAfipComprobante" [value]="itemAfipComprobante">
+              <mat-select id="idCodigoAfip" class="form-control form-control-sm" formControlName="afipComprobante"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let itemAfipComprobante of afipComprobantes" [value]="itemAfipComprobante">
                   {{itemAfipComprobante.codigoAfip}} - {{itemAfipComprobante.letra}}
                 </mat-option>
               </mat-select>
@@ -151,7 +151,7 @@
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

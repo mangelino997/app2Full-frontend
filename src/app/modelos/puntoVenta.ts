@@ -11,19 +11,17 @@ export class PuntoVenta {
             version: new FormControl(),
             sucursal: new FormControl('', Validators.required),
             empresa: new FormControl('', Validators.required),
-            puntoVenta: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(5)]),
+            puntoVenta: new FormControl('', [Validators.required, Validators.maxLength(5)]),
             fe: new FormControl('', Validators.required),
-            tipoComprobante: new FormControl(),
-            codigoAfip: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(3)]),
             feEnLinea: new FormControl('', Validators.required),
             feCAEA: new FormControl('', Validators.required),
             esCuentaOrden: new FormControl('', Validators.required),
             ultimoNumero: new FormControl(),
-            copias: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(3)]),
+            copias: new FormControl('', [Validators.required, Validators.maxLength(3)]),
             imprime: new FormControl('', Validators.required),
             estaHabilitado: new FormControl('', Validators.required),
             porDefecto: new FormControl(),
-            usointerno: new FormControl()
+            afipComprobante: new FormControl('', Validators.required)
         })
     }
 }
