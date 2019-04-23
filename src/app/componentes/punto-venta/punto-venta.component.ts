@@ -122,7 +122,7 @@ export class PuntoVentaComponent implements OnInit {
     );
   }
   //Obtiene el listado de tipos de comprobantes
-  private listarTiposComprobantes(){
+  private listarTiposComprobantes() {
     this.tipoComprobanteService.listarPorNumeracionPuntoVentaTrue().subscribe(
       res => {
         this.tipoComprobante = res.json();

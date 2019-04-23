@@ -598,6 +598,7 @@ export class PersonalComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
+          this.establecerValoresPorDefecto();
           setTimeout(function () {
             document.getElementById('idApellido').focus();
           }, 20);

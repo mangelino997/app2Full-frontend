@@ -194,6 +194,8 @@ export class ViajeComponent implements OnInit {
     this.usuarioNombre.setValue(usuario.nombre);
     this.tipoViaje.setValue(true);
     this.formularioViajePropio.get('esRemolquePropio').setValue(true);
+    let sucursal = this.appComponent.getUsuario().sucursal;
+    this.formularioViajePropio.get('sucursal').setValue(sucursal);
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajePropio.get('fecha').setValue(res.json());

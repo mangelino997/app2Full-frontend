@@ -70,10 +70,9 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCodigoAfip" class="tamanio-label">Código de Afip *</label>
-              <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="codigoAfip"
-                [compareWith]="compareFn">
-                <mat-option *ngFor="let itemAfipComprobante of listaAfipComprobante"
-                  [value]="itemAfipComprobante.codigoAfip">
+              <mat-select id="idCodigoAfip" class="form-control form-control-sm" formControlName="codigoAfip"
+                [compareWith]="compareFa">
+                <mat-option *ngFor="let itemAfipComprobante of listaAfipComprobante" [value]="itemAfipComprobante">
                   {{itemAfipComprobante.codigoAfip}} - {{itemAfipComprobante.letra}}
                 </mat-option>
               </mat-select>
@@ -84,7 +83,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idFe" class="tamanio-label">Es Comprobante Electrónico *</label>
-              <mat-select id="idFe" class="form-control form-control-sm" formControlName="fe" [compareWith]="compareFn">
+              <mat-select id="idFe" class="form-control form-control-sm" formControlName="fe">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -93,8 +92,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idFeEnLinea" class="tamanio-label">Es Punto de Venta en Línea *</label>
-              <mat-select id="idFeEnLinea" class="form-control form-control-sm" formControlName="feEnLinea"
-                [compareWith]="compareFn">
+              <mat-select id="idFeEnLinea" class="form-control form-control-sm" formControlName="feEnLinea">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -103,8 +101,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idFeCAEA" class="tamanio-label">Es CAE Anticipado *</label>
-              <mat-select id="idFeCAEA" class="form-control form-control-sm" formControlName="feCAEA"
-                [compareWith]="compareFn">
+              <mat-select id="idFeCAEA" class="form-control form-control-sm" formControlName="feCAEA">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -113,8 +110,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCuentaOrden" class="tamanio-label">Es por Cuenta y Orden *</label>
-              <mat-select id="idCuentaOrden" class="form-control form-control-sm" formControlName="esCuentaOrden"
-                [compareWith]="compareFn">
+              <mat-select id="idCuentaOrden" class="form-control form-control-sm" formControlName="esCuentaOrden">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -139,8 +135,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idImprime" class="tamanio-label">Imprime *</label>
-              <mat-select id="idImprime" class="form-control form-control-sm" formControlName="imprime"
-                [compareWith]="compareFn">
+              <mat-select id="idImprime" class="form-control form-control-sm" formControlName="imprime">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -149,8 +144,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idEstaHabilitado" class="tamanio-label">Habilitado *</label>
-              <mat-select id="idEstaHabilitado" class="form-control form-control-sm" formControlName="estaHabilitado"
-                [compareWith]="compareFn">
+              <mat-select id="idEstaHabilitado" class="form-control form-control-sm" formControlName="estaHabilitado">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
