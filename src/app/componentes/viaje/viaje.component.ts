@@ -217,6 +217,10 @@ export class ViajeComponent implements OnInit {
     this.viajePeajeComponente.vaciarListas();
     this.viajeTramoComponente.vaciarListas();
   }
+  //Establece el tipo de viaje
+  public establecerTipoViaje(): void {
+    this.viajeTramoComponente.establecerTipoViaje(this.tipoViaje.value);
+  }
   //Obtiene el listado de sucursales
   private listarSucursales() {
     this.sucursalServicio.listar().subscribe(

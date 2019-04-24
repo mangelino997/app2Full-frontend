@@ -230,11 +230,11 @@ export class AppService {
     return mascara;
   }
   //Desenmascara el km
-  public desenmascararKm(valor, cantidad) {
+  public desenmascararKm(valor) {
     if(valor) {
+      valor = valor + "";
       valor = valor.replace(' km', '');
       valor = valor.replace(/\,/g, '');
-      valor = parseFloat(valor).toFixed(cantidad);
     }
     return valor;
   }

@@ -1,11 +1,13 @@
-import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ViajePropioInsumo } from 'src/app/modelos/viajePropioInsumo';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material';
+import { ObservacionesDialogo } from '../observaciones-dialogo.component';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-viaje-insumo',
@@ -32,7 +34,8 @@ export class ViajeInsumoComponent implements OnInit {
   //Constructor
   constructor(private viajePropioInsumoModelo: ViajePropioInsumo, private proveedorServicio: ProveedorService,
     private fechaServicio: FechaService, private appComponent: AppComponent, 
-    private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog) { }
+    private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog,
+    private appServicio: AppService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio insumo
@@ -52,7 +55,7 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Obtiene el listado de insumos
   private listarInsumos() {
-    this.insumoProductoServicio.listar().subscribe(
+    this.insumoProductoServicio.listarInsumos().subscribe(
       res => {
         this.insumos = res.json();
       },
@@ -69,7 +72,6 @@ export class ViajeInsumoComponent implements OnInit {
       this.formularioViajePropioInsumo.get('fecha').setValue(res.json());
     })
     this.formularioViajePropioInsumo.get('cantidad').setValue(valor);
-    this.formularioViajePropioInsumo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
     this.formularioViajePropioInsumo.get('importe').setValue(this.appComponent.establecerCeros(valor));
     if(opcion == 1) {
       this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
@@ -77,14 +79,20 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Establece el precio unitario
   public establecerPrecioUnitario(formulario, elemento): void {
-    formulario.get('precioUnitario').setValue((formulario.get(elemento).value.precioUnitarioVenta));
-    this.establecerCeros(formulario.get('precioUnitario'));
+    let precioUnitarioVenta = formulario.get(elemento).value.precioUnitarioVenta;
+    if(precioUnitarioVenta != 0) {
+      formulario.get('precioUnitario').setValue(precioUnitarioVenta);
+      this.establecerCeros(formulario.get('precioUnitario'));
+      formulario.get('precioUnitario').disable();
+    } else {
+      formulario.get('precioUnitario').enable();
+      formulario.get('precioUnitario').reset();
+    }
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
-    formulario.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(2));
     if(cantidad != null && precioUnitario != null) {
       let importe = cantidad * precioUnitario;
       formulario.get('importe').setValue(importe);
@@ -98,7 +106,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajePropioInsumo.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaInsumos.push(this.formularioViajePropioInsumo.value);
     this.formularioViajePropioInsumo.reset();
-    this.calcularImporteTotal();
+    this.formularioViajePropioInsumo.value.id == null ? this.calcularImporteTotalA() : this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
@@ -108,7 +116,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.listaInsumos[this.indiceInsumo] = this.formularioViajePropioInsumo.value;
     this.btnInsumo = true;
     this.formularioViajePropioInsumo.reset();
-    this.calcularImporteTotal();
+    this.formularioViajePropioInsumo.value.id == null ? this.calcularImporteTotalA() : this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
@@ -121,20 +129,33 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Elimina una orden insumo de la tabla por indice
   public eliminarInsumo(indice, elemento): void {
-    this.listaInsumos[indice].id = elemento.id*(-1);
-    this.calcularImporteTotal();
+    if(elemento.id == null) {
+      this.listaInsumos.splice(indice, 1);
+      this.calcularImporteTotalA();
+    } else {
+      this.listaInsumos[indice].id = elemento.id*(-1);
+      this.calcularImporteTotal();
+    }
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
   }
-  //Calcula el importe total
+  //Calcula el importe total al agregar
+  private calcularImporteTotalA(): void {
+    let total = 0;
+    this.listaInsumos.forEach(item => {
+      total += parseFloat(item.importe);
+    })
+    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
+  }
+  //Calcula el importe total al actualizar
   private calcularImporteTotal(): void {
     let total = 0;
     this.listaInsumos.forEach(item => {
       if(item.id != -1) {
-        total += item.importe;
+        total += parseFloat(item.importe);
       }
     })
-    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
@@ -217,33 +238,5 @@ export class ViajeInsumoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {});
-  }
-}
-//Componente ObservacionesDialogo
-@Component({
-  selector: 'observaciones-dialogo',
-  templateUrl: '../observaciones-dialogo.component.html'
-})
-export class ObservacionesDialogo {
-  //Define el tema
-  public tema:string;
-  //Define el formulario
-  public formulario:FormGroup;
-  //Define la observacion
-  public observaciones:string;
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<ObservacionesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    //Establece el formulario
-    this.formulario = new FormGroup({
-      observaciones: new FormControl()
-    });
-    //Establece las observaciones
-    this.formulario.get('observaciones').setValue(this.data.elemento);
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }

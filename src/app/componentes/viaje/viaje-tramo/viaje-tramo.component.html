@@ -7,21 +7,28 @@
                     autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div class="form-group has-float-label">
                 <label for="idTramo" class="tamanio-label">Tramo *</label>
                 <input id="idTramo" class="form-control form-control-sm" type="text"
                     matInput [formControl]="formularioViajePropioTramo.get('tramo')"
                     [matAutocomplete]="autoTramo" autocomplete="off" [readonly]="soloLectura">
-                <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                    (optionSelected)="establecerKm()">
                     <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">
                         {{itemTramo.origen.nombre}},
                         {{itemTramo.origen.provincia.nombre}} ->
                         {{itemTramo.destino.nombre}},
                         {{itemTramo.destino.provincia.nombre}}
-                        ({{itemTramo.km}}km)
                     </mat-option>
                 </mat-autocomplete>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <div class="form-group has-float-label">
+                <label for="idKm" class="tamanio-label">Km</label>
+                <input id="idKm" [textMask]="mascararKm(6)" type="text" formControlName="km"
+                    autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true">
             </div>
         </div>
         <div class="col-md-3">
@@ -39,8 +46,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-group has-float-label">
-                <label for="idTramoUnidadNegocio" class="tamanio-label">Unidad de
-                    Negocio *</label>
+                <label for="idTramoUnidadNegocio" class="tamanio-label">Unidad de Negocio *</label>
                 <mat-select id="idTramoUnidadNegocio" class="form-control form-control-sm"
                     formControlName="viajeUnidadNegocio" [compareWith]="compareFn">
                     <mat-option *ngFor="let itemUnidadNegocio of unidadesNegocios"
@@ -52,8 +58,18 @@
         </div>
         <div class="col-md-3">
             <div class="form-group has-float-label">
-                <label for="idTramoViajeTipoCarga" class="tamanio-label">Tipo de Carga
-                    *</label>
+                <label for="idTramoTipoViaje" class="tamanio-label">Modalidad de Carga *</label>
+                <mat-select id="idTramoTipoViaje" class="form-control form-control-sm"
+                    formControlName="viajeTipo" [compareWith]="compareFn" (selectionChange)="establecerEstadoTipoCarga()">
+                    <mat-option *ngFor="let itemViajeTipo of viajesTipos" [value]="itemViajeTipo">
+                        {{itemViajeTipo.nombre}}
+                    </mat-option>
+                </mat-select>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+                <label for="idTramoViajeTipoCarga" class="tamanio-label">Tipo de Carga *</label>
                 <mat-select id="idTramoViajeTipoCarga" class="form-control form-control-sm"
                     formControlName="viajeTipoCarga" [compareWith]="compareFn">
                     <mat-option *ngFor="let itemViajeTipoCarga of viajesTiposCargas"
@@ -65,20 +81,9 @@
         </div>
         <div class="col-md-3">
             <div class="form-group has-float-label">
-                <label for="idTramoTipoViaje" class="tamanio-label">Tipo de Viaje *</label>
-                <mat-select id="idTramoTipoViaje" class="form-control form-control-sm"
-                    formControlName="viajeTipo" [compareWith]="compareFn">
-                    <mat-option *ngFor="let itemViajeTipo of viajesTipos" [value]="itemViajeTipo">
-                        {{itemViajeTipo.nombre}}
-                    </mat-option>
-                </mat-select>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group has-float-label">
                 <label for="idTramoViajeTarifa" class="tamanio-label">Tarifa *</label>
                 <mat-select id="idTramoViajeTarifa" class="form-control form-control-sm"
-                    formControlName="viajeTarifa" [compareWith]="compareFn">
+                    formControlName="viajeTarifa" [compareWith]="compareFn" (optionSelected)="establecerTipoViaje(tipoViaje)">
                     <mat-option *ngFor="let itemViajeTarifa of viajesTarifas" [value]="itemViajeTarifa">
                         {{itemViajeTarifa.nombre}}
                     </mat-option>
@@ -89,7 +94,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-group has-float-label">
-                <label for="idTramoCantidad" class="tamanio-label">Cantidad/km *</label>
+                <label for="idTramoCantidad" class="tamanio-label">Cantidad *</label>
                 <input id="idTramoCantidad" type="number" formControlName="cantidad"
                     autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura || estadoTarifa()"
                     (blur)="calcularImporte(formularioViajePropioTramo)">
@@ -97,8 +102,7 @@
         </div>
         <div class="col-md-3">
             <div class="form-group has-float-label">
-                <label for="idTramoPrecioUnitario" class="tamanio-label">Precio
-                    Unitario($)*</label>
+                <label for="idTramoPrecioUnitario" class="tamanio-label">Precio Unitario($)*</label>
                 <input id="idTramoPrecioUnitario" type="number" formControlName="precioUnitario"
                     autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura || estadoTarifa()"
                     (blur)="calcularImporte(formularioViajePropioTramo)">

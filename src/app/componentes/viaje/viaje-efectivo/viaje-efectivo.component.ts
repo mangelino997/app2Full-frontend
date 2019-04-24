@@ -1,10 +1,12 @@
-import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { ViajePropioEfectivo } from 'src/app/modelos/viajePropioEfectivo';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog } from '@angular/material';
+import { ObservacionesDialogo } from '../observaciones-dialogo.component';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-viaje-efectivo',
@@ -30,7 +32,8 @@ export class ViajeEfectivoComponent implements OnInit {
   public btnEfectivo:boolean = true;
   //Constructor
   constructor(private viajePropioEfectivoModelo: ViajePropioEfectivo, private empresaServicio: EmpresaService,
-    private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog) { }
+    private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog,
+    private appServicio: AppService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio efectivo
@@ -72,7 +75,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajePropioEfectivo.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaEfectivos.push(this.formularioViajePropioEfectivo.value);
     this.formularioViajePropioEfectivo.reset();
-    this.calcularImporteTotal();
+    this.formularioViajePropioEfectivo.value.id == null ? this.calcularImporteTotalA : this.calcularImporteTotal;
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
@@ -82,7 +85,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.listaEfectivos[this.indiceEfectivo] = this.formularioViajePropioEfectivo.value;
     this.btnEfectivo = true;
     this.formularioViajePropioEfectivo.reset();
-    this.calcularImporteTotal();
+    this.formularioViajePropioEfectivo.value.id == null ? this.calcularImporteTotalA : this.calcularImporteTotal;
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
@@ -92,23 +95,37 @@ export class ViajeEfectivoComponent implements OnInit {
     this.indiceEfectivo = indice;
     this.btnEfectivo = false;
     this.formularioViajePropioEfectivo.patchValue(this.listaEfectivos[indice]);
+    this.formularioViajePropioEfectivo.get('importeTotal').setValue(0);
   }
   //Elimina un  efectivo de la tabla por indice
   public eliminarEfectivo(indice, elemento): void {
-    this.listaEfectivos[indice].id = elemento.id*(-1);
-    this.calcularImporteTotal();
+    if(elemento.id == null) {
+      this.listaEfectivos.splice(indice, 1);
+      this.calcularImporteTotalA();
+    } else {
+      this.listaEfectivos[indice].id = elemento.id*(-1);
+      this.calcularImporteTotal();
+    }
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
   }
-  //Calcula el importe total
+  //Calcula el importe total para agregar
+  private calcularImporteTotalA(): void {
+    let total = 0;
+    this.listaEfectivos.forEach(item => {
+      total += parseFloat(item.importe);
+    });
+    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
+  }
+  //Calcula el importe total para actualizar
   private calcularImporteTotal(): void {
     let total = 0;
     this.listaEfectivos.forEach(item => {
       if(item.id != -1) {
-        total += item.importe;
+        total += parseFloat(item.importe);
       }
-    })
-    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    });
+    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
@@ -183,33 +200,5 @@ export class ViajeEfectivoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {});
-  }
-}
-//Componente ObservacionesDialogo
-@Component({
-  selector: 'observaciones-dialogo',
-  templateUrl: '../observaciones-dialogo.component.html'
-})
-export class ObservacionesDialogo {
-  //Define el tema
-  public tema:string;
-  //Define el formulario
-  public formulario:FormGroup;
-  //Define la observacion
-  public observaciones:string;
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<ObservacionesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    //Establece el formulario
-    this.formulario = new FormGroup({
-      observaciones: new FormControl()
-    });
-    //Establece las observaciones
-    this.formulario.get('observaciones').setValue(this.data.elemento);
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }

@@ -1,11 +1,12 @@
-import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { ViajePropioCombustible } from 'src/app/modelos/viajePropioCombustible';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog } from '@angular/material';
+import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 
 @Component({
   selector: 'app-viaje-combustible',
@@ -67,7 +68,7 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Obtiene el listado de insumos
   private listarInsumos() {
-    this.insumoProductoServicio.listar().subscribe(
+    this.insumoProductoServicio.listarCombustibles().subscribe(
       res => {
         this.insumos = res.json();
       },
@@ -80,7 +81,6 @@ export class ViajeCombustibleComponent implements OnInit {
   public calcularImporte(formulario): void {
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
-    formulario.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(2));
     if(cantidad != null && precioUnitario != null) {
       let importe = cantidad * precioUnitario;
       formulario.get('importe').setValue(importe);
@@ -89,8 +89,15 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Establece el precio unitario
   public establecerPrecioUnitario(formulario, elemento): void {
-    formulario.get('precioUnitario').setValue((formulario.get(elemento).value.precioUnitarioVenta));
-    this.establecerCeros(formulario.get('precioUnitario'));
+    let precioUnitarioVenta = parseFloat(formulario.get(elemento).value.precioUnitarioVenta);
+    if(precioUnitarioVenta != 0) {
+      formulario.get('precioUnitario').setValue(precioUnitarioVenta);
+      this.establecerCeros(formulario.get('precioUnitario'));
+      formulario.get('precioUnitario').disable();
+    } else {
+      formulario.get('precioUnitario').enable();
+      formulario.get('precioUnitario').reset();
+    }
   }
   //Agrega datos a la tabla de combustibles
   public agregarCombustible(): void {
@@ -99,7 +106,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajePropioCombustible.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaCombustibles.push(this.formularioViajePropioCombustible.value);
     this.formularioViajePropioCombustible.reset();
-    this.calcularTotalCombustibleYUrea();
+    this.formularioViajePropioCombustible.value.id == null ? this.calcularTotalCombustibleYUreaA() : this.calcularTotalCombustibleYUrea();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
@@ -109,7 +116,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listaCombustibles[this.indiceCombustible] = this.formularioViajePropioCombustible.value;
     this.btnCombustible = true;
     this.formularioViajePropioCombustible.reset();
-    this.calcularTotalCombustibleYUrea();
+    this.formularioViajePropioCombustible.value.id == null ? this.calcularTotalCombustibleYUreaA() : this.calcularTotalCombustibleYUrea();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
@@ -122,10 +129,29 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Elimina un combustible de la tabla por indice
   public eliminarCombustible(indice, elemento): void {
-    this.listaCombustibles[indice].id = elemento.id*(-1);
-    this.calcularTotalCombustibleYUrea();
+    if(elemento.id == null) {
+      this.listaCombustibles.splice(indice, 1);
+      this.calcularTotalCombustibleYUreaA();
+    } else {
+      this.listaCombustibles[indice].id = elemento.id*(-1);
+      this.calcularTotalCombustibleYUrea();
+    }
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
+  }
+  //Calcula el total de combustible y el total de urea
+  private calcularTotalCombustibleYUreaA(): void {
+    let totalCombustible = 0;
+    let totalUrea = 0;
+    this.listaCombustibles.forEach(item => {
+      if (item.insumo.id == 1) {
+        totalCombustible += item.cantidad;
+      } else if (item.insumo.id == 3) {
+        totalUrea += item.cantidad;
+      }
+    })
+    this.formularioViajePropioCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
+    this.formularioViajePropioCombustible.get('totalUrea').setValue(totalUrea.toFixed(2));
   }
   //Calcula el total de combustible y el total de urea
   private calcularTotalCombustibleYUrea(): void {
@@ -224,33 +250,5 @@ export class ViajeCombustibleComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {});
-  }
-}
-//Componente ObservacionesDialogo
-@Component({
-  selector: 'observaciones-dialogo',
-  templateUrl: '../observaciones-dialogo.component.html'
-})
-export class ObservacionesDialogo {
-  //Define el tema
-  public tema:string;
-  //Define el formulario
-  public formulario:FormGroup;
-  //Define la observacion
-  public observaciones:string;
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<ObservacionesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    //Establece el formulario
-    this.formulario = new FormGroup({
-      observaciones: new FormControl()
-    });
-    //Establece las observaciones
-    this.formulario.get('observaciones').setValue(this.data.elemento);
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }

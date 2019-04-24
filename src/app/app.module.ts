@@ -260,7 +260,7 @@ import { RepartoEntranteComponent } from './componentes/reparto-entrante/reparto
 import { VentaConceptoComponent } from './componentes/venta-concepto/venta-concepto.component';
 import { ViajeUnidadNegocioComponent } from './componentes/viaje-unidad-negocio/viaje-unidad-negocio.component';
 import { OpcionComponent } from './componentes/opcion/opcion.component';
-import { ViajeTramoComponent, DadorDestinatarioDialogo, DadorDestTablaDialogo, ObservacionesDialogo } from './componentes/viaje/viaje-tramo/viaje-tramo.component';
+import { ViajeTramoComponent, DadorDestinatarioDialogo, DadorDestTablaDialogo } from './componentes/viaje/viaje-tramo/viaje-tramo.component';
 import { ViajeCombustibleComponent } from './componentes/viaje/viaje-combustible/viaje-combustible.component';
 import { ViajeEfectivoComponent } from './componentes/viaje/viaje-efectivo/viaje-efectivo.component';
 import { ViajeInsumoComponent } from './componentes/viaje/viaje-insumo/viaje-insumo.component';
@@ -285,6 +285,7 @@ import { Categoria } from './modelos/categoria';
 import { BasicoCategoriaComponent } from './componentes/basico-categoria/basico-categoria.component';
 import { BasicoCategoria } from './modelos/basicoCategoria';
 import { BasicoCategoriaService } from './servicios/basico-categoria.service';
+import { ObservacionesDialogo } from './componentes/viaje/observaciones-dialogo.component';
 
 //Rutas
 const appRoutes: Routes = [

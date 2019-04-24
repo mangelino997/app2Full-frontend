@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col-md-3">
       <div class="form-group has-float-label-icon">
-        <label for="idFechaCajaAE" class="tamanio-label">Fecha Caja</label>
+        <label for="idFechaCajaAE" class="tamanio-label">Fecha Caja *</label>
         <div class="input-group input-group-sm mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text" id="idSigno">
@@ -33,7 +33,7 @@
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label-icon">
-        <label for="idImporteAE" class="tamanio-label">Importe*</label>
+        <label for="idImporteAE" class="tamanio-label">Importe *</label>
         <div class="input-group input-group-sm mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text">$</span>
@@ -64,9 +64,9 @@
           <tr>
             <th class="text-center" style="width:10%" scope="col">Sucursal</th>
             <th class="text-center" style="width:6%" scope="col">Adelanto</th>
+            <th class="text-center" style="width:8%" scope="col">Fecha</th>
             <th class="text-center" style="width:10%" scope="col">Usuario</th>
             <th class="text-center" style="width:20%" scope="col">Empresa</th>
-            <th class="text-center" style="width:8%" scope="col">Fecha</th>
             <th class="text-center" style="width:8%" scope="col">Importe($)</th>
             <th class="text-center" style="width:10%" scope="col">Observaciones</th>
             <th class="text-center" style="width:8%" scope="col">Anulado</th>
@@ -85,13 +85,13 @@
                 <span>{{i+1}}</span>
               </td>
               <td align="center">
+                <span>{{l.fechaCaja | date: 'dd/MM/yyyy'}}</span>
+              </td>
+              <td align="center">
                 <span>{{l.usuario.nombre}}</span>
               </td>
               <td align="center">
                 <span>{{l.empresa.razonSocial}}</span>
-              </td>
-              <td align="center">
-                <span>{{l.fechaCaja | date: 'dd/MM/yyyy'}}</span>
               </td>
               <td align="center">
                 <span>{{establecerCerosTabla(l.importe)}}</span>

@@ -45,7 +45,8 @@
                             <div class="col-md-2">
                                 <div class="form-group has-float-label">
                                     <label for="idEsPropio" class="tamanio-label-titulo">Tipo de Viaje *</label>
-                                    <mat-select id="idEsPropio" class="form-control form-control-sm" [formControl]="tipoViaje">
+                                    <mat-select id="idEsPropio" class="form-control form-control-sm" [formControl]="tipoViaje"
+                                        (selectionChange)="establecerTipoViaje()">
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>
@@ -127,7 +128,8 @@
             </div>
         </mat-card>
         <br>
-        <mat-horizontal-stepper [linear]="!estadoFormulario" #stepper>
+        <!-- [linear]="!estadoFormulario" -->
+        <mat-horizontal-stepper #stepper>
             <ng-template matStepperIcon="edit" let-index="index">
                 {{index+1}}
             </ng-template>

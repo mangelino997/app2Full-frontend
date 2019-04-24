@@ -1,10 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, Inject } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ViajePropioGasto } from 'src/app/modelos/viajePropioGasto';
 import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog } from '@angular/material';
+import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 
 @Component({
   selector: 'app-viaje-gasto',
@@ -160,33 +161,5 @@ export class ViajeGastoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {});
-  }
-}
-//Componente ObservacionesDialogo
-@Component({
-  selector: 'observaciones-dialogo',
-  templateUrl: '../observaciones-dialogo.component.html'
-})
-export class ObservacionesDialogo {
-  //Define el tema
-  public tema:string;
-  //Define el formulario
-  public formulario:FormGroup;
-  //Define la observacion
-  public observaciones:string;
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<ObservacionesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    //Establece el formulario
-    this.formulario = new FormGroup({
-      observaciones: new FormControl()
-    });
-    //Establece las observaciones
-    this.formulario.get('observaciones').setValue(this.data.elemento);
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }

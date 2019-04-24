@@ -2,11 +2,13 @@
   <div class="row">
     <div class="col-md-6">
       <div class="form-group has-float-label">
-        <label for="idProveedorOC" class="tamanio-label">Proveedor Combustible</label>
-        <input id="idProveedorOC" class="form-control form-control-sm" type="text" matInput [formControl]="formularioViajePropioCombustible.get('proveedor')"
-          [matAutocomplete]="autoProveedorOC" autocomplete="off" [readonly]="soloLectura">
+        <label for="idProveedorOC" class="tamanio-label">Proveedor Combustible *</label>
+        <input id="idProveedorOC" class="form-control form-control-sm" type="text" matInput
+          [formControl]="formularioViajePropioCombustible.get('proveedor')" [matAutocomplete]="autoProveedorOC"
+          autocomplete="off" [readonly]="soloLectura">
         <mat-autocomplete #autoProveedorOC="matAutocomplete" [displayWith]="displayFn.bind(this)">
-          <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">{{itemProveedor.alias}}
+          <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
+            {{itemProveedor.alias}}
           </mat-option>
         </mat-autocomplete>
       </div>
@@ -26,8 +28,8 @@
               <mat-icon>date_range</mat-icon>
             </span>
           </div>
-          <input id="idFechaOC" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="soloLectura">
+          <input id="idFechaOC" type="date" formControlName="fecha" autocomplete="off"
+            class="form-control form-control-sm" [readonly]="soloLectura">
         </div>
       </div>
     </div>
@@ -36,7 +38,8 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idInsumoOC" class="tamanio-label">Insumo Combustible *</label>
-        <mat-select id="idInsumoOC" class="form-control form-control-sm" formControlName="insumo" [compareWith]="compareFn"
+        <mat-select id="idInsumoOC" class="form-control form-control-sm" formControlName="insumo"
+          [compareWith]="compareFn"
           (selectionChange)="establecerPrecioUnitario(formularioViajePropioCombustible, 'insumo')">
           <mat-option *ngFor="let itemInsumos of insumos" [value]="itemInsumos">
             {{itemInsumos.nombre}}
@@ -45,39 +48,26 @@
       </div>
     </div>
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idCantidadOC" class="tamanio-label">Cantidad *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">lt.</span>
-          </div>
-          <input id="idCantidadOC" type="number" formControlName="cantidad" autocomplete="off" class="form-control"
-            [readonly]="soloLectura" (blur)="calcularImporte(formularioViajePropioCombustible)">
-        </div>
+        <input id="idCantidadOC" type="number" formControlName="cantidad" autocomplete="off"
+          class="form-control form-control-sm number-right" [readonly]="soloLectura"
+          (blur)="calcularImporte(formularioViajePropioCombustible)">
       </div>
     </div>
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
-          </div>
-          <input id="idPrecioUnitarioOC" type="number" formControlName="precioUnitario" autocomplete="off" class="form-control"
-            [readonly]="true">
-        </div>
+        <input id="idPrecioUnitarioOC" type="text" formControlName="precioUnitario" autocomplete="off"
+          (blur)="calcularImporte(formularioViajePropioCombustible)" class="form-control form-control-sm number-right"
+          placeholder="$ 0.00">
       </div>
     </div>
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idImporteOC" class="tamanio-label">Importe *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
-          </div>
-          <input id="idImporteOC" type="number" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="true">
-        </div>
+        <input id="idImporteOC" type="number" formControlName="importe" autocomplete="off"
+          class="form-control form-control-sm number-right" [readonly]="true">
       </div>
     </div>
   </div>
@@ -90,8 +80,10 @@
       </div>
     </div>
     <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="agregarCombustible()" [disabled]="soloLectura" *ngIf="btnCombustible">Agregar Orden</button>
-      <button mat-raised-button color="primary" (click)="modificarCombustible()" [disabled]="soloLectura" *ngIf="!btnCombustible">Actualizar Orden</button>
+      <button mat-raised-button color="primary" (click)="agregarCombustible()" [disabled]="soloLectura"
+        *ngIf="btnCombustible">Agregar Orden</button>
+      <button mat-raised-button color="primary" (click)="modificarCombustible()" [disabled]="soloLectura"
+        *ngIf="!btnCombustible">Actualizar Orden</button>
     </div>
   </div>
   <div class="row">
@@ -101,14 +93,15 @@
           <tr>
             <th class="text-center" style="width:10%" scope="col">Sucursal</th>
             <th class="text-center" style="width:5%" scope="col">Orden</th>
+            <th class="text-center" style="width:5%" scope="col">Fecha</th>
             <th class="text-center" style="width:10%" scope="col">Usuario</th>
             <th class="text-center" style="width:10%" scope="col">Proveedor</th>
             <th class="text-center" style="width:10%" scope="col">Insumo</th>
-            <th class="text-center" style="width:10%" scope="col">Gasoil/Urea(lt)</th>
+            <th class="text-center" style="width:10%" scope="col">Cantidad(lt)</th>
             <th class="text-center" style="width:10%" scope="col">Precio Unitario($)</th>
             <th class="text-center" style="width:10%" scope="col">Observaciones</th>
             <th class="text-center" style="width:5%" scope="col">Anulado</th>
-            <th class="text-center" style="width:16%" scope="col">Observaciones Anulado</th>
+            <th class="text-center" style="width:11%" scope="col">Obs. Anulado</th>
             <th class="text-center" style="width:2%" scope="col" *ngIf="!soloLectura">-</th>
             <th class="text-center" style="width:2%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
@@ -121,6 +114,9 @@
               </td>
               <td align="center">
                 <span>{{i+1}}</span>
+              </td>
+              <td align="center">
+                <span>{{l.fecha | date: 'dd/MM/yyyy'}}</span>
               </td>
               <td align="center">
                 <span>{{l.usuario.nombre}}</span>
@@ -167,8 +163,8 @@
           <div class="input-group-prepend">
             <span class="input-group-text" id="idSigno">lt.</span>
           </div>
-          <input id="idTotalCombustibleOC" type="number" formControlName="totalCombustible" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="true" aria-describedby="idSigno">
+          <input id="idTotalCombustibleOC" type="number" formControlName="totalCombustible" autocomplete="off"
+            class="form-control form-control-sm" [readonly]="true" aria-describedby="idSigno">
         </div>
       </div>
     </div>
@@ -179,8 +175,8 @@
           <div class="input-group-prepend">
             <span class="input-group-text" id="idSigno">lt.</span>
           </div>
-          <input id="idTotalUreaOC" type="number" formControlName="totalUrea" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="true" aria-describedby="idSigno">
+          <input id="idTotalUreaOC" type="number" formControlName="totalUrea" autocomplete="off"
+            class="form-control form-control-sm" [readonly]="true" aria-describedby="idSigno">
         </div>
       </div>
     </div>

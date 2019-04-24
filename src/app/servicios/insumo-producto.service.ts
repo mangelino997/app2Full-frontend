@@ -58,6 +58,14 @@ export class InsumoProductoService {
       })
     })
   }
+  //Obtiene una lista de combustibles
+  public listarCombustibles() {
+    return this.http.get(this.url + '/listarCombustibles', this.options);
+  }
+  //Obtiene una lista de insumos
+  public listarInsumos() {
+    return this.http.get(this.url + '/listarInsumos', this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

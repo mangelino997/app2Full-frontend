@@ -12,6 +12,8 @@ import { ViajeTarifaService } from 'src/app/servicios/viaje-tarifa.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
+import { AppService } from 'src/app/servicios/app.service';
+import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 
 @Component({
   selector: 'app-viaje-tramo',
@@ -57,9 +59,11 @@ export class ViajeTramoComponent implements OnInit {
   public indiceTramo:number;
   //Define si muestra el boton agregar tramo o actualizar tramo
   public btnTramo:boolean = true;
+  //Define el tipo de viaje
+  public tipoViaje:boolean = true;
   //Constructor
   constructor(private appComponent: AppComponent, private viajePropioTramoModelo: ViajePropioTramo,
-    private tramoServicio: TramoService,
+    private tramoServicio: TramoService, private appServicio: AppService,
     private empresaServicio: EmpresaService, private viajeUnidadNegocioServicio: ViajeUnidadNegocioService,
     private viajeTipoCargaServicio: ViajeTipoCargaService, private viajeTipoServicio: ViajeTipoService,
     private viajeTarifaServicio: ViajeTarifaService, public dialog: MatDialog, private fechaServicio: FechaService) { }
@@ -100,6 +104,36 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajePropioTramo.get('cantidad').setValue(valor);
     this.formularioViajePropioTramo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
     this.formularioViajePropioTramo.get('importe').setValue(this.appComponent.establecerCeros(valor));
+    this.formularioViajePropioTramo.get('importe').disable();
+  }
+  //Obtiene la mascara de km
+  public mascararKm(intLimite) {
+    return this.appServicio.mascararKm(intLimite);
+  }
+  //Establece el tipo de viaje (Propio o Tercero)
+  public establecerTipoViaje(tipoViaje): void {
+    this.tipoViaje = tipoViaje;
+    let viajeTarifa = this.formularioViajePropioTramo.get('viajeTarifa').value;
+    let modalidadCarga = this.formularioViajePropioTramo.get('viajeTipo').value;
+    let km = this.formularioViajePropioTramo.get('km').value;
+    if(this.tipoViaje != null && viajeTarifa && modalidadCarga && km) {
+      if(viajeTarifa.id == 1) {
+        if(this.tipoViaje) {
+          this.formularioViajePropioTramo.get('precioUnitario').setValue(modalidadCarga.costoPorKmPropio);
+          let importe = km * modalidadCarga.costoPorKmPropio;
+          this.formularioViajePropioTramo.get('importe').setValue(this.appServicio.establecerDecimales(importe, 3));
+          this.formularioViajePropioTramo.get('cantidad').disable();
+          this.formularioViajePropioTramo.get('precioUnitario').disable();
+        } else {
+          //Viaje Tercero
+        }
+      } else {
+        this.formularioViajePropioTramo.get('cantidad').reset();
+        this.formularioViajePropioTramo.get('precioUnitario').reset();
+        this.formularioViajePropioTramo.get('cantidad').enable();
+        this.formularioViajePropioTramo.get('precioUnitario').enable();
+      }
+    }
   }
   //Obtiene el listado de empresas
   private listarEmpresas() {
@@ -150,11 +184,32 @@ export class ViajeTramoComponent implements OnInit {
     this.viajeTarifaServicio.listar().subscribe(
       res => {
         this.viajesTarifas = res.json();
+        this.viajesTarifas.forEach((elemento) => {
+          if(elemento.porDefecto == true) {
+            this.formularioViajePropioTramo.get('viajeTarifa').setValue(elemento);
+          }
+        });
       },
       err => {
         console.log(err);
       }
     );
+  }
+  //Establece los km al seleccionar elemento de tramo
+  public establecerKm(): void {
+    let tramo = this.formularioViajePropioTramo.get('tramo').value;
+    this.formularioViajePropioTramo.get('km').setValue(this.appServicio.desenmascararKm(tramo.km));
+  }
+  //Establece el estado de tipo de carga al seleccionar una modalidad de carga
+  public establecerEstadoTipoCarga(): void {
+    let modalidadCarga = this.formularioViajePropioTramo.get('viajeTipo').value;
+    if(modalidadCarga.id == 3) {
+      this.formularioViajePropioTramo.get('viajeTipoCarga').setValue(this.viajesTiposCargas[0]);
+      this.formularioViajePropioTramo.get('viajeTipoCarga').disable();
+    } else {
+      this.formularioViajePropioTramo.get('viajeTipoCarga').enable();
+    }
+    this.establecerTipoViaje(this.tipoViaje);
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
@@ -165,7 +220,6 @@ export class ViajeTramoComponent implements OnInit {
       let importe = cantidad * precioUnitario;
       formulario.get('importe').setValue(importe);
       this.establecerCeros(formulario.get('importe'));
-      // formulario.get('importe').setValue(importe.toFixed(2));
     }
   }
   //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
@@ -284,7 +338,7 @@ export class ViajeTramoComponent implements OnInit {
   public displayFn(elemento) {
     if (elemento != undefined) {
       return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre +
-        ' ---> ' + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre + ' (' + elemento.km + 'km)' : elemento;
+        ' ---> ' + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre : elemento;
     } else {
       return elemento;
     }
@@ -403,34 +457,6 @@ export class DadorDestTablaDialogo {
     this.tema = this.data.tema;
     //Establece la lista de dadores-destinatarios
     this.listaDadorDestinatario = this.data.elemento.viajePropioTramoClientes;
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}
-//Componente ObservacionesDialogo
-@Component({
-  selector: 'observaciones-dialogo',
-  templateUrl: '../observaciones-dialogo.component.html'
-})
-export class ObservacionesDialogo {
-  //Define el tema
-  public tema: string;
-  //Define el formulario
-  public formulario: FormGroup;
-  //Define la observacion
-  public observaciones: string;
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<ObservacionesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    //Establece el formulario
-    this.formulario = new FormGroup({
-      observaciones: new FormControl()
-    });
-    //Establece las observaciones
-    this.formulario.get('observaciones').setValue(this.data.elemento);
   }
   onNoClick(): void {
     this.dialogRef.close();

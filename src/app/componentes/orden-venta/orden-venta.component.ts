@@ -739,7 +739,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Desenmascara km
   public establecerKm(formulario, cantidad): void {
-    formulario.setValue(this.appService.desenmascararKm(formulario.value, cantidad));
+    formulario.setValue(this.appService.desenmascararKm(formulario.value));
   }
   //Habilita el boton agregar a tabla
   public habilitarBoton(formA, formB): boolean {
