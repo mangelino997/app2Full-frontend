@@ -33,7 +33,7 @@
             class="form-control form-control-sm" [readonly]="soloLectura"
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" type="button" mat-raised-button color="primary"
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

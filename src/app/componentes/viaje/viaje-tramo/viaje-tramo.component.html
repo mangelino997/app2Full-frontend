@@ -128,8 +128,10 @@
             </div>
         </div>
         <div class="col-md-1">
-            <button mat-raised-button color="primary" (click)="agregarTramo()" [disabled]="soloLectura" *ngIf="btnTramo">Agregar Tramo</button>
-            <button mat-raised-button color="primary" (click)="modificarTramo()" [disabled]="soloLectura" *ngIf="!btnTramo">Actualizar Tramo</button>
+            <button mat-raised-button color="primary" (click)="agregarTramo()" [disabled]="!formularioViajePropioTramo.valid" 
+                *ngIf="btnTramo">Agregar Tramo</button>
+            <button mat-raised-button color="primary" (click)="modificarTramo()" [disabled]="!formularioViajePropioTramo.valid" 
+                *ngIf="!btnTramo">Actualizar Tramo</button>
         </div>
     </div>
     <div class="row">

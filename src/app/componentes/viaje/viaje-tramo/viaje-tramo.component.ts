@@ -122,6 +122,7 @@ export class ViajeTramoComponent implements OnInit {
           this.formularioViajePropioTramo.get('precioUnitario').setValue(modalidadCarga.costoPorKmPropio);
           let importe = km * modalidadCarga.costoPorKmPropio;
           this.formularioViajePropioTramo.get('importe').setValue(this.appServicio.establecerDecimales(importe, 3));
+          this.formularioViajePropioTramo.get('cantidad').setValue(0);
           this.formularioViajePropioTramo.get('cantidad').disable();
           this.formularioViajePropioTramo.get('precioUnitario').disable();
         } else {
