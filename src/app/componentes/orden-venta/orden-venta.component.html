@@ -100,7 +100,7 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idSeguro" class="tamanio-label">Seguro(%) *</label>
-                <input id="idSeguro" [textMask]="porcentajeMascara" type="text" formControlName="seguro" autocomplete="off"
+                <input id="idSeguro" [textMask]="mascararPorcentaje()" type="text" formControlName="seguro" autocomplete="off"
                   class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="% 8.00"
                   (blur)="establecerPorcentaje(formulario.get('seguro'), 2)">
               </div>
@@ -108,9 +108,9 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idComisionCR" class="tamanio-label">Comisión Contra Reembolso(%)</label>
-                <input id="idComisionCR" [textMask]="mascaraImporte(10)" type="text" formControlName="comisionCR" autocomplete="off"
-                  class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
-                  (blur)="setDecimales(formulario.get('comisionCR'), 2)">
+                <input id="idComisionCR" [textMask]="mascararPorcentaje()" type="text" formControlName="comisionCR" autocomplete="off"
+                  class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="% 00.00"
+                  (blur)="establecerPorcentaje(formulario.get('comisionCR'), 2)">
               </div>
             </div>
           </div>

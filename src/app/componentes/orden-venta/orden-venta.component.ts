@@ -196,6 +196,7 @@ export class OrdenVentaComponent implements OnInit {
     if (tipoTarifa) {
       this.ordenVentaEscalaServicio.listarPorOrdenVentaYPreciosDesde(ordenVenta, precioDesde).subscribe(res => {
         this.listaDeEscalas = res.json();
+        // this.listaDeEscalas.sort((a, b) => (a.valor < b.valor) ? 1 : -1);
         for(let i = 0 ; i < this.listaDeEscalas.length ; i++) {
           this.eliminarElementoEscalas(this.listaDeEscalas[i].escalaTarifa.valor);
         }
@@ -329,7 +330,6 @@ export class OrdenVentaComponent implements OnInit {
       case 2:
         this.establecerCamposSoloLectura(2);
         this.establecerValoresPorDefecto();
-        // this.cambioTipoTarifa();
         this.establecerValoresPestania(nombre, true, true, false, 'idTipoOrdenVenta');
         break;
       case 3:
@@ -647,6 +647,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar() {
+    this.formulario.enable();
     this.formulario.get('ordenesVentasEscalas').setValue(this.listaDeEscalas);
     this.formulario.get('ordenesVentasTramos').setValue(this.listaDeTramos);
     this.servicio.actualizar(this.formulario.value).subscribe(
