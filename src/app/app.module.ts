@@ -128,6 +128,7 @@ import { VentaConfigService } from './servicios/venta-config.service';
 import { ViajePropioTramoService } from './servicios/viaje-propio-tramo.service';
 import { ViajeTerceroTramoService } from './servicios/viaje-tercero-tramo.service';
 import { VentaItemConceptoService } from './servicios/venta-item-concepto.service';
+import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -172,6 +173,11 @@ import { Aforo } from './modelos/aforo';
 import { ClienteEventual } from './modelos/clienteEventual';
 import { EmitirFactura } from './modelos/emitirFactura';
 import { AfipCondicionIva } from './modelos/afipCondicionIva';
+import { BasicoCategoria } from './modelos/basicoCategoria';
+import { ChoferProveedor } from './modelos/choferProveedor';
+import { Personal } from './modelos/personal';
+import { PuntoVenta } from './modelos/puntoVenta';
+import { Categoria } from './modelos/categoria';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -278,14 +284,9 @@ import { AforoComponent } from './componentes/aforo/aforo.component';
 import { ChequesRechazadosComponent } from './componentes/cheques-rechazados/cheques-rechazados.component';
 import { RepartoComponent, AcompanianteDialogo } from './componentes/reparto-saliente/reparto.component';
 import { AfipCondicionIvaComponent } from './componentes/afip-condicion-iva/afip-condicion-iva.component';
-import { ChoferProveedor } from './modelos/choferProveedor';
-import { Personal } from './modelos/personal';
-import { PuntoVenta } from './modelos/puntoVenta';
-import { Categoria } from './modelos/categoria';
 import { BasicoCategoriaComponent } from './componentes/basico-categoria/basico-categoria.component';
-import { BasicoCategoria } from './modelos/basicoCategoria';
-import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 import { ObservacionesDialogo } from './componentes/viaje/observaciones-dialogo.component';
+import { RolOpcionComponent, RolOpcionDialog } from './componentes/rol-opcion/rol-opcion.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -352,6 +353,7 @@ const appRoutes: Routes = [
   { path: 'logisticaproveedoresvehiculos', component: VehiculoProveedorComponent, canActivate: [GuardiaService] },
   { path: 'generalescompaniadeseguropolizas', component: CompaniaSeguroPolizaComponent, canActivate: [GuardiaService] },
   { path: 'reestablecertablastablarolsubopcion', component: RolSubopcionComponent, canActivate: [GuardiaService] },
+  { path: 'reestablecertablastablarolopcion', component: RolOpcionComponent, canActivate: [GuardiaService] },
   { path: 'reestablecertablastablasubopcionpestania', component: SubopcionPestaniaComponent, canActivate: [GuardiaService] },
   { path: 'reestablecertablastablausuarioempresa', component: UsuarioEmpresaComponent, canActivate: [GuardiaService] },
   { path: 'organizacionempresas', component: EmpresaComponent, canActivate: [GuardiaService] },
@@ -466,7 +468,9 @@ const stompConfig: StompConfig = {
     CompaniaSeguroPolizaComponent,
     ViajeRemitoComponent,
     RolSubopcionComponent,
+    RolOpcionComponent,
     RolSubopcionDialog,
+    RolOpcionDialog,
     SubopcionPestaniaComponent,
     SubopcionPestaniaDialog,
     UsuarioEmpresaComponent,
@@ -748,6 +752,7 @@ const stompConfig: StompConfig = {
   bootstrap: [AppComponent],
   entryComponents: [
     RolSubopcionDialog,
+    RolOpcionDialog,
     SubopcionPestaniaDialog,
     UsuarioEmpresaDialog,
     UsuarioDialogo,
