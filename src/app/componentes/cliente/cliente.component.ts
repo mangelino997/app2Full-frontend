@@ -23,7 +23,6 @@ import { ToastrService } from 'ngx-toastr';
 import { Cliente } from 'src/app/modelos/cliente';
 import { MatSort, MatTableDataSource } from '@angular/material';
 
-
 @Component({
   selector: 'app-cliente',
   templateUrl: './cliente.component.html',

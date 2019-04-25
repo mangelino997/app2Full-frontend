@@ -701,7 +701,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
     this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
     if(empresa != null) {
-      this.formulario.get('empresa').setValue(empresa);
+      this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
     } else {
       this.formulario.get('cliente').setValue(cliente);
     }
