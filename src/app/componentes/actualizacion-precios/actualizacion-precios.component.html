@@ -1,39 +1,41 @@
-<div id="agendatelefonica" class="container-fluid" >
-  <div class="row justify-content-center contenedor" >
+<div id="agendatelefonica" class="container-fluid">
+  <div class="row justify-content-center contenedor">
     <div class="col-md-10 text-center">
       <h5>Actualización de Precios</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Buscar </label>
-              <mat-select class="form-control form-control-sm" [formControl]="buscarPor" (selectionChange)="cambioDeCampo()">
+              <label for="idAutocompletado" class="tamanio-label">Buscar</label>
+              <mat-select class="form-control form-control-sm" [formControl]="buscarPor"
+                (selectionChange)="cambioDeCampo()">
                 <mat-option [value]="0">Por Cliente</mat-option>
                 <mat-option [value]="1">Por Empresa</mat-option>
-              </mat-select>  
+              </mat-select>
             </div>
           </div>
-          <div class="col-md-3" *ngIf="buscarPorCliente">
+          <div class="col-md-6" *ngIf="buscarPorCliente">
             <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Cliente </label>
-              <input id="idAutocompletado" class="form-control form-control-sm " autocomplete="off"
-                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
+              <label for="idAutocompletado" class="tamanio-label">Cliente</label>
+              <input id="idAutocompletado" class="form-control form-control-sm " autocomplete="off" type="text" matInput
+                [formControl]="autocompletado" [matAutocomplete]="auto">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cargarTabla(0, item.id)"> 
+                <mat-option *ngFor="let item of resultados" [value]="item"
+                  (onSelectionChange)="cargarTabla(0, item.id)">
                   {{item.alias}}
                 </mat-option>
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-3" *ngIf="!buscarPorCliente">
+          <div class="col-md-4" *ngIf="!buscarPorCliente">
             <div class="form-group has-float-label">
-              <label for="idRubro" class="rubro-label">Empresa </label>
-                <mat-select id="idRubro" class="form-control form-control-sm" [formControl]="empresa" (selectionChange)="cargarTabla(1, undefined)"
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let empresa of empresas" [value]="empresa">
-                      {{empresa.razonSocial}}
-                  </mat-option>
-                </mat-select>
+              <label for="idRubro" class="rubro-label">Empresa</label>
+              <mat-select id="idRubro" class="form-control form-control-sm" [formControl]="empresa"
+                (selectionChange)="cargarTabla(1, undefined)" [compareWith]="compareFn">
+                <mat-option *ngFor="let empresa of empresas" [value]="empresa">
+                  {{empresa.razonSocial}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
         </div>
@@ -54,7 +56,8 @@
               </thead>
               <tbody>
                 <ng-container *ngFor="let l of listaCompleta; let i= index">
-                  <tr class="ordenVta-no-seleccionada" *ngIf="l.tipoTarifa.porPorcentaje==false" id="fila{{i}}" (click)="seleccionOrdenVta(i, l.id)">
+                  <tr class="ordenVta-no-seleccionada" *ngIf="l.tipoTarifa.porPorcentaje==false" id="fila{{i}}"
+                    (click)="seleccionOrdenVta(i, l.id)">
                     <td align="center">
                       <span>{{l.id}}</span>
                     </td>
@@ -103,7 +106,7 @@
                       <span>{{l.observaciones}}</span>
                     </td>
                     <td align="center">
-                      <mat-checkbox class="" disabled="true" ></mat-checkbox>
+                      <mat-checkbox class="" disabled="true"></mat-checkbox>
                     </td>
                   </tr>
                 </ng-container>
@@ -115,7 +118,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idPrecioDesde" class="tamanio-label">Precios Desde</label>
-              <mat-select class="form-control form-control-sm" formControlName="fechaDesde" >
+              <mat-select class="form-control form-control-sm" formControlName="fechaDesde">
                 <mat-option *ngFor="let itemOrdenVta of ordenVenta" [value]="itemOrdenVta.preciosDesde">
                   {{itemOrdenVta.preciosDesde | date: 'dd-MM-yyyy'}}
                 </mat-option>
@@ -124,7 +127,8 @@
           </div>
           <div class="col-md-3">
             <div class="form-group left">
-              <button class="btn btn-primary btn-sm" type="button" (click)="filtrarPorPrecioDesde()">Consultar Lista de Precios</button>
+              <button class="btn btn-primary btn-sm" type="button" (click)="filtrarPorPrecioDesde()">Consultar Lista de
+                Precios</button>
             </div>
           </div>
         </div>
@@ -132,23 +136,18 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idActualizacion" class="tamanio-label">Actualización de Precios</label>
-              <mat-select class="form-control form-control-sm" [formControl]="aumento" id="idActualizacion" >
+              <mat-select class="form-control form-control-sm" [formControl]="aumento" id="idActualizacion">
                 <mat-option [value]="0">Anulación aumento de precio</mat-option>
                 <mat-option [value]="1">Aumento de precio</mat-option>
-              </mat-select>  
+              </mat-select>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idPorcentaje" class="tamanio-label">Porcentaje(%)</label>
-              <input id="idPorcentaje" type="text" formControlName="porcentaje" autocomplete="off" [textMask]="porcentajeMascara"
-                class="form-control form-control-sm" (blur)="aplicarActualizacion()" placeholder="% 00.00"
-                class="form-control form-control-sm number-right">
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group has-float-label">
-      
+              <input id="idPorcentaje" type="text" formControlName="porcentaje" autocomplete="off"
+                [textMask]="porcentajeMascara" class="form-control form-control-sm" (blur)="aplicarActualizacion()"
+                placeholder="% 00.00" class="form-control form-control-sm number-right">
             </div>
           </div>
         </div>
@@ -157,12 +156,13 @@
             <div class="form-group has-float-label">
               <label for="idNuevoPrecioDesde" class="tamanio-label">Nuevos Precios Desde</label>
               <input id="idNuevoPrecioDesde" type="date" formControlName="precioDesde" autocomplete="off"
-                class="form-control form-control-sm" (blur)="validarNuevaFechaDesde()" (change)="validarNuevaFechaDesde()">
+                class="form-control form-control-sm" (blur)="validarNuevaFechaDesde()">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group left">
-              <button class="btn btn-primary col-auto mr-auto btn-sm" type="button" id="btn-confirm" [disabled]="this.formulario.get('fechaDesde').value==null" (click)="confirmar()">Confirmar</button>
+              <button id="btn-confirm" mat-raised-button color="primary"
+                [disabled]="!formulario.valid" (click)="confirmar()">Confirmar</button>
             </div>
           </div>
         </div>

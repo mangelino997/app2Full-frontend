@@ -9,12 +9,11 @@ export class ActualizacionPrecios {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-            precioDesde: new FormControl('', Validators.maxLength(45)), //nueva fecha
+            precioDesde: new FormControl('', Validators.required), //nueva fecha
             listaPrecios: new FormControl(),
-            aumento: new FormControl('', Validators.maxLength(45)),
+            aumento: new FormControl(),
             porcentaje: new FormControl(),
-            fechaDesde: new FormControl('', Validators.maxLength(30)) //la ultima fecha
+            fechaDesde: new FormControl('', Validators.required) //la ultima fecha
         })
     }
 }

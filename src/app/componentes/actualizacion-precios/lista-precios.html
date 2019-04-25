@@ -1,90 +1,90 @@
 <div class="row justify-content-center contenedor">
-        <div class="col-md-12 text-center">
-            <h5>Lista de Precios para la Fecha {{fecha}}</h5>
-            <div class="row" *ngIf="!porEscala">
-              <div class="col-md-12">
-                <table class="table table-bordered table-striped table-sm">
-                  <thead>
-                    <tr>
-                      <th class="text-center" style="width:5%" scope="col">#</th>
-                      <th class="text-center" style="width:10%" scope="col">Tramo Origen</th>
-                      <th class="text-center" style="width:15%" scope="col">Tramo Destino</th>
-                      <th class="text-center" style="width:5%" scope="col">Km</th>
-                      <th class="text-center" style="width:15%" scope="col">Precio Fijo Seco</th>
-                      <th class="text-center" style="width:15%" scope="col">Precio Unitario Seco</th>
-                      <th class="text-center" style="width:15%" scope="col">Precio Fijo Refrigerado</th>
-                      <th class="text-center" style="width:15%" scope="col">Precio Unitario Refrigerado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let precio of listaPrecios; let i = index">
-                      <td>
-                        <span>{{precio.id}}</span>
-                      </td>
-                      <td>
-                        <span>{{precio.tramo.origen.nombre}}</span>
-                      </td>
-                      <td >
-                        <span>{{precio.tramo.origen.nombre}}</span>
-                      </td>
-                      <td>
-                        <span>{{precio.tramo.km}}</span>
-                      </td>
-                      <td>
-                        <span>$ {{precio.importeFijoSeco}}</span>
-                      </td>
-                      <td>
-                        <span>$ {{precio.precioUnitarioSeco}}</span>
-                      </td>
-                      <td>
-                        <span>$ {{precio.precioFijoRefrigerado}}</span>
-                      </td>
-                      <td>
-                        <span>$ {{precio.precioUnitarioRefrigerado}}</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <div class="row" *ngIf="porEscala">
-              <div class="col-md-12">
-                <table class="table table-bordered table-striped table-sm">
-                  <thead>
-                    <tr>
-                    <th class="text-center" style="width:10%" scope="col">Id</th>
-                    <th class="text-center" style="width:20%" scope="col">Escala</th>
-                    <th class="text-center" style="width:20%" scope="col">Precio Fijo</th>
-                    <th class="text-center" style="width:20%" scope="col">Precio Unitario</th>
-                    <th class="text-center" style="width:20%" scope="col">% Según Tarifa</th>
-                    <th class="text-center" style="width:10%" scope="col">Mínimo</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let l of listaPrecios; let i = index">
-                    <td>
-                        <span>{{l.id}}</span>
-                    </td>
-                    <td>
-                        <span>{{l.escalaTarifa.valor}}</span>
-                    </td>
-                    <td>
-                        <span>$ {{l.importeFijo}}</span>
-                    </td>
-                    <td>
-                        <span>$ {{l.precioUnitario}}</span>
-                    </td>
-                    <td>
-                        <span>{{l.porcentaje}} %</span>
-                    </td>
-                    <td>
-                        <span>{{l.minimo}}</span>
-                    </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <button id="idBoton" mat-raised-button color="primary" (click)="dialogRef.close()">Salir</button>
-        </div>
+  <div class="col-md-12 text-center">
+    <h5>Lista de Precios para la Fecha {{fecha | date: 'dd/MM/yyyy'}}</h5>
+    <div class="row" *ngIf="!porEscala">
+      <div class="col-md-12">
+        <table class="table table-bordered table-striped table-sm">
+          <thead>
+            <tr>
+              <th class="text-center" style="width:5%" scope="col">#</th>
+              <th class="text-center" style="width:10%" scope="col">Tramo Origen</th>
+              <th class="text-center" style="width:15%" scope="col">Tramo Destino</th>
+              <th class="text-center" style="width:5%" scope="col">Km</th>
+              <th class="text-center" style="width:15%" scope="col">Precio Fijo Seco</th>
+              <th class="text-center" style="width:15%" scope="col">Precio Unitario Seco</th>
+              <th class="text-center" style="width:15%" scope="col">Precio Fijo Refrigerado</th>
+              <th class="text-center" style="width:15%" scope="col">Precio Unitario Refrigerado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let l of listaPrecios; let i = index">
+              <td>
+                <span>{{l.id}}</span>
+              </td>
+              <td>
+                <span>{{l.tramo.origen.nombre}}</span>
+              </td>
+              <td>
+                <span>{{l.tramo.origen.nombre}}</span>
+              </td>
+              <td>
+                <span>{{l.tramo.km}} km</span>
+              </td>
+              <td>
+                <span>$ {{(l.importeFijoSeco ? l.importeFijoSeco : '0.00') | number: '1.2-2'}}</span>
+              </td>
+              <td>
+                <span>$ {{(l.precioUnitarioSeco ? l.precioUnitarioSeco : '0.00') | number: '1.2-2'}}</span>
+              </td>
+              <td>
+                <span>$ {{(l.precioFijoRefrigerado ? l.precioFijoRefrigerado : '0.00') | number: '1.2-2'}}</span>
+              </td>
+              <td>
+                <span>$ {{(l.precioUnitarioRefrigerado ? l.precioUnitarioRefrigerado : '0.00') | number: '1.2-2'}}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+    <div class="row" *ngIf="porEscala">
+      <div class="col-md-12">
+        <table class="table table-bordered table-striped table-sm">
+          <thead>
+            <tr>
+              <th class="text-center" style="width:10%" scope="col">Id</th>
+              <th class="text-center" style="width:20%" scope="col">Escala</th>
+              <th class="text-center" style="width:20%" scope="col">Precio Fijo</th>
+              <th class="text-center" style="width:20%" scope="col">Precio Unitario</th>
+              <th class="text-center" style="width:20%" scope="col">% Según Tarifa</th>
+              <th class="text-center" style="width:10%" scope="col">Mínimo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let l of listaPrecios; let i = index">
+              <td>
+                <span>{{l.id}}</span>
+              </td>
+              <td>
+                <span>{{l.escalaTarifa.valor}}</span>
+              </td>
+              <td>
+                <span>$ {{(l.importeFijo ? l.importeFijo : '0.00') | number: '1.2-2'}}</span>
+              </td>
+              <td>
+                <span>$ {{(l.precioUnitario ? l.precioUnitario : '0.00') | number: '1.2-2'}}</span>
+              </td>
+              <td>
+                <span>{{(l.porcentaje ? l.porcentaje : '00.00') | number: '1.2-2'}} %</span>
+              </td>
+              <td>
+                <span>$ {{(l.minimo ? l.minimo : '0.00') | number: '1.2-2'}}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <button id="idBoton" mat-raised-button color="primary" (click)="dialogRef.close()">Salir</button>
+  </div>
+</div>

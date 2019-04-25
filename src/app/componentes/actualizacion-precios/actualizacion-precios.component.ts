@@ -10,7 +10,6 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { AppService } from 'src/app/servicios/app.service';
 
-
 @Component({
   selector: 'app-actualizacion-precios',
   templateUrl: './actualizacion-precios.component.html',
@@ -64,10 +63,12 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Define los resultados de autocompletado localidad
   public resultadosLocalidades: Array<any> = [];
   //Define la mascara de porcentaje
-  public porcentajeMascara:any;
+  public porcentajeMascara: any;
   //Constructor
-  constructor(private servicio: OrdenVentaService, private actualizacionPrecios: ActualizacionPrecios, private clienteService: ClienteService, private appService: AppService,
-    private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService, private empresaServicio: EmpresaService, private ordenVentaServicio: OrdenVentaService,
+  constructor(private servicio: OrdenVentaService, private actualizacionPrecios: ActualizacionPrecios, 
+    private clienteService: ClienteService, private appService: AppService,
+    private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService, 
+    private empresaServicio: EmpresaService, private ordenVentaServicio: OrdenVentaService,
     private toastr: ToastrService, public dialog: MatDialog) {
     //Defiene autocompletado de Clientes
     this.autocompletado.valueChanges.subscribe(data => {
@@ -77,13 +78,6 @@ export class ActualizacionPreciosComponent implements OnInit {
         })
       }
     })
-    // this.autocompletado.valueChanges.subscribe(data => {
-    //   if(typeof data == 'string') {
-    //     this.servicio.listarPorNombre(data).subscribe(res => {
-    //       this.resultados = res;
-    //     })
-    //   }
-    // })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -98,7 +92,6 @@ export class ActualizacionPreciosComponent implements OnInit {
     //Obtiene la mascara de porcentaje
     this.porcentajeMascara = this.appService.mascararPorcentaje();
   }
-
   //Obtiene el listado de registros
   private listarEmpresas() {
     this.empresaServicio.listar().subscribe(
@@ -154,7 +147,7 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Busca los datos segun la Orden seleccionada
   public buscarPorOrdenPrecios(indice) {
     this.ordenVenta = [];
-    this.porEscala = this.listaCompleta[indice].tipoTarifa.porEscala; //true o false
+    this.porEscala = this.listaCompleta[indice].tipoTarifa.porEscala;
     this.indiceSeleccionado = indice;
     if (this.listaCompleta[indice].tipoTarifa.porEscala == true) {
       this.ordenVentaEscalaServicio.listarFechasPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
@@ -382,6 +375,7 @@ export class ActualizacionPreciosComponent implements OnInit {
     return this.appService.setDecimales(valor, cantidad);
   }
 }
+//Componente Lista de Precios
 @Component({
   selector: 'lista-precios-dialogo',
   templateUrl: 'lista-precios.html',
@@ -393,8 +387,9 @@ export class ListaPreciosDialogo {
   public porEscala: boolean;
   //Define la lista de usuarios activos de la empresa
   public listaPrecios: Array<any> = [];
-
-  constructor(public dialogRef: MatDialogRef<ListaPreciosDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService) { }
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<ListaPreciosDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  //Al inicializarse el componente
   ngOnInit() {
     this.listaPrecios = this.data.listaFiltrada;
     this.fecha = this.data.fecha;
@@ -405,6 +400,7 @@ export class ListaPreciosDialogo {
     document.getElementById('idActualizacion').focus();
   }
 }
+//Componente Confirmar
 @Component({
   selector: 'confirmar-dialogo',
   templateUrl: 'confirmar-modal.html',
@@ -422,7 +418,7 @@ export class ConfimarDialogo {
   //Al inicializarse el componente
   ngOnInit() {
     this.formulario = this.data.formulario;
-    //controlo que tabla muestro en el modal
+    //Controlo que tabla muestro en el modal
     this.porEscala = this.data.porEscala;
     this.ordenVenta.setValue(this.data.ordenVenta);
   }
