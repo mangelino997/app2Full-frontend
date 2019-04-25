@@ -33,7 +33,7 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Define si mostrar el boton
   public mostrarBoton: boolean = null;
   //Define que campo muestra
-  public buscarPorCliente: boolean = null;
+  public buscarPorCliente: boolean = true;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -84,13 +84,19 @@ export class ActualizacionPreciosComponent implements OnInit {
     //Define el formulario y validaciones
     this.formulario = this.actualizacionPrecios.formulario;
     //Setea el campo a buscar por defecto
-    this.buscarPor.setValue(1);
+    this.buscarPor.setValue(0);
     //Obtiene la lista completa de registros
     this.listarEmpresas();
     //Setea por defecto que el combo sea un aumento de precio
     this.aumento.setValue(1);
     //Obtiene la mascara de porcentaje
     this.porcentajeMascara = this.appService.mascararPorcentaje();
+    //Establece la empresa por defecto y disable
+    this.empresa.setValue(this.appService.getEmpresa());
+    this.empresa.disable();
+    setTimeout(function() {
+      document.getElementById('idBuscarPor').focus();
+    }, 20);
   }
   //Obtiene el listado de registros
   private listarEmpresas() {
@@ -109,6 +115,7 @@ export class ActualizacionPreciosComponent implements OnInit {
       this.buscarPorCliente = true;
     } else {
       this.buscarPorCliente = false;
+      this.cargarTabla(1, null);
     }
   }
   //Carga la Tabla 
@@ -153,7 +160,8 @@ export class ActualizacionPreciosComponent implements OnInit {
       this.ordenVentaEscalaServicio.listarFechasPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
         res => {
           this.ordenVenta = res.json();
-          this.formulario.get('fechaDesde').setValue(this.ordenVenta[this.ordenVenta.length - 1].preciosDesde);
+          this.formulario.get('fechaDesde').setValue(this.ordenVenta[0].preciosDesde);
+          this.filtrarPorPrecioDesde();
         },
         err => {
         }
@@ -162,7 +170,8 @@ export class ActualizacionPreciosComponent implements OnInit {
       this.ordenVentaTramoServicio.listarPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
         res => {
           this.ordenVenta = res.json();
-          this.formulario.get('fechaDesde').setValue(this.ordenVenta[this.ordenVenta.length - 1].preciosDesde);
+          this.formulario.get('fechaDesde').setValue(this.ordenVenta[0].preciosDesde);
+          this.filtrarPorPrecioDesde();
         },
         err => {
         }
@@ -176,12 +185,12 @@ export class ActualizacionPreciosComponent implements OnInit {
       res => {
         let respuesta = res.json();
         this.listaFiltrada = respuesta;
-        this.openListaPrecioDialogo();
+        // this.openListaPrecioDialogo();
       }
     );
   }
   //Modal Lista de Precios para determinada Fecha
-  private openListaPrecioDialogo() {
+  public openListaPrecioDialogo() {
     const dialogRef = this.dialog.open(ListaPreciosDialogo, {
       width: '1100px',
       data: {
@@ -210,6 +219,11 @@ export class ActualizacionPreciosComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       if (result == 1) {
         this.reestablecerFormulario(undefined);
+        this.buscarPor.setValue(0);
+        this.buscarPorCliente = true;
+        setTimeout(function() {
+          document.getElementById('idBuscarPor').focus();
+        }, 20);
       }
     });
   }
@@ -220,9 +234,9 @@ export class ActualizacionPreciosComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('precioDesde').setValue(null);
     this.formulario.get('porcentaje').setValue(null);
-    this.empresa.setValue(null);
+    this.empresa.setValue(this.appService.getEmpresa());
+    this.empresa.disable();
     this.autocompletado.setValue(null);
-
   }
   //Realiza la actualizacion del precio de la orden seleccionada
   public aplicarActualizacion() {

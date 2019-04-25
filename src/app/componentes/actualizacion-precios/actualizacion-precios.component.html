@@ -1,13 +1,13 @@
 <div id="agendatelefonica" class="container-fluid">
   <div class="row justify-content-center contenedor">
-    <div class="col-md-10 text-center">
+    <div class="col-md-12 text-center">
       <h5>Actualización de Precios</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idAutocompletado" class="tamanio-label">Buscar</label>
-              <mat-select class="form-control form-control-sm" [formControl]="buscarPor"
+              <label for="idBuscarPor" class="tamanio-label">Buscar</label>
+              <mat-select id="idBuscarPor" class="form-control form-control-sm" [formControl]="buscarPor"
                 (selectionChange)="cambioDeCampo()">
                 <mat-option [value]="0">Por Cliente</mat-option>
                 <mat-option [value]="1">Por Empresa</mat-option>
@@ -118,7 +118,8 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idPrecioDesde" class="tamanio-label">Precios Desde</label>
-              <mat-select class="form-control form-control-sm" formControlName="fechaDesde">
+              <mat-select class="form-control form-control-sm" formControlName="fechaDesde"
+                (selectionChange)="filtrarPorPrecioDesde()">
                 <mat-option *ngFor="let itemOrdenVta of ordenVenta" [value]="itemOrdenVta.preciosDesde">
                   {{itemOrdenVta.preciosDesde | date: 'dd-MM-yyyy'}}
                 </mat-option>
@@ -127,7 +128,7 @@
           </div>
           <div class="col-md-3">
             <div class="form-group left">
-              <button class="btn btn-primary btn-sm" type="button" (click)="filtrarPorPrecioDesde()">Consultar Lista de
+              <button mat-raised-button color="accent" (click)="openListaPrecioDialogo()">Consultar Lista de
                 Precios</button>
             </div>
           </div>

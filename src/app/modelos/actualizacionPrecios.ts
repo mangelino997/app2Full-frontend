@@ -12,7 +12,7 @@ export class ActualizacionPrecios {
             precioDesde: new FormControl('', Validators.required), //nueva fecha
             listaPrecios: new FormControl(),
             aumento: new FormControl(),
-            porcentaje: new FormControl(),
+            porcentaje: new FormControl('', Validators.required),
             fechaDesde: new FormControl('', Validators.required) //la ultima fecha
         })
     }
