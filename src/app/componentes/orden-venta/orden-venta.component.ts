@@ -274,7 +274,7 @@ export class OrdenVentaComponent implements OnInit {
   public listarOrdenesVentas(tipo) {
     switch (tipo) {
       case 'empresa':
-        this.reestablecerCampos(this.formulario.get('empresa').value, null);
+        this.reestablecerCampos(null);
         this.ordenVentaServicio.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
@@ -282,7 +282,7 @@ export class OrdenVentaComponent implements OnInit {
         );
         break;
       case 'cliente':
-        this.reestablecerCampos(null, this.formulario.get('cliente').value);
+        this.reestablecerCampos(this.formulario.get('cliente').value);
         this.formulario.get('cliente').setValue(this.formulario.get('cliente').value);
         this.formulario.get('empresa').setValue(null);
         this.ordenVentaServicio.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
@@ -312,7 +312,7 @@ export class OrdenVentaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerCampos(null, null);
+    this.reestablecerCampos(null);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
@@ -627,7 +627,7 @@ export class OrdenVentaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
-          this.reestablecerCampos(null, null);
+          this.reestablecerCampos(null);
           this.listarEscalaTarifa();
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
@@ -654,7 +654,7 @@ export class OrdenVentaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerCampos(null, null);
+          this.reestablecerCampos(null);
           this.establecerValoresPorDefecto();
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
@@ -685,7 +685,7 @@ export class OrdenVentaComponent implements OnInit {
     this.obtenerPreciosDesde();
   }
   //Reestablecer campos
-  private reestablecerCampos(empresa, cliente) {
+  private reestablecerCampos(cliente) {
     let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
     this.preciosDesde.enable();
     this.preciosDesde.reset();
@@ -700,9 +700,9 @@ export class OrdenVentaComponent implements OnInit {
     this.formulario.get('tipoOrdenVenta').setValue(tipoOrdenVenta);
     this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
     this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
-    if(empresa != null) {
-      this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
-    } else {
+    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('empresa').disable();
+    if(cliente != null) {
       this.formulario.get('cliente').setValue(cliente);
     }
     if(this.indiceSeleccionado != 1) {
