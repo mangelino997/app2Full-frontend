@@ -272,6 +272,10 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Obtiene la lista por sucursal y empresa
   public listarPorSucursalYEmpresa() {
+    let sucursal = this.formulario.get('sucursal').value;
+    this.formulario.reset();
+    this.formulario.get('sucursal').setValue(sucursal);
+    this.establecerValoresPorDefecto();
     if (this.mostrarAutocompletado) {
       let sucursal = this.formulario.get('sucursal').value;
       let empresa = this.formulario.get('empresa').value;
