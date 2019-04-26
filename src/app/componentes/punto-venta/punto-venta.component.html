@@ -70,9 +70,9 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCodigoAfip" class="tamanio-label">Código de Afip *</label>
-              <mat-select id="idCodigoAfip" class="form-control form-control-sm" formControlName="afipComprobante"
+              <mat-select id="idCodigoAfip" class="form-control form-control-sm number-right" formControlName="afipComprobante"
                 [compareWith]="compareFn">
-                <mat-option *ngFor="let itemAfipComprobante of afipComprobantes" [value]="itemAfipComprobante">
+                <mat-option *ngFor="let itemAfipComprobante of afipComprobantes" [value]="itemAfipComprobante"  [textMask]="obtenerMascaraEnteros(3)" >
                   {{itemAfipComprobante.codigoAfip}} - {{itemAfipComprobante.letra}}
                 </mat-option>
               </mat-select>
@@ -121,15 +121,15 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idUltimoNumero" class="tamanio-label">Ultimo Número *</label>
-              <input id="idUltimoNumero" type="number" formControlName="ultimoNumero" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idUltimoNumero" type="text"  [textMask]="obtenerMascaraEnteros(8)" formControlName="ultimoNumero" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCopias" class="tamanio-label">Copias *</label>
-              <input id="idCopias" type="number" formControlName="copias" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idCopias" type="text" formControlName="copias" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">

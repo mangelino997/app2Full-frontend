@@ -148,6 +148,25 @@ export class AppService {
     };
     return mascara;
   }
+  //Obtiene la mascara de altura, ancho, largo, m3, kg CON decimales
+  public mascararEnterosCon4Decimales(intLimite) {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '',
+        suffix: '',
+        thousandsSeparatorSymbol:'',
+        integerLimit: intLimite,
+        requireDecimal: true,
+        allowDecimal: true,
+        decimalLimit: 4,
+        decimalSymbol: '.',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
   //Obtiene la mascara de enteros SIN decimales
   public mascararEnterosSinDecimales(intLimite) {
     let mascara = {
@@ -167,7 +186,7 @@ export class AppService {
     return mascara;
   }
   //Obtiene la mascara de enteros
-  public mascararEnteros(intLimite) {
+  public mascararEnteros(intLimite) {{{
     let mascara = {
       mask: createNumberMask({
         prefix: '',

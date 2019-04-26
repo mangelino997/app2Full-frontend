@@ -266,4 +266,12 @@ export class CategoriaComponent implements OnInit {
       }
     }
   }
+  //Mascara un porcentaje
+  public mascararPorcentaje() {
+    return this.appServicio.mascararPorcentaje();
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(formulario, cantidad): void {
+    formulario.setValue(this.appServicio.desenmascararPorcentaje(formulario.value, cantidad));
+  }
 }

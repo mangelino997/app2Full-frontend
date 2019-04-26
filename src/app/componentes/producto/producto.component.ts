@@ -8,6 +8,7 @@ import { Producto } from 'src/app/modelos/producto';
 import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
 import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
 import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-producto',
@@ -51,7 +52,7 @@ export class ProductoComponent implements OnInit {
   public empresas: Array<any> = [];
   //Constructor
   constructor(private appComponent: AppComponent, private producto: Producto, private servicio: ProductoService,
-    private subopcionPestaniaService: SubopcionPestaniaService, private rubrosServicio: RubroProductoService,
+    private subopcionPestaniaService: SubopcionPestaniaService, private rubrosServicio: RubroProductoService, private appService: AppService,
     private unidadMedidaServicio: UnidadMedidaService, private marcaServicio: MarcaProductoService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -316,5 +317,13 @@ export class ProductoComponent implements OnInit {
     } else {
       return elemento;
     }
+  }
+  //Mascara un numero con cuatro decimales
+  public mascararCuatroDecimales(limit) {
+    return this.appService.mascararEnterosCon4Decimales(limit);
+  }
+  //Mascara un importe
+  public mascararImporte(limit) {
+    return this.appService.mascararImporte(limit);
   }
 }

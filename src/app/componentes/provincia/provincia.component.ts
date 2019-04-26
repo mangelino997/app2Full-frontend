@@ -5,6 +5,7 @@ import { PaisService } from '../../servicios/pais.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-provincia',
@@ -40,7 +41,7 @@ export class ProvinciaComponent implements OnInit {
   public resultadosPaises:Array<any> = [];
   //Constructor
   constructor(private servicio: ProvinciaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private paisServicio: PaisService, private appComponent: AppComponent, private toastr: ToastrService) {
+    private paisServicio: PaisService, private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -283,5 +284,9 @@ export class ProvinciaComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
+  }
+  //Mascara un numero entero
+  public mascararEnteros(limit) {
+    return this.appService.mascararEnteros(limit);
   }
 }

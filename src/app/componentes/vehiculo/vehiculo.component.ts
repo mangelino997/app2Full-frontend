@@ -12,6 +12,7 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Vehiculo } from 'src/app/modelos/vehiculo';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-vehiculo',
@@ -76,7 +77,7 @@ export class VehiculoComponent implements OnInit {
     private localidadServicio: LocalidadService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService,
-    private personalServicio: PersonalService, private vehiculoModelo: Vehiculo) {
+    private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -463,4 +464,9 @@ export class VehiculoComponent implements OnInit {
       }
     }
   }
+  //Mascara un numero sin decimal
+  public mascararNumero(limit){
+    return this.appService.mascararEnteros(limit);
+  }
+
 }

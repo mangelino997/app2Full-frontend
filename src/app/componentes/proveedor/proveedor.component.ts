@@ -560,4 +560,8 @@ export class ProveedorComponent implements OnInit {
       }
     }
   }
+  //Mascara numeros enteros
+  public mascararEnteros(limit) {
+    return this.appServicio.mascararEnteros(limit);
+  }
 }

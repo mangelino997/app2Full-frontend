@@ -63,7 +63,7 @@
                       <div class="form-group has-float-label">
                         <label id="labelRazonSocial" for="idRazonSocial" class="tamanio-label-titulo">Razón Social *</label>
                         <input id="idRazonSocial" type="text" formControlName="razonSocial" autocomplete="off"
-                          class="form-control form-control-sm upper-case" [readonly]="soloLectura"
+                          class="form-control form-control-sm upper-case" [readonly]="soloLectura" maxlength="45"
                           (ngModelChange)="cambioCampo('idRazonSocial', 'labelRazonSocial')">
                       </div>
                     </div>
@@ -71,7 +71,7 @@
                       <div class="form-group has-float-label">
                         <label for="idNombreFantasia" class="tamanio-label-titulo">Nombre Fantasia</label>
                         <input id="idNombreFantasia" type="text" formControlName="nombreFantasia" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" maxlength="45" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -81,7 +81,7 @@
                           class="form-control form-control-sm" [readonly]="soloLectura"
                           pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$"
                           (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', 'sitioWeb')"
-                          (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioweb')">
+                          (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioweb')" maxlength="60">
                       </div>
                     </div>
                   </div>
@@ -93,7 +93,7 @@
                       <div class="form-group has-float-label">
                         <label for="idDomicilio" class="tamanio-label">Domicilio *</label>
                         <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" maxlength="60" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -129,7 +129,7 @@
                       <div class="form-group has-float-label">
                         <label id="labelTelefono" for="idTelefonoFijo" class="tamanio-label">Teléfono</label>
                         <input id="idTelefono" type="tel" formControlName="telefono" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -170,16 +170,16 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento *</label>
-                        <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarDocumento()"
-                          (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
+                        <input id="idNumeroDocumento" type="text" formControlName="numeroDocumento" autocomplete="off"
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura" (blur)="validarDocumento()"
+                          (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')" >
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
-                        <input id="idNumeroIIBB" type="number" formControlName="numeroIIBB" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                        <input id="idNumeroIIBB" type="text" formControlName="numeroIIBB" autocomplete="off"
+                          class="form-control form-control-sm number-right" [textMask]="mascararEnteros(15)" [readonly]="soloLectura">
                       </div>
                     </div>
                   </div>
@@ -268,29 +268,29 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idNumeroCuenta" class="tamanio-label">N° de Cuenta</label>
-                        <input id="idNumeroCuenta" type="text" formControlName="numeroCuenta"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                        <input id="idNumeroCuenta" type="text" formControlName="numeroCuenta" autocomplete="off" 
+                        class="form-control form-control-sm number-right" maxlength="20" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idTitular" class="tamanio-label">Titular</label>
                         <input id="idTitular" type="text" formControlName="titular" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idNumeroCBU" class="tamanio-label">N° de CBU</label>
                         <input id="idNumeroCBU" type="text" formControlName="numeroCBU" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm number-right" [textMask]="mascararEnteros(22)" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAliasCBU" class="tamanio-label">Alias CBU</label>
                         <input id="idAliasCBU" type="text" formControlName="aliasCBU"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                          autocomplete="off" class="form-control form-control-sm" maxlength="45" [readonly]="soloLectura">
                       </div>
                     </div>
                   </div>
@@ -301,7 +301,7 @@
                       <div class="form-group has-float-label">
                         <label for="idObservaciones" class="tamanio-label">Observaciones</label>
                         <textarea id="idObservaciones" class="form-control form-control-sm"
-                          formControlName="observaciones" rows="4" [readonly]="soloLectura"></textarea>
+                          formControlName="observaciones" rows="4" maxlength="400" [readonly]="soloLectura"></textarea>
                       </div>
                     </div>
                   </div>
@@ -312,7 +312,7 @@
                       <div class="form-group has-float-label">
                         <label for="idIngresarComprobante" class="tamanio-label">Al Ingresar Comprobante</label>
                         <textarea id="idIngresarComprobante" class="form-control form-control-sm"
-                          formControlName="notaIngresarComprobante" rows="2" [readonly]="soloLectura"></textarea>
+                          formControlName="notaIngresarComprobante" rows="2" maxlength="200" [readonly]="soloLectura"></textarea>
                       </div>
                     </div>
                   </div>
@@ -321,7 +321,7 @@
                       <div class="form-group has-float-label">
                         <label for="idImprimirOrdenPago" class="tamanio-label">Al Imprimir Orden de Pago</label>
                         <textarea id="idImprimirOrdenPago" class="form-control form-control-sm"
-                          formControlName="notaImpresionOrdenPago" rows="2" [readonly]="soloLectura"></textarea>
+                          formControlName="notaImpresionOrdenPago" maxlength="200" rows="2" [readonly]="soloLectura"></textarea>
                       </div>
                     </div>
                   </div>

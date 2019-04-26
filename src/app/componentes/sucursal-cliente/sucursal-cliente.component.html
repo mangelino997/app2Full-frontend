@@ -50,7 +50,7 @@
               <label id="labelNombre" for="idNombre" class="tamanio-label-titulo">Nombre Sucursal *</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura"
-                (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
+                (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="45">
             </div>
           </div>
         </div>
@@ -59,7 +59,7 @@
             <div class="form-group has-float-label">
               <label for="idDomicilio" class="tamanio-label-titulo">Domicilio *</label>
               <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="60">
             </div>
           </div>
           <div class="col-md-3">
@@ -95,14 +95,14 @@
             <div class="form-group has-float-label">
               <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
               <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil</label>
               <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
         </div>

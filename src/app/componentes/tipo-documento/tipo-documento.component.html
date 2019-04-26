@@ -32,18 +32,18 @@
           <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
-            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
+            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="45">
         </div>
         <div class="form-group has-float-label">
           <label id="labelAbreviatura" for="idAbreviatura" class="tamanio-label">Abreviatura *</label>
           <input id="idAbreviatura" type="text" formControlName="abreviatura" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
-            (ngModelChange)="cambioCampo('idAbreviatura', 'labelAbreviatura')">
+            (ngModelChange)="cambioCampo('idAbreviatura', 'labelAbreviatura')" maxlength="5">
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigoAfip" class="tamanio-label">Código Afip *</label>
           <input id="idCodigoAfip" type="number" formControlName="codigoAfip" autocomplete="off"
-            class="form-control form-control-sm" [readonly]="soloLectura">
+            class="form-control form-control-sm" [readonly]="soloLectura" maxlength="3">
         </div>
         <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">

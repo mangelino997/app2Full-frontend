@@ -7,6 +7,7 @@ import { AppComponent } from 'src/app/app.component';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
 import { MatDialog } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-viaje-combustible',
@@ -33,7 +34,7 @@ export class ViajeCombustibleComponent implements OnInit {
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajePropioCombustibleModelo: ViajePropioCombustible,
     private fechaServicio: FechaService, private appComponent: AppComponent, 
-    private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog) { }
+    private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog, private appService:AppService) { }
   //Al inicilizarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio combustible
@@ -250,5 +251,9 @@ export class ViajeCombustibleComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {});
+  }
+  //Mascara un importe decimal
+  public mascararImporte(limit) {
+    return this.appService.mascararImporte(limit);
   }
 }

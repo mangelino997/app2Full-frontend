@@ -51,16 +51,16 @@
       <div class="form-group has-float-label">
         <label for="idCantidadOC" class="tamanio-label">Cantidad *</label>
         <input id="idCantidadOC" type="number" formControlName="cantidad" autocomplete="off"
-          class="form-control form-control-sm number-right" [readonly]="soloLectura"
+          class="form-control form-control-sm number-right number-right" [readonly]="soloLectura"
           (blur)="calcularImporte(formularioViajePropioCombustible)">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
-        <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
+        <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario($) *</label>
         <input id="idPrecioUnitarioOC" type="text" formControlName="precioUnitario" autocomplete="off"
           (blur)="calcularImporte(formularioViajePropioCombustible)" class="form-control form-control-sm number-right"
-          placeholder="$ 0.00">
+          placeholder="$ 0.00" [textMask]= "mascararImporte(8)">
       </div>
     </div>
     <div class="col-md-3">

@@ -40,7 +40,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
-              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm" 
+              [readonly]="soloLectura" maxlength="30">
             </div>
           </div>
         </div>
@@ -83,7 +84,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelModelo" for="idModelo" class="tamanio-label">Modelo</label>
-              <input id="idModelo" type="text" formControlName="modelo" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idModelo" type="text" formControlName="modelo" autocomplete="off" class="form-control form-control-sm" 
+              [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -119,8 +121,9 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idStockMinimo" class="tamanio-label">Stock Mínimo</label>
-              <input id="idStockMinimo" type="number" formControlName="stockMinimo" class="form-control form-control-sm"
+              <label for="idStockMinimo" class="tamanio-label">Stock Mínimo($)</label>
+              <input id="idStockMinimo" type="text" formControlName="stockMinimo" class="form-control form-control-sm number-right"
+                [textMask]="mascararImporte(8)" (blur)="setDecimales(formularioEscala.get('stockMinimo'), 2)"
                 [readonly]="soloLectura">
             </div>
           </div>
@@ -128,15 +131,17 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario de Venta</label>
-              <input id="idPrecioUnitario" type="number" formControlName="precioUnitarioVenta" class="form-control form-control-sm"
+              <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario de Venta($)</label>
+              <input id="idPrecioUnitario" type="text" formControlName="precioUnitarioVenta" class="form-control form-control-sm number-right"
+                [textMask]="mascararImporte(8)" (blur)="setDecimales(formularioEscala.get('precioUnitarioVenta'), 2)"
                 [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCoeficienteITC" class="coeficiente-label">Coeficiente ITC</label>
-              <input id="idCoeficienteITC" type="number" formControlName="coeficienteITC" class="form-control form-control-sm"
+              <input id="idCoeficienteITC" type="text" formControlName="coeficienteITC" class="form-control form-control-sm number-right"
+                [textMask]="mascararCuatroDecimales(2)" (blur)="setDecimales(formularioEscala.get('coeficienteITC'), 4)"
                 [readonly]="soloLectura">
             </div>
           </div>

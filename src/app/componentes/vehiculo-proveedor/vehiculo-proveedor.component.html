@@ -69,14 +69,14 @@
             <div class="form-group has-float-label">
               <label for="idDominio" class="tamanio-label">Dominio *</label>
               <input id="idDominio" type="text" formControlName="dominio" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="10">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idAnioFabricacion" class="tamanio-label">Año de Fabricación *</label>
-              <input id="idAnioFabricacion" type="number" formControlName="anioFabricacion"
-                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idAnioFabricacion" type="text" formControlName="anioFabricacion" [textMask]="mascararNumero(4)"
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -84,15 +84,15 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNumeroMotor" class="tamanio-label">Número de Motor</label>
-              <input id="idNumeroMotor" type="number" formControlName="numeroMotor" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNumeroMotor" type="text" formControlName="numeroMotor" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="25">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNumeroChasis" class="tamanio-label">Número de Chasis</label>
-              <input id="idNumeroChasis" type="number" formControlName="numeroChasis" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNumeroChasis" type="text" formControlName="numeroChasis" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="25">
             </div>
           </div>
         </div>
@@ -143,8 +143,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNumeroPoliza" class="tamanio-label">Número de Póliza *</label>
-              <input id="idNumeroPoliza" type="number" formControlName="numeroPoliza" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNumeroPoliza" type="text" formControlName="numeroPoliza" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="15">
             </div>
           </div>
           <div class="col-md-4">
@@ -159,8 +159,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNumeroRuta" class="tamanio-label">Número de Ruta *</label>
-              <input id="idNumeroRuta" type="number" formControlName="numeroRuta" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNumeroRuta" type="text" formControlName="numeroRuta" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="15">
             </div>
           </div>
           <div class="col-md-4">
