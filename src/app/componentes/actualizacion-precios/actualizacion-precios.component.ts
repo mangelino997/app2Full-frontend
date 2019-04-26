@@ -450,7 +450,7 @@ export class ConfimarDialogo {
           var respuesta = res.json();
           if (respuesta.codigo == 201) {
             setTimeout(function () {
-              document.getElementById('idAutocompletado').focus();
+              document.getElementById('idBuscarPor').focus();
             }, 20);
             this.toastr.success(respuesta.mensaje);
           }
@@ -471,7 +471,7 @@ export class ConfimarDialogo {
           var respuesta = res.json();
           if (respuesta.codigo == 201) {
             setTimeout(function () {
-              document.getElementById('idAutocompletado').focus();
+              document.getElementById('idBuscarPor').focus();
             }, 20);
             this.toastr.success(respuesta.mensaje);
           }
