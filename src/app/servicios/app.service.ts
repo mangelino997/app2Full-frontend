@@ -186,7 +186,7 @@ export class AppService {
     return mascara;
   }
   //Obtiene la mascara de enteros
-  public mascararEnteros(intLimite) {{{
+  public mascararEnteros(intLimite) {
     let mascara = {
       mask: createNumberMask({
         prefix: '',

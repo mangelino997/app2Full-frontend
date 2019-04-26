@@ -274,7 +274,7 @@ export class OrdenVentaComponent implements OnInit {
   public listarOrdenesVentas(tipo) {
     switch (tipo) {
       case 'empresa':
-        this.reestablecerCampos(null);
+        // this.reestablecerCampos(null);
         this.ordenVentaServicio.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
@@ -684,6 +684,14 @@ export class OrdenVentaComponent implements OnInit {
     this.listaDeTramos = [];
     this.obtenerPreciosDesde();
   }
+  //Establece el tipo (empresa o cliente)
+  public establecerTipo(): void {
+    this.reestablecerCampos(null);
+    let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
+    if(!tipoOrdenVenta) {
+      this.listarOrdenesVentas('empresa');
+    }
+  }
   //Reestablecer campos
   private reestablecerCampos(cliente) {
     let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
@@ -707,6 +715,9 @@ export class OrdenVentaComponent implements OnInit {
     }
     if(this.indiceSeleccionado != 1) {
       this.formulario.get('tipoTarifa').disable();
+    }
+    if(this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
+      this.formulario.get('vendedor').disable();
     }
   }
   //Elimina un registro
