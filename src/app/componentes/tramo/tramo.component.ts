@@ -215,6 +215,7 @@ export class TramoComponent implements OnInit {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
+          this.establecerValoresPorDefecto();
           setTimeout(function() {
             document.getElementById('idOrigen').focus();
           }, 20);
@@ -222,7 +223,10 @@ export class TramoComponent implements OnInit {
         }
       },
       err => {
-        console.log(err);
+        let respuesta = err.json();
+        if(respuesta.codigo == 11017) {
+          this.toastr.error('Error Unicidad Origen->Destino', respuesta.mensaje);
+        }
       }
     );
   }
