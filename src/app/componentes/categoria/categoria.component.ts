@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CategoriaService } from '../../servicios/categoria.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
@@ -51,6 +51,8 @@ export class CategoriaComponent implements OnInit {
       res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
+        //Establece los valores de la primera pestania activa
+        this.seleccionarPestania(this.pestanias[0].id, this.pestanias[0].nombre, 0);
       },
       err => {
         console.log(err);
@@ -78,12 +80,30 @@ export class CategoriaComponent implements OnInit {
     //Obtiene la lista completa de registros
     this.listar();
     //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
+    // this.establecerValoresPorDefecto();
+  }
+  //Mascara un porcentaje
+  public mascararPorcentaje() {
+    return this.appServicio.mascararPorcentaje();
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(formulario, cantidad): void {
+    formulario.setValue(this.appServicio.desenmascararPorcentaje(formulario.value, cantidad));
+  }
+  //Mascara enteros
+  public mascararEnteros(limite) {
+    return this.appServicio.mascararEnteros(limite);
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.formulario.get('adicionalBasicoVacaciones').setValue('0.00');
-    this.formulario.get('topeBasicoAdelantos').setValue('0.00');
+    let diasLaborables = this.formulario.get('diasLaborables').value;
+    let horasLaborables = this.formulario.get('horasLaborables').value;
+    if(!diasLaborables) {
+      this.formulario.get('diasLaborables').setValue('24');
+    }
+    if(!horasLaborables) {
+      this.formulario.get('horasLaborables').setValue('8');
+    }
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
@@ -169,6 +189,7 @@ export class CategoriaComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.establecerValoresPorDefecto();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -265,13 +286,5 @@ export class CategoriaComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
-  }
-  //Mascara un porcentaje
-  public mascararPorcentaje() {
-    return this.appServicio.mascararPorcentaje();
-  }
-  //Establece los decimales de porcentaje
-  public establecerPorcentaje(formulario, cantidad): void {
-    formulario.setValue(this.appServicio.desenmascararPorcentaje(formulario.value, cantidad));
   }
 }
