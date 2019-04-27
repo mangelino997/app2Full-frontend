@@ -59,6 +59,14 @@ public listarPorCategoriaNombre(nombre) {
     })
   })
 }
+//Obtiene la lista por categoria
+public listarPorCategoria(idCategoria) {
+  return this.http.get(this.url + '/listarPorCategoria/' + idCategoria, this.options);
+}
+//Obtiene la lista por categoria y anio
+public listarPorCategoriaYAnio(idCategoria, anio) {
+  return this.http.get(this.url + '/listarPorCategoriaYAnio/' + idCategoria + '/' + anio, this.options);
+}
 //Agrega un registro
 public agregar(elemento) {
   return this.http.post(this.url, elemento, this.options);

@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
@@ -35,6 +35,8 @@ export class BasicoCategoriaComponent implements OnInit {
   public meses: Array<any> = [];
   //Define una lista de anios
   public anios: Array<any> = [];
+  //Defiene la categoria
+  public formularioListar:FormGroup;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -46,7 +48,7 @@ export class BasicoCategoriaComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'categoria', 'anio', 'mes', 'basico', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'categoria', 'mes', 'anio', 'basico', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -81,6 +83,11 @@ export class BasicoCategoriaComponent implements OnInit {
   ngOnInit() {
     //Define el formulario y validaciones
     this.formulario = this.basicoCategoria.formulario;
+    //Define el formulario de listar
+    this.formularioListar = new FormGroup({
+      categoria: new FormControl('', Validators.required),
+      anio: new FormControl('', Validators.required)
+    });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista de categorias
@@ -89,8 +96,10 @@ export class BasicoCategoriaComponent implements OnInit {
     this.listarMeses();
     //Obtiene la lista de años
     this.listarAnios();
-    //Obtiene la lista completa de registros
-    this.listar();
+  }
+  //Obtiene la mascara de importe
+  public mascararImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite);
   }
   //Obtiene la lista de categorias
   public listarCategorias() {
@@ -119,6 +128,19 @@ export class BasicoCategoriaComponent implements OnInit {
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
     this.formulario.setValue(elemento);
+    this.formulario.get('basico').setValue(this.appService.establecerDecimales(this.formulario.get('basico').value, 2));
+  }
+  //Establecer campos en disabled
+  public establecerEstadoCampos(opcion): void {
+    if(opcion) {
+      this.formulario.get('categoria').enable();
+      this.formulario.get('anio').enable();
+      this.formulario.get('mes').enable();
+    } else {
+      this.formulario.get('categoria').disable();
+      this.formulario.get('anio').disable();
+      this.formulario.get('mes').disable();
+    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -142,16 +164,24 @@ export class BasicoCategoriaComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
+        this.establecerEstadoCampos(true);
+        this.establecerValoresPestania(nombre, false, false, true, 'idCategoria');
         break;
       case 2:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.formularioListar.reset();
+        this.vaciarLista();
         break;
       default:
         break;
@@ -184,21 +214,8 @@ export class BasicoCategoriaComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('mes').setValue(this.formulario.get('mes').value.id);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -212,23 +229,21 @@ export class BasicoCategoriaComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("idCategoria").classList.add('label-error');
-          document.getElementById("idCategoria").classList.add('is-invalid');
-          document.getElementById("idCategoria").focus();
-          this.toastr.error(respuesta.mensaje);
+        if (respuesta.codigo == 11017) {
+          this.toastr.error('Error Unicidad Categoría, Mes y Año', respuesta.mensaje + ' Categoría');
         }
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-    this.formulario.get('mes').setValue(this.formulario.get('mes').value.id);
+    this.formulario.enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
+          this.establecerEstadoCampos(false);
           setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -237,11 +252,8 @@ export class BasicoCategoriaComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("idCategoria").classList.add('label-error');
-          document.getElementById("idCategoria").classList.add('is-invalid');
-          document.getElementById("idCategoria").focus();
-          this.toastr.error(respuesta.mensaje);
+        if (respuesta.codigo == 11017) {
+          this.toastr.error('Error Unicidad Categoría, Mes y Año', respuesta.mensaje + ' Categoría');
         }
       }
     );
@@ -249,6 +261,26 @@ export class BasicoCategoriaComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     console.log();
+  }
+  //Obtiene una lista por categoria y anio
+  public listarPorCategoriaYAnio(): void {
+    let idCategoria = this.formularioListar.get('categoria').value.id;
+    let anio = this.formularioListar.get('anio').value;
+    this.servicio.listarPorCategoriaYAnio(idCategoria, anio).subscribe(res => {
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sortingDataAccessor = (item, property) => {
+        switch(property) {
+          case 'categoria': return item.categoria.nombre;
+          case 'mes': return item.mes.nombre;
+          default: return item[property];
+        }
+      };
+      this.listaCompleta.sort = this.sort;
+    })
+  }
+  //Vacia la lista
+  public vaciarLista(): void {
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -258,10 +290,16 @@ export class BasicoCategoriaComponent implements OnInit {
     this.resultados = [];
   }
   //Formatea el numero a x decimales
-  public setDecimales(formulario, cantidad) {
+  public establecerDecimales(formulario, cantidad) {
     let valor = formulario.value;
     if (valor != '') {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
+  }
+  //Muestra numero con decimales
+  public mostrarDecimales(valor, cantidad) {
+    if(valor) {
+      return this.appService.establecerDecimales(valor, cantidad);
     }
   }
   //Manejo de colores de campos y labels
@@ -274,30 +312,27 @@ export class BasicoCategoriaComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.cambioAutocompletado(elemento);
-    this.setMes(elemento.mes);
+    // this.setMes(elemento.mes);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.cambioAutocompletado(elemento);
-    this.setMes(elemento.mes);
-  }
-  //Obtiene la mascara de importe
-  public obtenerMascaraImporte(intLimite) {
-    return this.appService.mascararImporte(intLimite);
+    // this.setMes(elemento.mes);
   }
   //Setear el json del mes correspoendiente (solo para mostrarlo en el consultar y actualizar)
-  private setMes(idMes) {
-    for (let i = 0; i < this.meses.length; i++) {
-      if (this.meses[i].id == idMes)
-        this.formulario.get('mes').setValue(this.meses[i]);
-    }
-  }
+  // private setMes(idMes) {
+  //   for (let i = 0; i < this.meses.length; i++) {
+  //     if (this.meses[i].id == idMes)
+  //       this.formulario.get('mes').setValue(this.meses[i]);
+  //   }
+  // }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
     if (elemento != undefined) {
-      return elemento.categoria.nombre ? elemento.categoria.nombre : elemento;
+      return elemento.categoria ? elemento.categoria.nombre + ' - ' +
+        elemento.mes.nombre + '/' + elemento.anio + ' - $ ' + this.appService.establecerDecimales(elemento.basico, 2) : elemento;
     } else {
       return elemento;
     }

@@ -225,7 +225,7 @@ export class TramoComponent implements OnInit {
       err => {
         let respuesta = err.json();
         if(respuesta.codigo == 11017) {
-          this.toastr.error('Error Unicidad Origen->Destino', respuesta.mensaje);
+          this.toastr.error('Error Unicidad Origen->Destino', respuesta.mensaje + " TRAMO");
         }
       }
     );
