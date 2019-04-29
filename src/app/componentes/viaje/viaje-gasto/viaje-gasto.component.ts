@@ -6,6 +6,7 @@ import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
 import { MatDialog } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-viaje-gasto',
@@ -29,14 +30,14 @@ export class ViajeGastoComponent implements OnInit {
   public btnGasto:boolean = true;
   //Constructor
   constructor(private viajePropioGastoModelo: ViajePropioGasto, private rubroProductoServicio: RubroProductoService,
-    private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog) { }
+    private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog, public appService: AppService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio gasto
     this.formularioViajePropioGasto = this.viajePropioGastoModelo.formulario;
     //Autocompletado Rubro Producto - Buscar por nombre
     this.formularioViajePropioGasto.get('rubroProducto').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.rubroProductoServicio.listarPorNombre(data).subscribe(response =>{
           this.resultadosRubrosProductos = response;
         })
@@ -161,5 +162,9 @@ export class ViajeGastoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {});
+  }
+  //Mascara un importe
+  public mascararImporte(limit) {
+    return this.appService.mascararImporte(limit);
   }
 }

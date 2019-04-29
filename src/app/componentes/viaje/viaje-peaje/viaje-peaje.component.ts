@@ -34,7 +34,7 @@ export class ViajePeajeComponent implements OnInit {
     this.formularioViajePropioPeaje = this.viajePropioPeajeModelo.formulario;
     //Autocompletado Proveedor (Peaje) - Buscar por alias
     this.formularioViajePropioPeaje.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
           this.resultadosProveedores = response;
         })

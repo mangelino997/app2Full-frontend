@@ -42,7 +42,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajePropioInsumo = this.viajePropioInsumoModelo.formulario;
     //Autocompletado Proveedor (Insumo) - Buscar por alias
     this.formularioViajePropioInsumo.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
           this.resultadosProveedores = response;
         })

@@ -86,7 +86,7 @@ export class ContactoProveedorComponent implements OnInit {
     });
     //Autocompletado Sucursal Banco - Buscar por nombre
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.proveedorServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosProveedores = response;
         })

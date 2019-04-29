@@ -129,7 +129,7 @@ export class ClienteComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorAlias(data).subscribe(response =>{
           this.resultados = response;
         })
@@ -146,7 +146,7 @@ export class ClienteComponent implements OnInit {
     this.seleccionarOpcion(1, 0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.barrioServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBarrios = response;
         })
@@ -154,7 +154,7 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -162,7 +162,7 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Cobrador - Buscar por nombre
     this.formulario.get('cobrador').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.cobradorServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosCobradores = response;
         })
@@ -170,7 +170,7 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Vendedor - Buscar por nombre
     this.formulario.get('vendedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.vendedorServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosVendedores = response;
         })
@@ -178,7 +178,7 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Zona - Buscar por nombre
     this.formulario.get('zona').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.zonaServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosZonas = response;
         })
@@ -186,7 +186,7 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Rubro - Buscar por nombre
     this.formulario.get('rubro').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.rubroServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosRubros = response;
         })
@@ -194,7 +194,7 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Orden Venta - Buscar por nombre
     this.formulario.get('ordenVenta').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.ordenVentaServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosOrdenesVentas = response;
         })
@@ -202,7 +202,7 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Cuenta Grupo - Buscar por nombre
     this.formulario.get('cuentaGrupo').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultadosCuentasGrupos = response;
         })
@@ -210,7 +210,7 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Sucursal Lugar Pago - Buscar por nombre
     this.formulario.get('sucursalLugarPago').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.sucursalServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosSucursalesPago = response;
         })
@@ -218,7 +218,7 @@ export class ClienteComponent implements OnInit {
     })
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosCompaniasSeguros = response;
         })

@@ -69,7 +69,7 @@ export class MonedaCotizacionComponent implements OnInit {
     });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.monedaCotizacionServicio.listarPorMoneda(data).subscribe(res => {
           this.resultados = res.json();
           console.log(res.json());

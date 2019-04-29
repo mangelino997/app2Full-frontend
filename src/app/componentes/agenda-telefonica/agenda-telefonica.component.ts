@@ -62,7 +62,7 @@ export class AgendaTelefonicaComponent implements OnInit {
     });
     //Defiene autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
@@ -84,7 +84,7 @@ export class AgendaTelefonicaComponent implements OnInit {
     })
     //Defiene autocompletado localidad
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.localidadServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosLocalidades = res;
         })

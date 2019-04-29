@@ -62,7 +62,7 @@ public empresas:Array<any> = [];
     );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
           console.log(res);

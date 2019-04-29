@@ -95,7 +95,7 @@ export class VehiculoComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
@@ -108,7 +108,7 @@ export class VehiculoComponent implements OnInit {
     this.formulario = this.vehiculoModelo.formulario;
     //Autocompletado - Buscar por alias filtro remolque
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
           this.resultadosVehiculosRemolques = response;
         })
@@ -116,7 +116,7 @@ export class VehiculoComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -124,7 +124,7 @@ export class VehiculoComponent implements OnInit {
     })
     //Autocompletado Personal - Buscar chofer por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.personalServicio.listarChoferPorAlias(data).subscribe(response => {
           this.resultadosPersonales = response;
         })
@@ -132,7 +132,7 @@ export class VehiculoComponent implements OnInit {
     })
     //Autocompletado Compania de Seguro - Buscar por nombre
     this.formulario.get('companiaSeguroPoliza').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.companiaSeguroPolizaServicio.listarPorCompaniaSeguroNombre(data).subscribe(response => {
           this.resultadosCompaniasSegurosPolizas = response;
         })

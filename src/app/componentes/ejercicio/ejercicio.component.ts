@@ -64,7 +64,7 @@ export class EjercicioComponent implements OnInit {
     let empresa = this.appComponent.getEmpresa();
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorNombre(data, empresa.id).subscribe(res => {
           this.resultados = res;
         })

@@ -108,7 +108,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.listarSucursales();
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorAlias(data).subscribe(res => {
           this.formulario.patchValue(res.json());
         })
@@ -116,7 +116,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     })
     //Autcompletado - Buscar por Remitente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
           this.resultadosClientes = res;
         })
@@ -124,7 +124,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     });
     //Autcompletado - Buscar por Localidad
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.localidadService.listarPorNombre(data).subscribe(res => {
           this.resultadosLocalidades = res;
         })
@@ -132,7 +132,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     });
     //Autcompletado - Buscar por Barrio
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.barrioService.listarPorNombre(data).subscribe(res => {
           this.resultadosBarrios = res;
         })

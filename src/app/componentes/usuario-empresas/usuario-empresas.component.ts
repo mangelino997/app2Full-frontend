@@ -38,7 +38,7 @@ export class UsuarioEmpresasComponent implements OnInit {
     this.seleccionarPestania(1, 'Actualizar');
     //Autocompleta Usuario - Buscar por nombre
     this.formulario.get('usuario').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.usuarioServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosUsuarios = res;
         })

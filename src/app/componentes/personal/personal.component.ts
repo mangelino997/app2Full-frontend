@@ -139,7 +139,7 @@ export class PersonalComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
@@ -152,7 +152,7 @@ export class PersonalComponent implements OnInit {
     this.formulario = this.personal.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.barrioServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBarrios = response;
         })
@@ -160,7 +160,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (data && typeof data == 'string' && data.length > 3) {
+      if (data && typeof data == 'string' && data.length > 2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         });
@@ -170,7 +170,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Localidad Nacimiento - Buscar por nombre
     this.formulario.get('localidadNacimiento').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -178,7 +178,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Categoria - Buscar por nombre
     this.formulario.get('categoria').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.categoriaServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosCategorias = response;
         })
@@ -186,7 +186,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Seguridad Social - Buscar por nombre
     this.formulario.get('seguridadSocial').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.seguridadSocialServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosSeguridadesSociales = response;
         })
@@ -194,7 +194,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Obra Social - Buscar por nombre
     this.formulario.get('obraSocial').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.obraSocialServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosObrasSociales = response;
         })
@@ -202,7 +202,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Actividad - Buscar por nombre
     this.formulario.get('afipActividad').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.afipActividadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipActividades = response;
         })
@@ -210,7 +210,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Condicion - Buscar por nombre
     this.formulario.get('afipCondicion').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.afipCondicionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipCondiciones = response;
         })
@@ -218,7 +218,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Localidad - Buscar por nombre
     this.formulario.get('afipLocalidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.afipLocalidadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipLocalidades = response;
         })
@@ -226,7 +226,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Mod Contratacion - Buscar por nombre
     this.formulario.get('afipModContratacion').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.afipModContratacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipModContrataciones = response;
         })
@@ -234,7 +234,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Siniestrado - Buscar por nombre
     this.formulario.get('afipSiniestrado').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.afipSiniestradoServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSiniestrados = response;
         })
@@ -242,7 +242,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Situacion - Buscar por nombre
     this.formulario.get('afipSituacion').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.afipSituacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSituaciones = response;
         })
@@ -721,14 +721,14 @@ export class PersonalComponent implements OnInit {
         case 1:
           let respuesta = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta) {
-            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
+            let err = { codigo: 11007, mensaje: 'CUIT Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 2:
           let respuesta2 = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta2) {
-            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
+            let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
             this.lanzarError(err);
           }
           break;

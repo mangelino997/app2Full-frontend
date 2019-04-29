@@ -48,13 +48,13 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idCantidadAV" class="tamanio-label">Cantidad *</label>
-        <input id="idCantidadAV" type="number" formControlName="cantidad" autocomplete="off" class="form-control form-control-sm"
+        <input id="idCantidadAV" type="number" formControlName="cantidad" autocomplete="off" class="form-control form-control-sm number-right"
           [readonly]="soloLectura" (blur)="calcularImporte(formularioViajePropioInsumo)">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
-        <label for="idPrecioUnitarioAV" class="tamanio-label">Precio Unitario *</label>
+        <label for="idPrecioUnitarioAV" class="tamanio-label">Precio Unitario($) *</label>
         <input id="idPrecioUnitarioAV" type="text" formControlName="precioUnitario" autocomplete="off" 
           (blur)="calcularImporte(formularioViajePropioInsumo)"
           class="form-control form-control-sm number-right" placeholder="$ 0.00">
@@ -62,7 +62,7 @@
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
-        <label for="idImporteAV" class="tamanio-label">Importe *</label>
+        <label for="idImporteAV" class="tamanio-label">Importe($) *</label>
         <input id="idImporteAV" type="number" formControlName="importe" autocomplete="off" 
           class="form-control form-control-sm" [readonly]="true">
       </div>
@@ -72,7 +72,7 @@
     <div class="col-md-6">
       <div class="form-group has-float-label">
         <label for="idObservaciones" class="tamanio-label">Observaciones</label>
-        <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="2"
+        <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="2" maxlength="60"
           [readonly]="soloLectura"></textarea>
       </div>
     </div>

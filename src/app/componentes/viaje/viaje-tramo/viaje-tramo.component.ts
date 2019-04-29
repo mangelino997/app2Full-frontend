@@ -73,7 +73,7 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajePropioTramo = this.viajePropioTramoModelo.formulario;
     //Autocompletado Tramo - Buscar por alias
     this.formularioViajePropioTramo.get('tramo').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.tramoServicio.listarPorOrigen(data).subscribe(response => {
           this.resultadosTramos = response;
         })
@@ -403,7 +403,7 @@ export class DadorDestinatarioDialogo {
     this.formulario = this.viajePropioTramoClienteModelo.formulario;
     //Autocompletado Cliente Dador - Buscar por alias
     this.formulario.get('clienteDador').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClientes = response;
         })
@@ -411,7 +411,7 @@ export class DadorDestinatarioDialogo {
     })
     //Autocompletado Cliente Destinatario - Buscar por alias
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClientes = response;
         })

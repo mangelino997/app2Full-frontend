@@ -101,7 +101,7 @@ export class ProveedorComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorAlias(data).subscribe(response =>{
           this.resultados = response;
         })
@@ -114,7 +114,7 @@ export class ProveedorComponent implements OnInit {
     this.formulario = this.proveedorModelo.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.barrioServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBarrios = response;
         })
@@ -122,7 +122,7 @@ export class ProveedorComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -130,7 +130,7 @@ export class ProveedorComponent implements OnInit {
     })
     //Autocompletado Banco - Buscar por nombre
     this.formulario.get('banco').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.bancoServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBancos = response;
         })

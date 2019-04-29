@@ -61,7 +61,7 @@ export class TramoComponent implements OnInit {
     });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorOrigen(data).subscribe(res => {
           this.resultados = res;
         })
@@ -69,7 +69,7 @@ export class TramoComponent implements OnInit {
     })
     //Autocompletado - Buscar por nombre
     this.autocompletadoOrigen.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorOrigen(data).subscribe(res => {
           this.resultados = res;
         })
@@ -77,7 +77,7 @@ export class TramoComponent implements OnInit {
     })
     //Autocompletado - Buscar por nombre
     this.autocompletadoDestino.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorDestino(data).subscribe(res => {
           this.resultados = res;
         })
@@ -99,7 +99,7 @@ export class TramoComponent implements OnInit {
     });
     //Autocompletado Origen - Buscar por nombre
     this.formulario.get('origen').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosOrigenesDestinos = res;
         })
@@ -107,7 +107,7 @@ export class TramoComponent implements OnInit {
     })
     //Autocompletado Destino - Buscar por nombre
     this.formulario.get('destino').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosOrigenesDestinos = res;
         })
