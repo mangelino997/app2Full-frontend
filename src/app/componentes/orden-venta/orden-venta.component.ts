@@ -119,7 +119,7 @@ export class OrdenVentaComponent implements OnInit {
     });
     //Autocompletado - Buscar por nombre
     this.buscar.valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorNombre(data).subscribe(response => {
           this.resultados = response;
         })
@@ -144,7 +144,7 @@ export class OrdenVentaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado - Buscar por nombre cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClientes = response;
         })
@@ -152,7 +152,7 @@ export class OrdenVentaComponent implements OnInit {
     });
     //Autocompletado Tramo - Buscar por nombre
     this.formularioTramo.get('tramo').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.tramoServicio.listarPorOrigen(data).subscribe(response => {
           this.resultadosTramos = response;
         })

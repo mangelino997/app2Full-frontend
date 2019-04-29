@@ -60,7 +60,7 @@ export class SucursalComponent implements OnInit {
     });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
@@ -80,7 +80,7 @@ export class SucursalComponent implements OnInit {
     });
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.barrioServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosBarrios = res;
         })
@@ -88,7 +88,7 @@ export class SucursalComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.localidadServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosLocalidades = res;
         })

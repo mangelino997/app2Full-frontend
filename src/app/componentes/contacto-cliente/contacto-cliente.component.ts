@@ -86,7 +86,7 @@ export class ContactoClienteComponent implements OnInit {
     this.listarTiposContactos();
     //Autocompletado Cliente - Buscar por alias
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClientes = response;
         })

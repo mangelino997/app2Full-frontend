@@ -72,7 +72,7 @@ export class ActualizacionPreciosComponent implements OnInit {
     private toastr: ToastrService, public dialog: MatDialog) {
     //Defiene autocompletado de Clientes
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
           this.resultados = res;
         })

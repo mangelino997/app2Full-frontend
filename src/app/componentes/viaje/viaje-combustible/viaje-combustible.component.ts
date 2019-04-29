@@ -41,7 +41,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajePropioCombustible = this.viajePropioCombustibleModelo.formulario;
     //Autocompletado Proveedor (Combustible) - Buscar por alias
     this.formularioViajePropioCombustible.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
           this.resultadosProveedores = response;
         })

@@ -127,7 +127,7 @@ export class ViajeComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorAlias(data).subscribe(response =>{
           this.resultados = response;
         })
@@ -150,7 +150,7 @@ export class ViajeComponent implements OnInit {
     this.establecerValoresPorDefecto();
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.vehiculoServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosVehiculos = response;
         })
@@ -158,7 +158,7 @@ export class ViajeComponent implements OnInit {
     })
     //Autocompletado Vehiculo Remolque - Buscar por alias
     this.formularioViajePropio.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.vehiculoServicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
           this.resultadosVehiculosRemolques = response;
         })
@@ -166,7 +166,7 @@ export class ViajeComponent implements OnInit {
     })
     //Autocompletado Personal - Buscar por alias
     this.formularioViajePropio.get('personal').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.personalServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosChoferes = response;
         })

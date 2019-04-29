@@ -63,7 +63,7 @@ export class LocalidadComponent implements OnInit {
     });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorNombre(data).subscribe(response =>{
           this.resultados = response;
         })
@@ -84,7 +84,7 @@ export class LocalidadComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Provincia - Buscar por nombre
     this.formulario.get('provincia').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.provinciaServicio.listarPorNombre(data).subscribe(response =>{
           this.resultadosProvincias = response;
         })

@@ -78,7 +78,7 @@ export class ViajeRemitoComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorAlias(data).subscribe(response =>{
           this.resultados = response;
         })
@@ -124,7 +124,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado ClienteRemitente - Buscar por nombre
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClienteRemitente = response;
         })
@@ -132,7 +132,7 @@ export class ViajeRemitoComponent implements OnInit {
     })
     //Autocompletado ClienteDestinatario - Buscar por nombre
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClienteDestinatario = response;
         })

@@ -108,7 +108,7 @@ export class RepartoComponent implements OnInit {
     this.formulario.get('vehiculo').valueChanges.subscribe(data => {
       switch(this.tipoViaje.value){
         case 1:
-          if(typeof data == 'string') {
+          if(typeof data == 'string'&& data.length>2) {
             this.vehiculoService.listarPorAlias(data).subscribe(res => {
               this.resultadosVehiculo = res;
             })
@@ -116,7 +116,7 @@ export class RepartoComponent implements OnInit {
           break;
 
         case 2:
-          if(typeof data == 'string') {
+          if(typeof data == 'string'&& data.length>2) {
             this.vehiculoProveedorService.listarPorAlias(data).subscribe(res => {
               this.resultadosVehiculo = res;
             })
@@ -131,14 +131,14 @@ export class RepartoComponent implements OnInit {
     this.formulario.get('remolque').valueChanges.subscribe(data => {
       switch(this.tipoViaje.value){
         case 1:
-          if(typeof data == 'string') {
+          if(typeof data == 'string'&& data.length>2) {
             this.vehiculoService.listarPorAliasFiltroRemolque(data).subscribe(res => {
               this.resultadosRemolque = res;
             })
           }
           break;
         case 2:
-          if(typeof data == 'string') {
+          if(typeof data == 'string'&& data.length>2) {
             this.vehiculoProveedorService.listarPorAliasFiltroRemolque(data).subscribe(res => {
               this.resultadosRemolque = res;
             })
@@ -153,7 +153,7 @@ export class RepartoComponent implements OnInit {
     this.formulario.get('chofer').valueChanges.subscribe(data => {
       switch(this.tipoViaje.value){
         case 1:
-          if(typeof data == 'string') {
+          if(typeof data == 'string'&& data.length>2) {
             this.personalServie.listarChoferesCortaDistanciaPorAlias(data).subscribe(res => {
               console.log(res);
               this.resultadosChofer = res.json();
@@ -161,7 +161,7 @@ export class RepartoComponent implements OnInit {
           }
           break;
         case 2:
-          if(typeof data == 'string') {
+          if(typeof data == 'string'&& data.length>2) {
             this.choferProveedorService.listarPorProveedor(data).subscribe(res => {
               console.log(res);
               this.resultadosChofer = res.json();
@@ -735,7 +735,7 @@ export class AcompanianteDialogo{
      });  
     //Autcompletado - Buscar por vehiculo segun tipo de viaje
     this.formulario.get('acompaniante').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.personalService.listarAcompaniantesPorAlias(data).subscribe(res => {
           this.resultados = res;
         })

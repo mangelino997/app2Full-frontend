@@ -76,7 +76,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.formulario = this.companiaSeguroPolizaModelo.formulario;
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if(typeof data == 'string' && data != '') {
+      if(typeof data == 'string'&& data.length>2) {
         this.companiaSeguroServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosCompaniasSeguros = res;
         })

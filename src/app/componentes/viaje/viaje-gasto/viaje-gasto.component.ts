@@ -37,7 +37,7 @@ export class ViajeGastoComponent implements OnInit {
     this.formularioViajePropioGasto = this.viajePropioGastoModelo.formulario;
     //Autocompletado Rubro Producto - Buscar por nombre
     this.formularioViajePropioGasto.get('rubroProducto').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.rubroProductoServicio.listarPorNombre(data).subscribe(response =>{
           this.resultadosRubrosProductos = response;
         })

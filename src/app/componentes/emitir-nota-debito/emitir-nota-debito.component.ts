@@ -82,7 +82,7 @@ export class EmitirNotaDebitoComponent implements OnInit {
     this.listarAlicuotaIva();
     //Autcompletado - Buscar por Cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
           this.resultadosClientes = res;
         })

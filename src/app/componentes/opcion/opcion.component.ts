@@ -56,7 +56,7 @@ export class OpcionComponent implements OnInit {
     });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
@@ -77,7 +77,7 @@ export class OpcionComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Subopcion - Buscar por Nombre
     this.formulario.get('subopcion').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.subopcionServicio.listarPorNombre(data).subscribe(res => {
           this.subopciones = res.json();
         })

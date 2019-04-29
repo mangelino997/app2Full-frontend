@@ -82,7 +82,7 @@ export class SucursalClienteComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response =>{
           this.resultadosClientes = response;
         })
@@ -90,7 +90,7 @@ export class SucursalClienteComponent implements OnInit {
     })
     //Autocompletado - Buscar por nombre barrio
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.barrioServicio.listarPorNombre(data).subscribe(response =>{
           this.resultadosBarrios = response;
         })
@@ -98,7 +98,7 @@ export class SucursalClienteComponent implements OnInit {
     })
     //Autocompletado - Buscar por nombre localidad
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response =>{
           this.resultadosLocalidades = response;
         })

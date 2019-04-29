@@ -84,7 +84,7 @@ export class ChoferProveedorComponent implements OnInit {
     //Autocompletado Proveedor - Buscar por nombre
     this.formulario.get('proveedor').valueChanges
       .subscribe(data => {
-        if(typeof data == 'string') {
+        if(typeof data == 'string'&& data.length>2) {
           this.proveedorServicio.listarPorAlias(data).subscribe(response => {
             this.resultadosProveedores = response;
           })
@@ -93,7 +93,7 @@ export class ChoferProveedorComponent implements OnInit {
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges
       .subscribe(data => {
-        if(typeof data == 'string') {
+        if(typeof data == 'string'&& data.length>2) {
           this.barrioServicio.listarPorNombre(data).subscribe(response => {
             this.resultadosBarrios = response;
           })
@@ -102,7 +102,7 @@ export class ChoferProveedorComponent implements OnInit {
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges
       .subscribe(data => {
-        if(typeof data == 'string') {
+        if(typeof data == 'string'&& data.length>2) {
           this.localidadServicio.listarPorNombre(data).subscribe(response => {
             this.resultadosLocalidades = response;
           })

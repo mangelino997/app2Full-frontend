@@ -87,7 +87,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado - Buscar por nombre compania seguro
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.companiaSeguroServicio.listarPorNombre(data).subscribe(response =>{
           this.resultadosCompaniasSeguros = response;
         })

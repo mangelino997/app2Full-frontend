@@ -74,7 +74,7 @@ export class EmpresaComponent implements OnInit {
     });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.servicio.listarPorRazonSocial(data).subscribe(response => {
           this.resultados = response;
         })
@@ -89,7 +89,7 @@ export class EmpresaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.barrioServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBarrios = response;
         })
@@ -97,7 +97,7 @@ export class EmpresaComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string') {
+      if (typeof data == 'string'&& data.length>2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })

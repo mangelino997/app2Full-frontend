@@ -70,7 +70,7 @@ export class SucursalBancoComponent implements OnInit {
     });
     //Autocompletado - Buscar por nombre banco
     this.formulario.get('banco').valueChanges.subscribe(data => {
-      if(typeof data == 'string') {
+      if(typeof data == 'string'&& data.length>2) {
         this.bancoServicio.listarPorNombre(data).subscribe(response =>{
           this.resultadosBancos = response;
         })
