@@ -75,6 +75,8 @@ export class ProductoComponent implements OnInit {
     this.formulario = this.producto.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+    //Establece valores por defecto
+    this.establecerValoresPorDefecto();
     //Obtiene la lista completa de registros
     this.listar();
     //Obtiene los rubros
@@ -83,6 +85,21 @@ export class ProductoComponent implements OnInit {
     this.listarMarcas();
     //Obtiene las unidades de medida
     this.listarUnidadesMedida();
+  }
+  //Establece los valores por defecto
+  private establecerValoresPorDefecto(): void {
+    this.formulario.get('esAsignable').setValue(false);
+    this.formulario.get('esSerializable').setValue(false);
+    this.formulario.get('esCritico').setValue(false);
+  }
+  //Establece el formulario al seleccionar de autocompletado
+  public establecerAutocompletado(): void {
+    let elemento = this.autocompletado.value;
+    if(elemento) {
+      this.formulario.setValue(elemento);
+      this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2));
+      this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemento.coeficienteITC, 4));
+    }
   }
   //Obtiene el listado de registros
   private listar() {
@@ -223,6 +240,7 @@ export class ProductoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
+          this.establecerValoresPorDefecto();
           setTimeout(function () {
             document.getElementById('idNombre').focus();
           }, 20);
@@ -284,13 +302,13 @@ export class ProductoComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
+    this.establecerAutocompletado();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
+    this.establecerAutocompletado();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -322,8 +340,18 @@ export class ProductoComponent implements OnInit {
   public mascararCuatroDecimales(limit) {
     return this.appService.mascararEnterosCon4Decimales(limit);
   }
+  //Mascara enteros
+  public mascararEnteros(limit) {
+    return this.appService.mascararEnteros(limit);
+  }
   //Mascara un importe
   public mascararImporte(limit) {
     return this.appService.mascararImporte(limit);
+  }
+  //Establece los decimales
+  public establecerDecimales(formulario, cantidad) {
+    if(formulario) {
+      formulario.setValue(this.appService.establecerDecimales(formulario.value, cantidad));
+    }
   }
 }

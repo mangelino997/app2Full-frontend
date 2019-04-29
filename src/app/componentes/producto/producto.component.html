@@ -3,7 +3,7 @@
     <div class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>INSUMO PRODUCTO</a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
           (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
@@ -18,9 +18,9 @@
               <label for="idAutocompletado" class="tamanio-label">Buscar</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
                 type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="formulario.setValue(item)">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)" 
+                (optionSelected)="establecerAutocompletado()">
+                <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.nombre}}
                 </mat-option>
               </mat-autocomplete>
@@ -31,8 +31,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">Código *</label>
-              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
-              readonly>
+              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
             </div>
           </div>
         </div>
@@ -40,8 +39,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
-              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm" 
-              [readonly]="soloLectura" maxlength="30">
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="30">
             </div>
           </div>
         </div>
@@ -49,34 +48,34 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idRubro" class="rubro-label">Rubro *</label>
-                <mat-select id="idRubro" class="form-control form-control-sm" formControlName="rubroProducto" 
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let rubro of rubros" [value]="rubro">
-                      {{rubro.nombre}}
-                  </mat-option>
-                </mat-select>
+              <mat-select id="idRubro" class="form-control form-control-sm" formControlName="rubroProducto"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let rubro of rubros" [value]="rubro">
+                  {{rubro.nombre}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idMarca" class="tamanio-label">Marca *</label>
-                <mat-select id="idMarca" class="form-control form-control-sm" formControlName="marcaProducto" 
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let marca of marcas" [value]="marca">
-                      {{marca.nombre}}
-                  </mat-option>
-                </mat-select>
+              <mat-select id="idMarca" class="form-control form-control-sm" formControlName="marcaProducto"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let marca of marcas" [value]="marca">
+                  {{marca.nombre}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelUnidadMedida" for="idUnidadMedida" class="tamanio-label">Unidad Medida *</label>
-              <mat-select id="idUnidadMedida" class="form-control form-control-sm" formControlName="unidadMedida" 
-              [compareWith]="compareFn">
-              <mat-option *ngFor="let medida of unidadesMedidas" [value]="medida">
+              <mat-select id="idUnidadMedida" class="form-control form-control-sm" formControlName="unidadMedida"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let medida of unidadesMedidas" [value]="medida">
                   {{medida.nombre}}
-              </mat-option>
-            </mat-select>
+                </mat-option>
+              </mat-select>
             </div>
           </div>
         </div>
@@ -84,8 +83,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelModelo" for="idModelo" class="tamanio-label">Modelo</label>
-              <input id="idModelo" type="text" formControlName="modelo" autocomplete="off" class="form-control form-control-sm" 
-              [readonly]="soloLectura">
+              <input id="idModelo" type="text" formControlName="modelo" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -121,9 +120,9 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idStockMinimo" class="tamanio-label">Stock Mínimo($)</label>
-              <input id="idStockMinimo" type="text" formControlName="stockMinimo" class="form-control form-control-sm number-right"
-                [textMask]="mascararImporte(8)" (blur)="setDecimales(formularioEscala.get('stockMinimo'), 2)"
+              <label for="idStockMinimo" class="tamanio-label">Stock Mínimo</label>
+              <input id="idStockMinimo" type="text" formControlName="stockMinimo"
+                class="form-control form-control-sm number-right" [textMask]="mascararEnteros(8)"
                 [readonly]="soloLectura">
             </div>
           </div>
@@ -132,22 +131,22 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario de Venta($)</label>
-              <input id="idPrecioUnitario" type="text" formControlName="precioUnitarioVenta" class="form-control form-control-sm number-right"
-                [textMask]="mascararImporte(8)" (blur)="setDecimales(formularioEscala.get('precioUnitarioVenta'), 2)"
-                [readonly]="soloLectura">
+              <input id="idPrecioUnitario" type="text" formControlName="precioUnitarioVenta"
+                class="form-control form-control-sm number-right" [textMask]="mascararImporte(8)"
+                (blur)="establecerDecimales(formulario.get('precioUnitarioVenta'), 2)" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCoeficienteITC" class="coeficiente-label">Coeficiente ITC</label>
-              <input id="idCoeficienteITC" type="text" formControlName="coeficienteITC" class="form-control form-control-sm number-right"
-                [textMask]="mascararCuatroDecimales(2)" (blur)="setDecimales(formularioEscala.get('coeficienteITC'), 4)"
-                [readonly]="soloLectura">
+              <input id="idCoeficienteITC" type="text" formControlName="coeficienteITC"
+                class="form-control form-control-sm number-right" [textMask]="mascararCuatroDecimales(2)"
+                (blur)="establecerDecimales(formulario.get('coeficienteITC'), 4)" [readonly]="soloLectura">
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" 
-          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
       </form>

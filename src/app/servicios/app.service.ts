@@ -9,7 +9,7 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 export class AppService {
   //Define la IP
   private IP = 'http://localhost:8080';
-  // private IP = 'https://jitwss.appspot.com';
+  // private IP = 'https://jitws-draimo.appspot.com';
   //Define la url base
   private URL_BASE = this.IP + '/jitws/auth';
   //Define la url de subcripcion a socket

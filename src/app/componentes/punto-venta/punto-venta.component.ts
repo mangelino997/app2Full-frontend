@@ -238,6 +238,14 @@ export class PuntoVentaComponent implements OnInit {
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursal');
         break;
+      case 5:
+        this.listaCompleta = new MatTableDataSource([]);
+        this.empresa.setValue(this.appService.getEmpresa());
+        this.empresa.disable();
+        setTimeout(function() {
+          document.getElementById('idSucursal').focus();
+        }, 20);
+        break;
       default:
         this.listaCompleta = new MatTableDataSource([]);
         break;
