@@ -29,9 +29,12 @@
                   </select>
                 </div>
                 <hr />
-                <button *ngIf="!estaAutenticado" id="idBotonA" class="btn btn-primary btn-block" type="button"
+                <button *ngIf="!estaAutenticado && !show" id="idBotonA" class="btn btn-primary btn-block" type="button"
                 name="buttonA" (click)="login()" [disabled]="!formulario.valid">Autenticarse</button>
-                <button *ngIf="estaAutenticado" id="idBotonI" class="btn btn-primary btn-block" type="button"
+                <div class="row justify-content-center">
+                  <mat-spinner diameter="40" *ngIf="show"></mat-spinner>
+                </div>
+                <button *ngIf="estaAutenticado && !show" id="idBotonI" class="btn btn-primary btn-block" type="button"
                 name="buttonI" (click)="ingresar(elemento)" [disabled]="!formulario.valid">Ingresar</button>
               </form>
             </div>

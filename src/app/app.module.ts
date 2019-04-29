@@ -6,7 +6,7 @@ import {
   MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
   MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
-  MatProgressBarModule, MatStepperModule, MatTreeModule, MatSortModule} from '@angular/material';
+  MatProgressBarModule, MatStepperModule, MatTreeModule, MatSortModule, MatProgressSpinnerModule} from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -129,6 +129,7 @@ import { ViajePropioTramoService } from './servicios/viaje-propio-tramo.service'
 import { ViajeTerceroTramoService } from './servicios/viaje-tercero-tramo.service';
 import { VentaItemConceptoService } from './servicios/venta-item-concepto.service';
 import { BasicoCategoriaService } from './servicios/basico-categoria.service';
+import { LoaderService } from './servicios/loader.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -394,7 +395,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost/jitws/socket', // ws://localhost:8080/jitws/socket
+  url: 'ws://localhost:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://jitwss.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -554,6 +555,7 @@ const stompConfig: StompConfig = {
     MatStepperModule,
     MatTreeModule,
     MatSortModule,
+    MatProgressSpinnerModule,
     TextMaskModule,
     ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
     ToastrModule.forRoot({
@@ -744,6 +746,7 @@ const stompConfig: StompConfig = {
     BasicoCategoria,
     AfipCondicionIva,
     MesService,
+    LoaderService,
     {
       provide: StompConfig,
       useValue: stompConfig
