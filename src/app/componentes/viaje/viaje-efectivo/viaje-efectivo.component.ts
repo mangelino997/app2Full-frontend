@@ -201,4 +201,8 @@ export class ViajeEfectivoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => {});
   }
+  //Mascara un importe decimal
+  public mascararImporte(limit) {
+    return this.appServicio.mascararImporte(limit);
+  }
 }

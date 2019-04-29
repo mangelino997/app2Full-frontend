@@ -85,7 +85,7 @@
             <div class="form-group has-float-label" *ngIf="!estadoLetra">
               <label for="idLetra" class="tamanio-label">Letra *</label>
               <input id="idLetra" type="text" formControlName="letra" 
-                autocomplete="off" class="form-control form-control-sm" [readonly]="true">
+                autocomplete="off" class="form-control form-control-sm" [readonly]="true" maxlength="1">
             </div>
             <!-- Letra (Factura) -->
             <div class="form-group has-float-label" *ngIf="estadoLetra">

@@ -721,14 +721,14 @@ export class PersonalComponent implements OnInit {
         case 1:
           let respuesta = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta) {
-            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
+            let err = { codigo: 11007, mensaje: 'CUIT Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 2:
           let respuesta2 = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta2) {
-            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
+            let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
             this.lanzarError(err);
           }
           break;

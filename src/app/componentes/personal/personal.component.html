@@ -56,7 +56,7 @@
                     <div class="col-md-2">
                       <div class="form-group has-float-label">
                         <label for="idCodigo" class="tamanio-label-titulo">N° de Legajo</label>
-                        <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm" readonly>
+                        <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm number-right" readonly>
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -192,14 +192,14 @@
                       <div class="form-group has-float-label">
                         <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
                         <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
-                          class="form-control form-control-sm number-right" [readonly]="soloLectura">
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura" [textMask]="mascararEnteros(11)">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil Propio</label>
                         <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
-                          class="form-control form-control-sm number-right" [readonly]="soloLectura">
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura" [textMask]="mascararEnteros(11)">
                       </div>
                     </div>
                   </div>
@@ -303,7 +303,7 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label id="labelCuil" for="idCuil" class="tamanio-label">CUIL *</label>
-                        <input id="idCuil" type="number" formControlName="cuil" autocomplete="off"
+                        <input id="idCuil" type="text" formControlName="cuil" autocomplete="off" [textMask]= "mascararEnteros(11)"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura" (blur)="validarCUIL()"
                           (ngModelChange)="cambioCampo('idCuil', 'labelCuil')">
                       </div>
@@ -476,7 +476,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idAporteAdicObraSocial" class="tamanio-label">Aporte Adicional O.S.</label>
+                        <label for="idAporteAdicObraSocial" class="tamanio-label">Aporte Adicional O.S.($)</label>
                         <input id="idAporteAdicObraSocial" [textMask]="mascararImporte(8)" type="text" formControlName="aporteAdicObraSocial"
                           autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
                           (blur)="establecerDecimales(formulario.get('aporteAdicObraSocial'), 2)">
@@ -484,7 +484,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idContribAdicObraSocial" class="tamanio-label">Contribución Adicional O.S.</label>
+                        <label for="idContribAdicObraSocial" class="tamanio-label">Contribución Adicional O.S.($)</label>
                         <input id="idContribAdicObraSocial" [textMask]="mascararImporte(8)" type="text" formControlName="contribAdicObraSocial"
                           autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
                           (blur)="establecerDecimales(formulario.get('contribAdicObraSocial'), 2)">

@@ -40,25 +40,25 @@
     <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idLetraG" class="tamanio-label">Letra *</label>
-        <input id="idLetraG" type="text" formControlName="letra" autocomplete="off" class="form-control form-control-sm"
+        <input id="idLetraG" type="text" formControlName="letra" autocomplete="off" class="form-control form-control-sm" maxlength="1"
           [readonly]="soloLectura">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idNumeroComprobanteG" class="tamanio-label">Número de Tique *</label>
-        <input id="idNumeroComprobanteG" type="number" formControlName="numeroComprobante" autocomplete="off" class="form-control form-control-sm"
+        <input id="idNumeroComprobanteG" type="number" formControlName="numeroComprobante" autocomplete="off" class="form-control form-control-sm number-right"
           [readonly]="soloLectura" (blur)="establecerCerosIzq(formularioViajePropioPeaje.get('numeroComprobante'), '0000000', -8)">
       </div>
     </div>
     <div class="col-md-2">
       <div class="form-group has-float-label-icon">
-        <label for="idImporteG" class="tamanio-label">Importe *</label>
+        <label for="idImporteG" class="tamanio-label">Importe($) *</label>
         <div class="input-group input-group-sm mb-3">
           <div class="input-group-prepend">
             <span class="input-group-text">$</span>
           </div>
-          <input id="idImporteG" type="number" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
+          <input id="idImporteG" type="number" formControlName="importe" autocomplete="off" class="form-control form-control-sm number-right"
             [readonly]="soloLectura" (blur)="establecerCeros(formularioViajePropioPeaje.get('importe'))">
         </div>
       </div>

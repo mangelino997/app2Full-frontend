@@ -80,6 +80,7 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
+    this.establecerDecimales(formulario.get('precioUnitario'), 2 )
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
     if(cantidad != null && precioUnitario != null) {
@@ -256,4 +257,12 @@ export class ViajeCombustibleComponent implements OnInit {
   public mascararImporte(limit) {
     return this.appService.mascararImporte(limit);
   }
+  //Formatea el numero a x decimales
+  public establecerDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
+  }
+
 }
