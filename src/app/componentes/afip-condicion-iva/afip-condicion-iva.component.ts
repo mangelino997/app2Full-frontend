@@ -6,7 +6,11 @@ import { ToastrService } from 'ngx-toastr';
 import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
 import { AfipCondicionIva } from 'src/app/modelos/afipCondicionIva';
 import { MatSort, MatTableDataSource } from '@angular/material';
-
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
+    
+    
 
 @Component({
   selector: 'app-afip-condicion-iva',
@@ -46,8 +50,13 @@ export class AfipCondicionIvaComponent implements OnInit {
   public columnas:string[] = ['id', 'nombre', 'abreviatura', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+    
   //Constructor
-  constructor(private servicio: AfipCondicionIvaService, private afipCondicionIva: AfipCondicionIva,
+  constructor(private servicio: AfipCondicionIvaService, private afipCondicionIva: AfipCondicionIva, private loaderService: LoaderService,
     private appComponent: AppComponent, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
@@ -72,6 +81,11 @@ export class AfipCondicionIvaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     this.listar();
+  //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
   }
   //Obtiene el listado de registros
   private listar() {
@@ -152,6 +166,7 @@ export class AfipCondicionIvaComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -161,6 +176,7 @@ export class AfipCondicionIvaComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -170,12 +186,14 @@ export class AfipCondicionIvaComponent implements OnInit {
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
         }
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -185,6 +203,7 @@ export class AfipCondicionIvaComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -194,6 +213,7 @@ export class AfipCondicionIvaComponent implements OnInit {
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
         }
       }
     );
