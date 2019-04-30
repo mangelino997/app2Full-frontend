@@ -57,9 +57,9 @@ export class BarrioComponent implements OnInit {
       }
     );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string'&& data.length>2) {
@@ -77,8 +77,6 @@ export class BarrioComponent implements OnInit {
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
     });
-    //Obtiene la lista completa de registros
-    this.listar();
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
@@ -120,6 +118,10 @@ export class BarrioComponent implements OnInit {
         break;
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        //Obtiene la lista completa de registros
+        this.listar();
         break;
       default:
         break;
