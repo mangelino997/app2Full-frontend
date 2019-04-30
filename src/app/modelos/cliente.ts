@@ -17,10 +17,10 @@ export class Cliente {
             barrio: new FormControl(),
             telefono: new FormControl('', [Validators.maxLength(45)]),
             sitioWeb: new FormControl('', [Validators.maxLength(60)]),
-            zona: new FormControl('', [Validators.required]),
-            rubro: new FormControl('', [Validators.required]),
             cobrador: new FormControl('', [Validators.required]),
             vendedor: new FormControl(),
+            zona: new FormControl('', [Validators.required]),
+            rubro: new FormControl('', [Validators.required]),
             afipCondicionIva: new FormControl('', [Validators.required]),
             tipoDocumento: new FormControl('', [Validators.required]),
             numeroDocumento: new FormControl('', [Validators.required, Validators.maxLength(15)]),
@@ -48,7 +48,8 @@ export class Cliente {
             fechaBaja: new FormControl(),
             usuarioMod: new FormControl(),
             fechaUltimaMod: new FormControl(),
-            alias: new FormControl()
+            alias: new FormControl(),
+            fechaAlta: new FormControl()
         })
     }
 }
