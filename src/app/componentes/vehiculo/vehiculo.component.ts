@@ -90,9 +90,9 @@ export class VehiculoComponent implements OnInit {
       }
     );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string'&& data.length>2) {
@@ -147,7 +147,7 @@ export class VehiculoComponent implements OnInit {
     //Obtiene la lista de empresas
     this.listarEmpresas();
     //Obtiene la lista completa de registros
-    this.listar();
+    // this.listar();
   }
   //Obtiene la lista de tipos de vehiculos
   private listarTiposVehiculos() {
@@ -225,6 +225,9 @@ export class VehiculoComponent implements OnInit {
         break;
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;

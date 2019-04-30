@@ -110,9 +110,9 @@ export class OrdenVentaComponent implements OnInit {
         }
       );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     //Se subscribe al servicio de lista por orden venta
     this.ordenVentaEscalaServicio.listaEscalas.subscribe(res => {
       this.listaDeEscalas = res;

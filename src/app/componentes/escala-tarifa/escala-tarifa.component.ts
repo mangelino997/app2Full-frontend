@@ -24,9 +24,9 @@ export class EscalaTarifaComponent implements OnInit {
   constructor(private servicio: EscalaTarifaService, private appComponent: AppComponent, 
     private toastr: ToastrService, private appServicio: AppService) {
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     //Establece el foco en valor
     setTimeout(function() {
       document.getElementById('idValor').focus();

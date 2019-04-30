@@ -51,9 +51,9 @@ export class OpcionComponent implements OnInit {
         }
       );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string'&& data.length>2) {
@@ -84,7 +84,7 @@ export class OpcionComponent implements OnInit {
       }
     })
     //Obtiene la lista completa
-    this.listar();
+    //this.listar();
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -118,6 +118,9 @@ export class OpcionComponent implements OnInit {
         break;
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;

@@ -70,10 +70,10 @@ export class ChoferProveedorComponent implements OnInit {
         console.log(err);
       }
     );
-    //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // //Se subscribe al servicio de lista de registros
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
   }
   //Al iniciarse el componente
   ngOnInit() {

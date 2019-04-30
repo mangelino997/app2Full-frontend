@@ -58,9 +58,9 @@ export class EjercicioComponent implements OnInit {
         }
       );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     let empresa = this.appComponent.getEmpresa();
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
@@ -78,7 +78,7 @@ export class EjercicioComponent implements OnInit {
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
-    this.listar();
+    //this.listar();
     //Obtiene la lista completa de años
     this.listarAnios();
     //Obtiene la lista completa de meses
@@ -122,6 +122,9 @@ export class EjercicioComponent implements OnInit {
       case 4:
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;

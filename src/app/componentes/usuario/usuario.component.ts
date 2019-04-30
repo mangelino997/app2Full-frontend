@@ -56,10 +56,10 @@ export class UsuarioComponent implements OnInit {
         console.log(err);
       }
     );
-    //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // //Se subscribe al servicio de lista de registros
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string'&& data.length>2) {
@@ -85,7 +85,7 @@ export class UsuarioComponent implements OnInit {
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
-    this.listar();
+    // this.listar();
     //Obtiene la lista de roles
     this.listarRoles();
     //Obtiene la lista de sucursales
@@ -151,6 +151,9 @@ export class UsuarioComponent implements OnInit {
       case 4:
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;

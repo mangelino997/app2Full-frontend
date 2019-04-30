@@ -54,9 +54,9 @@ export class ProvinciaComponent implements OnInit {
       }
     );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string'&& data.length>2) {
@@ -88,7 +88,7 @@ export class ProvinciaComponent implements OnInit {
       }
     })
     //Obtiene la lista completa
-    this.listar();
+    // this.listar();
   }
   //Vacia las listas de autocompletado
   public vaciarListas() {

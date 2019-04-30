@@ -69,9 +69,9 @@ export class EmpresaComponent implements OnInit {
         }
       );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string'&& data.length>2) {
@@ -104,7 +104,7 @@ export class EmpresaComponent implements OnInit {
       }
     })
     //Obtiene la lista completa de registros
-    this.listar();
+    //this.listar();
     //Obtiene la lista de condiciones de iva
     this.listarCondicionesIva();
     //Establece los valores por defecto
@@ -184,6 +184,9 @@ export class EmpresaComponent implements OnInit {
       case 4:
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;
