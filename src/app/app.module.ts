@@ -288,6 +288,7 @@ import { AfipCondicionIvaComponent } from './componentes/afip-condicion-iva/afip
 import { BasicoCategoriaComponent } from './componentes/basico-categoria/basico-categoria.component';
 import { ObservacionesDialogo } from './componentes/viaje/observaciones-dialogo.component';
 import { RolOpcionComponent, RolOpcionDialog } from './componentes/rol-opcion/rol-opcion.component';
+import { ProgresoComponent } from './componentes/progreso/progreso.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -395,7 +396,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://gestionws.appspot.com:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -529,7 +530,8 @@ const stompConfig: StompConfig = {
     ChequesRechazadosComponent,
     AcompanianteDialogo,
     AfipCondicionIvaComponent,
-    BasicoCategoriaComponent
+    BasicoCategoriaComponent,
+    ProgresoComponent
   ],
   imports: [
     BrowserModule,

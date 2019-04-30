@@ -170,12 +170,16 @@ export class BarrioComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;      },
+        this.listaCompleta.sort = this.sort;   
+        this.loaderService.hide();   
+      },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }

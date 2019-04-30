@@ -9,6 +9,9 @@ import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.se
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-actualizacion-precios',
@@ -64,12 +67,16 @@ export class ActualizacionPreciosComponent implements OnInit {
   public resultadosLocalidades: Array<any> = [];
   //Define la mascara de porcentaje
   public porcentajeMascara: any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
-  constructor(private servicio: OrdenVentaService, private actualizacionPrecios: ActualizacionPrecios, 
+  constructor(private actualizacionPrecios: ActualizacionPrecios, 
     private clienteService: ClienteService, private appService: AppService,
     private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService, 
     private empresaServicio: EmpresaService, private ordenVentaServicio: OrdenVentaService,
-    private toastr: ToastrService, public dialog: MatDialog) {
+    private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService) {
     //Defiene autocompletado de Clientes
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string'&& data.length>2) {
@@ -81,6 +88,11 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.actualizacionPrecios.formulario;
     //Setea el campo a buscar por defecto
@@ -121,21 +133,26 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Carga la Tabla 
   public cargarTabla(opcion, id) {
+    this.loaderService.show();
     this.listaCompleta = [];
     if (opcion == 0) {
       this.ordenVentaServicio.listarPorCliente(id).subscribe(
         res => {
           this.listaCompleta = res.json();
+          this.loaderService.hide();
         },
         err => {
+          this.loaderService.hide();
         }
       );
     } else {
       this.ordenVentaServicio.listarPorEmpresa(this.empresa.value.id).subscribe(
         res => {
           this.listaCompleta = res.json();
+          this.loaderService.hide();
         },
         err => {
+          this.loaderService.hide();
         }
       );
     }
@@ -427,11 +444,22 @@ export class ConfimarDialogo {
   public porEscala: boolean;
   //Define la Orden Venta seleccionada
   public ordenVenta: FormControl = new FormControl();
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<ConfimarDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
-    private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService) { }
+    private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService,
+    private loaderService: LoaderService) { }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    //Establece el formulario
     this.formulario = this.data.formulario;
     //Controlo que tabla muestro en el modal
     this.porEscala = this.data.porEscala;
@@ -439,6 +467,7 @@ export class ConfimarDialogo {
   }
   //Actualiza
   public actualizar() {
+    this.loaderService.show();
     //Agrega a cada registro los datos de la orden venta seleccionada
     for (let i = 0; i < this.formulario.length; i++) {
       this.formulario[i]['ordenVenta'] = this.ordenVenta.value;
@@ -454,6 +483,7 @@ export class ConfimarDialogo {
               document.getElementById('idBuscarPor').focus();
             }, 20);
             this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
           }
         },
         err => {
@@ -463,6 +493,7 @@ export class ConfimarDialogo {
             document.getElementById("idNombre").classList.add('is-invalid');
             document.getElementById("idNombre").focus();
             this.toastr.error(respuesta.mensaje);
+            this.loaderService.hide();
           }
         }
       );
@@ -475,6 +506,7 @@ export class ConfimarDialogo {
               document.getElementById('idBuscarPor').focus();
             }, 20);
             this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
           }
         },
         err => {
@@ -484,6 +516,7 @@ export class ConfimarDialogo {
             document.getElementById("idNombre").classList.add('is-invalid');
             document.getElementById("idNombre").focus();
             this.toastr.error(respuesta.mensaje);
+            this.loaderService.hide();
           }
         }
       );

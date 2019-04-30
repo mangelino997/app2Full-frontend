@@ -10,6 +10,9 @@ import { BasicoCategoria } from 'src/app/modelos/basicoCategoria';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { MesService } from 'src/app/servicios/mes.service';
 import { CategoriaService } from 'src/app/servicios/categoria.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-basico-categoria',
@@ -47,6 +50,10 @@ export class BasicoCategoriaComponent implements OnInit {
   public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'categoria', 'mes', 'anio', 'basico', 'ver', 'mod'];
   //Define la matSort
@@ -54,7 +61,8 @@ export class BasicoCategoriaComponent implements OnInit {
   //Constructor
   constructor(private servicio: BasicoCategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService, private basicoCategoria: BasicoCategoria,
-    private anio: FechaService, private mes: MesService, private categoriaService: CategoriaService) {
+    private anio: FechaService, private mes: MesService, private categoriaService: CategoriaService,
+    private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
       .subscribe(
@@ -81,6 +89,11 @@ export class BasicoCategoriaComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.basicoCategoria.formulario;
     //Define el formulario de listar
@@ -216,6 +229,7 @@ export class BasicoCategoriaComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -226,17 +240,20 @@ export class BasicoCategoriaComponent implements OnInit {
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
+        this.loaderService.hide();
       },
       err => {
         var respuesta = err.json();
         if (respuesta.codigo == 11017) {
           this.toastr.error('Error Unicidad Categoría, Mes y Año', respuesta.mensaje + ' Categoría');
         }
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.formulario.enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -249,12 +266,14 @@ export class BasicoCategoriaComponent implements OnInit {
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
+        this.loaderService.hide();
       },
       err => {
         var respuesta = err.json();
         if (respuesta.codigo == 11017) {
           this.toastr.error('Error Unicidad Categoría, Mes y Año', respuesta.mensaje + ' Categoría');
         }
+        this.loaderService.hide();
       }
     );
   }
@@ -264,6 +283,7 @@ export class BasicoCategoriaComponent implements OnInit {
   }
   //Obtiene una lista por categoria y anio
   public listarPorCategoriaYAnio(): void {
+    this.loaderService.show();
     let idCategoria = this.formularioListar.get('categoria').value.id;
     let anio = this.formularioListar.get('anio').value;
     this.servicio.listarPorCategoriaYAnio(idCategoria, anio).subscribe(res => {
@@ -276,6 +296,7 @@ export class BasicoCategoriaComponent implements OnInit {
         }
       };
       this.listaCompleta.sort = this.sort;
+      this.loaderService.hide();
     })
   }
   //Vacia la lista
@@ -312,22 +333,13 @@ export class BasicoCategoriaComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.cambioAutocompletado(elemento);
-    // this.setMes(elemento.mes);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.cambioAutocompletado(elemento);
-    // this.setMes(elemento.mes);
   }
-  //Setear el json del mes correspoendiente (solo para mostrarlo en el consultar y actualizar)
-  // private setMes(idMes) {
-  //   for (let i = 0; i < this.meses.length; i++) {
-  //     if (this.meses[i].id == idMes)
-  //       this.formulario.get('mes').setValue(this.meses[i]);
-  //   }
-  // }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
     if (elemento != undefined) {

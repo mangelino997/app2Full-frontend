@@ -13,6 +13,9 @@ import { ToastrService } from 'ngx-toastr';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ClienteEventual } from 'src/app/modelos/clienteEventual';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cliente-eventual',
@@ -38,6 +41,10 @@ export class ClienteEventualComponent implements OnInit {
   public resultadosRubros: Array<any> = [];
   //Define la lista de resultados de busqueda de sucursal lugar pago
   public resultadosSucursalesPago: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<ClienteEventualComponent>, @Inject(MAT_DIALOG_DATA) public data,
     private afipCondicionIvaServicio: AfipCondicionIvaService, private tipoDocumentoServicio: TipoDocumentoService,
@@ -45,16 +52,21 @@ export class ClienteEventualComponent implements OnInit {
     private cobradorServicio: CobradorService, private zonaServicio: ZonaService,
     private rubroServicio: RubroService, private sucursalServicio: SucursalService,
     private clienteServicio: ClienteService, private toastr: ToastrService, public clienteEventual: ClienteEventual,
-    private appService: AppService) {
+    private appService: AppService, private loaderService: LoaderService) {
     this.dialogRef.disableClose = true;
   }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.clienteEventual.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.barrioServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBarrios = response;
         })
@@ -62,7 +74,7 @@ export class ClienteEventualComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -70,7 +82,7 @@ export class ClienteEventualComponent implements OnInit {
     })
     //Autocompletado Cobrador - Buscar por nombre
     this.formulario.get('cobrador').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.cobradorServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosCobradores = response;
         })
@@ -78,7 +90,7 @@ export class ClienteEventualComponent implements OnInit {
     })
     //Autocompletado Zona - Buscar por nombre
     this.formulario.get('zona').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.zonaServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosZonas = response;
         })
@@ -86,7 +98,7 @@ export class ClienteEventualComponent implements OnInit {
     })
     //Autocompletado Rubro - Buscar por nombre
     this.formulario.get('rubro').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.rubroServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosRubros = response;
         })
@@ -94,7 +106,7 @@ export class ClienteEventualComponent implements OnInit {
     })
     //Autocompletado Sucursal Lugar Pago - Buscar por nombre
     this.formulario.get('sucursalLugarPago').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.sucursalServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosSucursalesPago = response;
         })
@@ -147,6 +159,7 @@ export class ClienteEventualComponent implements OnInit {
   }
   //Agrega un cliente eventual
   public agregarClienteEventual(): void {
+    this.loaderService.show();
     this.formulario.get('usuarioAlta').setValue(this.data.usuario);
     this.clienteServicio.agregarClienteEventual(this.formulario.value).subscribe(
       res => {
@@ -158,16 +171,18 @@ export class ClienteEventualComponent implements OnInit {
           }, 20);
           this.data.formulario = respuesta.id - 1;
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     )
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -175,26 +190,26 @@ export class ClienteEventualComponent implements OnInit {
   public validarDocumento(): void {
     let documento = this.formulario.get('numeroDocumento').value;
     let tipoDocumento = this.formulario.get('tipoDocumento').value;
-    if(documento) {
-      switch(tipoDocumento.id) {
+    if (documento) {
+      switch (tipoDocumento.id) {
         case 1:
           let respuesta = this.appService.validarCUIT(documento.toString());
-          if(!respuesta) {
-            let err = {codigo: 11010, mensaje: 'CUIT Incorrecto!'};
+          if (!respuesta) {
+            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 2:
           let respuesta2 = this.appService.validarCUIT(documento.toString());
-          if(!respuesta2) {
-            let err = {codigo: 11010, mensaje: 'CUIL Incorrecto!'};
+          if (!respuesta2) {
+            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 8:
           let respuesta8 = this.appService.validarDNI(documento.toString());
-          if(!respuesta8) {
-            let err = {codigo: 11010, mensaje: 'DNI Incorrecto!'};
+          if (!respuesta8) {
+            let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
             this.lanzarError(err);
           }
           break;
@@ -246,7 +261,7 @@ export class ClienteEventualComponent implements OnInit {
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {
     let valor = formulario.value;
-    if(valor != '') {
+    if (valor != '') {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }

@@ -167,6 +167,12 @@
             </div>
           </div>
         </div>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <h6>Procesando...</h6>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+        </div>
       </form>
     </div>
   </div>

@@ -37,7 +37,8 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group has-float-label">
-                        <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento *</label>
+                        <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento
+                            *</label>
                         <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
                             class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarDocumento()"
                             (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
@@ -46,9 +47,10 @@
                 <div class="col-md-3">
                     <div class="form-group has-float-label">
                         <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
-                        <input id="idNumeroIIBB" type="text" placeholder="$ 0.00" formControlName="numeroIIBB" autocomplete="off"
-                        [textMask]="obtenerMascaraImporte(10)" (blur)="setDecimales(formulario.get('numeroIIBB'), 2)"
-                        class="form-control form-control-sm number-right" [readonly]="soloLectura">
+                        <input id="idNumeroIIBB" type="text" placeholder="$ 0.00" formControlName="numeroIIBB"
+                            autocomplete="off" [textMask]="obtenerMascaraImporte(10)"
+                            (blur)="setDecimales(formulario.get('numeroIIBB'), 2)"
+                            class="form-control form-control-sm number-right" [readonly]="soloLectura">
                     </div>
                 </div>
             </div>
@@ -168,10 +170,15 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="!show">
                 <div class="col-md-12 text-center">
                     <button mat-raised-button color="primary" (click)="agregarClienteEventual()">Agregar</button>
                     <button mat-raised-button color="accent" [mat-dialog-close]="data.formulario">Cerrar</button>
+                </div>
+            </div>
+            <div class="row" *ngIf="show">
+                <div class="col text-center">
+                    <app-progreso></app-progreso>
                 </div>
             </div>
         </form>

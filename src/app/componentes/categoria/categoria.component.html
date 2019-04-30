@@ -70,27 +70,37 @@
             <div class="form-group has-float-label">
               <label for="idDiasLaborables" class="tamanio-label">Días Laborables *</label>
               <input id="idDiasLaborables" type="text" formControlName="diasLaborables" autocomplete="off"
-                class="form-control form-control-sm number-right" [readonly]="soloLectura" [textMask]="mascararEnteros(2)"
-                placeholder="24">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                [textMask]="mascararEnteros(2)" placeholder="24">
             </div>
           </div>
           <div class="col-md-5">
             <div class="form-group has-float-label">
               <label for="idHorasLaborables" class="tamanio-label">Horas Laborables *</label>
               <input id="idHorasLaborables" type="text" formControlName="horasLaborables" autocomplete="off"
-                class="form-control form-control-sm number-right" [readonly]="soloLectura" [textMask]="mascararEnteros(2)"
-                placeholder="8">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                [textMask]="mascararEnteros(2)" placeholder="8">
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" formnovalidate
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}</button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
       </form>
     </div>
   </div>
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
     <div class="col-md-10">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
+      </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="id" sticky>

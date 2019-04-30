@@ -78,7 +78,7 @@ export class ProductoComponent implements OnInit {
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
     //Obtiene la lista completa de registros
-    this.listar();
+    // this.listar();
     //Obtiene los rubros
     this.listarRubros();
     //Obtiene las marcas
@@ -158,7 +158,6 @@ export class ProductoComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.formulario.reset();
-    this.listar();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
@@ -182,6 +181,9 @@ export class ProductoComponent implements OnInit {
       case 4:
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;

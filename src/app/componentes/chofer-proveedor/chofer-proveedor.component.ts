@@ -6,11 +6,14 @@ import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { ChoferProveedor } from 'src/app/modelos/choferProveedor';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chofer-proveedor',
@@ -50,6 +53,10 @@ export class ChoferProveedorComponent implements OnInit {
   public resultadosProveedores:Array<any> = [];
   //Define la lista de resultados de choferes
   public resultadosChoferes:Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Define las columnas de la tabla
   public columnas:string[] = ['id', 'nombre', 'proveedor', 'tipo documento', 'numero documento', 'localidad', 'ver', 'mod'];
   //Define la matSort
@@ -58,7 +65,8 @@ export class ChoferProveedorComponent implements OnInit {
   constructor(private servicio: ChoferProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private choferProveedor: ChoferProveedor, private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService,
     private proveedorServicio: ProveedorService, private barrioServicio: BarrioService,
-    private localidadServicio: LocalidadService, private tipoDocumentoServicio: TipoDocumentoService) {
+    private localidadServicio: LocalidadService, private tipoDocumentoServicio: TipoDocumentoService,
+    private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -77,6 +85,11 @@ export class ChoferProveedorComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.choferProveedor.formulario;
     //Establece los valores de la primera pestania activa
@@ -196,6 +209,7 @@ export class ChoferProveedorComponent implements OnInit {
   }
   //Obtiene una lista de choferes por proveedor
   public listarPorProveedor() {
+    this.loaderService.show();
     let proveedor = this.formulario.get('proveedor').value;
     if(this.mostrarAutocompletado) {
       this.servicio.listarPorProveedor(proveedor.id).subscribe(
@@ -203,9 +217,11 @@ export class ChoferProveedorComponent implements OnInit {
           this.resultadosChoferes = res.json();
           this.resultados = new MatTableDataSource(res.json());
           this.resultados.sort = this.sort;
+          this.loaderService.hide();
         },
         err => {
           console.log(err);
+          this.loaderService.hide();
         }
       )
     }
@@ -235,6 +251,7 @@ export class ChoferProveedorComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
@@ -245,15 +262,18 @@ export class ChoferProveedorComponent implements OnInit {
             document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err.json());
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -264,10 +284,12 @@ export class ChoferProveedorComponent implements OnInit {
             document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err.json());
+        this.loaderService.hide();
       }
     );
   }

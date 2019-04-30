@@ -236,7 +236,6 @@ export class LocalidadComponent implements OnInit {
   //Obtiene la lista de localidades por provincia
   public listarPorProvincia(provincia) {
     this.servicio.listarPorProvincia(provincia.id).subscribe(res => {
-      console.log(provincia);
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
     })

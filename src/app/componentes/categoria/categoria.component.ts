@@ -7,6 +7,9 @@ import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { Categoria } from 'src/app/modelos/categoria';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-categoria',
@@ -38,13 +41,18 @@ export class CategoriaComponent implements OnInit {
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados:Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Define las columnas de la tabla
   public columnas:string[] = ['id', 'nombre', 'adicional vacaciones', 'tope adelantos', 'días laborables', 'horas laborables', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: CategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService, private categoria: Categoria) {
+    private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService, 
+    private categoria: Categoria, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -73,6 +81,11 @@ export class CategoriaComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.categoria.formulario;
     //Establece los valores de la primera pestania activa
@@ -180,18 +193,22 @@ export class CategoriaComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.establecerValoresPorDefecto();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
@@ -202,6 +219,7 @@ export class CategoriaComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -212,11 +230,13 @@ export class CategoriaComponent implements OnInit {
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -226,6 +246,7 @@ export class CategoriaComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -236,6 +257,7 @@ export class CategoriaComponent implements OnInit {
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
+        this.loaderService.hide();
       }
     );
   }

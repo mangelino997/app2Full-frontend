@@ -133,10 +133,10 @@ export class PersonalComponent implements OnInit {
         }
       );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res);
-      this.listaCompleta.sort = this.sort;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = new MatTableDataSource(res);
+    //   this.listaCompleta.sort = this.sort;
+    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string'&& data.length>2) {
