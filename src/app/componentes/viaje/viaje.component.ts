@@ -122,9 +122,9 @@ export class ViajeComponent implements OnInit {
       }
     );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string'&& data.length>2) {
@@ -143,7 +143,7 @@ export class ViajeComponent implements OnInit {
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(22, 0);
     //Obtiene la lista completa de registros
-    this.listar();
+    // this.listar();
     //Obtiene la lista de sucursales
     this.listarSucursales();
     //Establece los valores por defecto

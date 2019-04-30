@@ -253,7 +253,7 @@ export class PersonalComponent implements OnInit {
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(15, 0);
     //Obtiene la lista completa de registros
-    this.listar();
+    //this.listar();
     //Obtiene la lista de sexos
     this.listarSexos();
     //Obtiene la lista de estados civiles
@@ -503,6 +503,9 @@ export class PersonalComponent implements OnInit {
       case 4:
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;

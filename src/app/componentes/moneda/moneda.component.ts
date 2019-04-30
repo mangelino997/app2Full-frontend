@@ -72,9 +72,9 @@ export class MonedaComponent implements OnInit {
       }
     });
     //Se subscribe al servicio de lista de registros
-    this.monedaServicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.monedaServicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
   }
   //Al inicializarse el componente
   ngOnInit() {
@@ -83,7 +83,7 @@ export class MonedaComponent implements OnInit {
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Cargamos la lista de Monedas
-    this.listar();
+    // this.listar();
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -122,6 +122,9 @@ export class MonedaComponent implements OnInit {
       case 4:
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;

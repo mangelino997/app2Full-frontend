@@ -66,9 +66,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       }
     );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
   }
   //Al iniciarse el componente
   ngOnInit() {

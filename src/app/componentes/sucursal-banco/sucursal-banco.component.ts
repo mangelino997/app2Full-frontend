@@ -55,9 +55,9 @@ export class SucursalBancoComponent implements OnInit {
       }
     );
     //Se subscribe al servicio de lista de registros
-    this.servicio.listaCompleta.subscribe(res => {
-      this.listaCompleta = res;
-    });
+    // this.servicio.listaCompleta.subscribe(res => {
+    //   this.listaCompleta = res;
+    // });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -79,7 +79,7 @@ export class SucursalBancoComponent implements OnInit {
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
-    this.listar();
+    // this.listar();
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -119,6 +119,9 @@ export class SucursalBancoComponent implements OnInit {
         break;
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idBanco');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;

@@ -77,6 +77,8 @@ export class BarrioComponent implements OnInit {
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
     });
+    //Obtiene la lista completa de registros
+    //this.listar();
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
