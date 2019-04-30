@@ -28,8 +28,9 @@ export class LoginComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private loginService: LoginService, private usuarioService: UsuarioService,
-    private appComponent: AppComponent, private usuarioEmpresaService: UsuarioEmpresaService, 
-    private router: Router, private loaderService: LoaderService) {
+    private usuarioEmpresaService: UsuarioEmpresaService, 
+    private router: Router, private loaderService: LoaderService,
+    private appComponent: AppComponent) {
   }
   //Al inicializarse el componente
   ngOnInit() {

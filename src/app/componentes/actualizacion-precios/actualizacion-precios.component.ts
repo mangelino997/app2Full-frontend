@@ -94,6 +94,7 @@ export class ActualizacionPreciosComponent implements OnInit {
     //Establece la empresa por defecto y disable
     this.empresa.setValue(this.appService.getEmpresa());
     this.empresa.disable();
+    //Establece el foco en buscar por
     setTimeout(function() {
       document.getElementById('idBuscarPor').focus();
     }, 20);

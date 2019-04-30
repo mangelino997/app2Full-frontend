@@ -22,6 +22,9 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Cliente } from 'src/app/modelos/cliente';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-cliente',
@@ -91,6 +94,12 @@ export class ClienteComponent implements OnInit {
   public columnas:string[] = ['id', 'razón social', 'tipo documento', 'número documento', 'teléfono', 'domicilio', 'localidad', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Defiene el render
+  public render:boolean = false;
   //Constructor
   constructor(private servicio: ClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appService: AppService, private toastr: ToastrService,
@@ -101,7 +110,8 @@ export class ClienteComponent implements OnInit {
     private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
     private companiaSeguroServicio: CompaniaSeguroService, private ordenVentaServicio: OrdenVentaService,
-    private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente) {
+    private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente,
+    private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -118,9 +128,11 @@ export class ClienteComponent implements OnInit {
     .subscribe(
       res => {
         this.opciones = res.json();
+        this.render = true;
       },
       err => {
         console.log(err);
+        this.render = true;
       }
     );
     //Se subscribe al servicio de lista de registros
@@ -138,6 +150,11 @@ export class ClienteComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.clienteModelo.formulario;
     //Establece los valores de la primera pestania activa
@@ -455,6 +472,7 @@ export class ClienteComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
@@ -467,14 +485,17 @@ export class ClienteComponent implements OnInit {
           }, 20);
           this.toastr.success(respuesta.mensaje);
         }
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err.json());
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
@@ -486,10 +507,12 @@ export class ClienteComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err.json());
+        this.loaderService.hide();
       }
     );
   }

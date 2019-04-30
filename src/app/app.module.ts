@@ -291,7 +291,7 @@ import { RolOpcionComponent, RolOpcionDialog } from './componentes/rol-opcion/ro
 
 //Rutas
 const appRoutes: Routes = [
-  { path: '', component: LoginComponent },
+  // { path: '', component: LoginComponent },
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent, canActivate: [GuardiaService] },
   { path: 'generalespaises', component: PaisComponent, canActivate: [GuardiaService] },
@@ -395,7 +395,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://jitws-draimo.appspot.com:8080/jitws/socket
+  url: 'ws://gestionws.appspot.com:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,

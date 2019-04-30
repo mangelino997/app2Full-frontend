@@ -8,8 +8,8 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 @Injectable()
 export class AppService {
   //Define la IP
-  private IP = 'http://localhost:8080';
-  // private IP = 'https://jitws-draimo.appspot.com';
+  // private IP = 'http://localhost:8080';
+  private IP = 'https://gestionws.appspot.com';
   //Define la url base
   private URL_BASE = this.IP + '/jitws/auth';
   //Define la url de subcripcion a socket
@@ -23,7 +23,13 @@ export class AppService {
   //Define la lista completa
   public listaCompleta: Subject<any> = new Subject<any>();
   //Define la empresa
-  public empresa: any;
+  public empresa:any;
+  //Define el usuario
+  public usuario:any;
+  //Define la subopcion
+  public subopcion:any;
+  //Define el tema
+  public tema:any;
   //Constructor
   constructor(private http: Http, private stompService: StompService) {
     const headers: Headers = new Headers();
@@ -54,6 +60,18 @@ export class AppService {
   public getTopic() {
     return this.URL_TOPIC;
   }
+  //Obtiene el usuario
+  public getUsuario() {
+    return this.usuario;
+  }
+  //Establece el usuario
+  public setUsuario(usuario) {
+    this.usuario = usuario;
+  }
+  //Obtiene el rol del usuario actual
+  public getRol() {
+    return this.usuario.rol.id;
+  }
   //Obtiene la empresa
   public getEmpresa() {
     return this.empresa;
@@ -61,6 +79,18 @@ export class AppService {
   //Establece la empresa
   public setEmpresa(empresa) {
     this.empresa = empresa;
+  }
+  //Obtiene la subopcion
+  public getSubopcion() {
+    return this.subopcion;
+  }
+  //Obtiene el tema
+  public getTema() {
+    return this.tema;
+  }
+  //Establece el tema
+  public setTema(tema) {
+    this.tema = tema;
   }
   //Formatear numero a x decimales
   public setDecimales(valor, cantidad) {

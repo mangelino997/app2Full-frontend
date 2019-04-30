@@ -1,4 +1,4 @@
-import { Component, Pipe, PipeTransform } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AppService } from './servicios/app.service';
 import { Router } from '@angular/router';
 import 'rxjs/Rx';
@@ -7,7 +7,7 @@ import 'rxjs/Rx';
   selector: 'app-root',
   templateUrl: './app.component.html'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   public visible:boolean = false;
   public modulos = null;
   public usuario = {rol:{id:null}, sucursal:{id:null}, nombre:null};
@@ -15,11 +15,16 @@ export class AppComponent {
   public subopcion = null;
   public rol:number = null;
   public tema:string;
+  //Constructor
   constructor(private appService: AppService, private router: Router) {
     //Se subscribe al servicio de lista de registros
-    this.appService.listaCompleta.subscribe(res => {
-      this.obtenerMenu(this.getRol());
-    });
+    // this.appService.listaCompleta.subscribe(res => {
+    //   this.obtenerMenu(this.getRol());
+    // });
+  }
+  //Al inicializarse el componente
+  ngOnInit(): void {
+    this.router.navigate(['login']);
   }
   public setVisible(valor) {
     this.visible = valor;
