@@ -1,12 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { EjercicioService } from 'src/app/servicios/ejercicio.service';
 import { Ejercicio } from 'src/app/modelos/ejercicio';
 import { MesService } from 'src/app/servicios/mes.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-ejercicio',
@@ -31,7 +34,7 @@ export class EjercicioComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define la lista completa de años
   public anios: Array<any> = [];
   //Define la lista completa de meses
@@ -41,14 +44,19 @@ export class EjercicioComponent implements OnInit {
   //Define la lista de resultados del autocompletado
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'anio', 'mes', 'cantidad meses', 'predeterminado' , 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'anio', 'mes', 'cantidad meses', 'predeterminado', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: EjercicioService, private subopcionPestaniaService: SubopcionPestaniaService, private mesService: MesService,
-    private ejercicio: Ejercicio, private appComponent: AppComponent, private toastr: ToastrService) {
+    private ejercicio: Ejercicio, private appService: AppService, private toastr: ToastrService,
+    private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -61,10 +69,10 @@ export class EjercicioComponent implements OnInit {
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
     // });
-    let empresa = this.appComponent.getEmpresa();
+    let empresa = this.appService.getEmpresa();
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data, empresa.id).subscribe(res => {
           this.resultados = res;
         })
@@ -73,6 +81,11 @@ export class EjercicioComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.ejercicio.formulario;
     //Establece los valores de la primera pestania activa
@@ -173,13 +186,17 @@ export class EjercicioComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
-    let empresa = this.appComponent.getEmpresa();
+    this.loaderService.show();
+    let empresa = this.appService.getEmpresa();
     this.servicio.listar(empresa.id).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;       },
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
+      },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
@@ -207,8 +224,9 @@ export class EjercicioComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.loaderService.show();
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -218,6 +236,7 @@ export class EjercicioComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -228,12 +247,14 @@ export class EjercicioComponent implements OnInit {
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.loaderService.show();
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -243,6 +264,7 @@ export class EjercicioComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -253,6 +275,7 @@ export class EjercicioComponent implements OnInit {
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
+        this.loaderService.hide();
       }
     );
   }

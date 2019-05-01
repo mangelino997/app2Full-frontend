@@ -4,10 +4,12 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { ClienteService } from '../../servicios/cliente.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-contacto-cliente',
@@ -16,57 +18,67 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 })
 export class ContactoClienteComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = null;
+  public pestanias: Array<any> = null;
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
-  public opcionSeleccionada:number = null;
+  public opcionSeleccionada: number = null;
   //Define la lista de tipos de contactos
-  public tiposContactos:Array<any> = [];
+  public tiposContactos: Array<any> = [];
   //Define la lista de contactos
-  public contactos:Array<any> = [];
+  public contactos: Array<any> = [];
   //Define el form control para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda sucursales clientes
-  public resultadosClientes:Array<any> = [];
+  public resultadosClientes: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico' , 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: ContactoClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private clienteServicio: ClienteService, private tipoContactoServicio: TipoContactoService) {
+    private toastr: ToastrService, private appService: AppService,
+    private clienteServicio: ClienteService, private tipoContactoServicio: TipoContactoService,
+    private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -86,7 +98,7 @@ export class ContactoClienteComponent implements OnInit {
     this.listarTiposContactos();
     //Autocompletado Cliente - Buscar por alias
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClientes = response;
         })
@@ -116,7 +128,7 @@ export class ContactoClienteComponent implements OnInit {
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('tipoContacto').enable();
     } else {
       this.formulario.get('tipoContacto').disable();
@@ -138,7 +150,7 @@ export class ContactoClienteComponent implements OnInit {
     this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.vaciarListas();
     }
@@ -164,7 +176,7 @@ export class ContactoClienteComponent implements OnInit {
         this.contactos = [];
         this.autocompletado.reset();
         this.formulario.reset();
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idCliente').focus();
         }, 20);
       default:
@@ -192,7 +204,7 @@ export class ContactoClienteComponent implements OnInit {
     this.servicio.listarPorCliente(elemento.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
-        })
+    })
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -207,39 +219,45 @@ export class ContactoClienteComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.loaderService.show();
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idCliente').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.loaderService.show();
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idCliente').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }
@@ -256,7 +274,7 @@ export class ContactoClienteComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    if(respuesta.codigo == 11003) {
+    if (respuesta.codigo == 11003) {
       document.getElementById("labelCorreoelectronico").classList.add('label-error');
       document.getElementById("idCorreoelectronico").classList.add('is-invalid');
       document.getElementById("idCorreoelectronico").focus();
@@ -285,13 +303,13 @@ export class ContactoClienteComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -300,9 +318,9 @@ export class ContactoClienteComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }

@@ -50,15 +50,25 @@
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
       </form>
     </div>
   </div>
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
     <div class="col-md-8">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
+      </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="id" sticky>
@@ -75,11 +85,13 @@
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span class="cursor-color">ver</span></td>
+          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+              class="cursor-color">ver</span></td>
         </ng-container>
         <ng-container matColumnDef="mod" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span class="cursor-color">editar</span></td>
+          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+              class="cursor-color">editar</span></td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ProductoService } from 'src/app/servicios/producto.service';
@@ -9,6 +8,9 @@ import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
 import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
 import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-producto',
@@ -50,19 +52,24 @@ export class ProductoComponent implements OnInit {
   public resultadosCompaniasSeguros: Array<any> = [];
   //Defien la lista de empresas
   public empresas: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
-  constructor(private appComponent: AppComponent, private producto: Producto, private servicio: ProductoService,
-    private subopcionPestaniaService: SubopcionPestaniaService, private rubrosServicio: RubroProductoService, private appService: AppService,
-    private unidadMedidaServicio: UnidadMedidaService, private marcaServicio: MarcaProductoService, private toastr: ToastrService) {
+  constructor(private appService: AppService, private producto: Producto, private servicio: ProductoService,
+    private subopcionPestaniaService: SubopcionPestaniaService, private rubrosServicio: RubroProductoService,
+    private unidadMedidaServicio: UnidadMedidaService, private marcaServicio: MarcaProductoService, private toastr: ToastrService,
+    private loaderService: LoaderService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
       });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
@@ -71,6 +78,11 @@ export class ProductoComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.producto.formulario;
     //Establece los valores de la primera pestania activa
@@ -95,7 +107,7 @@ export class ProductoComponent implements OnInit {
   //Establece el formulario al seleccionar de autocompletado
   public establecerAutocompletado(): void {
     let elemento = this.autocompletado.value;
-    if(elemento) {
+    if (elemento) {
       this.formulario.setValue(elemento);
       this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2));
       this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemento.coeficienteITC, 4));
@@ -103,12 +115,15 @@ export class ProductoComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = res.json();
+        this.loaderService.hide();
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
@@ -236,7 +251,8 @@ export class ProductoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('usuario').setValue(this.appComponent.getUsuario());
+    this.loaderService.show();
+    this.formulario.get('usuario').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -247,6 +263,7 @@ export class ProductoComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -257,11 +274,13 @@ export class ProductoComponent implements OnInit {
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -271,6 +290,7 @@ export class ProductoComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -281,6 +301,7 @@ export class ProductoComponent implements OnInit {
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
+        this.loaderService.hide();
       }
     );
   }
@@ -352,7 +373,7 @@ export class ProductoComponent implements OnInit {
   }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad) {
-    if(formulario) {
+    if (formulario) {
       formulario.setValue(this.appService.establecerDecimales(formulario.value, cantidad));
     }
   }

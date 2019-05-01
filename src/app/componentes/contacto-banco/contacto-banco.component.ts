@@ -8,6 +8,9 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-contacto-banco',
@@ -16,54 +19,59 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 })
 export class ContactoBancoComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
-  public opcionSeleccionada:number = null;
+  public opcionSeleccionada: number = null;
   //Define la lista de tipos de contactos
-  public tiposContactos:Array<any> = [];
+  public tiposContactos: Array<any> = [];
   //Define la lista de contactos
-  public contactos:Array<any> = [];
+  public contactos: Array<any> = [];
   //Define el form control para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de sucursales bancos
-  public resultadosSucursalesBancos:Array<any> = [];
+  public resultadosSucursalesBancos: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'banco', 'sucursal', 'nombre contacto', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico' , 'ver', 'mod'];
+  public columnas: string[] = ['id', 'banco', 'sucursal', 'nombre contacto', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: ContactoBancoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private sucursalBancoServicio: SucursalBancoService, private tipoContactoServicio: TipoContactoService) {
+    private sucursalBancoServicio: SucursalBancoService, private tipoContactoServicio: TipoContactoService,
+    private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
@@ -71,6 +79,11 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -86,7 +99,7 @@ export class ContactoBancoComponent implements OnInit {
     });
     //Autocompletado Sucursal Banco - Buscar por nombre
     this.formulario.get('sucursalBanco').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.sucursalBancoServicio.listarPorNombreBanco(data).subscribe(response => {
           this.resultadosSucursalesBancos = response;
         })
@@ -120,7 +133,7 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('tipoContacto').enable();
     } else {
       this.formulario.get('tipoContacto').disable();
@@ -142,7 +155,7 @@ export class ContactoBancoComponent implements OnInit {
     this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.vaciarListas();
     }
@@ -165,10 +178,10 @@ export class ContactoBancoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idSucursalBanco');
         break;
       case 5:
-        this.contactos =[];
+        this.contactos = [];
         this.listaCompleta = new MatTableDataSource([]);
         this.mostrarAutocompletado = true;
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idSucursalBanco').focus();
         }, 20);
         break;
@@ -205,11 +218,11 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Obtiene la lista de contactos por sucursal banco
   public listarPorSucursalBanco(elemento) {
-    if(this.mostrarAutocompletado) {
+    if (this.mostrarAutocompletado) {
       this.servicio.listarPorSucursalBanco(elemento.id).subscribe(
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;  
+          this.listaCompleta.sort = this.sort;
         },
         err => {
           console.log(err);
@@ -219,39 +232,45 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idSucursalBanco').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idSucursalBanco').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }
@@ -268,7 +287,7 @@ export class ContactoBancoComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    if(respuesta.codigo == 11003) {
+    if (respuesta.codigo == 11003) {
       document.getElementById("labelCorreoelectronico").classList.add('label-error');
       document.getElementById("idCorreoelectronico").classList.add('is-invalid');
       document.getElementById("idCorreoelectronico").focus();
@@ -283,18 +302,18 @@ export class ContactoBancoComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined && valor != null && valor != '') {
+    if (valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
-        if(campo == 'telefonoFijo') {
+        if (campo == 'telefonoFijo') {
           document.getElementById("labelTelefonoFijo").classList.add('label-error');
           document.getElementById("idTelefonoFijo").classList.add('is-invalid');
           this.toastr.error('Telefono Fijo Incorrecto');
-        } else if(campo == 'telefonoMovil') {
+        } else if (campo == 'telefonoMovil') {
           document.getElementById("labelTelefonoMovil").classList.add('label-error');
           document.getElementById("idTelefonoMovil").classList.add('is-invalid');
           this.toastr.error('Telefono Movil Incorrecto');
-        } else if(campo == 'correoelectronico') {
+        } else if (campo == 'correoelectronico') {
           document.getElementById("labelCorreoelectronico").classList.add('label-error');
           document.getElementById("idCorreoelectronico").classList.add('is-invalid');
           this.toastr.error('Correo Electronico Incorrecto');
@@ -319,13 +338,13 @@ export class ContactoBancoComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autocompletado
   public displayF(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ' - ' + elemento.banco.nombre : elemento;
     } else {
       return elemento;
@@ -333,7 +352,7 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Define como se muestra los datos en el autocompletado a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + '' : elemento;
     } else {
       return elemento;
@@ -341,7 +360,7 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Define como se muestra los datos en el autocompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ' - ' + elemento.tipoContacto.nombre : elemento;
     } else {
       return elemento;
@@ -351,9 +370,9 @@ export class ContactoBancoComponent implements OnInit {
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
     var opcion = this.opcionSeleccionada;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }

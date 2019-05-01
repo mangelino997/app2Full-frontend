@@ -6,6 +6,9 @@ import { ToastrService } from 'ngx-toastr';
 import { CondicionCompra } from 'src/app/modelos/condicion-compra';
 import { CondicionCompraService } from 'src/app/servicios/condicion-compra.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-condicion-compra',
@@ -45,9 +48,14 @@ export class CondicionCompraComponent implements OnInit {
   public columnas:string[] = ['id', 'nombre', 'es contado', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: CondicionCompraService, private condicionCompra: CondicionCompra,
-    private appComponent: AppComponent, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+    private appComponent: AppComponent, private subopcionPestaniaService: SubopcionPestaniaService, 
+    private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
       .subscribe(res => {
@@ -65,22 +73,30 @@ export class CondicionCompraComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.condicionCompra.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
-    this.listar();
+    // this.listar();
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
@@ -121,6 +137,9 @@ export class CondicionCompraComponent implements OnInit {
       case 4:
         this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        break;
+      case 5:
+        this.listar();
         break;
       default:
         break;
@@ -163,6 +182,7 @@ export class CondicionCompraComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -172,6 +192,7 @@ export class CondicionCompraComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -182,11 +203,13 @@ export class CondicionCompraComponent implements OnInit {
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -196,6 +219,7 @@ export class CondicionCompraComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -206,6 +230,7 @@ export class CondicionCompraComponent implements OnInit {
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
+        this.loaderService.hide();
       }
     );
   }

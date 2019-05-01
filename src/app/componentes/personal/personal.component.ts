@@ -20,11 +20,13 @@ import { AfipModContratacionService } from '../../servicios/afip-mod-contratacio
 import { AfipSiniestradoService } from '../../servicios/afip-siniestrado.service';
 import { AfipSituacionService } from '../../servicios/afip-situacion.service';
 import { AppService } from '../../servicios/app.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Personal } from 'src/app/modelos/personal';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-personal',
@@ -96,14 +98,18 @@ export class PersonalComponent implements OnInit {
   //Define la lista de resultados de busqueda de afip situacion
   public resultadosAfipSituaciones: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'tipo documento', 'documento', 'telefono movil', 'domicilio', 'localidad', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'tipoDocumento', 'documento', 'telefonoMovil', 'domicilio', 'localidad', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, private personal: Personal,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
+    private appService: AppService, private appServicio: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
-    private localidadServicio: LocalidadService, private sexoServicio: SexoService,
+    private localidadServicio: LocalidadService, private sexoServicio: SexoService, private loaderService: LoaderService,
     private estadoCivilServicio: EstadoCivilService, private tipoDocumentoServicio: TipoDocumentoService,
     private sucursalServicio: SucursalService, private areaServicio: AreaService,
     private categoriaServicio: CategoriaService, private sindicatoServicio: SindicatoService,
@@ -111,8 +117,14 @@ export class PersonalComponent implements OnInit {
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService) {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    this.loaderService.show();
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -123,13 +135,15 @@ export class PersonalComponent implements OnInit {
         }
       );
     //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(
         res => {
           this.opciones = res.json();
+          this.loaderService.hide();
         },
         err => {
           console.log(err);
+          this.loaderService.hide();
         }
       );
     //Se subscribe al servicio de lista de registros
@@ -139,7 +153,7 @@ export class PersonalComponent implements OnInit {
     // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
@@ -152,7 +166,7 @@ export class PersonalComponent implements OnInit {
     this.formulario = this.personal.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.barrioServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBarrios = response;
         })
@@ -170,7 +184,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Localidad Nacimiento - Buscar por nombre
     this.formulario.get('localidadNacimiento').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -178,7 +192,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Categoria - Buscar por nombre
     this.formulario.get('categoria').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.categoriaServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosCategorias = response;
         })
@@ -186,7 +200,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Seguridad Social - Buscar por nombre
     this.formulario.get('seguridadSocial').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.seguridadSocialServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosSeguridadesSociales = response;
         })
@@ -194,7 +208,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Obra Social - Buscar por nombre
     this.formulario.get('obraSocial').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.obraSocialServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosObrasSociales = response;
         })
@@ -202,7 +216,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Actividad - Buscar por nombre
     this.formulario.get('afipActividad').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.afipActividadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipActividades = response;
         })
@@ -210,7 +224,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Condicion - Buscar por nombre
     this.formulario.get('afipCondicion').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.afipCondicionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipCondiciones = response;
         })
@@ -218,7 +232,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Localidad - Buscar por nombre
     this.formulario.get('afipLocalidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.afipLocalidadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipLocalidades = response;
         })
@@ -226,7 +240,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Mod Contratacion - Buscar por nombre
     this.formulario.get('afipModContratacion').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.afipModContratacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipModContrataciones = response;
         })
@@ -234,7 +248,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Siniestrado - Buscar por nombre
     this.formulario.get('afipSiniestrado').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.afipSiniestradoServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSiniestrados = response;
         })
@@ -242,7 +256,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Situacion - Buscar por nombre
     this.formulario.get('afipSituacion').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.afipSituacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSituaciones = response;
         })
@@ -582,20 +596,24 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.loaderService.show();
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
     this.servicio.agregar(this.formulario.value).subscribe(
@@ -609,17 +627,20 @@ export class PersonalComponent implements OnInit {
             document.getElementById('idApellido').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err.json());
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.loaderService.show();
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
     this.servicio.actualizar(this.formulario.value).subscribe(
@@ -631,10 +652,12 @@ export class PersonalComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err.json());
+        this.loaderService.hide();
       }
     );
   }

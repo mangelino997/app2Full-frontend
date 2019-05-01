@@ -38,8 +38,8 @@
             <div class="col-md-3" *ngIf="formulario.get('tipoOrdenVenta').value == true">
               <div class="form-group has-float-label">
                 <label for="idCliente" class="tamanio-label">Cliente *</label>
-                <input id="idCliente" class="form-control form-control-sm" type="text"
-                  matInput [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
+                <input id="idCliente" class="form-control form-control-sm" type="text" matInput
+                  [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
                   [required]="formulario.get('tipoOrdenVenta').value == true">
                 <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
                   (optionSelected)="listarOrdenesVentas('cliente')">
@@ -99,17 +99,17 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idSeguro" class="tamanio-label">Seguro(%) *</label>
-                <input id="idSeguro" [textMask]="mascararPorcentaje()" type="text" formControlName="seguro" autocomplete="off"
-                  class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="% 8.00"
-                  (blur)="establecerPorcentaje(formulario.get('seguro'), 2)">
+                <input id="idSeguro" [textMask]="mascararPorcentaje()" type="text" formControlName="seguro"
+                  autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                  placeholder="% 8.00" (blur)="establecerPorcentaje(formulario.get('seguro'), 2)">
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idComisionCR" class="tamanio-label">Comisión Contra Reembolso(%)</label>
-                <input id="idComisionCR" [textMask]="mascararPorcentaje()" type="text" formControlName="comisionCR" autocomplete="off"
-                  class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="% 00.00"
-                  (blur)="establecerPorcentaje(formulario.get('comisionCR'), 2)">
+                <input id="idComisionCR" [textMask]="mascararPorcentaje()" type="text" formControlName="comisionCR"
+                  autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                  placeholder="% 00.00" (blur)="establecerPorcentaje(formulario.get('comisionCR'), 2)">
               </div>
             </div>
           </div>
@@ -135,7 +135,8 @@
                 <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
                 <mat-select id="idPreciosDesde" class="form-control form-control-sm" [formControl]="preciosDesde"
                   [compareWith]="compareFn" (selectionChange)="cambioPreciosDesde()">
-                  <mat-option *ngFor="let itemPreciosDesde of preciosDesdeLista" [value]="itemPreciosDesde.preciosDesde">
+                  <mat-option *ngFor="let itemPreciosDesde of preciosDesdeLista"
+                    [value]="itemPreciosDesde.preciosDesde">
                     <span>{{itemPreciosDesde.preciosDesde | date: 'dd-MM-yyyy'}}</span>
                   </mat-option>
                 </mat-select>
@@ -165,18 +166,20 @@
                 <div class="form-group has-float-label">
                   <label for="idImporteFijo" class="tamanio-label">Precio Fijo<span
                       *ngIf="!(formularioEscala.get('precioUnitario').value) && !tipoTarifaEstado">*</span></label>
-                  <input id="idImporteFijo" [textMask]="mascaraImporte(10)" class="form-control form-control-sm number-right"
-                    formControlName="importeFijo" placeholder="$ 0.00" type="text" autocomplete="off"
-                    (blur)="setDecimales(formularioEscala.get('importeFijo'), 2)" (ngModelChange)="controlPrecios(1)">
+                  <input id="idImporteFijo" [textMask]="mascaraImporte(10)"
+                    class="form-control form-control-sm number-right" formControlName="importeFijo" placeholder="$ 0.00"
+                    type="text" autocomplete="off" (blur)="setDecimales(formularioEscala.get('importeFijo'), 2)"
+                    (ngModelChange)="controlPrecios(1)">
                 </div>
               </div>
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario<span
                       *ngIf="!(formularioEscala.get('importeFijo').value) && !tipoTarifaEstado">*</span></label>
-                  <input id="idPrecioUnitario" [textMask]="mascaraImporte(10)" formControlName="precioUnitario" type="text"
-                    autocomplete="off" class="form-control form-control-sm number-right" (ngModelChange)="controlPrecios(2)"
-                    (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)" placeholder="$ 0.00">
+                  <input id="idPrecioUnitario" [textMask]="mascaraImporte(10)" formControlName="precioUnitario"
+                    type="text" autocomplete="off" class="form-control form-control-sm number-right"
+                    (ngModelChange)="controlPrecios(2)" (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)"
+                    placeholder="$ 0.00">
                 </div>
               </div>
               <div class="col-md-2">
@@ -203,7 +206,7 @@
                   (click)="actualizarEscalaLista()" *ngIf="idModEscala != null">Actualizar</button>
               </div>
               <div class="col-md-1">
-                <button mat-raised-button color="accent" (click)="cancelarEscalaLista()" 
+                <button mat-raised-button color="accent" (click)="cancelarEscalaLista()"
                   *ngIf="idModEscala != null">Cancelar</button>
               </div>
             </div>
@@ -264,7 +267,7 @@
                 <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFc.bind(this)"
                   (optionSelected)="cambioAutocompletadoTramo()">
                   <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">
-                    {{itemTramo.origen.nombre}}, {{itemTramo.origen.provincia.nombre}} 
+                    {{itemTramo.origen.nombre}}, {{itemTramo.origen.provincia.nombre}}
                     - {{itemTramo.destino.nombre}}, {{itemTramo.destino.provincia.nombre}}
                   </mat-option>
                 </mat-autocomplete>
@@ -272,54 +275,61 @@
               <div class="form-group has-float-label">
                 <label for="idKmTramo" class="tamanio-label">Km *</label>
                 <input id="idKmTramo" class="form-control form-control-sm margin-left-5 number-right" type="text"
-                  [formControl]="formularioTramo.get('kmTramo')" autocomplete="off" readonly [textMask]="obtenerMascaraKm(5)"
-                  placeholder="0 km" style="width: 70px;">
+                  [formControl]="formularioTramo.get('kmTramo')" autocomplete="off" readonly
+                  [textMask]="obtenerMascaraKm(5)" placeholder="0 km" style="width: 70px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idKmPactado" class="tamanio-label">Km Pactado</label>
-                <input id="idKmPactado" class="form-control form-control-sm margin-left-5 number-right" formControlName="kmPactado" type="text"
-                  autocomplete="off" [textMask]="obtenerMascaraKm(5)" placeholder="0 km" style="width: 106px;"
-                  (blur)="establecerKm(formularioTramo.get('kmPactado'), 0)">
+                <input id="idKmPactado" class="form-control form-control-sm margin-left-5 number-right"
+                  formControlName="kmPactado" type="text" autocomplete="off" [textMask]="obtenerMascaraKm(5)"
+                  placeholder="0 km" style="width: 106px;" (blur)="establecerKm(formularioTramo.get('kmPactado'), 0)">
               </div>
               <div class="form-group has-float-label">
                 <label for="idImporteFijoSeco" class="tamanio-label">Imp. Fijo Seco <span
                     *ngIf="!(formularioTramo.get('precioUnitarioSeco').value) && !tipoTarifaEstado">*</span></label>
-                <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10)" class="form-control form-control-sm margin-left-5 number-right"
-                  formControlName="importeFijoSeco" (ngModelChange)="controlPreciosTramo(1)"
+                <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10)"
+                  class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoSeco"
+                  (ngModelChange)="controlPreciosTramo(1)"
                   (blur)="setDecimales(formularioTramo.get('importeFijoSeco'), 2)" type="text" autocomplete="off"
                   placeholder="$ 0.00" style="width: 130px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idPrecioUnitarioSeco" class="tamanio-label">Precio Un. Seco <span
                     *ngIf="!(formularioTramo.get('importeFijoSeco').value) && !tipoTarifaEstado">*</span></label>
-                <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10)" class="form-control form-control-sm margin-left-5 number-right"
-                  (ngModelChange)="controlPreciosTramo(2)" type="text" autocomplete="off" formControlName="precioUnitarioSeco"
-                  (blur)="setDecimales(formularioTramo.get('precioUnitarioSeco'), 2)" placeholder="$ 0.00" style="width: 142px;">
+                <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10)"
+                  class="form-control form-control-sm margin-left-5 number-right"
+                  (ngModelChange)="controlPreciosTramo(2)" type="text" autocomplete="off"
+                  formControlName="precioUnitarioSeco"
+                  (blur)="setDecimales(formularioTramo.get('precioUnitarioSeco'), 2)" placeholder="$ 0.00"
+                  style="width: 142px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idImporteFijoRef" class="tamanio-label">Imp. Fijo Ref. <span
                     *ngIf="!(formularioTramo.get('precioUnitarioRef').value) && !tipoTarifaEstado">*</span></label>
-                <input id="idImporteFijoRef" [textMask]="mascaraImporte(10)" class="form-control form-control-sm margin-left-5 number-right"
-                  formControlName="importeFijoRef" (ngModelChange)="controlPreciosTramoRef(1)"
+                <input id="idImporteFijoRef" [textMask]="mascaraImporte(10)"
+                  class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoRef"
+                  (ngModelChange)="controlPreciosTramoRef(1)"
                   (blur)="setDecimales(formularioTramo.get('importeFijoRef'), 2)" type="text" autocomplete="off"
                   placeholder="$ 0.00" style="width: 124px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idPrecioUnitarioRef" class="tamanio-label">Precio Un. Ref. <span
                     *ngIf="!(formularioTramo.get('importeFijoRef').value) && !tipoTarifaEstado">*</span></label>
-                <input id="idPrecioUnitarioRef" [textMask]="mascaraImporte(10)" class="form-control form-control-sm margin-left-5 number-right"
+                <input id="idPrecioUnitarioRef" [textMask]="mascaraImporte(10)"
+                  class="form-control form-control-sm margin-left-5 number-right"
                   (ngModelChange)="controlPreciosTramoRef(2)" type="text" autocomplete="off"
                   (blur)="setDecimales(formularioTramo.get('precioUnitarioRef'), 2)" formControlName="precioUnitarioRef"
                   placeholder="$ 0.00" style="width: 137px;">
               </div>
               <div class="col-md-1">
-                <button mat-raised-button color="primary" (click)="agregarTramoLista()" 
-                  *ngIf="idModTramo == null" [disabled]="!formularioTramo.valid">Agregar</button>
+                <button mat-raised-button color="primary" (click)="agregarTramoLista()" *ngIf="idModTramo == null"
+                  [disabled]="!formularioTramo.valid">Agregar</button>
                 <button mat-raised-button color="primary" (click)="actualizarTramoLista()"
                   *ngIf="idModTramo != null">Actualizar</button>
               </div>
               <div class="col-md-1">
-                <button mat-raised-button color="accent" (click)="cancelarTramoLista()" *ngIf="idModTramo != null">Cancelar</button>
+                <button mat-raised-button color="accent" (click)="cancelarTramoLista()"
+                  *ngIf="idModTramo != null">Cancelar</button>
               </div>
             </div>
             <table class="table table-bordered table-sm">
@@ -384,10 +394,15 @@
     </div>
     <div class="row justify-content-center contenedor">
       <div class="col-md-12 text-center">
-        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" formnovalidate
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)">
           {{pestaniaActual}}
         </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
       </div>
     </div>
   </div>

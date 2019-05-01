@@ -36,6 +36,7 @@ export class AppComponent implements OnInit {
   //Establece el usuario
   public setUsuario(usuario) {
     this.usuario = usuario;
+    this.appService.setUsuario(usuario);
   }
   //Obtiene el rol del usuario actual
   public getRol() {
@@ -57,6 +58,7 @@ export class AppComponent implements OnInit {
   //Establece la subopcion
   public setSubopcion(subopcion) {
     this.subopcion = subopcion;
+    this.appService.setSubopcion(subopcion);
   }
   //Obtiene el tema
   public getTema() {
@@ -65,6 +67,7 @@ export class AppComponent implements OnInit {
   //Establece el tema
   public setTema(tema) {
     this.tema = tema;
+    this.appService.setTema(tema);
   }
   //Obtiene la lista de modulos para armar el menu
   public obtenerMenu(id) {

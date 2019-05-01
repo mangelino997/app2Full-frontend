@@ -5,6 +5,9 @@ import { ToastrService } from 'ngx-toastr';
 import { MonedaService } from 'src/app/servicios/moneda.service';
 import { Moneda } from 'src/app/modelos/moneda';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSort, MatTableDataSource } from '@angular/material';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-moneda',
@@ -29,7 +32,7 @@ export class MonedaComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define el id que se muestra en el campo Codigo
@@ -43,13 +46,17 @@ export class MonedaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'esta activo', 'moneda principal', 'codigo afip', 'simbolo', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'estaActivo', 'monedaPrincipal', 'codigoAfip', 'simbolo', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
-  constructor(private moneda: Moneda, private monedaServicio: MonedaService, 
+  constructor(private moneda: Moneda, private monedaServicio: MonedaService,
     private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, public dialog: MatDialog) {
+    private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(1, 19)
       .subscribe(
@@ -64,7 +71,7 @@ export class MonedaComponent implements OnInit {
       );
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.monedaServicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res.json();
           console.log(res.json());
@@ -78,6 +85,11 @@ export class MonedaComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.moneda.formulario;
     //Establece los valores de la primera pestania activa
@@ -171,23 +183,27 @@ export class MonedaComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.monedaServicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;      },
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
+      },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
   //Agrega un registro
   private verificarPrincipal() {
-   if (this.formulario.get('porDefecto').value == "true") {
-    this.monedaServicio.obtenerPorDefecto().subscribe(
-      res => {
-        var respuesta = res.json();
-        //open modal reemplazar moneda
-        this.cambiarPrincipal(respuesta, this.formulario.value);
+    if (this.formulario.get('porDefecto').value == "true") {
+      this.monedaServicio.obtenerPorDefecto().subscribe(
+        res => {
+          var respuesta = res.json();
+          //open modal reemplazar moneda
+          this.cambiarPrincipal(respuesta, this.formulario.value);
         }
       );
     }
@@ -196,23 +212,27 @@ export class MonedaComponent implements OnInit {
     }
   }
   //Metodo Agregar Moneda
-  private agregar(moneda){
+  private agregar(moneda) {
+    this.loaderService.show();
     this.monedaServicio.agregar(moneda).subscribe(
       res => {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
+        setTimeout(function () {
+          document.getElementById('idNombre').focus();
+        }, 20);
+        this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.monedaServicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -222,10 +242,12 @@ export class MonedaComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }
@@ -236,11 +258,11 @@ export class MonedaComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    if(respuesta.codigo == 11002) {
+    if (respuesta.codigo == 11002) {
       document.getElementById("labelNombre").classList.add('label-error');
       document.getElementById("idNombre").classList.add('is-invalid');
       document.getElementById("idNombre").focus();
-    } 
+    }
     this.toastr.error(respuesta.mensaje);
   }
   //Reestablece los campos formularios
@@ -315,6 +337,8 @@ export class MonedaComponent implements OnInit {
     }
   }
 }
+
+//Componente Cambiar Moneda Principal Dialogo
 @Component({
   selector: 'cambiar-principal-dialogo',
   templateUrl: 'cambiar-principal-dialogo.html',
@@ -326,12 +350,14 @@ export class CambiarMonedaPrincipalDialogo {
   public result: any;
   //Define la moneda principal actual
   public monedaPrincipal: string;
-  constructor(public dialogRef: MatDialogRef<CambiarMonedaPrincipalDialogo>, @Inject(MAT_DIALOG_DATA) public data, private monedaServicio: MonedaService,
-    private toastr: ToastrService) { }
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<CambiarMonedaPrincipalDialogo>, @Inject(MAT_DIALOG_DATA) public data, private monedaServicio: MonedaService) { }
+  //Al inicializarse el componente
   ngOnInit() {
     this.monedaAgregar = this.data.monedaAgregar;
     this.monedaPrincipal = this.data.monedaPrincipal;
   }
+  //Cierra el dialogo
   onNoClick(): void {
     this.dialogRef.close();
   }

@@ -57,10 +57,15 @@
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary" formnovalidate (click)="accion(indiceSeleccionado)"
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate (click)="accion(indiceSeleccionado)"
           [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
       </form>
     </div>
   </div>
@@ -80,6 +85,11 @@
               </mat-autocomplete>
             </div>
           </form>
+        </div>
+      </div>
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
         </div>
       </div>
       <div class="row">

@@ -1,11 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
-import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
-import { EmpresaService } from '../../servicios/empresa.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
+
 @Component({
   selector: 'app-estado-servicio-afip',
   templateUrl: './estado-servicio-afip.component.html',
@@ -40,10 +35,9 @@ export class EstadoServicioAfipComponent implements OnInit {
   public resultadosCompaniasSeguros:Array<any> = [];
   //Defien la lista de empresas
   public empresas:Array<any> = [];
-  
+  //Cosntructor
   constructor() { }
-
+  //Al inicializarse el componente
   ngOnInit() {
   }
-
 }

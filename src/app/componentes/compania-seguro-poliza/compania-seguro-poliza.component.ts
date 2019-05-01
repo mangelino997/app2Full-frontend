@@ -4,11 +4,14 @@ import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { EmpresaService } from '../../servicios/empresa.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CompaniaSeguroPoliza } from 'src/app/modelos/companiaSeguroPoliza';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -48,12 +51,15 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public columnas:string[] = ['id', 'empresa', 'número póliza', 'vto póliza', 'ver', 'mod', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
-  // public compereFn:any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: CompaniaSeguroPolizaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService,
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
-    private companiaSeguroPolizaModelo: CompaniaSeguroPoliza) {
+    private companiaSeguroPolizaModelo: CompaniaSeguroPoliza, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(1, 195)
     .subscribe(
@@ -72,6 +78,11 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.companiaSeguroPolizaModelo.formulario;
     //Autocompletado Compania Seguro - Buscar por nombre
@@ -181,6 +192,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -190,16 +202,19 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
             document.getElementById('idCompaniaSeguro').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         var respuesta = err.json();
         this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.hide();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -209,11 +224,13 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
             document.getElementById('idCompaniaSeguro').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         var respuesta = err.json();
         this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
     );
   }

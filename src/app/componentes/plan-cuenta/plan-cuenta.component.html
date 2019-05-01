@@ -1,4 +1,9 @@
 <div class="container-fluid">
+  <div class="row" *ngIf="show">
+    <div class="col text-center">
+      <app-progreso></app-progreso>
+    </div>
+  </div>
   <div class="row">
     <div class="col-md 12">
       <mat-tree [dataSource]="datos" [treeControl]="treeControl">
@@ -7,12 +12,12 @@
             <div class="row">
               <div class="form-group has-float-label">
                 <label for="idNombre" class="tamanio-label">Nombre *</label>
-                <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm" 
+                <input id="idNombre" type="text" autocomplete="off" class="form-control form-control-sm"
                   formControlName="nombre" style="width: 250px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idImputable" class="tamanio-label">Es Imputable *</label>
-                <mat-select id="idImputable" class="form-control form-control-sm"  style="width: 120px;"
+                <mat-select id="idImputable" class="form-control form-control-sm" style="width: 120px;"
                   formControlName="esImputable" (selectionChange)="cambioImputable()" [disabled]="!formulario.valid">
                   <mat-option [value]="false">No</mat-option>
                   <mat-option [value]="true">Si</mat-option>
@@ -20,13 +25,13 @@
               </div>
               <div class="form-group has-float-label">
                 <label for="idActivo" class="tamanio-label">Esta Activo *</label>
-                <mat-select id="idActivo" class="form-control form-control-sm"  style="width: 108px;"
+                <mat-select id="idActivo" class="form-control form-control-sm" style="width: 108px;"
                   formControlName="estaActivo" [disabled]="!formulario.valid">
                   <mat-option [value]="false">No</mat-option>
                   <mat-option [value]="true">Si</mat-option>
                 </mat-select>
               </div>
-              <button mat-raised-button color="primary" (click)="agregar(node)" 
+              <button mat-raised-button color="primary" (click)="agregar(node)"
                 [disabled]="!formulario.valid">Agregar</button>
               <button mat-raised-button style="background-color: red; color: white"
                 (click)="eliminarNodo(node)">Quitar</button>

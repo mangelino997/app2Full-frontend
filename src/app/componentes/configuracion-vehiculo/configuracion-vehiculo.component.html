@@ -3,7 +3,8 @@
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CONFIGURACION VEHICULO</a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -38,9 +39,9 @@
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <div class="form-group has-float-label">
                 <label for="idAutocompletado" class="tamanio-label">Lista de Configuraciones</label>
-                <mat-select id="idAutocompletado" class="form-control form-control-sm" 
-                  [formControl]="autocompletado" [compareWith]="compareFn">
-                  <mat-option *ngFor="let item of configuraciones" [value]="item" 
+                <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="autocompletado"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of configuraciones" [value]="item"
                     (onSelectionChange)="formulario.setValue(item)">
                     Modelo: <b>{{item.modelo}}</b> - Cantidad Ejes: <b>{{item.cantidadEjes}}</b>
                     - Capacidad Carga: <b>{{item.capacidadCarga}}</b>
@@ -54,7 +55,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idModelo" class="tamanio-label">Modelo *</label>
-              <input id="idModelo" type="text" formControlName="modelo" autocomplete="off" 
+              <input id="idModelo" type="text" formControlName="modelo" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
@@ -72,8 +73,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCantidadEjes" class="tamanio-label">Cantidad de Ejes *</label>
-              <mat-select id="idCantidadEjes" class="form-control form-control-sm" 
-                formControlName="cantidadEjes">
+              <mat-select id="idCantidadEjes" class="form-control form-control-sm" formControlName="cantidadEjes">
                 <mat-option [value]="1">1</mat-option>
                 <mat-option [value]="2">2</mat-option>
                 <mat-option [value]="3">3</mat-option>
@@ -84,15 +84,19 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCapacidadCarga" class="tamanio-label">Capacidad Total de Carga(Tn) *</label>
-              <input id="idCapacidadCarga" type="text" formControlName="capacidadCarga" autocomplete="off" [textMask]="obtenerMascaraEnteroSinDecimales(10)"
-                placeholder="00" (blur)="desenmascararEnteros(formulario.get('capacidadCarga'), 2)"  class="form-control form-control-sm number-right"  [readonly]="soloLectura">
+              <input id="idCapacidadCarga" type="text" formControlName="capacidadCarga" autocomplete="off"
+                [textMask]="obtenerMascaraEnteroSinDecimales(10)" placeholder="00"
+                (blur)="desenmascararEnteros(formulario.get('capacidadCarga'), 2)"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idTara" class="tamanio-label">Tara(Tn)</label>
-              <input id="idTara" type="text" formControlName="tara" autocomplete="off"  
-                placeholder="00" (blur)="desenmascararEnteros(formulario.get('tara'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
+              <input id="idTara" type="text" formControlName="tara" autocomplete="off" placeholder="00"
+                (blur)="desenmascararEnteros(formulario.get('tara'), 2)"
+                class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)"
+                [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -100,41 +104,58 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idAltura" class="tamanio-label">Altura(m)</label>
-              <input id="idAltura" type="text" formControlName="altura" autocomplete="off"  
-                placeholder="00" (blur)="desenmascararEnteros(formulario.get('altura'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
+              <input id="idAltura" type="text" formControlName="altura" autocomplete="off" placeholder="00"
+                (blur)="desenmascararEnteros(formulario.get('altura'), 2)"
+                class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)"
+                [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idLargo" class="tamanio-label">Largo(m)</label>
-              <input id="idLargo" type="text" formControlName="largo" autocomplete="off"  
-                placeholder="00" (blur)="desenmascararEnteros(formulario.get('largo'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
+              <input id="idLargo" type="text" formControlName="largo" autocomplete="off" placeholder="00"
+                (blur)="desenmascararEnteros(formulario.get('largo'), 2)"
+                class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)"
+                [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idAncho" class="tamanio-label">Ancho(m)</label>
-              <input id="idAncho" type="text" formControlName="ancho" autocomplete="off"  
-                placeholder="00" (blur)="desenmascararEnteros(formulario.get('ancho'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
+              <input id="idAncho" type="text" formControlName="ancho" autocomplete="off" placeholder="00"
+                (blur)="desenmascararEnteros(formulario.get('ancho'), 2)"
+                class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)"
+                [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idM3" class="tamanio-label">M3(m)</label>
-              <input id="idM3" type="text" formControlName="m3" autocomplete="off"  
-                placeholder="00" (blur)="desenmascararEnteros(formulario.get('m3'), 2)" class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
+              <input id="idM3" type="text" formControlName="m3" autocomplete="off" placeholder="00"
+                (blur)="desenmascararEnteros(formulario.get('m3'), 2)" class="form-control form-control-sm number-right"
+                [textMask]="obtenerMascaraEnteroSinDecimales(10)" [readonly]="soloLectura">
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate 
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
       </form>
     </div>
   </div>
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
     <div class="col-md-10">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
+      </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="id" sticky>
@@ -163,61 +184,17 @@
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span class="cursor-color">ver</span></td>
+          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+              class="cursor-color">ver</span></td>
         </ng-container>
         <ng-container matColumnDef="mod" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span class="cursor-color">editar</span></td>
+          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+              class="cursor-color">editar</span></td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
       </table>
     </div>
   </div>
-  <!-- <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-12">
-      <table class="table table-bordered table-striped table-sm">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:5%" scope="col">id</th>
-            <th class="text-center" style="width:15%" scope="col">Tipo Vehículo</th>
-            <th class="text-center" style="width:20%" scope="col">Marca Vehículo</th>
-            <th class="text-center" style="width:10%" scope="col">Modelo</th>
-            <th class="text-center" style="width:10%" scope="col">Cantidad Ejes</th>
-            <th class="text-center" style="width:10%" scope="col">Capacidad Carga</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let l of listaCompleta">
-            <td align="center">
-              <span>{{l.id}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.tipoVehiculo.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.marcaVehiculo.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.modelo}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.cantidadEjes}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.capacidadCarga}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 </div>

@@ -3,7 +3,7 @@
     <div class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>AFIP CONCEPTO</a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
           (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
@@ -14,14 +14,13 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar</label>
-            <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-              [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-              <mat-option *ngFor="let item of resultados" [value]="item"
-                (onSelectionChange)="formulario.setValue(item)">
-                {{item.nombre}}
-              </mat-option>
-            </mat-autocomplete>
+          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
+              {{item.nombre}}
+            </mat-option>
+          </mat-autocomplete>
         </div>
         <div class="row justify-content-center">
           <div class="col-md-12">
@@ -35,7 +34,8 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre*</label>
-              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -43,45 +43,57 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="tamanio-label">Código Afip*</label>
-              <input id="idNombre" type="text" formControlName="codigoAfip" autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNombre" type="text" formControlName="codigoAfip" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button" formnovalidate (click)="accion(indiceSeleccionado)"
-          [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton && !show" class="btn btn-primary" type="button" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
       </form>
     </div>
   </div>
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-      <div class="col-md-8">
-        <br>
-        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="id" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-          </ng-container>
-          <ng-container matColumnDef="nombre" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="código afip" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Código Afip</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.codigoAfip}}</td>
-          </ng-container>
-          <ng-container matColumnDef="ver" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span class="cursor-color">ver</span></td>
-          </ng-container>
-          <ng-container matColumnDef="mod" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span class="cursor-color">editar</span></td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-        </table>
+    <div class="col-md-8">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
       </div>
+      <br>
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="id" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+        </ng-container>
+        <ng-container matColumnDef="nombre" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="código afip" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Código Afip</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.codigoAfip}}</td>
+        </ng-container>
+        <ng-container matColumnDef="ver" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+              class="cursor-color">ver</span></td>
+        </ng-container>
+        <ng-container matColumnDef="mod" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+              class="cursor-color">editar</span></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
     </div>
   </div>
-  
+</div>

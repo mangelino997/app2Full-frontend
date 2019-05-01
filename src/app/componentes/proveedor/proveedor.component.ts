@@ -11,10 +11,12 @@ import { CondicionCompraService } from '../../servicios/condicion-compra.service
 import { BancoService } from '../../servicios/banco.service';
 import { TipoCuentaBancariaService } from '../../servicios/tipo-cuenta-bancaria.service';
 import { AppService } from '../../servicios/app.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Proveedor } from 'src/app/modelos/proveedor';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-proveedor',
@@ -23,86 +25,99 @@ import { Proveedor } from 'src/app/modelos/proveedor';
 })
 export class ProveedorComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define la lista de opciones
-  public opciones:Array<any> = [];
+  public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta: Array<any> = [];
   //Define la opcion seleccionada
-  public opcionSeleccionada:number = null;
+  public opcionSeleccionada: number = null;
   //Define la lista de condiciones de iva
-  public condicionesIva:Array<any> = [];
+  public condicionesIva: Array<any> = [];
   //Define la lista de tipos de documentos
-  public tiposDocumentos:Array<any> = [];
+  public tiposDocumentos: Array<any> = [];
   //Define la lista de tipos de proveedores
-  public tiposProveedores:Array<any> = [];
+  public tiposProveedores: Array<any> = [];
   //Define la lista de condiciones de compra
-  public condicionesCompras:Array<any> = [];
+  public condicionesCompras: Array<any> = [];
   //Define la lista de tipos de cuentas bancarias
-  public tiposCuentasBancarias:Array<any> = [];
+  public tiposCuentasBancarias: Array<any> = [];
   //Define la opcion activa
-  public botonOpcionActivo:boolean = null;
+  public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de barrios
-  public resultadosBarrios:Array<any> = [];
+  public resultadosBarrios: Array<any> = [];
   //Define la lista de resultados de busqueda de localidades
-  public resultadosLocalidades:Array<any> = [];
+  public resultadosLocalidades: Array<any> = [];
   //Define la lista de resultados de busqueda de bancos
-  public resultadosBancos:Array<any> = [];
+  public resultadosBancos: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: ProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
+    private appService: AppService, private appServicio: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private afipCondicionIvaServicio: AfipCondicionIvaService,
     private tipoDocumentoServicio: TipoDocumentoService, private tipoProveedorServicio: TipoProveedorService,
     private condicionCompraServicio: CondicionCompraService, private bancoServicio: BancoService,
-    private tipoCuentaBancariaServicio: TipoCuentaBancariaService, private proveedorModelo: Proveedor) {
+    private tipoCuentaBancariaServicio: TipoCuentaBancariaService, private proveedorModelo: Proveedor,
+    private loaderService: LoaderService) {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    this.loaderService.show();
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.opciones = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+      .subscribe(
+        res => {
+          this.opciones = res.json();
+          this.loaderService.hide();
+        },
+        err => {
+          console.log(err);
+          this.loaderService.hide();
+        }
+      );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
     // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.servicio.listarPorAlias(data).subscribe(response =>{
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
       }
@@ -114,7 +129,7 @@ export class ProveedorComponent implements OnInit {
     this.formulario = this.proveedorModelo.formulario;
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.barrioServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBarrios = response;
         })
@@ -122,7 +137,7 @@ export class ProveedorComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -130,7 +145,7 @@ export class ProveedorComponent implements OnInit {
     })
     //Autocompletado Banco - Buscar por nombre
     this.formulario.get('banco').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.bancoServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosBancos = response;
         })
@@ -228,7 +243,7 @@ export class ProveedorComponent implements OnInit {
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('tipoProveedor').enable();
       this.formulario.get('afipCondicionIva').enable();
       this.formulario.get('tipoDocumento').enable();
@@ -260,7 +275,7 @@ export class ProveedorComponent implements OnInit {
     this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -293,7 +308,7 @@ export class ProveedorComponent implements OnInit {
   public seleccionarOpcion(opcion, indice) {
     this.opcionSeleccionada = opcion;
     this.botonOpcionActivo = indice;
-    switch(opcion) {
+    switch (opcion) {
       case 8:
         setTimeout(function () {
           document.getElementById('idRazonSocial').focus();
@@ -350,50 +365,59 @@ export class ProveedorComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = res.json();
+        this.loaderService.hide();
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.loaderService.show();
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idRazonSocial').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err.json());
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.loaderService.show();
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err.json());
+        this.loaderService.hide();
       }
     );
   }
@@ -411,23 +435,23 @@ export class ProveedorComponent implements OnInit {
   //Lanza error (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err;
-    if(respuesta.codigo == 11006) {
+    if (respuesta.codigo == 11006) {
       document.getElementById("labelRazonSocial").classList.add('label-error');
       document.getElementById("idRazonSocial").classList.add('is-invalid');
       document.getElementById("idRazonSocial").focus();
-    } else if(respuesta.codigo == 11009) {
+    } else if (respuesta.codigo == 11009) {
       document.getElementById("labelTelefono").classList.add('label-error');
       document.getElementById("idTelefono").classList.add('is-invalid');
       document.getElementById("idTelefono").focus();
-    } else if(respuesta.codigo == 11008) {
+    } else if (respuesta.codigo == 11008) {
       document.getElementById("labelSitioWeb").classList.add('label-error');
       document.getElementById("idSitioWeb").classList.add('is-invalid');
       document.getElementById("idSitioWeb").focus();
-    } else if(respuesta.codigo == 11010) {
+    } else if (respuesta.codigo == 11010) {
       document.getElementById("labelNumeroDocumento").classList.add('label-error');
       document.getElementById("idNumeroDocumento").classList.add('is-invalid');
       document.getElementById("idNumeroDocumento").focus();
-    } else if(respuesta.codigo == 11011) {
+    } else if (respuesta.codigo == 11011) {
       document.getElementById("labelNumeroCBU").classList.add('label-error');
       document.getElementById("idNumeroCBU").classList.add('is-invalid');
       document.getElementById("idNumeroCBU").focus();
@@ -446,10 +470,10 @@ export class ProveedorComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
-    if(valor != undefined  && valor != null && valor != '') {
+    if (valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
-        if(campo == 'telefonoFijo') {
+        if (campo == 'telefonoFijo') {
           document.getElementById("labelSitioWeb").classList.add('label-error');
           document.getElementById("idSitioWeb").classList.add('is-invalid');
           this.toastr.error('Sitio Web incorrecto');
@@ -461,26 +485,26 @@ export class ProveedorComponent implements OnInit {
   public validarDocumento(): void {
     let documento = this.formulario.get('numeroDocumento').value;
     let tipoDocumento = this.formulario.get('tipoDocumento').value;
-    if(documento) {
-      switch(tipoDocumento.id) {
+    if (documento) {
+      switch (tipoDocumento.id) {
         case 1:
           let respuesta = this.appServicio.validarCUIT(documento.toString());
-          if(!respuesta) {
-            let err = {codigo: 11010, mensaje: 'CUIT Incorrecto!'};
+          if (!respuesta) {
+            let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 2:
           let respuesta2 = this.appServicio.validarCUIT(documento.toString());
-          if(!respuesta2) {
-            let err = {codigo: 11010, mensaje: 'CUIL Incorrecto!'};
+          if (!respuesta2) {
+            let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 8:
           let respuesta8 = this.appServicio.validarDNI(documento.toString());
-          if(!respuesta8) {
-            let err = {codigo: 11010, mensaje: 'DNI Incorrecto!'};
+          if (!respuesta8) {
+            let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
             this.lanzarError(err);
           }
           break;
@@ -489,7 +513,7 @@ export class ProveedorComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -508,13 +532,13 @@ export class ProveedorComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -522,7 +546,7 @@ export class ProveedorComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -530,7 +554,7 @@ export class ProveedorComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
         + ', ' + elemento.provincia.pais.nombre : elemento;
     } else {
@@ -539,7 +563,7 @@ export class ProveedorComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado c
   public displayFc(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento ? 'Suspendida' : 'Activa';
     } else {
       return elemento;
@@ -549,15 +573,15 @@ export class ProveedorComponent implements OnInit {
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
     var opcion = this.opcionSeleccionada;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
-    } else if(keycode == 115) {
-      if(opcion < this.opciones[(this.opciones.length-1)].id) {
-        this.seleccionarOpcion(opcion+1, opcion-7);
+    } else if (keycode == 115) {
+      if (opcion < this.opciones[(this.opciones.length - 1)].id) {
+        this.seleccionarOpcion(opcion + 1, opcion - 7);
       } else {
         this.seleccionarOpcion(8, 0);
       }

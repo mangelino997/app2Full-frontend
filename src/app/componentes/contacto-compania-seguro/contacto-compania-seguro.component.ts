@@ -8,7 +8,9 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource } from '@angular/material';
-
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-contacto-compania-seguro',
@@ -48,10 +50,15 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   public columnas:string[] = ['id', 'nombre', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico' , 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: ContactoCompaniaSeguroService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private companiaSeguroServicio: CompaniaSeguroService, private tipoContactoServicio: TipoContactoService) {
+    private companiaSeguroServicio: CompaniaSeguroService, private tipoContactoServicio: TipoContactoService,
+    private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
     .subscribe(
@@ -70,6 +77,11 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+          this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -212,22 +224,27 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     );
   }
   //Obtiene la lista por compania seguro
-  public listarPorCompaniaSeguro(elemento) {
+  public listarPorCompaniaSeguro() {
+    this.loaderService.show();
+    let elemento = this.formulario.get('companiaSeguro').value;
     this.listaCompleta = new MatTableDataSource([]);
       if(this.mostrarAutocompletado) {
       this.servicio.listarPorCompaniaSeguro(elemento.id).subscribe(
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;        
+          this.listaCompleta.sort = this.sort;
+          this.loaderService.hide();   
         },
         err => {
           console.log(err);
+          this.loaderService.hide();
         }
       )
     }
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
@@ -238,15 +255,18 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
             document.getElementById('idCompaniaSeguro').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -257,10 +277,12 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
             document.getElementById('idCompaniaSeguro').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }
@@ -329,7 +351,6 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    var opcion = this.opcionSeleccionada;
     if(keycode == 113) {
       if(indice < this.pestanias.length) {
         this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);

@@ -2,8 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
-import { AppComponent } from 'src/app/app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 export class Arbol {
   id: number;
@@ -54,9 +57,14 @@ export class PlanCuentaComponent implements OnInit {
   //Defiene los datos del plan de cuenta
   datos: MatTreeFlatDataSource<Arbol, Nodo>;
   //Define el formulario
-  public formulario:FormGroup;
+  public formulario: FormGroup;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
-  constructor(private planCuentaServicio: PlanCuentaService, private appComponent: AppComponent) {
+  constructor(private planCuentaServicio: PlanCuentaService, private appService: AppService,
+    private loaderService: LoaderService) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
@@ -67,6 +75,11 @@ export class PlanCuentaComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit(): void {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -141,7 +154,7 @@ export class PlanCuentaComponent implements OnInit {
   //Crea un nuevo nodo
   public nuevoNodo(nodo: Nodo) {
     this.formulario.reset();
-    setTimeout(function() {
+    setTimeout(function () {
       document.getElementById('idNombre').focus();
     }, 20);
     this.establecerValoresPorDefecto();
@@ -152,9 +165,9 @@ export class PlanCuentaComponent implements OnInit {
   //Actualiza un nodo
   public editarNodo(nodo: Nodo) {
     nodo.editable = true;
-    setTimeout(function() {
+    setTimeout(function () {
       document.getElementById('idNombre').focus();
-      if(imputable) {
+      if (imputable) {
         document.getElementById('idNombre').classList.remove('upper-case')
         nombre.toLowerCase();
       } else {
@@ -165,7 +178,7 @@ export class PlanCuentaComponent implements OnInit {
     this.formulario.patchValue(nodo);
     let nombre = this.formulario.get('nombre').value;
     let imputable = this.formulario.get('esImputable').value;
-    if(imputable) {
+    if (imputable) {
       this.formulario.get('estaActivo').setValue(true);
       this.formulario.get('estaActivo').disable();
     } else {
@@ -180,21 +193,24 @@ export class PlanCuentaComponent implements OnInit {
   }
   //Agrega el nodo
   public agregar(nodo: Nodo) {
+    this.loaderService.show();
     this.formulario.get('estaActivo').enable();
     const elementoPadre = this.obtenerNodoPadre(nodo);
     const elemento = this.flatNodeMap.get(nodo);
     elemento.esImputable = this.formulario.get('esImputable').value;
     elemento.estaActivo = this.formulario.get('estaActivo').value;
     elemento.nombre = elemento.esImputable ? this.formulario.get('nombre').value : this.formulario.get('nombre').value.toUpperCase();
-    elemento.nivel = elementoPadre.nivel+1;
+    elemento.nivel = elementoPadre.nivel + 1;
     elemento.hijos = [];
-    elemento.empresa = this.appComponent.getEmpresa();
-    elemento.usuarioAlta = this.appComponent.getUsuario();
+    elemento.empresa = this.appService.getEmpresa();
+    elemento.usuarioAlta = this.appService.getUsuario();
     elemento.tipoCuentaContable = elementoPadre.tipoCuentaContable;
     this.planCuentaServicio.agregar(elemento);
+    this.loaderService.hide();
   }
   //Actualiza un nodo
   public actualizar(nodo: Nodo) {
+    this.loaderService.show();
     this.formulario.get('estaActivo').enable();
     const aNodo = this.flatNodeMap.get(nodo);
     const nodoPadre = this.obtenerNodoPadre(nodo);
@@ -205,12 +221,15 @@ export class PlanCuentaComponent implements OnInit {
     this.formulario.get('padre').setValue(padre);
     this.planCuentaServicio.actualizar(this.formulario.value, aNodo);
     nodo.editable = false;
+    this.loaderService.hide();
   }
   //Elimina el nodo
   public eliminar(nodo: Nodo) {
+    this.loaderService.show();
     let aNodo = this.flatNodeMap.get(nodo);
     let pNodo = this.obtenerNodoPadre(nodo);
     this.planCuentaServicio.eliminar(aNodo.id, pNodo);
+    this.loaderService.hide();
   }
   //Cancela la actualizacion de un nodo
   public cancelar(nodo: Nodo): void {
@@ -221,7 +240,7 @@ export class PlanCuentaComponent implements OnInit {
   public cambioImputable(): void {
     let nombre = this.formulario.get('nombre').value;
     let imputable = this.formulario.get('esImputable').value;
-    if(imputable) {
+    if (imputable) {
       document.getElementById('idNombre').classList.remove('upper-case')
       nombre.toLowerCase();
       this.formulario.get('estaActivo').setValue(true);

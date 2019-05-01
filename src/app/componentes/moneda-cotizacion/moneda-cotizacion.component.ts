@@ -1,13 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MonedaCotizacion } from 'src/app/modelos/moneda-cotizacion';
 import { MonedaCotizacionService } from 'src/app/servicios/moneda-cotizacion.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { AppComponent } from 'src/app/app.component';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-moneda-cotizacion',
@@ -40,11 +42,11 @@ export class MonedaCotizacionComponent implements OnInit {
   //Define la lista completa de Monedas
   public listaMonedas: Array<any> = [];
   //Define la lista completa de Monedas
-  public listaMonedaCotizacion=new MatTableDataSource([]);
+  public listaMonedaCotizacion = new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define el id que se muestra en el campo Codigo
-  public id:FormControl = new FormControl();
+  public id: FormControl = new FormControl();
   //Define empresa para las busquedas
   public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
@@ -54,22 +56,23 @@ export class MonedaCotizacionComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['moneda', 'fecha', 'valor', 'ver', 'mod'];
+  public columnas: string[] = ['moneda', 'fecha', 'valor', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
-  // public compereFn:any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
-  constructor(private appComponent: AppComponent, private monedaCotizacion: MonedaCotizacion, private monedaCotizacionServicio: MonedaCotizacionService, private monedaServicio: MonedaService,
-    private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService, private fechaServicio: FechaService) {
-    
+  constructor(private appService: AppService, private monedaCotizacion: MonedaCotizacion, private monedaCotizacionServicio: MonedaCotizacionService,
+    private monedaServicio: MonedaService, private toastr: ToastrService, private fechaServicio: FechaService, private loaderService: LoaderService) {
     //Actualiza en tiempo real la tabla
-    this.monedaCotizacionServicio.listaCompleta.subscribe(res=>{
-      this.listaMonedaCotizacion=res;
-      console.log(this.listaMonedaCotizacion);
+    this.monedaCotizacionServicio.listaCompleta.subscribe(res => {
+      this.listaMonedaCotizacion = res;
     });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.monedaCotizacionServicio.listarPorMoneda(data).subscribe(res => {
           this.resultados = res.json();
           console.log(res.json());
@@ -78,23 +81,27 @@ export class MonedaCotizacionComponent implements OnInit {
     });
   }
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Inicializa el boton en Agregar
-    this.mostrarAgregar=true;
+    this.mostrarAgregar = true;
     //Define el formulario y validaciones
     this.formulario = this.monedaCotizacion.formulario;
     //Lista las Monedas
     this.listarMonedas();
     //Inicializamos con la fecha actual
     this.establecerFecha();
-    console.log(this.mostrarAgregar);
   }
   //Establecer Fecha
-  public establecerFecha(){
+  public establecerFecha() {
     this.fechaServicio.obtenerFecha().subscribe(
-      res=>{
+      res => {
         this.formulario.get('fecha').setValue(res.json());
       },
-      err=>{
+      err => {
         this.toastr.error(err.mensaje);
       }
     );
@@ -112,49 +119,48 @@ export class MonedaCotizacionComponent implements OnInit {
   }
   //Agrega un registro
   public agregar() {
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.loaderService.show();
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.monedaCotizacionServicio.agregar(this.formulario.value).subscribe(
-      res=>{
+      res => {
         let respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idNombre').focus();
-          }, 20);
+        }, 20);
         this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
       },
-      err=>{
+      err => {
         this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
       });
   }
   //Actualiza un registro
   public actualizar() {
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    console.log(this.formulario.value);
+    this.loaderService.show();
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.monedaCotizacionServicio.actualizar(this.formulario.value).subscribe(
-      res=>{
+      res => {
         let respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idNombre').focus();
-          }, 20);
+        }, 20);
         this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
       },
-      err=>{
+      err => {
         this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
       });
   }
   //Carga la tabla con los datos de la moneda seleccionada
-  public cambioSeleccionado(){
-    console.log(this.formulario.value);
-    this.monedaCotizacionServicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(
-      res=>{
-        this.listaMonedaCotizacion = new MatTableDataSource(res.json());
-        this.listaMonedaCotizacion.sort = this.sort;
-      },
-      err=>{
-
-      }
-    );
+  public cambioSeleccionado() {
+    this.monedaCotizacionServicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(res => {
+      this.listaMonedaCotizacion = new MatTableDataSource(res.json());
+      this.listaMonedaCotizacion.sort = this.sort;
+    });
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -163,11 +169,11 @@ export class MonedaCotizacionComponent implements OnInit {
     this.autocompletado.setValue(undefined);
     this.resultados = [];
     this.establecerFecha();
-    this.mostrarAgregar=true;
+    this.mostrarAgregar = true;
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado() {
-    var elemento= this.autocompletado.value;
+    var elemento = this.autocompletado.value;
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
@@ -183,7 +189,7 @@ export class MonedaCotizacionComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.mostrarAgregar=false;
+    this.mostrarAgregar = false;
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
     this.formulario.get('fecha').setValue(elemento.fecha);
@@ -192,13 +198,13 @@ export class MonedaCotizacionComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;

@@ -42,8 +42,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTipoContacto" class="tamanio-label">Tipo de Contacto *</label>
-              <mat-select id="idTipoContacto" class="form-control form-control-sm" 
-                formControlName="tipoContacto" [compareWith]="compareFn">
+              <mat-select id="idTipoContacto" class="form-control form-control-sm" formControlName="tipoContacto"
+                [compareWith]="compareFn">
                 <mat-option *ngFor="let itemTipoContacto of tiposContactos" [value]="itemTipoContacto">
                   {{itemTipoContacto.nombre}}
                 </mat-option>
@@ -77,24 +77,34 @@
             <div class="form-group has-float-label">
               <label id="labelCorreoelectronico" for="idCorreoelectronico" class="tamanio-label">
                 Correo Electrónico</label>
-              <input id="idCorreoelectronico" type="email" formControlName="correoelectronico"
-                autocomplete="off" [readonly]="soloLectura" class="form-control form-control-sm" 
+              <input id="idCorreoelectronico" type="email" formControlName="correoelectronico" autocomplete="off"
+                [readonly]="soloLectura" class="form-control form-control-sm"
                 (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
                 pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
                 (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoelectronico')">
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" mat-raised-button color="primary"
-          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
       </form>
     </div>
   </div>
-
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-    <div class="col-md-10"><br>
+    <div class="col-md-10">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
+      </div>
+      <br>
       <div class="row">
         <div class="col-md-6">
           <div class="form-group has-float-label">
@@ -137,11 +147,13 @@
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span class="cursor-color">ver</span></td>
+          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+              class="cursor-color">ver</span></td>
         </ng-container>
         <ng-container matColumnDef="mod" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span class="cursor-color">editar</span></td>
+          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+              class="cursor-color">editar</span></td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

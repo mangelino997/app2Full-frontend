@@ -84,6 +84,10 @@ export class AppService {
   public getSubopcion() {
     return this.subopcion;
   }
+  //Establece la subopcion
+  public setSubopcion(subopcion) {
+    this.subopcion = subopcion;
+  }
   //Obtiene el tema
   public getTema() {
     return this.tema;
