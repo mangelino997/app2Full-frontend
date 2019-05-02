@@ -85,6 +85,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
@@ -93,6 +94,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }

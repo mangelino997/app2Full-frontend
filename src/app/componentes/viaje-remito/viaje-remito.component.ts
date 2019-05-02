@@ -22,74 +22,74 @@ import { Subscription } from 'rxjs';
 })
 export class ViajeRemitoComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el form control para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda cliente remitente
-  public resultadosClienteRemitente:Array<any> = [];
+  public resultadosClienteRemitente: Array<any> = [];
   //Define la lista de resultados de busqueda cliente destinatario
-  public resultadosClienteDestinatario:Array<any> = [];
+  public resultadosClienteDestinatario: Array<any> = [];
   //Define la lista de sucursales
-  public sucursales:Array<any> = [];
+  public sucursales: Array<any> = [];
   //Define la lista de tipos de comprobantes
-  public tiposComprobantes:Array<any> = [];
+  public tiposComprobantes: Array<any> = [];
   //Define la lista de letras
-  public letras:Array<any> = [];
+  public letras: Array<any> = [];
   //Define el estado de la letra
-  public estadoLetra:boolean = false;
+  public estadoLetra: boolean = false;
   //Define la fecha actual
-  public fechaActual:any;
- //Define el mostrar del circulo de progreso
- public show = false;
- //Define la subscripcion a loader.service
- private subscription: Subscription;
-//Define las columnas de la tabla
-public columnas: string[] = ['sucursal', 'fecha','tipoComprobante','puntoVenta','numero','bultos', 'observaciones','ver', 'mod'];
-//Define la matSort
-@ViewChild(MatSort) sort: MatSort;
-//Constructor
-constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
+  public fechaActual: any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['sucursal', 'fecha', 'tipoComprobante', 'puntoVenta', 'numero', 'bultos', 'observaciones', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Constructor
+  constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private loaderService: LoaderService, private toastr: ToastrService,
     private sucursalServicio: SucursalService, private clienteServicio: ClienteService,
     private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog,
     private fechaServicio: FechaService, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
     // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.servicio.listarPorAlias(data).subscribe(response =>{
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
       }
@@ -97,11 +97,11 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
   }
   //Al iniciarse el componente
   ngOnInit() {
-   //Establece la subscripcion a loader
-   this.subscription = this.loaderService.loaderState
-     .subscribe((state: LoaderState) => {
-       this.show = state.show;
-     });
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -139,7 +139,7 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado ClienteRemitente - Buscar por nombre
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClienteRemitente = response;
         })
@@ -147,7 +147,7 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
     })
     //Autocompletado ClienteDestinatario - Buscar por nombre
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClienteDestinatario = response;
         })
@@ -256,7 +256,7 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('sucursalDestino').enable();
       this.formulario.get('tipoComprobante').enable();
       this.formulario.get('letra').enable();
@@ -271,7 +271,7 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -330,6 +330,7 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
@@ -338,12 +339,13 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
   //Agrega un registro
   private agregar() {
-   this.loaderService.show();
+    this.loaderService.show();
     var tipoComprobante = this.formulario.get('tipoComprobante').value;
     var numeroCamion = this.formulario.get('numeroCamion').value;
     var sucursalDestino = this.formulario.get('sucursalDestino').value;
@@ -354,45 +356,45 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto(numeroCamion, sucursalDestino);
           this.formulario.get('tipoComprobante').setValue(tipoComprobante);
           this.cambioTipoComprobante();
           // this.establecerTipoComprobantePorDefecto();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idFecha').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
-   				this.loaderService.hide();
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-   this.loaderService.show();
+    this.loaderService.show();
     this.formulario.get('letra').enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           this.establecerTipoComprobantePorDefecto();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
-   				this.loaderService.hide();
+        this.loaderService.hide();
       }
     );
   }
@@ -421,7 +423,7 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
   //Establece la letra al cambiar el tipo de comprobante
   public cambioTipoComprobante(): void {
     let id = this.formulario.get('tipoComprobante').value.id;
-    if(id == 5) {
+    if (id == 5) {
       this.estadoLetra = false;
       this.formulario.get('letra').setValue('R');
     } else {
@@ -459,7 +461,7 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
     dialogRef.afterClosed().subscribe(resultado => {
       this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
         var cliente = res.json();
-        if(tipo == 1) {
+        if (tipo == 1) {
           this.formulario.get('clienteRemitente').setValue(cliente);
         } else {
           this.formulario.get('clienteDestinatario').setValue(cliente);
@@ -480,13 +482,13 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -494,7 +496,7 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
   }
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -502,7 +504,7 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
   }
   //Define como se muestra los datos con ceros a la izquierda
   public displayCeros(elemento, string, cantidad) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento ? (string + elemento).slice(cantidad) : elemento;
     } else {
       return elemento;
@@ -515,9 +517,9 @@ constructor(private servicio: ViajeRemitoService, private subopcionPestaniaServi
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }

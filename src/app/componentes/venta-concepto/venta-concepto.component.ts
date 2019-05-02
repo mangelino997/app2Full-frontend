@@ -18,89 +18,90 @@ import { MatSort, MatTableDataSource } from '@angular/material';
   styleUrls: ['./venta-concepto.component.css']
 })
 export class VentaConceptoComponent implements OnInit {
-//Define la pestania activa
-public activeLink:any = null;
-//Define el indice seleccionado de pestania
-public indiceSeleccionado:number = null;
-//Define la pestania actual seleccionada
-public pestaniaActual:string = null;
-//Define si mostrar el autocompletado
-public mostrarAutocompletado:boolean = null;
-//Define si el campo es de solo lectura
-public soloLectura:boolean = false;
-//Define si mostrar el boton
-public mostrarBoton:boolean = null;
-//Define la lista de pestanias
-public pestanias:Array<any> = [];
-//Define un formulario para validaciones de campos
-public formulario:FormGroup;
-//Define la lista completa de registros
-public listaCompleta = new MatTableDataSource([]);
-//Define la lista completa de tipos de comprobantes
-public tiposComprobantes:Array<any> = [];
-//Define el autocompletado
-public autocompletado:FormControl = new FormControl();
-//Define empresa para las busquedas
-public empresaBusqueda:FormControl = new FormControl();
-//Define la lista de resultados de busqueda
-public resultados:Array<any> = [];
-//Define la lista de resultados de busqueda companias seguros
-public resultadosCompaniasSeguros:Array<any> = [];
-//Defien la lista de empresas
-public empresas:Array<any> = [];
- //Define el mostrar del circulo de progreso
- public show = false;
- //Define la subscripcion a loader.service
- private subscription: Subscription;
- //Define las columnas de la tabla
- public columnas: string[] = ['id', 'nombre','tipoComprobante', 'estaHabilitado', 'ver', 'mod'];
- //Define la matSort
- @ViewChild(MatSort) sort: MatSort;
-// public compereFn:any;
-//Constructor
+  //Define la pestania activa
+  public activeLink: any = null;
+  //Define el indice seleccionado de pestania
+  public indiceSeleccionado: number = null;
+  //Define la pestania actual seleccionada
+  public pestaniaActual: string = null;
+  //Define si mostrar el autocompletado
+  public mostrarAutocompletado: boolean = null;
+  //Define si el campo es de solo lectura
+  public soloLectura: boolean = false;
+  //Define si mostrar el boton
+  public mostrarBoton: boolean = null;
+  //Define la lista de pestanias
+  public pestanias: Array<any> = [];
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define la lista completa de tipos de comprobantes
+  public tiposComprobantes: Array<any> = [];
+  //Define el autocompletado
+  public autocompletado: FormControl = new FormControl();
+  //Define empresa para las busquedas
+  public empresaBusqueda: FormControl = new FormControl();
+  //Define la lista de resultados de busqueda
+  public resultados: Array<any> = [];
+  //Define la lista de resultados de busqueda companias seguros
+  public resultadosCompaniasSeguros: Array<any> = [];
+  //Defien la lista de empresas
+  public empresas: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'nombre', 'tipoComprobante', 'estaHabilitado', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  // public compereFn:any;
+  //Constructor
 
   constructor(private servicio: VentaItemConceptoService, private ventaConcepto: VentaConcepto, private appService: AppService,
-    private loaderService: LoaderService, private subopcionPestaniaService: SubopcionPestaniaService, 
+    private loaderService: LoaderService, private subopcionPestaniaService: SubopcionPestaniaService,
     private tipoComprobanteServicio: TipoComprobanteService, private conceptosAfipServicio: AfipConceptoService,
     private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+        }
+      );
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
           console.log(res);
         })
       }
     })
-   }
+  }
 
   ngOnInit() {
-   //Establece la subscripcion a loader
-   this.subscription = this.loaderService.loaderState
-     .subscribe((state: LoaderState) => {
-       this.show = state.show;
-     });
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.ventaConcepto.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
-    this.listar(); 
+    this.listar();
     //Obtiene la lista completa de tipos de Comprobantes
     this.listarTiposComprobantes();
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
@@ -109,6 +110,7 @@ public empresas:Array<any> = [];
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
@@ -123,7 +125,7 @@ public empresas:Array<any> = [];
       }
     );
   }
-  
+
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -144,7 +146,7 @@ public empresas:Array<any> = [];
     * Se vacia el formulario solo cuando se cambia de pestania, no cuando
     * cuando se hace click en ver o mod de la pestania lista
     */
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -172,7 +174,7 @@ public empresas:Array<any> = [];
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('tipoComprobante').enable();
       this.formulario.get('estaHabilitado').enable();
     } else {
@@ -198,43 +200,17 @@ public empresas:Array<any> = [];
   }
   //Agrega un registro
   private agregar() {
-   this.loaderService.show();
+    this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
-        }
-      },
-      err => {
-        var respuesta = err.json();
-        document.getElementById("labelNombre").classList.add('label-error');
-        document.getElementById("idNombre").classList.add('is-invalid');
-        document.getElementById("idNombre").focus();
-        this.toastr.error(respuesta.mensaje);   
-   			this.loaderService.hide();   
-      }
-    );
-  }
-  //Actualiza un registro
-  private actualizar() {
-   this.loaderService.show();
-    console.log(this.formulario.value);
-    this.servicio.actualizar(this.formulario.value).subscribe(
-      res => {
-        var respuesta = res.json();
-        if(respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
-          setTimeout(function() {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
@@ -243,7 +219,33 @@ public empresas:Array<any> = [];
         document.getElementById("idNombre").classList.add('is-invalid');
         document.getElementById("idNombre").focus();
         this.toastr.error(respuesta.mensaje);
-   				this.loaderService.hide();
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Actualiza un registro
+  private actualizar() {
+    this.loaderService.show();
+    console.log(this.formulario.value);
+    this.servicio.actualizar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario('');
+          setTimeout(function () {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        document.getElementById("labelNombre").classList.add('label-error');
+        document.getElementById("idNombre").classList.add('is-invalid');
+        document.getElementById("idNombre").focus();
+        this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
     );
   }
@@ -288,7 +290,7 @@ public empresas:Array<any> = [];
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -297,16 +299,16 @@ public empresas:Array<any> = [];
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
