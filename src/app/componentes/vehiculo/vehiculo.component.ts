@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
@@ -15,6 +15,7 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-vehiculo',
@@ -23,39 +24,39 @@ import { Subscription } from 'rxjs';
 })
 export class VehiculoComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define si mostrar la lista de configuraciones de vehiculos
-  public mostrarConfiguracionVehiculo:boolean = null;
+  public mostrarConfiguracionVehiculo: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define la lista de tipos de vehiculos
-  public tiposVehiculos:Array<any> = [];
+  public tiposVehiculos: Array<any> = [];
   //Define la lista de marcas de vehiculos
-  public marcasVehiculos:Array<any> = [];
+  public marcasVehiculos: Array<any> = [];
   //Define la lista de empresas
-  public empresas:Array<any> = [];
+  public empresas: Array<any> = [];
   //Define la lista de configuraciones de vehiculos
-  public configuracionesVehiculos:Array<any> = [];
+  public configuracionesVehiculos: Array<any> = [];
   //Define el autocompletado para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define un campo control para tipo vehiculo
-  public tipoVehiculo:FormControl = new FormControl();
+  public tipoVehiculo: FormControl = new FormControl();
   //Define un campo control para marca vehiculo
-  public marcaVehiculo:FormControl = new FormControl();
+  public marcaVehiculo: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados = [];
   //Define la lista de resultados de busqueda vehiculo remolque
@@ -67,15 +68,19 @@ export class VehiculoComponent implements OnInit {
   //Define la lista de resultados de busqueda personal
   public resultadosPersonales = [];
   //Define el campo de control configuracion
-  public configuracion:FormControl = new FormControl();
+  public configuracion: FormControl = new FormControl();
   //Defiene la lista de compania seguro poliza
-  public companiasSegurosPolizas:Array<any> = [];
+  public companiasSegurosPolizas: Array<any> = [];
   //Define si el tipo de vehiculo seleccionado es remolque
-  public esVehiculoRemolque:boolean = false;
- //Define el mostrar del circulo de progreso
- public show = false;
- //Define la subscripcion a loader.service
- private subscription: Subscription;
+  public esVehiculoRemolque: boolean = false;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'tipoVehiculo', 'marcaVehiculo', 'dominio', 'titular', 'radicacionLocalidad', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: VehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService,
@@ -86,22 +91,22 @@ export class VehiculoComponent implements OnInit {
     private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
     // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
@@ -110,16 +115,16 @@ export class VehiculoComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-   //Establece la subscripcion a loader
-   this.subscription = this.loaderService.loaderState
-     .subscribe((state: LoaderState) => {
-       this.show = state.show;
-     });
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.vehiculoModelo.formulario;
     //Autocompletado - Buscar por alias filtro remolque
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
           this.resultadosVehiculosRemolques = response;
         })
@@ -127,7 +132,7 @@ export class VehiculoComponent implements OnInit {
     })
     //Autocompletado Localidad - Buscar por nombre
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
         })
@@ -135,7 +140,7 @@ export class VehiculoComponent implements OnInit {
     })
     //Autocompletado Personal - Buscar chofer por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.personalServicio.listarChoferPorAlias(data).subscribe(response => {
           this.resultadosPersonales = response;
         })
@@ -143,7 +148,7 @@ export class VehiculoComponent implements OnInit {
     })
     //Autocompletado Compania de Seguro - Buscar por nombre
     this.formulario.get('companiaSeguroPoliza').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.companiaSeguroPolizaServicio.listarPorCompaniaSeguroNombre(data).subscribe(response => {
           this.resultadosCompaniasSegurosPolizas = response;
         })
@@ -219,14 +224,14 @@ export class VehiculoComponent implements OnInit {
     this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerValoresPestania(nombre, false, false, true, true,'idTipoVehiculo');
+        this.establecerValoresPestania(nombre, false, false, true, true, 'idTipoVehiculo');
         break;
       case 2:
         this.establecerValoresPestania(nombre, true, true, false, false, 'idAutocompletado');
@@ -273,12 +278,16 @@ export class VehiculoComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
@@ -287,7 +296,7 @@ export class VehiculoComponent implements OnInit {
     let tipoVehiculo = this.tipoVehiculo.value;
     let marcaVehiculo = this.marcaVehiculo.value;
     this.esVehiculoRemolque = tipoVehiculo.esRemolque ? true : false;
-    if(tipoVehiculo != null && marcaVehiculo != null) {
+    if (tipoVehiculo != null && marcaVehiculo != null) {
       this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id)
         .subscribe(
           res => {
@@ -302,68 +311,68 @@ export class VehiculoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-   this.loaderService.show();
+    this.loaderService.show();
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idTipoVehiculo').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11017) {
+        if (respuesta.codigo == 11017) {
           document.getElementById("labelDominio").classList.add('label-error');
           document.getElementById("idDominio").classList.add('is-invalid');
           document.getElementById("idDominio").focus();
-        } else if(respuesta.codigo == 11018) {
+        } else if (respuesta.codigo == 11018) {
           document.getElementById("labelNumeroInterno").classList.add('label-error');
           document.getElementById("idNumeroInterno").classList.add('is-invalid');
           document.getElementById("idNumeroInterno").focus();
         }
         this.toastr.error(respuesta.mensaje);
-   			this.loaderService.hide();
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-   this.loaderService.show();
-  this.formulario.get('empresa').setValue(this.appService.getEmpresa());
-  this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-  this.servicio.actualizar(this.formulario.value).subscribe(
-    res => {
-      var respuesta = res.json();
-      if(respuesta.codigo == 200) {
-        this.reestablecerFormulario('');
-        setTimeout(function() {
-          document.getElementById('idAutocompletado').focus();
-        }, 20);
-        this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+    this.loaderService.show();
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
+    this.servicio.actualizar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario('');
+          setTimeout(function () {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if (respuesta.codigo == 11017) {
+          document.getElementById("labelDominio").classList.add('label-error');
+          document.getElementById("idDominio").classList.add('is-invalid');
+          document.getElementById("idDominio").focus();
+        } else if (respuesta.codigo == 11018) {
+          document.getElementById("labelNumeroInterno").classList.add('label-error');
+          document.getElementById("idNumeroInterno").classList.add('is-invalid');
+          document.getElementById("idNumeroInterno").focus();
+        }
+        this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
-    },
-    err => {
-      var respuesta = err.json();
-      if(respuesta.codigo == 11017) {
-        document.getElementById("labelDominio").classList.add('label-error');
-        document.getElementById("idDominio").classList.add('is-invalid');
-        document.getElementById("idDominio").focus();
-      } else if(respuesta.codigo == 11018) {
-        document.getElementById("labelNumeroInterno").classList.add('label-error');
-        document.getElementById("idNumeroInterno").classList.add('is-invalid');
-        document.getElementById("idNumeroInterno").focus();
-      }
-      this.toastr.error(respuesta.mensaje);
-   		this.loaderService.hide();
-    }
-  );
+    );
   }
   //Elimina un registro
   private eliminar() {
@@ -419,13 +428,13 @@ export class VehiculoComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Muestra el valor en los autocompletados
   public displayF(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -433,7 +442,7 @@ export class VehiculoComponent implements OnInit {
   }
   //Muestra el valor en los autocompletados a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -441,7 +450,7 @@ export class VehiculoComponent implements OnInit {
   }
   //Muestra el valor de otro autocompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
     } else {
       return elemento;
@@ -449,7 +458,7 @@ export class VehiculoComponent implements OnInit {
   }
   //Muestra el valor en los autocompletados c
   public displayFc(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.modelo ? 'Modelo: ' + elemento.modelo + ' - Cantidad Ejes: ' + elemento.cantidadEjes +
         ' - Capacidad Carga: ' + elemento.capacidadCarga : elemento;
     } else {
@@ -458,7 +467,7 @@ export class VehiculoComponent implements OnInit {
   }
   //Muestra el valor en los autocompletados d
   public displayFd(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.razonSocial ? elemento.razonSocial : elemento;
     } else {
       return elemento;
@@ -466,8 +475,8 @@ export class VehiculoComponent implements OnInit {
   }
   //Muestra el valor en los autocompletados e
   public displayFe(elemento) {
-    if(elemento != undefined) {
-      return elemento.companiaSeguro ? elemento.companiaSeguro.nombre + ' - Empresa: ' + elemento.empresa.razonSocial + 
+    if (elemento != undefined) {
+      return elemento.companiaSeguro ? elemento.companiaSeguro.nombre + ' - Empresa: ' + elemento.empresa.razonSocial +
         ' - N° Póliza: ' + elemento.numeroPoliza + ' - Vto. Póliza: ' + elemento.vtoPoliza : elemento;
     } else {
       return elemento;
@@ -476,17 +485,16 @@ export class VehiculoComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
   }
   //Mascara un numero sin decimal
-  public mascararNumero(limit){
+  public mascararNumero(limit) {
     return this.appService.mascararEnteros(limit);
   }
-
 }

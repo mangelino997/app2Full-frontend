@@ -17,64 +17,64 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 })
 export class TramoComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta= new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define el autocompletado para las busquedas Origen
-  public autocompletadoOrigen:FormControl = new FormControl();
+  public autocompletadoOrigen: FormControl = new FormControl();
   //Define el autocompletado para las busquedas Destino
-  public autocompletadoDestino:FormControl = new FormControl();
+  public autocompletadoDestino: FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de origenes destinos
-  public resultadosOrigenesDestinos:Array<any> = [];
- //Define el mostrar del circulo de progreso
- public show = false;
- //Define la subscripcion a loader.service
- private subscription: Subscription;
- //Define las columnas de la tabla
- public columnas: string[] = ['id', 'origen', 'destino', 'km','rutaAlternativa', 'liqChofer', 'estaActivo', 'ver', 'mod'];
- //Define la matSort
- @ViewChild(MatSort) sort: MatSort;
- 
+  public resultadosOrigenesDestinos: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'origen', 'destino', 'km', 'rutaAlternativa', 'liqChofer', 'estaActivo', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+
   //Constructor
   constructor(private servicio: TramoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private origenDestinoServicio: OrigenDestinoService,
     private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
     // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorOrigen(data).subscribe(res => {
           this.resultados = res;
         })
@@ -82,7 +82,7 @@ export class TramoComponent implements OnInit {
     })
     //Autocompletado - Buscar por nombre
     this.autocompletadoOrigen.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorOrigen(data).subscribe(res => {
           this.resultados = res;
         })
@@ -90,7 +90,7 @@ export class TramoComponent implements OnInit {
     })
     //Autocompletado - Buscar por nombre
     this.autocompletadoDestino.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorDestino(data).subscribe(res => {
           this.resultados = res;
         })
@@ -112,7 +112,7 @@ export class TramoComponent implements OnInit {
     });
     //Autocompletado Origen - Buscar por nombre
     this.formulario.get('origen').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosOrigenesDestinos = res;
         })
@@ -120,17 +120,17 @@ export class TramoComponent implements OnInit {
     })
     //Autocompletado Destino - Buscar por nombre
     this.formulario.get('destino').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosOrigenesDestinos = res;
         })
       }
     })
-   //Establece la subscripcion a loader
-   this.subscription = this.loaderService.loaderState
-     .subscribe((state: LoaderState) => {
-       this.show = state.show;
-     });
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
   }
@@ -146,7 +146,7 @@ export class TramoComponent implements OnInit {
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('excluirLiqChofer').enable();
       this.formulario.get('estaActivo').enable();
     } else {
@@ -168,7 +168,7 @@ export class TramoComponent implements OnInit {
   public seleccionarPestania(id, nombre, opcion) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(id != 5) {
+    if (id != 5) {
       this.reestablecerFormulario('');
     }
     switch (id) {
@@ -191,7 +191,7 @@ export class TramoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idAutocompletadoOrigen').focus();
         }, 20);
         break;
@@ -228,47 +228,47 @@ export class TramoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-   this.loaderService.show();
+    this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idOrigen').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
         let respuesta = err.json();
-        if(respuesta.codigo == 11017) {
+        if (respuesta.codigo == 11017) {
           this.toastr.error('Error Unicidad Origen->Destino', respuesta.mensaje + " TRAMO");
-   				this.loaderService.hide();
         }
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-   this.loaderService.show();
+    this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
         console.log(err);
-   				this.loaderService.hide();
+        this.loaderService.hide();
       }
     );
   }
@@ -278,7 +278,7 @@ export class TramoComponent implements OnInit {
   }
   //Establece la tabla al seleccion elemento de autocompletado
   public establecerTabla(opcion): void {
-    if(opcion) {
+    if (opcion) {
       this.autocompletadoDestino.reset();
     } else {
       this.autocompletadoOrigen.reset();
@@ -308,13 +308,13 @@ export class TramoComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autocompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
     } else {
       return elemento;
@@ -322,7 +322,7 @@ export class TramoComponent implements OnInit {
   }
   //Define como se muestra los datos en el autocompletado a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.origen ? elemento.origen.nombre + ' -> ' + elemento.destino.nombre : elemento;
     } else {
       return elemento;
@@ -330,7 +330,7 @@ export class TramoComponent implements OnInit {
   }
   //Define como se muestra los datos en el autocompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento ? 'Si' : 'No';
     } else {
       return elemento;
@@ -339,9 +339,9 @@ export class TramoComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }

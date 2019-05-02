@@ -23,49 +23,49 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 })
 export class VehiculoProveedorComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de tipos de vehiculos
-  public tiposVehiculos:Array<any> = [];
+  public tiposVehiculos: Array<any> = [];
   //Define la lista de marcas de vehiculos
-  public marcasVehiculos:Array<any> = [];
+  public marcasVehiculos: Array<any> = [];
   //Define el autocompletado para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de proveedores
-  public resultadosProveedores:Array<any> = [];
+  public resultadosProveedores: Array<any> = [];
   //Define la lista de resultados de choferes proveedores
-  public resultadosChoferesProveedores:Array<any> = [];
+  public resultadosChoferesProveedores: Array<any> = [];
   //Define la lista de resultados de busqueda vehiculo remolque
-  public resultadosVehiculosRemolques:Array<any> = [];
+  public resultadosVehiculosRemolques: Array<any> = [];
   //Define la lista de resultados de busqueda compania seguro
-  public resultadosCompaniasSeguros:Array<any> = [];
+  public resultadosCompaniasSeguros: Array<any> = [];
   //Define la lista de resultados de configuraciones vehiculos
-  public configuracionesVehiculos:Array<any> = [];
- //Define el mostrar del circulo de progreso
- public show = false;
- //Define la subscripcion a loader.service
- private subscription: Subscription;
- //Define las columnas de la tabla
- public columnas: string[] = ['id', 'dominio', 'proveedor', 'tipoVehiculo', 'marcaVehiculo', 'companiaSeguro', 'ver', 'mod'];
- //Define la matSort
- @ViewChild(MatSort) sort: MatSort;
+  public configuracionesVehiculos: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'dominio', 'proveedor', 'tipoVehiculo', 'marcaVehiculo', 'companiaSeguro', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
 
   //Constructor
   constructor(private servicio: VehiculoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
@@ -76,22 +76,22 @@ export class VehiculoProveedorComponent implements OnInit {
     private configuracionVehiculoServicio: ConfiguracionVehiculoService, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
     // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorAlias(data).subscribe(res => {
           this.resultados = res;
         })
@@ -100,11 +100,11 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-   //Establece la subscripcion a loader
-   this.subscription = this.loaderService.loaderState
-     .subscribe((state: LoaderState) => {
-       this.show = state.show;
-     });
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -136,7 +136,7 @@ export class VehiculoProveedorComponent implements OnInit {
     });
     //Autocompletado Proveedor - Buscar por alias
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.proveedorServicio.listarPorAlias(data).subscribe(res => {
           this.resultadosProveedores = res;
         })
@@ -144,7 +144,7 @@ export class VehiculoProveedorComponent implements OnInit {
     })
     //Autocompletado Chofer Proveedor - Buscar por alias
     this.formulario.get('choferProveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.choferProveedorServicio.listarPorAlias(data).subscribe(res => {
           this.resultadosChoferesProveedores = res;
         })
@@ -152,7 +152,7 @@ export class VehiculoProveedorComponent implements OnInit {
     })
     //Autocompletado - Buscar por alias filtro remolque
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
           this.resultadosVehiculosRemolques = response;
         })
@@ -160,11 +160,11 @@ export class VehiculoProveedorComponent implements OnInit {
     })
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosCompaniasSeguros = response;
         })
-        }
+      }
     })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
@@ -197,7 +197,7 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('tipoVehiculo').enable();
       this.formulario.get('marcaVehiculo').enable();
     } else {
@@ -221,7 +221,7 @@ export class VehiculoProveedorComponent implements OnInit {
     this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -229,7 +229,7 @@ export class VehiculoProveedorComponent implements OnInit {
       case 1:
         this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, false, false, true,'idProveedor');
+        this.establecerValoresPestania(nombre, false, false, true, 'idProveedor');
         break;
       case 2:
         this.establecerEstadoCampos(false);
@@ -279,6 +279,7 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
@@ -287,62 +288,63 @@ export class VehiculoProveedorComponent implements OnInit {
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
   //Agrega un registro
   private agregar() {
-   this.loaderService.show();
+    this.loaderService.show();
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11017) {
+        if (respuesta.codigo == 11017) {
           document.getElementById("labelDominio").classList.add('label-error');
           document.getElementById("idDominio").classList.add('is-invalid');
           document.getElementById("idDominio").focus();
         }
         this.toastr.error(respuesta.mensaje);
-   				this.loaderService.hide();
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-   this.loaderService.show();
+    this.loaderService.show();
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11017) {
+        if (respuesta.codigo == 11017) {
           document.getElementById("labelDominio").classList.add('label-error');
           document.getElementById("idDominio").classList.add('is-invalid');
           document.getElementById("idDominio").focus();
         }
         this.toastr.error(respuesta.mensaje);
-   			this.loaderService.hide();
+        this.loaderService.hide();
       }
     );
   }
@@ -354,7 +356,7 @@ export class VehiculoProveedorComponent implements OnInit {
   private listarConfiguracionesPorTipoVehiculoMarcaVehiculo() {
     let tipoVehiculo = this.formulario.get('tipoVehiculo').value;
     let marcaVehiculo = this.formulario.get('marcaVehiculo').value;
-    if(tipoVehiculo != null && marcaVehiculo != null) {
+    if (tipoVehiculo != null && marcaVehiculo != null) {
       this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id)
         .subscribe(
           res => {
@@ -393,13 +395,13 @@ export class VehiculoProveedorComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Muestra el valor en los autocompletados
   public displayF(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -407,7 +409,7 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Muestra el valor en los autocompletados a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -415,7 +417,7 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Muestra el valor de otro autocompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
     } else {
       return elemento;
@@ -424,16 +426,16 @@ export class VehiculoProveedorComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
   }
   //Mascara un numero sin decimal
-  public mascararNumero(limit){
+  public mascararNumero(limit) {
     return this.appService.mascararEnteros(limit);
   }
 }

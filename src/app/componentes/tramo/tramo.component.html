@@ -21,7 +21,8 @@
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="formulario.setValue(item)">
-                  {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}}, {{item.destino.provincia.nombre}}
+                  {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}},
+                  {{item.destino.provincia.nombre}}
                 </mat-option>
               </mat-autocomplete>
             </div>
@@ -31,8 +32,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">Código</label>
-              <input id="idCodigo" type="number" formControlName="id"
-                class="form-control form-control-sm" readonly>
+              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
             </div>
           </div>
         </div>
@@ -82,7 +82,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idExcluirLiqChofer" class="tamanio-label">Excluir Liquidación Chofer *</label>
-              <mat-select id="idExcluirLiqChofer" class="form-control form-control-sm" formControlName="excluirLiqChofer">
+              <mat-select id="idExcluirLiqChofer" class="form-control form-control-sm"
+                formControlName="excluirLiqChofer">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
               </mat-select>
@@ -98,12 +99,14 @@
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary"
-          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
-        <div class="row justify-content-center" *ngIf="show">
-            <mat-spinner diameter="40"></mat-spinner>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
         </div>
       </form>
     </div>
@@ -116,9 +119,11 @@
             <label for="idAutocompletadoOrigen" class="tamanio-label">Buscar por Origen</label>
             <input id="idAutocompletadoOrigen" class="form-control form-control-sm" type="text" matInput
               [formControl]="autocompletadoOrigen" [matAutocomplete]="autoOrigen" autocomplete="off">
-            <mat-autocomplete #autoOrigen="matAutocomplete" [displayWith]="displayFa.bind(this)" (optionSelected)="establecerTabla(true)">
+            <mat-autocomplete #autoOrigen="matAutocomplete" [displayWith]="displayFa.bind(this)"
+              (optionSelected)="establecerTabla(true)">
               <mat-option *ngFor="let item of resultados" [value]="item">
-                  {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}}, {{item.destino.provincia.nombre}}
+                {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}},
+                {{item.destino.provincia.nombre}}
               </mat-option>
             </mat-autocomplete>
           </div>
@@ -128,56 +133,63 @@
             <label for="idAutocompletadoDestino" class="tamanio-label">Buscar por Destino</label>
             <input id="idAutocompletadoDestino" class="form-control form-control-sm" type="text" matInput
               [formControl]="autocompletadoDestino" [matAutocomplete]="autoDestino" autocomplete="off">
-            <mat-autocomplete #autoDestino="matAutocomplete" [displayWith]="displayFa.bind(this)" (optionSelected)="establecerTabla(false)">
+            <mat-autocomplete #autoDestino="matAutocomplete" [displayWith]="displayFa.bind(this)"
+              (optionSelected)="establecerTabla(false)">
               <mat-option *ngFor="let item of resultados" [value]="item">
-                  {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}}, {{item.destino.provincia.nombre}}
+                {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}},
+                {{item.destino.provincia.nombre}}
               </mat-option>
             </mat-autocomplete>
           </div>
         </div>
       </div>
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
+      </div>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="id" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-          </ng-container>
-          <ng-container matColumnDef="origen" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Origen</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.origen.provincia.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="destino" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Destino</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.destino.provincia.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="km" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.km}}</td>
-          </ng-container>
-          <ng-container matColumnDef="rutaAlternativa" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Ruta Alternativa</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.rutaAlternativa}}</td>
-          </ng-container>
-          <ng-container matColumnDef="liqChofer" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Excluir Liq. Chofer</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.excluirLiqChofer?'Sí':'No'}}</td>
-          </ng-container>
-          <ng-container matColumnDef="estaActivo" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>esta Activo</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.estaActivo?'Sí': 'No'}}</td>
-          </ng-container>
-          <ng-container matColumnDef="ver" sticky>
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-                class="cursor-color">ver</span></td>
-          </ng-container>
-          <ng-container matColumnDef="mod" sticky>
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-                class="cursor-color">editar</span></td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-        </table>   
+        <ng-container matColumnDef="id" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+        </ng-container>
+        <ng-container matColumnDef="origen" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Origen</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.origen.provincia.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="destino" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Destino</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.destino.provincia.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="km" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.km}}</td>
+        </ng-container>
+        <ng-container matColumnDef="rutaAlternativa" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Ruta Alternativa</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.rutaAlternativa}}</td>
+        </ng-container>
+        <ng-container matColumnDef="liqChofer" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Excluir Liq. Chofer</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.excluirLiqChofer?'Sí':'No'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="estaActivo" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>esta Activo</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.estaActivo?'Sí': 'No'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="ver" sticky>
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+              class="cursor-color">ver</span></td>
+        </ng-container>
+        <ng-container matColumnDef="mod" sticky>
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+              class="cursor-color">editar</span></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
     </div>
   </div>
 </div>
