@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { VendedorService } from '../../servicios/vendedor.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
@@ -7,6 +7,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-vendedor',
@@ -31,7 +32,7 @@ export class VendedorComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado para las busquedas
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
@@ -40,6 +41,11 @@ export class VendedorComponent implements OnInit {
  public show = false;
  //Define la subscripcion a loader.service
  private subscription: Subscription;
+ //Define las columnas de la tabla
+ public columnas: string[] = ['id', 'nombre','estaActivo', 'ver', 'mod'];
+ //Define la matSort
+ @ViewChild(MatSort) sort: MatSort;
+
    //Establece la subscripcion a loader
   //Constructor
   constructor(private servicio: VendedorService, private subopcionPestaniaService: SubopcionPestaniaService,
@@ -160,7 +166,9 @@ export class VendedorComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err => {
         console.log(err);

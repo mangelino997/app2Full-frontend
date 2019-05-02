@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ViajeRemitoService } from '../../servicios/viaje-remito.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ClienteService } from '../../servicios/cliente.service';
@@ -7,7 +7,7 @@ import { TipoComprobanteService } from '../../servicios/tipo-comprobante.service
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AforoComponent } from '../aforo/aforo.component';
 import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.component';
@@ -38,7 +38,7 @@ export class ViajeRemitoComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define el form control para las busquedas
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados de busqueda
@@ -61,8 +61,12 @@ export class ViajeRemitoComponent implements OnInit {
  public show = false;
  //Define la subscripcion a loader.service
  private subscription: Subscription;
-  //Constructor
-  constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
+//Define las columnas de la tabla
+public columnas: string[] = ['sucursal', 'fecha','tipoComprobante','puntoVenta','numero','bultos', 'observaciones','ver', 'mod'];
+//Define la matSort
+@ViewChild(MatSort) sort: MatSort;
+//Constructor
+constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private loaderService: LoaderService, private toastr: ToastrService,
     private sucursalServicio: SucursalService, private clienteServicio: ClienteService,
     private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog,
@@ -328,7 +332,9 @@ export class ViajeRemitoComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err => {
         console.log(err);

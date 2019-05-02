@@ -8,6 +8,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { MatTableDataSource, MatSort } from '@angular/material';
 
 @Component({
   selector: 'app-viaje-unidad-negocio',
@@ -32,7 +33,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta: Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define empresa para las busquedas
@@ -41,10 +42,15 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   public resultados: Array<any> = [];
   //Defien la lista de empresas
   public empresas: Array<any> = [];
- //Define el mostrar del circulo de progreso
- public show = false;
- //Define la subscripcion a loader.service
- private subscription: Subscription;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'nombre', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+
   //Constructor
   constructor(private servicio: ViajeUnidadNegocioService, private ventaConcepto: ViajeUnidadNegocio, private appService: AppService,
     private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService, private loaderService: LoaderService) {
@@ -56,7 +62,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
       });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
@@ -65,11 +71,11 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit() {
-   //Establece la subscripcion a loader
-   this.subscription = this.loaderService.loaderState
-     .subscribe((state: LoaderState) => {
-       this.show = state.show;
-     });
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.ventaConcepto.formulario;
     //Establece los valores de la primera pestania activa
@@ -79,9 +85,16 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
-    this.servicio.listar().subscribe(res => {
-      this.listaCompleta = res.json();
-    });
+    this.servicio.listar().subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -139,7 +152,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-   this.loaderService.show();
+    this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -149,7 +162,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
@@ -158,13 +171,13 @@ export class ViajeUnidadNegocioComponent implements OnInit {
         document.getElementById("idNombre").classList.add('is-invalid');
         document.getElementById("idNombre").focus();
         this.toastr.error(respuesta.mensaje);
-   				this.loaderService.hide();
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-   this.loaderService.show();
+    this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -174,7 +187,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-   				this.loaderService.hide();
+          this.loaderService.hide();
         }
       },
       err => {
@@ -183,7 +196,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
         document.getElementById("idNombre").classList.add('is-invalid');
         document.getElementById("idNombre").focus();
         this.toastr.error(respuesta.mensaje);
-   				this.loaderService.hide();
+        this.loaderService.hide();
       }
     );
   }

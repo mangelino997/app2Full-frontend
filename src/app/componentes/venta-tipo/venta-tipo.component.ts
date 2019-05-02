@@ -10,6 +10,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { MatTableDataSource, MatSort } from '@angular/material';
 @Component({
   selector: 'app-venta-tipo',
   templateUrl: './venta-tipo.component.html',
@@ -33,7 +34,7 @@ public pestanias:Array<any> = [];
 //Define un formulario para validaciones de campos
 public formulario:FormGroup;
 //Define la lista completa de registros
-public listaCompleta:Array<any> = [];
+public listaCompleta = new MatTableDataSource([]);
 //Define la lista completa de tipos de comprobantes
 public tiposComprobantes:Array<any> = [];
 //Define la lista completa de Afip Conceptos
@@ -52,7 +53,12 @@ public empresas:Array<any> = [];
  public show = false;
  //Define la subscripcion a loader.service
  private subscription: Subscription;
+ //Define las columnas de la tabla
+ public columnas: string[] = ['id', 'nombre', 'tipoComprobante', 'esContraReembolso', 'afipConcepto', 'chequeRechazado', 'habilitado', 'ver', 'mod'];
+ //Define la matSort
+ @ViewChild(MatSort) sort: MatSort;
 // public compereFn:any;
+
 //Constructor
   constructor(private afipConceptosServicio: AfipConceptoService, private servicio: VentaTipoItemService, private ventaConcepto: VentaTipoItem, 
     private appService: AppService, private loaderService: LoaderService, 
@@ -96,16 +102,16 @@ public empresas:Array<any> = [];
     this.listarAfipConcepto();
   }
   //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        console.log(res.json());
-        this.listaCompleta = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+  private listar() {this.servicio.listar().subscribe(
+    res => {
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
+      this.loaderService.hide();
+    },
+    err => {
+      console.log(err);
+    }
+  );
   }
   //Obtiene la lista completa de tipos de Comprobantes
   private listarTiposComprobantes() {
