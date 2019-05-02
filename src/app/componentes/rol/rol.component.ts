@@ -168,6 +168,7 @@ export class RolComponent implements OnInit {
       },
       err => {
         console.log(err);
+        this.loaderService.hide();
       }
     );
   }
