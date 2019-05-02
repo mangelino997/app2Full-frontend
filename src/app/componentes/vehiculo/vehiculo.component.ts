@@ -8,11 +8,13 @@ import { EmpresaService } from '../../servicios/empresa.service';
 import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
 import { PersonalService } from '../../servicios/personal.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Vehiculo } from 'src/app/modelos/vehiculo';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-vehiculo',
@@ -70,16 +72,20 @@ export class VehiculoComponent implements OnInit {
   public companiasSegurosPolizas:Array<any> = [];
   //Define si el tipo de vehiculo seleccionado es remolque
   public esVehiculoRemolque:boolean = false;
+ //Define el mostrar del circulo de progreso
+ public show = false;
+ //Define la subscripcion a loader.service
+ private subscription: Subscription;
   //Constructor
   constructor(private servicio: VehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
+    private toastr: ToastrService, private loaderService: LoaderService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private localidadServicio: LocalidadService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService,
     private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -104,6 +110,11 @@ export class VehiculoComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+   //Establece la subscripcion a loader
+   this.subscription = this.loaderService.loaderState
+     .subscribe((state: LoaderState) => {
+       this.show = state.show;
+     });
     //Define los campos para validaciones
     this.formulario = this.vehiculoModelo.formulario;
     //Autocompletado - Buscar por alias filtro remolque
@@ -291,7 +302,8 @@ export class VehiculoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+   this.loaderService.show();
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -301,6 +313,7 @@ export class VehiculoComponent implements OnInit {
             document.getElementById('idTipoVehiculo').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
@@ -315,13 +328,15 @@ export class VehiculoComponent implements OnInit {
           document.getElementById("idNumeroInterno").focus();
         }
         this.toastr.error(respuesta.mensaje);
+   			this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-  this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
-  this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+   this.loaderService.show();
+  this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+  this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
   this.servicio.actualizar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
@@ -331,6 +346,7 @@ export class VehiculoComponent implements OnInit {
           document.getElementById('idAutocompletado').focus();
         }, 20);
         this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
       }
     },
     err => {
@@ -345,6 +361,7 @@ export class VehiculoComponent implements OnInit {
         document.getElementById("idNumeroInterno").focus();
       }
       this.toastr.error(respuesta.mensaje);
+   		this.loaderService.hide();
     }
   );
   }

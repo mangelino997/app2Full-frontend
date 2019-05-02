@@ -4,6 +4,9 @@ import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 import { UsuarioEmpresa } from 'src/app/modelos/usuarioEmpresa';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-usuario-empresas',
@@ -23,10 +26,19 @@ export class UsuarioEmpresasComponent implements OnInit {
   public listaEmpresas: Array<any> = [];
   //Define los elementos A de la primera tabla
   public empresas: FormArray;
+ //Define el mostrar del circulo de progreso
+ public show = false;
+ //Define la subscripcion a loader.service
+ private subscription: Subscription;
   //Constructor
   constructor(private usuarioEmpresaServicio: UsuarioEmpresaService, private usuarioEmpresaModelo: UsuarioEmpresa,
-    private usuarioServicio: UsuarioService, private fb: FormBuilder, private toastr: ToastrService) { }
+    private usuarioServicio: UsuarioService, private fb: FormBuilder, private toastr: ToastrService, private loaderService: LoaderService) { }
   ngOnInit() {
+   //Establece la subscripcion a loader
+   this.subscription = this.loaderService.loaderState
+     .subscribe((state: LoaderState) => {
+       this.show = state.show;
+     });
     //Establece el formulario
     this.formulario = this.fb.group({
       id: new FormControl(),
@@ -90,6 +102,7 @@ export class UsuarioEmpresasComponent implements OnInit {
   }
   //Actualiza la lista de empresas del usuario
   public actualizar(): void {
+   this.loaderService.show();
     let usuario = this.formulario.value.usuario;
     usuario.empresas = this.formulario.value.empresas;
     this.usuarioEmpresaServicio.actualizar(usuario).subscribe(
@@ -100,10 +113,12 @@ export class UsuarioEmpresasComponent implements OnInit {
         this.vaciarEmpresas();
         document.getElementById('idUsuario').focus();
         this.toastr.success(respuesta.mensaje);
+   			this.loaderService.hide();
       },
       err => {
         let respuesta = err.json();
         this.toastr.success(respuesta.mensaje);
+   			this.loaderService.hide();
       }
     )
   }
