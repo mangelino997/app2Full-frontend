@@ -1,10 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ViajeUnidadNegocioService } from 'src/app/servicios/viaje-unidad-negocio.service';
 import { ViajeUnidadNegocio } from 'src/app/modelos/viajeUnidadNegocio';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-viaje-unidad-negocio',
@@ -38,11 +41,15 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   public resultados: Array<any> = [];
   //Defien la lista de empresas
   public empresas: Array<any> = [];
+ //Define el mostrar del circulo de progreso
+ public show = false;
+ //Define la subscripcion a loader.service
+ private subscription: Subscription;
   //Constructor
-  constructor(private servicio: ViajeUnidadNegocioService, private ventaConcepto: ViajeUnidadNegocio, private appComponent: AppComponent,
-    private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+  constructor(private servicio: ViajeUnidadNegocioService, private ventaConcepto: ViajeUnidadNegocio, private appService: AppService,
+    private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;
@@ -58,6 +65,11 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit() {
+   //Establece la subscripcion a loader
+   this.subscription = this.loaderService.loaderState
+     .subscribe((state: LoaderState) => {
+       this.show = state.show;
+     });
     //Define el formulario y validaciones
     this.formulario = this.ventaConcepto.formulario;
     //Establece los valores de la primera pestania activa
@@ -127,6 +139,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+   this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -136,6 +149,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
@@ -144,11 +158,13 @@ export class ViajeUnidadNegocioComponent implements OnInit {
         document.getElementById("idNombre").classList.add('is-invalid');
         document.getElementById("idNombre").focus();
         this.toastr.error(respuesta.mensaje);
+   				this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+   this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -158,6 +174,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
@@ -166,6 +183,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
         document.getElementById("idNombre").classList.add('is-invalid');
         document.getElementById("idNombre").focus();
         this.toastr.error(respuesta.mensaje);
+   				this.loaderService.hide();
       }
     );
   }

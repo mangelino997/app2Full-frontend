@@ -5,6 +5,10 @@ import { ModuloService } from '../../servicios/modulo.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-submodulo',
@@ -36,11 +40,16 @@ export class SubmoduloComponent implements OnInit {
   public autocompletado:FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
   public resultados:Array<any> = [];
+ //Define el mostrar del circulo de progreso
+ public show = false;
+ //Define la subscripcion a loader.service
+ private subscription: Subscription;
   //Constructor
   constructor(private servicio: SubmoduloService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private moduloServicio: ModuloService, private appComponent: AppComponent, private toastr: ToastrService) {
+    private moduloServicio: ModuloService, private appService: AppService, private toastr: ToastrService,
+     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -72,6 +81,11 @@ export class SubmoduloComponent implements OnInit {
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+   //Establece la subscripcion a loader
+   this.subscription = this.loaderService.loaderState
+     .subscribe((state: LoaderState) => {
+       this.show = state.show;
+     });
     //Obtiene la lista de modulos
     this.listarModulos();
   }
@@ -163,6 +177,7 @@ export class SubmoduloComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+   this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -172,6 +187,7 @@ export class SubmoduloComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -181,12 +197,14 @@ export class SubmoduloComponent implements OnInit {
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
+          this.loaderService.hide();
         }
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+  this.loaderService.show();
   this.servicio.actualizar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
@@ -196,6 +214,7 @@ export class SubmoduloComponent implements OnInit {
           document.getElementById('idAutocompletado').focus();
         }, 20);
         this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
       }
     },
     err => {
@@ -205,6 +224,7 @@ export class SubmoduloComponent implements OnInit {
         document.getElementById("idNombre").classList.add('is-invalid');
         document.getElementById("idNombre").focus();
         this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
     }
   );

@@ -6,6 +6,9 @@ import { AppService } from '../../servicios/app.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-sucursal-banco',
@@ -39,12 +42,16 @@ export class SucursalBancoComponent implements OnInit {
   public sucursales:Array<any> = [];
   //Define la lista de resultados de busqueda banco
   public resultadosBancos:Array<any> = [];
+ //Define el mostrar del circulo de progreso
+ public show = false;
+ //Define la subscripcion a loader.service
+ private subscription: Subscription;
   //Constructor
   constructor(private servicio: SucursalBancoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
-    private bancoServicio: BancoService) {
+    private appService: AppService, private appServicio: AppService, private toastr: ToastrService,
+    private bancoServicio: BancoService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -78,6 +85,11 @@ export class SucursalBancoComponent implements OnInit {
     })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+   //Establece la subscripcion a loader
+   this.subscription = this.loaderService.loaderState
+     .subscribe((state: LoaderState) => {
+       this.show = state.show;
+     });
     //Obtiene la lista completa de registros
     // this.listar();
   }
@@ -180,6 +192,7 @@ export class SucursalBancoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+   this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -189,15 +202,18 @@ export class SucursalBancoComponent implements OnInit {
             document.getElementById('idBanco').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   			 this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+   			 this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+   this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -207,10 +223,12 @@ export class SucursalBancoComponent implements OnInit {
             document.getElementById('idBanco').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   		 this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+   		 this.loaderService.hide();
       }
     );
   }

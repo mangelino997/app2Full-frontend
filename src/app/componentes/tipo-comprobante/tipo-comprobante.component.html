@@ -39,10 +39,13 @@
           <input id="idAbreviatura" type="text" formControlName="abreviatura" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura" maxlength="8">
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
+        <button id="idBoton" *ngIf="mostrarBoton && !show" class="btn btn-primary" type="button"
           formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
+        <div class="row justify-content-center" *ngIf="show">
+            <mat-spinner diameter="40"></mat-spinner>
+        </div>
       </form>
     </div>
   </div>

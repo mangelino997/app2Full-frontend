@@ -8,10 +8,12 @@ import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
 import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-vehiculo-proveedor',
@@ -55,15 +57,19 @@ export class VehiculoProveedorComponent implements OnInit {
   public resultadosCompaniasSeguros:Array<any> = [];
   //Define la lista de resultados de configuraciones vehiculos
   public configuracionesVehiculos:Array<any> = [];
+ //Define el mostrar del circulo de progreso
+ public show = false;
+ //Define la subscripcion a loader.service
+ private subscription: Subscription;
   //Constructor
   constructor(private servicio: VehiculoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
+    private toastr: ToastrService, private loaderService: LoaderService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private localidadServicio: LocalidadService, private proveedorServicio: ProveedorService,
     private companiaSeguroServicio: CompaniaSeguroService, private choferProveedorServicio: ChoferProveedorService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -88,6 +94,11 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+   //Establece la subscripcion a loader
+   this.subscription = this.loaderService.loaderState
+     .subscribe((state: LoaderState) => {
+       this.show = state.show;
+     });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -273,7 +284,8 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+   this.loaderService.show();
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -283,6 +295,7 @@ export class VehiculoProveedorComponent implements OnInit {
             document.getElementById('idProveedor').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
@@ -293,12 +306,14 @@ export class VehiculoProveedorComponent implements OnInit {
           document.getElementById("idDominio").focus();
         }
         this.toastr.error(respuesta.mensaje);
+   				this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+   this.loaderService.show();
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -308,6 +323,7 @@ export class VehiculoProveedorComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
@@ -318,6 +334,7 @@ export class VehiculoProveedorComponent implements OnInit {
           document.getElementById("idDominio").focus();
         }
         this.toastr.error(respuesta.mensaje);
+   			this.loaderService.hide();
       }
     );
   }

@@ -2,9 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { TramoService } from '../../servicios/tramo.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { OrigenDestinoService } from '../../servicios/origen-destino.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-tramo',
@@ -40,12 +43,16 @@ export class TramoComponent implements OnInit {
   public resultados:Array<any> = [];
   //Define la lista de resultados de origenes destinos
   public resultadosOrigenesDestinos:Array<any> = [];
+ //Define el mostrar del circulo de progreso
+ public show = false;
+ //Define la subscripcion a loader.service
+ private subscription: Subscription;
   //Constructor
   constructor(private servicio: TramoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private origenDestinoServicio: OrigenDestinoService,
-    private toastr: ToastrService) {
+    private appService: AppService, private origenDestinoServicio: OrigenDestinoService,
+    private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -113,6 +120,11 @@ export class TramoComponent implements OnInit {
         })
       }
     })
+   //Establece la subscripcion a loader
+   this.subscription = this.loaderService.loaderState
+     .subscribe((state: LoaderState) => {
+       this.show = state.show;
+     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
   }
@@ -210,6 +222,7 @@ export class TramoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+   this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -220,18 +233,21 @@ export class TramoComponent implements OnInit {
             document.getElementById('idOrigen').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
         let respuesta = err.json();
         if(respuesta.codigo == 11017) {
           this.toastr.error('Error Unicidad Origen->Destino', respuesta.mensaje + " TRAMO");
+   				this.loaderService.hide();
         }
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+   this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -241,10 +257,12 @@ export class TramoComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
         console.log(err);
+   				this.loaderService.hide();
       }
     );
   }

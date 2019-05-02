@@ -5,13 +5,15 @@ import { ClienteService } from '../../servicios/cliente.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { TipoComprobanteService } from '../../servicios/tipo-comprobante.service';
 import { AppService } from '../../servicios/app.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AforoComponent } from '../aforo/aforo.component';
 import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.component';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-viaje-remito',
@@ -55,14 +57,18 @@ export class ViajeRemitoComponent implements OnInit {
   public estadoLetra:boolean = false;
   //Define la fecha actual
   public fechaActual:any;
+ //Define el mostrar del circulo de progreso
+ public show = false;
+ //Define la subscripcion a loader.service
+ private subscription: Subscription;
   //Constructor
   constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
+    private loaderService: LoaderService, private toastr: ToastrService,
     private sucursalServicio: SucursalService, private clienteServicio: ClienteService,
     private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog,
     private fechaServicio: FechaService, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -87,6 +93,11 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+   //Establece la subscripcion a loader
+   this.subscription = this.loaderService.loaderState
+     .subscribe((state: LoaderState) => {
+       this.show = state.show;
+     });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -326,13 +337,14 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+   this.loaderService.show();
     var tipoComprobante = this.formulario.get('tipoComprobante').value;
     var numeroCamion = this.formulario.get('numeroCamion').value;
     var sucursalDestino = this.formulario.get('sucursalDestino').value;
     this.formulario.get('letra').enable();
-    this.formulario.get('sucursalEmision').setValue(this.appComponent.getUsuario().sucursal);
-    this.formulario.get('empresaEmision').setValue(this.appComponent.getEmpresa());
-    this.formulario.get('usuario').setValue(this.appComponent.getUsuario());
+    this.formulario.get('sucursalEmision').setValue(this.appService.getUsuario().sucursal);
+    this.formulario.get('empresaEmision').setValue(this.appService.getEmpresa());
+    this.formulario.get('usuario').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -346,15 +358,18 @@ export class ViajeRemitoComponent implements OnInit {
             document.getElementById('idFecha').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+   				this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+   this.loaderService.show();
     this.formulario.get('letra').enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -366,10 +381,12 @@ export class ViajeRemitoComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+   				this.loaderService.hide();
       }
     );
   }
@@ -408,7 +425,7 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
-    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
+    valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
@@ -430,7 +447,7 @@ export class ViajeRemitoComponent implements OnInit {
       width: '1200px',
       data: {
         formulario: null,
-        usuario: this.appComponent.getUsuario()
+        usuario: this.appService.getUsuario()
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
@@ -451,7 +468,7 @@ export class ViajeRemitoComponent implements OnInit {
       data: {}
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      this.formulario.get('kilosAforado').setValue(this.appServicio.setDecimales(resultado, 2));
+      this.formulario.get('kilosAforado').setValue(this.appService.setDecimales(resultado, 2));
     });
   }
   //Funcion para comparar y mostrar elemento de campo select

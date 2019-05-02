@@ -58,7 +58,10 @@
         </div>
         <div class="row">
           <div class="col-md-12 text-center">
-            <button mat-raised-button color="primary" (click)="actualizar()">Actualizar</button>
+            <button mat-raised-button color="primary" *ngIf="!show" (click)="actualizar()">Actualizar</button>
+            <div class="row justify-content-center" *ngIf="show">
+                <mat-spinner diameter="40"></mat-spinner>
+            </div>
           </div>
         </div>
       </form>

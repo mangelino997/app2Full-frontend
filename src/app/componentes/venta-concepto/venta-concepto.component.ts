@@ -1,12 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { VentaConcepto } from 'src/app/modelos/venta-concepto';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
 import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-venta-concepto',
@@ -44,14 +47,19 @@ public resultados:Array<any> = [];
 public resultadosCompaniasSeguros:Array<any> = [];
 //Defien la lista de empresas
 public empresas:Array<any> = [];
+ //Define el mostrar del circulo de progreso
+ public show = false;
+ //Define la subscripcion a loader.service
+ private subscription: Subscription;
 // public compereFn:any;
 //Constructor
 
-  constructor(private servicio: VentaItemConceptoService, private ventaConcepto: VentaConcepto, private appComponent: AppComponent, 
-    private subopcionPestaniaService: SubopcionPestaniaService, private tipoComprobanteServicio: TipoComprobanteService, private conceptosAfipServicio: AfipConceptoService,
+  constructor(private servicio: VentaItemConceptoService, private ventaConcepto: VentaConcepto, private appService: AppService,
+    private loaderService: LoaderService, private subopcionPestaniaService: SubopcionPestaniaService, 
+    private tipoComprobanteServicio: TipoComprobanteService, private conceptosAfipServicio: AfipConceptoService,
     private toastr: ToastrService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -72,6 +80,11 @@ public empresas:Array<any> = [];
    }
 
   ngOnInit() {
+   //Establece la subscripcion a loader
+   this.subscription = this.loaderService.loaderState
+     .subscribe((state: LoaderState) => {
+       this.show = state.show;
+     });
     //Define el formulario y validaciones
     this.formulario = this.ventaConcepto.formulario;
     //Establece los valores de la primera pestania activa
@@ -178,6 +191,7 @@ public empresas:Array<any> = [];
   }
   //Agrega un registro
   private agregar() {
+   this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -187,6 +201,7 @@ public empresas:Array<any> = [];
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
@@ -194,12 +209,14 @@ public empresas:Array<any> = [];
         document.getElementById("labelNombre").classList.add('label-error');
         document.getElementById("idNombre").classList.add('is-invalid');
         document.getElementById("idNombre").focus();
-        this.toastr.error(respuesta.mensaje);      
+        this.toastr.error(respuesta.mensaje);   
+   			this.loaderService.hide();   
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+   this.loaderService.show();
     console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -210,6 +227,7 @@ public empresas:Array<any> = [];
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+   				this.loaderService.hide();
         }
       },
       err => {
@@ -218,6 +236,7 @@ public empresas:Array<any> = [];
         document.getElementById("idNombre").classList.add('is-invalid');
         document.getElementById("idNombre").focus();
         this.toastr.error(respuesta.mensaje);
+   				this.loaderService.hide();
       }
     );
   }
