@@ -18,8 +18,10 @@
       </div>
       <div class="col-md-2">
         <div class="inline">
-          <button mat-raised-button color="primary" (click)="verUsuariosDeRol()" [disabled]="!botonActivo">Usuarios</button>
-          <button mat-raised-button color="primary" style="margin-left: 5px;" (click)="verVistaPrevia()" [disabled]="!botonActivo">Vista Previa</button>
+          <button mat-raised-button color="primary" (click)="verUsuariosDeRol()"
+            [disabled]="!botonActivo">Usuarios</button>
+          <button mat-raised-button color="primary" style="margin-left: 5px;" (click)="verVistaPrevia()"
+            [disabled]="!botonActivo">Vista Previa</button>
         </div>
       </div>
     </div>
@@ -37,8 +39,9 @@
               <div *ngIf="estadoSidenav == 1">
                 <div class="row contenedor" *ngFor="let modulo of modulos; let idx = index">
                   <div class="col">
-                    <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" type="button" class="btn btn-outline-primary btn-sm btn-block"
-                      (click)="seleccionarModulo(modulo.id, idx)" [disabled]="!botonActivo">
+                    <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" type="button"
+                      class="btn btn-outline-primary btn-sm btn-block" (click)="seleccionarModulo(modulo.id, idx)"
+                      [disabled]="!botonActivo">
                       {{modulo.nombre}}</button>
                   </div>
                 </div>
@@ -46,8 +49,8 @@
               <div *ngIf="estadoSidenav == 2">
                 <div class="row contenedor" *ngFor="let submodulo of submodulos; let idx = index">
                   <div class="col">
-                    <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" type="button" class="btn btn-outline-primary btn-sm btn-block"
-                      (click)="listarPorRolYSubmodulo(submodulo, idx)">
+                    <button [ngClass]="{true:'activar-boton-subopcion'}[botonOpcionActivo === idx]" type="button"
+                      class="btn btn-outline-primary btn-sm btn-block" (click)="listarPorRolYSubmodulo(submodulo, idx)">
                       {{submodulo.nombre}}</button>
                   </div>
                 </div>
@@ -86,8 +89,14 @@
               </div>
             </div>
             <br>
-            <div class="row justify-content-center container-fluid">
-              <button mat-raised-button color="primary" (click)="actualizar()" [disabled]="!btnActualizarActivo">Actualizar</button>
+            <div class="row justify-content-center container-fluid" *ngIf="!show">
+              <button mat-raised-button color="primary" (click)="actualizar()"
+                [disabled]="!btnActualizarActivo">Actualizar</button>
+            </div>
+            <div class="row" *ngIf="show">
+              <div class="col text-center">
+                <app-progreso></app-progreso>
+              </div>
             </div>
           </mat-sidenav-content>
         </mat-sidenav-container>

@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormGroup, FormBuilder, FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { RolSubopcionService } from 'src/app/servicios/rol-subopcion.service';
 import { RolService } from 'src/app/servicios/rol.service';
 import { ModuloService } from 'src/app/servicios/modulo.service';
@@ -10,6 +10,9 @@ import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { AppComponent } from 'src/app/app.component';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-rol-subopcion-menu',
@@ -18,34 +21,43 @@ import { AppComponent } from 'src/app/app.component';
 })
 export class RolSubopcionMenuComponent implements OnInit {
   //Define el formulario
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista de roles
-  public roles:Array<any> = [];
+  public roles: Array<any> = [];
   //Define la lista de modulos
-  public modulos:Array<any> = [];
+  public modulos: Array<any> = [];
   //Define la lista de submodulos
-  public submodulos:Array<any> = [];
+  public submodulos: Array<any> = [];
   //Define una lista de subopciones
-  public subopciones:FormArray;
+  public subopciones: FormArray;
   //Define estado de la sidenav, modulo o submodulo
-  public estadoSidenav:number;
+  public estadoSidenav: number;
   //Define el nombre del titulo
-  public nombreTitulo:string;
+  public nombreTitulo: string;
   //Define el submodulo activo
-  public botonOpcionActivo:number;
+  public botonOpcionActivo: number;
   //Estado de botones modulos
-  public botonActivo:boolean;
+  public botonActivo: boolean;
   //Define el estado del boton actualizar
-  public btnActualizarActivo:boolean;
+  public btnActualizarActivo: boolean;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: RolSubopcionService, private fb: FormBuilder,
     private rolServicio: RolService, private moduloServicio: ModuloService,
     private submoduloServicio: SubmoduloService, private toastr: ToastrService,
     public dialog: MatDialog, private subopcionPestaniaServicio: SubopcionPestaniaService,
-    private appComponent: AppComponent) { }
+    private appService: AppService, private loaderService: LoaderService) { }
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario
     this.formulario = this.fb.group({
       rol: new FormControl(),
@@ -79,8 +91,8 @@ export class RolSubopcionMenuComponent implements OnInit {
   private listarRoles(): void {
     this.rolServicio.listar().subscribe(res => {
       this.roles = res.json();
-      let rol = this.appComponent.getRol();
-      if(rol != 1) {
+      let rol = this.appService.getRol();
+      if (rol != 1) {
         this.roles.splice(0, 1);
       }
     })
@@ -89,8 +101,8 @@ export class RolSubopcionMenuComponent implements OnInit {
   private listarModulos(): void {
     this.moduloServicio.listar().subscribe(res => {
       this.modulos = res.json();
-      let rol = this.appComponent.getRol();
-      if(rol != 1) {
+      let rol = this.appService.getRol();
+      if (rol != 1) {
         this.modulos.splice(0, 1);
       }
     })
@@ -105,6 +117,7 @@ export class RolSubopcionMenuComponent implements OnInit {
   }
   //Obtiene una lista por rol y submodulo
   public listarPorRolYSubmodulo(submodulo, indice): void {
+    this.loaderService.show();
     this.vaciarSubopciones();
     this.botonOpcionActivo = indice;
     this.btnActualizarActivo = true;
@@ -117,6 +130,7 @@ export class RolSubopcionMenuComponent implements OnInit {
         this.subopciones = this.formulario.get('subopciones') as FormArray;
         this.subopciones.push(this.crearSubopciones(subopciones[i]));
       }
+      this.loaderService.hide();
     })
   }
   //Vacia la lista de subopciones
@@ -134,14 +148,13 @@ export class RolSubopcionMenuComponent implements OnInit {
     this.vaciarSubopciones();
     this.btnActualizarActivo = false;
     this.botonOpcionActivo = -1;
-
   }
   //Actualiza la lista de subopciones del rol
   public actualizar(): void {
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.toastr.success(respuesta.mensaje);
         }
       },
@@ -179,7 +192,7 @@ export class RolSubopcionMenuComponent implements OnInit {
   public verPestaniasDialogo(subopcion, pestanias): void {
     const dialogRef = this.dialog.open(PestaniaDialogo, {
       width: '1200px',
-      data: { 
+      data: {
         rol: this.formulario.get('rol'),
         subopcion: subopcion,
         pestanias: pestanias
@@ -212,9 +225,9 @@ export class RolSubopcionMenuComponent implements OnInit {
 })
 export class UsuarioDialogo {
   //Define el nombre del rol
-  public nombreRol:string;
+  public nombreRol: string;
   //Define la lista de usuario del rol
-  public listaUsuarios:Array<any> = [];
+  public listaUsuarios: Array<any> = [];
   //Constructor
   constructor(public dialogRef: MatDialogRef<UsuarioDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private usuarioServicio: UsuarioService) { }
@@ -238,30 +251,44 @@ export class UsuarioDialogo {
 })
 export class VistaPreviaDialogo {
   //Define el rol
-  public rol:any;
+  public rol: any;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define la lista de modulos del rol
-  public modulos:Array<any> = [];
+  public modulos: Array<any> = [];
   //Define el nombre de la subopcion
-  public nombreSubopcion:string;
+  public nombreSubopcion: string;
   //Define el nombre del rol
-  public nombreRol:string;
+  public nombreRol: string;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<VistaPreviaDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private appServicio: AppService, private subopcionPestaniaService: SubopcionPestaniaService) { }
+    private appServicio: AppService, private subopcionPestaniaService: SubopcionPestaniaService,
+    private loaderService: LoaderService) { }
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    this.loaderService.show();
     this.rol = this.data.rol.value;
     this.nombreRol = this.rol.nombre;
     this.appServicio.obtenerMenu(this.rol.id).subscribe(res => {
       this.modulos = res.json().modulos;
+      this.loaderService.hide();
     })
   }
   public obtenerPestanias(subopcion): void {
+    this.loaderService.show();
     this.nombreSubopcion = subopcion.subopcion;
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.rol.id, subopcion.id).subscribe(res => {
       this.pestanias = res.json();
+      this.loaderService.hide();
     })
   }
   onNoClick(): void {
@@ -275,15 +302,25 @@ export class VistaPreviaDialogo {
 })
 export class PestaniaDialogo {
   //Define el formulario
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista de pestanias
-  public pestanias:FormArray;
+  public pestanias: FormArray;
   //Define el nombre de la subopcion
-  public nombreSubopcion:string;
+  public nombreSubopcion: string;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<PestaniaDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private fb: FormBuilder, private servicio: SubopcionPestaniaService, private toastr: ToastrService) { }
+    private fb: FormBuilder, private servicio: SubopcionPestaniaService, private toastr: ToastrService,
+    private loaderService: LoaderService) { }
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define datos pasado por parametro al dialogo
     let pestanias = this.data.pestanias.pestanias
     let rol = this.data.rol.value;
@@ -317,16 +354,19 @@ export class PestaniaDialogo {
   }
   //Actualiza la lista de pestanias de la subopcion
   public actualizar(): void {
+    this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         let respuesta = err.json();
         this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
     )
   }

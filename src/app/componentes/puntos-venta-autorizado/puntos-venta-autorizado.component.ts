@@ -1,9 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { EmpresaService } from '../../servicios/empresa.service';
-import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-puntos-venta-autorizado',
@@ -12,47 +8,43 @@ import { ToastrService } from 'ngx-toastr';
 })
 export class PuntosVentaAutorizadoComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta: Array<any> = [];
   //Define el autocompletado
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define empresa para las busquedas
-  public empresaBusqueda:FormControl = new FormControl();
+  public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda companias seguros
-  public resultadosCompaniasSeguros:Array<any> = [];
+  public resultadosCompaniasSeguros: Array<any> = [];
   //Defien la lista de empresas
-  public empresas:Array<any> = [];
-  // public compereFn:any;
+  public empresas: Array<any> = [];
   //Constructor
-
-  constructor(private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
-    
-   }
-
+  constructor() {}
+  //Al inicializarse el componente
   ngOnInit() {
     //Define el formulario y validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
       empresa: new FormControl()
-      });
+    });
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -66,5 +58,4 @@ export class PuntosVentaAutorizadoComponent implements OnInit {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   };
-  
 }

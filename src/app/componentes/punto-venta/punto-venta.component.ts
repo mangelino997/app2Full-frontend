@@ -12,6 +12,9 @@ import { PuntoVenta } from 'src/app/modelos/puntoVenta';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-punto-venta',
@@ -63,13 +66,18 @@ export class PuntoVentaComponent implements OnInit {
     'cae', 'cuentaOrden', 'numero', 'copia', 'imprime', 'habilitada', 'defecto', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: PuntoVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private puntoVenta: PuntoVenta,
-    private sucursalServicio: SucursalService, private empresaServicio: EmpresaService, private afipComprobanteService: AfipComprobanteService,
-    private tipoComprobanteService: TipoComprobanteService, private appService: AppService) {
+    private toastr: ToastrService, private puntoVenta: PuntoVenta,
+    private sucursalServicio: SucursalService, private empresaServicio: EmpresaService,
+    private afipComprobanteService: AfipComprobanteService, private tipoComprobanteService: TipoComprobanteService,
+    private appService: AppService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -86,6 +94,11 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = this.puntoVenta.formulario;
     //Establece los valores de la primera pestania activa
@@ -105,7 +118,7 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('empresa').disable();
   }
   //Obtiene el listado de sucursales
@@ -242,7 +255,7 @@ export class PuntoVentaComponent implements OnInit {
         this.listaCompleta = new MatTableDataSource([]);
         this.empresa.setValue(this.appService.getEmpresa());
         this.empresa.disable();
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idSucursal').focus();
         }, 20);
         break;
@@ -280,6 +293,7 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Obtiene la lista por sucursal y empresa
   public listarPorSucursalYEmpresa() {
+    this.loaderService.show();
     let sucursal = this.formulario.get('sucursal').value;
     this.formulario.reset();
     this.formulario.get('sucursal').setValue(sucursal);
@@ -290,19 +304,27 @@ export class PuntoVentaComponent implements OnInit {
       if (sucursal && empresa) {
         this.servicio.listarPorSucursalYEmpresaLetra(sucursal.id, empresa.id).subscribe(res => {
           this.puntosVentas = res.json();
+          this.loaderService.hide();
         });
+      } else {
+        this.loaderService.hide();
       }
+    } else {
+      this.loaderService.hide();
     }
   }
   //Obtiene la lista por sucursal y empresa
   public listarPorSucursalYEmpresaLista(sucursal, empresa) {
+    this.loaderService.show();
     this.servicio.listarPorSucursalYEmpresaLetra(sucursal.value.id, empresa.value.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
+      this.loaderService.hide();
     });
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.formulario.enable();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
@@ -315,15 +337,18 @@ export class PuntoVentaComponent implements OnInit {
             document.getElementById('idSucursal').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.formulario.enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -336,10 +361,12 @@ export class PuntoVentaComponent implements OnInit {
             document.getElementById('idSucursal').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         this.lanzarError(err);
+        this.loaderService.hide();
       }
     );
   }

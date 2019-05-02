@@ -14,7 +14,7 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
-          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput 
+          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
@@ -52,10 +52,15 @@
             </mat-option>
           </mat-autocomplete>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
       </form>
     </div>
   </div>
@@ -71,6 +76,11 @@
             {{itemPais.nombre}}
           </mat-option>
         </mat-autocomplete>
+      </div>
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
       </div>
       <table class="table table-bordered table-striped table-sm">
         <thead>

@@ -10,7 +10,8 @@
             <div *ngFor="let submodulo of modulo.submodulos">
                 <button mat-menu-item [matMenuTriggerFor]="lsubmodulo">{{submodulo.submodulo}}</button>
                 <mat-menu #lsubmodulo="matMenu">
-                    <button *ngFor="let subopcion of submodulo.subopciones" mat-menu-item (click)="obtenerPestanias(subopcion)">{{subopcion.subopcion}}</button>
+                    <button *ngFor="let subopcion of submodulo.subopciones" mat-menu-item
+                        (click)="obtenerPestanias(subopcion)">{{subopcion.subopcion}}</button>
                 </mat-menu>
             </div>
         </mat-menu>
@@ -23,6 +24,11 @@
     </nav>
 </div>
 <br>
-<div class="row justify-content-center">
+<div class="row justify-content-center" *ngIf="!show">
     <button mat-raised-button color="primary" (click)="onNoClick()">Cerrar</button>
+</div>
+<div class="row" *ngIf="show">
+    <div class="col text-center">
+        <app-progreso></app-progreso>
+    </div>
 </div>

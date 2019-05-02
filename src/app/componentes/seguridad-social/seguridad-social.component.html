@@ -14,8 +14,8 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
-          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-            type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}}
@@ -40,15 +40,26 @@
             (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', 'sitioWeb')"
             (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioWeb')" maxlength="60">
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton" class="btn btn-primary" type="button"
-          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
       </form>
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-8">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
+      </div>
+      <br>
       <table class="table table-bordered table-sm">
         <thead>
           <tr>

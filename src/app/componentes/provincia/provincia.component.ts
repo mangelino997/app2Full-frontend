@@ -2,10 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ProvinciaService } from '../../servicios/provincia.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { PaisService } from '../../servicios/pais.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-provincia',
@@ -14,52 +16,57 @@ import { AppService } from 'src/app/servicios/app.service';
 })
 export class ProvinciaComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta: Array<any> = [];
   //Define la lista de paises
-  public paises:Array<any> = [];
+  public paises: Array<any> = [];
   //Define el autocompletado para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados paises
-  public resultadosPaises:Array<any> = [];
+  public resultadosPaises: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private servicio: ProvinciaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private paisServicio: PaisService, private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService) {
+    private paisServicio: PaisService, private toastr: ToastrService,
+    private appService: AppService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
     // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
@@ -68,6 +75,11 @@ export class ProvinciaComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -81,7 +93,7 @@ export class ProvinciaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Pais - Buscar por nombre
     this.formulario.get('pais').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.paisServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosPaises = res;
         })
@@ -111,7 +123,7 @@ export class ProvinciaComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.listaCompleta = [];
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -130,7 +142,7 @@ export class ProvinciaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idPais').focus();
         }, 20);
         break;
@@ -178,51 +190,57 @@ export class ProvinciaComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11002) {
+        if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
         }
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
-  this.servicio.actualizar(this.formulario.value).subscribe(
-    res => {
-      var respuesta = res.json();
-      if(respuesta.codigo == 200) {
-        this.reestablecerFormulario('');
-        setTimeout(function() {
-          document.getElementById('idAutocompletado').focus();
-        }, 20);
-        this.toastr.success(respuesta.mensaje);
+    this.loaderService.show();
+    this.servicio.actualizar(this.formulario.value).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario('');
+          setTimeout(function () {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if (respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
       }
-    },
-    err => {
-      var respuesta = err.json();
-      if(respuesta.codigo == 11002) {
-        document.getElementById("labelNombre").classList.add('label-error');
-        document.getElementById("idNombre").classList.add('is-invalid');
-        document.getElementById("idNombre").focus();
-        this.toastr.error(respuesta.mensaje);
-      }
-    }
-  );
+    );
   }
   //Elimina un registro
   private eliminar() {
@@ -237,8 +255,10 @@ export class ProvinciaComponent implements OnInit {
   }
   //Obtiene la lista de provincias por pais
   public listarPorPais(pais) {
+    this.loaderService.show();
     this.servicio.listarPorPais(pais.id).subscribe(res => {
       this.listaCompleta = res.json();
+      this.loaderService.hide();
     })
   }
   //Manejo de colores de campos y labels
@@ -260,7 +280,7 @@ export class ProvinciaComponent implements OnInit {
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -268,7 +288,7 @@ export class ProvinciaComponent implements OnInit {
   }
   //Formatea el valor del autocompletado a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.pais.nombre : elemento;
     } else {
       return elemento;
@@ -277,9 +297,9 @@ export class ProvinciaComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }

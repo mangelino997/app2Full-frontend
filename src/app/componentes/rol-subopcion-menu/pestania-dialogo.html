@@ -25,9 +25,14 @@
                         </tr>
                     </tbody>
                 </table>
-                <div class="row justify-content-center">
+                <div class="row justify-content-center" *ngIf="!show">
                     <button mat-raised-button color="primary" (click)="actualizar()">Actualizar</button>
                     <button mat-raised-button color="accent" (click)="onNoClick()">Cerrar</button>
+                </div>
+                <div class="row" *ngIf="show">
+                    <div class="col text-center">
+                        <app-progreso></app-progreso>
+                    </div>
                 </div>
             </div>
         </div>
