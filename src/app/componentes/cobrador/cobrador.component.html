@@ -68,17 +68,17 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="esta habilitada" sticky>
+        <ng-container matColumnDef="estaHabilitada" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Habilitada</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.estaActivo ? 'Si' : 'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
         </ng-container>
         <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
               class="cursor-color">editar</span></td>
         </ng-container>

@@ -5,7 +5,6 @@ import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { AfipCondicionIvaService } from '../../servicios/afip-condicion-iva.service';
 import { AppService } from '../../servicios/app.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Empresa } from 'src/app/modelos/empresa';
@@ -52,7 +51,7 @@ export class EmpresaComponent implements OnInit {
   //Define la lista de resultados de busqueda de barrio
   public resultadosLocalidades: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'razon social', 'domicilio', 'barrio', 'localidad', 'cuit', 'inicio actividad', 'esta activa', 'usuarios', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'razonSocial', 'domicilio', 'barrio', 'localidad', 'cuit', 'inicioActividad', 'estaActiva', 'usuarios', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso

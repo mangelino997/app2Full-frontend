@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ResumenClienteService } from '../../servicios/resumen-cliente.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { MatSort, MatTableDataSource } from '@angular/material';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-resumen-cliente',
@@ -31,7 +32,7 @@ export class ResumenClienteComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta: Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado para las busquedas
   public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
@@ -40,11 +41,15 @@ export class ResumenClienteComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'nombre', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ResumenClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private loaderService: LoaderService) {
+    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -157,7 +162,8 @@ export class ResumenClienteComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {

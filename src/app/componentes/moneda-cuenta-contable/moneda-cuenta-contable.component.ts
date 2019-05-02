@@ -10,6 +10,7 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-moneda-cuenta-contable',
@@ -60,9 +61,9 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Constructor
   constructor(private monedaCuentaContableServicio: MonedaCuentaContableService, private monedaCuentaContable: MonedaCuentaContable,
     private planCuentaServicio: PlanCuentaService, private subopcionPestaniaService: SubopcionPestaniaService, private monedaServicio: MonedaService,
-    private empresaServicio: EmpresaService, private loaderService: LoaderService) {
+    private empresaServicio: EmpresaService, private loaderService: LoaderService, private appService: AppService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(1, 19)
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

@@ -91,7 +91,7 @@ export class ClienteComponent implements OnInit {
   //Define la lista de resultados de busqueda de compania seguro
   public resultadosCompaniasSeguros:Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'razón social', 'tipo documento', 'número documento', 'teléfono', 'domicilio', 'localidad', 'ver', 'mod'];
+  public columnas:string[] = ['id', 'razonSocial', 'tipoDocumento', 'numeroDocumento', 'telefono', 'domicilio', 'localidad', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso

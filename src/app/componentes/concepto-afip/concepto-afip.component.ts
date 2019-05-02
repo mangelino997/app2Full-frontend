@@ -45,7 +45,7 @@ export class ConceptoAfipComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'código afip', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'codigoAfip', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso

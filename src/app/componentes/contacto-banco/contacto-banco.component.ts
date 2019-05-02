@@ -49,7 +49,7 @@ export class ContactoBancoComponent implements OnInit {
   //Define la lista de resultados de busqueda de sucursales bancos
   public resultadosSucursalesBancos: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'banco', 'sucursal', 'nombre contacto', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'banco', 'sucursal', 'nombreContacto', 'tipoContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -58,11 +58,11 @@ export class ContactoBancoComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: ContactoBancoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
+    private appServicio: AppService, private toastr: ToastrService,
     private sucursalBancoServicio: SucursalBancoService, private tipoContactoServicio: TipoContactoService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol(), this.appServicio.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -233,7 +233,7 @@ export class ContactoBancoComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('usuarioAlta').setValue(this.appServicio.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -255,7 +255,7 @@ export class ContactoBancoComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.formulario.get('usuarioMod').setValue(this.appServicio.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

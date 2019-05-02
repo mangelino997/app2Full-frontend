@@ -470,19 +470,19 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="razón social" sticky>
+        <ng-container matColumnDef="razonSocial" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.razonSocial}}</td>
         </ng-container>
-        <ng-container matColumnDef="tipo documento" sticky>
+        <ng-container matColumnDef="tipoDocumento" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.tipoDocumento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="número documento" sticky>
+        <ng-container matColumnDef="numeroDocumento" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.numeroDocumento}}</td>
         </ng-container>
-        <ng-container matColumnDef="teléfono" sticky>
+        <ng-container matColumnDef="telefono" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.telefono}}</td>
         </ng-container>
@@ -496,12 +496,12 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
         </ng-container>
         <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
               class="cursor-color">editar</span></td>
         </ng-container>

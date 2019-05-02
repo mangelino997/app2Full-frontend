@@ -44,7 +44,7 @@ export class AgendaTelefonicaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'domicilio', 'teléfono fijo', 'teléfono movil', 'correo electrónico', 'localidad', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'domicilio', 'teléfonoFijo', 'teléfonoMovil', 'correoElectrónico', 'localidad', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor

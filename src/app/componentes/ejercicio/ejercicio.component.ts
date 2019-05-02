@@ -44,7 +44,7 @@ export class EjercicioComponent implements OnInit {
   //Define la lista de resultados del autocompletado
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'anio', 'mes', 'cantidad meses', 'predeterminado', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'anio', 'mes', 'cantidadMeses', 'predeterminado', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso

@@ -48,7 +48,7 @@ export class ContactoProveedorComponent implements OnInit {
   //Define la lista de resultados de busqueda de sucursales bancos
   public resultadosProveedores: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'proveedor', 'nombre contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'proveedor', 'nombreContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso

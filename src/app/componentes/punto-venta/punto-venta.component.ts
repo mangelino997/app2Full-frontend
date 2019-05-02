@@ -3,7 +3,6 @@ import { PuntoVentaService } from '../../servicios/punto-venta.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { EmpresaService } from '../../servicios/empresa.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 // import { MatAutocompleteTrigger } from '@angular/material';

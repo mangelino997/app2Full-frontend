@@ -46,7 +46,7 @@ export class CategoriaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'adicional vacaciones', 'tope adelantos', 'días laborables', 'horas laborables', 'ver', 'mod'];
+  public columnas:string[] = ['id', 'nombre', 'adicionalVacaciones', 'topeAdelantos', 'díasLaborables', 'horasLaborables', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor

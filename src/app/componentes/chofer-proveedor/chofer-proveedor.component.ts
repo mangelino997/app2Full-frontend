@@ -58,7 +58,7 @@ export class ChoferProveedorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'proveedor', 'tipo documento', 'numero documento', 'localidad', 'ver', 'mod'];
+  public columnas:string[] = ['id', 'nombre', 'proveedor', 'tipoDocumento', 'numeroDocumento', 'localidad', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor

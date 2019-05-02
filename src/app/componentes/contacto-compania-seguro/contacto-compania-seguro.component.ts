@@ -4,7 +4,6 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource } from '@angular/material';
@@ -19,35 +18,35 @@ import { Subscription } from 'rxjs';
 })
 export class ContactoCompaniaSeguroComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
-  public opcionSeleccionada:number = null;
+  public opcionSeleccionada: number = null;
   //Define la lista de tipos de contactos
-  public tiposContactos:Array<any> = [];
+  public tiposContactos: Array<any> = [];
   //Define la lista de contactos
-  public contactos:Array<any> = [];
+  public contactos: Array<any> = [];
   //Define el form control para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda companias seguros
-  public resultadosCompaniasSeguros:Array<any> = [];
+  public resultadosCompaniasSeguros: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'tipo contacto', 'teléfono fijo', 'teléfono movil', 'correo electrónico' , 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'tipoContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -56,20 +55,20 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: ContactoCompaniaSeguroService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appServicio: AppService, private toastr: ToastrService,
+    private appServicio: AppService, private toastr: ToastrService,
     private companiaSeguroServicio: CompaniaSeguroService, private tipoContactoServicio: TipoContactoService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol(), this.appServicio.getSubopcion())
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
@@ -80,7 +79,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
-          this.show = state.show;
+        this.show = state.show;
       });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
@@ -99,8 +98,8 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado - Buscar por nombre compania seguro
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.companiaSeguroServicio.listarPorNombre(data).subscribe(response =>{
+      if (typeof data == 'string' && data.length > 2) {
+        this.companiaSeguroServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosCompaniasSeguros = response;
         })
       }
@@ -132,7 +131,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('tipoContacto').enable();
     } else {
       this.formulario.get('tipoContacto').disable();
@@ -154,7 +153,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultadosCompaniasSeguros = [];
     }
@@ -178,7 +177,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
         break;
       case 5:
         this.mostrarAutocompletado = true;
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idCompaniaSeguro').focus();
         }, 20);
       default:
@@ -228,12 +227,12 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     this.loaderService.show();
     let elemento = this.formulario.get('companiaSeguro').value;
     this.listaCompleta = new MatTableDataSource([]);
-      if(this.mostrarAutocompletado) {
+    if (this.mostrarAutocompletado) {
       this.servicio.listarPorCompaniaSeguro(elemento.id).subscribe(
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
-          this.loaderService.hide();   
+          this.loaderService.hide();
         },
         err => {
           console.log(err);
@@ -245,13 +244,13 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('usuarioAlta').setValue(this.appServicio.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idCompaniaSeguro').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -267,13 +266,13 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('usuarioAlta').setValue(this.appServicio.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idCompaniaSeguro').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -299,7 +298,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    if(respuesta.codigo == 11003) {
+    if (respuesta.codigo == 11003) {
       document.getElementById("labelCorreoelectronico").classList.add('label-error');
       document.getElementById("idCorreoelectronico").classList.add('is-invalid');
       document.getElementById("idCorreoelectronico").focus();
@@ -313,14 +312,14 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.listarPorCompaniaSeguro(elemento.companiaSeguro);
+    this.listarPorCompaniaSeguro();
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.listarPorCompaniaSeguro(elemento.companiaSeguro);
+    this.listarPorCompaniaSeguro();
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
@@ -328,13 +327,13 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -342,7 +341,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ' - ' + elemento.tipoContacto.nombre : elemento;
     } else {
       return elemento;
@@ -351,9 +350,9 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }

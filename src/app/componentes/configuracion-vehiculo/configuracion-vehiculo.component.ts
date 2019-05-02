@@ -45,7 +45,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   //Define la lista de marcas de vehiculos
   public marcasVehiculos: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'tipo vehículo', 'marca vehículo', 'modelo', 'cantidad ejes', 'capacidad carga', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'tipoVehiculo', 'marcaVehiculo', 'modelo', 'cantidadEjes', 'capacidadCarga', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso

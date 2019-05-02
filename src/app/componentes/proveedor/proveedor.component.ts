@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProveedorService } from '../../servicios/proveedor.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
@@ -17,6 +17,7 @@ import { Proveedor } from 'src/app/modelos/proveedor';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-proveedor',
@@ -43,7 +44,7 @@ export class ProveedorComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta: Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada: number = null;
   //Define la lista de condiciones de iva
@@ -72,9 +73,13 @@ export class ProveedorComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'razonSocial', 'tipoDocumento', 'numeroDocumento', 'telefono', 'domicilio', 'localidad', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private appServicio: AppService, private toastr: ToastrService,
+    private appService: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private afipCondicionIvaServicio: AfipCondicionIvaService,
     private tipoDocumentoServicio: TipoDocumentoService, private tipoProveedorServicio: TipoProveedorService,
@@ -368,7 +373,8 @@ export class ProveedorComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
@@ -465,7 +471,7 @@ export class ProveedorComponent implements OnInit {
   }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
-    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
+    valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
   }
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
@@ -488,21 +494,21 @@ export class ProveedorComponent implements OnInit {
     if (documento) {
       switch (tipoDocumento.id) {
         case 1:
-          let respuesta = this.appServicio.validarCUIT(documento.toString());
+          let respuesta = this.appService.validarCUIT(documento.toString());
           if (!respuesta) {
             let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 2:
-          let respuesta2 = this.appServicio.validarCUIT(documento.toString());
+          let respuesta2 = this.appService.validarCUIT(documento.toString());
           if (!respuesta2) {
             let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
             this.lanzarError(err);
           }
           break;
         case 8:
-          let respuesta8 = this.appServicio.validarDNI(documento.toString());
+          let respuesta8 = this.appService.validarDNI(documento.toString());
           if (!respuesta8) {
             let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
             this.lanzarError(err);
@@ -589,6 +595,6 @@ export class ProveedorComponent implements OnInit {
   }
   //Mascara numeros enteros
   public mascararEnteros(limit) {
-    return this.appServicio.mascararEnteros(limit);
+    return this.appService.mascararEnteros(limit);
   }
 }

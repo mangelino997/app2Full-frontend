@@ -48,7 +48,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas:Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'empresa', 'número póliza', 'vto póliza', 'ver', 'mod', 'eliminar'];
+  public columnas:string[] = ['id', 'empresa', 'numeroPoliza', 'vtoPoliza', 'ver', 'mod', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso

@@ -124,15 +124,15 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.domicilio}}</td>
         </ng-container>
-        <ng-container matColumnDef="teléfono fijo" sticky>
+        <ng-container matColumnDef="teléfonoFijo" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Fijo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.telefonoFijo}}</td>
         </ng-container>
-        <ng-container matColumnDef="teléfono movil" sticky>
+        <ng-container matColumnDef="teléfonoMovil" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Movil</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.telefonoMovil}}</td>
         </ng-container>
-        <ng-container matColumnDef="correo electrónico" sticky>
+        <ng-container matColumnDef="correoElectrónico" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electrónico</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.correoelectronico}}</td>
         </ng-container>
@@ -142,12 +142,12 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
         </ng-container>
         <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
               class="cursor-color">editar</span></td>
         </ng-container>

@@ -163,7 +163,7 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="razon social" sticky>
+        <ng-container matColumnDef="razonSocial" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.razonSocial}}</td>
         </ng-container>
@@ -184,11 +184,11 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>CUIT</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.cuit}}</td>
         </ng-container>
-        <ng-container matColumnDef="inicio actividad" sticky>
+        <ng-container matColumnDef="inicioActividad" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Inicio Actividad</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.inicioActividad | date: 'dd/MM/yyyy'}}</td>
         </ng-container>
-        <ng-container matColumnDef="esta activa" sticky>
+        <ng-container matColumnDef="estaActiva" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Está Activa</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.estaActiva ? 'Si' : 'No'}}</td>
         </ng-container>
@@ -197,12 +197,12 @@
           <td mat-cell *matCellDef="let elemento">{{elemento.usuarios}}</td>
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
         </ng-container>
         <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
               class="cursor-color">editar</span></td>
         </ng-container>

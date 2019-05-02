@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ProvinciaService } from '../../servicios/provincia.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { PaisService } from '../../servicios/pais.service';
@@ -8,6 +8,7 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-provincia',
@@ -32,7 +33,7 @@ export class ProvinciaComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta: Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define la lista de paises
   public paises: Array<any> = [];
   //Define el autocompletado para las busquedas
@@ -45,6 +46,10 @@ export class ProvinciaComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'nombre', 'codigoIIBB', 'codigoAfip', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ProvinciaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private paisServicio: PaisService, private toastr: ToastrService,
@@ -122,7 +127,6 @@ export class ProvinciaComponent implements OnInit {
     this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.listaCompleta = [];
     if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
@@ -181,7 +185,8 @@ export class ProvinciaComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
       },
       err => {
         console.log(err);
@@ -257,7 +262,8 @@ export class ProvinciaComponent implements OnInit {
   public listarPorPais(pais) {
     this.loaderService.show();
     this.servicio.listarPorPais(pais.id).subscribe(res => {
-      this.listaCompleta = res.json();
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
       this.loaderService.hide();
     })
   }

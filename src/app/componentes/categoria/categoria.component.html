@@ -111,29 +111,29 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="adicional vacaciones" sticky>
+        <ng-container matColumnDef="adicionalVacaciones" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Adicional Vacaciones</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.adicionalBasicoVacaciones | number:'2.2-2'}}</td>
         </ng-container>
-        <ng-container matColumnDef="tope adelantos" sticky>
+        <ng-container matColumnDef="topeAdelantos" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tope Adelantos</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.topeBasicoAdelantos | number:'2.2-2'}}</td>
         </ng-container>
-        <ng-container matColumnDef="días laborables" sticky>
+        <ng-container matColumnDef="díasLaborables" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Días Laborables</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.diasLaborables}}</td>
         </ng-container>
-        <ng-container matColumnDef="horas laborables" sticky>
+        <ng-container matColumnDef="horasLaborables" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Horas Laborables</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.horasLaborables}}</td>
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
         </ng-container>
         <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
               class="cursor-color">editar</span></td>
         </ng-container>

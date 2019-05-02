@@ -8,6 +8,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSort, MatTableDataSource }
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-moneda',
@@ -55,10 +56,10 @@ export class MonedaComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private moneda: Moneda, private monedaServicio: MonedaService,
-    private subopcionPestaniaService: SubopcionPestaniaService,
+    private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService,
     private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(1, 19)
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

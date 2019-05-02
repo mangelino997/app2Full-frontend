@@ -45,7 +45,7 @@ export class CondicionCompraComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'es contado', 'ver', 'mod'];
+  public columnas:string[] = ['id', 'nombre', 'esContado', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
