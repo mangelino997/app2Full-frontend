@@ -415,7 +415,7 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAfipSiniestrado" class="tamanio-label">Código de Siniestrado *</label>
-                        <input id="idAfipSiniestrado" class="form-control form-control-sm number-right" type="text"
+                        <input id="idAfipSiniestrado" class="form-control form-control-sm" type="text"
                           matInput [formControl]="formulario.get('afipSiniestrado')"
                           [matAutocomplete]="autoAfipSiniestrado" autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoAfipSiniestrado="matAutocomplete" [displayWith]="displayFd.bind(this)">

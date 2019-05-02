@@ -123,6 +123,10 @@ export class ClienteEventualComponent implements OnInit {
       document.getElementById('idCondicionIva').focus();
     }, 20);
   }
+  //Obtiene la mascara de enteros CON decimales
+  public mascararEnteroSinDecimales(intLimite) {
+    return this.appService.mascararEnterosSinDecimales(intLimite);
+  }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {
     this.afipCondicionIvaServicio.listar().subscribe(
