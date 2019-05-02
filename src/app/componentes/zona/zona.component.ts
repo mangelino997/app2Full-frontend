@@ -211,8 +211,8 @@ export class ZonaComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-        }
         this.loaderService.hide();
+        }
       },
       err => {
         var respuesta = err.json();
@@ -221,8 +221,8 @@ export class ZonaComponent implements OnInit {
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
-          this.loaderService.hide();
         }
+          this.loaderService.hide();
       }
     );
   }
