@@ -10,6 +10,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-venta-concepto',
@@ -34,7 +35,7 @@ public pestanias:Array<any> = [];
 //Define un formulario para validaciones de campos
 public formulario:FormGroup;
 //Define la lista completa de registros
-public listaCompleta:Array<any> = [];
+public listaCompleta = new MatTableDataSource([]);
 //Define la lista completa de tipos de comprobantes
 public tiposComprobantes:Array<any> = [];
 //Define el autocompletado
@@ -51,6 +52,10 @@ public empresas:Array<any> = [];
  public show = false;
  //Define la subscripcion a loader.service
  private subscription: Subscription;
+ //Define las columnas de la tabla
+ public columnas: string[] = ['id', 'nombre','tipoComprobante', 'estaHabilitado', 'ver', 'mod'];
+ //Define la matSort
+ @ViewChild(MatSort) sort: MatSort;
 // public compereFn:any;
 //Constructor
 
@@ -98,7 +103,9 @@ public empresas:Array<any> = [];
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err => {
         console.log(err);

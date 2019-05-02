@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { VehiculoProveedorService } from '../../servicios/vehiculo-proveedor.service';
 import { ChoferProveedorService } from '../../servicios/chofer-proveedor.service';
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
@@ -14,6 +14,7 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-vehiculo-proveedor',
@@ -38,7 +39,7 @@ export class VehiculoProveedorComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define la lista de tipos de vehiculos
   public tiposVehiculos:Array<any> = [];
   //Define la lista de marcas de vehiculos
@@ -61,6 +62,11 @@ export class VehiculoProveedorComponent implements OnInit {
  public show = false;
  //Define la subscripcion a loader.service
  private subscription: Subscription;
+ //Define las columnas de la tabla
+ public columnas: string[] = ['id', 'dominio', 'proveedor', 'tipoVehiculo', 'marcaVehiculo', 'companiaSeguro', 'ver', 'mod'];
+ //Define la matSort
+ @ViewChild(MatSort) sort: MatSort;
+
   //Constructor
   constructor(private servicio: VehiculoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService,
@@ -275,7 +281,9 @@ export class VehiculoProveedorComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err => {
         console.log(err);
