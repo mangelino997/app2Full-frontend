@@ -17,7 +17,8 @@
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Buscar Vehículo</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+                placeholder="Buscar por Dominio o Número Interno">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="establecerFormulario(item)">

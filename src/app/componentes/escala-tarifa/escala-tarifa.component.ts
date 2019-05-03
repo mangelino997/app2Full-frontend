@@ -83,6 +83,7 @@ export class EscalaTarifaComponent implements OnInit {
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
+          this.listar();
         }
       },
       err => {
@@ -110,6 +111,7 @@ export class EscalaTarifaComponent implements OnInit {
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
+          this.listar();
         }
       },
       err => {

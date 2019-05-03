@@ -122,9 +122,9 @@ export class OrdenVentaComponent implements OnInit {
     //   this.listaCompleta = res;
     // });
     //Se subscribe al servicio de lista por orden venta
-    this.ordenVentaEscalaServicio.listaEscalas.subscribe(res => {
-      this.listaDeEscalas = res;
-    });
+    // this.ordenVentaEscalaServicio.listaEscalas.subscribe(res => {
+    //   this.listaDeEscalas = res;
+    // });
     //Autocompletado - Buscar por nombre
     this.buscar.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -206,20 +206,23 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Obtiene la lista de orden venta escala o orden venta tramo
   public cambioPreciosDesde(): void {
+    this.loaderService.show();
     let tipoTarifa = this.formulario.get('tipoTarifa').value.porEscala;
     let ordenVenta = this.ordenventa.value.id;
     let precioDesde = this.preciosDesde.value;
     if (tipoTarifa) {
       this.ordenVentaEscalaServicio.listarPorOrdenVentaYPreciosDesde(ordenVenta, precioDesde).subscribe(res => {
         this.listaDeEscalas = res.json();
-        // this.listaDeEscalas.sort((a, b) => (a.valor < b.valor) ? 1 : -1);
         for (let i = 0; i < this.listaDeEscalas.length; i++) {
           this.eliminarElementoEscalas(this.listaDeEscalas[i].escalaTarifa.valor);
         }
+        this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1);
+        this.loaderService.hide();
       });
     } else {
       this.ordenVentaTramoServicio.listarPorOrdenVentaYPreciosDesde(ordenVenta, precioDesde).subscribe(res => {
         this.listaDeTramos = res.json();
+        this.loaderService.hide();
       });
     }
   }
@@ -462,6 +465,7 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioEscala.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
       this.ordenVentaEscalaServicio.agregar(this.formularioEscala.value).subscribe(res => {
         this.loaderService.hide();
+        this.cambioPreciosDesde();
       });
     } else {
       this.listaDeEscalas.push(this.formularioEscala.value);
@@ -478,6 +482,7 @@ export class OrdenVentaComponent implements OnInit {
       this.loaderService.show();
       this.ordenVentaEscalaServicio.actualizar(this.formularioEscala.value).subscribe(res => {
         this.loaderService.hide();
+        this.cambioPreciosDesde();
       });
     } else {
       this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
@@ -504,6 +509,7 @@ export class OrdenVentaComponent implements OnInit {
       elemento.ordenVenta = { id: this.ordenventa.value.id };
       this.ordenVentaEscalaServicio.eliminar(elemento).subscribe(res => {
         this.loaderService.hide();
+        this.cambioPreciosDesde();
       });
     } else {
       this.listaDeEscalas.splice(indice, 1);
@@ -594,6 +600,7 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioTramo.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
       this.ordenVentaTramoServicio.agregar(this.formularioTramo.value).subscribe(res => {
         this.loaderService.hide();
+        this.cambioPreciosDesde();
       });
     } else {
       this.listaDeTramos.push(this.formularioTramo.value);
@@ -609,6 +616,7 @@ export class OrdenVentaComponent implements OnInit {
       this.loaderService.show();
       this.ordenVentaTramoServicio.actualizar(this.formularioTramo.value).subscribe(res => {
         this.loaderService.hide();
+        this.cambioPreciosDesde();
       });
     } else {
       this.listaDeTramos[this.idModTramo] = this.formularioTramo.value;
@@ -634,6 +642,7 @@ export class OrdenVentaComponent implements OnInit {
       elemento.ordenVenta = { id: this.ordenventa.value.id };
       this.ordenVentaTramoServicio.eliminar(elemento).subscribe(res => {
         this.loaderService.hide();
+        this.cambioPreciosDesde();
       });
     } else {
       this.listaDeTramos.splice(indice, 1);
