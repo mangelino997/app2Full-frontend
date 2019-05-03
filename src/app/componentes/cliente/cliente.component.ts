@@ -678,6 +678,10 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('vencimientoPolizaSeguro').clearValidators();
     }
   }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
+  }
   //Obtiene la mascara de enteros CON decimales
   public obtenerMascaraEnteroSinDecimales(intLimite) {
     return this.appService.mascararEnterosSinDecimales(intLimite);

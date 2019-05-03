@@ -123,6 +123,10 @@ export class ClienteEventualComponent implements OnInit {
       document.getElementById('idCondicionIva').focus();
     }, 20);
   }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
+  }
   //Obtiene la mascara de enteros CON decimales
   public mascararEnteroSinDecimales(intLimite) {
     return this.appService.mascararEnterosSinDecimales(intLimite);

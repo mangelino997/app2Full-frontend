@@ -50,6 +50,10 @@ export class VehiculoProveedorService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista por proveedor
+  public listarPorProveedor(idProveedor) {
+    return this.http.get(this.url + '/listarPorProveedor/' + idProveedor, this.options);
+  }
   //Obtiene un listado por alias
   public listarPorAlias(alias) {
     return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {

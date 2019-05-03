@@ -66,7 +66,6 @@ export class VehiculoProveedorComponent implements OnInit {
   public columnas: string[] = ['id', 'dominio', 'proveedor', 'tipoVehiculo', 'marcaVehiculo', 'companiaSeguro', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
-
   //Constructor
   constructor(private servicio: VehiculoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService,
@@ -187,6 +186,22 @@ export class VehiculoProveedorComponent implements OnInit {
       this.marcasVehiculos = res.json();
     })
   }
+  //Obtiene la lista por proveedor
+  public listarPorProveedor(): void {
+    this.loaderService.show();
+    let proveedor = this.formulario.get('proveedor').value;
+    this.servicio.listarPorProveedor(proveedor.id).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
+      },
+      err => {
+        console.log(err);
+        this.loaderService.hide();
+      }
+    );
+  }
   //Vacia la lista de resultados de autocompletados
   private vaciarLista() {
     this.resultados = [];
@@ -244,7 +259,10 @@ export class VehiculoProveedorComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
+        this.listaCompleta = new MatTableDataSource([]);
+        setTimeout(function() {
+          document.getElementById('idProveedor').focus();
+        }, 20);
         break;
       default:
         break;
@@ -355,7 +373,7 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }

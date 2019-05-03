@@ -43,8 +43,8 @@
           <div class="col-md-8">
             <div class="form-group has-float-label">
               <label for="idNumeroPoliza" class="tamanio-label">Número de Póliza</label>
-              <input id="idNumeroPoliza" type="text" placeholder="00" formControlName="numeroPoliza" autocomplete="off" class="form-control form-control-sm number-right"
-                [readonly]="soloLectura" [textMask]="obtenerMascaraEnteroSinDecimales(10)">
+              <input id="idNumeroPoliza" type="text" formControlName="numeroPoliza" 
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
         </div>

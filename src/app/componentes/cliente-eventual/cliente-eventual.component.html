@@ -48,8 +48,8 @@
                     <div class="form-group has-float-label">
                         <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
                         <input id="idNumeroIIBB" type="text" formControlName="numeroIIBB"
-                            autocomplete="off" [textMask]="mascararEnteroSinDecimales(10)"
-                            class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="15">
+                            autocomplete="off" [textMask]="mascararEnteros(15)"
+                            class="form-control form-control-sm number-right" [readonly]="soloLectura">
                     </div>
                 </div>
             </div>

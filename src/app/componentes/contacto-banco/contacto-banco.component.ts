@@ -4,7 +4,6 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { SucursalBancoService } from '../../servicios/sucursal-banco.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource } from '@angular/material';
@@ -49,7 +48,7 @@ export class ContactoBancoComponent implements OnInit {
   //Define la lista de resultados de busqueda de sucursales bancos
   public resultadosSucursalesBancos: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'banco', 'sucursal', 'nombreContacto', 'tipoContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombreContacto', 'tipoContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso

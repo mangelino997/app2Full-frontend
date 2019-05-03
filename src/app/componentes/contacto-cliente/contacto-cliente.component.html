@@ -18,7 +18,7 @@
               <label for="idCliente" class="tamanio-label">Cliente *</label>
               <input id="idCliente" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
-                (blur)="verificarSeleccion(formulario.get('cliente'))">
+                (blur)="verificarSeleccion(formulario.get('cliente'))" placeholder="Buscar Cliente">
               <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente"
                   (onSelectionChange)="listarPorCliente(itemCliente)">
@@ -99,7 +99,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-    <div class="col-md-8">
+    <div class="col-md-12">
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <app-progreso></app-progreso>
@@ -107,11 +107,12 @@
       </div>
       <br>
       <div class="row">
-        <div class="col-md-12">
+        <div class="col-md-6">
           <div class="form-group has-float-label">
             <label for="idCliente" class="tamanio-label">Cliente *</label>
             <input id="idCliente" class="form-control form-control-sm" type="text" matInput
-              [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off">
+              [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
+              placeholder="Buscar por Cliente">
             <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFn.bind(this)">
               <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente"
                 (onSelectionChange)="listarPorCliente(itemCliente)">
@@ -139,7 +140,7 @@
           <td mat-cell *matCellDef="let elemento">{{elemento.telefonoFijo}}</td>
         </ng-container>
         <ng-container matColumnDef="telefonoMovil" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Movil</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Móvil</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.telefonoMovil}}</td>
         </ng-container>
         <ng-container matColumnDef="correoElectronico" sticky>

@@ -60,12 +60,12 @@ export class EmpresaComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: EmpresaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appServicio: AppService, private toastr: ToastrService,
+    private appService: AppService, private toastr: ToastrService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
     private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa, public dialog: MatDialog,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol(), this.appServicio.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -119,6 +119,10 @@ export class EmpresaComponent implements OnInit {
     //this.listar();
     //Obtiene la lista de condiciones de iva
     this.listarCondicionesIva();
+  }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
   }
   //Establece el formulario al seleccionar item de autocompletado
   public establecerFormulario(): void {

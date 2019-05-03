@@ -78,7 +78,7 @@ export class VehiculoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'tipoVehiculo', 'marcaVehiculo', 'dominio', 'titular', 'radicacionLocalidad', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'tipoVehiculo', 'marcaVehiculo', 'dominio', 'titular', 'localidad', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -190,7 +190,8 @@ export class VehiculoComponent implements OnInit {
     })
   }
   //Establece el formulario al seleccionar elemento de autocompletado
-  public establecerFormulario(elemento) {
+  public establecerFormulario() {
+    let elemento = this.autocompletado.value;
     this.formulario.setValue(elemento);
     this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
     this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
@@ -283,6 +284,7 @@ export class VehiculoComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        console.log(this.listaCompleta);
         this.loaderService.hide();
       },
       err => {
@@ -399,7 +401,8 @@ export class VehiculoComponent implements OnInit {
   * Establece la configuracion de vehiculo al seleccionar un item de la lista
   * configuraciones de vehiculos
   */
-  public establecerConfiguracion(elemento) {
+  public establecerConfiguracion(elem) {
+    let elemento = elem.configuracionVehiculo ? elem.configuracionVehiculo : elem;
     this.configuracion.setValue('Modelo: ' + elemento.modelo +
       ' - Cantidad de Ejes: ' + elemento.cantidadEjes +
       ' - Capacidad de Carga: ' + elemento.capacidadCarga + '\n' +

@@ -102,15 +102,15 @@
             <div class="form-group has-float-label">
               <label id="labelCUIT" for="idCUIT" class="tamanio-label">CUIT *</label>
               <input id="idCUIT" type="number" formControlName="cuit" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura"
                 (ngModelChange)="cambioCampo('idCUIT', 'labelCUIT')">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
-              <input id="idNumeroIIBB" type="number" formControlName="numeroIIBB" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="15">
+              <input id="idNumeroIIBB" [textMask]="mascararEnteros(15)" type="text" formControlName="numeroIIBB" 
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
         </div>

@@ -189,15 +189,15 @@
         </ng-container>
         <ng-container matColumnDef="esAsignable" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Asignable</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.esAsignable}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.esAsignable ? 'Si' : 'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="esSerializable" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Serializable</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.esSerializable}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.esSerializable ? 'Si' : 'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="esCritico" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Crítico</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.esCritico}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.esCritico ? 'Si' : 'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
           <th mat-header-cell *matHeaderCellDef>-</th>

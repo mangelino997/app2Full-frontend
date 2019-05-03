@@ -105,7 +105,8 @@
               <label for="idChoferProveedor" class="tamanio-label">Chofer Habitual</label>
               <input id="idChoferProveedor" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('choferProveedor')" [matAutocomplete]="autoChoferProveedor"
-                autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('choferProveedor'))">
+                autocomplete="off" [readonly]="soloLectura"
+                (blur)="verificarSeleccion(formulario.get('choferProveedor'))">
               <mat-autocomplete #autoChoferProveedor="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemChoferProveedor of resultadosChoferesProveedores"
                   [value]="itemChoferProveedor">
@@ -119,7 +120,8 @@
               <label for="idVehiculoRemolque" class="tamanio-label">Remolque Habitual</label>
               <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('vehiculoRemolque')" [matAutocomplete]="autoVehiculoRemolque"
-                autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('vehiculoRemolque'))">
+                autocomplete="off" [readonly]="soloLectura"
+                (blur)="verificarSeleccion(formulario.get('vehiculoRemolque'))">
               <mat-autocomplete #autoVehiculoRemolque="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
                   [value]="itemVehiculoRemolque">
@@ -135,7 +137,8 @@
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro *</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
-                autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('companiaSeguro'))">
+                autocomplete="off" [readonly]="soloLectura"
+                (blur)="verificarSeleccion(formulario.get('companiaSeguro'))">
               <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFa.bind(this)">
                 <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
                   {{itemCompaniaSeguro.nombre}}
@@ -211,12 +214,28 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-12">
+      <br>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group has-float-label">
+            <label for="idProveedor" class="tamanio-label">Proveedor *</label>
+            <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
+              [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedorL" autocomplete="off"
+              (blur)="verificarSeleccion(formulario.get('proveedor'))">
+            <mat-autocomplete #autoProveedorL="matAutocomplete" [displayWith]="displayF.bind(this)"
+              (optionSelected)="listarPorProveedor()">
+              <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
+                {{itemProveedor.alias}}
+              </mat-option>
+            </mat-autocomplete>
+          </div>
+        </div>
+      </div>
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <app-progreso></app-progreso>
         </div>
       </div>
-      <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="id" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>

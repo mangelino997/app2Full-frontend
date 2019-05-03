@@ -114,14 +114,12 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idTipoDocumento" class="tamanio-label">Tipo de Documento *</label>
-              <input id="idTipoDocumento" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('tipoDocumento')" [matAutocomplete]="autoTipoDocumento" autocomplete="off"
-                [readonly]="soloLectura">
-              <mat-autocomplete #autoTipoDocumento="matAutocomplete" [displayWith]="displayFa.bind(this)">
+              <mat-select id="idTipoDocumento" class="form-control form-control-sm" formControlName="tipoDocumento"
+                [compareWith]="compareFn">
                 <mat-option *ngFor="let itemTipoDocumento of tiposDocumentos" [value]="itemTipoDocumento">
                   {{itemTipoDocumento.nombre}}
                 </mat-option>
-              </mat-autocomplete>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-3">
@@ -197,7 +195,7 @@
             <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
               [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off">
             <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)"
-              (optionSelected)="listarPorProveedor()"(blur)="verificarSeleccion(formulario.get('proveedor'))">
+              (optionSelected)="listarPorProveedor()" (blur)="verificarSeleccion(formulario.get('proveedor'))">
               <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
                 {{itemProveedor.alias}}
               </mat-option>

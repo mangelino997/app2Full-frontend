@@ -18,7 +18,7 @@
               <label for="idProveedor" class="tamanio-label">Proveedor *</label>
               <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off"
-                (blur)="verificarSeleccion(formulario.get('proveedor'))">
+                (blur)="verificarSeleccion(formulario.get('proveedor'))" placeholder="Buscar Proveedor">
               <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)"
                 (optionSelected)="listarPorProveedor()">
                 <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
@@ -111,7 +111,8 @@
           <div class="form-group has-float-label">
             <label for="idProveedor" class="tamanio-label">Proveedor *</label>
             <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
-              [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off">
+              [formControl]="formulario.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off"
+              placeholder="Buscar por Proveedor">
             <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayF.bind(this)"
               (optionSelected)="listarPorProveedor()">
               <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
