@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { FormGroup, FormControl, Validators, MaxLengthValidator } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ViajeUnidadNegocioService } from 'src/app/servicios/viaje-unidad-negocio.service';
 import { ViajeUnidadNegocio } from 'src/app/modelos/viajeUnidadNegocio';
@@ -155,6 +155,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

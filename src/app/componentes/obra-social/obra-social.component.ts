@@ -177,6 +177,7 @@ export class ObraSocialComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

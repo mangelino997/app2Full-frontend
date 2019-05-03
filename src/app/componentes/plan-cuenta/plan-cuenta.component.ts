@@ -194,6 +194,7 @@ export class PlanCuentaComponent implements OnInit {
   //Agrega el nodo
   public agregar(nodo: Nodo) {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.formulario.get('estaActivo').enable();
     const elementoPadre = this.obtenerNodoPadre(nodo);
     const elemento = this.flatNodeMap.get(nodo);

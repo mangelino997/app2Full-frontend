@@ -258,6 +258,7 @@ export class ProductoComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {

@@ -612,6 +612,7 @@ export class PersonalComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);

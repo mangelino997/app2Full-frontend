@@ -1,4 +1,4 @@
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 //Define la entidad de la base de datos.
 export class OrdenVentaTramo {
     //define un formulario FormGroup

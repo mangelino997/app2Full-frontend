@@ -346,6 +346,7 @@ export class ViajeRemitoComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     var tipoComprobante = this.formulario.get('tipoComprobante').value;
     var numeroCamion = this.formulario.get('numeroCamion').value;
     var sucursalDestino = this.formulario.get('sucursalDestino').value;

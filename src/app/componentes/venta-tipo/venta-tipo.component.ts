@@ -219,6 +219,7 @@ export class VentaTipoComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -244,7 +245,6 @@ export class VentaTipoComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

@@ -325,6 +325,7 @@ export class PuntoVentaComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.enable();
+    this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

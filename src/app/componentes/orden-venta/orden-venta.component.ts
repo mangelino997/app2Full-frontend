@@ -462,6 +462,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
     if (this.indiceSeleccionado == 3) {
       this.loaderService.show();
+      this.formularioEscala.get('id').setValue(null);
       this.formularioEscala.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
       this.ordenVentaEscalaServicio.agregar(this.formularioEscala.value).subscribe(res => {
         this.loaderService.hide();
@@ -597,6 +598,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
     if (this.indiceSeleccionado == 3) {
       this.loaderService.show();
+      this.formularioTramo.get('id').setValue(null);
       this.formularioTramo.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
       this.ordenVentaTramoServicio.agregar(this.formularioTramo.value).subscribe(res => {
         this.loaderService.hide();
