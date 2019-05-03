@@ -244,6 +244,12 @@ export class TipoVehiculoComponent implements OnInit {
   private eliminar() {
     console.log();
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();

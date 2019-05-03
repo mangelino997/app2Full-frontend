@@ -15,7 +15,8 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}}
@@ -64,15 +65,13 @@
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-10">
       <div class="form-group has-float-label">
-        <label for="idSubmodulo" class="tamanio-label">Submódulo</label>
-        <input id="idSubmodulo" class="form-control form-control-sm" type="text" matInput
-          [formControl]="formulario.get('submodulo')" [matAutocomplete]="autoSubmodulo" autocomplete="off">
-        <mat-autocomplete #autoSubmodulo="matAutocomplete" [displayWith]="displayFa.bind(this)">
-          <mat-option *ngFor="let itemSubmodulo of submodulos" [value]="itemSubmodulo"
-            (onSelectionChange)="listarPorSubmodulo(itemSubmodulo)">
-            {{itemSubmodulo.nombre}} - {{itemSubmodulo.modulo.nombre}}
+        <label for="idSubmodulo" class="tamanio-label">Submódulo *</label>
+        <mat-select id="idSubmodulo" class="form-control form-control-sm" formControlName="submodulo"
+          [compareWith]="compareFn">
+          <mat-option *ngFor="let itemSubmodulo of submodulos" [value]="itemSubmodulo">
+            {{itemSubmodulo.modulo.nombre}} - {{itemSubmodulo.nombre}}
           </mat-option>
-        </mat-autocomplete>
+        </mat-select>
       </div>
       <div class="row" *ngIf="show">
         <div class="col text-center">

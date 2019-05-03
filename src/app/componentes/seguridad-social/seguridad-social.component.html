@@ -15,7 +15,8 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}}
@@ -36,9 +37,9 @@
           <label id="labelSitioWeb" for="idSitioWeb" class="tamanio-label">Sitio Web</label>
           <input id="idSitioWeb" type="text" formControlName="sitioWeb" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
-            pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$"
-            (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', 'sitioWeb')"
             (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioWeb')" maxlength="60">
+            <!-- pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$"
+            (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', 'sitioWeb')" -->
         </div>
         <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">

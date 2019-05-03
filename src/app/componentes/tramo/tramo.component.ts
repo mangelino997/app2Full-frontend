@@ -277,6 +277,12 @@ export class TramoComponent implements OnInit {
   private eliminar() {
     console.log();
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
   //Establece la tabla al seleccion elemento de autocompletado
   public establecerTabla(opcion): void {
     if (opcion) {

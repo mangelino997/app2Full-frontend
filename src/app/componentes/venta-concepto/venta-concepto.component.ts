@@ -56,9 +56,7 @@ export class VentaConceptoComponent implements OnInit {
   public columnas: string[] = ['id', 'nombre', 'tipoComprobante', 'estaHabilitado', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
-  // public compereFn:any;
   //Constructor
-
   constructor(private servicio: VentaItemConceptoService, private ventaConcepto: VentaConcepto, private appService: AppService,
     private loaderService: LoaderService, private subopcionPestaniaService: SubopcionPestaniaService,
     private tipoComprobanteServicio: TipoComprobanteService, private conceptosAfipServicio: AfipConceptoService,
@@ -227,7 +225,6 @@ export class VentaConceptoComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -253,6 +250,12 @@ export class VentaConceptoComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     console.log();
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {

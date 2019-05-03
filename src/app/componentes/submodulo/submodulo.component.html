@@ -15,7 +15,8 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}}
@@ -36,7 +37,7 @@
           <label for="idModulo" class="tamanio-label">Módulo *</label>
           <input id="idModulo" class="form-control form-control-sm" type="text" matInput
             [formControl]="formulario.get('modulo')" [matAutocomplete]="autoModulo" autocomplete="off"
-            [readonly]="soloLectura">
+            [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('modulo'))">
           <mat-autocomplete #autoModulo="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let itemModulo of modulos" [value]="itemModulo">
               {{itemModulo.nombre}}
@@ -60,7 +61,8 @@
       <div class="form-group has-float-label">
         <label for="idModulo" class="tamanio-label">Módulo</label>
         <input id="idModulo" class="form-control form-control-sm" type="text" matInput
-          [formControl]="formulario.get('modulo')" [matAutocomplete]="autoModulo" autocomplete="off">
+          [formControl]="formulario.get('modulo')" [matAutocomplete]="autoModulo" autocomplete="off"
+          (blur)="verificarSeleccion(formulario.get('modulo'))">
         <mat-autocomplete #autoModulo="matAutocomplete" [displayWith]="displayFn.bind(this)">
           <mat-option *ngFor="let itemModulo of modulos" [value]="itemModulo"
             (onSelectionChange)="listarPorModulo(itemModulo)">

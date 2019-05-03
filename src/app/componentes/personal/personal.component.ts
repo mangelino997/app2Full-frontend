@@ -216,7 +216,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Actividad - Buscar por nombre
     this.formulario.get('afipActividad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
+      if (typeof data == 'string' && data.length > 1) {
         this.afipActividadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipActividades = response;
         })
@@ -224,7 +224,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Condicion - Buscar por nombre
     this.formulario.get('afipCondicion').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
+      if (typeof data == 'string' && data.length > 1) {
         this.afipCondicionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipCondiciones = response;
         })
@@ -232,7 +232,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Localidad - Buscar por nombre
     this.formulario.get('afipLocalidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
+      if (typeof data == 'string' && data.length > 1) {
         this.afipLocalidadServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipLocalidades = response;
         })
@@ -240,7 +240,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Mod Contratacion - Buscar por nombre
     this.formulario.get('afipModContratacion').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
+      if (typeof data == 'string' && data.length > 1) {
         this.afipModContratacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipModContrataciones = response;
         })
@@ -248,7 +248,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Siniestrado - Buscar por nombre
     this.formulario.get('afipSiniestrado').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
+      if (typeof data == 'string' && data.length > 1) {
         this.afipSiniestradoServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSiniestrados = response;
         })
@@ -256,7 +256,7 @@ export class PersonalComponent implements OnInit {
     })
     //Autocompletado Afip Situacion - Buscar por nombre
     this.formulario.get('afipSituacion').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
+      if (typeof data == 'string' && data.length > 1) {
         this.afipSituacionServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosAfipSituaciones = response;
         })
@@ -665,6 +665,12 @@ export class PersonalComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     console.log();
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
   }
   //Reestablece los campos agregar
   private reestablecerFormulario(id) {

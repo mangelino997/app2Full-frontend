@@ -226,13 +226,13 @@ export class ClienteComponent implements OnInit {
       }
     })
     //Autocompletado Sucursal Lugar Pago - Buscar por nombre
-    this.formulario.get('sucursalLugarPago').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.sucursalServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosSucursalesPago = response;
-        })
-      }
-    })
+    // this.formulario.get('sucursalLugarPago').valueChanges.subscribe(data => {
+    //   if(typeof data == 'string'&& data.length>2) {
+    //     this.sucursalServicio.listarPorNombre(data).subscribe(response => {
+    //       this.resultadosSucursalesPago = response;
+    //     })
+    //   }
+    // })
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
       if(typeof data == 'string'&& data.length>2) {
@@ -253,6 +253,8 @@ export class ClienteComponent implements OnInit {
     this.listarSituacionesClientes();
     //Obtiene la lista de condiciones de venta
     this.listarCondicionesVentas();
+    //Obtiene la lista de sucursales
+    this.listarSucursales();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
   }
@@ -278,6 +280,12 @@ export class ClienteComponent implements OnInit {
     this.resultadosCuentasGrupos = [];
     this.resultadosSucursalesPago = [];
     this.resultadosCompaniasSeguros = [];
+  }
+  //Obtiene la lista de sucursales
+  private listarSucursales(): void {
+    this.sucursalServicio.listar().subscribe(res => {
+      this.resultadosSucursalesPago = res.json();
+    });
   }
   //Obtiene el listado de condiciones de iva
   private listarCondicionesIva() {

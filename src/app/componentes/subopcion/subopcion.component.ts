@@ -257,6 +257,12 @@ export class SubopcionComponent implements OnInit {
   private eliminar() {
     console.log();
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
   //Obtiene la lista de subopciones por submodulo
   public listarPorSubmodulo(submodulo) {
     this.loaderService.show();

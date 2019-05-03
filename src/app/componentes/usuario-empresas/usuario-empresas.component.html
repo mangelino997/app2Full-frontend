@@ -14,7 +14,8 @@
             <div class="form-group has-float-label">
               <label for="idUsuario" class="tamanio-label">Nombre de Usuario</label>
               <input id="idUsuario" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('usuario')" [matAutocomplete]="autoUsuario" autocomplete="off">
+                [formControl]="formulario.get('usuario')" [matAutocomplete]="autoUsuario" autocomplete="off"
+                (blur)="verificarSeleccion(formulario.get('usuario'))">
               <mat-autocomplete #autoUsuario="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let itemUsuario of resultadosUsuarios" [value]="itemUsuario">
                   {{itemUsuario.nombre}}

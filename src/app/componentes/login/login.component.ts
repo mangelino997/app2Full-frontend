@@ -53,11 +53,12 @@ export class LoginComponent implements OnInit {
       if(res.headers.get('authorization')) {
         //Almacena el token en el local storage
         localStorage.setItem('token', res.headers.get('authorization'));
+        let token = res.headers.get('authorization');
         //Establece logueado en true
         this.loginService.setLogueado(true);
         this.estaAutenticado = true;
         //Obtiene el usuario por username
-        this.usuarioService.obtenerPorUsername(this.elemento.username).subscribe(
+        this.usuarioService.obtenerPorUsername(this.elemento.username, token).subscribe(
           res => {
             let usuario = res.json();
             this.appComponent.setUsuario(usuario);

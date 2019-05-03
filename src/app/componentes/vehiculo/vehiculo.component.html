@@ -18,7 +18,8 @@
               <label for="idAutocompletado" class="tamanio-label">Buscar Vehículo</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-                placeholder="Buscar por Dominio o Número Interno">
+                placeholder="Buscar por Dominio o Número Interno"
+                (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="establecerFormulario(item)">
@@ -108,7 +109,7 @@
               <label for="idEmpresa" class="tamanio-label">Titular *</label>
               <input id="idEmpresa" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('empresa')" [matAutocomplete]="autoEmpresa" autocomplete="off"
-                [readonly]="soloLectura">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('empresa'))">
               <mat-autocomplete #autoEmpresa="matAutocomplete" [displayWith]="displayFd.bind(this)">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa"
                   (onSelectionChange)="listarCompaniasSeguroPolizaPorEmpresa(itemEmpresa)">
@@ -140,7 +141,7 @@
               <label for="idPersonal" class="tamanio-label">Chofer Habitual</label>
               <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal" autocomplete="off"
-                [readonly]="soloLectura">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('personal'))">
               <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemPersonal of resultadosPersonales" [value]="itemPersonal">
                   {{itemPersonal.alias}}
@@ -153,7 +154,7 @@
               <label for="idVehiculoRemolque" class="tamanio-label">Remolque Habitual</label>
               <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('vehiculoRemolque')" [matAutocomplete]="autoVehiculoRemolque"
-                autocomplete="off" [readonly]="soloLectura">
+                autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('vehiculoRemolque'))">
               <mat-autocomplete #autoVehiculoRemolque="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
                   [value]="itemVehiculoRemolque">
@@ -167,7 +168,7 @@
               <label for="idLocalidad" class="tamanio-label">Radicación Localidad *</label>
               <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad" autocomplete="off"
-                [readonly]="soloLectura">
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('localidad'))">
               <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                 <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
                   {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}}
@@ -182,7 +183,7 @@
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro *</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('companiaSeguroPoliza')" [matAutocomplete]="autoCompaniaSeguro"
-                autocomplete="off" [readonly]="soloLectura">
+                autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('companiaSeguroPoliza'))">
               <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFe.bind(this)">
                 <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSegurosPolizas"
                   [value]="itemCompaniaSeguro">

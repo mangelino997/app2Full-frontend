@@ -18,7 +18,8 @@
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Buscar Remito</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
-                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto">
+                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto"
+                (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
                 (optionSelected)="establecerFormulario()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
@@ -112,7 +113,7 @@
               <label for="idClienteRemitente" class="tamanio-label">Remitente *</label>
               <input id="idClienteRemitente" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('clienteRemitente')" [matAutocomplete]="autoClienteRemitente"
-                autocomplete="off" [readonly]="soloLectura">
+                autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('clienteRemitente'))">
               <mat-autocomplete #autoClienteRemitente="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let itemClienteRemitente of resultadosClienteRemitente"
                   [value]="itemClienteRemitente">{{itemClienteRemitente.alias}}</mat-option>
@@ -128,7 +129,7 @@
               <label for="idClienteDestinatario" class="tamanio-label">Destinatario *</label>
               <input id="idClienteDestinatario" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('clienteDestinatario')" [matAutocomplete]="autoClienteDestinatario"
-                autocomplete="off" [readonly]="soloLectura">
+                autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('clienteDestinatario'))">
               <mat-autocomplete #autoClienteDestinatario="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let itemClienteDestinatario of resultadosClienteDestinatario"
                   [value]="itemClienteDestinatario">{{itemClienteDestinatario.alias}}</mat-option>

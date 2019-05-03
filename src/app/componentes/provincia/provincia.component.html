@@ -15,7 +15,8 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}}, {{item.pais.nombre}}
@@ -45,7 +46,8 @@
         <div class="form-group has-float-label">
           <label for="idPais" class="tamanio-label">País *</label>
           <input id="idPais" class="form-control form-control-sm" type="text" matInput [readonly]="soloLectura"
-            [formControl]="formulario.get('pais')" [matAutocomplete]="autoPais" autocomplete="off">
+            [formControl]="formulario.get('pais')" [matAutocomplete]="autoPais" autocomplete="off"
+            (blur)="verificarSeleccion(formulario.get('pais'))">
           <mat-autocomplete #autoPais="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let itemPais of resultadosPaises" [value]="itemPais">
               {{itemPais.nombre}}
@@ -69,7 +71,8 @@
       <div class="form-group has-float-label">
         <label for="idPais" class="tamanio-label">País</label>
         <input id="idPais" class="form-control form-control-sm" type="text" matInput
-          [formControl]="formulario.get('pais')" [matAutocomplete]="autoPais" autocomplete="off">
+          [formControl]="formulario.get('pais')" [matAutocomplete]="autoPais" autocomplete="off"
+          (blur)="verificarSeleccion(formulario.get('pais'))">
         <mat-autocomplete #autoPais="matAutocomplete" [displayWith]="displayFn.bind(this)">
           <mat-option *ngFor="let itemPais of resultadosPaises" [value]="itemPais"
             (onSelectionChange)="listarPorPais(itemPais)">

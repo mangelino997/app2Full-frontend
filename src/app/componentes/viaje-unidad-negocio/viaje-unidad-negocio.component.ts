@@ -207,6 +207,12 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   private eliminar() {
     console.log();
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(res => {
