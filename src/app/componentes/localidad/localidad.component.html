@@ -15,7 +15,7 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}}, {{item.provincia.nombre}}
@@ -41,7 +41,7 @@
           <label for="idProvincia" class="tamanio-label">Provincia *</label>
           <input id="idProvincia" class="form-control form-control-sm" type="text" matInput
             [formControl]="formulario.get('provincia')" [matAutocomplete]="autoProvincia" autocomplete="off"
-            [readonly]="soloLectura">
+            [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('provincia'))">
           <mat-autocomplete #autoProvincia="matAutocomplete" [displayWith]="displayFb.bind(this)">
             <mat-option *ngFor="let itemProvincia of resultadosProvincias" [value]="itemProvincia">
               {{itemProvincia.nombre}}, {{itemProvincia.pais.nombre}}

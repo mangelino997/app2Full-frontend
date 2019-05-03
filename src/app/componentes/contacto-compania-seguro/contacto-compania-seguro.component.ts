@@ -359,4 +359,10 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       }
     }
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
 }

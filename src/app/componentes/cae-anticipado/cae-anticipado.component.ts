@@ -29,4 +29,10 @@ export class CaeAnticipadoComponent implements OnInit {
   public mascararEnteros(limite) {
     return this.appService.mascararEnteros(limite);
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }  
 }

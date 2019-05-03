@@ -16,7 +16,7 @@
             <div class="form-group has-float-label">
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput [formControl]="formulario.get('companiaSeguro')"
-                [matAutocomplete]="autoCompaniaSeguro" autocomplete="off" [readonly]="soloLectura">
+                [matAutocomplete]="autoCompaniaSeguro" autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('companiaSeguro'))">
               <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFn.bind(this)"
                 (optionSelected)="obtenerPorCompaniaSeguroYEmpresa()">
                 <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
