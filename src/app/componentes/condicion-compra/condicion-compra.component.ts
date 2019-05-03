@@ -281,6 +281,12 @@ export class CondicionCompraComponent implements OnInit {
       return a.id === b.id;
     }
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }  
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
     if (elemento != undefined) {

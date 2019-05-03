@@ -18,7 +18,7 @@
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro *</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
-                autocomplete="off">
+                autocomplete="off" (blur)="verificarSeleccion(formulario.get('companiaSeguro'))">
               <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro"
                   (onSelectionChange)="listarPorCompaniaSeguro(itemCompaniaSeguro)">

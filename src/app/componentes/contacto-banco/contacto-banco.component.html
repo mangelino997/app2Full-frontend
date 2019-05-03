@@ -17,7 +17,8 @@
             <div class="form-group has-float-label">
               <label for="idSucursalBanco" class="tamanio-label">Banco-Sucursal *</label>
               <input id="idSucursalBanco" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('sucursalBanco')" [matAutocomplete]="auto" autocomplete="off">
+                [formControl]="formulario.get('sucursalBanco')" [matAutocomplete]="auto" autocomplete="off"
+                (blur)="verificarSeleccion(formulario.get('sucursalBanco'))">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                 <mat-option *ngFor="let itemSucursalBanco of resultadosSucursalesBancos" [value]="itemSucursalBanco"
                   (onSelectionChange)="listarPorSucursalBanco(itemSucursalBanco)">

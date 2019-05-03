@@ -250,7 +250,7 @@
                         <label for="idBanco" class="tamanio-label">Banco</label>
                         <input id="idBanco" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('banco')" [matAutocomplete]="autoBanco" autocomplete="off"
-                          [readonly]="soloLectura">
+                          [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('banco'))">
                         <mat-autocomplete #autoBanco="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemBanco of resultadosBancos" [value]="itemBanco">
                             {{itemBanco.nombre}}

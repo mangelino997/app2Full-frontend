@@ -268,4 +268,10 @@ export class AfipCondicionIvaComponent implements OnInit {
       return elemento;
     }
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
 }

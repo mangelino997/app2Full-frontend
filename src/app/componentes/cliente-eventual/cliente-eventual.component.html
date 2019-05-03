@@ -97,7 +97,7 @@
                         <label for="idLocalidad" class="tamanio-label">Localidad *</label>
                         <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
                             [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
-                            autocomplete="off" [readonly]="soloLectura">
+                            autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('localidad'))">
                         <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFb.bind(this)">
                             <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
                                 {{itemLocalidad.nombre}}, {{itemLocalidad.provincia.nombre}},
@@ -120,7 +120,7 @@
                         <label for="idCobrador" class="tamanio-label">Cobrador *</label>
                         <input id="idCobrador" class="form-control form-control-sm" type="text" matInput
                             [formControl]="formulario.get('cobrador')" [matAutocomplete]="autoCobrador"
-                            autocomplete="off" [readonly]="soloLectura">
+                            autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('cobrador'))">
                         <mat-autocomplete #autoCobrador="matAutocomplete" [displayWith]="displayFa.bind(this)">
                             <mat-option *ngFor="let itemCobrador of resultadosCobradores" [value]="itemCobrador">
                                 {{itemCobrador.nombre}}
@@ -133,7 +133,7 @@
                         <label for="idZona" class="tamanio-label">Zona *</label>
                         <input id="idZona" class="form-control form-control-sm" type="text" matInput
                             [formControl]="formulario.get('zona')" [matAutocomplete]="autoZona" autocomplete="off"
-                            [readonly]="soloLectura">
+                            [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('zona'))">
                         <mat-autocomplete #autoZona="matAutocomplete" [displayWith]="displayFa.bind(this)">
                             <mat-option *ngFor="let itemZona of resultadosZonas" [value]="itemZona">
                                 {{itemZona.nombre}}
@@ -146,7 +146,7 @@
                         <label for="idRubro" class="tamanio-label">Rubro *</label>
                         <input id="idRubro" class="form-control form-control-sm" type="text" matInput
                             [formControl]="formulario.get('rubro')" [matAutocomplete]="autoRubro" autocomplete="off"
-                            [readonly]="soloLectura">
+                            [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('rubro'))">
                         <mat-autocomplete #autoRubro="matAutocomplete" [displayWith]="displayFa.bind(this)">
                             <mat-option *ngFor="let itemRubro of resultadosRubros" [value]="itemRubro">
                                 {{itemRubro.nombre}}
@@ -158,7 +158,7 @@
                     <div class="form-group has-float-label">
                         <label for="idSucursalLugarPago" class="tamanio-label">Sucursal Lugar de Pago</label>
                         <input id="idSucursalLugarPago" class="form-control form-control-sm" type="text" matInput
-                            [formControl]="formulario.get('sucursalLugarPago')"
+                            [formControl]="formulario.get('sucursalLugarPago')" (blur)="verificarSeleccion(formulario.get('sucursalLugarPago'))"
                             [matAutocomplete]="autoSucursalLugarPago" autocomplete="off" [readonly]="soloLectura">
                         <mat-autocomplete #autoSucursalLugarPago="matAutocomplete" [displayWith]="displayFc.bind(this)">
                             <mat-option *ngFor="let itemSucursalLugarPago of resultadosSucursalesPago"
