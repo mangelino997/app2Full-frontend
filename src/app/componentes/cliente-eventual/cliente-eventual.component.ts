@@ -164,6 +164,7 @@ export class ClienteEventualComponent implements OnInit {
   //Agrega un cliente eventual
   public agregarClienteEventual(): void {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.data.usuario);
     this.clienteServicio.agregarClienteEventual(this.formulario.value).subscribe(
       res => {

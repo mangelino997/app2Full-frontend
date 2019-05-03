@@ -209,6 +209,7 @@ export class CategoriaComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.establecerValoresPorDefecto();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {

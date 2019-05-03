@@ -215,6 +215,7 @@ export class MonedaComponent implements OnInit {
   //Metodo Agregar Moneda
   private agregar(moneda) {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.monedaServicio.agregar(moneda).subscribe(
       res => {
         var respuesta = res.json();

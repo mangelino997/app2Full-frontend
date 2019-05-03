@@ -120,6 +120,7 @@ export class MonedaCotizacionComponent implements OnInit {
   //Agrega un registro
   public agregar() {
     this.loaderService.show();
+    this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.monedaCotizacionServicio.agregar(this.formulario.value).subscribe(
       res => {
