@@ -52,7 +52,6 @@ export class TramoComponent implements OnInit {
   public columnas: string[] = ['id', 'origen', 'destino', 'km', 'rutaAlternativa', 'liqChofer', 'estaActivo', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
-
   //Constructor
   constructor(private servicio: TramoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private origenDestinoServicio: OrigenDestinoService,
@@ -133,6 +132,14 @@ export class TramoComponent implements OnInit {
       });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+  }
+  //Obtiene la mascara de km
+  public obtenerMascaraKm(intLimite) {
+    return this.appService.mascararKm(intLimite);
+  }
+  //Desenmascara km
+  public establecerKm(formulario): void {
+    formulario.setValue(this.appService.desenmascararKm(formulario.value));
   }
   //Vacia las listas de resultados
   public vaciarListas() {
@@ -279,7 +286,7 @@ export class TramoComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }

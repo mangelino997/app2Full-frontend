@@ -325,24 +325,32 @@ export class ClienteComponent implements OnInit {
     this.situacionClienteServicio.listar().subscribe(
       res => {
         this.situacionesClientes = res.json();
-        this.formulario.get('situacionCliente').setValue(this.situacionesClientes[0]);
+        this.establecerSituacionCliente();
       },
       err => {
         console.log(err);
       }
     );
   }
+  //Establece la situacion cliente por defecto
+  private establecerSituacionCliente(): void {
+    this.formulario.get('situacionCliente').setValue(this.situacionesClientes[0]);
+  }
   //Obtiene el listado de condiciones de ventas
   private listarCondicionesVentas() {
     this.condicionVentaServicio.listar().subscribe(
       res => {
         this.condicionesVentas = res.json();
-        this.formulario.get('condicionVenta').setValue(this.condicionesVentas[0]);
+        this.establecerCondicionVenta();
       },
       err => {
         console.log(err);
       }
     );
+  }
+  //Establece la condicion de venta por defecto
+  private establecerCondicionVenta(): void {
+    this.formulario.get('condicionVenta').setValue(this.condicionesVentas[0]);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -495,6 +503,9 @@ export class ClienteComponent implements OnInit {
         var respuesta = res.json();
         if(respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
+          this.establecerValoresPorDefecto();
+          this.establecerSituacionCliente();
+          this.establecerCondicionVenta();
           setTimeout(function() {
             document.getElementById('idRazonSocial').focus();
           }, 20);
