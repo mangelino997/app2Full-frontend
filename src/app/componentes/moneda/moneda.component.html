@@ -36,7 +36,8 @@
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="nombre-label">Nombre *</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off" [readonly]="soloLectura"
-                class="form-control form-control-sm" (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
+                class="form-control form-control-sm" (ngModelChange)="cambioCampo('idNombre', 'labelNombre')"
+                maxlength="45">
             </div>
           </div>
         </div>
@@ -67,7 +68,7 @@
             <div class="form-group has-float-label">
               <label for="idCodigoAfip" class="codigoAfip-label">Código Afip *</label>
               <input id="idCodigoAfip" type="text" formControlName="codigoAfip" [readonly]="soloLectura"
-                class="form-control form-control-sm">
+                class="form-control form-control-sm" maxlength="3">
             </div>
           </div>
         </div>
@@ -76,7 +77,7 @@
             <div class="form-group has-float-label">
               <label for="idSimbolo" class="simbolo-label">Símbolo *</label>
               <input id="idSimbolo" type="text" formControlName="simbolo" [readonly]="soloLectura"
-                class="form-control form-control-sm">
+                class="form-control form-control-sm" maxlength="5">
             </div>
           </div>
         </div>

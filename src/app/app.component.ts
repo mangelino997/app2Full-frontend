@@ -96,7 +96,7 @@ export class AppComponent implements OnInit {
     pagina = pagina.replace(new RegExp(/[,]/g), "");
     pagina = pagina.replace(new RegExp(/[.]/g), "");
     pagina = pagina.replace(new RegExp(/[/]/g), "");
-    this.router.navigate([pagina]);
+    this.router.navigate([pagina], { replaceUrl: true });
   }
   //Establece los ceros en los numero flotantes
   public establecerCeros(valor) {

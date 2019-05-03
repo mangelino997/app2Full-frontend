@@ -95,7 +95,7 @@ export class LoginComponent implements OnInit {
       //Establece el tema
       this.appComponent.setTema(this.establecerTema(this.elemento.empresa));
       //Navega a la pagina principal (home)
-      this.router.navigate(['/home']);
+      this.router.navigate(['/home'], { replaceUrl: true });
     }
   }
   private establecerTema(empresa):string {

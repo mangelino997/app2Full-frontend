@@ -106,6 +106,10 @@ export class LocalidadComponent implements OnInit {
     //Obtiene la lista de provincias
     this.listarProvincias();
   }
+  //Mascara enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
+  }
   //Obtiene el listado de provincia
   private listarProvincias() {
     this.provinciaServicio.listar().subscribe(res => {

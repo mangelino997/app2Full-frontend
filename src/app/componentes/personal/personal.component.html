@@ -64,14 +64,14 @@
                       <div class="form-group has-float-label">
                         <label for="idRazonSocial" class="tamanio-label-titulo">Apellido *</label>
                         <input id="idApellido" type="text" formControlName="apellido" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idNombre" class="tamanio-label-titulo">Nombre *</label>
                         <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
                       </div>
                     </div>
                   </div>
@@ -83,7 +83,7 @@
                       <div class="form-group has-float-label">
                         <label for="idDomicilio" class="tamanio-label">Domicilio *</label>
                         <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                          class="form-control form-control-sm" [readonly]="soloLectura" maxlength="60">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -199,8 +199,7 @@
                       <div class="form-group has-float-label">
                         <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
                         <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
-                          class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                          [textMask]="mascararEnteros(11)">
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -208,8 +207,7 @@
                         <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil
                           Propio</label>
                         <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
-                          class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                          [textMask]="mascararEnteros(11)">
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
                       </div>
                     </div>
                   </div>
@@ -671,7 +669,8 @@
                       <div class="form-group has-float-label">
                         <label for="idObservaciones" class="tamanio-label">Observaciones</label>
                         <textarea id="idObservaciones" class="form-control form-control-sm"
-                          formControlName="observaciones" [readonly]="soloLectura"></textarea>
+                          formControlName="observaciones" [readonly]="soloLectura"
+                          maxlength="200"></textarea>
                       </div>
                     </div>
                   </div>
@@ -800,9 +799,10 @@
                       <div class="form-group has-float-label">
                         <label id="labelCorreoelectronico" for="idCorreoelectronico" class="tamanio-label">
                           Correo Electrónico</label>
-                        <input id="idCorreoelectronico" type="email" formControlName="correoelectronico"
+                        <input id="idCorreoelectronico" type="text" formControlName="correoelectronico"
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
                           (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
+                          maxlength="60"
                           pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
                           (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoelectronico')">
                       </div>
