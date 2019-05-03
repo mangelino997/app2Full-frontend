@@ -41,7 +41,7 @@
               <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
               <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura"
-                (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
+                (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="45">
             </div>
           </div>
         </div>

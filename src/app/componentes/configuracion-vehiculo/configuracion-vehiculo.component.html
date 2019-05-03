@@ -56,7 +56,7 @@
             <div class="form-group has-float-label">
               <label for="idModelo" class="tamanio-label">Modelo *</label>
               <input id="idModelo" type="text" formControlName="modelo" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
             </div>
           </div>
         </div>
@@ -65,7 +65,7 @@
             <div class="form-group has-float-label">
               <label for="idDescripcion" class="tamanio-label">Descripción</label>
               <textarea id="idDescripcion" class="form-control form-control-sm" formControlName="descripcion"
-                [readonly]="soloLectura"></textarea>
+                [readonly]="soloLectura" maxlength="100"></textarea>
             </div>
           </div>
         </div>

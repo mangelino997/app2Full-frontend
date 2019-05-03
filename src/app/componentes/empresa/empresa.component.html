@@ -39,14 +39,14 @@
               <label id="labelRazonSocial" for="idRazonSocial" class="tamanio-label">Razón Social *</label>
               <input id="idRazonSocial" type="text" formControlName="razonSocial" autocomplete="off"
                 class="form-control form-control-sm upper-case" [readonly]="soloLectura"
-                (ngModelChange)="cambioCampo('idRazonSocial', 'labelRazonSocial')">
+                (ngModelChange)="cambioCampo('idRazonSocial', 'labelRazonSocial')" maxlength="45">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idAbreviatura" class="tamanio-label">Abreviatura *</label>
               <input id="idAbreviatura" type="text" formControlName="abreviatura" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="15">
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@
             <div class="form-group has-float-label">
               <label for="idDomicilio" class="tamanio-label">Domicilio *</label>
               <input id="idDomicilio" type="text" formControlName="domicilio" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="60">
             </div>
           </div>
           <div class="col-md-4">
@@ -110,7 +110,7 @@
             <div class="form-group has-float-label">
               <label for="idNumeroIIBB" class="tamanio-label">N° de Ingresos Brutos</label>
               <input id="idNumeroIIBB" type="number" formControlName="numeroIIBB" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="15">
             </div>
           </div>
         </div>
