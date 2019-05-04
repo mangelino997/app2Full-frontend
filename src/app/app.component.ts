@@ -70,8 +70,8 @@ export class AppComponent implements OnInit {
     this.appService.setTema(tema);
   }
   //Obtiene la lista de modulos para armar el menu
-  public obtenerMenu(id) {
-    this.appService.obtenerMenu(id).subscribe(
+  public obtenerMenu(id, token) {
+    this.appService.obtenerMenu(id, token).subscribe(
       res => {
         this.modulos = res.json().modulos;
       },

@@ -49,8 +49,13 @@ export class UsuarioEmpresaService {
     return this.http.get(this.url + '/listarPorUsuario/' + idUsuario, this.options);
   }
   //Obtiene un listado de empresas activas del usuario
-  public listarEmpresasActivasDeUsuario(idUsuario) {
-    return this.http.get(this.url + '/listarEmpresasActivasDeUsuario/' + idUsuario, this.options);
+  public listarEmpresasActivasDeUsuario(idUsuario, token) {
+    //Establece los headers y el token
+    let headers: Headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Authorization', token);
+    let options = new RequestOptions({headers: headers});
+    return this.http.get(this.url + '/listarEmpresasActivasDeUsuario/' + idUsuario, options);
   }
   //Actualiza una lista de registros
   public actualizar(elemento) {

@@ -13,6 +13,9 @@ import { ToastrModule } from 'ngx-toastr';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
 import { TextMaskModule } from 'angular2-text-mask';
 
+//BUILD PRODUCCION
+//node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod --build-optimizer
+
 //Servicios
 import { AppService } from './servicios/app.service';
 import { LoginService } from './servicios/login.service';

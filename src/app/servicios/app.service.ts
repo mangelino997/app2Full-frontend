@@ -45,8 +45,12 @@ export class AppService {
     this.listaCompleta.next(JSON.parse(m.body));
   }
   //Obtiene el menu
-  public obtenerMenu(id) {
-    return this.http.get(this.URL_BASE + '/menu/' + id, this.options);
+  public obtenerMenu(id, token) {
+    let headers: Headers = new Headers();
+    headers.append('Content-Type', 'application/json');
+    headers.append('Authorization', token);
+    let options = new RequestOptions({ headers: headers });
+    return this.http.get(this.URL_BASE + '/menu/' + id, options);
   }
   //Obtiene la IP
   public getIP() {

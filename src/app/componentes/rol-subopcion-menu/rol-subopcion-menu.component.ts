@@ -283,7 +283,7 @@ export class VistaPreviaDialogo {
     this.loaderService.show();
     this.rol = this.data.rol.value;
     this.nombreRol = this.rol.nombre;
-    this.appServicio.obtenerMenu(this.rol.id).subscribe(res => {
+    this.appServicio.obtenerMenu(this.rol.id, localStorage.getItem('token')).subscribe(res => {
       this.modulos = res.json().modulos;
       this.loaderService.hide();
     })
