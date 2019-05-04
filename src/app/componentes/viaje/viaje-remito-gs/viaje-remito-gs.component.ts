@@ -15,13 +15,13 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Evento que envia los datos del formulario a Viaje
   @Output() dataEvent = new EventEmitter<any>();
   //Define un formulario viaje remito para validaciones de campos
-  public formularioViajeRemito:FormGroup;
+  public formularioViajeRemito: FormGroup;
   //Define una lista de remitos
-  public remitos:FormArray;
+  public remitos: FormArray;
   //Define la lista de tramos
-  public listaTramos:Array<any> = [];
+  public listaTramos: Array<any> = [];
   //Defiene la lista de sucursales
-  public sucursales:Array<any> = [];
+  public sucursales: Array<any> = [];
   //Constructor
   constructor(private viajeRemito: ViajeRemito, private viajeRemitoServicio: ViajeRemitoService,
     private appComponent: AppComponent, private sucursalServicio: SucursalService,
@@ -46,7 +46,7 @@ export class ViajeRemitoGSComponent implements OnInit {
     let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
     let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
     let viajePropio = this.formularioViajeRemito.get('tramo').value;
-    if(tipo) {
+    if (tipo) {
       this.viajeRemitoServicio.listarAsignadosPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion, viajePropio.id).subscribe(res => {
         let listaRemitosAsignados = res.json();
         for (var i = 0; i < listaRemitosAsignados.length; i++) {
@@ -68,7 +68,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   }
   //Asigna o Quita remitos de tramo
   public cambiarEstadoRemitos(opcion): void {
-    if(opcion) {
+    if (opcion) {
       this.viajeRemitoServicio.quitar(this.formularioViajeRemito.value.remitos).subscribe(
         res => {
           let respuesta = res.json();
@@ -103,7 +103,7 @@ export class ViajeRemitoGSComponent implements OnInit {
     // this.formularioViajeRemito.get('numeroCamion').reset();
     // this.formularioViajeRemito.get('sucursalDestino').reset();
     this.formularioViajeRemito.reset();
-    while(this.remitos.length != 0) {
+    while (this.remitos.length != 0) {
       this.remitos.removeAt(0);
     }
   }
@@ -122,8 +122,12 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
+  }
+  //Establece control para lista remitos con checkbox
+  get controlRemitos() {
+    return <FormArray>this.formularioViajeRemito.get('remitos');
   }
 }

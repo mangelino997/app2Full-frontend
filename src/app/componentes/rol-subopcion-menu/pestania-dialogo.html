@@ -12,7 +12,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr *ngFor="let a of formulario.get('pestanias').controls; let i = index" [formGroupName]="i">
+                        <tr *ngFor="let a of controlPestanias.controls; let i = index" [formGroupName]="i">
                             <td align="center">
                                 <span>{{a.value.id}}</span>
                             </td>

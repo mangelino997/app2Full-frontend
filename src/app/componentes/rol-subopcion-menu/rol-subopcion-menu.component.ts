@@ -9,7 +9,6 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
-import { AppComponent } from 'src/app/app.component';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
@@ -151,16 +150,19 @@ export class RolSubopcionMenuComponent implements OnInit {
   }
   //Actualiza la lista de subopciones del rol
   public actualizar(): void {
+    this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         let respuesta = err.json();
         this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
     )
   }
@@ -216,6 +218,10 @@ export class RolSubopcionMenuComponent implements OnInit {
     if (a != null && b != null) {
       return a.id === b.id;
     }
+  }
+  //Establece el control de subopcion para checkbox
+  get controlSubopciones() { 
+    return <FormArray>this.formulario.get('subopciones'); 
   }
 }
 //Componente Usuarios
@@ -311,16 +317,20 @@ export class PestaniaDialogo {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Define el tema
+  public tema:string;
   //Constructor
   constructor(public dialogRef: MatDialogRef<PestaniaDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private fb: FormBuilder, private servicio: SubopcionPestaniaService, private toastr: ToastrService,
-    private loaderService: LoaderService) { }
+    private loaderService: LoaderService, private appService: AppService) { }
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
+    //Establece el tema
+    this.tema = this.appService.getTema();
     //Define datos pasado por parametro al dialogo
     let pestanias = this.data.pestanias.pestanias
     let rol = this.data.rol.value;
@@ -369,5 +379,9 @@ export class PestaniaDialogo {
         this.loaderService.hide();
       }
     )
+  }
+  //Establece control para lista pestania con checkbox
+  get controlPestanias() { 
+    return <FormArray>this.formulario.get('pestanias'); 
   }
 }

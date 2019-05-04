@@ -12,7 +12,8 @@
     <div class="col-md-5">
       <div class="form-group has-float-label">
         <label for="idTramoRG" class="tamanio-label">Tramo *</label>
-        <mat-select id="idTramoRG" class="form-control form-control-sm" formControlName="tramo" [compareWith]="compareFn">
+        <mat-select id="idTramoRG" class="form-control form-control-sm" formControlName="tramo"
+          [compareWith]="compareFn">
           <mat-option *ngFor="let itemTramo of listaTramos" [value]="itemTramo">
             {{itemTramo.tramo.origen.nombre}},
             {{itemTramo.tramo.origen.provincia.nombre}} ->
@@ -26,8 +27,8 @@
     <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idNumeroCamionRG" class="tamanio-label">Número de Camión *</label>
-        <input id="idNumeroCamionRG" type="number" formControlName="numeroCamion" autocomplete="off" class="form-control form-control-sm number-right"
-          [readonly]="soloLectura">
+        <input id="idNumeroCamionRG" type="number" formControlName="numeroCamion" autocomplete="off"
+          class="form-control form-control-sm number-right">
       </div>
     </div>
     <div class="col-md-2">
@@ -60,7 +61,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let a of formularioViajeRemito.get('remitos').controls; let i = index" [formGroupName]="i">
+          <tr *ngFor="let a of controlRemitos.controls; let i = index" [formGroupName]="i">
             <td align="center">
               <mat-checkbox formControlName="estaPendiente" color="primary"></mat-checkbox>
             </td>
@@ -88,7 +89,8 @@
     </div>
   </div>
   <div class="row justify-content-end">
-    <button mat-raised-button color="primary" (click)="cambiarEstadoRemitos(formularioViajeRemito.get('tipoRemito').value)">
+    <button mat-raised-button color="primary"
+      (click)="cambiarEstadoRemitos(formularioViajeRemito.get('tipoRemito').value)">
       {{formularioViajeRemito.get('tipoRemito').value ? 'Quitar' : 'Asignar'}}
     </button>
   </div>
