@@ -254,7 +254,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   }
   //Establece Letra
   public establecerCabecera(){
-    this.afipComprobanteService.obtenerLetra(this.formulario.get('cliente').value.condicionVenta.id, 3).subscribe(
+    this.afipComprobanteService.obtenerLetra(3, this.formulario.get('cliente').value.condicionVenta.id).subscribe(
       res=>{
         this.formulario.get('letra').setValue(res.text());
         this.establecerCodAfip(res.text());
