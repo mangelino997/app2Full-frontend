@@ -231,7 +231,10 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
       this.servicio.listarPorCompaniaSeguro(elemento.id).subscribe(
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;
+          if(this.indiceSeleccionado==5)
+            this.listaCompleta.sort = this.sort;
+          else
+            this.contactos = res.json();
           this.loaderService.hide();
         },
         err => {
