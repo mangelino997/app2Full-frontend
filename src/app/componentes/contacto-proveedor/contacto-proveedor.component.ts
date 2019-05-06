@@ -221,7 +221,10 @@ export class ContactoProveedorComponent implements OnInit {
         res => {
           this.contactos = res.json();
           this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;
+          if(this.indiceSeleccionado==5)
+            this.listaCompleta.sort = this.sort;
+          else
+            this.contactos = res.json();
           this.loaderService.hide();
         },
         err => {

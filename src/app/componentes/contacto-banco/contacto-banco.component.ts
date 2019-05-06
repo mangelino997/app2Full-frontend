@@ -220,8 +220,12 @@ export class ContactoBancoComponent implements OnInit {
     if (this.mostrarAutocompletado) {
       this.servicio.listarPorSucursalBanco(elemento.id).subscribe(
         res => {
+          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;
+          if(this.indiceSeleccionado==5)
+            this.listaCompleta.sort = this.sort;
+          else
+            this.contactos = res.json();
         },
         err => {
           console.log(err);

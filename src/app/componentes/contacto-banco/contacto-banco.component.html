@@ -20,9 +20,9 @@
                 [formControl]="formulario.get('sucursalBanco')" [matAutocomplete]="auto" autocomplete="off"
                 (blur)="verificarSeleccion(formulario.get('sucursalBanco'))"
                 placeholder="Buscar por Banco o Sucursal">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="listarPorSucursalBanco(itemSucursalBanco)">
                 <mat-option *ngFor="let itemSucursalBanco of resultadosSucursalesBancos" [value]="itemSucursalBanco"
-                  (onSelectionChange)="listarPorSucursalBanco(itemSucursalBanco)">
+                  >
                   {{itemSucursalBanco.banco.nombre}} - {{itemSucursalBanco.nombre}}
                 </mat-option>
               </mat-autocomplete>
