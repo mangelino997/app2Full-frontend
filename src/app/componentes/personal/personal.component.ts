@@ -407,7 +407,7 @@ export class PersonalComponent implements OnInit {
     this.resultadosAfipSituaciones = [];
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
-  private establecerEstadoCampos(estado) {
+  private establecerEstadoCampos(estado, opcionPestania) {
     if (estado) {
       this.formulario.get('sexo').enable();
       this.formulario.get('estadoCivil').enable();
@@ -424,6 +424,11 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('esChoferLargaDistancia').enable();
       this.formulario.get('turnoRotativo').enable();
       this.formulario.get('turnoFueraConvenio').enable();
+      if(opcionPestania==3){
+        this.formulario.get('fechaFin').enable();
+      }else{
+        this.formulario.get('fechaFin').disable();
+      }
     } else {
       this.formulario.get('sexo').disable();
       this.formulario.get('estadoCivil').disable();
@@ -503,19 +508,19 @@ export class PersonalComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerEstadoCampos(true);
+        this.establecerEstadoCampos(true, 1);
         this.establecerValoresPestania(nombre, false, false, true, 'idApellido');
         break;
       case 2:
-        this.establecerEstadoCampos(false);
+        this.establecerEstadoCampos(false, 2);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.establecerEstadoCampos(true);
+        this.establecerEstadoCampos(true, 3);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
-        this.establecerEstadoCampos(false);
+        this.establecerEstadoCampos(false, 4);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
@@ -629,6 +634,7 @@ export class PersonalComponent implements OnInit {
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
+          this.establecerValoresPorDefecto();
         }
       },
       err => {

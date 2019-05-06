@@ -104,7 +104,7 @@ export class TramoComponent implements OnInit {
       version: new FormControl(),
       origen: new FormControl('', Validators.required),
       destino: new FormControl('', Validators.required),
-      km: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(5)]),
+      km: new FormControl(),
       estaActivo: new FormControl('', Validators.required),
       excluirLiqChofer: new FormControl('', Validators.required),
       rutaAlternativa: new FormControl('', Validators.maxLength(20))
@@ -290,11 +290,20 @@ export class TramoComponent implements OnInit {
       valor.setValue(null);
     }
   }
-  //Establece la tabla al seleccion elemento de autocompletado
-  public establecerTabla(opcion): void {
+  //Limpia los autocompletados
+  public limpiarAutocompletados(opcion): void {
+    this.listaCompleta= new MatTableDataSource([]);
     if (opcion) {
       this.autocompletadoDestino.reset();
     } else {
+      this.autocompletadoOrigen.reset();
+    }
+  }
+  //Establece la tabla al seleccion elemento de autocompletado
+  public establecerTabla(){
+    if(this.autocompletadoOrigen.value!=null){
+      this.autocompletadoDestino.reset();
+    }else{
       this.autocompletadoOrigen.reset();
     }
     this.listaCompleta = new MatTableDataSource(this.resultados);

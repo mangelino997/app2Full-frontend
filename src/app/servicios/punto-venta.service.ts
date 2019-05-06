@@ -66,9 +66,9 @@ export class PuntoVentaService {
     return this.http.get(this.url + '/listarPorSucursalYEmpresaLetra/' + idSucursal + '/' + idEmpresa, this.options);
   }
   //Obtiene una lista por empresa, sucursal y tipo de comprobante
-  public listarPorEmpresaYSucursalYTipoComprobante(idEmpresa, idSucursal, idTipoComprobante) {
+  public listarPorEmpresaYSucursalYAfipComprobante(idEmpresa, idSucursal, idAfipComprobante) {
     return this.http.get(this.url + '/listarPorEmpresaYSucursalYTipoComprobante/' 
-      + idEmpresa + '/' + idSucursal + '/' + idTipoComprobante, this.options);
+      + idEmpresa + '/' + idSucursal + '/' + idAfipComprobante, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

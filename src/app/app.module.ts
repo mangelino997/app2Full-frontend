@@ -254,7 +254,7 @@ import { ViajeComponent } from './componentes/viaje/viaje.component';
 import { ActualizacionPreciosComponent, ListaPreciosDialogo, ConfimarDialogo } from './componentes/actualizacion-precios/actualizacion-precios.component';
 import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
 import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
-import { EmitirFacturaComponent, ViajeDialogo, ObservacionDialogo, TotalConceptoDialogo, TotalCargaDialogo } from './componentes/emitir-factura/emitir-factura.component';
+import { EmitirFacturaComponent, ViajeDialogo, ObservacionDialogo, TotalConceptoDialogo, TotalCargaDialogo, ErrorPuntoVenta } from './componentes/emitir-factura/emitir-factura.component';
 import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/emitir-nota-credito.component';
 import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
 import { MonedaComponent, CambiarMonedaPrincipalDialogo } from './componentes/moneda/moneda.component';
@@ -292,6 +292,8 @@ import { BasicoCategoriaComponent } from './componentes/basico-categoria/basico-
 import { ObservacionesDialogo } from './componentes/viaje/observaciones-dialogo.component';
 import { RolOpcionComponent, RolOpcionDialog } from './componentes/rol-opcion/rol-opcion.component';
 import { ProgresoComponent } from './componentes/progreso/progreso.component';
+import { configuracionVehiculo } from './modelos/configuracionVehiculo';
+import { ErrorPuntoVentaComponent } from './componentes/error-punto-venta/error-punto-venta.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -399,7 +401,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://192.168.0.156:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -534,7 +536,9 @@ const stompConfig: StompConfig = {
     AcompanianteDialogo,
     AfipCondicionIvaComponent,
     BasicoCategoriaComponent,
-    ProgresoComponent
+    ProgresoComponent,
+    ErrorPuntoVenta,
+    ErrorPuntoVentaComponent
   ],
   imports: [
     BrowserModule,
@@ -711,6 +715,7 @@ const stompConfig: StompConfig = {
     GrupoCuentaContable,
     GrupoCuentaContableService,
     Ejercicio,
+    configuracionVehiculo,
     EjercicioService,
     StompService,
     CondicionCompra,
@@ -780,7 +785,8 @@ const stompConfig: StompConfig = {
     TotalCargaDialogo,
     TotalConceptoDialogo,
     ChequesRechazadosComponent,
-    AcompanianteDialogo
+    AcompanianteDialogo,
+    ErrorPuntoVenta
   ]
 })
 export class AppModule { }

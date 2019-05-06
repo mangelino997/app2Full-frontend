@@ -11,6 +11,7 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { configuracionVehiculo } from 'src/app/modelos/configuracionVehiculo';
 
 @Component({
   selector: 'app-configuracion-vehiculo',
@@ -56,7 +57,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   constructor(private servicio: ConfiguracionVehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private configuracionVehiculo: configuracionVehiculo) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
       .subscribe(
@@ -81,21 +82,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      tipoVehiculo: new FormControl('', Validators.required),
-      marcaVehiculo: new FormControl('', Validators.required),
-      modelo: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      descripcion: new FormControl('', Validators.maxLength(100)),
-      cantidadEjes: new FormControl('', [Validators.required]),
-      capacidadCarga: new FormControl('', Validators.required),
-      tara: new FormControl(),
-      altura: new FormControl(),
-      largo: new FormControl(),
-      ancho: new FormControl(),
-      m3: new FormControl()
-    });
+    this.formulario = this.configuracionVehiculo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista completa de registros
@@ -300,6 +287,17 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   //Obtiene la mascara de enteros CON decimales
   public obtenerMascaraEnteroSinDecimales(intLimite) {
     return this.appService.mascararEnterosSinDecimales(intLimite);
+  }
+  //Obtiene la mascara de enteros CON decimales
+  public obtenerMascaraEnteroConDecimales(intLimite) {
+    return this.appService.mascararEnterosConDecimales(intLimite);
+  }
+  //Formatea el numero a x decimales
+  public setDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

@@ -23,6 +23,7 @@ import { AforoComponent } from '../aforo/aforo.component';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { isNumber } from 'util';
+import { Route, Router } from '@angular/router';
 @Component({
   selector: 'app-emitir-factura',
   templateUrl: './emitir-factura.component.html',
@@ -106,8 +107,8 @@ export class EmitirFacturaComponent implements OnInit {
     private sucursalService: SucursalClienteService, private puntoVentaService: PuntoVentaService, private tipoComprobanteservice: TipoComprobanteService,
     private afipComprobanteService: AfipComprobanteService, private ventaTipoItemService: VentaTipoItemService, private viajeRemitoServicio: ViajeRemitoService,
     private ordenVentaServicio: OrdenVentaService, private viajePropioTramoService: ViajePropioTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService,
-    private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ventaItemConceptoService: VentaItemConceptoService, private alicuotasIvaService: AfipAlicuotaIvaService
-    ) {}
+    private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ventaItemConceptoService: VentaItemConceptoService, private alicuotasIvaService: AfipAlicuotaIvaService,
+    private route: Router) {}
   ngOnInit() {
     //Define el formulario de orden venta
     this.formulario = this.factura.formulario; // formulario general (engloba los demás)
@@ -145,14 +146,23 @@ export class EmitirFacturaComponent implements OnInit {
     });
   }
   //Obtiene la lista de Puntos de Venta
-  public listarPuntoVenta(){
-    this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 1).subscribe(
+  public listarPuntoVenta(){    
+    this.puntoVentaService.listarPorEmpresaYSucursalYAfipComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 1).subscribe(
       res=>{
+        console.log(res.json());
         this.resultadosPuntoVenta= res.json();
-        this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta);
+        this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
+        if(this.resultadosPuntoVenta.length==0){
+          const dialogRef = this.dialog.open(ErrorPuntoVenta, {
+          width: '700px'
+      });
+        dialogRef.afterClosed().subscribe(resultado => {
+          this.route.navigate(['/home']);
+       });
       }
-    );
-  }
+    },
+    err=>{}
+  )}
   //Obtiene la lista de Items
   public listarItems(){
     this.ventaTipoItemService.listarItems(1).subscribe(
@@ -469,7 +479,7 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('afipCondicionIva').setValue(this.formulario.get('clienteRemitente').value.afipCondicionIva);
       this.formulario.get('cobrador').setValue(this.formulario.get('clienteRemitente').value.cobrador);
       this.formulario.get('cliente').setValue(this.formulario.get('clienteRemitente').value);
-      this.afipComprobanteService.obtenerLetra(this.formulario.get('clienteRemitente').value.afipCondicionIva.id, 1).subscribe(
+      this.afipComprobanteService.obtenerLetra(1, this.formulario.get('clienteRemitente').value.afipCondicionIva.id).subscribe(
         res=>{
           this.formulario.get('letra').setValue(res.text());
           this.cargarCodigoAfip(res.text());  
@@ -486,7 +496,7 @@ export class EmitirFacturaComponent implements OnInit {
       this.formulario.get('numeroDocumento').setValue(this.formulario.get('clienteDestinatario').value.numeroDocumento);
       this.formulario.get('cobrador').setValue(this.formulario.get('clienteDestinatario').value.cobrador);
       this.formulario.get('cliente').setValue(this.formulario.get('clienteDestinatario').value);
-      this.afipComprobanteService.obtenerLetra(this.formulario.get('clienteDestinatario').value.afipCondicionIva.id, 1).subscribe(
+      this.afipComprobanteService.obtenerLetra(1, this.formulario.get('clienteDestinatario').value.afipCondicionIva.id).subscribe(
         res=>{
           this.formulario.get('letra').setValue(res.text());
           this.cargarCodigoAfip(res.text());
@@ -981,6 +991,20 @@ export class EmitirFacturaComponent implements OnInit {
     } else {
       return '';
     }
+  }
+}
+@Component({
+  selector: 'error-puntoVenta',
+  templateUrl: 'error-puntoventa-dialogo.html',
+  styleUrls: ['./emitir-factura.component.css']
+
+})
+export class ErrorPuntoVenta{
+  constructor(public dialogRef: MatDialogRef<ViajeDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService, public dialog: MatDialog) {}
+   ngOnInit() {
+   }
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }
 @Component({
