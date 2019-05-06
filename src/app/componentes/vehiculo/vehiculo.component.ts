@@ -16,6 +16,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service';
 
 @Component({
   selector: 'app-vehiculo',
@@ -69,8 +70,12 @@ export class VehiculoComponent implements OnInit {
   public resultadosPersonales = [];
   //Define el campo de control configuracion
   public configuracion: FormControl = new FormControl();
+  //Define la lista de companias de suguros
+  public companiasSeguros:Array<any> = [];
   //Defiene la lista de compania seguro poliza
   public companiasSegurosPolizas: Array<any> = [];
+  //Define la compania de seguro
+  public companiaSeguro:FormControl = new FormControl();
   //Define si el tipo de vehiculo seleccionado es remolque
   public esVehiculoRemolque: boolean = false;
   //Define el mostrar del circulo de progreso
@@ -86,7 +91,7 @@ export class VehiculoComponent implements OnInit {
     private toastr: ToastrService, private loaderService: LoaderService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private localidadServicio: LocalidadService, private empresaServicio: EmpresaService,
-    private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService,
+    private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService, private companiaSeguroService: CompaniaSeguroService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService,
     private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -184,10 +189,22 @@ export class VehiculoComponent implements OnInit {
     })
   }
   //Obtiene la lista de compania de seguros poliza por empresa
-  public listarCompaniasSeguroPolizaPorEmpresa(empresa) {
-    this.companiaSeguroPolizaServicio.listarPorEmpresa(empresa.id).subscribe(res => {
-      this.companiasSegurosPolizas = res.json();
+  public listarCompaniasSeguroPorEmpresa(): void {
+    this.formulario.get('companiaSeguroPoliza').reset();
+    this.companiaSeguro.reset();
+    this.companiasSeguros = [];
+    this.companiasSegurosPolizas = [];
+    let empresa = this.formulario.get('empresa').value;
+    this.companiaSeguroService.listarPorEmpresa(empresa.id).subscribe(res => {
+      this.companiasSeguros = res.json();
     })
+  }
+  //Obtiene la lista de polizas por compania de seguro
+  public listarPolizas(): void {
+    let companiaSeguro = this.companiaSeguro.value;
+    this.companiaSeguroPolizaServicio.listarPorCompaniaSeguro(companiaSeguro.id).subscribe(res => {
+      this.companiasSegurosPolizas = res.json();
+    });
   }
   //Establece el formulario al seleccionar elemento de autocompletado
   public establecerFormulario() {
@@ -196,6 +213,11 @@ export class VehiculoComponent implements OnInit {
     this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
     this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
     this.establecerConfiguracion(elemento);
+    this.listarCompaniasSeguroPorEmpresa();
+    let companiaSeguroPoliza = elemento.companiaSeguroPoliza;
+    this.companiaSeguro.setValue(companiaSeguroPoliza.companiaSeguro);
+    this.listarPolizas();
+    this.formulario.get('companiaSeguroPoliza').setValue(elemento.companiaSeguroPoliza);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarLista() {
@@ -204,6 +226,24 @@ export class VehiculoComponent implements OnInit {
     this.resultadosLocalidades = [];
     this.resultadosCompaniasSegurosPolizas = [];
     this.resultadosPersonales = [];
+    this.companiasSeguros = [];
+    this.companiasSegurosPolizas = [];
+  }
+  //Establece selects solo lectura
+  private establecerCamposSoloLectura(opcion): void {
+    if(opcion) {
+      this.tipoVehiculo.disable();
+      this.marcaVehiculo.disable();
+      this.formulario.get('empresa').disable();
+      this.formulario.get('companiaSeguroPoliza').disable();
+      this.companiaSeguro.disable();
+    } else {
+      this.tipoVehiculo.enable();
+      this.marcaVehiculo.enable();
+      this.formulario.get('empresa').enable();
+      this.formulario.get('companiaSeguroPoliza').enable();
+      this.companiaSeguro.enable();
+    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura,
@@ -232,15 +272,19 @@ export class VehiculoComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerCamposSoloLectura(false);
         this.establecerValoresPestania(nombre, false, false, true, true, 'idTipoVehiculo');
         break;
       case 2:
+        this.establecerCamposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, false, false, 'idAutocompletado');
         break;
       case 3:
+        this.establecerCamposSoloLectura(false);
         this.establecerValoresPestania(nombre, true, false, true, true, 'idAutocompletado');
         break;
       case 4:
+        this.establecerCamposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
         break;
       case 5:
@@ -284,7 +328,6 @@ export class VehiculoComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
-        console.log(this.listaCompleta);
         this.loaderService.hide();
       },
       err => {
@@ -420,12 +463,16 @@ export class VehiculoComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.estableberValoresFormulario(elemento);
+    // this.estableberValoresFormulario(elemento);
+    this.autocompletado.setValue(elemento);
+    this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.estableberValoresFormulario(elemento);
+    // this.estableberValoresFormulario(elemento);
+    this.autocompletado.setValue(elemento);
+    this.establecerFormulario();
   }
   //Establece los valores al "ver" o "modificar" desde la pestaña "lista"
   private estableberValoresFormulario(elemento) {

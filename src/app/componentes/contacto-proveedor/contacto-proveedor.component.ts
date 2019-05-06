@@ -229,6 +229,8 @@ export class ContactoProveedorComponent implements OnInit {
           this.loaderService.hide();
         }
       )
+    } else {
+      this.loaderService.hide();
     }
   }
   //Agrega un registro
