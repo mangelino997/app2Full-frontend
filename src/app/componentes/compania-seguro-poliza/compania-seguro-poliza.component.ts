@@ -258,17 +258,19 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene un listado por compania de seguro
   public obtenerPorCompaniaSeguroYEmpresa() {
-    let companiaSeguro = this.formulario.get('companiaSeguro').value;
-    let empresa = this.formulario.get('empresa').value;
-    if(companiaSeguro != null && empresa != null) {
-      this.servicio.obtenerPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
-        try {
-          this.formulario.patchValue(res.json());
-        } catch(e) {
-          this.formulario.get('numeroPoliza').reset();
-          this.formulario.get('vtoPoliza').reset();
-        }
-      })
+    if(this.indiceSeleccionado != 1) {
+      let companiaSeguro = this.formulario.get('companiaSeguro').value;
+      let empresa = this.formulario.get('empresa').value;
+      if(companiaSeguro != null && empresa != null) {
+        this.servicio.obtenerPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
+          try {
+            this.formulario.patchValue(res.json());
+          } catch(e) {
+            this.formulario.get('numeroPoliza').reset();
+            this.formulario.get('vtoPoliza').reset();
+          }
+        })
+      }
     }
   }
   //Reestablece los campos formularios

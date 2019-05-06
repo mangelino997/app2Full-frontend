@@ -81,7 +81,7 @@
             <div class="form-group has-float-label">
               <label for="idDominio" class="tamanio-label">Dominio *</label>
               <input id="idDominio" type="text" formControlName="dominio" autocomplete="off"
-                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="10">
+                class="form-control form-control-sm upper-case number-right" [readonly]="soloLectura" maxlength="10">
             </div>
           </div>
           <div class="col-md-4">
@@ -267,12 +267,53 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-12">
+      <br>
+      <form [formGroup]="formularioListar">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
+              <mat-select id="idTipoVehiculo" class="form-control form-control-sm" formControlName="tipoVehiculo">
+                <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
+                  {{itemTipoVehiculo.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
+              <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo">
+                <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
+                  {{itemMarcaVehiculo.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idEmpresa" class="tamanio-label">Titular *</label>
+              <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa">
+                <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
+                  {{itemEmpresa.razonSocial}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <button mat-raised-button color="primary" [disabled]="!formularioListar.valid" (click)="listar()">Buscar</button>
+          </div>
+          <div class="col-md-1"></div>
+          <div class="col-md-1">
+            <button mat-raised-button color="accent" (click)="listarTodos()">Buscar Todos</button>
+          </div>
+        </div>
+      </form>
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <app-progreso></app-progreso>
         </div>
       </div>
-      <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="id" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>

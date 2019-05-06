@@ -225,14 +225,6 @@ export class ClienteComponent implements OnInit {
         })
       }
     })
-    //Autocompletado Sucursal Lugar Pago - Buscar por nombre
-    // this.formulario.get('sucursalLugarPago').valueChanges.subscribe(data => {
-    //   if(typeof data == 'string'&& data.length>2) {
-    //     this.sucursalServicio.listarPorNombre(data).subscribe(response => {
-    //       this.resultadosSucursalesPago = response;
-    //     })
-    //   }
-    // })
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
       if(typeof data == 'string'&& data.length>2) {
@@ -258,6 +250,14 @@ export class ClienteComponent implements OnInit {
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
   }
+  //Establece el formulario
+  public establecerFormulario(): void {
+    let elemento = this.autocompletado.value;
+    this.formulario.setValue(elemento);
+    this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
+    this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.establecerDecimales(elemento.descuentoFlete, 2) : null);
+    this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
+  }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
     this.formulario.get('esSeguroPropio').setValue(false);
@@ -278,7 +278,6 @@ export class ClienteComponent implements OnInit {
     this.resultadosRubros = [];
     this.resultadosOrdenesVentas = [];
     this.resultadosCuentasGrupos = [];
-    this.resultadosSucursalesPago = [];
     this.resultadosCompaniasSeguros = [];
   }
   //Obtiene la lista de sucursales
@@ -367,6 +366,7 @@ export class ClienteComponent implements OnInit {
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
     if(estado) {
+      this.formulario.get('sucursalLugarPago').enable();
       this.formulario.get('afipCondicionIva').enable();
       this.formulario.get('tipoDocumento').enable();
       this.formulario.get('condicionVenta').enable();
@@ -375,6 +375,7 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('esSeguroPropio').enable();
       this.formulario.get('imprimirControlDeuda').enable();
     } else {
+      this.formulario.get('sucursalLugarPago').disable();
       this.formulario.get('afipCondicionIva').disable();
       this.formulario.get('tipoDocumento').disable();
       this.formulario.get('condicionVenta').disable();

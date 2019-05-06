@@ -66,6 +66,11 @@ export class VehiculoService {
       })
     })
   }
+  //Obtiene un listado por empresa, tipo de vehiculo y marca de vehiculo
+  public listarFiltro(idEmpresa, idTipo, idMarca) {
+    return this.http.get(this.url + '/listarFiltro/' + idEmpresa + '/' + idTipo + '/' + idMarca,
+      this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

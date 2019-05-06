@@ -52,6 +52,11 @@ export class TramoComponent implements OnInit {
   public columnas: string[] = ['id', 'origen', 'destino', 'km', 'rutaAlternativa', 'liqChofer', 'estaActivo', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define autocompletados listar
+  public autocompletadoOrigenListar:FormControl = new FormControl();
+  public autocompletadoDestinoListar:FormControl = new FormControl();
+  public resultadosOrigenListar: Array<any> = [];
+  public resultadosDestinoListar: Array<any> = [];
   //Constructor
   constructor(private servicio: TramoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private origenDestinoServicio: OrigenDestinoService,
@@ -95,6 +100,22 @@ export class TramoComponent implements OnInit {
         })
       }
     })
+    //Autocompletado - Buscar por nombre
+    this.autocompletadoOrigenListar.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosOrigenListar = res;
+        })
+      }
+    })
+    //Autocompletado - Buscar por nombre
+    this.autocompletadoDestinoListar.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.origenDestinoServicio.listarPorNombre(data).subscribe(res => {
+          this.resultadosDestinoListar = res;
+        })
+      }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -132,6 +153,11 @@ export class TramoComponent implements OnInit {
       });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+  }
+  //Establece el formulario
+  public establecerFormulario(): void {
+    let elemento = this.autocompletado.value;
+    this.formulario.setValue(elemento);
   }
   //Obtiene la mascara de km
   public obtenerMascaraKm(intLimite) {
@@ -292,7 +318,7 @@ export class TramoComponent implements OnInit {
   }
   //Limpia los autocompletados
   public limpiarAutocompletados(opcion): void {
-    this.listaCompleta= new MatTableDataSource([]);
+    this.listaCompleta = new MatTableDataSource([]);
     if (opcion) {
       this.autocompletadoDestino.reset();
     } else {
@@ -300,14 +326,13 @@ export class TramoComponent implements OnInit {
     }
   }
   //Establece la tabla al seleccion elemento de autocompletado
-  public establecerTabla(){
-    if(this.autocompletadoOrigen.value!=null){
-      this.autocompletadoDestino.reset();
-    }else{
-      this.autocompletadoOrigen.reset();
-    }
-    this.listaCompleta = new MatTableDataSource(this.resultados);
-    this.listaCompleta.sort = this.sort;
+  public establecerTabla() {  
+    let origen = this.autocompletadoOrigenListar.value;
+    let destino = this.autocompletadoDestinoListar.value;
+    this.servicio.listarPorFiltro(origen ? origen.id : 0, destino ? destino.id : 0).subscribe(res => {
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
+    })
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -346,7 +371,8 @@ export class TramoComponent implements OnInit {
   //Define como se muestra los datos en el autocompletado a
   public displayFa(elemento) {
     if (elemento != undefined) {
-      return elemento.origen ? elemento.origen.nombre + ' -> ' + elemento.destino.nombre : elemento;
+      return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre + ' -> ' 
+        + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre : elemento;
     } else {
       return elemento;
     }
@@ -355,6 +381,14 @@ export class TramoComponent implements OnInit {
   public displayFb(elemento) {
     if (elemento != undefined) {
       return elemento ? 'Si' : 'No';
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autocompletado c
+  public displayFc(elemento) {
+    if (elemento != undefined) {
+      return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
     } else {
       return elemento;
     }

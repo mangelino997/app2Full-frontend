@@ -125,6 +125,11 @@ export class SucursalClienteComponent implements OnInit {
     //Obtiene la lista completa de registros
     // this.listar();
   }
+  //Establece el formulario
+  public establecerFormulario(): void {
+    let elemento = this.autocompletado.value;
+    this.formulario.setValue(elemento);
+  }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultados = [];
@@ -167,7 +172,10 @@ export class SucursalClienteComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idCliente');
         break;
       case 5:
-        this.listar();
+        this.mostrarAutocompletado = true;
+        setTimeout(function() {
+          document.getElementById('idCliente').focus();
+        }, 20);
         break;
       default:
         break;
@@ -216,16 +224,20 @@ export class SucursalClienteComponent implements OnInit {
     );
   }
   //Obtiene una lista por cliente
-  public listarPorCliente(elemento) {
+  public listarPorCliente() {
     if (this.mostrarAutocompletado) {
+      let elemento = this.formulario.get('cliente').value;
       this.loaderService.show();
       this.servicio.listarPorCliente(elemento.id).subscribe(
         res => {
-          this.sucursales = res.json();
+          if(this.indiceSeleccionado == 5) {
+            this.listaCompleta = res.json();
+          } else {
+            this.sucursales = res.json();
+          }
           this.loaderService.hide();
         },
         err => {
-          console.log(err);
           this.loaderService.hide();
         }
       )
@@ -287,8 +299,9 @@ export class SucursalClienteComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.formulario.get('cliente').reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
@@ -335,14 +348,16 @@ export class SucursalClienteComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+    this.listarPorCliente();
+    this.autocompletado.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+    this.listarPorCliente();
+    this.autocompletado.setValue(elemento);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

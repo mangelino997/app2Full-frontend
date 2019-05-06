@@ -15,8 +15,6 @@ export class ConfiguracionVehiculoService {
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -50,10 +48,14 @@ export class ConfiguracionVehiculoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene un listado por nombre
+  //Obtiene un listado por tipo de vehiculo y marca de vehiculo
   public listarPorTipoVehiculoMarcaVehiculo(idTipo, idMarca) {
     return this.http.get(this.url + '/listarPorTipoVehiculoMarcaVehiculo/' + idTipo + '/' + idMarca,
       this.options);
+  }
+  //Obtiene un listado por marca de vehiculo
+  public listarPorMarcaVehiculo(idMarca) {
+    return this.http.get(this.url + '/listarPorMarcaVehiculo/' + idMarca, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

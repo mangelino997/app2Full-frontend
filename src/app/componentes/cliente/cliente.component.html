@@ -39,9 +39,9 @@
                         <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
                           autocomplete="off" type="text" matInput [formControl]="autocompletado"
                           [matAutocomplete]="auto">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
-                          <mat-option *ngFor="let item of resultados" [value]="item"
-                            (onSelectionChange)="formulario.setValue(item)">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
+                          (optionSelected)="establecerFormulario()">
+                          <mat-option *ngFor="let item of resultados" [value]="item">
                             {{item.alias}}
                           </mat-option>
                         </mat-autocomplete>
@@ -315,8 +315,8 @@
                       <div class="form-group has-float-label">
                         <label for="idDescuentoFlete" class="tamanio-label">Descuento en Flete</label>
                         <input id="idDescuentoFlete" type="text" formControlName="descuentoFlete" autocomplete="off"
-                          class="form-control form-control-sm number-right" step="0.1" placeholder="$ 0.00"
-                          [readonly]="soloLectura" [textMask]="obtenerMascaraImporte(10)"
+                          class="form-control form-control-sm number-right" placeholder="$ 0.00"
+                          [readonly]="soloLectura" [textMask]="obtenerMascaraImporte(2)"
                           (blur)="setDecimales(formulario.get('descuentoFlete'), 2)">
                       </div>
                     </div>

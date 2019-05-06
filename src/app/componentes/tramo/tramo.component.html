@@ -19,9 +19,9 @@
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
                 (blur)="verificarSeleccion(autocompletado)">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="formulario.setValue(item)">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)"
+                (optionSelected)="establecerFormulario()">
+                <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}},
                   {{item.destino.provincia.nombre}}
                 </mat-option>
@@ -67,8 +67,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idKm" class="tamanio-label">Kilómetros *</label>
-              <input id="idKm" [textMask]="obtenerMascaraKm(4)" type="text" formControlName="km" 
-                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+              <input id="idKm" [textMask]="obtenerMascaraKm(4)" type="text" formControlName="km" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura"
                 (blur)="establecerKm(formulario.get('km'))" placeholder="0 km">
             </div>
           </div>
@@ -120,36 +120,32 @@
       <div class="row">
         <div class="col-md-4">
           <div class="form-group has-float-label">
-            <label for="idAutocompletadoOrigen" class="tamanio-label">Buscar por Origen</label>
+            <label for="idAutocompletadoOrigen" class="tamanio-label">Buscar Origen</label>
             <input id="idAutocompletadoOrigen" class="form-control form-control-sm" type="text" matInput
-              [formControl]="autocompletadoOrigen" [matAutocomplete]="autoOrigen" autocomplete="off">
-            <mat-autocomplete #autoOrigen="matAutocomplete" [displayWith]="displayFa.bind(this)"
-            (optionSelected)="limpiarAutocompletados(true)"> 
-              <mat-option *ngFor="let item of resultados" [value]="item">
-                {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}},
-                {{item.destino.provincia.nombre}}
+              [formControl]="autocompletadoOrigenListar" [matAutocomplete]="autoOrigenL" autocomplete="off">
+            <mat-autocomplete #autoOrigenL="matAutocomplete" [displayWith]="displayFc.bind(this)">
+              <mat-option *ngFor="let item of resultadosOrigenListar" [value]="item">
+                {{item.nombre}}, {{item.provincia.nombre}}
               </mat-option>
             </mat-autocomplete>
           </div>
         </div>
         <div class="col-md-4">
           <div class="form-group has-float-label">
-            <label for="idAutocompletadoDestino" class="tamanio-label">Buscar por Destino</label>
+            <label for="idAutocompletadoDestino" class="tamanio-label">Buscar Destino</label>
             <input id="idAutocompletadoDestino" class="form-control form-control-sm" type="text" matInput
-              [formControl]="autocompletadoDestino" [matAutocomplete]="autoDestino" autocomplete="off">
-            <mat-autocomplete #autoDestino="matAutocomplete" [displayWith]="displayFa.bind(this)"
-            (optionSelected)="limpiarAutocompletados(false)">
-              <mat-option *ngFor="let item of resultados" [value]="item">
-                {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}},
-                {{item.destino.provincia.nombre}}
+              [formControl]="autocompletadoDestinoListar" [matAutocomplete]="autoDestinoL" autocomplete="off">
+            <mat-autocomplete #autoDestinoL="matAutocomplete" [displayWith]="displayFc.bind(this)">
+              <mat-option *ngFor="let item of resultadosDestinoListar" [value]="item">
+                {{item.nombre}}, {{item.provincia.nombre}}
               </mat-option>
             </mat-autocomplete>
           </div>
         </div>
         <div class="col-md-1">
           <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="establecerTabla()">
-          Buscar
-        </button>
+            Buscar
+          </button>
         </div>
       </div>
       <div class="row" *ngIf="show">
@@ -164,11 +160,11 @@
         </ng-container>
         <ng-container matColumnDef="origen" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Origen</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.origen.provincia.nombre}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.origen.nombre}}, {{elemento.origen.provincia.nombre}}</td>
         </ng-container>
         <ng-container matColumnDef="destino" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Destino</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.destino.provincia.nombre}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.destino.nombre}}, {{elemento.destino.provincia.nombre}}</td>
         </ng-container>
         <ng-container matColumnDef="km" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>

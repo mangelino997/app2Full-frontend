@@ -8,7 +8,7 @@ import { EmpresaService } from '../../servicios/empresa.service';
 import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-poliza.service';
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
 import { PersonalService } from '../../servicios/personal.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Vehiculo } from 'src/app/modelos/vehiculo';
 import { AppService } from 'src/app/servicios/app.service';
@@ -42,6 +42,8 @@ export class VehiculoComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario listar para validaciones de campos
+  public formularioListar: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de tipos de vehiculos
@@ -71,11 +73,11 @@ export class VehiculoComponent implements OnInit {
   //Define el campo de control configuracion
   public configuracion: FormControl = new FormControl();
   //Define la lista de companias de suguros
-  public companiasSeguros:Array<any> = [];
+  public companiasSeguros: Array<any> = [];
   //Defiene la lista de compania seguro poliza
   public companiasSegurosPolizas: Array<any> = [];
   //Define la compania de seguro
-  public companiaSeguro:FormControl = new FormControl();
+  public companiaSeguro: FormControl = new FormControl();
   //Define si el tipo de vehiculo seleccionado es remolque
   public esVehiculoRemolque: boolean = false;
   //Define el mostrar del circulo de progreso
@@ -127,6 +129,12 @@ export class VehiculoComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.vehiculoModelo.formulario;
+    //Define el formulario listar
+    this.formularioListar = new FormGroup({
+      tipoVehiculo: new FormControl('', Validators.required),
+      marcaVehiculo: new FormControl('', Validators.required),
+      empresa: new FormControl('', Validators.required)
+    });
     //Autocompletado - Buscar por alias filtro remolque
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -231,7 +239,7 @@ export class VehiculoComponent implements OnInit {
   }
   //Establece selects solo lectura
   private establecerCamposSoloLectura(opcion): void {
-    if(opcion) {
+    if (opcion) {
       this.tipoVehiculo.disable();
       this.marcaVehiculo.disable();
       this.formulario.get('empresa').disable();
@@ -288,7 +296,10 @@ export class VehiculoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
+        this.formularioListar.reset();
+        setTimeout(function () {
+          document.getElementById('idTipoVehiculo').focus();
+        }, 20);
         break;
       default:
         break;
@@ -322,8 +333,9 @@ export class VehiculoComponent implements OnInit {
     );
   }
   //Obtiene el listado de registros
-  private listar() {
+  public listarTodos() {
     this.loaderService.show();
+    this.formularioListar.reset();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
@@ -331,10 +343,24 @@ export class VehiculoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
-      }
-    );
+      });
+  }
+  //Obtiene el listado de registros por filtro
+  public listar() {
+    this.loaderService.show();
+    let tipoVehiculo = this.formularioListar.get('tipoVehiculo').value;
+    let marcaVehiculo = this.formularioListar.get('marcaVehiculo').value;
+    let empresa = this.formularioListar.get('empresa').value;
+    this.servicio.listarFiltro(empresa.id, tipoVehiculo.id, marcaVehiculo.id).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      });
   }
   //Obtiene la lista de configuraciones de vehiculos por tipoVehiculo y marcaVehiculo
   public listarConfiguracionesPorTipoVehiculoMarcaVehiculo() {
@@ -426,7 +452,7 @@ export class VehiculoComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
