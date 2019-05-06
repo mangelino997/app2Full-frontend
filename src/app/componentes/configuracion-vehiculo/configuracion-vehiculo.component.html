@@ -85,8 +85,8 @@
             <div class="form-group has-float-label">
               <label for="idCapacidadCarga" class="tamanio-label">Capacidad Total de Carga(Tn) *</label>
               <input id="idCapacidadCarga" type="text" formControlName="capacidadCarga" autocomplete="off"
-                [textMask]="obtenerMascaraEnteroSinDecimales(10)" placeholder="00"
-                (blur)="desenmascararEnteros(formulario.get('capacidadCarga'), 2)"
+                [textMask]="obtenerMascaraEnteroConDecimales(10)" placeholder="0.00"
+                (blur)="setDecimales(formulario.get('capacidadCarga'), 2)"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
