@@ -63,7 +63,7 @@ export class VehiculoProveedorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'dominio', 'proveedor', 'tipoVehiculo', 'marcaVehiculo', 'companiaSeguro', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'dominio', 'tipoVehiculo', 'marcaVehiculo', 'companiaSeguro', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor

@@ -133,7 +133,7 @@ export class EmitirNotaDebitoComponent implements OnInit {
   }
   //Obtiene la lista de Puntos de Venta
   public listarPuntoVenta(){
-    this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
+    this.puntoVentaService.listarPorEmpresaYSucursalYAfipComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
       res=>{
         this.resultadosPuntoVenta= res.json();
         // this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta); 

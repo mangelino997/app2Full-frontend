@@ -67,9 +67,9 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idKm" class="tamanio-label">Kilómetros *</label>
-              <input id="idKm" [textMask]="obtenerMascaraKm(5)" type="text" formControlName="km" 
+              <input id="idKm" [textMask]="obtenerMascaraKm(4)" type="text" formControlName="km" 
                 autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                (blur)="establecerKm(formulario.get('kmPactado'))" placeholder="0 km">
+                (blur)="establecerKm(formulario.get('km'))" placeholder="0 km">
             </div>
           </div>
         </div>
@@ -124,7 +124,7 @@
             <input id="idAutocompletadoOrigen" class="form-control form-control-sm" type="text" matInput
               [formControl]="autocompletadoOrigen" [matAutocomplete]="autoOrigen" autocomplete="off">
             <mat-autocomplete #autoOrigen="matAutocomplete" [displayWith]="displayFa.bind(this)"
-              (optionSelected)="establecerTabla(true)">
+            (optionSelected)="limpiarAutocompletados(true)"> 
               <mat-option *ngFor="let item of resultados" [value]="item">
                 {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}},
                 {{item.destino.provincia.nombre}}
@@ -138,13 +138,18 @@
             <input id="idAutocompletadoDestino" class="form-control form-control-sm" type="text" matInput
               [formControl]="autocompletadoDestino" [matAutocomplete]="autoDestino" autocomplete="off">
             <mat-autocomplete #autoDestino="matAutocomplete" [displayWith]="displayFa.bind(this)"
-              (optionSelected)="establecerTabla(false)">
+            (optionSelected)="limpiarAutocompletados(false)">
               <mat-option *ngFor="let item of resultados" [value]="item">
                 {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}},
                 {{item.destino.provincia.nombre}}
               </mat-option>
             </mat-autocomplete>
           </div>
+        </div>
+        <div class="col-md-1">
+          <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="establecerTabla()">
+          Buscar
+        </button>
         </div>
       </div>
       <div class="row" *ngIf="show">
