@@ -15,6 +15,8 @@ import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service'
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 import { NotaDebito } from 'src/app/modelos/notaDebito';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
+import { ErrorPuntoVentaComponent } from '../error-punto-venta/error-punto-venta.component';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -58,7 +60,7 @@ export class EmitirNotaDebitoComponent implements OnInit {
 
   constructor(private notaDebito: NotaDebito, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService,private appComponent: AppComponent,
     private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService, 
-    private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService, public dialog: MatDialog, 
+    private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService, public dialog: MatDialog, private route: Router, 
     private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService, private ventaComprobanteService: VentaComprobanteService) { 
     
   }
@@ -135,8 +137,17 @@ export class EmitirNotaDebitoComponent implements OnInit {
   public listarPuntoVenta(){
     this.puntoVentaService.listarPorEmpresaYSucursalYAfipComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
       res=>{
+        console.log(res.json());
         this.resultadosPuntoVenta= res.json();
-        // this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta); 
+        this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
+        if(this.resultadosPuntoVenta.length==0){
+          const dialogRef = this.dialog.open(ErrorPuntoVentaComponent, {
+          width: '700px'
+      });
+        dialogRef.afterClosed().subscribe(resultado => {
+          this.route.navigate(['/home']);
+       });
+      } 
       }
     );
   }

@@ -24,6 +24,7 @@ import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.serv
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { isNumber } from 'util';
 import { Route, Router } from '@angular/router';
+import { ErrorPuntoVentaComponent } from '../error-punto-venta/error-punto-venta.component';
 @Component({
   selector: 'app-emitir-factura',
   templateUrl: './emitir-factura.component.html',
@@ -153,7 +154,7 @@ export class EmitirFacturaComponent implements OnInit {
         this.resultadosPuntoVenta= res.json();
         this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
         if(this.resultadosPuntoVenta.length==0){
-          const dialogRef = this.dialog.open(ErrorPuntoVenta, {
+          const dialogRef = this.dialog.open(ErrorPuntoVentaComponent, {
           width: '700px'
       });
         dialogRef.afterClosed().subscribe(resultado => {
@@ -991,20 +992,6 @@ export class EmitirFacturaComponent implements OnInit {
     } else {
       return '';
     }
-  }
-}
-@Component({
-  selector: 'error-puntoVenta',
-  templateUrl: 'error-puntoventa-dialogo.html',
-  styleUrls: ['./emitir-factura.component.css']
-
-})
-export class ErrorPuntoVenta{
-  constructor(public dialogRef: MatDialogRef<ViajeDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService, public dialog: MatDialog) {}
-   ngOnInit() {
-   }
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }
 @Component({

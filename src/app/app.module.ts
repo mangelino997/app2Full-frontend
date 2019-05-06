@@ -254,7 +254,7 @@ import { ViajeComponent } from './componentes/viaje/viaje.component';
 import { ActualizacionPreciosComponent, ListaPreciosDialogo, ConfimarDialogo } from './componentes/actualizacion-precios/actualizacion-precios.component';
 import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
 import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
-import { EmitirFacturaComponent, ViajeDialogo, ObservacionDialogo, TotalConceptoDialogo, TotalCargaDialogo, ErrorPuntoVenta } from './componentes/emitir-factura/emitir-factura.component';
+import { EmitirFacturaComponent, ViajeDialogo, ObservacionDialogo, TotalConceptoDialogo, TotalCargaDialogo } from './componentes/emitir-factura/emitir-factura.component';
 import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/emitir-nota-credito.component';
 import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
 import { MonedaComponent, CambiarMonedaPrincipalDialogo } from './componentes/moneda/moneda.component';
@@ -537,7 +537,6 @@ const stompConfig: StompConfig = {
     AfipCondicionIvaComponent,
     BasicoCategoriaComponent,
     ProgresoComponent,
-    ErrorPuntoVenta,
     ErrorPuntoVentaComponent
   ],
   imports: [
@@ -786,7 +785,7 @@ const stompConfig: StompConfig = {
     TotalConceptoDialogo,
     ChequesRechazadosComponent,
     AcompanianteDialogo,
-    ErrorPuntoVenta
+    ErrorPuntoVentaComponent
   ]
 })
 export class AppModule { }
