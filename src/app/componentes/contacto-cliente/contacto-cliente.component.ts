@@ -200,10 +200,15 @@ export class ContactoClienteComponent implements OnInit {
     }
   }
   //Obtiene la lista de contactos de un cliente
-  public listarPorCliente(elemento) {
+  public listarPorCliente() {
+    let elemento = this.formulario.get('cliente').value;
     this.servicio.listarPorCliente(elemento.id).subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res.json());
-      this.listaCompleta.sort = this.sort;
+      if(this.indiceSeleccionado == 5) {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+      } else {
+        this.contactos = res.json();
+      }
     })
   }
   //Obtiene el siguiente id
@@ -289,14 +294,16 @@ export class ContactoClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.listarPorCliente(elemento.cliente);
+    this.formulario.get('cliente').setValue(elemento);
+    this.listarPorCliente();
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.listarPorCliente(elemento.cliente);
+    this.formulario.get('cliente').setValue(elemento);
+    this.listarPorCliente();
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);

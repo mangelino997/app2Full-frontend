@@ -19,9 +19,9 @@
               <input id="idCliente" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
                 (blur)="verificarSeleccion(formulario.get('cliente'))" placeholder="Buscar Cliente">
-              <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente"
-                  (onSelectionChange)="listarPorCliente(itemCliente)">
+              <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                (optionSelected)="listarPorCliente()">
+                <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
                   {{itemCliente.alias}}
                 </mat-option>
               </mat-autocomplete>
@@ -113,9 +113,9 @@
             <input id="idCliente" class="form-control form-control-sm" type="text" matInput
               [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
               placeholder="Buscar por Cliente">
-            <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFn.bind(this)">
-              <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente"
-                (onSelectionChange)="listarPorCliente(itemCliente)">
+            <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayFn.bind(this)"
+              (optionSelected)="listarPorCliente()">
+              <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
                 {{itemCliente.alias}}
               </mat-option>
             </mat-autocomplete>
