@@ -15,6 +15,9 @@ import { isNumber } from 'util';
 import { VentaItemConceptoService } from 'src/app/servicios/venta-item-concepto.service';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { ErrorPuntoVentaComponent } from '../error-punto-venta/error-punto-venta.component';
 
 @Component({
   selector: 'app-emitir-nota-credito',
@@ -68,7 +71,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   constructor(private notaCredito: NotaCredito, private fechaService: FechaService, private tipoComprobanteService: TipoComprobanteService,private appComponent: AppComponent,
     private afipComprobanteService: AfipComprobanteService, private puntoVentaService: PuntoVentaService, private clienteService: ClienteService, 
     private appService: AppService, private provinciaService: ProvinciaService ,private toastr: ToastrService, private ventaComprobanteService: VentaComprobanteService,
-    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService ) { }
+    private ventaTipoItemervice: VentaTipoItemService, private alicuotasIvaService: AfipAlicuotaIvaService, private route: Router, public dialog: MatDialog ) { }
 
   ngOnInit() {
     //Define el formulario y validaciones
@@ -185,11 +188,20 @@ export class EmitirNotaCreditoComponent implements OnInit {
   public listarPuntoVenta(){
     this.puntoVentaService.listarPorEmpresaYSucursalYAfipComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 3).subscribe(
       res=>{
-        this.resultadosPuntoVenta= res.json();
         console.log(res.json());
-        // this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]['puntoVenta'].value);
+        this.resultadosPuntoVenta= res.json();
+        this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
+        if(this.resultadosPuntoVenta.length==0){
+          const dialogRef = this.dialog.open(ErrorPuntoVentaComponent, {
+          width: '700px'
+      });
+        dialogRef.afterClosed().subscribe(resultado => {
+          this.route.navigate(['/home']);
+       });
       }
-    );
+    },
+    err=>{}
+  )
   }
   //Obtiene una lista de las Provincias 
   public listarProvincias(){
