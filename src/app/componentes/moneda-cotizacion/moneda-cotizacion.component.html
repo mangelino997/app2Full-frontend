@@ -65,7 +65,7 @@
               </ng-container>
               <ng-container matColumnDef="ver" sticky>
                 <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento"><span class="cursor-color">X</span></td>
+                <td mat-cell *matCellDef="let elemento; let i=index" (click)="eliminar(elemento.id)"><span class="cursor-color">X</span></td>
               </ng-container>
               <ng-container matColumnDef="mod" sticky>
                 <th mat-header-cell *matHeaderCellDef>-</th>
@@ -73,7 +73,7 @@
                     class="cursor-color">Mod</span></td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-              <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+              <tr mat-row *matRowDef="let row; columns: columnas"></tr>
             </table>
           </div>
         </div>

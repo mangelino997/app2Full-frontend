@@ -159,6 +159,7 @@ export class MonedaCotizacionComponent implements OnInit {
   //Carga la tabla con los datos de la moneda seleccionada
   public cambioSeleccionado() {
     this.monedaCotizacionServicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(res => {
+      console.log(res.json());
       this.listaMonedaCotizacion = new MatTableDataSource(res.json());
       this.listaMonedaCotizacion.sort = this.sort;
     });
@@ -195,6 +196,19 @@ export class MonedaCotizacionComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.formulario.get('fecha').setValue(elemento.fecha);
     this.formulario.get('valor').setValue(elemento.valor);
+  }
+  //Elimina un elemento de la lista
+  public eliminar(id){
+    console.log(id);
+    this.monedaCotizacionServicio.eliminar(id).subscribe(res => {
+      let respuesta = res.json();
+      this.toastr.success(respuesta.mensaje);
+      this.cambioSeleccionado();
+    },
+    err=>{
+      let error = err.json();
+      this.toastr.error(error.mensaje);
+    });
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
