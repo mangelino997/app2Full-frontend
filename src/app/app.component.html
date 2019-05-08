@@ -9,14 +9,19 @@
       </div>
       <span class="spacer"></span>
       <div>
-        <button mat-raised-button [matMenuTriggerFor]="lusuario">{{usuario.nombre}}</button>
+        <button mat-raised-button [matMenuTriggerFor]="lusuario">{{usuario.nombre}} <mat-icon>arrow_drop_down</mat-icon></button>
         <mat-menu #lusuario="matMenu">
           <div class="container text-center titulo-menu">{{usuario.nombre}}</div>
           <mat-divider></mat-divider>
-          <a href="https://jit-gestion.appspot.com/login" target="_blank"><button mat-menu-item>Nuevo Ingreso</button></a>
-          <a href="https://jit-gestion.appspot.com/login"><button mat-menu-item>Salir</button></a>
-          <!-- <a href="http://localhost:4200/login" target="_blank"><button mat-menu-item>Nuevo Ingreso</button></a>
-          <a href="http://localhost:4200/login"><button mat-menu-item>Salir</button></a> -->
+          <button mat-menu-item (click)="nuevoIngreso()">
+            <mat-icon>tab</mat-icon><span style="margin-left: 10px;">Nuevo Ingreso</span>
+          </button>
+          <button mat-menu-item (click)="soporte()">
+            <mat-icon>contact_support</mat-icon><span style="margin-left: 10px;">Soporte</span>
+          </button>
+          <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon><span style="margin-left: 10px;">Salir</span>
+          </button>
         </mat-menu>
       </div>
     </mat-toolbar-row>

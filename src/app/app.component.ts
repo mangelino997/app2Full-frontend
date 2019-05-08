@@ -80,6 +80,19 @@ export class AppComponent implements OnInit {
       }
     )
   }
+  //Soporte
+  public soporte(): void {
+    this.router.navigate(['soporte'], {replaceUrl: true});
+  }
+  //Nuevo Ingreso
+  public nuevoIngreso(): void {
+    this.router.navigate(['login'], {replaceUrl: true});
+  }
+  //Logout
+  public logout(): void {
+    localStorage.removeItem('token');
+    this.router.navigate(['login'], {replaceUrl: true});
+  }
   public navegar(submodulo, subopcion, idSubopcion) {
     this.setSubopcion(idSubopcion);
     var pag = submodulo + subopcion;

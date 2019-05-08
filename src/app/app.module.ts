@@ -294,6 +294,7 @@ import { RolOpcionComponent, RolOpcionDialog } from './componentes/rol-opcion/ro
 import { ProgresoComponent } from './componentes/progreso/progreso.component';
 import { configuracionVehiculo } from './modelos/configuracionVehiculo';
 import { ErrorPuntoVentaComponent } from './componentes/error-punto-venta/error-punto-venta.component';
+import { SoporteComponent } from './componentes/soporte/soporte.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -397,11 +398,12 @@ const appRoutes: Routes = [
   { path: 'recoleccionesadministrar', component: OrdenRecoleccionComponent, canActivate: [GuardiaService] },
   { path: 'logisticaunidadesdenegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
   { path: 'contablecondicionesdeiva', component: AfipCondicionIvaComponent, canActivate: [GuardiaService] },
-  { path: 'categoriasbasicos', component: BasicoCategoriaComponent, canActivate: [GuardiaService] }
+  { path: 'categoriasbasicos', component: BasicoCategoriaComponent, canActivate: [GuardiaService] },
+  { path: 'soporte', component: SoporteComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.156:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://localhost:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -537,7 +539,8 @@ const stompConfig: StompConfig = {
     AfipCondicionIvaComponent,
     BasicoCategoriaComponent,
     ProgresoComponent,
-    ErrorPuntoVentaComponent
+    ErrorPuntoVentaComponent,
+    SoporteComponent
   ],
   imports: [
     BrowserModule,
