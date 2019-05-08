@@ -6,7 +6,6 @@ import { FechaService } from '../../servicios/fecha.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { PersonalService } from '../../servicios/personal.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ViajePropio } from 'src/app/modelos/viajePropio';
@@ -17,6 +16,8 @@ import { ViajeGastoComponent } from './viaje-gasto/viaje-gasto.component';
 import { ViajeInsumoComponent } from './viaje-insumo/viaje-insumo.component';
 import { ViajePeajeComponent } from './viaje-peaje/viaje-peaje.component';
 import { ViajeRemitoGSComponent } from './viaje-remito-gs/viaje-remito-gs.component';
+import { AppService } from 'src/app/servicios/app.service';
+import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
 
 @Component({
   selector: 'app-viaje',
@@ -33,102 +34,103 @@ export class ViajeComponent implements OnInit {
   @ViewChild(ViajePeajeComponent) viajePeajeComponente;
   @ViewChild(ViajeRemitoGSComponent) viajeRemitoGSComponente;
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si los campos de la cebecera son de solo lectura
-  public soloLecturaCabecera:boolean = false;
+  public soloLecturaCabecera: boolean = false;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define la lista de opciones
-  public opciones:Array<any> = [];
+  public opciones: Array<any> = [];
   //Define un formulario viaje propio para validaciones de campos
-  public formularioViajePropio:FormGroup;
+  public formularioViajePropio: FormGroup;
   //Define un formulario viaje propio tramo para validaciones de campos
   public formularioViajePropioTramo: FormGroup = new FormGroup({});
   //Define un formulario viaje propio combustible para validaciones de campos
-  public formularioViajePropioCombustible:FormGroup = new FormGroup({});
+  public formularioViajePropioCombustible: FormGroup = new FormGroup({});
   //Define un formulario viaje propio efectivo para validaciones de campos
-  public formularioViajePropioEfectivo:FormGroup = new FormGroup({});
+  public formularioViajePropioEfectivo: FormGroup = new FormGroup({});
   //Define un formulario viaje propio insumo para validaciones de campos
-  public formularioViajePropioInsumo:FormGroup = new FormGroup({});
+  public formularioViajePropioInsumo: FormGroup = new FormGroup({});
   //Define un formulario viaje remitos dadores de carga para validaciones de campos
-  public formularioViajeRemitoDC:FormGroup = new FormGroup({});
+  public formularioViajeRemitoDC: FormGroup = new FormGroup({});
   //Define un formulario viaje remito para validaciones de campos
-  public formularioViajeRemito:FormGroup = new FormGroup({});
+  public formularioViajeRemito: FormGroup = new FormGroup({});
   //Define un formulario viaje propio gasto para validaciones de campos
-  public formularioViajePropioGasto:FormGroup = new FormGroup({});
+  public formularioViajePropioGasto: FormGroup = new FormGroup({});
   //Define un formulario viaje propio peaje para validaciones de campos
-  public formularioViajePropioPeaje:FormGroup = new FormGroup({});
+  public formularioViajePropioPeaje: FormGroup = new FormGroup({});
   //Define la lista completa de registros
-  public listaCompleta:Array<any> = [];
+  public listaCompleta: Array<any> = [];
   //Define la opcion seleccionada
-  public opcionSeleccionada:number = null;
+  public opcionSeleccionada: number = null;
   //Define la opcion activa
-  public botonOpcionActivo:boolean = null;
+  public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de vehiculos
-  public resultadosVehiculos:Array<any> = [];
+  public resultadosVehiculos: Array<any> = [];
   //Define la lista de resultados de vehiculos remolques
-  public resultadosVehiculosRemolques:Array<any> = [];
+  public resultadosVehiculosRemolques: Array<any> = [];
   //Define la lista de resultados de choferes
-  public resultadosChoferes:Array<any> = [];
+  public resultadosChoferes: Array<any> = [];
   //Define el tipo de viaje (Propio o Tercero)
-  public tipoViaje:FormControl = new FormControl();
+  public tipoViaje: FormControl = new FormControl();
   //Define el nombre del usuario logueado
-  public usuarioNombre:FormControl = new FormControl();
+  public usuarioNombre: FormControl = new FormControl();
   //Define la lista de sucursales
-  public sucursales:Array<any> = [];
+  public sucursales: Array<any> = [];
   //Define una bandera para campos solo lectura de componentes hijos
-  public banderaSoloLectura:boolean = false;
+  public banderaSoloLectura: boolean = false;
   //Define si la lista de tramos tiene registros
-  public estadoFormulario:boolean = false;
+  public estadoFormulario: boolean = false;
   //Constructor
   constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
+    private appService: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private fechaServicio: FechaService,
     private sucursalServicio: SucursalService, private vehiculoServicio: VehiculoService,
-    private personalServicio: PersonalService, private viajePropioModelo: ViajePropio) {
+    private personalServicio: PersonalService, private viajePropioModelo: ViajePropio,
+    private choferProveedorServicio: ChoferProveedorService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
-    .subscribe(
-      res => {
-        this.opciones = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+      .subscribe(
+        res => {
+          this.opciones = res.json();
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
     // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.servicio.listarPorAlias(data).subscribe(response =>{
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
       }
@@ -150,28 +152,39 @@ export class ViajeComponent implements OnInit {
     this.establecerValoresPorDefecto();
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.vehiculoServicio.listarPorAlias(data).subscribe(response => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.vehiculoServicio.listarPorAliasYRemolqueFalse(data).subscribe(response => {
           this.resultadosVehiculos = response;
         })
       }
     })
     //Autocompletado Vehiculo Remolque - Buscar por alias
     this.formularioViajePropio.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.vehiculoServicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.vehiculoServicio.listarPorAliasYRemolqueTrue(data).subscribe(response => {
           this.resultadosVehiculosRemolques = response;
         })
       }
     })
     //Autocompletado Personal - Buscar por alias
     this.formularioViajePropio.get('personal').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.personalServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosChoferes = response;
+      if (typeof data == 'string' && data.length > 2) {
+        this.personalServicio.listarChoferesLargaDistanciaPorAlias(data).subscribe(res => {
+          this.resultadosChoferes = res.json();
         })
       }
     })
+    //Autocompletado Proveedor Chofer - Buscar por alias
+    // this.formularioViajePropio.get('choferProveedor').valueChanges.subscribe(data => {
+    //   if (typeof data == 'string' && data.length > 2) {
+    //     let vehiculoProveedor = this.formularioViajePropio.get('vehiculoProveedor').value;
+    //     if(vehiculoProveedor) {
+    //       this.choferProveedorServicio.listarPorAliasYProveedor(data, vehiculoProveedor.proveedor.id).subscribe(res => {
+    //         this.resultadosChoferes = res.json();
+    //       });
+    //     }
+    //   }
+    // })
   }
   //Establece el formulario y listas al seleccionar un elemento del autocompletado
   public cambioAutocompletado(): void {
@@ -189,12 +202,12 @@ export class ViajeComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
-    let usuario = this.appComponent.getUsuario();
+    let usuario = this.appService.getUsuario();
     this.formularioViajePropio.get('usuario').setValue(usuario);
     this.usuarioNombre.setValue(usuario.nombre);
     this.tipoViaje.setValue(true);
     this.formularioViajePropio.get('esRemolquePropio').setValue(true);
-    let sucursal = this.appComponent.getUsuario().sucursal;
+    let sucursal = this.appService.getUsuario().sucursal;
     this.formularioViajePropio.get('sucursal').setValue(sucursal);
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
@@ -234,7 +247,7 @@ export class ViajeComponent implements OnInit {
   }
   //Establece los campos select en solo lectura
   private establecerCamposSoloLectura(opcion): void {
-    if(opcion) {
+    if (opcion) {
       this.tipoViaje.disable();
       this.formularioViajePropio.get('esRemolquePropio').disable();
       this.formularioViajePropio.get('sucursal').disable();
@@ -253,7 +266,7 @@ export class ViajeComponent implements OnInit {
     this.mostrarBoton = boton;
     this.vaciarListas();
     this.establecerValoresPorDefecto();
-    if(this.banderaSoloLectura) {
+    if (this.banderaSoloLectura) {
       this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
       this.viajeTramoComponente.reestablecerFormularioYLista();
       this.viajeCombustibleComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
@@ -276,7 +289,7 @@ export class ViajeComponent implements OnInit {
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -312,7 +325,7 @@ export class ViajeComponent implements OnInit {
   public seleccionarOpcion(opcion, indice) {
     this.opcionSeleccionada = opcion;
     this.botonOpcionActivo = indice;
-    switch(opcion) {
+    switch (opcion) {
       case 1:
         setTimeout(function () {
           document.getElementById('idFecha').focus();
@@ -365,12 +378,18 @@ export class ViajeComponent implements OnInit {
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
     this.estadoFormulario = false;
+    this.tipoViaje.enable();
     for (const key in $event) {
-      if($event[key].id > 0 || $event[key].id == null) {
+      if ($event[key].id > 0 || $event[key].id == null) {
         this.estadoFormulario = true;
+        this.tipoViaje.disable();
       }
     }
-    this.formularioViajePropio.get('viajePropioTramos').setValue($event);
+    if(!this.estadoFormulario) {
+      this.formularioViajePropio.get('viajePropioTramos').reset();
+    } else {
+      this.formularioViajePropio.get('viajePropioTramos').setValue($event);
+    }
     this.viajeRemitoGSComponente.establecerListaTramos($event);
   }
   //Recibe la lista de combustibles de Viaje Combustible
@@ -399,7 +418,7 @@ export class ViajeComponent implements OnInit {
   }
   //Dependiendo en que pestaña esta, es la acción que realiza
   public accion(): void {
-    switch(this.indiceSeleccionado) {
+    switch (this.indiceSeleccionado) {
       case 1:
         this.agregar();
         break;
@@ -414,15 +433,16 @@ export class ViajeComponent implements OnInit {
   }
   //Agregar el viaje propio
   private agregar(): void {
+    this.tipoViaje.enable();
     let vehiculo = this.formularioViajePropio.get('vehiculo').value;
     this.formularioViajePropio.get('empresa').setValue(vehiculo.empresa);
-    this.formularioViajePropio.get('empresaEmision').setValue(this.appComponent.getEmpresa());
+    this.formularioViajePropio.get('empresaEmision').setValue(this.appService.getEmpresa());
     let empresa = this.formularioViajePropio.get('empresa').value;
     this.formularioViajePropio.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
     this.servicio.agregar(this.formularioViajePropio.value).subscribe(
       res => {
         let resultado = res.json();
-        if(resultado.codigo == 201) {
+        if (resultado.codigo == 201) {
           this.reestablecerFormulario(resultado.id);
           this.vaciarListasHijos();
           this.establecerValoresPorDefecto();
@@ -438,11 +458,12 @@ export class ViajeComponent implements OnInit {
   }
   //Actualiza el viaje propio
   private actualizar(): void {
+    this.tipoViaje.enable();
     this.establecerCamposSoloLectura(false);
     this.servicio.actualizar(this.formularioViajePropio.value).subscribe(
       res => {
         let resultado = res.json();
-        if(resultado.codigo == 200) {
+        if (resultado.codigo == 200) {
           this.establecerCamposSoloLectura(true);
           this.reestablecerFormulario(resultado.id);
           this.vaciarListasHijos();
@@ -471,19 +492,19 @@ export class ViajeComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    if(respuesta.codigo == 11006) {
+    if (respuesta.codigo == 11006) {
       document.getElementById("labelRazonSocial").classList.add('label-error');
       document.getElementById("idRazonSocial").classList.add('is-invalid');
       document.getElementById("idRazonSocial").focus();
-    } else if(respuesta.codigo == 11009) {
+    } else if (respuesta.codigo == 11009) {
       document.getElementById("labelTelefono").classList.add('label-error');
       document.getElementById("idTelefono").classList.add('is-invalid');
       document.getElementById("idTelefono").focus();
-    } else if(respuesta.codigo == 11008) {
+    } else if (respuesta.codigo == 11008) {
       document.getElementById("labelSitioWeb").classList.add('label-error');
       document.getElementById("idSitioWeb").classList.add('is-invalid');
       document.getElementById("idSitioWeb").focus();
-    } else if(respuesta.codigo == 11010) {
+    } else if (respuesta.codigo == 11010) {
       document.getElementById("labelNumeroDocumento").classList.add('label-error');
       document.getElementById("idNumeroDocumento").classList.add('is-invalid');
       document.getElementById("idNumeroDocumento").focus();
@@ -498,10 +519,10 @@ export class ViajeComponent implements OnInit {
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formularioViajePropio.get(campo).value;
-    if(valor != undefined && valor != null && valor != '') {
+    if (valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
-        if(campo == 'sitioWeb') {
+        if (campo == 'sitioWeb') {
           document.getElementById("labelSitioWeb").classList.add('label-error');
           document.getElementById("idSitioWeb").classList.add('is-invalid');
           this.toastr.error('Sitio Web Incorrecto');
@@ -524,13 +545,13 @@ export class ViajeComponent implements OnInit {
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -538,7 +559,7 @@ export class ViajeComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.dominio ? elemento.dominio : elemento;
     } else {
       return elemento;
@@ -548,15 +569,15 @@ export class ViajeComponent implements OnInit {
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
     var opcion = this.opcionSeleccionada;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
-    } else if(keycode == 115) {
-      if(opcion < this.opciones.length) {
-        this.seleccionarOpcion(opcion+1, opcion);
+    } else if (keycode == 115) {
+      if (opcion < this.opciones.length) {
+        this.seleccionarOpcion(opcion + 1, opcion);
       } else {
         this.seleccionarOpcion(1, 0);
       }

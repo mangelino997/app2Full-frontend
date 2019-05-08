@@ -58,9 +58,17 @@ export class VehiculoService {
       })
     })
   }
+  //Obtiene un listado por alias filtrado por vehiculos no remolque
+  public listarPorAliasYRemolqueFalse(alias) {
+    return this.http.get(this.url + '/listarPorAliasYRemolqueFalse/' + alias, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Obtiene un listado por alias filtrado por vehiculos remolque
-  public listarPorAliasFiltroRemolque(alias) {
-    return this.http.get(this.url + '/listarPorAliasFiltroRemolque/' + alias, this.options).map(res => {
+  public listarPorAliasYRemolqueTrue(alias) {
+    return this.http.get(this.url + '/listarPorAliasYRemolqueTrue/' + alias, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })

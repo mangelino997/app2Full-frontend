@@ -138,7 +138,7 @@ export class VehiculoComponent implements OnInit {
     //Autocompletado - Buscar por alias filtro remolque
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAliasFiltroRemolque(data).subscribe(response => {
+        this.servicio.listarPorAliasYRemolqueTrue(data).subscribe(response => {
           this.resultadosVehiculosRemolques = response;
         })
       }

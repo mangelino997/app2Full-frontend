@@ -132,7 +132,7 @@ export class RepartoComponent implements OnInit {
       switch(this.tipoViaje.value){
         case 1:
           if(typeof data == 'string'&& data.length>2) {
-            this.vehiculoService.listarPorAliasFiltroRemolque(data).subscribe(res => {
+            this.vehiculoService.listarPorAliasYRemolqueTrue(data).subscribe(res => {
               this.resultadosRemolque = res;
             })
           }

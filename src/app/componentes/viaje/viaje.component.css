@@ -35,3 +35,7 @@
     padding-right: 0px !important;
     border-radius: 4px !important;
 }
+.btn-width {
+    padding: 0px 0px !important;
+    min-width: 45px !important;
+}

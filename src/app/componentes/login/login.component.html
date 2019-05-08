@@ -25,7 +25,7 @@
                 </div>
                 <div *ngIf="estaAutenticado" class="form-group has-float-label">
                   <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-                  <mat-select id="idEmpresa" class="form-control form-control-sm"
+                  <mat-select id="idEmpresa" class="form-control"
                     formControlName="empresa" [compareWith]="compareFn">
                     <mat-option *ngFor="let empresa of empresas" [value]="empresa">
                       {{empresa.razonSocial}}

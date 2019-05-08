@@ -48,9 +48,13 @@ export class PersonalService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene la lista de registros Ordenados 
+  //Obtiene la lista de choferes de corta distancia por alias
   public listarChoferesCortaDistanciaPorAlias(nombre) {
     return this.http.get(this.url + '/listarChoferesCortaDistanciaPorAlias/' + nombre, this.options);
+  }
+  //Obtiene la lista de choferes de larga distancia por alias
+  public listarChoferesLargaDistanciaPorAlias(nombre) {
+    return this.http.get(this.url + '/listarChoferesLargaDistanciaPorAlias/' + nombre, this.options);
   }
   //Obtiene un listado por alias
   public listarPorAlias(alias) {

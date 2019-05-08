@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Output, EventEmitter } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { ViajePropioTramo } from 'src/app/modelos/viajePropioTramo';
 import { ViajePropioTramoCliente } from 'src/app/modelos/viajePropioTramoCliente';
 import { TramoService } from 'src/app/servicios/tramo.service';
@@ -234,6 +234,7 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Agrega datos a la tabla de tramos
   public agregarTramo(): void {
+    this.formularioViajePropioTramo.enable();
     this.numeroOrden++;
     this.formularioViajePropioTramo.get('numeroOrden').setValue(this.numeroOrden);
     let fecha = this.formularioViajePropioTramo.get('fechaTramo').value;
@@ -264,7 +265,8 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Elimina un tramo de la tabla por indice
   public eliminarTramo(indice, elemento): void {
-    this.listaTramos[indice].id = elemento.id*(-1);
+    // this.listaTramos[indice].id = elemento.id > 0 ? elemento.id*(-1) : -1;
+    this.listaTramos.splice(indice, 1);
     document.getElementById('idTramoFecha').focus();
     this.enviarDatos();
   }

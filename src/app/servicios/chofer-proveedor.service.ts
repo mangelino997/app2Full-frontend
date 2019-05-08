@@ -62,6 +62,10 @@ export class ChoferProveedorService {
   public listarPorProveedor(id) {
     return this.http.get(this.url + '/listarPorProveedor/' + id, this.options);
   }
+  //Obtiene una lista por id proveedor
+  public listarPorAliasYProveedor(alias, idProveedor) {
+    return this.http.get(this.url + '/listarPorAliasYProveedor/' + alias + '/' + idProveedor, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
