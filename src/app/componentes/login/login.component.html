@@ -6,7 +6,8 @@
         <mat-card>
           <div class="row justify-content-center">
             <img width="40px" height="35px" src="/assets/logo.png" alt="Logo">
-            <h2 style="padding-left: 10px;font-weight: bold;">JIT</h2><h4 style="padding-top: 8px; padding-left: 5px;">Logistica</h4>
+            <h2 style="padding-left: 10px;font-weight: bold;">JIT</h2>
+            <h4 style="padding-top: 8px; padding-left: 5px;">Logistica</h4>
           </div>
           <br />
           <div class="row">
@@ -14,28 +15,33 @@
               <form [formGroup]="formulario">
                 <div id="divUsername" class="form-group has-float-label">
                   <label id="labelUsername" for="idUsername" class="tamanio-label">Usuario *</label>
-                  <input id="idUsername" type="text" formControlName="username" autocomplete="off"
-                  class="form-control" required [(ngModel)]="elemento.username" autofocus>
+                  <input id="idUsername" type="text" formControlName="username" autocomplete="off" class="form-control"
+                    required autofocus>
                 </div>
                 <div id="divPassword" class="form-group has-float-label">
                   <label id="labelPassword" for="idPassword" class="tamanio-label">Contraseña *</label>
                   <input id="idPassword" type="password" formControlName="password" autocomplete="off"
-                  class="form-control" required [(ngModel)]="elemento.password">
+                    class="form-control" required>
                 </div>
                 <div *ngIf="estaAutenticado" class="form-group has-float-label">
                   <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-                  <select id="idEmpresa" class="form-control" formControlName="empresa" [(ngModel)]="elemento.empresa">
-                    <option *ngFor="let empresa of empresas" [ngValue]="empresa">{{empresa.razonSocial}}</option>
-                  </select>
+                  <mat-select id="idEmpresa" class="form-control form-control-sm"
+                    formControlName="empresa" [compareWith]="compareFn">
+                    <mat-option *ngFor="let empresa of empresas" [value]="empresa">
+                      {{empresa.razonSocial}}
+                    </mat-option>
+                  </mat-select>
                 </div>
                 <hr />
-                <button *ngIf="!estaAutenticado && !show" id="idBotonA" class="btn btn-primary btn-block" type="button"
-                name="buttonA" (click)="login()" [disabled]="!formulario.valid">Autenticarse</button>
                 <div class="row justify-content-center">
-                  <mat-spinner diameter="40" *ngIf="show"></mat-spinner>
+                  <button *ngIf="!estaAutenticado && !show" id="idBotonA" mat-raised-button color="primary"
+                    name="buttonA" (click)="login()" [disabled]="!formulario.valid">Autenticarse</button>
+                  <div class="row justify-content-center">
+                    <mat-spinner diameter="40" *ngIf="show"></mat-spinner>
+                  </div>
+                  <button *ngIf="estaAutenticado && !show" id="idBotonI" mat-raised-button color="primary"
+                    name="buttonI" (click)="ingresar(elemento)" [disabled]="!formulario.valid">Ingresar</button>
                 </div>
-                <button *ngIf="estaAutenticado && !show" id="idBotonI" class="btn btn-primary btn-block" type="button"
-                name="buttonI" (click)="ingresar(elemento)" [disabled]="!formulario.valid">Ingresar</button>
               </form>
             </div>
           </div>

@@ -15,8 +15,6 @@ import { ToastrService } from 'ngx-toastr';
   templateUrl: './login.component.html'
 })
 export class LoginComponent implements OnInit {
-  //Define un elemento
-  public elemento: any = {};
   //Define el formulario
   public formulario = null;
   //Define si esta autenticado
@@ -49,7 +47,9 @@ export class LoginComponent implements OnInit {
   //Loguea un usuario
   public login() {
     this.loaderService.show();
-    this.loginService.login(this.elemento.username, this.elemento.password)
+    let username = this.formulario.get('username').value;
+    let password = this.formulario.get('password').value;
+    this.loginService.login(username, password)
       .subscribe(res => {
         if (res.headers.get('authorization')) {
           //Almacena el token en el local storage
@@ -59,7 +59,7 @@ export class LoginComponent implements OnInit {
           this.loginService.setLogueado(true);
           this.estaAutenticado = true;
           //Obtiene el usuario por username
-          this.usuarioService.obtenerPorUsername(this.elemento.username, token).subscribe(
+          this.usuarioService.obtenerPorUsername(username, token).subscribe(
             res => {
               let usuario = res.json();
               this.appComponent.setUsuario(usuario);
@@ -75,16 +75,17 @@ export class LoginComponent implements OnInit {
                   this.loaderService.hide();
                 },
                 err => {
-                  console.log(err);
+                  this.loaderService.hide();
                 }
               );
             },
             err => {
-              console.log(err);
+              this.loaderService.hide();
             }
           );
         } else {
           this.loginService.setLogueado(false);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -97,9 +98,11 @@ export class LoginComponent implements OnInit {
   public ingresar() {
     if (this.estaAutenticado === true) {
       //Establece la empresa
-      this.appComponent.setEmpresa(this.elemento.empresa);
+      let empresa = this.formulario.get('empresa').value;
+      //Establece la empresa
+      this.appComponent.setEmpresa(empresa);
       //Establece el tema
-      this.appComponent.setTema(this.establecerTema(this.elemento.empresa));
+      this.appComponent.setTema(this.establecerTema(empresa));
       //Navega a la pagina principal (home)
       this.router.navigate(['/home'], { replaceUrl: true });
     }
@@ -116,6 +119,13 @@ export class LoginComponent implements OnInit {
         return 'purple-theme';
       case 5:
         return 'green-theme';
+    }
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
     }
   }
 }
