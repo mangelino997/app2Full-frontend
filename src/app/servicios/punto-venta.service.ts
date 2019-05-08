@@ -8,11 +8,11 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class PuntoVentaService {
   //Define la ruta al servicio web
-  private ruta:string = "/puntoventa";
+  private ruta: string = "/puntoventa";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la subcripcion
@@ -20,7 +20,7 @@ export class PuntoVentaService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -31,7 +31,7 @@ export class PuntoVentaService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -46,7 +46,7 @@ export class PuntoVentaService {
   }
   //Obtiene el Numero por PuntoVenta y codigoAfip
   public obtenerNumero(punto, codigo, sucursal, empresa) {
-    return this.http.get(this.url + '/obtenerNumero/' + punto + '/' + codigo + '/' 
+    return this.http.get(this.url + '/obtenerNumero/' + punto + '/' + codigo + '/'
       + sucursal + '/' + empresa, this.options);
   }
   //Obtiene la lista de registros
@@ -66,9 +66,9 @@ export class PuntoVentaService {
     return this.http.get(this.url + '/listarPorSucursalYEmpresaLetra/' + idSucursal + '/' + idEmpresa, this.options);
   }
   //Obtiene una lista por empresa, sucursal y tipo de comprobante
-  public listarPorEmpresaYSucursalYAfipComprobante(idEmpresa, idSucursal, idAfipComprobante) {
-    return this.http.get(this.url + '/listarPorEmpresaYSucursalYTipoComprobante/' 
-      + idEmpresa + '/' + idSucursal + '/' + idAfipComprobante, this.options);
+  public listarPorEmpresaYSucursalYTipoComprobante(idEmpresa, idSucursal, idTipoComprobante) {
+    return this.http.get(this.url + '/listarPorEmpresaYSucursalYTipoComprobante/'
+      + idEmpresa + '/' + idSucursal + '/' + idTipoComprobante, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
