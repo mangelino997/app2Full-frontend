@@ -59,7 +59,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajePropioCombustible.get('fecha').setValue(res.json());
     })
-    this.formularioViajePropioCombustible.get('cantidad').setValue(valor);
+    // this.formularioViajePropioCombustible.get('cantidad').setValue(valor);
     this.formularioViajePropioCombustible.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
     this.formularioViajePropioCombustible.get('importe').setValue(this.appComponent.establecerCeros(valor));
     if(opcion == 1) {
@@ -103,6 +103,7 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Agrega datos a la tabla de combustibles
   public agregarCombustible(): void {
+    this.formularioViajePropioCombustible.get('precioUnitario').enable();
     this.formularioViajePropioCombustible.get('tipoComprobante').setValue({id:15});
     this.formularioViajePropioCombustible.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajePropioCombustible.get('usuario').setValue(this.appComponent.getUsuario());
@@ -112,6 +113,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
+    this.formularioViajePropioCombustible.get('precioUnitario').disable();
   }
   //Modifica los datos del combustible
   public modificarCombustible(): void {
@@ -147,9 +149,9 @@ export class ViajeCombustibleComponent implements OnInit {
     let totalUrea = 0;
     this.listaCombustibles.forEach(item => {
       if (item.insumo.id == 1) {
-        totalCombustible += item.cantidad;
+        totalCombustible += Number(item.cantidad);
       } else if (item.insumo.id == 3) {
-        totalUrea += item.cantidad;
+        totalUrea += Number(item.cantidad);
       }
     })
     this.formularioViajePropioCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
@@ -162,9 +164,9 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listaCombustibles.forEach(item => {
       if(item.id != -1) {
         if(item.insumo.id == 1) {
-          totalCombustible += item.cantidad;
+          totalCombustible += Number(item.cantidad);
         } else if(item.insumo.id == 3) {
-          totalUrea += item.cantidad;
+          totalUrea += Number(item.cantidad);
         }
       }
     })
@@ -264,5 +266,8 @@ export class ViajeCombustibleComponent implements OnInit {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
-
+  //Mascara un entero
+  public mascararEnteros(limit) {
+    return this.appService.mascararEnteros(limit);
+  }
 }

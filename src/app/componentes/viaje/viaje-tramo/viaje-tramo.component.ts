@@ -14,6 +14,8 @@ import { ClienteService } from 'src/app/servicios/cliente.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
+import { ViajePropioTramoService } from 'src/app/servicios/viaje-propio-tramo.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-viaje-tramo',
@@ -61,12 +63,17 @@ export class ViajeTramoComponent implements OnInit {
   public btnTramo:boolean = true;
   //Define el tipo de viaje
   public tipoViaje:boolean = true;
+  //Define la pestaña seleccionada
+  public indiceSeleccionado:number = 1;
+  //Define el viaje actual de los tramos
+  public viaje:any;
   //Constructor
   constructor(private appComponent: AppComponent, private viajePropioTramoModelo: ViajePropioTramo,
     private tramoServicio: TramoService, private appServicio: AppService,
     private empresaServicio: EmpresaService, private viajeUnidadNegocioServicio: ViajeUnidadNegocioService,
     private viajeTipoCargaServicio: ViajeTipoCargaService, private viajeTipoServicio: ViajeTipoService,
-    private viajeTarifaServicio: ViajeTarifaService, public dialog: MatDialog, private fechaServicio: FechaService) { }
+    private viajeTarifaServicio: ViajeTarifaService, public dialog: MatDialog, private fechaServicio: FechaService,
+    private servicio: ViajePropioTramoService, private toastr: ToastrService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio tramo
@@ -185,16 +192,20 @@ export class ViajeTramoComponent implements OnInit {
     this.viajeTarifaServicio.listar().subscribe(
       res => {
         this.viajesTarifas = res.json();
-        this.viajesTarifas.forEach((elemento) => {
-          if(elemento.porDefecto == true) {
-            this.formularioViajePropioTramo.get('viajeTarifa').setValue(elemento);
-          }
-        });
+        this.establecerViajeTarifaPorDefecto();
       },
       err => {
         console.log(err);
       }
     );
+  }
+  //Establece el viaje tarifa por defecto
+  private establecerViajeTarifaPorDefecto(): void {
+    this.viajesTarifas.forEach((elemento) => {
+      if(elemento.porDefecto == true) {
+        this.formularioViajePropioTramo.get('viajeTarifa').setValue(elemento);
+      }
+    });
   }
   //Establece los km al seleccionar elemento de tramo
   public establecerKm(): void {
@@ -245,6 +256,7 @@ export class ViajeTramoComponent implements OnInit {
     this.listaTramos.push(this.formularioViajePropioTramo.value);
     this.formularioViajePropioTramo.reset();
     this.establecerValoresPorDefecto();
+    this.establecerViajeTarifaPorDefecto();
     document.getElementById('idTramoFecha').focus();
     this.enviarDatos();
   }
@@ -254,6 +266,7 @@ export class ViajeTramoComponent implements OnInit {
     this.btnTramo = true;
     this.formularioViajePropioTramo.reset();
     this.establecerValoresPorDefecto();
+    this.establecerViajeTarifaPorDefecto();
     document.getElementById('idTramoFecha').focus();
     this.enviarDatos();
   }
@@ -265,10 +278,22 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Elimina un tramo de la tabla por indice
   public eliminarTramo(indice, elemento): void {
-    // this.listaTramos[indice].id = elemento.id > 0 ? elemento.id*(-1) : -1;
-    this.listaTramos.splice(indice, 1);
+    if(this.indiceSeleccionado == 1) {
+      this.listaTramos.splice(indice, 1);
+      this.enviarDatos();
+    } else {
+      this.servicio.eliminar(elemento.id).subscribe(res => {
+        let respuesta = res.json();
+        this.toastr.success(respuesta.mensaje);
+        this.servicio.listarTramos(this.viaje.id).subscribe(res => {
+          this.listaTramos = res.json();
+          this.enviarDatos();
+        });
+      });
+    }
+    this.establecerValoresPorDefecto();
+    this.establecerViajeTarifaPorDefecto();
     document.getElementById('idTramoFecha').focus();
-    this.enviarDatos();
   }
   //Envia la lista de tramos a Viaje
   private enviarDatos(): void {
@@ -279,13 +304,16 @@ export class ViajeTramoComponent implements OnInit {
     elemento.setValue(this.appComponent.establecerCeros(elemento.value));
   }
   //Establece la lista de tramos
-  public establecerLista(lista): void {
+  public establecerLista(lista, viaje): void {
     this.establecerValoresPorDefecto();
+    this.establecerViajeTarifaPorDefecto();
     this.listaTramos = lista;
+    this.viaje = viaje;
     this.enviarDatos();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
+    this.indiceSeleccionado = indice;
     switch(indice) {
       case 1:
         this.soloLectura = false;

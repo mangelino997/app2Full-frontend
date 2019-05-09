@@ -25,7 +25,8 @@ export class ViajePropioTramo {
             cantidad: new FormControl('', Validators.required),
             precioUnitario: new FormControl('', Validators.required),
             importe: new FormControl('', Validators.required),
-            viajePropioTramoClientes: new FormControl()
+            viajePropioTramoClientes: new FormControl(),
+            activo: new FormControl()
         })
     }
 }

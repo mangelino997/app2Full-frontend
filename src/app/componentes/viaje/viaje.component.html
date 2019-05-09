@@ -19,7 +19,7 @@
                                     <label for="idAutocompletado" class="tamanio-label">Buscar Guía de Servicio</label>
                                     <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
                                         autocomplete="off" type="text" matInput [formControl]="autocompletado"
-                                        [matAutocomplete]="auto">
+                                        [matAutocomplete]="auto" placeholder="Buscar por N° GS, Fecha, Empresa o Chofer">
                                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
                                         (optionSelected)="cambioAutocompletado()">
                                         <mat-option *ngFor="let item of resultados" [value]="item">

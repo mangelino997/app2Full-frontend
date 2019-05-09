@@ -192,7 +192,7 @@ export class ViajeComponent implements OnInit {
     this.servicio.obtenerPorId(viaje.id).subscribe(res => {
       let viajePropio = res.json();
       this.formularioViajePropio.setValue(viajePropio);
-      this.viajeTramoComponente.establecerLista(viajePropio.viajePropioTramos);
+      this.viajeTramoComponente.establecerLista(viajePropio.viajePropioTramos, viaje);
       this.viajeCombustibleComponente.establecerLista(viajePropio.viajePropioCombustibles);
       this.viajeEfectivoComponente.establecerLista(viajePropio.viajePropioEfectivos);
       this.viajeInsumoComponente.establecerLista(viajePropio.viajePropioInsumos);
