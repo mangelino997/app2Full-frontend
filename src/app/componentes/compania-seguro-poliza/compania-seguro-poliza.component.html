@@ -18,7 +18,7 @@
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput [formControl]="formulario.get('companiaSeguro')"
                 [matAutocomplete]="autoCompaniaSeguro" autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('companiaSeguro'))">
               <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFn.bind(this)"
-                (optionSelected)="obtenerPorCompaniaSeguroYEmpresa()">
+                (optionSelected)="listarPorCompaniaSeguroYEmpresa()">
                 <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
                   {{itemCompaniaSeguro.nombre}}
                 </mat-option>
@@ -31,9 +31,22 @@
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Empresa *</label>
               <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa" [compareWith]="compareFn"
-                (selectionChange)="obtenerPorCompaniaSeguroYEmpresa()">
+                (selectionChange)="listarPorCompaniaSeguroYEmpresa()">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                   {{itemEmpresa.razonSocial}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center" *ngIf="indiceSeleccionado == 3">
+          <div class="col-md-8">
+            <div class="form-group has-float-label">
+              <label for="idPoliza" class="tamanio-label">Póliza *</label>
+              <mat-select id="idPoliza" class="form-control form-control-sm" [formControl]="poliza" [compareWith]="compareFn"
+                (selectionChange)="establecerPoliza()">
+                <mat-option *ngFor="let poliza of polizas" [value]="poliza">
+                  Numero: <b>{{poliza.numeroPoliza}}</b> - Vto.: <b>{{poliza.vtoPoliza | date: 'dd/MM/yyyy'}}</b>
                 </mat-option>
               </mat-select>
             </div>

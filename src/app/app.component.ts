@@ -86,7 +86,8 @@ export class AppComponent implements OnInit {
   }
   //Nuevo Ingreso
   public nuevoIngreso(): void {
-    this.router.navigate(['login'], {replaceUrl: true});
+    window.open(this.appService.getUrlOrigen() + '/login', '_blank');
+    // this.router.navigate(['login'], {replaceUrl: true});
   }
   //Logout
   public logout(): void {

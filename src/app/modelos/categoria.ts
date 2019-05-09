@@ -10,8 +10,8 @@ export class Categoria {
             id: new FormControl(),
             version: new FormControl(),
             nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-            adicionalBasicoVacaciones: new FormControl('', [Validators.required]),
-            topeBasicoAdelantos: new FormControl('',[Validators.required]),
+            adicionalBasicoVacaciones: new FormControl(),
+            topeBasicoAdelantos: new FormControl(),
             diasLaborables: new FormControl('', [Validators.min(1), Validators.max(31)]),
             horasLaborables: new FormControl('', [Validators.min(1), Validators.max(24)])
         })

@@ -57,8 +57,8 @@ export class CompaniaSeguroPolizaService {
     return this.http.get(this.url + '/listarPorCompaniaSeguro/' + id, this.options);
   }
   //Obtiene por compania de seguro y empresa
-  public obtenerPorCompaniaSeguroYEmpresa(idCompaniaSeguro, idEmpresa) {
-    return this.http.get(this.url + '/obtenerPorCompaniaSeguroYEmpresa/' + idCompaniaSeguro + '/' + idEmpresa, this.options);
+  public listarPorCompaniaSeguroYEmpresa(idCompaniaSeguro, idEmpresa) {
+    return this.http.get(this.url + '/listarPorCompaniaSeguroYEmpresa/' + idCompaniaSeguro + '/' + idEmpresa, this.options);
   }
   //Obtiene por nombre de compania de seguro
   public listarPorCompaniaSeguroNombre(nombre) {

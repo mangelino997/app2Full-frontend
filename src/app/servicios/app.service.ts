@@ -7,6 +7,8 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 
 @Injectable()
 export class AppService {
+  //Deifne la URL origen
+  private URL_ORIGEN = 'http://localhost:4200';
   //Define la IP
   private IP = 'http://localhost:8080'; //192.168.0.156:8080
   // private IP = 'https://gestionws.appspot.com';
@@ -51,6 +53,10 @@ export class AppService {
     headers.append('Authorization', token);
     let options = new RequestOptions({ headers: headers });
     return this.http.get(this.URL_BASE + '/menu/' + id, options);
+  }
+  //Obtiene la URL ORIGEN
+  public getUrlOrigen() {
+    return this.URL_ORIGEN;
   }
   //Obtiene la IP
   public getIP() {

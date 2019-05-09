@@ -307,13 +307,17 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.establecerFormulario();
+    this.listarPorTipoVehiculoMarcaVehiculo();
+    this.autocompletado.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.establecerFormulario();
+    this.listarPorTipoVehiculoMarcaVehiculo();
+    this.autocompletado.setValue(elemento);
   }
   //Obtiene la mascara de enteros CON decimales
   public obtenerMascaraEnteroSinDecimales(intLimite) {

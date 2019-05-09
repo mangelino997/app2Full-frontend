@@ -55,6 +55,10 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Defiene la poliza
+  public poliza:FormControl = new FormControl();
+  //Define la lista de polizas de una compania seguro y empresa
+  public polizas:Array<any> = [];
   //Constructor
   constructor(private servicio: CompaniaSeguroPolizaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService,
@@ -257,27 +261,28 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     })
   }
   //Obtiene un listado por compania de seguro
-  public obtenerPorCompaniaSeguroYEmpresa() {
+  public listarPorCompaniaSeguroYEmpresa() {
     if(this.indiceSeleccionado != 1) {
       let companiaSeguro = this.formulario.get('companiaSeguro').value;
       let empresa = this.formulario.get('empresa').value;
       if(companiaSeguro != null && empresa != null) {
-        this.servicio.obtenerPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
-          try {
-            this.formulario.patchValue(res.json());
-          } catch(e) {
-            this.formulario.get('numeroPoliza').reset();
-            this.formulario.get('vtoPoliza').reset();
-          }
+        this.servicio.listarPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
+          this.polizas = res.json();
         })
       }
     }
+  }
+  //Establece los datos de la poliza seleccionada
+  public establecerPoliza(): void {
+    let poliza = this.poliza.value;
+    this.formulario.setValue(poliza);
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.empresaBusqueda.setValue(undefined);
     this.autocompletado.setValue(undefined);
     this.formulario.reset();
+    this.poliza.reset();
     this.vaciarListas();
   }
   //Manejo de colores de campos y labels

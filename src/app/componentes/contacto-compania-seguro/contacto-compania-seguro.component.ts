@@ -46,7 +46,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Define la lista de resultados de busqueda companias seguros
   public resultadosCompaniasSeguros: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'tipoContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'tipoContacto', 'nombreContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -238,10 +238,11 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-          console.log(err);
           this.loaderService.hide();
         }
       )
+    } else {
+      this.loaderService.hide();
     }
   }
   //Agrega un registro

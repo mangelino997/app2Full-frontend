@@ -127,13 +127,13 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="nombre" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
-        </ng-container>
         <ng-container matColumnDef="tipoContacto" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Contacto</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.tipoContacto.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="nombreContacto" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre Contacto</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
         <ng-container matColumnDef="telefonoFijo" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Fijo</th>

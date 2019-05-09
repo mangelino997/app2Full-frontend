@@ -109,8 +109,16 @@ export class CategoriaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
+    let adicionalBasicoVacaciones = this.formulario.get('adicionalBasicoVacaciones').value;
+    let topeBasicoAdelantos = this.formulario.get('topeBasicoAdelantos').value;
     let diasLaborables = this.formulario.get('diasLaborables').value;
     let horasLaborables = this.formulario.get('horasLaborables').value;
+    if(!adicionalBasicoVacaciones) {
+      this.formulario.get('adicionalBasicoVacaciones').setValue('0');
+    }
+    if(!topeBasicoAdelantos) {
+      this.formulario.get('topeBasicoAdelantos').setValue('0');
+    }
     if(!diasLaborables) {
       this.formulario.get('diasLaborables').setValue('24');
     }

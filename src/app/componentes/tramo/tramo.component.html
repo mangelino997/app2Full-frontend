@@ -13,7 +13,7 @@
       <h5>{{pestaniaActual}} Tramo</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Buscar por Origen</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
@@ -23,7 +23,7 @@
                 (optionSelected)="establecerFormulario()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.origen.nombre}}, {{item.origen.provincia.nombre}} -> {{item.destino.nombre}},
-                  {{item.destino.provincia.nombre}}
+                  {{item.destino.provincia.nombre}} (Ruta Alt.: {{item.rutaAlternativa}})
                 </mat-option>
               </mat-autocomplete>
             </div>

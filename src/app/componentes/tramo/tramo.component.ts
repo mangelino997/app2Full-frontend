@@ -372,7 +372,8 @@ export class TramoComponent implements OnInit {
   public displayFa(elemento) {
     if (elemento != undefined) {
       return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre + ' -> ' 
-        + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre : elemento;
+        + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre 
+        + ' (Ruta Alt.: ' + elemento.rutaAlternativa + ')' : elemento;
     } else {
       return elemento;
     }

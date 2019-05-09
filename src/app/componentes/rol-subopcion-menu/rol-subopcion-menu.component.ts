@@ -50,7 +50,8 @@ export class RolSubopcionMenuComponent implements OnInit {
     private rolServicio: RolService, private moduloServicio: ModuloService,
     private submoduloServicio: SubmoduloService, private toastr: ToastrService,
     public dialog: MatDialog, private subopcionPestaniaServicio: SubopcionPestaniaService,
-    private appService: AppService, private loaderService: LoaderService) { }
+    private appService: AppService, private loaderService: LoaderService,
+    private usuarioServicio: UsuarioService) { }
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -168,7 +169,21 @@ export class RolSubopcionMenuComponent implements OnInit {
   }
   //Activa los botones de modulos al seleccionar un rol
   public activarBotones(): void {
-    this.botonActivo = true;
+    this.loaderService.show();
+    this.vaciarSubopciones();
+    this.atras();
+    let rol = this.formulario.get('rol').value;
+    //Obtiene la lista de usuario por rol
+    this.usuarioServicio.listarPorRol(rol.id).subscribe(res => {
+      let listaUsuarios = res.json();
+      if(listaUsuarios.length != 0) {
+        this.botonActivo = true;
+      } else {
+        this.botonActivo = false;
+        this.toastr.warning('El rol seleccionado no tiene usuarios asignados.');
+      }
+      this.loaderService.hide();
+    })
   }
   //Abre el dialogo usuario para ver los usuarios de un determinado rol
   public verUsuariosDeRol(): void {
@@ -234,17 +249,36 @@ export class UsuarioDialogo {
   public nombreRol: string;
   //Define la lista de usuario del rol
   public listaUsuarios: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<UsuarioDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private usuarioServicio: UsuarioService) { }
+    private usuarioServicio: UsuarioService, private loaderService: LoaderService, private toastr: ToastrService) { }
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    this.loaderService.show();
     let rol = this.data.rol.value;
     //Establece el nombre del rol
     this.nombreRol = rol.nombre;
     //Obtiene la lista de usuario por rol
-    this.usuarioServicio.listarPorRol(rol.id).subscribe(res => {
-      this.listaUsuarios = res.json();
-    })
+    this.usuarioServicio.listarPorRol(rol.id).subscribe(
+      res => {
+        this.listaUsuarios = res.json();
+        if(this.listaUsuarios.length == 0) {
+          this.toastr.warning('El rol seleccionado no tiene usuarios asignados.');
+          this.dialogRef.close();
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      });
   }
   onNoClick(): void {
     this.dialogRef.close();
@@ -273,7 +307,7 @@ export class VistaPreviaDialogo {
   //Constructor
   constructor(public dialogRef: MatDialogRef<VistaPreviaDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private appServicio: AppService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private loaderService: LoaderService) { }
+    private loaderService: LoaderService, private toastr: ToastrService) { }
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -283,10 +317,16 @@ export class VistaPreviaDialogo {
     this.loaderService.show();
     this.rol = this.data.rol.value;
     this.nombreRol = this.rol.nombre;
-    this.appServicio.obtenerMenu(this.rol.id, localStorage.getItem('token')).subscribe(res => {
-      this.modulos = res.json().modulos;
-      this.loaderService.hide();
-    })
+    this.appServicio.obtenerMenu(this.rol.id, localStorage.getItem('token')).subscribe(
+      res => {
+        this.modulos = res.json().modulos;
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.warning('El rol seleccionado no tiene subopciones asignadas.');
+        this.loaderService.hide();
+        this.dialogRef.close();
+      });
   }
   public obtenerPestanias(subopcion): void {
     this.loaderService.show();

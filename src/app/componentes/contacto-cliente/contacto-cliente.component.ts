@@ -48,7 +48,7 @@ export class ContactoClienteComponent implements OnInit {
   //Define la lista de resultados de busqueda sucursales clientes
   public resultadosClientes: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'tipoContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'tipoContacto', 'nombreContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
