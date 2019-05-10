@@ -53,8 +53,10 @@
       </div>
     </div>
     <div class="col-md-2">
-      <button mat-raised-button color="primary" (click)="agregarEfectivo()" [disabled]="soloLectura" *ngIf="btnEfectivo">Agregar Adelanto</button>
-      <button mat-raised-button color="primary" (click)="modificarEfectivo()" [disabled]="soloLectura" *ngIf="!btnEfectivo">Actualizar Adelanto</button>
+      <button mat-raised-button color="primary" (click)="agregarEfectivo()" [disabled]="!formularioViajePropioEfectivo.valid" 
+        *ngIf="btnEfectivo">Agregar Adelanto</button>
+      <button mat-raised-button color="primary" (click)="modificarEfectivo()" [disabled]="!formularioViajePropioEfectivo.valid" 
+        *ngIf="!btnEfectivo">Actualizar Adelanto</button>
     </div>
   </div>
   <div class="row">

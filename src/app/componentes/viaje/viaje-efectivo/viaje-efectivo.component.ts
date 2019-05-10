@@ -7,6 +7,8 @@ import { AppComponent } from 'src/app/app.component';
 import { MatDialog } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
+import { ToastrService } from 'ngx-toastr';
+import { ViajePropioEfectivoService } from 'src/app/servicios/viaje-propio-efectivo';
 
 @Component({
   selector: 'app-viaje-efectivo',
@@ -30,10 +32,14 @@ export class ViajeEfectivoComponent implements OnInit {
   public indiceEfectivo:number;
   //Define si muestra el boton agregar efectivo o actualizar efectivo
   public btnEfectivo:boolean = true;
+  //Define la pestaña seleccionada
+  public indiceSeleccionado:number = 1;
+  //Define el viaje actual de los tramos
+  public viaje:any;
   //Constructor
   constructor(private viajePropioEfectivoModelo: ViajePropioEfectivo, private empresaServicio: EmpresaService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog,
-    private appServicio: AppService) { }
+    private appServicio: AppService, private toastr: ToastrService, private servicio: ViajePropioEfectivoService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio efectivo
@@ -75,7 +81,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajePropioEfectivo.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaEfectivos.push(this.formularioViajePropioEfectivo.value);
     this.formularioViajePropioEfectivo.reset();
-    this.formularioViajePropioEfectivo.value.id == null ? this.calcularImporteTotalA : this.calcularImporteTotal;
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
@@ -85,7 +91,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.listaEfectivos[this.indiceEfectivo] = this.formularioViajePropioEfectivo.value;
     this.btnEfectivo = true;
     this.formularioViajePropioEfectivo.reset();
-    this.formularioViajePropioEfectivo.value.id == null ? this.calcularImporteTotalA : this.calcularImporteTotal;
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
@@ -99,31 +105,31 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Elimina un  efectivo de la tabla por indice
   public eliminarEfectivo(indice, elemento): void {
-    if(elemento.id == null) {
+    if(this.indiceSeleccionado == 1) {
       this.listaEfectivos.splice(indice, 1);
-      this.calcularImporteTotalA();
-    } else {
-      this.listaEfectivos[indice].id = elemento.id*(-1);
       this.calcularImporteTotal();
+      this.establecerValoresPorDefecto(0);
+      this.enviarDatos();
+    } else {
+      this.servicio.eliminar(elemento.id).subscribe(res => {
+        let respuesta = res.json();
+        this.toastr.success(respuesta.mensaje);
+        this.servicio.listarEfectivos(this.viaje.id).subscribe(res => {
+          this.listaEfectivos = res.json();
+          this.calcularImporteTotal();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+        });
+      });
     }
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();
   }
   //Calcula el importe total para agregar
-  private calcularImporteTotalA(): void {
-    let total = 0;
-    this.listaEfectivos.forEach(item => {
-      total += parseFloat(item.importe);
-    });
-    this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
-  }
-  //Calcula el importe total para actualizar
   private calcularImporteTotal(): void {
     let total = 0;
     this.listaEfectivos.forEach(item => {
-      if(item.id != -1) {
-        total += parseFloat(item.importe);
-      }
+      total += parseFloat(item.importe);
     });
     this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
   }
@@ -140,13 +146,15 @@ export class ViajeEfectivoComponent implements OnInit {
     return this.appComponent.establecerCeros(elemento);
   }
   //Establece la lista de efectivos
-  public establecerLista(lista): void {
+  public establecerLista(lista, viaje): void {
     this.establecerValoresPorDefecto(1);
     this.listaEfectivos = lista;
+    this.viaje = viaje;
     this.calcularImporteTotal();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
+    this.indiceSeleccionado = indice;
     switch(indice) {
       case 1:
         this.soloLectura = false;

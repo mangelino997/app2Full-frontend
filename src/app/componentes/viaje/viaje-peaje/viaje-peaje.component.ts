@@ -4,6 +4,9 @@ import { ViajePropioPeaje } from 'src/app/modelos/viajePropioPeaje';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
+import { ViajePropioPeajeService } from 'src/app/servicios/viaje-propio-peaje';
+import { ToastrService } from 'ngx-toastr';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-viaje-peaje',
@@ -14,28 +17,34 @@ export class ViajePeajeComponent implements OnInit {
   //Evento que envia los datos del formulario a Viaje
   @Output() dataEvent = new EventEmitter<any>();
   //Define un formulario viaje propio peaje para validaciones de campos
-  public formularioViajePropioPeaje:FormGroup;
+  public formularioViajePropioPeaje: FormGroup;
   //Define la lista de ordenes de peajes (tabla)
-  public listaPeajes:Array<any> = [];
+  public listaPeajes: Array<any> = [];
   //Define la lista de proveedores
-  public resultadosProveedores:Array<any> = [];
+  public resultadosProveedores: Array<any> = [];
   //Define si los campos son de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define el indice del Peaje para las modificaciones
-  public indicePeaje:number;
+  public indicePeaje: number;
   //Define si muestra el boton agregar Peaje o actualizar Peaje
-  public btnPeaje:boolean = true;
+  public btnPeaje: boolean = true;
+  //Define la pestaña seleccionada
+  public indiceSeleccionado:number = 1;
+  //Define el viaje actual de los tramos
+  public viaje:any;
   //Constructor
   constructor(private viajePropioPeajeModelo: ViajePropioPeaje, private proveedorServicio: ProveedorService,
-    private fechaServicio: FechaService, private appComponent: AppComponent) { }
+    private fechaServicio: FechaService, private appComponent: AppComponent,
+    private servicio: ViajePropioPeajeService, private toastr: ToastrService,
+    private appService: AppService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio peaje
     this.formularioViajePropioPeaje = this.viajePropioPeajeModelo.formulario;
     //Autocompletado Proveedor (Peaje) - Buscar por alias
     this.formularioViajePropioPeaje.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
+      if (typeof data == 'string' && data.length > 2) {
+        this.proveedorServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosProveedores = response;
         })
       }
@@ -51,20 +60,16 @@ export class ViajePeajeComponent implements OnInit {
       this.formularioViajePropioPeaje.get('fecha').setValue(res.json());
     })
     this.formularioViajePropioPeaje.get('importe').setValue(this.appComponent.establecerCeros(valor));
-    if(opcion == 1) {
+    if (opcion == 1) {
       this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
     }
   }
   //Agrega datos a la tabla de peajes
   public agregarPeaje(): void {
-    this.formularioViajePropioPeaje.get('tipoComprobante').setValue({id:17});
+    this.formularioViajePropioPeaje.get('tipoComprobante').setValue({ id: 17 });
     this.formularioViajePropioPeaje.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaPeajes.push(this.formularioViajePropioPeaje.value);
-    let importe = this.formularioViajePropioPeaje.get('importe').value;
-    let importeTotal = this.formularioViajePropioPeaje.get('importeTotal').value;
-    let total = parseFloat(importeTotal) + parseFloat(importe);
-    this.formularioViajePropioPeaje.reset();
-    this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorP').focus();
     this.enviarDatos();
@@ -74,6 +79,7 @@ export class ViajePeajeComponent implements OnInit {
     this.listaPeajes[this.indicePeaje] = this.formularioViajePropioPeaje.value;
     this.btnPeaje = true;
     this.formularioViajePropioPeaje.reset();
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorP').focus();
     this.enviarDatos();
@@ -86,13 +92,33 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(indice, elemento): void {
-    this.listaPeajes.splice(indice, 1);
-    let importe = elemento.importe;
-    let importeTotal = this.formularioViajePropioPeaje.get('importeTotal').value;
-    let total = parseFloat(importeTotal) - parseFloat(importe);
-    this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    if(this.indiceSeleccionado == 1) {
+      this.listaPeajes.splice(indice, 1);
+      this.calcularImporteTotal();
+      this.establecerValoresPorDefecto(0);
+      this.enviarDatos();
+    } else {
+      this.servicio.eliminar(elemento.id).subscribe(res => {
+        let respuesta = res.json();
+        this.toastr.success(respuesta.mensaje);
+        this.servicio.listarPeajes(this.viaje.id).subscribe(res => {
+          this.listaPeajes = res.json();
+          this.calcularImporteTotal();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+        });
+      });
+    }
     document.getElementById('idProveedorP').focus();
     this.enviarDatos();
+  }
+  //Calcula el total de combustible y el total de urea
+  private calcularImporteTotal(): void {
+    let importeTotal = 0;
+    this.listaPeajes.forEach(item => {
+      importeTotal += Number(item.importe);
+    })
+    this.formularioViajePropioPeaje.get('importeTotal').setValue(importeTotal.toFixed(2));
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
@@ -107,28 +133,27 @@ export class ViajePeajeComponent implements OnInit {
     this.dataEvent.emit(this.listaPeajes);
   }
   //Establece la lista de efectivos
-  public establecerLista(lista): void {
+  public establecerLista(lista, viaje): void {
     this.establecerValoresPorDefecto(1);
     this.listaPeajes = lista;
+    this.viaje = viaje;
+    this.calcularImporteTotal();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
-    switch(indice) {
+    this.indiceSeleccionado = indice;
+    switch (indice) {
       case 1:
         this.soloLectura = false;
-        // this.establecerCamposSelectSoloLectura(false);
         break;
       case 2:
         this.soloLectura = true;
-        // this.establecerCamposSelectSoloLectura(true);
         break;
       case 3:
         this.soloLectura = false;
-        // this.establecerCamposSelectSoloLectura(false);
         break;
       case 4:
         this.soloLectura = true;
-        // this.establecerCamposSelectSoloLectura(true);
         break;
     }
   }
@@ -149,9 +174,16 @@ export class ViajePeajeComponent implements OnInit {
     this.vaciarListas();
     this.formularioViajePropioPeaje.reset();
   }
+  //Formatea el numero a x decimales
+  public establecerDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
+  }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;

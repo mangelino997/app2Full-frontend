@@ -7,6 +7,8 @@ import { AppComponent } from 'src/app/app.component';
 import { MatDialog } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
+import { ViajePropioGastoService } from 'src/app/servicios/viaje-propio-gasto';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-viaje-gasto',
@@ -28,9 +30,14 @@ export class ViajeGastoComponent implements OnInit {
   public indiceGasto:number;
   //Define si muestra el boton agregar Gasto o actualizar Gasto
   public btnGasto:boolean = true;
+  //Define la pestaña seleccionada
+  public indiceSeleccionado:number = 1;
+  //Define el viaje actual de los tramos
+  public viaje:any;
   //Constructor
   constructor(private viajePropioGastoModelo: ViajePropioGasto, private rubroProductoServicio: RubroProductoService,
-    private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog, public appService: AppService) { }
+    private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog, public appService: AppService,
+    private servicio: ViajePropioGastoService, private toastr: ToastrService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio gasto
@@ -67,11 +74,8 @@ export class ViajeGastoComponent implements OnInit {
     this.formularioViajePropioGasto.get('sucursal').setValue(usuario.sucursal);
     this.formularioViajePropioGasto.get('usuario').setValue(usuario);
     this.listaGastos.push(this.formularioViajePropioGasto.value);
-    let importe = this.formularioViajePropioGasto.get('importe').value;
-    let importeTotal = this.formularioViajePropioGasto.get('importeTotal').value;
-    let total = parseFloat(importeTotal) + parseFloat(importe);
     this.formularioViajePropioGasto.reset();
-    this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaG').focus();
     this.enviarDatos();
@@ -81,6 +85,7 @@ export class ViajeGastoComponent implements OnInit {
     this.listaGastos[this.indiceGasto] = this.formularioViajePropioGasto.value;
     this.btnGasto = true;
     this.formularioViajePropioGasto.reset();
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaG').focus();
     this.enviarDatos();
@@ -93,25 +98,59 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Elimina un gasto de la tabla por indice
   public eliminarGasto(indice, elemento): void {
-    this.listaGastos.splice(indice, 1);
-    let importe = elemento.importe;
-    let importeTotal = this.formularioViajePropioGasto.get('importeTotal').value;
-    let total = parseFloat(importeTotal) - parseFloat(importe);
-    this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(total));
+    if(this.indiceSeleccionado == 1) {
+      this.listaGastos.splice(indice, 1);
+      this.calcularImporteTotal();
+      this.establecerValoresPorDefecto(0);
+      this.enviarDatos();
+    } else {
+      this.servicio.eliminar(elemento.id).subscribe(res => {
+        let respuesta = res.json();
+        this.toastr.success(respuesta.mensaje);
+        this.servicio.listarGastos(this.viaje.id).subscribe(res => {
+          this.listaGastos = res.json();
+          this.calcularImporteTotal();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+        });
+      });
+    }
     document.getElementById('idFechaG').focus();
     this.enviarDatos();
+  }
+  //Calcula el importe a partir de cantidad y precio unitario
+  public calcularImporte(formulario): void {
+    this.establecerDecimales(formulario.get('precioUnitario'), 2 )
+    let cantidad = formulario.get('cantidad').value;
+    let precioUnitario = formulario.get('precioUnitario').value;
+    if(cantidad != null && precioUnitario != null) {
+      let importe = cantidad * precioUnitario;
+      formulario.get('importe').setValue(importe);
+      this.establecerCeros(formulario.get('importe'));
+    }
+  }
+  //Calcula el importe total
+  private calcularImporteTotal(): void {
+    let importeTotal = 0;
+    this.listaGastos.forEach(item => {
+      importeTotal += Number(item.importe);
+    });
+    this.formularioViajePropioGasto.get('importeTotal').setValue(importeTotal.toFixed(2));
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
     this.dataEvent.emit(this.listaGastos);
   }
   //Establece la lista de efectivos
-  public establecerLista(lista): void {
+  public establecerLista(lista, viaje): void {
     this.establecerValoresPorDefecto(1);
     this.listaGastos = lista;
+    this.viaje = viaje;
+    this.calcularImporteTotal();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
+    this.indiceSeleccionado = indice;
     switch(indice) {
       case 1:
         this.soloLectura = false;
@@ -166,5 +205,12 @@ export class ViajeGastoComponent implements OnInit {
   //Mascara un importe
   public mascararImporte(limit) {
     return this.appService.mascararImporte(limit);
+  }
+  //Formatea el numero a x decimales
+  public establecerDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
   }
 }

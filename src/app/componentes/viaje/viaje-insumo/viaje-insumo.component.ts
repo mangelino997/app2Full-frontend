@@ -8,6 +8,8 @@ import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service
 import { MatDialog } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
+import { ToastrService } from 'ngx-toastr';
+import { ViajePropioInsumoService } from 'src/app/servicios/viaje-propio-insumo';
 
 @Component({
   selector: 'app-viaje-insumo',
@@ -18,32 +20,36 @@ export class ViajeInsumoComponent implements OnInit {
   //Evento que envia los datos del formulario a Viaje
   @Output() dataEvent = new EventEmitter<any>();
   //Define un formulario viaje propio insumo para validaciones de campos
-  public formularioViajePropioInsumo:FormGroup;
+  public formularioViajePropioInsumo: FormGroup;
   //Define la lista de resultados proveedores de busqueda
-  public resultadosProveedores:Array<any> = [];
+  public resultadosProveedores: Array<any> = [];
   //Define la lista de ordenes de insumos (tabla)
-  public listaInsumos:Array<any> = [];
+  public listaInsumos: Array<any> = [];
   //Define la lista de insumos productos
-  public insumos:Array<any> = [];
+  public insumos: Array<any> = [];
   //Define si los campos son de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define el indice del Insumo para las modificaciones
-  public indiceInsumo:number;
+  public indiceInsumo: number;
   //Define si muestra el boton agregar Insumo o actualizar Insumo
-  public btnInsumo:boolean = true;
+  public btnInsumo: boolean = true;
+  //Define la pestaña seleccionada
+  public indiceSeleccionado:number = 1;
+  //Define el viaje actual de los tramos
+  public viaje:any;
   //Constructor
   constructor(private viajePropioInsumoModelo: ViajePropioInsumo, private proveedorServicio: ProveedorService,
-    private fechaServicio: FechaService, private appComponent: AppComponent, 
+    private fechaServicio: FechaService, private appComponent: AppComponent,
     private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog,
-    private appServicio: AppService) { }
+    private appServicio: AppService, private toastr: ToastrService, private servicio: ViajePropioInsumoService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio insumo
     this.formularioViajePropioInsumo = this.viajePropioInsumoModelo.formulario;
     //Autocompletado Proveedor (Insumo) - Buscar por alias
     this.formularioViajePropioInsumo.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
+      if (typeof data == 'string' && data.length > 2) {
+        this.proveedorServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosProveedores = response;
         })
       }
@@ -73,14 +79,14 @@ export class ViajeInsumoComponent implements OnInit {
     })
     this.formularioViajePropioInsumo.get('cantidad').setValue(valor);
     this.formularioViajePropioInsumo.get('importe').setValue(this.appComponent.establecerCeros(valor));
-    if(opcion == 1) {
+    if (opcion == 1) {
       this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
     }
   }
   //Establece el precio unitario
   public establecerPrecioUnitario(formulario, elemento): void {
     let precioUnitarioVenta = formulario.get(elemento).value.precioUnitarioVenta;
-    if(precioUnitarioVenta != 0) {
+    if (precioUnitarioVenta != 0) {
       formulario.get('precioUnitario').setValue(precioUnitarioVenta);
       this.establecerCeros(formulario.get('precioUnitario'));
       formulario.get('precioUnitario').disable();
@@ -93,7 +99,7 @@ export class ViajeInsumoComponent implements OnInit {
   public calcularImporte(formulario): void {
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
-    if(cantidad != null && precioUnitario != null) {
+    if (cantidad != null && precioUnitario != null) {
       let importe = cantidad * precioUnitario;
       formulario.get('importe').setValue(importe);
       this.establecerCeros(formulario.get('importe'));
@@ -101,12 +107,12 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Agrega datos a la tabla de orden insumo
   public agregarInsumo(): void {
-    this.formularioViajePropioInsumo.get('tipoComprobante').setValue({id:18});
+    this.formularioViajePropioInsumo.get('tipoComprobante').setValue({ id: 18 });
     this.formularioViajePropioInsumo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajePropioInsumo.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaInsumos.push(this.formularioViajePropioInsumo.value);
     this.formularioViajePropioInsumo.reset();
-    this.formularioViajePropioInsumo.value.id == null ? this.calcularImporteTotalA() : this.calcularImporteTotal();
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
@@ -116,7 +122,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.listaInsumos[this.indiceInsumo] = this.formularioViajePropioInsumo.value;
     this.btnInsumo = true;
     this.formularioViajePropioInsumo.reset();
-    this.formularioViajePropioInsumo.value.id == null ? this.calcularImporteTotalA() : this.calcularImporteTotal();
+    this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
@@ -129,31 +135,31 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Elimina una orden insumo de la tabla por indice
   public eliminarInsumo(indice, elemento): void {
-    if(elemento.id == null) {
+    if(this.indiceSeleccionado == 1) {
       this.listaInsumos.splice(indice, 1);
-      this.calcularImporteTotalA();
-    } else {
-      this.listaInsumos[indice].id = elemento.id*(-1);
       this.calcularImporteTotal();
+      this.establecerValoresPorDefecto(0);
+      this.enviarDatos();
+    } else {
+      this.servicio.eliminar(elemento.id).subscribe(res => {
+        let respuesta = res.json();
+        this.toastr.success(respuesta.mensaje);
+        this.servicio.listarInsumos(this.viaje.id).subscribe(res => {
+          this.listaInsumos = res.json();
+          this.calcularImporteTotal();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+        });
+      });
     }
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
   }
   //Calcula el importe total al agregar
-  private calcularImporteTotalA(): void {
-    let total = 0;
-    this.listaInsumos.forEach(item => {
-      total += parseFloat(item.importe);
-    })
-    this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
-  }
-  //Calcula el importe total al actualizar
   private calcularImporteTotal(): void {
     let total = 0;
     this.listaInsumos.forEach(item => {
-      if(item.id != -1) {
-        total += parseFloat(item.importe);
-      }
+      total += parseFloat(item.importe);
     })
     this.formularioViajePropioInsumo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
   }
@@ -162,14 +168,16 @@ export class ViajeInsumoComponent implements OnInit {
     this.dataEvent.emit(this.listaInsumos);
   }
   //Establece la lista de efectivos
-  public establecerLista(lista): void {
+  public establecerLista(lista, viaje): void {
     this.establecerValoresPorDefecto(1);
     this.listaInsumos = lista;
+    this.viaje = viaje;
     this.calcularImporteTotal();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
-    switch(indice) {
+    this.indiceSeleccionado = indice;
+    switch (indice) {
       case 1:
         this.soloLectura = false;
         this.establecerCamposSelectSoloLectura(false);
@@ -190,7 +198,7 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Establece los campos select en solo lectura o no
   private establecerCamposSelectSoloLectura(opcion): void {
-    if(opcion) {
+    if (opcion) {
       this.formularioViajePropioInsumo.get('insumoProducto').disable();
     } else {
       this.formularioViajePropioInsumo.get('insumoProducto').enable();
@@ -215,7 +223,7 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -224,7 +232,7 @@ export class ViajeInsumoComponent implements OnInit {
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
@@ -237,6 +245,6 @@ export class ViajeInsumoComponent implements OnInit {
         elemento: elemento
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => {});
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
 }

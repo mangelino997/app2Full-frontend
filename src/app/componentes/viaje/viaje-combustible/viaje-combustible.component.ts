@@ -8,6 +8,8 @@ import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service
 import { MatDialog } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
+import { ViajePropioCombustibleService } from 'src/app/servicios/viaje-propio-combustible';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-viaje-combustible',
@@ -31,10 +33,15 @@ export class ViajeCombustibleComponent implements OnInit {
   public indiceCombustible:number;
   //Define si muestra el boton agregar combustible o actualizar combustible
   public btnCombustible:boolean = true;
+  //Define la pestaña seleccionada
+  public indiceSeleccionado:number = 1;
+  //Define el viaje actual de los tramos
+  public viaje:any;
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajePropioCombustibleModelo: ViajePropioCombustible,
     private fechaServicio: FechaService, private appComponent: AppComponent, 
-    private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog, private appService:AppService) { }
+    private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog, private appService:AppService,
+    private servicio: ViajePropioCombustibleService, private toastr: ToastrService) { }
   //Al inicilizarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio combustible
@@ -109,18 +116,17 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajePropioCombustible.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaCombustibles.push(this.formularioViajePropioCombustible.value);
     this.formularioViajePropioCombustible.reset();
-    this.formularioViajePropioCombustible.value.id == null ? this.calcularTotalCombustibleYUreaA() : this.calcularTotalCombustibleYUrea();
+    this.calcularTotalCombustibleYUrea();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
-    this.formularioViajePropioCombustible.get('precioUnitario').disable();
   }
   //Modifica los datos del combustible
   public modificarCombustible(): void {
     this.listaCombustibles[this.indiceCombustible] = this.formularioViajePropioCombustible.value;
     this.btnCombustible = true;
     this.formularioViajePropioCombustible.reset();
-    this.formularioViajePropioCombustible.value.id == null ? this.calcularTotalCombustibleYUreaA() : this.calcularTotalCombustibleYUrea();
+    this.calcularTotalCombustibleYUrea();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
@@ -133,18 +139,28 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Elimina un combustible de la tabla por indice
   public eliminarCombustible(indice, elemento): void {
-    if(elemento.id == null) {
+    if(this.indiceSeleccionado == 1) {
       this.listaCombustibles.splice(indice, 1);
-      this.calcularTotalCombustibleYUreaA();
-    } else {
-      this.listaCombustibles[indice].id = elemento.id*(-1);
       this.calcularTotalCombustibleYUrea();
+      this.establecerValoresPorDefecto(0);
+      this.enviarDatos();
+    } else {
+      this.servicio.eliminar(elemento.id).subscribe(res => {
+        let respuesta = res.json();
+        this.toastr.success(respuesta.mensaje);
+        this.servicio.listarCombustibles(this.viaje.id).subscribe(res => {
+          this.listaCombustibles = res.json();
+          this.calcularTotalCombustibleYUrea();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+        });
+      });
     }
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
   }
   //Calcula el total de combustible y el total de urea
-  private calcularTotalCombustibleYUreaA(): void {
+  private calcularTotalCombustibleYUrea(): void {
     let totalCombustible = 0;
     let totalUrea = 0;
     this.listaCombustibles.forEach(item => {
@@ -152,22 +168,6 @@ export class ViajeCombustibleComponent implements OnInit {
         totalCombustible += Number(item.cantidad);
       } else if (item.insumo.id == 3) {
         totalUrea += Number(item.cantidad);
-      }
-    })
-    this.formularioViajePropioCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
-    this.formularioViajePropioCombustible.get('totalUrea').setValue(totalUrea.toFixed(2));
-  }
-  //Calcula el total de combustible y el total de urea
-  private calcularTotalCombustibleYUrea(): void {
-    let totalCombustible = 0;
-    let totalUrea = 0;
-    this.listaCombustibles.forEach(item => {
-      if(item.id != -1) {
-        if(item.insumo.id == 1) {
-          totalCombustible += Number(item.cantidad);
-        } else if(item.insumo.id == 3) {
-          totalUrea += Number(item.cantidad);
-        }
       }
     })
     this.formularioViajePropioCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
@@ -186,13 +186,15 @@ export class ViajeCombustibleComponent implements OnInit {
     this.dataEvent.emit(this.listaCombustibles);
   }
   //Establece la lista de combustibles
-  public establecerLista(lista): void {
+  public establecerLista(lista, viaje): void {
     this.establecerValoresPorDefecto(1);
     this.listaCombustibles = lista;
+    this.viaje = viaje;
     this.calcularTotalCombustibleYUrea();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
+    this.indiceSeleccionado = indice;
     switch(indice) {
       case 1:
         this.soloLectura = false;

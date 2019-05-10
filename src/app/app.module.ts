@@ -295,6 +295,11 @@ import { ProgresoComponent } from './componentes/progreso/progreso.component';
 import { configuracionVehiculo } from './modelos/configuracionVehiculo';
 import { ErrorPuntoVentaComponent } from './componentes/error-punto-venta/error-punto-venta.component';
 import { SoporteComponent } from './componentes/soporte/soporte.component';
+import { ViajePropioCombustibleService } from './servicios/viaje-propio-combustible';
+import { ViajePropioEfectivoService } from './servicios/viaje-propio-efectivo';
+import { ViajePropioInsumoService } from './servicios/viaje-propio-insumo';
+import { ViajePropioGastoService } from './servicios/viaje-propio-gasto';
+import { ViajePropioPeajeService } from './servicios/viaje-propio-peaje';
 
 //Rutas
 const appRoutes: Routes = [
@@ -758,6 +763,11 @@ const stompConfig: StompConfig = {
     BasicoCategoria,
     AfipCondicionIva,
     MesService,
+    ViajePropioCombustibleService,
+    ViajePropioEfectivoService,
+    ViajePropioInsumoService,
+    ViajePropioGastoService,
+    ViajePropioPeajeService,
     LoaderService,
     {
       provide: StompConfig,

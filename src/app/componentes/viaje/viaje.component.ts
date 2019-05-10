@@ -193,11 +193,11 @@ export class ViajeComponent implements OnInit {
       let viajePropio = res.json();
       this.formularioViajePropio.setValue(viajePropio);
       this.viajeTramoComponente.establecerLista(viajePropio.viajePropioTramos, viaje);
-      this.viajeCombustibleComponente.establecerLista(viajePropio.viajePropioCombustibles);
-      this.viajeEfectivoComponente.establecerLista(viajePropio.viajePropioEfectivos);
-      this.viajeInsumoComponente.establecerLista(viajePropio.viajePropioInsumos);
-      this.viajeGastoComponente.establecerLista(viajePropio.viajePropioGastos);
-      this.viajePeajeComponente.establecerLista(viajePropio.viajePropioPeajes);
+      this.viajeCombustibleComponente.establecerLista(viajePropio.viajePropioCombustibles, viaje);
+      this.viajeEfectivoComponente.establecerLista(viajePropio.viajePropioEfectivos, viaje);
+      this.viajeInsumoComponente.establecerLista(viajePropio.viajePropioInsumos, viaje);
+      this.viajeGastoComponente.establecerLista(viajePropio.viajePropioGastos, viaje);
+      this.viajePeajeComponente.establecerLista(viajePropio.viajePropioPeajes, viaje);
     });
   }
   //Establece los valores por defecto

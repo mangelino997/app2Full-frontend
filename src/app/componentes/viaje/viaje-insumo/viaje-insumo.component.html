@@ -3,8 +3,9 @@
     <div class="col-md-6">
       <div class="form-group has-float-label">
         <label for="idProveedor" class="tamanio-label">Proveedor *</label>
-        <input id="idProveedor" class="form-control form-control-sm" type="text" matInput [formControl]="formularioViajePropioInsumo.get('proveedor')"
-          [matAutocomplete]="autoProveedor" autocomplete="off" [readonly]="soloLectura">
+        <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
+          [formControl]="formularioViajePropioInsumo.get('proveedor')" [matAutocomplete]="autoProveedor"
+          autocomplete="off" [readonly]="soloLectura">
         <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayFn.bind(this)">
           <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
             {{itemProveedor.alias}}
@@ -27,8 +28,8 @@
               <mat-icon>date_range</mat-icon>
             </span>
           </div>
-          <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="soloLectura">
+          <input id="idFecha" type="date" formControlName="fecha" autocomplete="off"
+            class="form-control form-control-sm" [readonly]="soloLectura">
         </div>
       </div>
     </div>
@@ -37,7 +38,8 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idInsumoProducto" class="tamanio-label">Insumo *</label>
-        <mat-select id="idInsumoProducto" class="form-control form-control-sm" formControlName="insumoProducto" [compareWith]="compareFn"
+        <mat-select id="idInsumoProducto" class="form-control form-control-sm" formControlName="insumoProducto"
+          [compareWith]="compareFn"
           (selectionChange)="establecerPrecioUnitario(formularioViajePropioInsumo, 'insumoProducto')">
           <mat-option *ngFor="let itemInsumo of insumos" [value]="itemInsumo">
             {{itemInsumo.nombre}}
@@ -48,22 +50,23 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idCantidadAV" class="tamanio-label">Cantidad *</label>
-        <input id="idCantidadAV" type="number" formControlName="cantidad" autocomplete="off" class="form-control form-control-sm number-right"
-          [readonly]="soloLectura" (blur)="calcularImporte(formularioViajePropioInsumo)">
+        <input id="idCantidadAV" type="number" formControlName="cantidad" autocomplete="off"
+          class="form-control form-control-sm number-right" [readonly]="soloLectura"
+          (blur)="calcularImporte(formularioViajePropioInsumo)">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idPrecioUnitarioAV" class="tamanio-label">Precio Unitario($) *</label>
-        <input id="idPrecioUnitarioAV" type="text" formControlName="precioUnitario" autocomplete="off" 
-          (blur)="calcularImporte(formularioViajePropioInsumo)"
-          class="form-control form-control-sm number-right" placeholder="$ 0.00">
+        <input id="idPrecioUnitarioAV" type="text" formControlName="precioUnitario" autocomplete="off"
+          (blur)="calcularImporte(formularioViajePropioInsumo)" class="form-control form-control-sm number-right"
+          placeholder="$ 0.00">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idImporteAV" class="tamanio-label">Importe($) *</label>
-        <input id="idImporteAV" type="number" formControlName="importe" autocomplete="off" 
+        <input id="idImporteAV" type="number" formControlName="importe" autocomplete="off"
           class="form-control form-control-sm" [readonly]="true">
       </div>
     </div>
@@ -72,13 +75,15 @@
     <div class="col-md-6">
       <div class="form-group has-float-label">
         <label for="idObservaciones" class="tamanio-label">Observaciones</label>
-        <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="2" maxlength="60"
-          [readonly]="soloLectura"></textarea>
+        <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="2"
+          maxlength="60" [readonly]="soloLectura"></textarea>
       </div>
     </div>
     <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="agregarInsumo()" [disabled]="soloLectura" *ngIf="btnInsumo">Agregar Orden</button>
-      <button mat-raised-button color="primary" (click)="modificarInsumo()" [disabled]="soloLectura" *ngIf="!btnInsumo">Actualizar Orden</button>
+      <button mat-raised-button color="primary" (click)="agregarInsumo()" [disabled]="!formularioViajePropioInsumo.valid"
+        *ngIf="btnInsumo">Agregar Orden</button>
+      <button mat-raised-button color="primary" (click)="modificarInsumo()" [disabled]="!formularioViajePropioInsumo.valid"
+        *ngIf="!btnInsumo">Actualizar Orden</button>
     </div>
   </div>
   <div class="row">
@@ -160,8 +165,8 @@
           <div class="input-group-prepend">
             <span class="input-group-text">$</span>
           </div>
-          <input id="idImporteTotalOI" type="number" formControlName="importeTotal" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="true">
+          <input id="idImporteTotalOI" type="number" formControlName="importeTotal" autocomplete="off"
+            class="form-control form-control-sm" [readonly]="true">
         </div>
       </div>
     </div>

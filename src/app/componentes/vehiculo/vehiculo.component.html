@@ -274,6 +274,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
               <mat-select id="idTipoVehiculo" class="form-control form-control-sm" formControlName="tipoVehiculo">
+                <mat-option [value]="1">TODOS</mat-option>
                 <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
                   {{itemTipoVehiculo.nombre}}
                 </mat-option>
@@ -284,6 +285,7 @@
             <div class="form-group has-float-label">
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
               <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo">
+                <mat-option [value]="1">TODOS</mat-option>
                 <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                   {{itemMarcaVehiculo.nombre}}
                 </mat-option>
@@ -294,6 +296,7 @@
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Titular *</label>
               <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa">
+                <mat-option [value]="1">TODOS</mat-option>
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                   {{itemEmpresa.razonSocial}}
                 </mat-option>
@@ -302,10 +305,6 @@
           </div>
           <div class="col-md-1">
             <button mat-raised-button color="primary" [disabled]="!formularioListar.valid" (click)="listar()">Buscar</button>
-          </div>
-          <div class="col-md-1"></div>
-          <div class="col-md-1">
-            <button mat-raised-button color="accent" (click)="listarTodos()">Buscar Todos</button>
           </div>
         </div>
       </form>

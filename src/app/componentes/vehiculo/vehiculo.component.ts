@@ -352,7 +352,10 @@ export class VehiculoComponent implements OnInit {
     let tipoVehiculo = this.formularioListar.get('tipoVehiculo').value;
     let marcaVehiculo = this.formularioListar.get('marcaVehiculo').value;
     let empresa = this.formularioListar.get('empresa').value;
-    this.servicio.listarFiltro(empresa.id, tipoVehiculo.id, marcaVehiculo.id).subscribe(
+    tipoVehiculo = tipoVehiculo == '1' ? 0 : tipoVehiculo.id;
+    marcaVehiculo = marcaVehiculo == '1' ? 0 : marcaVehiculo.id;
+    empresa = empresa == '1' ? 0 : empresa.id;
+    this.servicio.listarFiltro(empresa, tipoVehiculo, marcaVehiculo).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
