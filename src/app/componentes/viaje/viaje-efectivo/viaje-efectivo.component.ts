@@ -113,13 +113,11 @@ export class ViajeEfectivoComponent implements OnInit {
     } else {
       this.servicio.eliminar(elemento.id).subscribe(res => {
         let respuesta = res.json();
+        this.listaEfectivos.splice(indice, 1);
+        this.calcularImporteTotal();
+        this.establecerValoresPorDefecto(0);
+        this.enviarDatos();
         this.toastr.success(respuesta.mensaje);
-        this.servicio.listarEfectivos(this.viaje.id).subscribe(res => {
-          this.listaEfectivos = res.json();
-          this.calcularImporteTotal();
-          this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
-        });
       });
     }
     document.getElementById('idFechaCajaAE').focus();
@@ -158,6 +156,7 @@ export class ViajeEfectivoComponent implements OnInit {
     switch(indice) {
       case 1:
         this.soloLectura = false;
+        this.establecerValoresPorDefecto(1);
         this.establecerCamposSelectSoloLectura(false);
         break;
       case 2:

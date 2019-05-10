@@ -28,7 +28,7 @@
             <div class="form-group has-float-label">
                 <label for="idKm" class="tamanio-label">Km</label>
                 <input id="idKm" [textMask]="mascararKm(6)" type="text" formControlName="km" autocomplete="off"
-                    class="form-control form-control-sm number-right" [readonly]="true">
+                    class="form-control form-control-sm number-right" [readonly]="true" placeholder="0 km">
             </div>
         </div>
         <div class="col-md-3">
@@ -93,17 +93,18 @@
         <div class="col-md-3">
             <div class="form-group has-float-label">
                 <label for="idTramoCantidad" class="tamanio-label">Cantidad *</label>
-                <input id="idTramoCantidad" type="number" formControlName="cantidad" autocomplete="off"
+                <input id="idTramoCantidad" [textMask]="mascararEnteros(4)" type="text" formControlName="cantidad" autocomplete="off"
                     class="form-control form-control-sm number-right" [readonly]="soloLectura || estadoTarifa()"
-                    (blur)="calcularImporte(formularioViajePropioTramo)">
+                    (blur)="calcularImporte(formularioViajePropioTramo, null, null)" placeholder="0">
             </div>
         </div>
         <div class="col-md-3">
             <div class="form-group has-float-label">
-                <label for="idTramoPrecioUnitario" class="tamanio-label">Precio Unitario($)*</label>
-                <input id="idTramoPrecioUnitario" type="number" formControlName="precioUnitario" autocomplete="off"
-                    class="form-control form-control-sm number-right" [readonly]="soloLectura || estadoTarifa()"
-                    (blur)="calcularImporte(formularioViajePropioTramo)">
+                <label for="idTramoPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
+                <input id="idTramoPrecioUnitario" [textMask]="mascararImporte(8)" type="text" formControlName="precioUnitario" 
+                    autocomplete="off" class="form-control form-control-sm number-right" 
+                    [readonly]="soloLectura || estadoTarifa()" placeholder="$ 0.00"
+                    (blur)="calcularImporte(formularioViajePropioTramo, formularioViajePropioTramo.get('precioUnitario'), 2)">
             </div>
         </div>
         <div class="col-md-3">

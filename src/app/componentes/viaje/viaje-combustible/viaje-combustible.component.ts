@@ -147,13 +147,11 @@ export class ViajeCombustibleComponent implements OnInit {
     } else {
       this.servicio.eliminar(elemento.id).subscribe(res => {
         let respuesta = res.json();
+        this.listaCombustibles.splice(indice, 1);
+        this.calcularTotalCombustibleYUrea();
+        this.establecerValoresPorDefecto(0);
+        this.enviarDatos();
         this.toastr.success(respuesta.mensaje);
-        this.servicio.listarCombustibles(this.viaje.id).subscribe(res => {
-          this.listaCombustibles = res.json();
-          this.calcularTotalCombustibleYUrea();
-          this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
-        });
       });
     }
     document.getElementById('idProveedorOC').focus();
@@ -198,6 +196,7 @@ export class ViajeCombustibleComponent implements OnInit {
     switch(indice) {
       case 1:
         this.soloLectura = false;
+        this.establecerValoresPorDefecto(1);
         this.establecerCamposSelectSoloLectura(false);
         break;
       case 2:

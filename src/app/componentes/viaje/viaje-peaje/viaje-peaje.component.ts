@@ -69,6 +69,7 @@ export class ViajePeajeComponent implements OnInit {
     this.formularioViajePropioPeaje.get('tipoComprobante').setValue({ id: 17 });
     this.formularioViajePropioPeaje.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaPeajes.push(this.formularioViajePropioPeaje.value);
+    this.formularioViajePropioPeaje.reset();
     this.calcularImporteTotal();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorP').focus();
@@ -100,13 +101,11 @@ export class ViajePeajeComponent implements OnInit {
     } else {
       this.servicio.eliminar(elemento.id).subscribe(res => {
         let respuesta = res.json();
+        this.listaPeajes.splice(indice, 1);
+        this.calcularImporteTotal();
+        this.establecerValoresPorDefecto(0);
+        this.enviarDatos();
         this.toastr.success(respuesta.mensaje);
-        this.servicio.listarPeajes(this.viaje.id).subscribe(res => {
-          this.listaPeajes = res.json();
-          this.calcularImporteTotal();
-          this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
-        });
       });
     }
     document.getElementById('idProveedorP').focus();
@@ -145,6 +144,7 @@ export class ViajePeajeComponent implements OnInit {
     switch (indice) {
       case 1:
         this.soloLectura = false;
+        this.establecerValoresPorDefecto(1);
         break;
       case 2:
         this.soloLectura = true;

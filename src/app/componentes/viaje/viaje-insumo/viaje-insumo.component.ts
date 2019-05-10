@@ -143,13 +143,11 @@ export class ViajeInsumoComponent implements OnInit {
     } else {
       this.servicio.eliminar(elemento.id).subscribe(res => {
         let respuesta = res.json();
+        this.listaInsumos.splice(indice, 1);
+        this.calcularImporteTotal();
+        this.establecerValoresPorDefecto(0);
+        this.enviarDatos();
         this.toastr.success(respuesta.mensaje);
-        this.servicio.listarInsumos(this.viaje.id).subscribe(res => {
-          this.listaInsumos = res.json();
-          this.calcularImporteTotal();
-          this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
-        });
       });
     }
     document.getElementById('idProveedor').focus();
@@ -180,6 +178,7 @@ export class ViajeInsumoComponent implements OnInit {
     switch (indice) {
       case 1:
         this.soloLectura = false;
+        this.establecerValoresPorDefecto(1);
         this.establecerCamposSelectSoloLectura(false);
         break;
       case 2:

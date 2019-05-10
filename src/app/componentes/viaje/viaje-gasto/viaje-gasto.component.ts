@@ -98,7 +98,7 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Elimina un gasto de la tabla por indice
   public eliminarGasto(indice, elemento): void {
-    if(this.indiceSeleccionado == 1) {
+    if(this.indiceSeleccionado == 1 || elemento.id == null) {
       this.listaGastos.splice(indice, 1);
       this.calcularImporteTotal();
       this.establecerValoresPorDefecto(0);
@@ -106,13 +106,11 @@ export class ViajeGastoComponent implements OnInit {
     } else {
       this.servicio.eliminar(elemento.id).subscribe(res => {
         let respuesta = res.json();
+        this.listaGastos.splice(indice, 1);
+        this.calcularImporteTotal();
+        this.establecerValoresPorDefecto(0);
+        this.enviarDatos();
         this.toastr.success(respuesta.mensaje);
-        this.servicio.listarGastos(this.viaje.id).subscribe(res => {
-          this.listaGastos = res.json();
-          this.calcularImporteTotal();
-          this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
-        });
       });
     }
     document.getElementById('idFechaG').focus();
@@ -154,6 +152,7 @@ export class ViajeGastoComponent implements OnInit {
     switch(indice) {
       case 1:
         this.soloLectura = false;
+        this.establecerValoresPorDefecto(1);
         break;
       case 2:
         this.soloLectura = true;

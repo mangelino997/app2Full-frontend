@@ -297,6 +297,7 @@ export class ViajeComponent implements OnInit {
       case 1:
         this.obtenerSiguienteId();
         this.establecerCamposSoloLectura(false);
+        this.estadoFormulario = false;
         this.establecerValoresPestania(nombre, false, false, false, true, 'idFecha');
         break;
       case 2:
