@@ -11,7 +11,7 @@ export class AppService {
   // private URL_ORIGEN = 'https://jit-gestion.appspot.com';
   private URL_ORIGEN = 'http://localhost:4200';
   //Define la IP
-  private IP = 'http://localhost:8080'; //192.168.0.156:8080
+  private IP = 'http://192.168.0.156:8080'; //192.168.0.156:8080
   // private IP = 'https://gestionws.appspot.com';
   //Define la url base
   private URL_BASE = this.IP + '/jitws/auth';
@@ -128,9 +128,9 @@ export class AppService {
       valor = valor.replace('$ ', '');
       valor = valor.replace(' km', '');
       valor = valor.replace(/\,/g, '');
-      valor = parseFloat(valor).toFixed(cantidad);
+      // valor = parseFloat(valor).toFixed(cantidad);
     }
-    return valor;
+    return parseFloat(valor).toFixed(cantidad);
   }
   //Valida el CUIT/CUIL
   public validarCUIT(cuit) {
@@ -271,7 +271,7 @@ export class AppService {
   //Desenmascara el porcentaje
   public desenmascararPorcentaje(valor, cantidad) {
     if(valor) {
-      valor = valor.replace('%', '');
+      valor = valor.replace('% ', '');
       valor = valor.replace(/\,/g, '');
       valor = parseFloat(valor).toFixed(cantidad);
     }
