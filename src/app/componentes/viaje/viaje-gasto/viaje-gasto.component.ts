@@ -19,21 +19,21 @@ export class ViajeGastoComponent implements OnInit {
   //Evento que envia los datos del formulario a Viaje
   @Output() dataEvent = new EventEmitter<any>();
   //Define un formulario viaje propio gasto para validaciones de campos
-  public formularioViajePropioGasto:FormGroup;
+  public formularioViajePropioGasto: FormGroup;
   //Define la lista de ordenes de gastos (tabla)
-  public listaGastos:Array<any> = [];
+  public listaGastos: Array<any> = [];
   //Define la lista de resultados rubro producto de busqueda
-  public resultadosRubrosProductos:Array<any> = [];
+  public resultadosRubrosProductos: Array<any> = [];
   //Define si los campos son de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define el indice del Gasto para las modificaciones
-  public indiceGasto:number;
+  public indiceGasto: number;
   //Define si muestra el boton agregar Gasto o actualizar Gasto
-  public btnGasto:boolean = true;
+  public btnGasto: boolean = true;
   //Define la pestaña seleccionada
-  public indiceSeleccionado:number = 1;
+  public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
-  public viaje:any;
+  public viaje: any;
   //Constructor
   constructor(private viajePropioGastoModelo: ViajePropioGasto, private rubroProductoServicio: RubroProductoService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog, public appService: AppService,
@@ -44,8 +44,8 @@ export class ViajeGastoComponent implements OnInit {
     this.formularioViajePropioGasto = this.viajePropioGastoModelo.formulario;
     //Autocompletado Rubro Producto - Buscar por nombre
     this.formularioViajePropioGasto.get('rubroProducto').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.rubroProductoServicio.listarPorNombre(data).subscribe(response =>{
+      if (typeof data == 'string' && data.length > 2) {
+        this.rubroProductoServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosRubrosProductos = response;
         })
       }
@@ -63,13 +63,13 @@ export class ViajeGastoComponent implements OnInit {
     this.formularioViajePropioGasto.get('cantidad').setValue(valor);
     this.formularioViajePropioGasto.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
     this.formularioViajePropioGasto.get('importe').setValue(this.appComponent.establecerCeros(valor));
-    if(opcion == 1) {
+    if (opcion == 1) {
       this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
     }
   }
   //Agrega datos a la tabla de gastos
   public agregarGasto(): void {
-    this.formularioViajePropioGasto.get('tipoComprobante').setValue({id:19});
+    this.formularioViajePropioGasto.get('tipoComprobante').setValue({ id: 19 });
     let usuario = this.appComponent.getUsuario();
     this.formularioViajePropioGasto.get('sucursal').setValue(usuario.sucursal);
     this.formularioViajePropioGasto.get('usuario').setValue(usuario);
@@ -98,7 +98,7 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Elimina un gasto de la tabla por indice
   public eliminarGasto(indice, elemento): void {
-    if(this.indiceSeleccionado == 1 || elemento.id == null) {
+    if (this.indiceSeleccionado == 1 || elemento.id == null) {
       this.listaGastos.splice(indice, 1);
       this.calcularImporteTotal();
       this.establecerValoresPorDefecto(0);
@@ -118,10 +118,10 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Calcula el importe a partir de cantidad y precio unitario
   public calcularImporte(formulario): void {
-    this.establecerDecimales(formulario.get('precioUnitario'), 2 )
+    this.establecerDecimales(formulario.get('precioUnitario'), 2);
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
-    if(cantidad != null && precioUnitario != null) {
+    if (cantidad != null && precioUnitario != null) {
       let importe = cantidad * precioUnitario;
       formulario.get('importe').setValue(importe);
       this.establecerCeros(formulario.get('importe'));
@@ -149,7 +149,7 @@ export class ViajeGastoComponent implements OnInit {
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
     this.indiceSeleccionado = indice;
-    switch(indice) {
+    switch (indice) {
       case 1:
         this.soloLectura = false;
         this.establecerValoresPorDefecto(1);
@@ -184,7 +184,7 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -199,9 +199,9 @@ export class ViajeGastoComponent implements OnInit {
         elemento: elemento
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => {});
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
-  //Mascara un importe
+  //Mascara un importe decimal
   public mascararImporte(limit) {
     return this.appService.mascararImporte(limit);
   }
@@ -211,5 +211,9 @@ export class ViajeGastoComponent implements OnInit {
     if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
+  }
+  //Mascara un entero
+  public mascararEnteros(limit) {
+    return this.appService.mascararEnteros(limit);
   }
 }

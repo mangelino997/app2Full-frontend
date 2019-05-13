@@ -3,8 +3,9 @@
     <div class="col-md-6">
       <div class="form-group has-float-label">
         <label for="idProveedorP" class="tamanio-label">Proveedor *</label>
-        <input id="idProveedorP" class="form-control form-control-sm" type="text" matInput [formControl]="formularioViajePropioPeaje.get('proveedor')"
-          [matAutocomplete]="autoProveedorP" autocomplete="off" [readonly]="soloLectura">
+        <input id="idProveedorP" class="form-control form-control-sm" type="text" matInput
+          [formControl]="formularioViajePropioPeaje.get('proveedor')" [matAutocomplete]="autoProveedorP"
+          autocomplete="off" [readonly]="soloLectura">
         <mat-autocomplete #autoProveedorP="matAutocomplete" [displayWith]="displayFn.bind(this)">
           <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
             {{itemProveedor.alias}}
@@ -15,17 +16,10 @@
   </div>
   <div class="row">
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idFechaP" class="tamanio-label">Fecha</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">
-              <mat-icon>date_range</mat-icon>
-            </span>
-          </div>
-          <input id="idFechaP" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="soloLectura">
-        </div>
+        <input id="idFechaP" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
+          [readonly]="soloLectura">
       </div>
     </div>
   </div>
@@ -33,38 +27,37 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idPuntoVentaG" class="tamanio-label">Punto de Venta *</label>
-        <input id="idPuntoVentaG" type="number" formControlName="puntoVenta" autocomplete="off" class="form-control form-control-sm"
-          [readonly]="soloLectura" (blur)="establecerCerosIzq(formularioViajePropioPeaje.get('puntoVenta'), '000', -4)">
+        <input id="idPuntoVentaG" [textMask]="mascararEnteros(5)" type="text" formControlName="puntoVenta"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+          (blur)="establecerCerosIzq(formularioViajePropioPeaje.get('puntoVenta'), '0000', -5)">
       </div>
     </div>
     <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idLetraG" class="tamanio-label">Letra *</label>
-        <input id="idLetraG" type="text" formControlName="letra" autocomplete="off" class="form-control form-control-sm" maxlength="1"
-          [readonly]="soloLectura">
+        <input id="idLetraG" type="text" formControlName="letra" autocomplete="off" class="form-control form-control-sm"
+          maxlength="1" [readonly]="soloLectura">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idNumeroComprobanteG" class="tamanio-label">Número de Tique *</label>
-        <input id="idNumeroComprobanteG" type="number" formControlName="numeroComprobante" autocomplete="off" class="form-control form-control-sm number-right"
-          [readonly]="soloLectura" (blur)="establecerCerosIzq(formularioViajePropioPeaje.get('numeroComprobante'), '0000000', -8)">
+        <input id="idNumeroComprobanteG" [textMask]="mascararEnteros(8)" type="text" formControlName="numeroComprobante"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+          (blur)="establecerCerosIzq(formularioViajePropioPeaje.get('numeroComprobante'), '0000000', -8)">
       </div>
     </div>
     <div class="col-md-2">
-      <div class="form-group has-float-label-icon">
-        <label for="idImporteG" class="tamanio-label">Importe($) *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
-          </div>
-          <input id="idImporteG" type="number" formControlName="importe" autocomplete="off" class="form-control form-control-sm number-right"
-            [readonly]="soloLectura" (blur)="establecerCeros(formularioViajePropioPeaje.get('importe'))">
-        </div>
+      <div class="form-group has-float-label">
+        <label for="idImporteG" class="tamanio-label">Importe *</label>
+        <input id="idImporteG" [textMask]="mascararImporte(8)" type="text" formControlName="importe" autocomplete="off"
+          class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
+          (blur)="establecerDecimales(formularioViajePropioPeaje.get('importe'), 2)">
       </div>
     </div>
     <div class="col-md-2">
-      <button mat-raised-button color="primary" (click)="agregarPeaje()" [disabled]="soloLectura">Agregar Peaje</button>
+      <button mat-raised-button color="primary" (click)="agregarPeaje()"
+        [disabled]="!formularioViajePropioPeaje.valid">Agregar Peaje</button>
     </div>
   </div>
   <div class="row">
@@ -76,7 +69,7 @@
             <th class="text-center" style="width:15%" scope="col">Proveedor</th>
             <th class="text-center" style="width:10%" scope="col">Punto de Venta</th>
             <th class="text-center" style="width:15%" scope="col">Número de Tique</th>
-            <th class="text-center" style="width:10%" scope="col">Importe($)</th>
+            <th class="text-center" style="width:10%" scope="col">Importe</th>
             <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
         </thead>
@@ -89,13 +82,13 @@
               <span>{{l.proveedor.razonSocial}}</span>
             </td>
             <td align="center">
-              <span>{{mostrarCeros(l.puntoVenta, '000', -4)}}</span>
+              <span>{{mostrarCeros(l.puntoVenta, '0000', -5)}}</span>
             </td>
             <td align="center">
               <span>{{mostrarCeros(l.numeroComprobante, '0000000', -8)}}</span>
             </td>
             <td align="center">
-              <span>{{establecerCerosTabla(l.importe)}}</span>
+              <span>$ {{establecerCerosTabla(l.importe)}}</span>
             </td>
             <td align="center">
               <span class="cursor-color-rojo" (click)="eliminarPeaje(i, l)" *ngIf="!soloLectura">X</span>
@@ -108,15 +101,10 @@
   <br>
   <div class="row justify-content-end">
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idImporteTotalP" class="tamanio-label">Importe Total *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
-          </div>
-          <input id="idImporteTotalP" type="number" formControlName="importeTotal" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="true">
-        </div>
+        <input id="idImporteTotalP" [textMask]="mascararImporte(8)" type="text" formControlName="importeTotal"
+          autocomplete="off" class="form-control form-control-sm" [readonly]="true" placeholder="$ 0.00">
       </div>
     </div>
   </div>

@@ -20,27 +20,27 @@ export class ViajeCombustibleComponent implements OnInit {
   //Evento que envia los datos del formulario a Viaje
   @Output() dataEvent = new EventEmitter<any>();
   //Define un formulario viaje propio combustible para validaciones de campos
-  public formularioViajePropioCombustible:FormGroup;
+  public formularioViajePropioCombustible: FormGroup;
   //Define la lista de resultados proveedores de busqueda
-  public resultadosProveedores:Array<any> = [];
+  public resultadosProveedores: Array<any> = [];
   //Define la lista de insumos
-  public insumos:Array<any> = [];
+  public insumos: Array<any> = [];
   //Define la lista de combustibles
-  public listaCombustibles:Array<any> = [];
+  public listaCombustibles: Array<any> = [];
   //Define si los campos son de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define el indice del combustible para las modificaciones
-  public indiceCombustible:number;
+  public indiceCombustible: number;
   //Define si muestra el boton agregar combustible o actualizar combustible
-  public btnCombustible:boolean = true;
+  public btnCombustible: boolean = true;
   //Define la pestaña seleccionada
-  public indiceSeleccionado:number = 1;
+  public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
-  public viaje:any;
+  public viaje: any;
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajePropioCombustibleModelo: ViajePropioCombustible,
-    private fechaServicio: FechaService, private appComponent: AppComponent, 
-    private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog, private appService:AppService,
+    private fechaServicio: FechaService, private appComponent: AppComponent,
+    private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog, private appService: AppService,
     private servicio: ViajePropioCombustibleService, private toastr: ToastrService) { }
   //Al inicilizarse el componente
   ngOnInit() {
@@ -48,8 +48,8 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajePropioCombustible = this.viajePropioCombustibleModelo.formulario;
     //Autocompletado Proveedor (Combustible) - Buscar por alias
     this.formularioViajePropioCombustible.get('proveedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.proveedorServicio.listarPorAlias(data).subscribe(response =>{
+      if (typeof data == 'string' && data.length > 2) {
+        this.proveedorServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosProveedores = response;
         })
       }
@@ -69,7 +69,7 @@ export class ViajeCombustibleComponent implements OnInit {
     // this.formularioViajePropioCombustible.get('cantidad').setValue(valor);
     this.formularioViajePropioCombustible.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
     this.formularioViajePropioCombustible.get('importe').setValue(this.appComponent.establecerCeros(valor));
-    if(opcion == 1) {
+    if (opcion == 1) {
       this.formularioViajePropioCombustible.get('totalCombustible').setValue(this.appComponent.establecerCeros(valor));
       this.formularioViajePropioCombustible.get('totalUrea').setValue(this.appComponent.establecerCeros(valor));
     }
@@ -87,10 +87,10 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
-    this.establecerDecimales(formulario.get('precioUnitario'), 2 )
+    this.establecerDecimales(formulario.get('precioUnitario'), 2);
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
-    if(cantidad != null && precioUnitario != null) {
+    if (cantidad != null && precioUnitario != null) {
       let importe = cantidad * precioUnitario;
       formulario.get('importe').setValue(importe);
       this.establecerCeros(formulario.get('importe'));
@@ -99,7 +99,7 @@ export class ViajeCombustibleComponent implements OnInit {
   //Establece el precio unitario
   public establecerPrecioUnitario(formulario, elemento): void {
     let precioUnitarioVenta = parseFloat(formulario.get(elemento).value.precioUnitarioVenta);
-    if(precioUnitarioVenta != 0) {
+    if (precioUnitarioVenta != 0) {
       formulario.get('precioUnitario').setValue(precioUnitarioVenta);
       this.establecerCeros(formulario.get('precioUnitario'));
       formulario.get('precioUnitario').disable();
@@ -111,7 +111,7 @@ export class ViajeCombustibleComponent implements OnInit {
   //Agrega datos a la tabla de combustibles
   public agregarCombustible(): void {
     this.formularioViajePropioCombustible.get('precioUnitario').enable();
-    this.formularioViajePropioCombustible.get('tipoComprobante').setValue({id:15});
+    this.formularioViajePropioCombustible.get('tipoComprobante').setValue({ id: 15 });
     this.formularioViajePropioCombustible.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajePropioCombustible.get('usuario').setValue(this.appComponent.getUsuario());
     this.listaCombustibles.push(this.formularioViajePropioCombustible.value);
@@ -139,7 +139,7 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Elimina un combustible de la tabla por indice
   public eliminarCombustible(indice, elemento): void {
-    if(this.indiceSeleccionado == 1) {
+    if (this.indiceSeleccionado == 1) {
       this.listaCombustibles.splice(indice, 1);
       this.calcularTotalCombustibleYUrea();
       this.establecerValoresPorDefecto(0);
@@ -193,7 +193,7 @@ export class ViajeCombustibleComponent implements OnInit {
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
     this.indiceSeleccionado = indice;
-    switch(indice) {
+    switch (indice) {
       case 1:
         this.soloLectura = false;
         this.establecerValoresPorDefecto(1);
@@ -215,7 +215,7 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Establece los campos select en solo lectura o no
   private establecerCamposSelectSoloLectura(opcion): void {
-    if(opcion) {
+    if (opcion) {
       this.formularioViajePropioCombustible.get('insumo').disable();
     } else {
       this.formularioViajePropioCombustible.get('insumo').enable();
@@ -233,13 +233,13 @@ export class ViajeCombustibleComponent implements OnInit {
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado c
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -254,7 +254,7 @@ export class ViajeCombustibleComponent implements OnInit {
         elemento: elemento
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => {});
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Mascara un importe decimal
   public mascararImporte(limit) {
@@ -270,5 +270,16 @@ export class ViajeCombustibleComponent implements OnInit {
   //Mascara un entero
   public mascararEnteros(limit) {
     return this.appService.mascararEnteros(limit);
+  }
+  //Mascarar litros
+  public mascararLitros(limite) {
+    return this.appService.mascararLitros(limite);
+  }
+  //Desenmascarar litros
+  public desenmascararLitros(formulario) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appService.desenmascararLitros(valor));
+    }
   }
 }

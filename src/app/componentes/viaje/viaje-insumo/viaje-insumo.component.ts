@@ -34,9 +34,9 @@ export class ViajeInsumoComponent implements OnInit {
   //Define si muestra el boton agregar Insumo o actualizar Insumo
   public btnInsumo: boolean = true;
   //Define la pestaña seleccionada
-  public indiceSeleccionado:number = 1;
+  public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
-  public viaje:any;
+  public viaje: any;
   //Constructor
   constructor(private viajePropioInsumoModelo: ViajePropioInsumo, private proveedorServicio: ProveedorService,
     private fechaServicio: FechaService, private appComponent: AppComponent,
@@ -97,6 +97,7 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
+    this.establecerDecimales(formulario.get('precioUnitario'), 2);
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
     if (cantidad != null && precioUnitario != null) {
@@ -135,7 +136,7 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Elimina una orden insumo de la tabla por indice
   public eliminarInsumo(indice, elemento): void {
-    if(this.indiceSeleccionado == 1) {
+    if (this.indiceSeleccionado == 1) {
       this.listaInsumos.splice(indice, 1);
       this.calcularImporteTotal();
       this.establecerValoresPorDefecto(0);
@@ -219,6 +220,21 @@ export class ViajeInsumoComponent implements OnInit {
   public reestablecerFormularioYLista(): void {
     this.vaciarListas();
     this.formularioViajePropioInsumo.reset();
+  }
+  //Mascara un importe decimal
+  public mascararImporte(limit) {
+    return this.appServicio.mascararImporte(limit);
+  }
+  //Formatea el numero a x decimales
+  public establecerDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appServicio.establecerDecimales(valor, cantidad));
+    }
+  }
+  //Mascara un entero
+  public mascararEnteros(limit) {
+    return this.appServicio.mascararEnteros(limit);
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

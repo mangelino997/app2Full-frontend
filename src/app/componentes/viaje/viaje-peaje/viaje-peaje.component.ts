@@ -59,7 +59,6 @@ export class ViajePeajeComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajePropioPeaje.get('fecha').setValue(res.json());
     })
-    this.formularioViajePropioPeaje.get('importe').setValue(this.appComponent.establecerCeros(valor));
     if (opcion == 1) {
       this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
     }
@@ -174,12 +173,20 @@ export class ViajePeajeComponent implements OnInit {
     this.vaciarListas();
     this.formularioViajePropioPeaje.reset();
   }
+  //Mascara un importe decimal
+  public mascararImporte(limit) {
+    return this.appService.mascararImporte(limit);
+  }
   //Formatea el numero a x decimales
   public establecerDecimales(formulario, cantidad) {
     let valor = formulario.value;
     if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
+  }
+  //Mascara un entero
+  public mascararEnteros(limit) {
+    return this.appService.mascararEnteros(limit);
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

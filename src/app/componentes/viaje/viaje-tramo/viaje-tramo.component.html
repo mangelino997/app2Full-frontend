@@ -109,9 +109,10 @@
         </div>
         <div class="col-md-3">
             <div class="form-group has-float-label">
-                <label for="idTramoImporte" class="tamanio-label">Importe($)*</label>
-                <input id="idTramoImporte" type="number" formControlName="importe" autocomplete="off"
-                    class="form-control form-control-sm number-right" [readonly]="soloLectura">
+                <label for="idTramoImporte" class="tamanio-label">Importe *</label>
+                <input id="idTramoImporte" [textMask]="mascararImporte(8)" type="text" formControlName="importe" 
+                    autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                    placeholder="$ 0.00">
             </div>
         </div>
         <div class="col md 3">
@@ -167,7 +168,7 @@
                                 {{l.tramo.destino.nombre}}</span>
                         </td>
                         <td align="center">
-                            <span>{{l.tramo.km}}</span>
+                            <span>{{l.tramo.km}} km</span>
                         </td>
                         <td align="center">
                             <span>{{l.empresa.razonSocial}}</span>
@@ -191,7 +192,7 @@
                             <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
                         </td>
                         <td align="center" *ngIf="!soloLectura">
-                            <span class="cursor-color" (click)="modTramo(i)">Mod</span>
+                            <span class="cursor-color" (click)="modTramo(i)">editar</span>
                         </td>
                         <td align="center" *ngIf="!soloLectura">
                             <span class="cursor-color-rojo" (click)="eliminarTramo(i, l)">X</span>

@@ -1,46 +1,29 @@
 <form [formGroup]="formularioViajePropioEfectivo">
   <div class="row">
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idFechaCajaAE" class="tamanio-label">Fecha Caja *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="idSigno">
-              <mat-icon>date_range</mat-icon>
-            </span>
-          </div>
-          <input id="idFechaCajaAE" type="date" formControlName="fechaCaja" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="soloLectura" aria-describedby="idSigno">
-        </div>
+        <input id="idFechaCajaAE" type="date" formControlName="fechaCaja" autocomplete="off"
+          class="form-control form-control-sm" [readonly]="soloLectura" aria-describedby="idSigno">
       </div>
     </div>
     <div class="col-md-4">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idEmpresaAE" class="tamanio-label">Caja Viajes *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="idSigno">
-              <mat-icon>business</mat-icon>
-            </span>
-          </div>
-          <mat-select id="idEmpresaAE" class="form-control form-control-sm" formControlName="empresa" [compareWith]="compareFn">
-            <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
-              {{itemEmpresa.razonSocial}}
-            </mat-option>
-          </mat-select>
-        </div>
+        <mat-select id="idEmpresaAE" class="form-control form-control-sm" formControlName="empresa"
+          [compareWith]="compareFn">
+          <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
+            {{itemEmpresa.razonSocial}}
+          </mat-option>
+        </mat-select>
       </div>
     </div>
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
-        <label for="idImporteAE" class="tamanio-label">Importe($) *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
-          </div>
-          <input id="idImporteAE" type="text" formControlName="importe" autocomplete="off" class="form-control form-control-sm number-right"
-            [readonly]="soloLectura" (blur)="establecerCeros(formularioViajePropioEfectivo.get('importe'))">
-        </div>
+      <div class="form-group has-float-label">
+        <label for="idImporteAE" class="tamanio-label">Importe *</label>
+        <input id="idImporteAE" [textMask]="mascararImporte(8)" type="text" formControlName="importe" autocomplete="off"
+            class="form-control form-control-sm number-right" [readonly]="soloLectura"
+            (blur)="establecerDecimales(formularioViajePropioEfectivo.get('importe'), 2)">
       </div>
     </div>
   </div>
@@ -53,10 +36,10 @@
       </div>
     </div>
     <div class="col-md-2">
-      <button mat-raised-button color="primary" (click)="agregarEfectivo()" [disabled]="!formularioViajePropioEfectivo.valid" 
-        *ngIf="btnEfectivo">Agregar Adelanto</button>
-      <button mat-raised-button color="primary" (click)="modificarEfectivo()" [disabled]="!formularioViajePropioEfectivo.valid" 
-        *ngIf="!btnEfectivo">Actualizar Adelanto</button>
+      <button mat-raised-button color="primary" (click)="agregarEfectivo()"
+        [disabled]="!formularioViajePropioEfectivo.valid" *ngIf="btnEfectivo">Agregar Adelanto</button>
+      <button mat-raised-button color="primary" (click)="modificarEfectivo()"
+        [disabled]="!formularioViajePropioEfectivo.valid" *ngIf="!btnEfectivo">Actualizar Adelanto</button>
     </div>
   </div>
   <div class="row">
@@ -69,12 +52,12 @@
             <th class="text-center" style="width:8%" scope="col">Fecha</th>
             <th class="text-center" style="width:10%" scope="col">Usuario</th>
             <th class="text-center" style="width:20%" scope="col">Empresa</th>
-            <th class="text-center" style="width:8%" scope="col">Importe($)</th>
+            <th class="text-center" style="width:8%" scope="col">Importe</th>
             <th class="text-center" style="width:10%" scope="col">Observaciones</th>
             <th class="text-center" style="width:8%" scope="col">Anulado</th>
-            <th class="text-center" style="width:12%" scope="col">Observaciones Anulado</th>
-            <th class="text-center" style="width:4%" scope="col" *ngIf="!soloLectura">-</th>
-            <th class="text-center" style="width:4%" scope="col" *ngIf="!soloLectura">-</th>
+            <th class="text-center" style="width:10%" scope="col">Observ. Anulado</th>
+            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
+            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
         </thead>
         <tbody>
@@ -96,7 +79,7 @@
                 <span>{{l.empresa.razonSocial}}</span>
               </td>
               <td align="center">
-                <span>{{establecerCerosTabla(l.importe)}}</span>
+                <span>$ {{establecerCerosTabla(l.importe)}}</span>
               </td>
               <td align="center">
                 <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
@@ -108,7 +91,7 @@
                 <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
               </td>
               <td align="center">
-                <span class="cursor-color" (click)="modEfectivo(i)" *ngIf="!soloLectura">Mod</span>
+                <span class="cursor-color" (click)="modEfectivo(i)" *ngIf="!soloLectura">editar</span>
               </td>
               <td align="center">
                 <span class="cursor-color-rojo" (click)="eliminarEfectivo(i, l)" *ngIf="!soloLectura">X</span>
@@ -122,15 +105,10 @@
   <br>
   <div class="row justify-content-end">
     <div class="col-md-2">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idImporteAE" class="tamanio-label">Importe Total *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
-          </div>
-          <input id="idImporteAE" type="number" formControlName="importeTotal" autocomplete="off" class="form-control form-control-sm"
-            [readonly]="true">
-        </div>
+        <input id="idImporteAE" [textMask]="mascararImporte(8)" type="text" formControlName="importeTotal" 
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true">
       </div>
     </div>
   </div>

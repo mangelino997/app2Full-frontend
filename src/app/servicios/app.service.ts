@@ -8,6 +8,7 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 @Injectable()
 export class AppService {
   //Deifne la URL origen
+  // private URL_ORIGEN = 'https://jit-gestion.appspot.com';
   private URL_ORIGEN = 'http://localhost:4200';
   //Define la IP
   private IP = 'http://localhost:8080'; //192.168.0.156:8080
@@ -298,6 +299,34 @@ export class AppService {
     if(valor) {
       valor = valor + "";
       valor = valor.replace(' km', '');
+      valor = valor.replace(/\,/g, '');
+    }
+    return valor;
+  }
+  //Obtiene la mascara de litros
+  public mascararLitros(intLimite) {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '',
+        suffix: ' lt',
+        thousandsSeparatorSymbol: ',',
+        integerLimit: intLimite,
+        requireDecimal: true,
+        allowDecimal: true,
+        decimalLimit: 2,
+        decimalSymbol: '.',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
+  //Desenmascara el km
+  public desenmascararLitros(valor) {
+    if(valor) {
+      valor = valor + "";
+      valor = valor.replace(' lt.', '');
       valor = valor.replace(/\,/g, '');
     }
     return valor;

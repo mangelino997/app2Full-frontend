@@ -20,17 +20,10 @@
   </div>
   <div class="row">
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idFechaOC" class="tamanio-label">Fecha</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">
-              <mat-icon>date_range</mat-icon>
-            </span>
-          </div>
-          <input id="idFechaOC" type="date" formControlName="fecha" autocomplete="off"
+        <input id="idFechaOC" type="date" formControlName="fecha" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura">
-        </div>
       </div>
     </div>
   </div>
@@ -50,14 +43,14 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idCantidadOC" class="tamanio-label">Cantidad *</label>
-        <input id="idCantidadOC" [textMask]="mascararEnteros(4)" type="text" formControlName="cantidad" autocomplete="off"
+        <input id="idCantidadOC" [textMask]="mascararEnteros(8)" type="text" formControlName="cantidad" autocomplete="off"
           class="form-control form-control-sm number-right number-right" [readonly]="soloLectura"
           (blur)="calcularImporte(formularioViajePropioCombustible)">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
-        <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario($) *</label>
+        <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
         <input id="idPrecioUnitarioOC" type="text" formControlName="precioUnitario" autocomplete="off"
           (blur)="calcularImporte(formularioViajePropioCombustible)" class="form-control form-control-sm number-right"
           placeholder="$ 0.00" [textMask]="mascararImporte(8)">
@@ -65,9 +58,9 @@
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
-        <label for="idImporteOC" class="tamanio-label">Importe($) *</label>
-        <input id="idImporteOC" type="number" formControlName="importe" autocomplete="off"
-          class="form-control form-control-sm number-right" [readonly]="true">
+        <label for="idImporteOC" class="tamanio-label">Importe *</label>
+        <input id="idImporteOC" [textMask]="mascararImporte(8)" type="text" formControlName="importe" autocomplete="off"
+          class="form-control form-control-sm number-right" [readonly]="true" placeholder="$ 0.00">
       </div>
     </div>
   </div>
@@ -97,12 +90,12 @@
             <th class="text-center" style="width:10%" scope="col">Usuario</th>
             <th class="text-center" style="width:10%" scope="col">Proveedor</th>
             <th class="text-center" style="width:10%" scope="col">Insumo</th>
-            <th class="text-center" style="width:10%" scope="col">Cantidad(lt)</th>
-            <th class="text-center" style="width:10%" scope="col">Precio Unitario($)</th>
+            <th class="text-center" style="width:10%" scope="col">Cantidad</th>
+            <th class="text-center" style="width:10%" scope="col">Precio Unitario</th>
             <th class="text-center" style="width:10%" scope="col">Observaciones</th>
             <th class="text-center" style="width:5%" scope="col">Anulado</th>
-            <th class="text-center" style="width:11%" scope="col">Obs. Anulado</th>
-            <th class="text-center" style="width:2%" scope="col" *ngIf="!soloLectura">-</th>
+            <th class="text-center" style="width:10%" scope="col">Obs. Anulado</th>
+            <th class="text-center" style="width:3%" scope="col" *ngIf="!soloLectura">-</th>
             <th class="text-center" style="width:2%" scope="col" *ngIf="!soloLectura">-</th>
           </tr>
         </thead>
@@ -128,10 +121,10 @@
                 <span>{{l.insumo.nombre}}</span>
               </td>
               <td align="center">
-                <span>{{l.cantidad}}</span>
+                <span>{{l.cantidad}} lt.</span>
               </td>
               <td align="center">
-                <span>{{establecerCerosTabla(l.precioUnitario)}}</span>
+                <span>$ {{establecerCerosTabla(l.precioUnitario)}}</span>
               </td>
               <td align="center">
                 <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
@@ -143,7 +136,7 @@
                 <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
               </td>
               <td align="center" *ngIf="!soloLectura">
-                <span class="cursor-color" (click)="modCombustible(i)">Mod</span>
+                <span class="cursor-color" (click)="modCombustible(i)">editar</span>
               </td>
               <td align="center">
                 <span class="cursor-color-rojo" (click)="eliminarCombustible(i, l)" *ngIf="!soloLectura">X</span>
@@ -157,27 +150,17 @@
   <br>
   <div class="row justify-content-end">
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idTotalCombustibleOC" class="tamanio-label">Total Gasoil</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="idSigno">lt.</span>
-          </div>
-          <input id="idTotalCombustibleOC" type="number" formControlName="totalCombustible" autocomplete="off"
-            class="form-control form-control-sm" [readonly]="true" aria-describedby="idSigno">
-        </div>
+        <input id="idTotalCombustibleOC" [textMask]="mascararLitros(8)" type="text" formControlName="totalCombustible" 
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="0,00 lt.">
       </div>
     </div>
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idTotalUreaOC" class="tamanio-label">Total Urea</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text" id="idSigno">lt.</span>
-          </div>
-          <input id="idTotalUreaOC" type="number" formControlName="totalUrea" autocomplete="off"
-            class="form-control form-control-sm" [readonly]="true" aria-describedby="idSigno">
-        </div>
+        <input id="idTotalUreaOC" [textMask]="mascararLitros(8)" type="text" formControlName="totalUrea" 
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="0.00 lt">
       </div>
     </div>
   </div>

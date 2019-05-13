@@ -473,6 +473,12 @@ export class DadorDestinatarioDialogo {
   onNoClick(): void {
     this.dialogRef.close();
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
   //Agrega el dador y el destinatario a la tabla
   public agregarDadorDestinatario(): void {
     this.listaDadorDestinatario.push(this.formulario.value);

@@ -212,4 +212,11 @@ export class ViajeEfectivoComponent implements OnInit {
   public mascararImporte(limit) {
     return this.appServicio.mascararImporte(limit);
   }
+  //Formatea el numero a x decimales
+  public establecerDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appServicio.establecerDecimales(valor, cantidad));
+    }
+  }
 }

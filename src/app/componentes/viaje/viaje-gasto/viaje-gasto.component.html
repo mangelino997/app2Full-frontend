@@ -1,17 +1,10 @@
 <form [formGroup]="formularioViajePropioGasto">
   <div class="row">
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idFechaG" class="tamanio-label">Fecha</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">
-              <mat-icon>date_range</mat-icon>
-            </span>
-          </div>
-          <input id="idFechaG" type="date" formControlName="fecha" autocomplete="off"
-            class="form-control form-control-sm" [readonly]="soloLectura">
-        </div>
+        <input id="idFechaG" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
+          [readonly]="soloLectura">
       </div>
     </div>
   </div>
@@ -32,34 +25,24 @@
     <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idCantidadG" class="tamanio-label">Cantidad *</label>
-        <input id="idCantidadG" type="number" formControlName="cantidad" autocomplete="off"
-          class="form-control form-control-sm number-right" [readonly]="soloLectura"
+        <input id="idCantidadG" [textMask]="mascararEnteros(8)" type="text" formControlName="cantidad"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
           (blur)="calcularImporte(formularioViajePropioGasto)">
       </div>
     </div>
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
-        <label for="idPrecioUnitarioG" class="tamanio-label">Precio Unitario($) *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
-          </div>
-          <input id="idPrecioUnitarioG" type="text" formControlName="precioUnitario" autocomplete="off"
-            class="form-control form-control-sm number-right" [readonly]="soloLectura"
-            (blur)="calcularImporte(formularioViajePropioGasto)">
-        </div>
+      <div class="form-group has-float-label">
+        <label for="idPrecioUnitarioG" class="tamanio-label">Precio Unitario *</label>
+        <input id="idPrecioUnitarioG" [textMask]="mascararImporte(8)" type="text" formControlName="precioUnitario"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+          placeholder="$ 0.00" (blur)="calcularImporte(formularioViajePropioGasto)">
       </div>
     </div>
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idImporteG" class="tamanio-label">Importe($) *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
-          </div>
-          <input id="idImporteG" type="text" formControlName="importe" autocomplete="off"
-            class="form-control form-control-sm number-right" [readonly]="true">
-        </div>
+        <input id="idImporteG" [textMask]="mascararImporte(8)" type="text" formControlName="importe" autocomplete="off"
+          class="form-control form-control-sm number-right" [readonly]="true" placeholder="$ 0.00">
       </div>
     </div>
   </div>
@@ -104,10 +87,10 @@
               <span>{{l.cantidad}}</span>
             </td>
             <td align="center">
-              <span>{{establecerCerosTabla(l.precioUnitario)}}</span>
+              <span>$ {{establecerCerosTabla(l.precioUnitario)}}</span>
             </td>
             <td align="center">
-              <span>{{establecerCerosTabla(l.importe)}}</span>
+              <span>$ {{establecerCerosTabla(l.importe)}}</span>
             </td>
             <td align="center">
               <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
@@ -129,15 +112,10 @@
   <br>
   <div class="row justify-content-end">
     <div class="col-md-3">
-      <div class="form-group has-float-label-icon">
+      <div class="form-group has-float-label">
         <label for="idImporteTotalG" class="tamanio-label">Importe Total *</label>
-        <div class="input-group input-group-sm mb-3">
-          <div class="input-group-prepend">
-            <span class="input-group-text">$</span>
-          </div>
-          <input id="idImporteTotalG" type="number" formControlName="importeTotal" autocomplete="off"
-            class="form-control form-control-sm" [readonly]="true">
-        </div>
+        <input id="idImporteTotalG" [textMask]="mascararImporte(8)" type="text" formControlName="importeTotal"
+          autocomplete="off" class="form-control form-control-sm" [readonly]="true" placeholder="$ 0.00">
       </div>
     </div>
   </div>
