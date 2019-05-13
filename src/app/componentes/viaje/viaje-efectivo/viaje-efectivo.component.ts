@@ -181,6 +181,12 @@ export class ViajeEfectivoComponent implements OnInit {
       this.formularioViajePropioEfectivo.get('empresa').enable();
     }
   }
+  //Establece el foco en fecha
+  public establecerFoco(): void {
+    setTimeout(function() {
+      document.getElementById('idFechaCajaAE').focus();
+    }, 100);
+  }
   //Vacia la lista
   public vaciarListas(): void {
     this.listaEfectivos = [];

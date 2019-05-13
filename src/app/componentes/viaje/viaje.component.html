@@ -91,7 +91,7 @@
                                     <input id="idVehiculo" class="form-control form-control-sm" type="text" matInput
                                         [formControl]="tipoViaje.value ? formularioViajePropio.get('vehiculo') : formularioViajePropio.get('vehiculoProveedor')"
                                         [matAutocomplete]="autoVehiculo" autocomplete="off"
-                                        [readonly]="soloLecturaCabecera">
+                                        [readonly]="soloLecturaCabecera" placeholder="Buscar por Dominio ó Tipo/Marca Vehículo">
                                     <mat-autocomplete #autoVehiculo="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemVehiculo of resultadosVehiculos"
@@ -115,7 +115,7 @@
                                         matInput
                                         [formControl]="formularioViajePropio.get('esRemolquePropio').value ? formularioViajePropio.get('vehiculoRemolque') : formularioViajePropio.get('vehiculoProveedorRemolque')"
                                         [matAutocomplete]="autoVehiculoRemolque" autocomplete="off"
-                                        [readonly]="soloLecturaCabecera">
+                                        [readonly]="soloLecturaCabecera" placeholder="Buscar por Dominio ó Tipo/Marca Vehículo">
                                     <mat-autocomplete #autoVehiculoRemolque="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
@@ -137,7 +137,7 @@
                                     <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
                                         [formControl]="tipoViaje.value ? formularioViajePropio.get('personal') : formularioViajePropio.get('choferProveedor')"
                                         [matAutocomplete]="autoChofer" autocomplete="off"
-                                        [readonly]="soloLecturaCabecera">
+                                        [readonly]="soloLecturaCabecera" placeholder="Buscar por N° Legajo, Nombre ó Num. Doc.">
                                     <mat-autocomplete #autoChofer="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemChofer of resultadosChoferes" [value]="itemChofer">
@@ -158,7 +158,7 @@
         </mat-card>
         <br>
         <!-- [linear]="!estadoFormulario" -->
-        <mat-horizontal-stepper [linear]="!estadoFormulario" #stepper>
+        <mat-horizontal-stepper [linear]="!estadoFormulario" (selectionChange)="onStepChange($event)" #stepper>
             <ng-template matStepperIcon="edit" let-index="index">
                 {{index+1}}
             </ng-template>

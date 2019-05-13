@@ -115,6 +115,12 @@ export class ViajeRemitoGSComponent implements OnInit {
   public establecerListaTramos(tramos): void {
     this.listaTramos = tramos;
   }
+  //Establece el foco en fecha
+  public establecerFoco(): void {
+    setTimeout(function() {
+      document.getElementById('idTipoRemitoRG').focus();
+    }, 100);
+  }
   //Define como se muestran los ceros a la izquierda en tablas
   public mostrarCeros(elemento, string, cantidad) {
     return elemento ? (string + elemento).slice(cantidad) : elemento;

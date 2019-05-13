@@ -212,6 +212,12 @@ export class ViajeInsumoComponent implements OnInit {
   public establecerCerosTabla(elemento) {
     return this.appComponent.establecerCeros(elemento);
   }
+  //Establece el foco en fecha
+  public establecerFoco(): void {
+    setTimeout(function() {
+      document.getElementById('idProveedorI').focus();
+    }, 100);
+  }
   //Vacia la lista
   public vaciarListas(): void {
     this.listaInsumos = [];

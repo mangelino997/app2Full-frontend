@@ -5,12 +5,13 @@
         <div class="col">
             <form [formGroup]="formulario">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <div class="form-group has-float-label">
                             <label for="idTramoDadorCarga" class="tamanio-label">Dador de Carga *</label>
                             <input id="idTramoDadorCarga" class="form-control form-control-sm" type="text" matInput
                                 [formControl]="formulario.get('clienteDador')" [matAutocomplete]="autoDadorCarga"
-                                autocomplete="off" (blur)="verificarSeleccion(formulario.get('clienteDador'))">
+                                autocomplete="off" (blur)="verificarSeleccion(formulario.get('clienteDador'))"
+                                placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento">
                             <mat-autocomplete #autoDadorCarga="matAutocomplete" [displayWith]="displayFb.bind(this)">
                                 <mat-option *ngFor="let itemDadorCarga of resultadosClientes" [value]="itemDadorCarga">
                                     {{itemDadorCarga.alias}}
@@ -18,12 +19,13 @@
                             </mat-autocomplete>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-5">
                         <div class="form-group has-float-label">
                             <label for="idTramoDestinatario" class="tamanio-label">Destinatario *</label>
                             <input id="idTramoDestinatario" class="form-control form-control-sm" type="text" matInput
                                 [formControl]="formulario.get('clienteDestinatario')" [matAutocomplete]="autoDestinatario"
-                                autocomplete="off" (blur)="verificarSeleccion(formulario.get('clienteDestinatario'))">
+                                autocomplete="off" (blur)="verificarSeleccion(formulario.get('clienteDestinatario'))"
+                                placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento">
                             <mat-autocomplete #autoDestinatario="matAutocomplete" [displayWith]="displayFb.bind(this)">
                                 <mat-option *ngFor="let itemDestinatario of resultadosClientes" [value]="itemDestinatario">
                                     {{itemDestinatario.alias}}
@@ -31,7 +33,7 @@
                             </mat-autocomplete>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-2">
                         <button mat-raised-button color="primary" (click)="agregarDadorDestinatario()"
                             [disabled]="!formulario.valid">Agregar</button>
                     </div>

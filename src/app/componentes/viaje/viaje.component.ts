@@ -483,6 +483,33 @@ export class ViajeComponent implements OnInit {
   public obtenerEstadoFormulario(formulario, estado) {
     return formulario && estado ? false : true;
   }
+  public onStepChange(event: any): void {
+    switch (event.selectedIndex) {
+      case 0:
+        this.viajeTramoComponente.establecerFoco();
+        break;
+      case 1:
+        this.viajeCombustibleComponente.establecerFoco();
+        break;
+      case 2:
+        this.viajeEfectivoComponente.establecerFoco();
+        break;
+      case 3:
+        this.viajeInsumoComponente.establecerFoco();
+        break;
+      case 4:
+        break;
+      case 5:
+        this.viajeRemitoGSComponente.establecerFoco();
+        break;
+      case 6:
+        this.viajeGastoComponente.establecerFoco();
+        break;
+      case 7:
+        this.viajePeajeComponente.establecerFoco();
+        break;
+    }
+  }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formularioViajePropio.reset();

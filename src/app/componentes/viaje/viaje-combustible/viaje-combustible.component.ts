@@ -221,6 +221,12 @@ export class ViajeCombustibleComponent implements OnInit {
       this.formularioViajePropioCombustible.get('insumo').enable();
     }
   }
+  //Establece el foco en fecha
+  public establecerFoco(): void {
+    setTimeout(function() {
+      document.getElementById('idProveedorOC').focus();
+    }, 100);
+  }
   //Vacia la lista
   public vaciarListas(): void {
     this.listaCombustibles = [];

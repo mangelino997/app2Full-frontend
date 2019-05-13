@@ -275,6 +275,7 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajePropioTramo.reset();
     this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
+    this.resultadosTramos = [];
     document.getElementById('idTramoFecha').focus();
     this.enviarDatos();
   }
@@ -285,6 +286,7 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajePropioTramo.reset();
     this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
+    this.resultadosTramos = [];
     document.getElementById('idTramoFecha').focus();
     this.enviarDatos();
   }
@@ -313,6 +315,7 @@ export class ViajeTramoComponent implements OnInit {
     }
     this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
+    this.resultadosTramos = [];
     document.getElementById('idTramoFecha').focus();
   }
   //Envia la lista de tramos a Viaje
@@ -370,6 +373,12 @@ export class ViajeTramoComponent implements OnInit {
       this.formularioViajePropioTramo.get('viajeTipo').enable();
       this.formularioViajePropioTramo.get('viajeTarifa').enable();
     }
+  }
+  //Establece el foco en fecha
+  public establecerFoco(): void {
+    setTimeout(function() {
+      document.getElementById('idTramoFecha').focus();
+    }, 100);
   }
   //Vacia la lista
   public vaciarListas(): void {
@@ -483,11 +492,13 @@ export class DadorDestinatarioDialogo {
   public agregarDadorDestinatario(): void {
     this.listaDadorDestinatario.push(this.formulario.value);
     this.formulario.reset();
+    this.resultadosClientes = [];
     document.getElementById('idTramoDadorCarga').focus();
   }
   //Elimina un dador-destinatario de la tabla
   public eliminarDadorDestinatario(indice): void {
     this.listaDadorDestinatario.splice(indice, 1);
+    this.resultadosClientes = [];
     document.getElementById('idTramoDadorCarga').focus();
   }
   //Define como se muestra los datos en el autcompletado b
