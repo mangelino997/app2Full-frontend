@@ -258,7 +258,7 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Realiza la actualizacion del precio de la orden seleccionada
   public aplicarActualizacion() {
-    this.establecerPorcentaje(this.formulario.get('porcentaje'), 2)
+    this.establecerPorcentaje(this.formulario.get('porcentaje'), 2);
     if (this.formulario.get('porcentaje').value < 0) {
       this.toastr.error('El porcentaje no puede ser un valor Negativo');
       this.formulario.get('porcentaje').reset();

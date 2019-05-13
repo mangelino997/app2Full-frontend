@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, Pipe } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -24,6 +24,7 @@ import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.serv
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { Router } from '@angular/router';
 import { ErrorPuntoVentaComponent } from '../error-punto-venta/error-punto-venta.component';
+import { DecimalPipe } from '@angular/common';
 
 @Component({
   selector: 'app-emitir-factura',
@@ -100,8 +101,12 @@ export class EmitirFacturaComponent implements OnInit {
   public subtotalSuma: FormControl = new FormControl();
   //Cuenta la cantidad de items agregados a la lista
   public contador: FormControl = new FormControl();
+  //Define la mascara de porcentaje
+  public porcentajeMascara: any;
   //Define la lista de resultados de busqueda barrio
   public resultadosBarrios = [];
+  //Valor de prueba para calcular el subtotal con coma
+  public flete:number=0;
   constructor(
     private appComponent: AppComponent, public dialog: MatDialog, private fechaService: FechaService, private ventaComprobanteService: VentaComprobanteService,
     public clienteService: ClienteService, private toastr: ToastrService, private factura: EmitirFactura, private appService: AppService,
@@ -121,6 +126,8 @@ export class EmitirFacturaComponent implements OnInit {
     this.listarItems();
     //Lista las alicuotas afip iva
     this.listarAlicuotaIva();
+    //Obtiene la mascara de porcentaje
+    // this.porcentajeMascara = this.appService.mascararPorcentaje();
     //Carga el tipo de comprobante
     this.tipoComprobanteservice.obtenerPorId(1).subscribe(
       res => {
@@ -789,6 +796,8 @@ export class EmitirFacturaComponent implements OnInit {
           res => {
             respuesta = res.json();
             this.formularioItem.get('flete').setValue(respuesta);
+            this.setDecimales(this.formularioItem.get('flete'), 2);
+
           }
         );
         break;
@@ -802,6 +811,8 @@ export class EmitirFacturaComponent implements OnInit {
           res => {
             respuesta = res.json();
             this.formularioItem.get('flete').setValue(respuesta);
+            this.setDecimales(this.formularioItem.get('flete'), 2);
+
           }
         );
         break;
@@ -816,6 +827,8 @@ export class EmitirFacturaComponent implements OnInit {
           res => {
             respuesta = res.json();
             this.formularioItem.get('flete').setValue(respuesta);
+            this.setDecimales(this.formularioItem.get('flete'), 2);
+
           }
         );
         break;
@@ -824,6 +837,7 @@ export class EmitirFacturaComponent implements OnInit {
           res => {
             respuesta = res.json();
             this.formularioItem.get('flete').setValue(respuesta);
+            this.setDecimales(this.formularioItem.get('flete'), 2);
           }
         );
         break;
@@ -832,25 +846,42 @@ export class EmitirFacturaComponent implements OnInit {
   //Calcular el Subtotal del item agregado
   public calcularSubtotal($event) {
     let subtotal = 0;
-    this.formularioItem.get('importeNetoGravado').setValue(0.00);
-    this.formulario.get('importeTotal').setValue(0.00);
-    this.formulario.get('importeNoGravado').setValue(0.00);
-    this.formulario.get('importeExento').setValue(0.00);
-    this.formulario.get('importeOtrosTributos').setValue(0.00);
+    // this.formularioItem.get('importeNetoGravado').setValue(0.00);
+    // this.formulario.get('importeTotal').setValue(0.00);
+    // this.formulario.get('importeNoGravado').setValue(0.00);
+    // this.formulario.get('importeExento').setValue(0.00);
+    // this.formulario.get('importeOtrosTributos').setValue(0.00);
     // this.formularioItem.get('importeNetoGravado').setValue(subtotal);
-    let vdeclaradoNeto = this.formularioItem.get('valorDeclarado').value * (this.formularioItem.get('importeSeguro').value / 1000);
+    //Desenmascaro los valores
+    // this.establecerPorcentaje(this.formularioItem.get('descuento'), 2);
+    // this.establecerPorcentaje(this.formularioItem.get('importeSeguro'), 2);
+    this.setDecimales(this.formularioItem.get('valorDeclarado'), 2);
+    this.setDecimales(this.formularioItem.get('flete'), 2);
+    this.setDecimales(this.formularioItem.get('importeRetiro'), 2);
+    this.setDecimales(this.formularioItem.get('importeEntrega'), 2);
+    this.setDecimales(this.formularioItem.get('importeVentaItemConcepto'), 2);
+    //Asigno los valores sin la mascara
+    let valorDeclarado = this.formularioItem.get('valorDeclarado').value;
+    let importeSeguro = this.formularioItem.get('importeSeguro').value;
     let descuento = this.formularioItem.get('descuento').value;
     let flete = this.formularioItem.get('flete').value;
+    let retiro = this.formularioItem.get('importeRetiro').value;
+    let entrega = this.formularioItem.get('importeEntrega').value;
+    let concepto = this.formularioItem.get('importeVentaItemConcepto').value;
+    let vdeclaradoNeto = valorDeclarado * (importeSeguro / 1000);
+    console.log(valorDeclarado, importeSeguro, vdeclaradoNeto);
+
+    
+    console.log(retiro, entrega, concepto);
+
     if (descuento > 0) {
       flete = flete - flete * (descuento / 100); //valor neto del flete con el descuento
       this.formularioItem.get('importeFlete').setValue(flete);
     } else {
       this.formularioItem.get('importeFlete').setValue(flete);
     }
-    let retiro = this.formularioItem.get('importeRetiro').value;
-    let entrega = this.formularioItem.get('importeEntrega').value;
-    let concepto = this.formularioItem.get('importeVentaItemConcepto').value;
     subtotal = vdeclaradoNeto + flete + retiro + entrega + concepto;
+    console.log(vdeclaradoNeto, flete, descuento, retiro, entrega, concepto, subtotal);
     this.formularioItem.get('importeNetoGravado').setValue(this.returnDecimales(subtotal, 2));
   }
   //Abre un modal para agregar un aforo
@@ -926,8 +957,19 @@ export class EmitirFacturaComponent implements OnInit {
     );
   }
   //Formatea el numero a x decimales
-  public setDecimales(valor, cantidad) {
-    valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+  public setDecimales(formulario, cantidad) {
+    // valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(formulario, cantidad) {
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.desenmascararPorcentaje(valor, cantidad));
+    }
   }
   //Retorna el numero a x decimales
   public returnDecimales(valor: number, cantidad: number) {
@@ -976,6 +1018,14 @@ export class EmitirFacturaComponent implements OnInit {
     } else {
       return '';
     }
+  }
+  //Obtiene la mascara de importe
+  public obtenerMascaraImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite);
+  }
+  //Obtiene la mascara de porcentaje
+  public obtenerPorcentajeMascara() {
+    return this.appService.mascararPorcentaje();
   }
 }
 //Componente Viaje Dialogo
