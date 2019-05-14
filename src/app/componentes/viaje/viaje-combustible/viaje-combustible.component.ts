@@ -10,6 +10,9 @@ import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ViajePropioCombustibleService } from 'src/app/servicios/viaje-propio-combustible';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-viaje-combustible',
@@ -37,11 +40,15 @@ export class ViajeCombustibleComponent implements OnInit {
   public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
   public viaje: any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajePropioCombustibleModelo: ViajePropioCombustible,
     private fechaServicio: FechaService, private appComponent: AppComponent,
     private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog, private appService: AppService,
-    private servicio: ViajePropioCombustibleService, private toastr: ToastrService) { }
+    private servicio: ViajePropioCombustibleService, private toastr: ToastrService, private loaderService: LoaderService) { }
   //Al inicilizarse el componente
   ngOnInit() {
     //Establece el formulario viaje propio combustible

@@ -18,6 +18,9 @@ import { ViajePeajeComponent } from './viaje-peaje/viaje-peaje.component';
 import { ViajeRemitoGSComponent } from './viaje-remito-gs/viaje-remito-gs.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-viaje',
@@ -50,7 +53,7 @@ export class ViajeComponent implements OnInit {
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define la lista de opciones
-  public opciones: Array<any> = [];
+  // public opciones: Array<any> = [];
   //Define un formulario viaje propio para validaciones de campos
   public formularioViajePropio: FormGroup;
   //Define un formulario viaje propio tramo para validaciones de campos
@@ -95,13 +98,19 @@ export class ViajeComponent implements OnInit {
   public banderaSoloLectura: boolean = false;
   //Define si la lista de tramos tiene registros
   public estadoFormulario: boolean = false;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define el render de los componentes
+  public render:boolean = false;
   //Constructor
   constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private fechaServicio: FechaService,
     private sucursalServicio: SucursalService, private vehiculoServicio: VehiculoService,
     private personalServicio: PersonalService, private viajePropioModelo: ViajePropio,
-    private choferProveedorServicio: ChoferProveedorService) {
+    private choferProveedorServicio: ChoferProveedorService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
       .subscribe(
@@ -109,20 +118,18 @@ export class ViajeComponent implements OnInit {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
         },
-        err => {
-          console.log(err);
-        }
+        err => {}
       );
     //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.opciones = res.json();
-        },
-        err => {
-          console.log(err);
-        }
-      );
+    // this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+    //   .subscribe(
+    //     res => {
+    //       this.opciones = res.json();
+    //     },
+    //     err => {
+    //       console.log(err);
+    //     }
+    //   );
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
@@ -138,6 +145,11 @@ export class ViajeComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario viaje propio
     this.formularioViajePropio = this.viajePropioModelo.formulario;
     //Establece los valores de la primera pestania activa
@@ -239,6 +251,7 @@ export class ViajeComponent implements OnInit {
     this.sucursalServicio.listar().subscribe(
       res => {
         this.sucursales = res.json();
+        this.render = true;
       },
       err => {
         console.log(err);
@@ -434,6 +447,7 @@ export class ViajeComponent implements OnInit {
   }
   //Agregar el viaje propio
   private agregar(): void {
+    this.loaderService.show();
     this.tipoViaje.enable();
     let vehiculo = this.formularioViajePropio.get('vehiculo').value;
     this.formularioViajePropio.get('empresa').setValue(vehiculo.empresa);
@@ -450,15 +464,18 @@ export class ViajeComponent implements OnInit {
           document.getElementById('idFecha').focus();
           this.toastr.success(resultado.mensaje);
         }
+        this.loaderService.hide();
       },
       err => {
         let resultado = err.json();
         this.toastr.error(resultado.mensaje);
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza el viaje propio
   private actualizar(): void {
+    this.loaderService.show();
     this.tipoViaje.enable();
     this.establecerCamposSoloLectura(false);
     this.servicio.actualizar(this.formularioViajePropio.value).subscribe(
@@ -472,10 +489,12 @@ export class ViajeComponent implements OnInit {
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(resultado.mensaje);
         }
+        this.loaderService.hide();
       },
       err => {
         let resultado = err.json();
         this.toastr.error(resultado.mensaje);
+        this.loaderService.hide();
       }
     );
   }
@@ -596,19 +615,20 @@ export class ViajeComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    var opcion = this.opcionSeleccionada;
+    // var opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
-    } else if (keycode == 115) {
-      if (opcion < this.opciones.length) {
-        this.seleccionarOpcion(opcion + 1, opcion);
-      } else {
-        this.seleccionarOpcion(1, 0);
-      }
-    }
+    } 
+    // else if (keycode == 115) {
+    //   if (opcion < this.opciones.length) {
+    //     this.seleccionarOpcion(opcion + 1, opcion);
+    //   } else {
+    //     this.seleccionarOpcion(1, 0);
+    //   }
+    // }
   }
 }
