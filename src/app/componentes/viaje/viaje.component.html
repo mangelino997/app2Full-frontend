@@ -1,4 +1,7 @@
-<div id="viaje" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+<div *ngIf="!render" class="row justify-content-center">
+    <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="render" id="viaje" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
     <div class="row">
         <div class="col" class="centrar">
             <nav mat-tab-nav-bar>
@@ -19,7 +22,8 @@
                                     <label for="idAutocompletado" class="tamanio-label">Buscar Guía de Servicio</label>
                                     <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
                                         autocomplete="off" type="text" matInput [formControl]="autocompletado"
-                                        [matAutocomplete]="auto" placeholder="Buscar por N° GS, Fecha, Empresa o Chofer">
+                                        [matAutocomplete]="auto"
+                                        placeholder="Buscar por N° GS, Fecha, Empresa o Chofer">
                                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
                                         (optionSelected)="cambioAutocompletado()">
                                         <mat-option *ngFor="let item of resultados" [value]="item">
@@ -91,7 +95,8 @@
                                     <input id="idVehiculo" class="form-control form-control-sm" type="text" matInput
                                         [formControl]="tipoViaje.value ? formularioViajePropio.get('vehiculo') : formularioViajePropio.get('vehiculoProveedor')"
                                         [matAutocomplete]="autoVehiculo" autocomplete="off"
-                                        [readonly]="soloLecturaCabecera" placeholder="Buscar por Dominio ó Tipo/Marca Vehículo">
+                                        [readonly]="soloLecturaCabecera"
+                                        placeholder="Buscar por Dominio ó Tipo/Marca Vehículo">
                                     <mat-autocomplete #autoVehiculo="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemVehiculo of resultadosVehiculos"
@@ -115,7 +120,8 @@
                                         matInput
                                         [formControl]="formularioViajePropio.get('esRemolquePropio').value ? formularioViajePropio.get('vehiculoRemolque') : formularioViajePropio.get('vehiculoProveedorRemolque')"
                                         [matAutocomplete]="autoVehiculoRemolque" autocomplete="off"
-                                        [readonly]="soloLecturaCabecera" placeholder="Buscar por Dominio ó Tipo/Marca Vehículo">
+                                        [readonly]="soloLecturaCabecera"
+                                        placeholder="Buscar por Dominio ó Tipo/Marca Vehículo">
                                     <mat-autocomplete #autoVehiculoRemolque="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
@@ -137,7 +143,8 @@
                                     <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
                                         [formControl]="tipoViaje.value ? formularioViajePropio.get('personal') : formularioViajePropio.get('choferProveedor')"
                                         [matAutocomplete]="autoChofer" autocomplete="off"
-                                        [readonly]="soloLecturaCabecera" placeholder="Buscar por N° Legajo, Nombre ó Num. Doc.">
+                                        [readonly]="soloLecturaCabecera"
+                                        placeholder="Buscar por N° Legajo, Nombre ó Num. Doc.">
                                     <mat-autocomplete #autoChofer="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemChofer of resultadosChoferes" [value]="itemChofer">
@@ -211,12 +218,17 @@
                 </form>
             </mat-step>
         </mat-horizontal-stepper>
-        <div class="row" *ngIf="mostrarBoton">
+        <div class="row" *ngIf="mostrarBoton && !show">
             <div class="centrar">
                 <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="accion()"
                     [disabled]="obtenerEstadoFormulario(formularioViajePropio.valid, estadoFormulario)">
                     {{pestaniaActual}} Viaje
                 </button>
+            </div>
+        </div>
+        <div class="row" *ngIf="show">
+            <div class="col text-center">
+                <app-progreso></app-progreso>
             </div>
         </div>
     </div>

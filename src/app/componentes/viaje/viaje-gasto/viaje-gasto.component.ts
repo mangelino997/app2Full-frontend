@@ -42,14 +42,8 @@ export class ViajeGastoComponent implements OnInit {
   ngOnInit() {
     //Establece el formulario viaje propio gasto
     this.formularioViajePropioGasto = this.viajePropioGastoModelo.formulario;
-    //Autocompletado Rubro Producto - Buscar por nombre
-    this.formularioViajePropioGasto.get('rubroProducto').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.rubroProductoServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosRubrosProductos = response;
-        })
-      }
-    })
+    //Obtiene la lista de rubros de productos
+    this.listarRubrosProductos();
     //Establece los valores por defecto del formulario viaje gasto
     this.establecerValoresPorDefecto(1);
   }
@@ -66,6 +60,12 @@ export class ViajeGastoComponent implements OnInit {
     if (opcion == 1) {
       this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
     }
+  }
+  //Obtiene la lista de rubros de productos
+  public listarRubrosProductos(): void {
+    this.rubroProductoServicio.listar().subscribe(res => {
+      this.resultadosRubrosProductos = res.json();
+    });
   }
   //Agrega datos a la tabla de gastos
   public agregarGasto(): void {
@@ -175,7 +175,7 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Establece el foco en fecha
   public establecerFoco(): void {
-    setTimeout(function() {
+    setTimeout(function () {
       document.getElementById('idFechaG').focus();
     }, 100);
   }
@@ -187,6 +187,13 @@ export class ViajeGastoComponent implements OnInit {
   public reestablecerFormularioYLista(): void {
     this.vaciarListas();
     this.formularioViajePropioGasto.reset();
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
