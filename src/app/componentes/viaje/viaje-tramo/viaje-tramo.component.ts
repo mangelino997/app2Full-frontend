@@ -3,7 +3,6 @@ import { FormGroup } from '@angular/forms';
 import { ViajePropioTramo } from 'src/app/modelos/viajePropioTramo';
 import { ViajePropioTramoCliente } from 'src/app/modelos/viajePropioTramoCliente';
 import { TramoService } from 'src/app/servicios/tramo.service';
-import { AppComponent } from 'src/app/app.component';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { ViajeUnidadNegocioService } from 'src/app/servicios/viaje-unidad-negocio.service';
 import { ViajeTipoCargaService } from 'src/app/servicios/viaje-tipo-carga.service';
@@ -16,6 +15,9 @@ import { AppService } from 'src/app/servicios/app.service';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { ViajePropioTramoService } from 'src/app/servicios/viaje-propio-tramo.service';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-viaje-tramo',
@@ -67,15 +69,24 @@ export class ViajeTramoComponent implements OnInit {
   public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
   public viaje: any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
-  constructor(private appComponent: AppComponent, private viajePropioTramoModelo: ViajePropioTramo,
+  constructor(private viajePropioTramoModelo: ViajePropioTramo,
     private tramoServicio: TramoService, private appServicio: AppService,
     private empresaServicio: EmpresaService, private viajeUnidadNegocioServicio: ViajeUnidadNegocioService,
     private viajeTipoCargaServicio: ViajeTipoCargaService, private viajeTipoServicio: ViajeTipoService,
     private viajeTarifaServicio: ViajeTarifaService, public dialog: MatDialog, private fechaServicio: FechaService,
-    private servicio: ViajePropioTramoService, private toastr: ToastrService) { }
+    private servicio: ViajePropioTramoService, private toastr: ToastrService, private loaderService: LoaderService) { }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario viaje propio tramo
     this.formularioViajePropioTramo = this.viajePropioTramoModelo.formulario;
     //Autocompletado Tramo - Buscar por alias
@@ -110,7 +121,7 @@ export class ViajeTramoComponent implements OnInit {
     })
     // this.formularioViajePropioTramo.get('cantidad').setValue(valor);
     // this.formularioViajePropioTramo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
-    this.formularioViajePropioTramo.get('importe').setValue(this.appComponent.establecerCeros(valor));
+    this.formularioViajePropioTramo.get('importe').setValue(this.appServicio.establecerDecimales(valor, 2));
     this.formularioViajePropioTramo.get('importe').disable();
   }
   //Obtiene la mascara de importes
@@ -270,7 +281,7 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajePropioTramo.get('fechaAlta').setValue(fecha);
     let km = this.formularioViajePropioTramo.get('tramo').value.km;
     this.formularioViajePropioTramo.get('km').setValue(km);
-    this.formularioViajePropioTramo.get('usuario').setValue(this.appComponent.getUsuario());
+    this.formularioViajePropioTramo.get('usuario').setValue(this.appServicio.getUsuario());
     this.listaTramos.push(this.formularioViajePropioTramo.value);
     this.formularioViajePropioTramo.reset();
     this.establecerValoresPorDefecto();
@@ -304,14 +315,20 @@ export class ViajeTramoComponent implements OnInit {
       this.establecerViajeTarifaPorDefecto();
       this.enviarDatos();
     } else {
-      this.servicio.eliminar(elemento.id).subscribe(res => {
-        let respuesta = res.json();
-        this.listaTramos.splice(indice, 1);
-        this.establecerValoresPorDefecto();
-        this.establecerViajeTarifaPorDefecto();
-        this.enviarDatos();
-        this.toastr.success(respuesta.mensaje);
-      });
+      this.loaderService.show();
+      this.servicio.eliminar(elemento.id).subscribe(
+        res => {
+          let respuesta = res.json();
+          this.listaTramos.splice(indice, 1);
+          this.establecerValoresPorDefecto();
+          this.establecerViajeTarifaPorDefecto();
+          this.enviarDatos();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        },
+        err => {
+          this.loaderService.hide();
+        });
     }
     this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
@@ -324,7 +341,7 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
-    elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+    elemento.setValue(this.appServicio.establecerDecimales(elemento.value, 2));
   }
   //Establece la lista de tramos
   public establecerLista(lista, viaje): void {
@@ -389,6 +406,12 @@ export class ViajeTramoComponent implements OnInit {
     this.vaciarListas();
     this.formularioViajePropioTramo.reset();
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
@@ -410,7 +433,7 @@ export class ViajeTramoComponent implements OnInit {
     const dialogRef = this.dialog.open(DadorDestinatarioDialogo, {
       width: '1200px',
       data: {
-        tema: this.appComponent.getTema()
+        tema: this.appServicio.getTema()
       }
     });
     dialogRef.afterClosed().subscribe(viajePropioTramoClientes => {
@@ -422,7 +445,7 @@ export class ViajeTramoComponent implements OnInit {
     const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
       width: '1200px',
       data: {
-        tema: this.appComponent.getTema(),
+        tema: this.appServicio.getTema(),
         elemento: elemento
       }
     });
@@ -433,7 +456,7 @@ export class ViajeTramoComponent implements OnInit {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
       width: '1200px',
       data: {
-        tema: this.appComponent.getTema(),
+        tema: this.appServicio.getTema(),
         elemento: elemento
       }
     });

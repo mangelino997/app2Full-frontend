@@ -9,6 +9,9 @@ import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { ViajePropioEfectivoService } from 'src/app/servicios/viaje-propio-efectivo';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-viaje-efectivo',
@@ -36,12 +39,22 @@ export class ViajeEfectivoComponent implements OnInit {
   public indiceSeleccionado:number = 1;
   //Define el viaje actual de los tramos
   public viaje:any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private viajePropioEfectivoModelo: ViajePropioEfectivo, private empresaServicio: EmpresaService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog,
-    private appServicio: AppService, private toastr: ToastrService, private servicio: ViajePropioEfectivoService) { }
+    private appServicio: AppService, private toastr: ToastrService, private servicio: ViajePropioEfectivoService,
+    private loaderService: LoaderService) { }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario viaje propio efectivo
     this.formularioViajePropioEfectivo = this.viajePropioEfectivoModelo.formulario;
     //Obtiene la lista de empresas
@@ -111,14 +124,20 @@ export class ViajeEfectivoComponent implements OnInit {
       this.establecerValoresPorDefecto(0);
       this.enviarDatos();
     } else {
-      this.servicio.eliminar(elemento.id).subscribe(res => {
-        let respuesta = res.json();
-        this.listaEfectivos.splice(indice, 1);
-        this.calcularImporteTotal();
-        this.establecerValoresPorDefecto(0);
-        this.enviarDatos();
-        this.toastr.success(respuesta.mensaje);
-      });
+      this.loaderService.show();
+      this.servicio.eliminar(elemento.id).subscribe(
+        res => {
+          let respuesta = res.json();
+          this.listaEfectivos.splice(indice, 1);
+          this.calcularImporteTotal();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        },
+        err => {
+          this.loaderService.hide();
+        });
     }
     document.getElementById('idFechaCajaAE').focus();
     this.enviarDatos();

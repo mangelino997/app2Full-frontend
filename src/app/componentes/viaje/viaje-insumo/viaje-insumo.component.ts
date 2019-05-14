@@ -10,6 +10,9 @@ import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { ViajePropioInsumoService } from 'src/app/servicios/viaje-propio-insumo';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-viaje-insumo',
@@ -37,13 +40,22 @@ export class ViajeInsumoComponent implements OnInit {
   public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
   public viaje: any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private viajePropioInsumoModelo: ViajePropioInsumo, private proveedorServicio: ProveedorService,
-    private fechaServicio: FechaService, private appComponent: AppComponent,
+    private fechaServicio: FechaService, private appComponent: AppComponent, private loaderService: LoaderService,
     private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog,
     private appServicio: AppService, private toastr: ToastrService, private servicio: ViajePropioInsumoService) { }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario viaje propio insumo
     this.formularioViajePropioInsumo = this.viajePropioInsumoModelo.formulario;
     //Autocompletado Proveedor (Insumo) - Buscar por alias
@@ -142,14 +154,19 @@ export class ViajeInsumoComponent implements OnInit {
       this.establecerValoresPorDefecto(0);
       this.enviarDatos();
     } else {
+      this.loaderService.show();
       this.servicio.eliminar(elemento.id).subscribe(res => {
-        let respuesta = res.json();
-        this.listaInsumos.splice(indice, 1);
-        this.calcularImporteTotal();
-        this.establecerValoresPorDefecto(0);
-        this.enviarDatos();
-        this.toastr.success(respuesta.mensaje);
-      });
+          let respuesta = res.json();
+          this.listaInsumos.splice(indice, 1);
+          this.calcularImporteTotal();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        },
+        err => {
+          this.loaderService.hide();
+        });
     }
     document.getElementById('idProveedor').focus();
     this.enviarDatos();
@@ -241,6 +258,12 @@ export class ViajeInsumoComponent implements OnInit {
   //Mascara un entero
   public mascararEnteros(limit) {
     return this.appServicio.mascararEnteros(limit);
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

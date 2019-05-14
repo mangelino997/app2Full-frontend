@@ -51,6 +51,11 @@ export class ViajeCombustibleComponent implements OnInit {
     private servicio: ViajePropioCombustibleService, private toastr: ToastrService, private loaderService: LoaderService) { }
   //Al inicilizarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario viaje propio combustible
     this.formularioViajePropioCombustible = this.viajePropioCombustibleModelo.formulario;
     //Autocompletado Proveedor (Combustible) - Buscar por alias
@@ -152,14 +157,20 @@ export class ViajeCombustibleComponent implements OnInit {
       this.establecerValoresPorDefecto(0);
       this.enviarDatos();
     } else {
-      this.servicio.eliminar(elemento.id).subscribe(res => {
-        let respuesta = res.json();
-        this.listaCombustibles.splice(indice, 1);
-        this.calcularTotalCombustibleYUrea();
-        this.establecerValoresPorDefecto(0);
-        this.enviarDatos();
-        this.toastr.success(respuesta.mensaje);
-      });
+      this.loaderService.show();
+      this.servicio.eliminar(elemento.id).subscribe(
+        res => {
+          let respuesta = res.json();
+          this.listaCombustibles.splice(indice, 1);
+          this.calcularTotalCombustibleYUrea();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        },
+        err => {
+          this.loaderService.hide();
+        });
     }
     document.getElementById('idProveedorOC').focus();
     this.enviarDatos();
@@ -242,6 +253,12 @@ export class ViajeCombustibleComponent implements OnInit {
   public reestablecerFormularioYLista(): void {
     this.vaciarListas();
     this.formularioViajePropioCombustible.reset();
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

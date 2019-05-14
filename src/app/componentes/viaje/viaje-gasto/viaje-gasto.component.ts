@@ -9,6 +9,9 @@ import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ViajePropioGastoService } from 'src/app/servicios/viaje-propio-gasto';
 import { ToastrService } from 'ngx-toastr';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-viaje-gasto',
@@ -34,12 +37,21 @@ export class ViajeGastoComponent implements OnInit {
   public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
   public viaje: any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private viajePropioGastoModelo: ViajePropioGasto, private rubroProductoServicio: RubroProductoService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog, public appService: AppService,
-    private servicio: ViajePropioGastoService, private toastr: ToastrService) { }
+    private servicio: ViajePropioGastoService, private toastr: ToastrService, private loaderService: LoaderService) { }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario viaje propio gasto
     this.formularioViajePropioGasto = this.viajePropioGastoModelo.formulario;
     //Obtiene la lista de rubros de productos
@@ -54,8 +66,6 @@ export class ViajeGastoComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajePropioGasto.get('fecha').setValue(res.json());
     })
-    this.formularioViajePropioGasto.get('cantidad').setValue(valor);
-    this.formularioViajePropioGasto.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
     this.formularioViajePropioGasto.get('importe').setValue(this.appComponent.establecerCeros(valor));
     if (opcion == 1) {
       this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
@@ -104,14 +114,19 @@ export class ViajeGastoComponent implements OnInit {
       this.establecerValoresPorDefecto(0);
       this.enviarDatos();
     } else {
+      this.loaderService.show();
       this.servicio.eliminar(elemento.id).subscribe(res => {
-        let respuesta = res.json();
-        this.listaGastos.splice(indice, 1);
-        this.calcularImporteTotal();
-        this.establecerValoresPorDefecto(0);
-        this.enviarDatos();
-        this.toastr.success(respuesta.mensaje);
-      });
+          let respuesta = res.json();
+          this.listaGastos.splice(indice, 1);
+          this.calcularImporteTotal();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        },
+        err => {
+          this.loaderService.hide();
+        });
     }
     document.getElementById('idFechaG').focus();
     this.enviarDatos();

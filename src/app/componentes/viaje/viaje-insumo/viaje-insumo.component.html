@@ -6,7 +6,8 @@
         <input id="idProveedorI" class="form-control form-control-sm" type="text" matInput
           [formControl]="formularioViajePropioInsumo.get('proveedor')" [matAutocomplete]="autoProveedor"
           autocomplete="off" [readonly]="soloLectura"
-          placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento">
+          placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento"
+          (blur)="verificarSeleccion(formularioViajePropioInsumo.get('proveedor'))">
         <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayFn.bind(this)">
           <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
             {{itemProveedor.alias}}

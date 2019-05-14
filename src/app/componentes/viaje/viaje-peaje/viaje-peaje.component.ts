@@ -3,10 +3,12 @@ import { FormGroup } from '@angular/forms';
 import { ViajePropioPeaje } from 'src/app/modelos/viajePropioPeaje';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { AppComponent } from 'src/app/app.component';
 import { ViajePropioPeajeService } from 'src/app/servicios/viaje-propio-peaje';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-viaje-peaje',
@@ -32,13 +34,21 @@ export class ViajePeajeComponent implements OnInit {
   public indiceSeleccionado:number = 1;
   //Define el viaje actual de los tramos
   public viaje:any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(private viajePropioPeajeModelo: ViajePropioPeaje, private proveedorServicio: ProveedorService,
-    private fechaServicio: FechaService, private appComponent: AppComponent,
-    private servicio: ViajePropioPeajeService, private toastr: ToastrService,
-    private appService: AppService) { }
+    private fechaServicio: FechaService, private servicio: ViajePropioPeajeService, private toastr: ToastrService,
+    private appService: AppService, private loaderService: LoaderService) { }
   //Al inicializarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario viaje propio peaje
     this.formularioViajePropioPeaje = this.viajePropioPeajeModelo.formulario;
     //Autocompletado Proveedor (Peaje) - Buscar por alias
@@ -60,13 +70,13 @@ export class ViajePeajeComponent implements OnInit {
       this.formularioViajePropioPeaje.get('fecha').setValue(res.json());
     })
     if (opcion == 1) {
-      this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
+      this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appService.establecerDecimales(valor, 2));
     }
   }
   //Agrega datos a la tabla de peajes
   public agregarPeaje(): void {
     this.formularioViajePropioPeaje.get('tipoComprobante').setValue({ id: 17 });
-    this.formularioViajePropioPeaje.get('usuario').setValue(this.appComponent.getUsuario());
+    this.formularioViajePropioPeaje.get('usuario').setValue(this.appService.getUsuario());
     this.listaPeajes.push(this.formularioViajePropioPeaje.value);
     this.formularioViajePropioPeaje.reset();
     this.calcularImporteTotal();
@@ -92,20 +102,26 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(indice, elemento): void {
-    if(this.indiceSeleccionado == 1) {
+    if(this.indiceSeleccionado == 1 || elemento.id == null) {
       this.listaPeajes.splice(indice, 1);
       this.calcularImporteTotal();
       this.establecerValoresPorDefecto(0);
       this.enviarDatos();
     } else {
-      this.servicio.eliminar(elemento.id).subscribe(res => {
-        let respuesta = res.json();
-        this.listaPeajes.splice(indice, 1);
-        this.calcularImporteTotal();
-        this.establecerValoresPorDefecto(0);
-        this.enviarDatos();
-        this.toastr.success(respuesta.mensaje);
-      });
+      this.loaderService.show();
+      this.servicio.eliminar(elemento.id).subscribe(
+        res => {
+          let respuesta = res.json();
+          this.listaPeajes.splice(indice, 1);
+          this.calcularImporteTotal();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        },
+        err => {
+          this.loaderService.hide();
+        });
     }
     document.getElementById('idProveedorP').focus();
     this.enviarDatos();
@@ -120,7 +136,9 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
-    elemento.setValue((string + elemento.value).slice(cantidad));
+    if(elemento.value) {
+      elemento.setValue((string + elemento.value).slice(cantidad));
+    }
   }
   //Define como se muestran los ceros a la izquierda en tablas
   public mostrarCeros(elemento, string, cantidad) {
@@ -158,11 +176,11 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
-    elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+    elemento.setValue(this.appService.establecerDecimales(elemento.value, 2));
   }
   //Establece los ceros en los numeros flotantes en tablas
   public establecerCerosTabla(elemento) {
-    return this.appComponent.establecerCeros(elemento);
+    return this.appService.establecerDecimales(elemento, 2);
   }
   //Establece el foco en fecha
   public establecerFoco(): void {
@@ -193,6 +211,19 @@ export class ViajePeajeComponent implements OnInit {
   //Mascara un entero
   public mascararEnteros(limit) {
     return this.appService.mascararEnteros(limit);
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if(typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

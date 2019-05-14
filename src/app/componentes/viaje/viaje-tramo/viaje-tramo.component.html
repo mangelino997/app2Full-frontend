@@ -12,7 +12,8 @@
                 <label for="idTramo" class="tamanio-label">Tramo *</label>
                 <input id="idTramo" class="form-control form-control-sm" type="text" matInput
                     [formControl]="formularioViajePropioTramo.get('tramo')" [matAutocomplete]="autoTramo"
-                    autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por Ciudad Origen">
+                    autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por Ciudad Origen"
+                    (blur)="verificarSeleccion(formularioViajePropioTramo.get('tramo'))">
                 <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFn.bind(this)"
                     (optionSelected)="establecerKm()">
                     <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">

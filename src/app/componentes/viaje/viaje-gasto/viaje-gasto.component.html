@@ -25,7 +25,7 @@
         <label for="idCantidadG" class="tamanio-label">Cantidad *</label>
         <input id="idCantidadG" [textMask]="mascararEnteros(8)" type="text" formControlName="cantidad"
           autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-          (blur)="calcularImporte(formularioViajePropioGasto)">
+          (blur)="calcularImporte(formularioViajePropioGasto)" placeholder="0">
       </div>
     </div>
     <div class="col-md-2">
