@@ -196,7 +196,7 @@ export class OrdenVentaComponent implements OnInit {
         }
       );
     } else {
-      this.ordenVentaTramoServicio.listarPorOrdenVenta(this.ordenventa.value.id).subscribe(
+      this.ordenVentaTramoServicio.listarFechasPorOrdenVenta(this.ordenventa.value.id).subscribe(
         res => {
           this.preciosDesdeLista = res.json();
           this.loaderService.hide();
