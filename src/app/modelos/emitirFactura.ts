@@ -101,7 +101,7 @@ export class EmitirFactura {
             ordenVenta: new FormControl('', Validators.required),
             importeContraReembolso: new FormControl('', Validators.required),
             pComision: new FormControl('', Validators.required),
-            alicuotaIva: new FormControl('', Validators.required),
+            alicuotaIva: new FormControl(),
             importeIva: new FormControl()
         });
     }
