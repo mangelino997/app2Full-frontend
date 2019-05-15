@@ -56,6 +56,10 @@ export class OrdenVentaTramoService {
   public listarPorOrdenVentaYPreciosDesde(idOrdenVta, precioDesde) {
     return this.http.get(this.url + '/listarPorOrdenVentaYPreciosDesde/' + idOrdenVta + '/' + precioDesde, this.options);
   }
+  //Obtiene una lista de las distintas fechas por id de Orden Venta
+  public listarFechasPorOrdenVenta(id) {
+    return this.http.get(this.url + '/listarFechasPorOrdenVenta/' + id, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

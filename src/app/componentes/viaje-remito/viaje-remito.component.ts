@@ -171,12 +171,16 @@ export class ViajeRemitoComponent implements OnInit {
   //Establece los enteros
   public establecerEnteros(formulario): void {
     let valor = formulario.value;
-    formulario.setValue(this.appService.establecerEnteros(valor));
+    if(valor) {
+      formulario.setValue(this.appService.establecerEnteros(valor));
+    }
   }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;
-    formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    if(valor) {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
@@ -354,6 +358,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.formulario.get('sucursalEmision').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('empresaEmision').setValue(this.appService.getEmpresa());
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
