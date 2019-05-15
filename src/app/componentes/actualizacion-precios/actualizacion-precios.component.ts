@@ -185,7 +185,7 @@ export class ActualizacionPreciosComponent implements OnInit {
         }
       );
     } else {
-      this.ordenVentaTramoServicio.listarPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
+      this.ordenVentaTramoServicio.listarFechasPorOrdenVenta(this.listaCompleta[indice].id).subscribe(
         res => {
           this.ordenVenta = res.json();
           this.formulario.get('fechaDesde').setValue(this.ordenVenta[0].preciosDesde);
