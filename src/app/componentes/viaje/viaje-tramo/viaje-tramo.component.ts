@@ -244,8 +244,10 @@ export class ViajeTramoComponent implements OnInit {
     if (modalidadCarga.id == 3) {
       this.formularioViajePropioTramo.get('viajeTipoCarga').setValue(this.viajesTiposCargas[0]);
       this.formularioViajePropioTramo.get('viajeTipoCarga').disable();
+      this.formularioViajePropioTramo.get('viajePropioTramoClientes').disable();
     } else {
       this.formularioViajePropioTramo.get('viajeTipoCarga').enable();
+      this.formularioViajePropioTramo.get('viajePropioTramoClientes').enable();
     }
     this.establecerTipoViaje(this.tipoViaje);
   }

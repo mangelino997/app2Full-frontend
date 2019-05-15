@@ -168,16 +168,28 @@ export class ViajeGastoComponent implements OnInit {
       case 1:
         this.soloLectura = false;
         this.establecerValoresPorDefecto(1);
+        this.establecerSelectsSoloLectura(false);
         break;
       case 2:
         this.soloLectura = true;
+        this.establecerSelectsSoloLectura(true);
         break;
       case 3:
         this.soloLectura = false;
+        this.establecerSelectsSoloLectura(false);
         break;
       case 4:
         this.soloLectura = true;
+        this.establecerSelectsSoloLectura(true);
         break;
+    }
+  }
+  //Establece selects solo lectura
+  private establecerSelectsSoloLectura(opcion): void {
+    if (opcion) {
+      this.formularioViajePropioGasto.get('rubroProducto').disable();
+    } else {
+      this.formularioViajePropioGasto.get('rubroProducto').enable();
     }
   }
   //Establece los ceros en los numeros flotantes

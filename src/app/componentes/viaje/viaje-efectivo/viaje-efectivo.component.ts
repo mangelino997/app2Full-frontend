@@ -3,7 +3,6 @@ import { FormGroup } from '@angular/forms';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { ViajePropioEfectivo } from 'src/app/modelos/viajePropioEfectivo';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { AppComponent } from 'src/app/app.component';
 import { MatDialog } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
@@ -45,7 +44,7 @@ export class ViajeEfectivoComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private viajePropioEfectivoModelo: ViajePropioEfectivo, private empresaServicio: EmpresaService,
-    private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog,
+    private fechaServicio: FechaService, public dialog: MatDialog,
     private appServicio: AppService, private toastr: ToastrService, private servicio: ViajePropioEfectivoService,
     private loaderService: LoaderService) { }
   //Al inicializarse el componente
@@ -81,17 +80,16 @@ export class ViajeEfectivoComponent implements OnInit {
       this.fechaActual = res.json();
       this.formularioViajePropioEfectivo.get('fechaCaja').setValue(res.json());
     })
-    this.formularioViajePropioEfectivo.get('importe').setValue(this.appComponent.establecerCeros(valor));
     if(opcion == 1) {
-      this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
+      this.formularioViajePropioEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(valor, 2));
     }
   }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
     this.formularioViajePropioEfectivo.get('fecha').setValue(this.fechaActual);
     this.formularioViajePropioEfectivo.get('tipoComprobante').setValue({id:16});
-    this.formularioViajePropioEfectivo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formularioViajePropioEfectivo.get('usuario').setValue(this.appComponent.getUsuario());
+    this.formularioViajePropioEfectivo.get('sucursal').setValue(this.appServicio.getUsuario().sucursal);
+    this.formularioViajePropioEfectivo.get('usuario').setValue(this.appServicio.getUsuario());
     this.listaEfectivos.push(this.formularioViajePropioEfectivo.value);
     this.formularioViajePropioEfectivo.reset();
     this.calcularImporteTotal();
@@ -156,11 +154,11 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
-    elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+    elemento.setValue(this.appServicio.establecerDecimales(elemento.value, 2));
   }
   //Establece los ceros en los numeros flotantes en tablas
   public establecerCerosTabla(elemento) {
-    return this.appComponent.establecerCeros(elemento);
+    return this.appServicio.establecerDecimales(elemento, 2);
   }
   //Establece la lista de efectivos
   public establecerLista(lista, viaje): void {
@@ -227,7 +225,7 @@ export class ViajeEfectivoComponent implements OnInit {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
       width: '1200px',
       data: {
-        tema: this.appComponent.getTema(),
+        tema: this.appServicio.getTema(),
         elemento: elemento
       }
     });

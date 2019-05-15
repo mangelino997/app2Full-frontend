@@ -22,7 +22,7 @@
       <div class="form-group has-float-label">
         <label for="idImporteAE" class="tamanio-label">Importe *</label>
         <input id="idImporteAE" [textMask]="mascararImporte(8)" type="text" formControlName="importe" autocomplete="off"
-            class="form-control form-control-sm number-right" [readonly]="soloLectura"
+            class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
             (blur)="establecerDecimales(formularioViajePropioEfectivo.get('importe'), 2)">
       </div>
     </div>

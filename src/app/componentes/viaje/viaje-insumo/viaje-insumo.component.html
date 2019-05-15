@@ -52,7 +52,7 @@
       <div class="form-group has-float-label">
         <label for="idPrecioUnitarioAV" class="tamanio-label">Precio Unitario *</label>
         <input id="idPrecioUnitarioAV" [textMask]="mascararImporte(8)" type="text" formControlName="precioUnitario"
-          autocomplete="off" (blur)="calcularImporte(formularioViajePropioInsumo)"
+          autocomplete="off" (blur)="calcularImporte(formularioViajePropioInsumo)" [readonly]="soloLectura"
           class="form-control form-control-sm number-right" placeholder="$ 0.00">
       </div>
     </div>

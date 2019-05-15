@@ -162,16 +162,28 @@ export class ViajePeajeComponent implements OnInit {
       case 1:
         this.soloLectura = false;
         this.establecerValoresPorDefecto(1);
+        this.establecerSelectsSoloLectura(false);
         break;
       case 2:
         this.soloLectura = true;
+        this.establecerSelectsSoloLectura(true);
         break;
       case 3:
         this.soloLectura = false;
+        this.establecerSelectsSoloLectura(false);
         break;
       case 4:
         this.soloLectura = true;
+        this.establecerSelectsSoloLectura(true);
         break;
+    }
+  }
+  //Establece selects solo lectura
+  private establecerSelectsSoloLectura(opcion): void {
+    if (opcion) {
+      this.formularioViajePropioPeaje.get('letra').disable();
+    } else {
+      this.formularioViajePropioPeaje.get('letra').enable();
     }
   }
   //Establece los ceros en los numeros flotantes
