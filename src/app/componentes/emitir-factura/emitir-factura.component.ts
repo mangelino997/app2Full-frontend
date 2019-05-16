@@ -157,9 +157,6 @@ export class EmitirFacturaComponent implements OnInit {
     this.puntoVentaService.listarPorEmpresaYSucursalYTipoComprobante(this.empresa.value.id, this.appComponent.getUsuario().sucursal.id, 1).subscribe(
       res => {
         this.resultadosPuntoVenta = res.json();
-        console.log(res.json());
-        console.log(this.resultadosPuntoVenta[0]);
-
         this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0]);
         if (this.resultadosPuntoVenta.length == 0) {
           const dialogRef = this.dialog.open(ErrorPuntoVentaComponent, {
@@ -185,7 +182,6 @@ export class EmitirFacturaComponent implements OnInit {
   //Maneja el cambio en el combo Items
   public cambioItem() {
     this.resetearItem();
-    console.log(this.item.value.id);
     this.formularioItem.get('ventaTipoItem').setValue(this.item.value);
     switch (this.item.value.id) {
       case 4: //el item con id=4 es Contrareembolso
@@ -246,7 +242,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Abre el dialogo para seleccionar un Tramo
   public abrirDialogoTramo(): void {
-    console.log(this.formulario.value);
     const dialogRef = this.dialog.open(ViajeDialogo, {
       width: '1200px',
       data: {
@@ -254,7 +249,7 @@ export class EmitirFacturaComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      if (resultado != undefined || resultado != null) {
+      if (resultado.viaje!="" && resultado.remito!="") {
         //Deshabilita el combo "Item"
         this.item.disable();
         //setea los valores en cliente remitente
@@ -286,20 +281,13 @@ export class EmitirFacturaComponent implements OnInit {
         setTimeout(function () {
           document.getElementById('idPagoOrigen').focus();
         }, 20);
-      } else if(!resultado){
-            this.item.reset();
-            setTimeout(function () {
-              document.getElementById('idItem').focus();
-            }, 20);
-          }
-          else{
-            console.log("entró");
-            this.item.reset();
-            this.item.enable();
-            setTimeout(function () {
-              document.getElementById('idItem').focus();
-            }, 20);
-          }
+      } else { //if(!resultado)
+          this.item.reset();
+          this.item.enable();
+          setTimeout(function () {
+            document.getElementById('idItem').focus();
+          }, 20);
+      }
     });
     //Primero comprobar que ese numero de viaje exista y depsues abrir la ventana emergente
     // this.viajePropioTramoService.listarTramos(this.formularioItem.get('numeroViaje').value).subscribe(
@@ -439,38 +427,22 @@ export class EmitirFacturaComponent implements OnInit {
       document.getElementById('idItem').focus();
     }, 20);
   }
-  //Controla que un remito agregado a la tabla no se pueda volver a seleccionar
-  // public remitosDisponibles(opcion, remito) {
+  //Controla que un item CR agregado no se pueda volver a seleccionar (solo puede haber un contra reembolso)
+  // public itemsDisponibles(opcion, item) {
   //   //opcion = 1 (saca de la lista de Remitos) opcion = 2 (agrega a la lista de Remitos) 
   //   switch (opcion) {
   //     case 1:
-  //       for (let i = 0; i < this.resultadosRemitos.length; i++) {
-  //         if (remito.id == this.resultadosRemitos[i].id) {
-  //           this.resultadosRemitos.splice(i, 1);
+  //       for (let i = 0; i < this.resultadosItems.length; i++) {
+  //         if (item.id == this.resultadosItems[i].id) {
+  //           this.resultadosItems.splice(i, 1);
   //         }
   //       }
   //       break;
   //     case 2:
-  //       this.resultadosRemitos.push(remito);
+  //       this.resultadosItems.push(item);
   //       break;
   //   }
   // }
-  //Controla que un item CR agregado no se pueda volver a seleccionar (solo puede haber un contra reembolso)
-  public itemsDisponibles(opcion, item) {
-    //opcion = 1 (saca de la lista de Remitos) opcion = 2 (agrega a la lista de Remitos) 
-    switch (opcion) {
-      case 1:
-        for (let i = 0; i < this.resultadosItems.length; i++) {
-          if (item.id == this.resultadosItems[i].id) {
-            this.resultadosItems.splice(i, 1);
-          }
-        }
-        break;
-      case 2:
-        this.resultadosItems.push(item);
-        break;
-    }
-  }
   //Controla los checkbox
   public pagoEnOrigen() {
     if (this.formulario.get('pagoEnOrigen').value == true) {
@@ -580,7 +552,6 @@ export class EmitirFacturaComponent implements OnInit {
     this.setDecimales(this.formulario.get('importeTotal'), 2);
 
     this.formularioCR.reset();
-    this.itemsDisponibles(2, this.listaCR[0].item);
     this.listaCR.splice(0, 1);
   }
   //Habilita y carga los campos una vez que se selecciono el item
@@ -670,7 +641,6 @@ export class EmitirFacturaComponent implements OnInit {
   public listarTarifasOVentaEmpresa() {
     this.ordenVentaServicio.listar().subscribe(
       res => {
-        console.log(res.json());
         this.resultadosTarifas = res.json();
       }
     )
@@ -719,7 +689,6 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Completa el campo "porcentaje" y "Comison" cuando NO se elige una Orden Venta en ContraReembolso
   public calcularComision() {
-    console.log(this.formularioCR.get('porcentajeCC').value)
     this.setDecimales(this.formularioCR.get('porcentajeCC'), 2);
     let comision = (this.formularioCR.get('porcentajeCC').value / 100) * this.formularioCR.get('importeContraReembolso').value;
     this.formularioCR.get('pComision').setValue(comision);
@@ -965,7 +934,6 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('ventaComprobanteItemCR').setValue(this.listaCR);
     //A PuntoVenta debo enviarle solo el valor, pero antes utilizo sus otros datos
     this.formulario.get('puntoVenta').setValue(this.resultadosPuntoVenta[0].puntoVenta);
-    console.log(this.formulario.value);
     this.ventaComprobanteService.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
