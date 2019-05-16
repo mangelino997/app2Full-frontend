@@ -633,9 +633,9 @@ export class PersonalComponent implements OnInit {
             document.getElementById('idApellido').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
           this.establecerValoresPorDefecto();
         }
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err.json());
@@ -689,41 +689,39 @@ export class PersonalComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err;
-    if (respuesta.codigo == 11010) {
-      document.getElementById("labelNumeroDocumento").classList.add('label-error');
-      document.getElementById("idNumeroDocumento").classList.add('is-invalid');
-      document.getElementById("idNumeroDocumento").focus();
-    } else if (respuesta.codigo == 11012) {
-      document.getElementById("labelCuil").classList.add('label-error');
-      document.getElementById("idCuil").classList.add('is-invalid');
-      document.getElementById("idCuil").focus();
-    } else if (respuesta.codigo == 11013) {
-      document.getElementById("labelTelefonoFijo").classList.add('label-error');
-      document.getElementById("idTelefonoFijo").classList.add('is-invalid');
-      document.getElementById("idTelefonoFijo").focus();
-    } else if (respuesta.codigo == 11014) {
-      document.getElementById("labelTelefonoMovil").classList.add('label-error');
-      document.getElementById("idTelefonoMovil").classList.add('is-invalid');
-      document.getElementById("idTelefonoMovil").focus();
-    } else if (respuesta.codigo == 11003) {
-      document.getElementById("labelCorreoelectronico").classList.add('label-error');
-      document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-      document.getElementById("idCorreoelectronico").focus();
-    } else if (respuesta.codigo == 11015) {
-      document.getElementById("labelTelefonoMovilEmpresa").classList.add('label-error');
-      document.getElementById("idTelefonoMovilEmpresa").classList.add('is-invalid');
-      document.getElementById("idTelefonoMovilEmpresa").focus();
-    }
+    try {
+      if (respuesta.codigo == 11010) {
+        document.getElementById("labelNumeroDocumento").classList.add('label-error');
+        document.getElementById("idNumeroDocumento").classList.add('is-invalid');
+        document.getElementById("idNumeroDocumento").focus();
+      } else if (respuesta.codigo == 11012) {
+        document.getElementById("labelCuil").classList.add('label-error');
+        document.getElementById("idCuil").classList.add('is-invalid');
+        document.getElementById("idCuil").focus();
+      } else if (respuesta.codigo == 11013) {
+        document.getElementById("labelTelefonoFijo").classList.add('label-error');
+        document.getElementById("idTelefonoFijo").classList.add('is-invalid');
+        document.getElementById("idTelefonoFijo").focus();
+      } else if (respuesta.codigo == 11014) {
+        document.getElementById("labelTelefonoMovil").classList.add('label-error');
+        document.getElementById("idTelefonoMovil").classList.add('is-invalid');
+        document.getElementById("idTelefonoMovil").focus();
+      } else if (respuesta.codigo == 11003) {
+        document.getElementById("labelCorreoelectronico").classList.add('label-error');
+        document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+        document.getElementById("idCorreoelectronico").focus();
+      } else if (respuesta.codigo == 11015) {
+        document.getElementById("labelTelefonoMovilEmpresa").classList.add('label-error');
+        document.getElementById("idTelefonoMovilEmpresa").classList.add('is-invalid');
+        document.getElementById("idTelefonoMovilEmpresa").focus();
+      }
+    } catch(e) {}
     this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  }
-  //Formatea el numero a x decimales
-  public setDecimales(valor, cantidad) {
-    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
   }
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
