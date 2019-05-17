@@ -80,6 +80,20 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
+              <label for="idRolSecundario" class="tamanio-label">Rol Secundario</label>
+              <mat-select id="idRolSecundario" class="form-control form-control-sm" formControlName="rolSecundario"
+                [compareWith]="compareFn">
+                <mat-option [value]="0">Vacio</mat-option>
+                <mat-option *ngFor="let itemRolS of resultadosRoles" [value]="itemRolS">
+                  {{itemRolS.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
               <label for="idSucursal" class="tamanio-label">Sucursal *</label>
               <mat-select id="idSucursal" class="form-control form-control-sm" formControlName="sucursal"
                 [compareWith]="compareFn">
@@ -89,8 +103,6 @@
               </mat-select>
             </div>
           </div>
-        </div>
-        <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCuentaHabilitada" class="tamanio-label">Cuenta Habilitada *</label>

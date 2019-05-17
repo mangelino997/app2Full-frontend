@@ -25,10 +25,17 @@
                 </div>
                 <div *ngIf="estaAutenticado" class="form-group has-float-label">
                   <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-                  <mat-select id="idEmpresa" class="form-control"
-                    formControlName="empresa" [compareWith]="compareFn">
+                  <mat-select id="idEmpresa" class="form-control" formControlName="empresa" [compareWith]="compareFn">
                     <mat-option *ngFor="let empresa of empresas" [value]="empresa">
                       {{empresa.razonSocial}}
+                    </mat-option>
+                  </mat-select>
+                </div>
+                <div *ngIf="estaAutenticado && rolSecundario" class="form-group has-float-label">
+                  <label for="idRol" class="tamanio-label">Rol *</label>
+                  <mat-select id="idRol" class="form-control" formControlName="rol" [compareWith]="compareFn">
+                    <mat-option *ngFor="let rol of roles" [value]="rol">
+                      {{rol.nombre}}
                     </mat-option>
                   </mat-select>
                 </div>

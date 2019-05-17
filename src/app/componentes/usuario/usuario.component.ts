@@ -92,7 +92,8 @@ export class UsuarioComponent implements OnInit {
       password: new FormControl(),
       rol: new FormControl('', Validators.required),
       sucursal: new FormControl('', Validators.required),
-      cuentaHabilitada: new FormControl('', Validators.required)
+      cuentaHabilitada: new FormControl('', Validators.required),
+      rolSecundario: new FormControl()
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
@@ -222,6 +223,10 @@ export class UsuarioComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
+    let rolSecundario = this.formulario.get('rolSecundario').value;
+    if(rolSecundario == '0') {
+      this.formulario.get('rolSecundario').setValue(null);
+    }
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -249,6 +254,10 @@ export class UsuarioComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    let rolSecundario = this.formulario.get('rolSecundario').value;
+    if(rolSecundario == '0') {
+      this.formulario.get('rolSecundario').setValue(null);
+    }
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

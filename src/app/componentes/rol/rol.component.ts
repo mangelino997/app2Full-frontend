@@ -43,6 +43,8 @@ export class RolComponent implements OnInit {
   private subscription: Subscription;
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'nombre', 'ver', 'mod'];
+  //Define la lista de roles
+  public roles:Array<any> = [];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -83,12 +85,13 @@ export class RolComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      idRolSecundario: new FormControl('', Validators.required)
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
-    // this.listar();
+    this.listar();
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -162,6 +165,7 @@ export class RolComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
+        this.roles = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
@@ -176,6 +180,8 @@ export class RolComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
+    let rol = this.formulario.get('idRolSecundario').value;
+    this.formulario.get('idRolSecundario').setValue(rol.id);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -185,8 +191,8 @@ export class RolComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         var respuesta = err.json();
@@ -260,6 +266,13 @@ export class RolComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if(a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
