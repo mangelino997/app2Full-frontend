@@ -34,10 +34,10 @@
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')">
         </div>
         <div class="form-group has-float-label" *ngIf="indiceSeleccionado == 1">
-          <label for="idRolSecundario" class="tamanio-label">Copiar de *</label>
+          <label for="idRolSecundario" class="tamanio-label">Copiar de Rol Orígen</label>
           <mat-select id="idRolSecundario" class="form-control form-control-sm"
-            formControlName="idRolSecundario" [compareWith]="compareFn">
-            <mat-option [value]="0">Vacio</mat-option>
+            formControlName="rolSecundario" [compareWith]="compareFn">
+            <mat-option [value]="">Vacio</mat-option>
             <mat-option *ngFor="let itemRol of roles" [value]="itemRol">
               {{itemRol.nombre}}
             </mat-option>

@@ -50,7 +50,7 @@ export class UsuarioComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'username', 'rol', 'sucursal', 'cuentaHabilitada', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'username', 'rol', 'rolSecundario', 'sucursal', 'cuentaHabilitada', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -232,6 +232,7 @@ export class UsuarioComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
+          this.passwordRepeat.reset();
           setTimeout(function () {
             document.getElementById('idNombre').focus();
           }, 20);

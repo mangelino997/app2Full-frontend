@@ -86,7 +86,7 @@ export class RolComponent implements OnInit {
       id: new FormControl(),
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      idRolSecundario: new FormControl('', Validators.required)
+      rolSecundario: new FormControl()
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
@@ -180,8 +180,8 @@ export class RolComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    let rol = this.formulario.get('idRolSecundario').value;
-    this.formulario.get('idRolSecundario').setValue(rol.id);
+    let rol = this.formulario.get('rolSecundario').value;
+    this.formulario.get('rolSecundario').setValue(rol);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

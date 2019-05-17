@@ -151,6 +151,10 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Rol</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.rol.nombre}}</td>
         </ng-container>
+        <ng-container matColumnDef="rolSecundario" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Rol Secundario</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.rolSecundario ? elemento.rolSecundario.nombre : null}}</td>
+        </ng-container>
         <ng-container matColumnDef="sucursal" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
