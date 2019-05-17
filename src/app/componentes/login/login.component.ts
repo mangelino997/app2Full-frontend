@@ -58,6 +58,7 @@ export class LoginComponent implements OnInit {
     let password = this.formulario.get('password').value;
     this.loginService.login(username, password)
       .subscribe(res => {
+        console.log(res);
         if (res.headers.get('authorization')) {
           //Almacena el token en el local storage
           localStorage.setItem('token', res.headers.get('authorization'));
@@ -103,8 +104,9 @@ export class LoginComponent implements OnInit {
         }
       },
       err => {
+        console.log(err);
         this.loginService.setLogueado(false);
-        this.toast.error('Usuario o contraseña incorrecto');
+        this.toast.error('o cuenta no habilitada', 'Usuario o contraseña incorrecto');
         this.loaderService.hide();
       });
   }
