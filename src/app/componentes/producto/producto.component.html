@@ -131,7 +131,7 @@
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario de Venta($)</label>
+              <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario de Venta</label>
               <input id="idPrecioUnitario" type="text" formControlName="precioUnitarioVenta"
                 class="form-control form-control-sm number-right" [textMask]="mascararImporte(8)"
                 (blur)="establecerDecimales(formulario.get('precioUnitarioVenta'), 2)" [readonly]="soloLectura">
