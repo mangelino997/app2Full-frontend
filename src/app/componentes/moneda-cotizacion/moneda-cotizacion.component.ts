@@ -210,12 +210,33 @@ export class MonedaCotizacionComponent implements OnInit {
       this.toastr.error(error.mensaje);
     });
   }
+  //Retorna el numero a x decimales
+  public returnDecimales(valor: number, cantidad: number) {
+    return this.appService.establecerDecimales(valor, cantidad);
+  }
+  //Formatea el numero a x decimales
+  public setDecimales(formulario, cantidad) {
+    // valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
+  }
+  //Obtiene la mascara de importe
+  public obtenerMascaraImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite);
+  }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
     if (a != null && b != null) {
       return a.id === b.id;
     }
+  }
+  //Desenmascara los campos con mascara importe
+  public desenmascararImporte(){
+    if(this.formulario.get('valor').value!=null)
+      this.setDecimales(this.formulario.get('valor'), 2);
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
