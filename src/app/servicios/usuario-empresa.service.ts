@@ -54,8 +54,8 @@ export class UsuarioEmpresaService {
     let headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', token);
-    let options = new RequestOptions({headers: headers});
-    return this.http.get(this.url + '/listarEmpresasActivasDeUsuario/' + idUsuario, options);
+    this.options = new RequestOptions({headers: headers});
+    return this.http.get(this.url + '/listarEmpresasActivasDeUsuario/' + idUsuario, this.options);
   }
   //Actualiza una lista de registros
   public actualizar(elemento) {

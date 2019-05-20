@@ -93,6 +93,11 @@ export class RolComponent implements OnInit {
     //Obtiene la lista completa de registros
     this.listar();
   }
+  //Establece el formulario al seleccionar elemento de autocompletado
+  public establecerFormulario(): void {
+    let elemento = this.autocompletado.value;
+    this.formulario.patchValue(elemento);
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -171,7 +176,6 @@ export class RolComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -259,13 +263,13 @@ export class RolComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

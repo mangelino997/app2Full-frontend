@@ -75,7 +75,6 @@ export class LoginComponent implements OnInit {
                 this.rolSecundario = false;
                 //Establece el rol actual
                 this.appService.setRol(usuario.rol);
-                console.log(usuario.rol);
                 //Obtiene el menu del rol principal
                 this.appComponent.obtenerMenu(usuario.rol.id, this.token);
               } else {
