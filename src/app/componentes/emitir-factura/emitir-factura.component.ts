@@ -987,7 +987,7 @@ export class EmitirFacturaComponent implements OnInit {
   }
   //Retorna el numero a x decimales
   public returnDecimales(valor: number, cantidad: number) {
-    return Number(this.appService.setDecimales(valor, cantidad));
+    return this.appService.setDecimales(valor, cantidad);
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
