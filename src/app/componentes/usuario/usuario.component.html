@@ -51,7 +51,7 @@
                 class="form-control form-control-sm" [readonly]="soloLectura" maxlength="15">
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4" *ngIf="indiceSeleccionado == 1">
             <div class="form-group has-float-label">
               <label for="idPassword" class="tamanio-label">Contraseña *</label>
               <input id="idPassword" type="password" formControlName="password" autocomplete="off"
@@ -59,7 +59,7 @@
                 (blur)="verificarContrasenia()">
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-4" *ngIf="indiceSeleccionado == 1">
             <div class="form-group has-float-label">
               <label id="labelPasswordRepeat" for="idPasswordRepeat" class="tamanio-label">Repetir Contraseña *</label>
               <input id="idPasswordRepeat" type="password" [formControl]="passwordRepeat" autocomplete="off"

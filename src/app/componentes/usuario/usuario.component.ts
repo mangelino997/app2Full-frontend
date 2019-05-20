@@ -129,10 +129,12 @@ export class UsuarioComponent implements OnInit {
       this.formulario.get('rol').enable();
       this.formulario.get('sucursal').enable();
       this.formulario.get('cuentaHabilitada').enable();
+      this.formulario.get('rolSecundario').enable();
     } else {
       this.formulario.get('rol').disable();
       this.formulario.get('sucursal').disable();
       this.formulario.get('cuentaHabilitada').disable();
+      this.formulario.get('rolSecundario').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -327,7 +329,11 @@ export class UsuarioComponent implements OnInit {
   }
   //Habilita el boton agregar si el formulario es valido
   public habilitarBoton(): boolean {
-    return !this.formulario.valid || !this.passwordRepeat.valid || !this.estadoContrasenia;
+    if(this.indiceSeleccionado == 1) {
+      return !this.formulario.valid || !this.passwordRepeat.valid || !this.estadoContrasenia;
+    } else {
+      return !this.formulario.valid;
+    }
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
