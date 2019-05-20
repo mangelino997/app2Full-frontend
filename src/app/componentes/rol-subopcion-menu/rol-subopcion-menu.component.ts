@@ -179,8 +179,15 @@ export class RolSubopcionMenuComponent implements OnInit {
       if(listaUsuarios.length != 0) {
         this.botonActivo = true;
       } else {
-        this.botonActivo = false;
-        this.toastr.warning('El rol seleccionado no tiene usuarios asignados.');
+        this.usuarioServicio.listarPorRolSecundario(rol.id).subscribe(res => {
+          let lista = res.json();
+          if(lista.length != 0) {
+            this.botonActivo = true;
+          } else {
+            this.botonActivo = false;
+            this.toastr.warning('El rol seleccionado no tiene usuarios asignados.');
+          }
+        });
       }
       this.loaderService.hide();
     })
@@ -271,8 +278,19 @@ export class UsuarioDialogo {
       res => {
         this.listaUsuarios = res.json();
         if(this.listaUsuarios.length == 0) {
-          this.toastr.warning('El rol seleccionado no tiene usuarios asignados.');
-          this.dialogRef.close();
+          this.usuarioServicio.listarPorRolSecundario(rol.id).subscribe(
+            res => {
+              this.listaUsuarios = res.json();
+              if(this.listaUsuarios.length == 0) {
+                this.toastr.warning('El rol seleccionado no tiene usuarios asignados.');
+                this.dialogRef.close();
+              }
+              this.loaderService.hide();
+            },
+            err => {
+              this.loaderService.hide();
+            }
+          );
         }
         this.loaderService.hide();
       },

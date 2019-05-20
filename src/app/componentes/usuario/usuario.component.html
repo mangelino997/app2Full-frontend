@@ -55,14 +55,16 @@
             <div class="form-group has-float-label">
               <label for="idPassword" class="tamanio-label">Contraseña *</label>
               <input id="idPassword" type="password" formControlName="password" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="60">
+                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="60"
+                (blur)="verificarContrasenia()">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idPasswordRepeat" class="tamanio-label">Repetir Contraseña *</label>
+              <label id="labelPasswordRepeat" for="idPasswordRepeat" class="tamanio-label">Repetir Contraseña *</label>
               <input id="idPasswordRepeat" type="password" [formControl]="passwordRepeat" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="60">
+                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="60"
+                (blur)="verificarContrasenia()" (ngModelChange)="cambioRepetirContrasenia()">
             </div>
           </div>
         </div>
@@ -115,7 +117,7 @@
           </div>
         </div>
         <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+          (click)="accion(indiceSeleccionado)" [disabled]="habilitarBoton()">
           {{pestaniaActual}}
         </button>
         <div class="row" *ngIf="show">

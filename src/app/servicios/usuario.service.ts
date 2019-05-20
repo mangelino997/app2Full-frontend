@@ -71,6 +71,10 @@ export class UsuarioService {
   public listarPorRol(idRol) {
     return this.http.get(this.url + '/listarPorRol/' + idRol, this.options);
   }
+  //Obtiene una lista por rol secundario
+  public listarPorRolSecundario(idRol) {
+    return this.http.get(this.url + '/listarPorRolSecundario/' + idRol, this.options);
+  }
   //Obtiene una lista de usuarios por Empresa
   public listarPorEmpresa(idEmpresa) {
     return this.http.get(this.url + '/listarPorEmpresa/' + idEmpresa, this.options);

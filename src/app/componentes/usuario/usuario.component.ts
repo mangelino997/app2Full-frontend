@@ -40,7 +40,7 @@ export class UsuarioComponent implements OnInit {
   //Define la lista de resultados del autocompletado
   public resultados: Array<any> = [];
   //Define campo de control de repetir contraseña
-  public passwordRepeat: FormControl = new FormControl();
+  public passwordRepeat: FormControl = new FormControl('', Validators.required);
   //Define la lista de resultados de autocompletado roles
   public resultadosRoles: Array<any> = [];
   //Define la lista de resultados de autocompletado sucursales
@@ -53,6 +53,8 @@ export class UsuarioComponent implements OnInit {
   public columnas: string[] = ['id', 'nombre', 'username', 'rol', 'rolSecundario', 'sucursal', 'cuentaHabilitada', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define el estado de contraseña y repetir contraseña
+  public estadoContrasenia:boolean = false;
   //Constructor
   constructor(private servicio: UsuarioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
@@ -89,7 +91,7 @@ export class UsuarioComponent implements OnInit {
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       username: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      password: new FormControl(),
+      password: new FormControl('', Validators.required),
       rol: new FormControl('', Validators.required),
       sucursal: new FormControl('', Validators.required),
       cuentaHabilitada: new FormControl('', Validators.required),
@@ -292,6 +294,40 @@ export class UsuarioComponent implements OnInit {
     if(typeof valor.value != 'object') {
       valor.setValue(null);
     }
+  }
+  //
+  public cambioRepetirContrasenia(): void {
+    let contrasenia = this.formulario.get('password').value;
+    let contraseniaRepetida = this.passwordRepeat.value;
+    if(contrasenia && contraseniaRepetida) {
+      if(contrasenia == contraseniaRepetida) {
+        this.estadoContrasenia = true;
+      } else {
+        this.estadoContrasenia = false;
+        document.getElementById('idPasswordRepeat').classList.remove('is-invalid');
+        document.getElementById('labelPasswordRepeat').classList.remove('label-error');
+      }
+    }
+  }
+  //Verifica la contraseña ingresada
+  public verificarContrasenia(): void {
+    let contrasenia = this.formulario.get('password').value;
+    let contraseniaRepetida = this.passwordRepeat.value;
+    if(contrasenia && contraseniaRepetida) {
+      if(contrasenia != contraseniaRepetida) {
+        this.estadoContrasenia = false;
+        document.getElementById('labelPasswordRepeat').classList.add('label-error');
+        document.getElementById('idPasswordRepeat').classList.add('is-invalid');
+        document.getElementById('idPasswordRepeat').focus();
+        this.toastr.error('Las contraseñas ingresadas NO coinciden');
+      } else {
+        this.estadoContrasenia = true;
+      }
+    }
+  }
+  //Habilita el boton agregar si el formulario es valido
+  public habilitarBoton(): boolean {
+    return !this.formulario.valid || !this.passwordRepeat.valid || !this.estadoContrasenia;
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
