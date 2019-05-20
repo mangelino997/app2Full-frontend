@@ -31,16 +31,12 @@ export class AppComponent implements OnInit {
   }
   //Obtiene el usuario
   public getUsuario() {
-    return this.usuario;
+    return this.appService.getUsuario();
   }
   //Establece el usuario
   public setUsuario(usuario) {
     this.usuario = usuario;
     this.appService.setUsuario(usuario);
-  }
-  //Obtiene el rol del usuario actual
-  public getRol() {
-    return this.usuario.rol.id;
   }
   //Obtiene la empresa
   public getEmpresa() {

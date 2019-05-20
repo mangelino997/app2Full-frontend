@@ -55,7 +55,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   constructor(private servicio: ViajeUnidadNegocioService, private ventaConcepto: ViajeUnidadNegocio, private appService: AppService,
     private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;

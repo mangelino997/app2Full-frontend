@@ -56,7 +56,7 @@ export class EjercicioComponent implements OnInit {
     private ejercicio: Ejercicio, private appService: AppService, private toastr: ToastrService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

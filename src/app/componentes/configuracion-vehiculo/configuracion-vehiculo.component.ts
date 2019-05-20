@@ -57,11 +57,11 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public marcaVehiculo:FormControl = new FormControl();
   //Constructor
   constructor(private servicio: ConfiguracionVehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService,
+    private toastr: ToastrService, private appService: AppService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private loaderService: LoaderService, private configuracionVehiculo: configuracionVehiculo) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

@@ -61,7 +61,7 @@ export class ContactoBancoComponent implements OnInit {
     private sucursalBancoServicio: SucursalBancoService, private tipoContactoServicio: TipoContactoService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol(), this.appServicio.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

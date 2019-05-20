@@ -63,7 +63,7 @@ export class MonedaCuentaContableComponent implements OnInit {
     private planCuentaServicio: PlanCuentaService, private subopcionPestaniaService: SubopcionPestaniaService, private monedaServicio: MonedaService,
     private empresaServicio: EmpresaService, private loaderService: LoaderService, private appService: AppService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

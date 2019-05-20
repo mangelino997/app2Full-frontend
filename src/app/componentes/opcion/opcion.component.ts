@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-opcion',
@@ -45,10 +46,10 @@ export class OpcionComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: OpcionService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private subopcionServicio: SubopcionService,
+    private appService: AppService, private toastr: ToastrService, private subopcionServicio: SubopcionService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

@@ -60,7 +60,7 @@ export class ContactoProveedorComponent implements OnInit {
     private appServicio: AppService, private toastr: ToastrService, private loaderService: LoaderService,
     private proveedorServicio: ProveedorService, private tipoContactoServicio: TipoContactoService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol(), this.appServicio.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

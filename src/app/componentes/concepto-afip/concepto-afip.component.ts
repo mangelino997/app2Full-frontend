@@ -9,6 +9,7 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-concepto-afip',
@@ -53,11 +54,11 @@ export class ConceptoAfipComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private appComponent: AppComponent, private servicio: AfipConceptoService, private afipConcepto: ConceptoAfip,
+  constructor(private appService: AppService, private servicio: AfipConceptoService, private afipConcepto: ConceptoAfip,
     private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

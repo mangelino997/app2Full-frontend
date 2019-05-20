@@ -102,7 +102,7 @@ export class ClienteComponent implements OnInit {
   public render:boolean = false;
   //Constructor
   constructor(private servicio: ClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private appService: AppService, private toastr: ToastrService,
+    private appService: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private cobradorServicio: CobradorService,
     private vendedorServicio: VendedorService, private zonaServicio: ZonaService,
@@ -113,7 +113,7 @@ export class ClienteComponent implements OnInit {
     private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -124,7 +124,7 @@ export class ClienteComponent implements OnInit {
       }
     );
     //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
       res => {
         this.opciones = res.json();
@@ -498,7 +498,7 @@ export class ClienteComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.formulario.get('esCuentaCorriente').setValue(true);
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -524,7 +524,7 @@ export class ClienteComponent implements OnInit {
   private actualizar() {
     this.loaderService.show();
     this.formulario.get('esCuentaCorriente').setValue(true);
-    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

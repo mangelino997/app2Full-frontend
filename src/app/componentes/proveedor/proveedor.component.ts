@@ -93,7 +93,7 @@ export class ProveedorComponent implements OnInit {
       });
     this.loaderService.show();
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -104,7 +104,7 @@ export class ProveedorComponent implements OnInit {
         }
       );
     //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.opciones = res.json();

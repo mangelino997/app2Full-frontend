@@ -59,7 +59,7 @@ export class MonedaComponent implements OnInit {
     private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService,
     private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

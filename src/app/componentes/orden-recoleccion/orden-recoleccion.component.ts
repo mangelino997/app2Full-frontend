@@ -80,12 +80,12 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Define la lista de resultados de busqueda barrio
   public resultadosBarrios = [];
   constructor(
-    private ordenRecoleccion: OrdenRecoleccion, private subopcionPestaniaService: SubopcionPestaniaService, private appComponent: AppComponent, 
+    private ordenRecoleccion: OrdenRecoleccion, private subopcionPestaniaService: SubopcionPestaniaService, 
     private fechaServicio: FechaService, private localidadService: LocalidadService, private clienteService: ClienteService, private toastr: ToastrService,
     private barrioService: BarrioService, private appService: AppService, private servicio: OrdenRecoleccionService, 
     private sucursalService: SucursalService,  public dialog: MatDialog, public clienteServicio: ClienteService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -252,9 +252,9 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
-    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formulario.get('usuario').setValue(this.appComponent.getUsuario());
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+    this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
+    this.formulario.get('usuario').setValue(this.appService.getUsuario());
     this.formulario.get('fechaEmision').setValue(this.formulario.get('fechaEmision').value+'T00:00:00');
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
@@ -276,9 +276,9 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar() {
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
-    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formulario.get('usuario').setValue(this.appComponent.getUsuario());
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+    this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
+    this.formulario.get('usuario').setValue(this.appService.getUsuario());
     this.formulario.get('fechaEmision').setValue(this.formulario.get('fechaEmision').value+'T00:00:00');
     console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
@@ -311,7 +311,7 @@ export class OrdenRecoleccionComponent implements OnInit {
       width: '1200px',
       data: {
         formulario: null,
-        usuario: this.appComponent.getUsuario()
+        usuario: this.appService.getUsuario()
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {

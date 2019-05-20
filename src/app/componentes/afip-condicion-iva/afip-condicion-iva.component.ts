@@ -9,6 +9,7 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-afip-condicion-iva',
@@ -54,9 +55,9 @@ export class AfipCondicionIvaComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: AfipCondicionIvaService, private afipCondicionIva: AfipCondicionIva, private loaderService: LoaderService,
-    private appComponent: AppComponent, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;

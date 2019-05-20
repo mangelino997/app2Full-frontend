@@ -5,7 +5,6 @@ import { ProveedorService } from '../../servicios/proveedor.service';
 import { BarrioService } from '../../servicios/barrio.service';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
@@ -63,12 +62,12 @@ export class ChoferProveedorComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ChoferProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private choferProveedor: ChoferProveedor, private appComponent: AppComponent, private toastr: ToastrService, private appServicio: AppService,
+    private choferProveedor: ChoferProveedor, private appService: AppService, private toastr: ToastrService, private appServicio: AppService,
     private proveedorServicio: ProveedorService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private tipoDocumentoServicio: TipoDocumentoService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();
@@ -267,7 +266,7 @@ export class ChoferProveedorComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -289,7 +288,7 @@ export class ChoferProveedorComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.formulario.get('usuarioMod').setValue(this.appComponent.getUsuario());
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

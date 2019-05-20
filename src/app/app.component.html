@@ -5,13 +5,13 @@
       <span class="spacer"></span>
       <div class="text-center">
         <span style="float:left;clear:left;font-size:25px;font-weight: bold;">{{empresa.razonSocial}}</span>
-        <div><span style="float:right;clear:right;font-size:16px;margin-top:-10px;">Sucursal: {{usuario.sucursal.nombre}}</span></div>
+        <div><span style="float:right;clear:right;font-size:16px;margin-top:-10px;">Sucursal: {{getUsuario().sucursal.nombre}}</span></div>
       </div>
       <span class="spacer"></span>
       <div>
-        <button mat-raised-button [matMenuTriggerFor]="lusuario">{{usuario.nombre}} <mat-icon>arrow_drop_down</mat-icon></button>
+        <button mat-raised-button [matMenuTriggerFor]="lusuario">{{getUsuario().nombre}} <mat-icon>arrow_drop_down</mat-icon></button>
         <mat-menu #lusuario="matMenu">
-          <div class="container text-center titulo-menu">{{usuario.nombre}}</div>
+          <div class="container text-center titulo-menu">{{getUsuario().nombre}}</div>
           <mat-divider></mat-divider>
           <button mat-menu-item (click)="nuevoIngreso()">
             <mat-icon>tab</mat-icon><span style="margin-left: 10px;">Nuevo Ingreso</span>

@@ -98,8 +98,7 @@ export class OrdenVentaComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService,
-    private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
+    private toastr: ToastrService, private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService,
     private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
     private tramoServicio: TramoService, private ordenVenta: OrdenVenta, private ordenVentaServicio: OrdenVentaService,
@@ -107,7 +106,7 @@ export class OrdenVentaComponent implements OnInit {
     private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ordenVentaTramoServicio: OrdenVentaTramoService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -761,7 +760,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formulario.get('tipoOrdenVenta').setValue(tipoOrdenVenta);
     this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
     this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('empresa').disable();
     if (cliente != null) {
       this.formulario.get('cliente').setValue(cliente);

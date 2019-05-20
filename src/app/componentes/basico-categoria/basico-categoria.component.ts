@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
@@ -60,11 +59,11 @@ export class BasicoCategoriaComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: BasicoCategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService, private basicoCategoria: BasicoCategoria,
+    private toastr: ToastrService, private appService: AppService, private basicoCategoria: BasicoCategoria,
     private anio: FechaService, private mes: MesService, private categoriaService: CategoriaService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

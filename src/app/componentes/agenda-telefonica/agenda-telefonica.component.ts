@@ -9,6 +9,7 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-agendatelefonica',
@@ -49,10 +50,10 @@ export class AgendaTelefonicaComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: AgendaTelefonicaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private localidadServicio: LocalidadService, private appComponent: AppComponent,
+    private localidadServicio: LocalidadService, private appService: AppService,
     private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appComponent.getRol(), this.appComponent.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

@@ -9,6 +9,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { Subscription } from 'rxjs';
 import { LoaderState } from 'src/app/modelos/loader';
 import { ToastrService } from 'ngx-toastr';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-login',
@@ -33,7 +34,7 @@ export class LoginComponent implements OnInit {
   public roles:Array<any> = [];
   //Constructor
   constructor(private loginService: LoginService, private usuarioService: UsuarioService,
-    private usuarioEmpresaService: UsuarioEmpresaService,
+    private usuarioEmpresaService: UsuarioEmpresaService, private appService: AppService,
     private router: Router, private loaderService: LoaderService,
     private appComponent: AppComponent, private toast: ToastrService) {
   }
@@ -69,7 +70,7 @@ export class LoginComponent implements OnInit {
           this.usuarioService.obtenerPorUsername(username, this.token).subscribe(
             res => {
               let usuario = res.json();
-              this.appComponent.setUsuario(usuario);
+              this.appService.setUsuario(usuario);
               if(!usuario.rolSecundario) {
                 this.rolSecundario = false;
                 //Obtiene el menu del rol principal
@@ -113,6 +114,8 @@ export class LoginComponent implements OnInit {
     if (this.estaAutenticado === true) {
       //Obtiene el rol seleccionado
       let rol = this.formulario.get('rol').value;
+      //Establece el rol
+      this.appService.setRol(rol);
       if(rol) {
         this.appComponent.obtenerMenu(rol.id, this.token);
       }

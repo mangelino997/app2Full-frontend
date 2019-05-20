@@ -51,7 +51,7 @@ export class VendedorComponent implements OnInit {
   constructor(private servicio: VendedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appservice: AppService, private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appservice.getRol(), this.appservice.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appservice.getRol().id, this.appservice.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();

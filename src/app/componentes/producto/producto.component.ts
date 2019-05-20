@@ -67,7 +67,7 @@ export class ProductoComponent implements OnInit {
     private unidadMedidaServicio: UnidadMedidaService, private marcaServicio: MarcaProductoService, private toastr: ToastrService,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestanias
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(res => {
         this.pestanias = res.json();
         this.activeLink = this.pestanias[0].nombre;

@@ -33,6 +33,8 @@ export class AppService {
   public subopcion:any;
   //Define el tema
   public tema:any;
+  //Define el rol del usuario actual
+  public rol:any;
   //Constructor
   constructor(private http: Http, private stompService: StompService) {
     const headers: Headers = new Headers();
@@ -79,9 +81,13 @@ export class AppService {
   public setUsuario(usuario) {
     this.usuario = usuario;
   }
+  //Establece el rol del usuario actual
+  public setRol(rol): void {
+    this.rol = rol;
+  }
   //Obtiene el rol del usuario actual
   public getRol() {
-    return this.usuario.rol.id;
+    return this.rol;
   }
   //Obtiene la empresa
   public getEmpresa() {
