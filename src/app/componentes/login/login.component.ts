@@ -73,6 +73,9 @@ export class LoginComponent implements OnInit {
               this.appService.setUsuario(usuario);
               if(!usuario.rolSecundario) {
                 this.rolSecundario = false;
+                //Establece el rol actual
+                this.appService.setRol(usuario.rol);
+                console.log(usuario.rol);
                 //Obtiene el menu del rol principal
                 this.appComponent.obtenerMenu(usuario.rol.id, this.token);
               } else {
@@ -114,9 +117,10 @@ export class LoginComponent implements OnInit {
     if (this.estaAutenticado === true) {
       //Obtiene el rol seleccionado
       let rol = this.formulario.get('rol').value;
-      //Establece el rol
-      this.appService.setRol(rol);
       if(rol) {
+        //Establece el rol
+        this.appService.setRol(rol);
+        //Obtiene el menu
         this.appComponent.obtenerMenu(rol.id, this.token);
       }
       //Establece la empresa
