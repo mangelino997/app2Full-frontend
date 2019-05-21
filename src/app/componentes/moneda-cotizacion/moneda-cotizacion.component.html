@@ -57,7 +57,7 @@
               </ng-container>
               <ng-container matColumnDef="fecha" sticky>
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Cotización</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.fecha}}</td>
+                <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
               </ng-container>
               <ng-container matColumnDef="valor" sticky>
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor</th>

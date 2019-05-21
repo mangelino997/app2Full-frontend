@@ -159,7 +159,6 @@ export class MonedaCotizacionComponent implements OnInit {
   //Carga la tabla con los datos de la moneda seleccionada
   public cambioSeleccionado() {
     this.monedaCotizacionServicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(res => {
-      console.log(res.json());
       this.listaMonedaCotizacion = new MatTableDataSource(res.json());
       this.listaMonedaCotizacion.sort = this.sort;
     });
@@ -198,17 +197,16 @@ export class MonedaCotizacionComponent implements OnInit {
     this.formulario.get('valor').setValue(elemento.valor);
   }
   //Elimina un elemento de la lista
-  public eliminar(id){
-    console.log(id);
+  public eliminar(id) {
     this.monedaCotizacionServicio.eliminar(id).subscribe(res => {
       let respuesta = res.json();
       this.toastr.success(respuesta.mensaje);
       this.cambioSeleccionado();
     },
-    err=>{
-      let error = err.json();
-      this.toastr.error(error.mensaje);
-    });
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+      });
   }
   //Retorna el numero a x decimales
   public returnDecimales(valor: number, cantidad: number) {
@@ -216,9 +214,8 @@ export class MonedaCotizacionComponent implements OnInit {
   }
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {
-    // valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
     let valor = formulario.value;
-    if(valor != '') {
+    if (valor != '') {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
@@ -234,8 +231,8 @@ export class MonedaCotizacionComponent implements OnInit {
     }
   }
   //Desenmascara los campos con mascara importe
-  public desenmascararImporte(){
-    if(this.formulario.get('valor').value!=null)
+  public desenmascararImporte() {
+    if (this.formulario.get('valor').value != null)
       this.setDecimales(this.formulario.get('valor'), 2);
   }
   //Formatea el valor del autocompletado
