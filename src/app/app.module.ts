@@ -133,6 +133,7 @@ import { ViajeTerceroTramoService } from './servicios/viaje-tercero-tramo.servic
 import { VentaItemConceptoService } from './servicios/venta-item-concepto.service';
 import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 import { LoaderService } from './servicios/loader.service';
+import { TipoFamiliarService } from './servicios/tipo-familiar.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -182,6 +183,7 @@ import { ChoferProveedor } from './modelos/choferProveedor';
 import { Personal } from './modelos/personal';
 import { PuntoVenta } from './modelos/puntoVenta';
 import { Categoria } from './modelos/categoria';
+import { TipoFamiliar } from './modelos/tipo-familiar';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -300,6 +302,7 @@ import { ViajePropioEfectivoService } from './servicios/viaje-propio-efectivo';
 import { ViajePropioInsumoService } from './servicios/viaje-propio-insumo';
 import { ViajePropioGastoService } from './servicios/viaje-propio-gasto';
 import { ViajePropioPeajeService } from './servicios/viaje-propio-peaje';
+import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -404,7 +407,8 @@ const appRoutes: Routes = [
   { path: 'logisticaunidadesdenegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
   { path: 'contablecondicionesdeiva', component: AfipCondicionIvaComponent, canActivate: [GuardiaService] },
   { path: 'categoriasbasicos', component: BasicoCategoriaComponent, canActivate: [GuardiaService] },
-  { path: 'soporte', component: SoporteComponent, canActivate: [GuardiaService] }
+  { path: 'soporte', component: SoporteComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontiposdefamiliares', component: TipoFamiliarComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
@@ -545,7 +549,8 @@ const stompConfig: StompConfig = {
     BasicoCategoriaComponent,
     ProgresoComponent,
     ErrorPuntoVentaComponent,
-    SoporteComponent
+    SoporteComponent,
+    TipoFamiliarComponent
   ],
   imports: [
     BrowserModule,
@@ -755,11 +760,13 @@ const stompConfig: StompConfig = {
     RepartoTerceroComprobanteService,
     RepartoPropioComprobanteService,
     RetiroDepositoComprobanteService,
+    TipoFamiliarService,
     Aforo,
     ChoferProveedor,
     Personal,
     PuntoVenta,
     Categoria,
+    TipoFamiliar,
     BasicoCategoria,
     AfipCondicionIva,
     MesService,

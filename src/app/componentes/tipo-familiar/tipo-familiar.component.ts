@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { BarrioService } from '../../servicios/barrio.service';
+import { TipoFamiliarService } from '../../servicios/tipo-familiar.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -8,13 +8,14 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { TipoFamiliar } from 'src/app/modelos/tipo-familiar';
 
 @Component({
-  selector: 'app-barrio',
-  templateUrl: './barrio.component.html',
-  styleUrls: ['./barrio.component.css']
+  selector: 'app-tipo-familiar',
+  templateUrl: './tipo-familiar.component.html',
+  styleUrls: ['./tipo-familiar.component.css']
 })
-export class BarrioComponent implements OnInit {
+export class TipoFamiliarComponent implements OnInit {
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -44,12 +45,12 @@ export class BarrioComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre','esDeducibleImpGan', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(private servicio: BarrioService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private loaderService: LoaderService, private appService: AppService) {
+  constructor(private servicio: TipoFamiliarService, private subopcionPestaniaService: SubopcionPestaniaService,
+    private toastr: ToastrService, private loaderService: LoaderService, private appService: AppService, private tipoFamiliar: TipoFamiliar) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -84,11 +85,7 @@ export class BarrioComponent implements OnInit {
         this.show = state.show;
       });
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
-    });
+    this.formulario = this.tipoFamiliar.formulario;
     //Obtiene la lista completa de registros
     //this.listar();
   }
@@ -102,6 +99,11 @@ export class BarrioComponent implements OnInit {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
+    if(soloLectura) {
+      this.formulario.get('esDeducibleImpGan').disable();
+    }else {
+      this.formulario.get('esDeducibleImpGan').enable();
+    }
     this.mostrarBoton = boton;
     setTimeout(function () {
       document.getElementById(componente).focus();
