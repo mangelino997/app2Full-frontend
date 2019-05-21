@@ -113,9 +113,7 @@ export class ProductoComponent implements OnInit {
   public establecerAutocompletado(): void {
     let elemento = this.autocompletado.value;
     if (elemento) {
-      this.formulario.setValue(elemento);
-      this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2));
-      this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemento.coeficienteITC, 4));
+      this.formulario.patchValue(elemento);
     }
   }
   //Obtiene el listado de registros

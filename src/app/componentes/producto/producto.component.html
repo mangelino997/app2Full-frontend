@@ -128,24 +128,6 @@
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario de Venta</label>
-              <input id="idPrecioUnitario" type="text" formControlName="precioUnitarioVenta"
-                class="form-control form-control-sm number-right" [textMask]="mascararImporte(8)"
-                (blur)="establecerDecimales(formulario.get('precioUnitarioVenta'), 2)" [readonly]="soloLectura">
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idCoeficienteITC" class="coeficiente-label">Coeficiente ITC</label>
-              <input id="idCoeficienteITC" type="text" formControlName="coeficienteITC"
-                class="form-control form-control-sm number-right" [textMask]="mascararCuatroDecimales(2)"
-                (blur)="establecerDecimales(formulario.get('coeficienteITC'), 4)" [readonly]="soloLectura">
-            </div>
-          </div>
-        </div>
         <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
