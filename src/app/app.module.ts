@@ -135,6 +135,11 @@ import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 import { LoaderService } from './servicios/loader.service';
 import { TipoFamiliarService } from './servicios/tipo-familiar.service';
 import { PersonalFamiliarService } from './servicios/personal-familiar.service';
+import { ViajePropioCombustibleService } from './servicios/viaje-propio-combustible';
+import { ViajePropioEfectivoService } from './servicios/viaje-propio-efectivo';
+import { ViajePropioInsumoService } from './servicios/viaje-propio-insumo';
+import { ViajePropioGastoService } from './servicios/viaje-propio-gasto';
+import { ViajePropioPeajeService } from './servicios/viaje-propio-peaje';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -186,6 +191,7 @@ import { PuntoVenta } from './modelos/puntoVenta';
 import { Categoria } from './modelos/categoria';
 import { TipoFamiliar } from './modelos/tipo-familiar';
 import { PersonalFamiliar } from './modelos/personal-familiar';
+import { Usuario } from './modelos/usuario';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -299,13 +305,9 @@ import { ProgresoComponent } from './componentes/progreso/progreso.component';
 import { configuracionVehiculo } from './modelos/configuracionVehiculo';
 import { ErrorPuntoVentaComponent } from './componentes/error-punto-venta/error-punto-venta.component';
 import { SoporteComponent } from './componentes/soporte/soporte.component';
-import { ViajePropioCombustibleService } from './servicios/viaje-propio-combustible';
-import { ViajePropioEfectivoService } from './servicios/viaje-propio-efectivo';
-import { ViajePropioInsumoService } from './servicios/viaje-propio-insumo';
-import { ViajePropioGastoService } from './servicios/viaje-propio-gasto';
-import { ViajePropioPeajeService } from './servicios/viaje-propio-peaje';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
 import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
+import { ContraseniaComponent } from './componentes/contrasenia/contrasenia.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -412,7 +414,8 @@ const appRoutes: Routes = [
   { path: 'categoriasbasicos', component: BasicoCategoriaComponent, canActivate: [GuardiaService] },
   { path: 'soporte', component: SoporteComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdefamiliares', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
-  { path: 'legajosfamiliares', component: PersonalFamiliarComponent, canActivate: [GuardiaService] }
+  { path: 'legajosfamiliares', component: PersonalFamiliarComponent, canActivate: [GuardiaService] },
+  { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
@@ -555,7 +558,8 @@ const stompConfig: StompConfig = {
     ErrorPuntoVentaComponent,
     SoporteComponent,
     TipoFamiliarComponent,
-    PersonalFamiliarComponent
+    PersonalFamiliarComponent,
+    ContraseniaComponent
   ],
   imports: [
     BrowserModule,
@@ -772,6 +776,7 @@ const stompConfig: StompConfig = {
     PuntoVenta,
     Categoria,
     TipoFamiliar,
+    Usuario,
     BasicoCategoria,
     AfipCondicionIva,
     MesService,

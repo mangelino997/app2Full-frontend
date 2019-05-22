@@ -87,6 +87,10 @@ export class UsuarioService {
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
   }
+  //Actualiza la contraseña de un registro
+  public actualizarContrasenia(elemento) {
+    return this.http.put(this.url + '/actualizarContrasenia', elemento, this.options);
+  }
   //Elimina un registro
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);
