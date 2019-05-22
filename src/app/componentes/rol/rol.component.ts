@@ -86,7 +86,8 @@ export class RolComponent implements OnInit {
       id: new FormControl(),
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      rolSecundario: new FormControl()
+      rolSecundario: new FormControl(),
+      esDesarrollador: new FormControl()
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
@@ -188,7 +189,7 @@ export class RolComponent implements OnInit {
     this.formulario.get('rolSecundario').setValue(rol);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           setTimeout(function () {
@@ -199,7 +200,7 @@ export class RolComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -215,7 +216,7 @@ export class RolComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
           setTimeout(function () {
@@ -226,7 +227,7 @@ export class RolComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -239,7 +240,24 @@ export class RolComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    let rol = this.formulario.value;
+    this.servicio.eliminar(rol.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.toastr.success(respuesta.mensaje);
+        } else if(respuesta.codigo == 5004) {
+          this.toastr.error(respuesta.mensaje, 'Registro NO eliminado');
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        let respuesta = err.json();
+        this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

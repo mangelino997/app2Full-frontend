@@ -95,7 +95,8 @@ export class UsuarioComponent implements OnInit {
       rol: new FormControl('', Validators.required),
       sucursal: new FormControl('', Validators.required),
       cuentaHabilitada: new FormControl('', Validators.required),
-      rolSecundario: new FormControl()
+      rolSecundario: new FormControl(),
+      esDesarrollador: new FormControl()
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
