@@ -246,6 +246,10 @@ export class RolComponent implements OnInit {
       res => {
         let respuesta = res.json();
         if(respuesta.codigo == 200) {
+          this.reestablecerFormulario('');
+          setTimeout(function () {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
           this.toastr.success(respuesta.mensaje);
         } else if(respuesta.codigo == 5004) {
           this.toastr.error(respuesta.mensaje, 'Registro NO eliminado');

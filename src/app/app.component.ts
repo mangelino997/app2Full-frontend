@@ -24,7 +24,7 @@ export class AppComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit(): void {
-    this.router.navigate(['login']);
+    this.router.navigate(['login'], { replaceUrl: true });
   }
   public setVisible(valor) {
     this.visible = valor;
@@ -75,6 +75,10 @@ export class AppComponent implements OnInit {
         console.log(err);
       }
     )
+  }
+  //Cambiar contraseña
+  public cambiarContrasenia(): void {
+    this.router.navigate(['usuarioscontrasenas'], {replaceUrl: true});
   }
   //Soporte
   public soporte(): void {

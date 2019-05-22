@@ -10,6 +10,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { Usuario } from 'src/app/modelos/usuario';
 
 @Component({
   selector: 'app-usuario',
@@ -58,7 +59,7 @@ export class UsuarioComponent implements OnInit {
   //Constructor
   constructor(private servicio: UsuarioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
-    private rolServicio: RolService, private sucursalServicio: SucursalService) {
+    private rolServicio: RolService, private sucursalServicio: SucursalService, private usuario: Usuario) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -86,18 +87,7 @@ export class UsuarioComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      username: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      password: new FormControl('', Validators.required),
-      rol: new FormControl('', Validators.required),
-      sucursal: new FormControl('', Validators.required),
-      cuentaHabilitada: new FormControl('', Validators.required),
-      rolSecundario: new FormControl(),
-      esDesarrollador: new FormControl()
-    });
+    this.formulario = this.usuario.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
@@ -298,7 +288,7 @@ export class UsuarioComponent implements OnInit {
       valor.setValue(null);
     }
   }
-  //
+  //Cambio en campo repetir contraseña
   public cambioRepetirContrasenia(): void {
     let contrasenia = this.formulario.get('password').value;
     let contraseniaRepetida = this.passwordRepeat.value;
