@@ -1,0 +1,242 @@
+<div id="personal" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+    <div class="row">
+        <div class="col" class="centrar">
+            <nav mat-tab-nav-bar>
+                <a mat-tab-link disabled>FAMILIAR PERSONAL</a>
+                <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+                    (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+            </nav>
+        </div>
+    </div>
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+        <div class="col-md-8">
+            <h5 class="text-center">{{pestaniaActual}} Familiar Personal</h5>
+            <form [formGroup]="formulario" class="contenedor">
+                <div class="contenedor-top-titulo">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+                                <label for="idAutocompletado" class="tamanio-label">Buscar Familiar Personal</label>
+                                <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+                                    type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto"
+                                    autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
+                                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
+                                    (optionSelected)="cambioAutocompletado()">
+                                    <mat-option *ngFor="let item of resultados" [value]="item">{{item.alias}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group has-float-label">
+                                <label for="idPersonal" class="tamanio-label">Personal *</label>
+                                <input id="idPersonal" class="form-control form-control-sm color-busqueda"
+                                    type="text" matInput [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal"
+                                    autocomplete="off" (blur)="verificarSeleccion(formulario.get('personal'))">
+                                <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
+                                    (optionSelected)="listarPorPersonal()">
+                                    <mat-option *ngFor="let item of resultados" [value]="item">
+                                        {{item.alias}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label for="idTipoFamiliar" class="tamanio-label">Tipo de Familiar *</label>
+                                <mat-select id="idTipoFamiliar" class="form-control form-control-sm" formControlName="tipoFamiliar"
+                                    [compareWith]="compareFn">
+                                    <mat-option *ngFor="let itemTipoFamiliar of familiares" [value]="itemTipoFamiliar">
+                                        {{itemTipoFamiliar.nombre}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                </div>
+                <br>
+                <mat-divider></mat-divider>
+                <br>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group has-float-label">
+                            <label for="idRazonSocial" class="tamanio-label">Apellido
+                                *</label>
+                            <input id="idApellido" type="text" formControlName="apellido" autocomplete="off"
+                                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group has-float-label">
+                            <label for="idNombre" class="tamanio-label">Nombre *</label>
+                            <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                        </div>
+                    </div>
+                </div>
+                <div class="contenedor-top" *ngIf="opcionSeleccionada == 15">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label for="idFechaNacimiento" class="tamanio-label">Fecha de
+                                    Nacimiento *</label>
+                                <input id="idFechaNacimiento" type="date" formControlName="fechaNacimiento"
+                                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label for="idLocalidadNacimiento" class="tamanio-label">Lugar de
+                                    Nacimiento *</label>
+                                <input id="idLocalidadNacimiento" class="form-control form-control-sm" type="text"
+                                    matInput [formControl]="formulario.get('localidadNacimiento')"
+                                    [matAutocomplete]="autoLocalidadNacimiento" autocomplete="off"
+                                    [readonly]="soloLectura"
+                                    (blur)="verificarSeleccion(formulario.get('localidadNacimiento'))">
+                                <mat-autocomplete #autoLocalidadNacimiento="matAutocomplete"
+                                    [displayWith]="displayFb.bind(this)">
+                                    <mat-option *ngFor="let itemLocalidadNacimiento of resultadosLocalidades"
+                                        [value]="itemLocalidadNacimiento"
+                                        (onSelectionChange)="establecerNacionalidad(itemLocalidadNacimiento)">
+                                        {{itemLocalidadNacimiento.nombre}},
+                                        {{itemLocalidadNacimiento.provincia.nombre}},
+                                        {{itemLocalidadNacimiento.provincia.pais.nombre}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label for="idNacionalidad" class="tamanio-label">Nacionalidad</label>
+                                <input id="idNacionalidad" type="text" autocomplete="off"
+                                    [formControl]="nacionalidadNacimiento" class="form-control form-control-sm"
+                                    [readonly]="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label for="idSexo" class="tamanio-label">Sexo *</label>
+                                <mat-select id="idSexo" class="form-control form-control-sm" formControlName="sexo"
+                                    [compareWith]="compareFn">
+                                    <mat-option *ngFor="let itemSexo of sexos" [value]="itemSexo">
+                                        {{itemSexo.nombre}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label for="idTipoDocumento" class="tamanio-label">Tipo Documento
+                                    *</label>
+                                <mat-select id="idTipoDocumento" class="form-control form-control-sm"
+                                    formControlName="tipoDocumento" [compareWith]="compareFn">
+                                    <mat-option *ngFor="let itemTipoDocumento of tiposDocumentos"
+                                        [value]="itemTipoDocumento">
+                                        {{itemTipoDocumento.nombre}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de
+                                    Documento *</label>
+                                <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento"
+                                    autocomplete="off" class="form-control form-control-sm number-right"
+                                    [readonly]="soloLectura" (blur)="validarDocumento()"
+                                    (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label id="labelCuil" for="idCuil" class="tamanio-label">CUIL
+                                    *</label>
+                                <input id="idCuil" type="text" formControlName="cuil" autocomplete="off"
+                                    [textMask]="mascararEnteros(11)" class="form-control form-control-sm number-right"
+                                    [readonly]="soloLectura" (blur)="validarCUIL()"
+                                    (ngModelChange)="cambioCampo('idCuil', 'labelCuil')">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <mat-divider></mat-divider>
+                    <br>
+                    <span>Alta Impuesto a las Ganancias</span>
+                    <br>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label for="idAnio" class="tamanio-label">Año</label>
+                                <mat-select id="idAnio" class="form-control form-control-sm" formControlName="anioAltaImpGan"
+                                    [compareWith]="compareFn">
+                                    <mat-option *ngFor="let itemAnio of anios" [value]="itemAnio">
+                                        {{itemAnio}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group has-float-label">
+                                <label for="idMes" class="tamanio-label">Mes</label>
+                                <mat-select id="idMes" class="form-control form-control-sm" formControlName="mesAltaImpGan"
+                                    [compareWith]="compareFn">
+                                    <mat-option *ngFor="let itemMes of meses" [value]="itemMes">
+                                        {{itemMes.nombre}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+                <span>Baja Impuesto a las Ganancias</span>
+                <br>
+                <br>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group has-float-label">
+                            <label for="idAnioBaja" class="tamanio-label">Año</label>
+                            <mat-select id="idAnioBaja" class="form-control form-control-sm" formControlName="anioBajaImpGan"
+                                [compareWith]="compareFn">
+                                <mat-option *ngFor="let itemAnio of anios" [value]="itemAnio">
+                                    {{itemAnio}}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group has-float-label">
+                            <label for="idMesBaja" class="tamanio-label">Mes</label>
+                            <mat-select id="idMesBaja" class="form-control form-control-sm" formControlName="mesBajaImpGan"
+                                [compareWith]="compareFn">
+                                <mat-option *ngFor="let itemMes of meses" [value]="itemMes">
+                                    {{itemMes.nombre}}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="centrar">
+                        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary"
+                            formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+                            {{pestaniaActual}}
+                        </button>
+                        <div class="row" *ngIf="show">
+                            <div class="col text-center">
+                                <app-progreso></app-progreso>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

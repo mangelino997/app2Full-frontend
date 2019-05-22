@@ -36,6 +36,10 @@ export class PersonalFamiliarService {
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
   }
+  //Obtiene una lista por cliente
+  public listarPorPersonal(idPersonal) {
+    return this.http.get(this.url + '/listarPorPersonal/' + idPersonal, this.options);
+  }
   //Resfresca la lista completa si hay cambios
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));

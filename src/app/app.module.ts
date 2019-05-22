@@ -134,6 +134,7 @@ import { VentaItemConceptoService } from './servicios/venta-item-concepto.servic
 import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 import { LoaderService } from './servicios/loader.service';
 import { TipoFamiliarService } from './servicios/tipo-familiar.service';
+import { PersonalFamiliarService } from './servicios/personal-familiar.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -184,6 +185,7 @@ import { Personal } from './modelos/personal';
 import { PuntoVenta } from './modelos/puntoVenta';
 import { Categoria } from './modelos/categoria';
 import { TipoFamiliar } from './modelos/tipo-familiar';
+import { PersonalFamiliar } from './modelos/personal-familiar';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -303,6 +305,7 @@ import { ViajePropioInsumoService } from './servicios/viaje-propio-insumo';
 import { ViajePropioGastoService } from './servicios/viaje-propio-gasto';
 import { ViajePropioPeajeService } from './servicios/viaje-propio-peaje';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
+import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -408,7 +411,8 @@ const appRoutes: Routes = [
   { path: 'contablecondicionesdeiva', component: AfipCondicionIvaComponent, canActivate: [GuardiaService] },
   { path: 'categoriasbasicos', component: BasicoCategoriaComponent, canActivate: [GuardiaService] },
   { path: 'soporte', component: SoporteComponent, canActivate: [GuardiaService] },
-  { path: 'configuraciontiposdefamiliares', component: TipoFamiliarComponent, canActivate: [GuardiaService] }
+  { path: 'configuraciontiposdefamiliares', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
+  { path: 'legajosfamiliares', component: PersonalFamiliarComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
@@ -550,7 +554,8 @@ const stompConfig: StompConfig = {
     ProgresoComponent,
     ErrorPuntoVentaComponent,
     SoporteComponent,
-    TipoFamiliarComponent
+    TipoFamiliarComponent,
+    PersonalFamiliarComponent
   ],
   imports: [
     BrowserModule,
@@ -776,6 +781,8 @@ const stompConfig: StompConfig = {
     ViajePropioGastoService,
     ViajePropioPeajeService,
     LoaderService,
+    PersonalFamiliarService,
+    PersonalFamiliar,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -805,7 +812,8 @@ const stompConfig: StompConfig = {
     TotalConceptoDialogo,
     ChequesRechazadosComponent,
     AcompanianteDialogo,
-    ErrorPuntoVentaComponent
+    ErrorPuntoVentaComponent,
+    PersonalFamiliarComponent
   ]
 })
 export class AppModule { }
