@@ -269,7 +269,7 @@ import { EmitirNotaCreditoComponent } from './componentes/emitir-nota-credito/em
 import { EmitirNotaDebitoComponent } from './componentes/emitir-nota-debito/emitir-nota-debito.component';
 import { MonedaComponent, CambiarMonedaPrincipalDialogo } from './componentes/moneda/moneda.component';
 import { MonedaCotizacionComponent } from './componentes/moneda-cotizacion/moneda-cotizacion.component';
-import { MonedaCuentaContableComponent } from './componentes/moneda-cuenta-contable/moneda-cuenta-contable.component';
+import { MonedaCuentaContableComponent, PlanCuentaDialogo } from './componentes/moneda-cuenta-contable/moneda-cuenta-contable.component';
 import { PuntosVentaAutorizadoComponent } from './componentes/puntos-venta-autorizado/puntos-venta-autorizado.component';
 import { CondicionVentaComponent } from './componentes/condicion-venta/condicion-venta.component';
 import { ProductoComponent } from './componentes/producto/producto.component';
@@ -308,7 +308,6 @@ import { SoporteComponent } from './componentes/soporte/soporte.component';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
 import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
 import { ContraseniaComponent } from './componentes/contrasenia/contrasenia.component';
-import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -511,6 +510,7 @@ const stompConfig: StompConfig = {
     MonedaComponent,
     MonedaCotizacionComponent,
     MonedaCuentaContableComponent,
+    PlanCuentaDialogo,
     PuntosVentaAutorizadoComponent,
     RepartoComponent,
     CondicionVentaComponent,
@@ -819,7 +819,8 @@ const stompConfig: StompConfig = {
     ChequesRechazadosComponent,
     AcompanianteDialogo,
     ErrorPuntoVentaComponent,
-    PersonalFamiliarComponent
+    PersonalFamiliarComponent,
+    PlanCuentaDialogo
   ]
 })
 export class AppModule { }

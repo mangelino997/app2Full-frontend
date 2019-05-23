@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { MonedaCuentaContable } from 'src/app/modelos/moneda-cuenta-contable';
@@ -6,11 +6,45 @@ import { MonedaCuentaContableService } from 'src/app/servicios/moneda-cuenta-con
 import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { FlatTreeControl } from '@angular/cdk/tree';
+
+export class Arbol {
+  id: number;
+  version: number;
+  empresa: {};
+  padre: Arbol;
+  nombre: string;
+  esImputable: boolean;
+  estaActivo: boolean;
+  usuarioAlta: {};
+  usuarioMod: {};
+  tipoCuentaContable: {};
+  nivel: number;
+  hijos: Arbol[];
+}
+export class Nodo {
+  id: number;
+  version: number;
+  empresa: {};
+  padre: Arbol;
+  nombre: string;
+  esImputable: boolean;
+  estaActivo: boolean;
+  usuarioAlta: {};
+  usuarioMod: {};
+  tipoCuentaContable: {};
+  nivel: number;
+  hijos: Arbol[];
+  level: number;
+  expandable: boolean;
+  editable: boolean;
+  mostrarBotones: boolean;
+}
 
 @Component({
   selector: 'app-moneda-cuenta-contable',
@@ -61,14 +95,14 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Constructor
   constructor(private monedaCuentaContableServicio: MonedaCuentaContableService, private monedaCuentaContable: MonedaCuentaContable,
     private planCuentaServicio: PlanCuentaService, private subopcionPestaniaService: SubopcionPestaniaService, private monedaServicio: MonedaService,
-    private empresaServicio: EmpresaService, private loaderService: LoaderService, private appService: AppService) {
+    private empresaServicio: EmpresaService, private loaderService: LoaderService, private appService: AppService,
+    public dialog: MatDialog) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
-          console.log(res.json());
         },
         err => {
           console.log(err);
@@ -273,10 +307,134 @@ export class MonedaCuentaContableComponent implements OnInit {
       return elemento;
     }
   }
+  //Formatea el valor del autocompletado
+  public displayFa(elemento) {
+    if (elemento != undefined) {
+      return elemento.nombre ? elemento.id + ' - ' + elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
+  //Abre el dialogo Plan de Cuenta
+  public abrirPlanCuentaDialogo() {
+    const dialogRef = this.dialog.open(PlanCuentaDialogo, {
+      width: '90%',
+      height: '90%',
+      data: {
+        empresa: this.formulario.get('empresa').value
+      },
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if(resultado) {
+        this.formulario.get('cuentaContable').setValue(resultado);
+      }
+    });
+  }
+}
+//Componente Plan de Cuenta
+@Component({
+  selector: 'plan-cuenta-dialogo',
+  templateUrl: 'plan-cuenta-dialogo.component.html',
+})
+export class PlanCuentaDialogo {
+  flatNodeMap = new Map<Nodo, Arbol>();
+  nestedNodeMap = new Map<Arbol, Nodo>();
+  selectedParent: Nodo | null = null;
+  newItemName = '';
+  treeControl: FlatTreeControl<Nodo>;
+  treeFlattener: MatTreeFlattener<Arbol, Nodo>;
+  //Defiene los datos del plan de cuenta
+  datos: MatTreeFlatDataSource<Arbol, Nodo>;
+  //Define el formulario
+  public formulario: FormGroup;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define el nodo seleccionado
+  public nodoSeleccionado:any;
+  //Constructor
+  constructor(private planCuentaServicio: PlanCuentaService, private appService: AppService,
+    private loaderService: LoaderService, public dialogRef: MatDialogRef<PlanCuentaDialogo>, 
+    @Inject(MAT_DIALOG_DATA) public data) {
+    this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
+      this.isExpandable, this.getChildren);
+    this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
+    this.datos = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    this.planCuentaServicio.listarPorEmpresaYGrupoCuentaContable(this.data.empresa.id, 1).subscribe(res => {
+      this.datos.data = res.json();
+    });
+  }
+  //Al inicializarse el componente
+  ngOnInit(): void {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    //Establece el formulario
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      empresa: new FormControl(),
+      padre: new FormControl(),
+      nombre: new FormControl(),
+      esImputable: new FormControl(),
+      estaActivo: new FormControl(),
+      usuarioAlta: new FormControl(),
+      usuarioMod: new FormControl(),
+      tipoCuentaContable: new FormControl(),
+      nivel: new FormControl(),
+      hijos: new FormControl()
+    });
+  }
+
+  getLevel = (node: Nodo) => node.level;
+
+  isExpandable = (node: Nodo) => node.expandable;
+
+  getChildren = (node: Arbol): Arbol[] => node.hijos;
+
+  hasChild = (_: number, _nodeData: Nodo) => _nodeData.expandable;
+
+  hasNoContent = (_: number, _nodeData: Nodo) => _nodeData.nombre === '';
+
+  transformer = (node: Arbol, level: number) => {
+    const existingNode = this.nestedNodeMap.get(node);
+    const flatNode = existingNode && existingNode.nombre === node.nombre
+      ? existingNode
+      : new Nodo();
+    flatNode.id = node.id;
+    flatNode.version = node.version;
+    flatNode.empresa = node.empresa;
+    flatNode.padre = node.padre;
+    flatNode.nombre = node.nombre;
+    flatNode.esImputable = node.esImputable;
+    flatNode.estaActivo = node.estaActivo;
+    flatNode.usuarioAlta = node.usuarioAlta;
+    flatNode.usuarioMod = node.usuarioMod;
+    flatNode.tipoCuentaContable = node.tipoCuentaContable;
+    flatNode.nivel = node.nivel;
+    flatNode.hijos = node.hijos;
+    flatNode.level = level;
+    flatNode.expandable = !!node.hijos;
+    flatNode.editable = false;
+    this.flatNodeMap.set(flatNode, node);
+    this.nestedNodeMap.set(node, flatNode);
+    return flatNode;
+  }
+  //Obtiene la cuenta seleccionada
+  public seleccionar(nodo): void {
+    this.nodoSeleccionado = nodo;
+  }
+  //Cierra el dialogo
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
 }
