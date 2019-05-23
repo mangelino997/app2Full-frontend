@@ -25,7 +25,7 @@
             <div class="form-group has-float-label">
               <label for="idPassword" class="tamanio-label">Nueva Contraseña *</label>
               <input id="idPassword" type="password" formControlName="password" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="60"
+                class="form-control form-control-sm" maxlength="20"
                 (blur)="verificarContrasenia()">
             </div>
           </div>
@@ -35,7 +35,7 @@
             <div class="form-group has-float-label">
               <label id="labelPasswordRepeat" for="idPasswordRepeat" class="tamanio-label">Repetir Contraseña *</label>
               <input id="idPasswordRepeat" type="password" [formControl]="passwordRepeat" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="60"
+                class="form-control form-control-sm" maxlength="20"
                 (blur)="verificarContrasenia()" (ngModelChange)="cambioRepetirContrasenia()">
             </div>
           </div>

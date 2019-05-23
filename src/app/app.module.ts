@@ -305,6 +305,7 @@ import { ErrorPuntoVentaComponent } from './componentes/error-punto-venta/error-
 import { SoporteComponent } from './componentes/soporte/soporte.component';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
 import { ContraseniaComponent } from './componentes/contrasenia/contrasenia.component';
+import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -554,6 +555,7 @@ const stompConfig: StompConfig = {
     ErrorPuntoVentaComponent,
     SoporteComponent,
     TipoFamiliarComponent,
+    PersonalFamiliarComponent,
     ContraseniaComponent
   ],
   imports: [
