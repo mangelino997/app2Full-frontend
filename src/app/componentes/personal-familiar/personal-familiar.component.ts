@@ -13,6 +13,11 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { PersonalFamiliar } from 'src/app/modelos/personal-familiar';
 import { RolOpcionService } from 'src/app/servicios/rol-opcion.service';
+import { FechaService } from 'src/app/servicios/fecha.service';
+import { MesService } from 'src/app/servicios/mes.service';
+import { TipoFamiliar } from 'src/app/modelos/tipo-familiar';
+import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
+import { PersonalFamiliarService } from 'src/app/servicios/personal-familiar.service';
 
 @Component({
   selector: 'app-personal-familiar',
@@ -43,31 +48,42 @@ export class PersonalFamiliarComponent implements OnInit {
   public opcionSeleccionada: number = null;
   //Define la lista de sexos
   public sexos: Array<any> = [];
+  //Define la lista de tipos de familiares
+  public familiares: Array<any> = [];
   //Define la lista de tipos de documentos
   public tiposDocumentos: Array<any> = [];
+  //Define la lista de anios
+  public anios: Array<any> = [];
+  //Define la lista de meses
+  public meses: Array<any> = [];
   //Define la opcion activa
   public botonOpcionActivo: boolean = null;
   //Define la nacionalidad de nacimiento
   public nacionalidadNacimiento: FormControl = new FormControl();
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
+  //Define el form control para las busquedas
+  public autocompletadopersonal: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda de localidades
   public resultadosLocalidades: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id','familiar', 'nombre','apellido', 'fechaNacimiento', 'lugarNacimiento', 'nacionalidad', 'ver', 'mod'];
+  public columnas: string[] = ['id','familiar', 'apellido', 'nombre', 'fechaNacimiento', 'lugarNacimiento', 'nacionalidad', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la lista de personales
+  public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, private personalFamiliar: PersonalFamiliar,
-    private appService: AppService, private appServicio: AppService, private toastr: ToastrService,private localidadServicio: LocalidadService,
-     private sexoServicio: SexoService, private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService,
-     private rolOpcionServicio: RolOpcionService) {
+  constructor(private servicio: PersonalFamiliarService,private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
+    private personalFamiliar: PersonalFamiliar, private appService: AppService, private appServicio: AppService, 
+    private toastr: ToastrService,private localidadServicio: LocalidadService, private sexoServicio: SexoService, 
+    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, 
+     private anio: FechaService, private mes: MesService, private tipoFamiliar: TipoFamiliarService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -80,21 +96,10 @@ export class PersonalFamiliarComponent implements OnInit {
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-          console.log(err);
-        }
-      );
-    //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      .subscribe(
-        res => {
-          this.opciones = res.json();
           this.loaderService.hide();
         },
         err => {
           console.log(err);
-          this.loaderService.hide();
         }
       );
     //Se subscribe al servicio de lista de registros
@@ -106,6 +111,14 @@ export class PersonalFamiliarComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorAlias(data).subscribe(response => {
+          this.resultados = response;
+        })
+      }
+    })
+    //Autocompletado - Buscar personal por alias
+    this.autocompletadopersonal.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.personalServicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
       }
@@ -133,6 +146,23 @@ export class PersonalFamiliarComponent implements OnInit {
     this.listarSexos();
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
+    //Obtiene la lista de meses
+    this.listarMeses();
+    //Obtiene la lista de años
+    this.listarAnios();
+    //Obtiene la lista de tipos de familiares
+    this.listarTiposFamiliares();
+  }
+  //Obtiene el listado de tipos de familiares
+  private listarTiposFamiliares() {
+    this.tipoFamiliar.listar().subscribe(
+      res => {
+        this.familiares = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   //Obtiene el listado de sexos
   private listarSexos() {
@@ -157,6 +187,22 @@ export class PersonalFamiliarComponent implements OnInit {
       }
     );
   }
+  //Obtiene la lista de meses
+  private listarMeses() {
+    this.mes.listar().subscribe(
+      res => {
+        this.meses = res.json();
+      }
+    );
+  }
+  //Obtiene la lista de años
+  private listarAnios() {
+    this.anio.listarAnios().subscribe(
+      res => {
+        this.anios = res.json();
+      }
+    );
+  }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
     this.resultados = [];
@@ -170,7 +216,15 @@ export class PersonalFamiliarComponent implements OnInit {
     } else {
       this.formulario.get('sexo').disable();
       this.formulario.get('tipoDocumento').disable();
+      this.formulario.get('mes').disable();
+      this.formulario.get('anio').disable();
+      this.formulario.get('mesBaja').disable();
+      this.formulario.get('anioBaja').disable();
     }
+  }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
+    return this.appServicio.mascararEnteros(intLimite);
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
@@ -266,6 +320,18 @@ export class PersonalFamiliarComponent implements OnInit {
       default:
         break;
     }
+  }
+  //Obtiene la lista de contactos de un cliente
+  public listarPorPersonal() {
+    let elemento = this.formulario.get('cliente').value;
+    this.servicio.listarPorPersonal(elemento.id).subscribe(res => {
+      if(this.indiceSeleccionado == 5) {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+      } else {
+        this.personales = res.json();
+      }
+    })
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {

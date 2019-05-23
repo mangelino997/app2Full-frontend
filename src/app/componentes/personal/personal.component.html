@@ -31,22 +31,22 @@
                   <h5>{{pestaniaActual}} Personal</h5>
                 </div>
                 <div class="contenedor-top-titulo">
-                  <div class="row">
-                    <div class="col-md-6">
-                      <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                        <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
-                        <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text"
-                          matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-                          (blur)="verificarSeleccion(autocompletado)">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
-                          (optionSelected)="cambioAutocompletado()">
-                          <mat-option *ngFor="let item of resultados" [value]="item">
-                            {{item.alias}}
-                          </mat-option>
-                        </mat-autocomplete>
+                    <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+                            <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
+                            <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text"
+                              matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+                              (blur)="verificarSeleccion(autocompletado)">
+                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
+                              (optionSelected)="cambioAutocompletado()">
+                              <mat-option *ngFor="let item of resultados" [value]="item">
+                                {{item.alias}}
+                              </mat-option>
+                            </mat-autocomplete>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
                   <div class="row">
                     <div class="col-md-1">
                       <button mat-mini-fab color="primary" (click)="sidenav.toggle()">
@@ -323,7 +323,8 @@
                         <label for="idSeguridadSocial" class="tamanio-label">Organismo Previsional *</label>
                         <input id="idSeguridadSocial" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('seguridadSocial')" [matAutocomplete]="autoSeguridadSocial"
-                          autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('seguridadSocial'))">
+                          autocomplete="off" [readonly]="soloLectura"
+                          (blur)="verificarSeleccion(formulario.get('seguridadSocial'))">
                         <mat-autocomplete #autoSeguridadSocial="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemSeguridadSocial of resultadosSeguridadesSociales"
                             [value]="itemSeguridadSocial">
@@ -360,7 +361,8 @@
                         <label for="idAfipSituacion" class="tamanio-label">Situación *</label>
                         <input id="idAfipSituacion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipSituacion')" [matAutocomplete]="autoAfipSituacion"
-                          autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('afipSituacion'))">
+                          autocomplete="off" [readonly]="soloLectura"
+                          (blur)="verificarSeleccion(formulario.get('afipSituacion'))">
                         <mat-autocomplete #autoAfipSituacion="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipSituacion of resultadosAfipSituaciones"
                             [value]="itemAfipSituacion">
@@ -374,7 +376,8 @@
                         <label for="idAfipCondicion" class="tamanio-label">Condición *</label>
                         <input id="idAfipCondicion" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipCondicion')" [matAutocomplete]="autoAfipCondicion"
-                          autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('afipCondicion'))">
+                          autocomplete="off" [readonly]="soloLectura"
+                          (blur)="verificarSeleccion(formulario.get('afipCondicion'))">
                         <mat-autocomplete #autoAfipCondicion="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipCondicion of resultadosAfipCondiciones"
                             [value]="itemAfipCondicion">
@@ -388,7 +391,8 @@
                         <label for="idAfipActividad" class="tamanio-label">Actividad *</label>
                         <input id="idAfipActividad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipActividad')" [matAutocomplete]="autoAfipActividad"
-                          autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('afipActividad'))">
+                          autocomplete="off" [readonly]="soloLectura"
+                          (blur)="verificarSeleccion(formulario.get('afipActividad'))">
                         <mat-autocomplete #autoAfipActividad="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipActividad of resultadosAfipActividades"
                             [value]="itemAfipActividad">
@@ -418,9 +422,9 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAfipSiniestrado" class="tamanio-label">Código de Siniestrado *</label>
-                        <input id="idAfipSiniestrado" class="form-control form-control-sm" type="text"
-                          matInput [formControl]="formulario.get('afipSiniestrado')"
-                          [matAutocomplete]="autoAfipSiniestrado" autocomplete="off" [readonly]="soloLectura"
+                        <input id="idAfipSiniestrado" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="formulario.get('afipSiniestrado')" [matAutocomplete]="autoAfipSiniestrado"
+                          autocomplete="off" [readonly]="soloLectura"
                           (blur)="verificarSeleccion(formulario.get('afipSiniestrado'))">
                         <mat-autocomplete #autoAfipSiniestrado="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipSiniestrado of resultadosAfipSiniestrados"
@@ -435,7 +439,8 @@
                         <label for="idAfipLocalidad" class="tamanio-label">Localidad *</label>
                         <input id="idAfipLocalidad" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('afipLocalidad')" [matAutocomplete]="autoAfipLocalidad"
-                          autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('afipLocalidad'))">
+                          autocomplete="off" [readonly]="soloLectura"
+                          (blur)="verificarSeleccion(formulario.get('afipLocalidad'))">
                         <mat-autocomplete #autoAfipLocalidad="matAutocomplete" [displayWith]="displayFd.bind(this)">
                           <mat-option *ngFor="let itemAfipLocalidad of resultadosAfipLocalidades"
                             [value]="itemAfipLocalidad">
@@ -482,7 +487,8 @@
                         <label for="idObraSocial" class="tamanio-label">Obra Social *</label>
                         <input id="idObraSocial" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('obraSocial')" [matAutocomplete]="autoObraSocial"
-                          autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('obraSocial'))">
+                          autocomplete="off" [readonly]="soloLectura"
+                          (blur)="verificarSeleccion(formulario.get('obraSocial'))">
                         <mat-autocomplete #autoObraSocial="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemObraSocial of resultadosObrasSociales" [value]="itemObraSocial">
                             {{itemObraSocial.nombre}}
@@ -669,8 +675,7 @@
                       <div class="form-group has-float-label">
                         <label for="idObservaciones" class="tamanio-label">Observaciones</label>
                         <textarea id="idObservaciones" class="form-control form-control-sm"
-                          formControlName="observaciones" [readonly]="soloLectura"
-                          maxlength="200"></textarea>
+                          formControlName="observaciones" [readonly]="soloLectura" maxlength="200"></textarea>
                       </div>
                     </div>
                   </div>
@@ -801,8 +806,7 @@
                           Correo Electrónico</label>
                         <input id="idCorreoelectronico" type="text" formControlName="correoelectronico"
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura"
-                          (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
-                          maxlength="60"
+                          (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')" maxlength="60"
                           pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
                           (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoelectronico')">
                       </div>
