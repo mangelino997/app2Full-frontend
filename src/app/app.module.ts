@@ -306,7 +306,6 @@ import { configuracionVehiculo } from './modelos/configuracionVehiculo';
 import { ErrorPuntoVentaComponent } from './componentes/error-punto-venta/error-punto-venta.component';
 import { SoporteComponent } from './componentes/soporte/soporte.component';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
-import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
 import { ContraseniaComponent } from './componentes/contrasenia/contrasenia.component';
 
 //Rutas
