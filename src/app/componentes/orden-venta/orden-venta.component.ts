@@ -172,8 +172,8 @@ export class OrdenVentaComponent implements OnInit {
     });
   }
   //Obtiene la mascara de importe
-  public mascaraImporte(intLimite) {
-    return this.appService.mascararImporte(intLimite);
+  public mascaraImporte(intLimite, decimalLimite) {
+    return this.appService.mascararImporte(intLimite, decimalLimite);
   }
   //Obtiene la mascara de porcentaje
   public mascararPorcentaje() {

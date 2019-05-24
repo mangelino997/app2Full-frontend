@@ -507,7 +507,7 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAporteAdicObraSocial" class="tamanio-label">Aporte Adicional O.S.($)</label>
-                        <input id="idAporteAdicObraSocial" [textMask]="mascararImporte(8)" type="text"
+                        <input id="idAporteAdicObraSocial" [textMask]="mascararImporte(8, 2)" type="text"
                           formControlName="aporteAdicObraSocial" autocomplete="off"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura"
                           placeholder="$ 0.00" (blur)="establecerDecimales(formulario.get('aporteAdicObraSocial'), 2)">
@@ -517,7 +517,7 @@
                       <div class="form-group has-float-label">
                         <label for="idContribAdicObraSocial" class="tamanio-label">Contribución Adicional
                           O.S.($)</label>
-                        <input id="idContribAdicObraSocial" [textMask]="mascararImporte(8)" type="text"
+                        <input id="idContribAdicObraSocial" [textMask]="mascararImporte(8, 2)" type="text"
                           formControlName="contribAdicObraSocial" autocomplete="off"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura"
                           placeholder="$ 0.00" (blur)="establecerDecimales(formulario.get('contribAdicObraSocial'), 2)">

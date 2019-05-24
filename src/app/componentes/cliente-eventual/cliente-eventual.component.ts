@@ -264,8 +264,8 @@ export class ClienteEventualComponent implements OnInit {
     this.toastr.error(respuesta.mensaje);
   }
   //Obtiene la mascara de importe
-  public obtenerMascaraImporte(intLimite) {
-    return this.appService.mascararImporte(intLimite);
+  public obtenerMascaraImporte(intLimite, decimalLimite) {
+    return this.appService.mascararImporte(intLimite, decimalLimite);
   }
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {

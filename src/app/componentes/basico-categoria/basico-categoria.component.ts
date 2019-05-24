@@ -110,8 +110,8 @@ export class BasicoCategoriaComponent implements OnInit {
     this.listarAnios();
   }
   //Obtiene la mascara de importe
-  public mascararImporte(intLimite) {
-    return this.appService.mascararImporte(intLimite);
+  public mascararImporte(intLimite, decimalLimite) {
+    return this.appService.mascararImporte(intLimite, decimalLimite);
   }
   //Obtiene la lista de categorias
   public listarCategorias() {

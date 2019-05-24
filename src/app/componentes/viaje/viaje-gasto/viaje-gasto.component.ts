@@ -242,8 +242,8 @@ export class ViajeGastoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Mascara un importe decimal
-  public mascararImporte(limit) {
-    return this.appService.mascararImporte(limit);
+  public mascararImporte(limit, decimalLimite) {
+    return this.appService.mascararImporte(limit, decimalLimite);
   }
   //Formatea el numero a x decimales
   public establecerDecimales(formulario, cantidad) {

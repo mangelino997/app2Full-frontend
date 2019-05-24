@@ -14,6 +14,8 @@ export class ObservacionesDialogo {
     public formulario: FormGroup;
     //Define la observacion
     public observaciones: string;
+    //Define si es solo lectura
+    public soloLectura:boolean = true;
     //Constructor
     constructor(public dialogRef: MatDialogRef<ObservacionesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
     ngOnInit() {
@@ -25,6 +27,8 @@ export class ObservacionesDialogo {
         });
         //Establece las observaciones
         this.formulario.get('observaciones').setValue(this.data.elemento);
+        //Establece solo lectura
+        this.soloLectura = this.data.soloLectura;
     }
     onNoClick(): void {
         this.dialogRef.close();

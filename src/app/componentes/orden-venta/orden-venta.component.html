@@ -166,7 +166,7 @@
                 <div class="form-group has-float-label">
                   <label for="idImporteFijo" class="tamanio-label">Precio Fijo<span
                       *ngIf="!(formularioEscala.get('precioUnitario').value) && !tipoTarifaEstado">*</span></label>
-                  <input id="idImporteFijo" [textMask]="mascaraImporte(10)"
+                  <input id="idImporteFijo" [textMask]="mascaraImporte(10, 2)"
                     class="form-control form-control-sm number-right" formControlName="importeFijo" placeholder="$ 0.00"
                     type="text" autocomplete="off" (blur)="setDecimales(formularioEscala.get('importeFijo'), 2)"
                     (ngModelChange)="controlPrecios(1)">
@@ -176,7 +176,7 @@
                 <div class="form-group has-float-label">
                   <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario<span
                       *ngIf="!(formularioEscala.get('importeFijo').value) && !tipoTarifaEstado">*</span></label>
-                  <input id="idPrecioUnitario" [textMask]="mascaraImporte(10)" formControlName="precioUnitario"
+                  <input id="idPrecioUnitario" [textMask]="mascaraImporte(10, 2)" formControlName="precioUnitario"
                     type="text" autocomplete="off" class="form-control form-control-sm number-right"
                     (ngModelChange)="controlPrecios(2)" (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)"
                     placeholder="$ 0.00">
@@ -194,7 +194,7 @@
               <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label for="idMinimo" class="tamanio-label">Mínimo *</label>
-                  <input id="idMinimo" [textMask]="mascaraImporte(10)" formControlName="minimo" type="text"
+                  <input id="idMinimo" [textMask]="mascaraImporte(10, 2)" formControlName="minimo" type="text"
                     autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)"
                     class="form-control form-control-sm number-right" placeholder="$ 0.00">
                 </div>
@@ -287,7 +287,7 @@
               <div class="form-group has-float-label">
                 <label for="idImporteFijoSeco" class="tamanio-label">Imp. Fijo Seco <span
                     *ngIf="!(formularioTramo.get('precioUnitarioSeco').value) && !tipoTarifaEstado">*</span></label>
-                <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10)"
+                <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoSeco"
                   (ngModelChange)="controlPreciosTramo(1)"
                   (blur)="setDecimales(formularioTramo.get('importeFijoSeco'), 2)" type="text" autocomplete="off"
@@ -296,7 +296,7 @@
               <div class="form-group has-float-label">
                 <label for="idPrecioUnitarioSeco" class="tamanio-label">Precio Un. Seco <span
                     *ngIf="!(formularioTramo.get('importeFijoSeco').value) && !tipoTarifaEstado">*</span></label>
-                <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10)"
+                <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right"
                   (ngModelChange)="controlPreciosTramo(2)" type="text" autocomplete="off"
                   formControlName="precioUnitarioSeco"
@@ -306,7 +306,7 @@
               <div class="form-group has-float-label">
                 <label for="idImporteFijoRef" class="tamanio-label">Imp. Fijo Ref. <span
                     *ngIf="!(formularioTramo.get('precioUnitarioRef').value) && !tipoTarifaEstado">*</span></label>
-                <input id="idImporteFijoRef" [textMask]="mascaraImporte(10)"
+                <input id="idImporteFijoRef" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoRef"
                   (ngModelChange)="controlPreciosTramoRef(1)"
                   (blur)="setDecimales(formularioTramo.get('importeFijoRef'), 2)" type="text" autocomplete="off"
@@ -315,7 +315,7 @@
               <div class="form-group has-float-label">
                 <label for="idPrecioUnitarioRef" class="tamanio-label">Precio Un. Ref. <span
                     *ngIf="!(formularioTramo.get('importeFijoRef').value) && !tipoTarifaEstado">*</span></label>
-                <input id="idPrecioUnitarioRef" [textMask]="mascaraImporte(10)"
+                <input id="idPrecioUnitarioRef" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right"
                   (ngModelChange)="controlPreciosTramoRef(2)" type="text" autocomplete="off"
                   (blur)="setDecimales(formularioTramo.get('precioUnitarioRef'), 2)" formControlName="precioUnitarioRef"

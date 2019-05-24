@@ -692,8 +692,8 @@ export class ClienteComponent implements OnInit {
     return this.appService.mascararEnterosConDecimales(intLimite);
   }
   //Obtiene la mascara de importe
-  public obtenerMascaraImporte(intLimite) {
-    return this.appService.mascararImporte(intLimite);
+  public obtenerMascaraImporte(intLimite, decimalLimite) {
+    return this.appService.mascararImporte(intLimite, decimalLimite);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

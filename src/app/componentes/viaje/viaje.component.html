@@ -36,7 +36,7 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group has-float-label">
-                                    <label for="idCodigo" class="tamanio-label-titulo">N° Guía Serv.</label>
+                                    <label for="idCodigo" class="tamanio-label-titulo">N° Guía Servicio</label>
                                     <input id="idCodigo" type="number" formControlName="id"
                                         class="form-control form-control-sm" readonly>
                                 </div>
@@ -164,7 +164,6 @@
             </div>
         </mat-card>
         <br>
-        <!-- [linear]="!estadoFormulario" -->
         <mat-horizontal-stepper [linear]="!estadoFormulario" (selectionChange)="onStepChange($event)" #stepper>
             <ng-template matStepperIcon="edit" let-index="index">
                 {{index+1}}

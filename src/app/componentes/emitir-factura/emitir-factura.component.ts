@@ -1034,8 +1034,8 @@ export class EmitirFacturaComponent implements OnInit {
     }
   }
   //Obtiene la mascara de importe
-  public obtenerMascaraImporte(intLimite) {
-    return this.appService.mascararImporte(intLimite);
+  public obtenerMascaraImporte(intLimite, decimalLimite) {
+    return this.appService.mascararImporte(intLimite, decimalLimite);
   }
   //Obtiene la mascara de enteros SIN decimales
   public obtenerMascaraEnteroSinDecimales(intLimite) {

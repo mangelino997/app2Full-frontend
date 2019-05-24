@@ -220,8 +220,8 @@ export class MonedaCotizacionComponent implements OnInit {
     }
   }
   //Obtiene la mascara de importe
-  public obtenerMascaraImporte(intLimite) {
-    return this.appService.mascararImporte(intLimite);
+  public obtenerMascaraImporte(intLimite, decimalLimite) {
+    return this.appService.mascararImporte(intLimite, decimalLimite);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

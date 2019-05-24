@@ -288,8 +288,8 @@ export class PersonalComponent implements OnInit {
     return this.appServicio.mascararEnteros(intLimite);
   }
   //Obtiene la mascara de importe
-  public mascararImporte(intLimite) {
-    return this.appServicio.mascararImporte(intLimite);
+  public mascararImporte(intLimite, decimalLimite) {
+    return this.appServicio.mascararImporte(intLimite, decimalLimite);
   }
   //Obtiene la mascara de porcentaje
   public mascararPorcentaje() {

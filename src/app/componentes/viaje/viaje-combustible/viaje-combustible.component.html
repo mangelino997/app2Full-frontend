@@ -52,13 +52,13 @@
         <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
         <input id="idPrecioUnitarioOC" type="text" formControlName="precioUnitario" autocomplete="off"
           (blur)="calcularImporte(formularioViajePropioCombustible)" class="form-control form-control-sm number-right"
-          placeholder="$ 0.00" [textMask]="mascararImporte(8)" [readonly]="soloLectura">
+          placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)" [readonly]="soloLectura">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idImporteOC" class="tamanio-label">Importe *</label>
-        <input id="idImporteOC" [textMask]="mascararImporte(8)" type="text" formControlName="importe" autocomplete="off"
+        <input id="idImporteOC" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe" autocomplete="off"
           class="form-control form-control-sm number-right" [readonly]="true" placeholder="$ 0.00">
       </div>
     </div>

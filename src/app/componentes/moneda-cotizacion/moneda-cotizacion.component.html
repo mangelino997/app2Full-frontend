@@ -26,7 +26,7 @@
             <div class="form-group has-float-label">
               <label for="idValor" class="labelValor">Valor *</label>
               <input id="idValor" type="text" formControlName="valor" [readonly]="soloLectura" placeholder="$ 0.00"
-                class="form-control form-control-sm" [textMask]="obtenerMascaraImporte(8)" (blur)="desenmascararImporte()">
+                class="form-control form-control-sm" [textMask]="obtenerMascaraImporte(8, 2)" (blur)="desenmascararImporte()">
             </div>
           </div>
           <div class="col-md-1" *ngIf="mostrarAgregar && !show">

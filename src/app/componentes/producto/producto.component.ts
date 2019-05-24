@@ -379,8 +379,8 @@ export class ProductoComponent implements OnInit {
     return this.appService.mascararEnteros(limit);
   }
   //Mascara un importe
-  public mascararImporte(limit) {
-    return this.appService.mascararImporte(limit);
+  public mascararImporte(limit, decimalLimite) {
+    return this.appService.mascararImporte(limit, decimalLimite);
   }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad) {

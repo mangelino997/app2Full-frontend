@@ -97,7 +97,7 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Establece el precio unitario
   public establecerPrecioUnitario(formulario, elemento): void {
-    let precioUnitarioVenta = formulario.get(elemento).value.precioUnitarioVenta;
+    let precioUnitarioVenta = formulario.get(elemento).value.precioUnitarioViaje;
     if (precioUnitarioVenta != 0) {
       formulario.get('precioUnitario').setValue(precioUnitarioVenta);
       this.establecerCeros(formulario.get('precioUnitario'));
@@ -245,8 +245,8 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajePropioInsumo.reset();
   }
   //Mascara un importe decimal
-  public mascararImporte(limit) {
-    return this.appServicio.mascararImporte(limit);
+  public mascararImporte(limit, decimalLimite) {
+    return this.appServicio.mascararImporte(limit, decimalLimite);
   }
   //Formatea el numero a x decimales
   public establecerDecimales(formulario, cantidad) {

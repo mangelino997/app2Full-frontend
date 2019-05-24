@@ -293,7 +293,7 @@
                         <label for="idLimiteCredito" class="tamanio-label">Límite de Crédito</label>
                         <input id="idLimiteCredito" type="text" formControlName="creditoLimite" autocomplete="off"
                           class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                          placeholder="$ 0.00" [textMask]="obtenerMascaraImporte(10)"
+                          placeholder="$ 0.00" [textMask]="obtenerMascaraImporte(10, 2)"
                           (blur)="setDecimales(formulario.get('creditoLimite'), 2)">
                       </div>
                     </div>
@@ -316,7 +316,7 @@
                         <label for="idDescuentoFlete" class="tamanio-label">Descuento en Flete</label>
                         <input id="idDescuentoFlete" type="text" formControlName="descuentoFlete" autocomplete="off"
                           class="form-control form-control-sm number-right" placeholder="$ 0.00"
-                          [readonly]="soloLectura" [textMask]="obtenerMascaraImporte(2)"
+                          [readonly]="soloLectura" [textMask]="obtenerMascaraImporte(2, 2)"
                           (blur)="setDecimales(formulario.get('descuentoFlete'), 2)">
                       </div>
                     </div>

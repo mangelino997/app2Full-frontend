@@ -18,6 +18,7 @@ export class Producto {
             esSerializable: new FormControl('', Validators.required),
             esCritico: new FormControl('', Validators.required),
             stockMinimo: new FormControl(),
+            precioUnitarioViaje: new FormControl(),
             precioUnitarioVenta: new FormControl(),
             coeficienteITC: new FormControl(),
             usuario: new FormControl()

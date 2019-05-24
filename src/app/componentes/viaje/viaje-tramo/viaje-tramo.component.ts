@@ -125,8 +125,8 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajePropioTramo.get('importe').disable();
   }
   //Obtiene la mascara de importes
-  public mascararImporte(limite) {
-    return this.appServicio.mascararImporte(limite);
+  public mascararImporte(intLimite, decimalLimite) {
+    return this.appServicio.mascararImporte(intLimite, decimalLimite);
   }
   //Establece decimales de importe
   public desenmascararImporte(formulario, cantidad) {
@@ -258,11 +258,11 @@ export class ViajeTramoComponent implements OnInit {
     }
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
-    formulario.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(2));
+    formulario.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(cant));
     if (cantidad != null && precioUnitario != null) {
       let importe = cantidad * precioUnitario;
       formulario.get('importe').setValue(importe);
-      this.establecerCeros(formulario.get('importe'));
+      this.establecerCeros(formulario.get('importe'), cant);
     }
   }
   //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
@@ -342,8 +342,8 @@ export class ViajeTramoComponent implements OnInit {
     this.dataEvent.emit(this.listaTramos);
   }
   //Establece los ceros en los numeros flotantes
-  public establecerCeros(elemento): void {
-    elemento.setValue(this.appServicio.establecerDecimales(elemento.value, 2));
+  public establecerCeros(elemento, decimales): void {
+    elemento.setValue(this.appServicio.establecerDecimales(elemento.value, decimales));
   }
   //Establece la lista de tramos
   public establecerLista(lista, viaje): void {
@@ -459,10 +459,26 @@ export class ViajeTramoComponent implements OnInit {
       width: '1200px',
       data: {
         tema: this.appServicio.getTema(),
-        elemento: elemento
+        elemento: elemento,
+        soloLectura: true
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });
+  }
+  //Abre un dialogo para ver las observaciones
+  public abrirObservacionesDialogo(elemento): void {
+    const dialogRef = this.dialog.open(ObservacionesDialogo, {
+      width: '1200px',
+      data: {
+        tema: this.appServicio.getTema(),
+        elemento: elemento,
+        soloLectura: false
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      let observaciones = resultado.value.observaciones;
+      this.formularioViajePropioTramo.get('observaciones').setValue(observaciones);
+    });
   }
 }
 //Componente DadorDestinatarioDialogo

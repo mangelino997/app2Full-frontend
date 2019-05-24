@@ -21,7 +21,7 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idImporteAE" class="tamanio-label">Importe *</label>
-        <input id="idImporteAE" [textMask]="mascararImporte(8)" type="text" formControlName="importe" autocomplete="off"
+        <input id="idImporteAE" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe" autocomplete="off"
             class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
             (blur)="establecerDecimales(formularioViajePropioEfectivo.get('importe'), 2)">
       </div>
@@ -107,7 +107,7 @@
     <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idImporteAE" class="tamanio-label">Importe Total *</label>
-        <input id="idImporteAE" [textMask]="mascararImporte(8)" type="text" formControlName="importeTotal" 
+        <input id="idImporteAE" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importeTotal" 
           autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true">
       </div>
     </div>

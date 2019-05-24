@@ -6,14 +6,14 @@
                 <div class="form-group">
                     <label for="idTramoObservaciones" class="tamanio-label">Observaciones</label>
                     <textarea id="idTramoObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="4"
-                        [readonly]="true"></textarea>
+                        [readonly]="soloLectura"></textarea>
                 </div>
             </div>
         </div>
     </form>
     <div class="row">
         <div class="col text-center">
-            <button mat-raised-button (click)="onNoClick()">Cerrar</button>
+            <button mat-raised-button [mat-dialog-close]="formulario">Cerrar</button>
         </div>
     </div>
 </div>

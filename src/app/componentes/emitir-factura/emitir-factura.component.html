@@ -264,7 +264,7 @@
             <label for="idFlete" class="tamanio-label">Flete</label>
             <input id="idFlete" type="text" formControlName="flete" class="form-control form-control-sm number-right"
               style="width: 120px;" autocomplete="off" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura"
-              placeholder="$ 0.00" [textMask]="obtenerMascaraImporte(8)" >
+              placeholder="$ 0.00" [textMask]="obtenerMascaraImporte(8, 2)" >
           </div>
           <div class="form-group has-float-label">
             <label for="idDescuento" class="tamanio-label">% Dto.</label>
@@ -274,12 +274,12 @@
           <div class="form-group has-float-label">
             <label for="idRetiro" class="tamanio-label">Retiro</label>
             <input id="idRetiro" type="text" formControlName="importeRetiro" class="form-control form-control-sm number-right" placeholder="$ 0.00"
-              style="width: 55px;" autocomplete="off" [textMask]="obtenerMascaraImporte(8)" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+              style="width: 55px;" autocomplete="off" [textMask]="obtenerMascaraImporte(8, 2)" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
           </div>
           <div class="form-group has-float-label">
             <label for="idEntrega" class="tamanio-label">Entrega</label>
             <input id="idEntrega" type="text" formControlName="importeEntrega" class="form-control form-control-sm number-right" placeholder="$ 0.00"
-              style="width: 68px;" autocomplete="off" [textMask]="obtenerMascaraImporte(8)" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
+              style="width: 68px;" autocomplete="off" [textMask]="obtenerMascaraImporte(8, 2)" (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
           </div>
           <div class="form-group has-float-label ">
             <label for="idConcepto" class="tamanio-label">Conceptos Varios</label>
@@ -296,12 +296,12 @@
             <label for="idImporteConcepto" class="tamanio-label">Precio(Conc.Var.)</label>
             <input id="idImporteConcepto" type="text" formControlName="importeVentaItemConcepto" placeholder="$ 0.00"
               class="form-control form-control-sm number-right" style="width: 130px;" autocomplete="off" 
-              [textMask]="obtenerMascaraImporte(8)" (blur)="calcularSubtotal($event)">
+              [textMask]="obtenerMascaraImporte(8, 2)" (blur)="calcularSubtotal($event)">
           </div>
           <div class="form-group has-float-label">
             <label for="idSubtotal" class="tamanio-label">Subtotal</label>
             <input id="idSubtotal" type="text" formControlName="importeNetoGravado" class="form-control form-control-sm number-right"
-               style="width: 73px;" [textMask]="obtenerMascaraImporte(10)" (blur)="calcularSubtotal($event)" readonly>
+               style="width: 73px;" [textMask]="obtenerMascaraImporte(10, 2)" (blur)="calcularSubtotal($event)" readonly>
           </div>
           <div class="form-group has-float-label">
             <label for="idAlicuota" class="tamanio-label">Alic. IVA</label>
@@ -368,17 +368,17 @@
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label"><b>Importe Neto Gravado</b></label>
           <input id="idCodigo" type="text" formControlName="importeNetoGravado"  placeholder="$ 0.00"
-          [textMask]="obtenerMascaraImporte(8)" (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)" class="form-control input-bold form-control-sm number-right" style="width: 189px;">
+          [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formulario.get('importeNetoGravado'), 2)" class="form-control input-bold form-control-sm number-right" style="width: 189px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label"><b>Importe IVA</b></label>
           <input id="idCodigo" type="text" formControlName="importeIva"  placeholder="$ 0.00"
-            [textMask]="obtenerMascaraImporte(8)" (blur)="setDecimales(formulario.get('importeIva'), 2)" class="form-control input-bold form-control-sm number-right" style="width: 120px;">
+            [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formulario.get('importeIva'), 2)" class="form-control input-bold form-control-sm number-right" style="width: 120px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label"><b>Importe Total</b></label>
           <input id="idCodigo" type="text" formControlName="importeTotal"  placeholder="$ 0.00"
-            [textMask]="obtenerMascaraImporte(8)" (blur)="setDecimales(formulario.get('importeTotal'), 2)"class="form-control input-bold form-control-sm number-right" style="width: 130px;">
+            [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formulario.get('importeTotal'), 2)"class="form-control input-bold form-control-sm number-right" style="width: 130px;">
         </div>
       </div>
       <form [formGroup]="formularioCR">
@@ -387,7 +387,7 @@
             <label for="idContraReembolso" class="tamanio-label">ContraReembolso</label>
             <input id="idContraReembolso" type="text" formControlName="importeContraReembolso" placeholder="$ 0.00"
               class="form-control form-control-sm number-right" autocomplete="off" style="width: 140px;"
-              [textMask]="obtenerMascaraImporte(8)" (blur)="setDecimales(formularioCR.get('importeContraReembolso'), 2)">
+              [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formularioCR.get('importeContraReembolso'), 2)">
           </div>
           <div class="form-group has-float-label">
             <label for="idTarifaOVta" class="tamanio-label">Tarifa O.Vta.*</label>
@@ -407,7 +407,7 @@
             <label for="idCodigo" class="tamanio-label">Comisión</label>
             <input id="idCodigo" type="text" formControlName="pComision" class="form-control form-control-sm number-right"
               style="width: 120px;" placeholder="$ 0.00" readonly
-              [textMask]="obtenerMascaraImporte(8)" (blur)="setDecimales(formularioCR.get('pComision'), 2)">
+              [textMask]="obtenerMascaraImporte(8, 2)" (blur)="setDecimales(formularioCR.get('pComision'), 2)">
           </div>
           <div class="form-group has-float-label">
             <label for="idAlicuotaCR" class="tamanio-label">Alíc. IVA</label>

@@ -163,7 +163,7 @@ export class AppService {
     return true;
   }
   //Obtiene la mascara de importe
-  public mascararImporte(intLimite) {
+  public mascararImporte(intLimite, decimalLimite) {
     let mascara = {
       mask: createNumberMask({
         prefix: '$ ',
@@ -172,7 +172,7 @@ export class AppService {
         integerLimit: intLimite,
         requireDecimal: true,
         allowDecimal: true,
-        decimalLimit: 2,
+        decimalLimit: decimalLimite,
         decimalSymbol: '.',
         allowLeadingZeroes: true,
       }),
