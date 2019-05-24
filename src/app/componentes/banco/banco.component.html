@@ -36,11 +36,11 @@
           <label id="labelSitioweb" for="idSitioWeb" class="tamanio-label">Sitio Web</label>
           <input id="idSitioWeb" type="text" formControlName="sitioWeb" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
-            pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$"
-            (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', 'sitioWeb')"
+            pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org|io|site|info))*$"
+            (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org|io|site|info))*$', 'sitioWeb')"
             (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioweb')" maxlength="60">
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton && !show" class="btn btn-primary" type="button" formnovalidate
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

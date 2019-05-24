@@ -17,18 +17,18 @@
           <input id="idBanco" class="form-control form-control-sm" type="text" matInput
             [formControl]="formulario.get('banco')" [matAutocomplete]="autoBanco" autocomplete="off"
             (blur)="verificarSeleccion(formulario.get('banco'))">
-          <mat-autocomplete #autoBanco="matAutocomplete" [displayWith]="displayFa.bind(this)">
-            <mat-option *ngFor="let itemBanco of resultadosBancos" [value]="itemBanco"
-              (onSelectionChange)="listarPorBanco(itemBanco)">
+          <mat-autocomplete #autoBanco="matAutocomplete" [displayWith]="displayFa.bind(this)"
+            (optionSelected)="listarPorBanco()">
+            <mat-option *ngFor="let itemBanco of resultadosBancos" [value]="itemBanco">
               {{itemBanco.nombre}}
             </mat-option>
           </mat-autocomplete>
         </div>
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Lista de Sucursales de Banco</label>
-          <mat-select id="idAutocompletado" class="form-control form-control-sm" formControlName="autocompletado"
-            [compareWith]="compareFn">
-            <mat-option *ngFor="let item of sucursales" [value]="item" (onSelectionChange)="formulario.setValue(item)">
+          <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="autocompletado"
+            [compareWith]="compareFn" (selectionChange)="establecerFormulario()">
+            <mat-option *ngFor="let item of sucursales" [value]="item">
               {{item.nombre}} - {{item.banco.nombre}}
             </mat-option>
           </mat-select>
