@@ -11,8 +11,7 @@ export class MonedaCuentaContable {
             version: new FormControl(),
             moneda: new FormControl('', Validators.required),
             empresa: new FormControl('', Validators.required),
-            cuentaContable: new FormControl('', Validators.required),
-            usuarioAlta: new FormControl()
+            planCuenta: new FormControl('', Validators.required)
         })
     }
 }

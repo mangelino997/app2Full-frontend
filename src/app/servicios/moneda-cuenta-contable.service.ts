@@ -50,9 +50,13 @@ export class MonedaCuentaContableService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene un registros por nombre
-  public listarPorMoneda(nombre) {
-    return this.http.get(this.url + '/listarPorMoneda/'+ nombre, this.options);
+  //Obtiene registros por id de moneda
+  public listarPorMoneda(id) {
+    return this.http.get(this.url + '/listarPorMoneda/'+ id, this.options);
+  }
+  //Obtiene registros por nombre de moneda
+  public listarPorNombreMoneda(nombre) {
+    return this.http.get(this.url + '/listarPorNombreMoneda/'+ nombre, this.options);
   }
   //Obtiene por Moneda y Empresa
   public obtenerPorMonedaYEmpresa(moneda, empresa) {

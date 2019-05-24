@@ -20,7 +20,7 @@
           <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFn.bind(this)"
             (optionSelected)="cambioAutocompletado()">
             <mat-option *ngFor="let item of resultados" [value]="item">
-              {{item.nombre}}
+              {{item.moneda.nombre}} - {{item.empresa.razonSocial}}
             </mat-option>
           </mat-autocomplete>
         </div>
@@ -59,7 +59,7 @@
             <div class="form-group has-float-label">
               <label for="idCuentaContable" class="tamanio-label">Cuenta Contable *</label>
               <input id="idCuentaContable" class="form-control form-control-sm" type="text" matInput
-                formControlName="cuentaContable" [matAutocomplete]="autoCuentaContable" autocomplete="off" readonly>
+                formControlName="planCuenta" [matAutocomplete]="autoCuentaContable" autocomplete="off" readonly>
               <mat-autocomplete #autoCuentaContable="matAutocomplete" [displayWith]="displayFa.bind(this)"></mat-autocomplete>
             </div>
           </div>
@@ -95,7 +95,7 @@
         </ng-container>
         <ng-container matColumnDef="cuentaContable" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Contable</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.cuentaContable.nombre}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.planCuenta.nombre}}</td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
