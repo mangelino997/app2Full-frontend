@@ -209,7 +209,7 @@ export class PersonalComponent implements OnInit {
     //Autocompletado Obra Social - Buscar por nombre
     this.formulario.get('obraSocial').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.obraSocialServicio.listarPorNombre(data).subscribe(response => {
+        this.obraSocialServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosObrasSociales = response;
         })
       }

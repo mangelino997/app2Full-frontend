@@ -66,7 +66,7 @@ export class ObraSocialComponent implements OnInit {
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
+        this.servicio.listarPorAlias(data).subscribe(res => {
           this.resultados = res;
         })
       }
@@ -83,7 +83,7 @@ export class ObraSocialComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(60)]),
       codigoAfip: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(6)]),
       sitioWeb: new FormControl('', Validators.maxLength(60))
     });
