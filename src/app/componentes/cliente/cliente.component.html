@@ -143,53 +143,49 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCobrador" class="tamanio-label">Cobrador *</label>
-                        <input id="idCobrador" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('cobrador')" [matAutocomplete]="autoCobrador" autocomplete="off"
-                          [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('cobrador'))">
-                        <mat-autocomplete #autoCobrador="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                          <mat-option *ngFor="let itemCobrador of resultadosCobradores" [value]="itemCobrador">
+                          <mat-select id="idCobrador" class="form-control form-control-sm"
+                          [compareWith]="compareFn" formControlName="cobrador">
+                          <mat-option *ngFor="let itemCobrador of cobradores"
+                            [value]="itemCobrador">
                             {{itemCobrador.nombre}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idVendedor" class="tamanio-label">Vendedor</label>
-                        <input id="idVendedor" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('vendedor')" [matAutocomplete]="autoVendedor" autocomplete="off"
-                          [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('vendedor'))">
-                        <mat-autocomplete #autoVendedor="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                          <mat-option *ngFor="let itemVendedor of resultadosVendedores" [value]="itemVendedor">
+                        <mat-select id="idVendedor" class="form-control form-control-sm"
+                          [compareWith]="compareFn" formControlName="vendedor">
+                          <mat-option *ngFor="let itemVendedor of vendedores"
+                            [value]="itemVendedor">
                             {{itemVendedor.nombre}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idZona" class="tamanio-label">Zona *</label>
-                        <input id="idZona" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('zona')" [matAutocomplete]="autoZona" autocomplete="off"
-                          [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('zona'))">
-                        <mat-autocomplete #autoZona="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                          <mat-option *ngFor="let itemZona of resultadosZonas" [value]="itemZona">
+                        <mat-select id="idZona" class="form-control form-control-sm"
+                          [compareWith]="compareFn" formControlName="zona">
+                          <mat-option *ngFor="let itemZona of zonas"
+                            [value]="itemZona">
                             {{itemZona.nombre}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idRubro" class="tamanio-label">Rubro *</label>
-                        <input id="idRubro" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('rubro')" [matAutocomplete]="autoRubro" autocomplete="off"
-                          [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('rubro'))">
-                        <mat-autocomplete #autoRubro="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                          <mat-option *ngFor="let itemRubro of resultadosRubros" [value]="itemRubro">
+                        <mat-select id="idRubro" class="form-control form-control-sm"
+                          [compareWith]="compareFn" formControlName="rubro">
+                          <mat-option *ngFor="let itemRubro of rubros"
+                            [value]="itemRubro">
                             {{itemRubro.nombre}}
                           </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                       </div>
                     </div>
                   </div>
@@ -299,18 +295,6 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
-                        <label for="idSucursalLugarPago" class="tamanio-label">Sucursal Lugar de Pago</label>
-                        <mat-select id="idSucursalLugarPago" class="form-control form-control-sm"
-                          formControlName="sucursalLugarPago" [compareWith]="compareFn">
-                          <mat-option *ngFor="let itemSucursalLugarPago of resultadosSucursalesPago"
-                            [value]="itemSucursalLugarPago">
-                            {{itemSucursalLugarPago.nombre}}, {{itemSucursalLugarPago.localidad.nombre}}
-                          </mat-option>
-                        </mat-select>
-                      </div>
-                    </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idDescuentoFlete" class="tamanio-label">Descuento en Flete</label>

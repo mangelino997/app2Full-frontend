@@ -90,7 +90,9 @@ export class CobradorComponent implements OnInit {
       fechaAlta: new FormControl(),
       fechaBaja: new FormControl(),
       estaActivo: new FormControl('', Validators.required),
-      usuarioAlta: new FormControl()
+      usuarioAlta: new FormControl(),
+      porDefectoClienteEventual: new FormControl(),
+      correoElectronico: new FormControl('', [Validators.required, Validators.maxLength(60)])
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);

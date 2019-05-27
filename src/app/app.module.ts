@@ -192,6 +192,7 @@ import { Categoria } from './modelos/categoria';
 import { TipoFamiliar } from './modelos/tipo-familiar';
 import { PersonalFamiliar } from './modelos/personal-familiar';
 import { Usuario } from './modelos/usuario';
+import { ViajeTipo } from './modelos/viajeTipo';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -308,6 +309,7 @@ import { SoporteComponent } from './componentes/soporte/soporte.component';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
 import { ContraseniaComponent } from './componentes/contrasenia/contrasenia.component';
 import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
+import { ViajeTipoComponent } from './componentes/viaje-tipo/viaje-tipo.component';
 import { CostosInsumosProductoComponent } from './componentes/costos-insumos-producto/costos-insumos-producto.component';
 import { CostoInsumoProducto } from './modelos/costoInsumoProducto';
 
@@ -418,8 +420,8 @@ const appRoutes: Routes = [
   { path: 'configuraciontiposdefamiliares', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
   { path: 'legajosfamiliares', component: PersonalFamiliarComponent, canActivate: [GuardiaService] },
   { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] },
-  { path: 'contablecostosinsumosproductos', component: CostosInsumosProductoComponent, canActivate: [GuardiaService] }
-
+  { path: 'contablecostosinsumosproductos', component: CostosInsumosProductoComponent, canActivate: [GuardiaService] },
+  { path: 'configuracionviajetipo', component: ViajeTipoComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
@@ -565,7 +567,8 @@ const stompConfig: StompConfig = {
     TipoFamiliarComponent,
     PersonalFamiliarComponent,
     ContraseniaComponent,
-    CostosInsumosProductoComponent
+    CostosInsumosProductoComponent,
+    ViajeTipoComponent
   ],
   imports: [
     BrowserModule,
@@ -795,6 +798,7 @@ const stompConfig: StompConfig = {
     PersonalFamiliarService,
     PersonalFamiliar,
     CostoInsumoProducto,
+    ViajeTipo,
     {
       provide: StompConfig,
       useValue: stompConfig

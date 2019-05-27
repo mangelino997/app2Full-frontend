@@ -1,8 +1,8 @@
-<div id="obrasocial" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+<div id="viajetipo" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
-        <a mat-tab-link disabled>OBRA SOCIAL</a>
+        <a mat-tab-link disabled>COSTO TIPO VIAJE </a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
           (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
@@ -10,12 +10,12 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-4 text-center">
-      <h5>{{pestaniaActual}} Obra Social</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
               {{item.nombre}}
@@ -24,26 +24,33 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Código</label>
-          <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm" readonly>
+          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
         </div>
         <div class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
-            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="60">
+            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="45">
         </div>
         <div class="form-group has-float-label">
-          <label for="idCodigoAfip" class="tamanio-label">Código Afip *</label>
-          <input id="idCodigoAfip" type="number" formControlName="codigoAfip" autocomplete="off"
-            class="form-control form-control-sm" [readonly]="soloLectura" maxlength="6">
-        </div>
-        <div class="form-group has-float-label">
-          <label id="labelSitioweb" for="idSitioWeb" class="tamanio-label">Sitio Web</label>
-          <input id="idSitioWeb" type="text" formControlName="sitioWeb" autocomplete="off"
+          <label id="labelAbreviatura" for="idAbreviatura" class="tamanio-label">Abreviatura *</label>
+          <input id="idAbreviatura" type="text" formControlName="abreviatura" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
-            (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioweb')" maxlength="60">
-            <!-- pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$"
-            (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org))*$', 'sitioWeb')" -->
+            (ngModelChange)="cambioCampo('idAbreviatura', 'labelAbreviatura')" maxlength="10">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCostoPorKmPropio" class="tamanio-label">Costo por Km Vehículos Propios</label>
+          <input id="idCostoPorKmPropio" [textMask]="mascararImporte(8,3)" type="text"
+            formControlName="costoPorKmPropio" autocomplete="off" class="form-control form-control-sm number-right"
+            [readonly]="soloLectura" (blur)="establecerDecimales(formulario.get('costoPorKmPropio'), 3)"
+            placeholder="0.000">
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCostoPorKmTercero" class="tamanio-label">Costo por Km Vehículos Terceros</label>
+          <input id="idCostoPorKmTercero" [textMask]="mascararImporte(8,3)" type="text"
+            formControlName="costoPorKmTercero" autocomplete="off" class="form-control form-control-sm number-right"
+            [readonly]="soloLectura" (blur)="establecerDecimales(formulario.get('costoPorKmTercero'), 3)"
+            placeholder="0.000">
         </div>
         <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
@@ -58,13 +65,13 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="row" *ngIf="show">
-      <div class="col text-center">
-        <app-progreso></app-progreso>
+    <div class="col-md-9">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
       </div>
-    </div>
-    <br>
-    <div class="col-md-8">
+      <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="id" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
@@ -74,18 +81,22 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="codigoAfip" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Código Afip</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.codigoAfip}}</td>
+        <ng-container matColumnDef="abreviatura" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Abreviatura</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.abreviatura}}</td>
         </ng-container>
-        <ng-container matColumnDef="sitioWeb" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sitio Web</th>
-          <td mat-cell *matCellDef="let elemento"><a href="https://{{elemento.sitioWeb}}" target="_blank">{{elemento.sitioWeb}}</a></td>
+        <ng-container matColumnDef="costoPorKmPropio" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Costo por Km Vehículos Propios</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.costoPorKmPropio}}</td>
+        </ng-container>
+        <ng-container matColumnDef="costoPorKmTercero" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Costo por Km Vehículos Terceros</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.costoPorKmTercero}}</td>
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
           <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-              class="cursor-color">ver</span></td>
+          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)" class="centrar"><span
+              class="cursor-color">ver </span></td>
         </ng-container>
         <ng-container matColumnDef="mod" sticky>
           <th mat-header-cell *matHeaderCellDef>-</th>
