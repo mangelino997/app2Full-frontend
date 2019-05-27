@@ -308,6 +308,8 @@ import { SoporteComponent } from './componentes/soporte/soporte.component';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
 import { ContraseniaComponent } from './componentes/contrasenia/contrasenia.component';
 import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
+import { CostosInsumosProductoComponent } from './componentes/costos-insumos-producto/costos-insumos-producto.component';
+import { CostoInsumoProducto } from './modelos/costoInsumoProducto';
 
 //Rutas
 const appRoutes: Routes = [
@@ -415,11 +417,13 @@ const appRoutes: Routes = [
   { path: 'soporte', component: SoporteComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdefamiliares', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
   { path: 'legajosfamiliares', component: PersonalFamiliarComponent, canActivate: [GuardiaService] },
-  { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] }
+  { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] },
+  { path: 'contablecostosinsumosproductos', component: CostosInsumosProductoComponent, canActivate: [GuardiaService] }
+
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://192.168.0.123:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -560,7 +564,8 @@ const stompConfig: StompConfig = {
     SoporteComponent,
     TipoFamiliarComponent,
     PersonalFamiliarComponent,
-    ContraseniaComponent
+    ContraseniaComponent,
+    CostosInsumosProductoComponent
   ],
   imports: [
     BrowserModule,
@@ -789,6 +794,7 @@ const stompConfig: StompConfig = {
     LoaderService,
     PersonalFamiliarService,
     PersonalFamiliar,
+    CostoInsumoProducto,
     {
       provide: StompConfig,
       useValue: stompConfig

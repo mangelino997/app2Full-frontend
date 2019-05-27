@@ -14,7 +14,7 @@
             <form [formGroup]="formulario" class="contenedor">
                 <div class="contenedor-top-titulo">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
                                 <label for="idAutocompletado" class="tamanio-label">Buscar Familiar Personal</label>
                                 <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
@@ -35,9 +35,8 @@
                                 <input id="idPersonal" class="form-control form-control-sm color-busqueda"
                                     type="text" matInput [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal"
                                     autocomplete="off" (blur)="verificarSeleccion(formulario.get('personal'))">
-                                <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
-                                    (optionSelected)="listarPorPersonal()">
-                                    <mat-option *ngFor="let item of resultados" [value]="item">
+                                <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)" > <!--(optionSelected)="listarPorPersonal()"-->
+                                    <mat-option *ngFor="let item of resultadosPersonal" [value]="item">
                                         {{item.alias}}
                                     </mat-option>
                                 </mat-autocomplete>
@@ -239,4 +238,60 @@
             </form>
         </div>
     </div>
+    <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+    <div class="col-md-12">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
+      </div>
+      <br>
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="legajo" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Legajo-Personal</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+        </ng-container>
+        <ng-container matColumnDef="familiar" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Familiar</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.tipoFamiliar.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="apellido" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Apellido</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.apellido}}</td>
+        </ng-container>
+        <ng-container matColumnDef="nombre" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="fechaNacimiento" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Nacimiento</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.fechaNacimiento}}</td>
+        </ng-container>
+        <ng-container matColumnDef="lugarNacimiento" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Lugar de Nacimiento</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.localidadNacimiento.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="nacionalidad" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nacionalidad</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.localidadNacimiento.provincia.pais.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="sexo" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sexo</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.sexo.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="ver" sticky>
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+              class="cursor-color">ver</span></td>
+        </ng-container>
+        <ng-container matColumnDef="mod" sticky>
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+              class="cursor-color">editar</span></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+    </div>
+  </div>
 </div>

@@ -66,10 +66,12 @@ export class PersonalFamiliarComponent implements OnInit {
   public autocompletadopersonal: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
+  //Define la lista de resultados de busqueda para el campo Personal
+  public resultadosPersonal: Array<any> = [];
   //Define la lista de resultados de busqueda de localidades
   public resultadosLocalidades: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id','familiar', 'apellido', 'nombre', 'fechaNacimiento', 'lugarNacimiento', 'nacionalidad', 'ver', 'mod'];
+  public columnas: string[] = ['legajo','familiar', 'apellido', 'nombre', 'fechaNacimiento', 'lugarNacimiento', 'nacionalidad', 'sexo', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la lista de personales
@@ -102,23 +104,11 @@ export class PersonalFamiliarComponent implements OnInit {
           console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = new MatTableDataSource(res);
-    //   this.listaCompleta.sort = this.sort;
-    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
-      }
-    })
-    //Autocompletado - Buscar personal por alias
-    this.autocompletadopersonal.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarPorAlias(data).subscribe(response => {
+          console.log(response);
           this.resultados = response;
         })
       }
@@ -141,7 +131,7 @@ export class PersonalFamiliarComponent implements OnInit {
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(15, 0);
     //Obtiene la lista completa de registros
-    //this.listar();
+    this.listar();
     //Obtiene la lista de sexos
     this.listarSexos();
     //Obtiene la lista de tipos de documentos
@@ -152,6 +142,15 @@ export class PersonalFamiliarComponent implements OnInit {
     this.listarAnios();
     //Obtiene la lista de tipos de familiares
     this.listarTiposFamiliares();
+    //Autocompletado - Buscar personal por alias
+    this.formulario.get('personal').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.personalServicio.listarPorAlias(data).subscribe(response => {
+          console.log(response);
+          this.resultadosPersonal = response;
+        })
+      }
+    })
   }
   //Obtiene el listado de tipos de familiares
   private listarTiposFamiliares() {
@@ -211,15 +210,30 @@ export class PersonalFamiliarComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado, opcionPestania) {
     if (estado) {
+      this.formulario.get('personal').enable();
+      this.formulario.get('tipoFamiliar').enable();
+      // this.formulario.get('fechaNacimiento').enable();
+      this.formulario.get('localidadNacimiento').enable();
       this.formulario.get('sexo').enable();
       this.formulario.get('tipoDocumento').enable();
+      // this.formulario.get('numeroDocumento').enable();
+      this.formulario.get('mesBajaImpGan').enable();
+      this.formulario.get('mesAltaImpGan').enable();
+      this.formulario.get('anioBajaImpGan').enable();
+      this.formulario.get('anioAltaImpGan').enable();
     } else {
+      this.formulario.get('personal').disable();
+      this.formulario.get('tipoFamiliar').disable();
+      // this.formulario.get('fechaNacimiento').disable();
+      this.formulario.get('localidadNacimiento').disable();
       this.formulario.get('sexo').disable();
       this.formulario.get('tipoDocumento').disable();
-      this.formulario.get('mes').disable();
-      this.formulario.get('anio').disable();
-      this.formulario.get('mesBaja').disable();
-      this.formulario.get('anioBaja').disable();
+      // this.formulario.get('numeroDocumento').disable();
+      this.formulario.get('mesBajaImpGan').disable();
+      this.formulario.get('mesAltaImpGan').disable();
+      this.formulario.get('anioBajaImpGan').disable();
+      this.formulario.get('anioAltaImpGan').disable();
+
     }
   }
   //Obtiene la mascara de enteros
@@ -238,16 +252,6 @@ export class PersonalFamiliarComponent implements OnInit {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
-    if(soloLectura) {
-        this.formulario.get('personal').disable();
-        this.formulario.get('sexo').disable();
-        this.formulario.get('tipoDocumento').disable();
-    } else {
-        this.formulario.get('personal').enable();
-        this.formulario.get('sexo').enable();
-        this.formulario.get('tipoDocumento').enable();
-
-    }
     this.mostrarBoton = boton;
     this.vaciarListas();
     setTimeout(function () {
@@ -259,6 +263,7 @@ export class PersonalFamiliarComponent implements OnInit {
     this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.listar();
     if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
@@ -267,7 +272,7 @@ export class PersonalFamiliarComponent implements OnInit {
       case 1:
         this.obtenerSiguienteId();
         this.establecerEstadoCampos(true, 1);
-        this.establecerValoresPestania(nombre, false, false, true, 'idApellido');
+        this.establecerValoresPestania(nombre, false, false, true, 'idPersonal');
         break;
       case 2:
         this.establecerEstadoCampos(false, 2);
@@ -275,11 +280,11 @@ export class PersonalFamiliarComponent implements OnInit {
         break;
       case 3:
         this.establecerEstadoCampos(true, 3);
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 4:
         this.establecerEstadoCampos(false, 4);
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 5:
         this.listar();
@@ -295,7 +300,7 @@ export class PersonalFamiliarComponent implements OnInit {
     switch (opcion) {
       case 15:
         setTimeout(function () {
-          document.getElementById('idApellido').focus();
+          document.getElementById('idPersonal').focus();
         }, 20);
         break;
       case 17:
@@ -322,17 +327,16 @@ export class PersonalFamiliarComponent implements OnInit {
     }
   }
   //Obtiene la lista de contactos de un cliente
-  public listarPorPersonal() {
-    let elemento = this.formulario.get('cliente').value;
-    this.servicio.listarPorPersonal(elemento.id).subscribe(res => {
-      if(this.indiceSeleccionado == 5) {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-      } else {
-        this.personales = res.json();
-      }
-    })
-  }
+  // public listarPorPersonal() {
+  //   this.servicio.listarPorPersonal(elemento.id).subscribe(res => {
+  //     if(this.indiceSeleccionado == 5) {
+  //       this.listaCompleta = new MatTableDataSource(res.json());
+  //       this.listaCompleta.sort = this.sort;
+  //     } else {
+  //       this.personales = res.json();
+  //     }
+  //   })
+  // }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
@@ -361,24 +365,25 @@ export class PersonalFamiliarComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    // this.formulario.get('mesAltaImpGan').setValue(this.formulario.value.mesAltaImpGan.numero);
+    // this.formulario.get('mesBajaImpGan').setValue(this.formulario.value.mesBajaImpGan.numero);
     this.loaderService.show();
-    this.formulario.get('id').setValue(null);
+    // this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if (respuesta.codigo == 201) {
-          this.reestablecerFormulario(respuesta.id);
-          this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
-          setTimeout(function () {
-            document.getElementById('idApellido').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-        }
+        this.reestablecerFormulario(respuesta.id);
+        this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
+        setTimeout(function () {
+          document.getElementById('idApellido').focus();
+        }, 20);
+        this.toastr.success(respuesta.mensaje);  
         this.loaderService.hide();
       },
       err => {
-        this.lanzarError(err.json());
-        this.loaderService.hide();
+        let error= err;
+        document.getElementById("idApellido").focus();
+        this.toastr.error(error.mensaje);
       }
     );
   }
@@ -398,8 +403,9 @@ export class PersonalFamiliarComponent implements OnInit {
         }
       },
       err => {
-        this.lanzarError(err.json());
-        this.loaderService.hide();
+        let error= err;
+        document.getElementById("idApellido").focus();
+        this.toastr.error(error.mensaje);
       }
     );
   }
@@ -422,15 +428,22 @@ export class PersonalFamiliarComponent implements OnInit {
     this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarErrorDocumento(err) {
+    this.formulario.get('numeroDocumento').setValue(null);
+    document.getElementById("labelNumeroDocumento").classList.add('label-error');
+    document.getElementById("idNumeroDocumento").classList.add('is-invalid');
+    document.getElementById("idNumeroDocumento").focus();
+    var respuesta = err;
+    this.toastr.error(respuesta.mensaje);
+
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err;
-    try {
-      if (respuesta.codigo == 11012) {
-        document.getElementById("labelCuil").classList.add('label-error');
-        document.getElementById("idCuil").classList.add('is-invalid');
-        document.getElementById("idCuil").focus();
-      } 
-    } catch(e) {}
+    this.formulario.get('cuil').setValue(null);
+    document.getElementById("labelCuil").classList.add('label-error');
+    document.getElementById("idCuil").classList.add('is-invalid');
+    document.getElementById("idCuil").focus();
     this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels
@@ -448,21 +461,21 @@ export class PersonalFamiliarComponent implements OnInit {
           let respuesta = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta) {
             let err = { codigo: 11007, mensaje: 'CUIT Incorrecto!' };
-            this.lanzarError(err);
+            this.lanzarErrorDocumento(err);
           }
           break;
         case 2:
           let respuesta2 = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta2) {
             let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
-            this.lanzarError(err);
+            this.lanzarErrorDocumento(err);
           }
           break;
         case 8:
           let respuesta8 = this.appServicio.validarDNI(documento.toString());
           if (!respuesta8) {
             let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
-            this.lanzarError(err);
+            this.lanzarErrorDocumento(err);
           }
           break;
       }
