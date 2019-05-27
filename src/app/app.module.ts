@@ -192,6 +192,7 @@ import { Categoria } from './modelos/categoria';
 import { TipoFamiliar } from './modelos/tipo-familiar';
 import { PersonalFamiliar } from './modelos/personal-familiar';
 import { Usuario } from './modelos/usuario';
+import { ViajeTipo } from './modelos/viajeTipo';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -308,6 +309,7 @@ import { SoporteComponent } from './componentes/soporte/soporte.component';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
 import { ContraseniaComponent } from './componentes/contrasenia/contrasenia.component';
 import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
+import { ViajeTipoComponent } from './componentes/viaje-tipo/viaje-tipo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -415,7 +417,8 @@ const appRoutes: Routes = [
   { path: 'soporte', component: SoporteComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdefamiliares', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
   { path: 'legajosfamiliares', component: PersonalFamiliarComponent, canActivate: [GuardiaService] },
-  { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] }
+  { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] },
+  { path: 'configuracionviajetipo', component: ViajeTipoComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
@@ -560,7 +563,8 @@ const stompConfig: StompConfig = {
     SoporteComponent,
     TipoFamiliarComponent,
     PersonalFamiliarComponent,
-    ContraseniaComponent
+    ContraseniaComponent,
+    ViajeTipoComponent
   ],
   imports: [
     BrowserModule,
@@ -789,6 +793,7 @@ const stompConfig: StompConfig = {
     LoaderService,
     PersonalFamiliarService,
     PersonalFamiliar,
+    ViajeTipo,
     {
       provide: StompConfig,
       useValue: stompConfig
