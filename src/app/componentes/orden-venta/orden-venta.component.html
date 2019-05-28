@@ -162,7 +162,7 @@
         <div *ngIf="formulario.get('tipoTarifa').value ? formulario.get('tipoTarifa').value.porEscala : true">
           <form [formGroup]="formularioEscala">
             <div class="row">
-              <div class="col-md-2">
+              <div class="col-md-1">
                 <div class="form-group has-float-label">
                   <label for="idEscala" class="tamanio-label">Escala *</label>
                   <mat-select id="idEscala" class="form-control form-control-sm" formControlName="escalaTarifa"
@@ -293,41 +293,53 @@
                 <label for="idKmTramo" class="tamanio-label">Km *</label>
                 <input id="idKmTramo" class="form-control form-control-sm margin-left-5 number-right" type="text"
                   [formControl]="formularioTramo.get('kmTramo')" autocomplete="off" readonly
-                  [textMask]="obtenerMascaraKm(5)" placeholder="0 km" style="width: 70px;">
+                  [textMask]="obtenerMascaraKm(5)" placeholder="0 km" style="width: 75px;">
               </div>
               <div class="form-group has-float-label">
                 <label for="idKmPactado" class="tamanio-label">Km Pactado</label>
                 <input id="idKmPactado" class="form-control form-control-sm margin-left-5 number-right"
                   formControlName="kmPactado" type="text" autocomplete="off" [textMask]="obtenerMascaraKm(5)"
-                  placeholder="0 km" style="width: 106px;" (blur)="establecerKm(formularioTramo.get('kmPactado'), 0)">
+                  placeholder="0 km" style="width: 100px;" (blur)="establecerKm(formularioTramo.get('kmPactado'), 0)">
               </div>
               <div class="form-group has-float-label">
-                <label for="idImporteFijoSeco" class="tamanio-label">Imp. Fijo Seco <span
-                    *ngIf="!(formularioTramo.get('precioUnitarioSeco').value) && !tipoTarifaEstado">*</span></label>
+                <label for="idImporteSecoPor" class="tamanio-label">Imp. Seco por: *</label>
+                <mat-select id="idImporteSecoPor" class="form-control form-control-sm" [formControl]="importeSecoPor"
+                  [compareWith]="compareFn" (selectionChange)="cambioImportesSecoPor()" style="width: 150px;">
+                  <mat-option [value]="false">Imp. Fijo Seco</mat-option>
+                  <mat-option [value]="true">Precio Un. Seco</mat-option>
+                </mat-select>
+              </div>
+              <div class="form-group has-float-label">
+                <label for="idImporteRefPor" class="tamanio-label">Imp. Ref. por: *</label>
+                <mat-select id="idImporteRefPor" class="form-control form-control-sm" [formControl]="importeRefPor"
+                  [compareWith]="compareFn" (selectionChange)="cambioImportesRefPor()" style="width: 150px;">
+                  <mat-option [value]="false">Imp. Fijo Ref.</mat-option>
+                  <mat-option [value]="true">Precio Un. Ref.</mat-option>
+                </mat-select>
+              </div>
+              <div class="form-group has-float-label" *ngIf="!importeSecoPor.value">
+                <label for="idImporteFijoSeco" class="tamanio-label">Imp. Fijo Seco <span *ngIf="importeSecoPor">*</span></label>
                 <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoSeco"
                   (blur)="controlPreciosTramo(1)" type="text" autocomplete="off" placeholder="$ 0.00"
                   style="width: 130px;">
               </div>
-              <div class="form-group has-float-label">
-                <label for="idPrecioUnitarioSeco" class="tamanio-label">Precio Un. Seco <span
-                    *ngIf="!(formularioTramo.get('importeFijoSeco').value) && !tipoTarifaEstado">*</span></label>
+              <div class="form-group has-float-label" *ngIf="importeSecoPor.value">
+                <label for="idPrecioUnitarioSeco" class="tamanio-label">Precio Un. Seco <span *ngIf="!importeSecoPor">*</span></label>
                 <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right" type="text" autocomplete="off"
                   formControlName="precioUnitarioSeco" (blur)="controlPreciosTramo(2)" placeholder="$ 0.00"
                   style="width: 142px;">
               </div>
-              <div class="form-group has-float-label">
-                <label for="idImporteFijoRef" class="tamanio-label">Imp. Fijo Ref. <span
-                    *ngIf="!(formularioTramo.get('precioUnitarioRef').value) && !tipoTarifaEstado">*</span></label>
+              <div class="form-group has-float-label" *ngIf="!importeRefPor.value">
+                <label for="idImporteFijoRef" class="tamanio-label">Imp. Fijo Ref. <span *ngIf="importeRefPor">*</span></label>
                 <input id="idImporteFijoRef" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoRef"
                   (blur)="controlPreciosTramoRef(1)" type="text" autocomplete="off" placeholder="$ 0.00"
                   style="width: 124px;">
               </div>
-              <div class="form-group has-float-label">
-                <label for="idPrecioUnitarioRef" class="tamanio-label">Precio Un. Ref. <span
-                    *ngIf="!(formularioTramo.get('importeFijoRef').value) && !tipoTarifaEstado">*</span></label>
+              <div class="form-group has-float-label" *ngIf="importeRefPor.value">
+                <label for="idPrecioUnitarioRef" class="tamanio-label">Precio Un. Ref. <span *ngIf="!importeRefPor">*</span></label>
                 <input id="idPrecioUnitarioRef" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right" type="text" autocomplete="off"
                   (blur)="controlPreciosTramoRef(2)" formControlName="precioUnitarioRef" placeholder="$ 0.00"
