@@ -192,6 +192,7 @@ import { Categoria } from './modelos/categoria';
 import { TipoFamiliar } from './modelos/tipo-familiar';
 import { PersonalFamiliar } from './modelos/personal-familiar';
 import { Usuario } from './modelos/usuario';
+import { ViajeTipo } from './modelos/viajeTipo';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -206,7 +207,7 @@ import { AreaComponent } from './componentes/area/area.component';
 import { BancoComponent } from './componentes/banco/banco.component'; //Probado
 import { BarrioComponent } from './componentes/barrio/barrio.component'; //Probado
 import { CategoriaComponent } from './componentes/categoria/categoria.component'; //Probado
-import { CobradorComponent } from './componentes/cobrador/cobrador.component'; //Probado
+import { CobradorComponent, CambiarCobradorPrincipalDialogo } from './componentes/cobrador/cobrador.component'; //Probado
 import { CompaniaSeguroComponent } from './componentes/compania-seguro/compania-seguro.component'; //Probado
 import { MarcaProductoComponent } from './componentes/marca-producto/marca-producto.component'; //Probado
 import { MarcaVehiculoComponent } from './componentes/marca-vehiculo/marca-vehiculo.component'; //Probado
@@ -308,6 +309,14 @@ import { SoporteComponent } from './componentes/soporte/soporte.component';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
 import { ContraseniaComponent } from './componentes/contrasenia/contrasenia.component';
 import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
+import { ViajeTipoComponent } from './componentes/viaje-tipo/viaje-tipo.component';
+import { CostosInsumosProductoComponent } from './componentes/costos-insumos-producto/costos-insumos-producto.component';
+import { CostoInsumoProducto } from './modelos/costoInsumoProducto';
+import { Cobrador } from './modelos/cobrador';
+import { VencimientosChoferesComponent } from './componentes/vencimientos-choferes/vencimientos-choferes.component';
+import { CuentaBancariaComponent } from './componentes/cuenta-bancaria/cuenta-bancaria.component';
+import { CuentaBancaria } from './modelos/cuentaBancaria';
+import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -415,11 +424,17 @@ const appRoutes: Routes = [
   { path: 'soporte', component: SoporteComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdefamiliares', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
   { path: 'legajosfamiliares', component: PersonalFamiliarComponent, canActivate: [GuardiaService] },
-  { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] }
+  { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] },
+  { path: 'contablecostosinsumosproductos', component: CostosInsumosProductoComponent, canActivate: [GuardiaService] },
+  { path: 'configuracionviajetipo', component: ViajeTipoComponent, canActivate: [GuardiaService] },
+  { path: 'legajosvencimientoschoferes', component: VencimientosChoferesComponent, canActivate: [GuardiaService] },
+  { path: 'cuentasbancariascuentas', component: CuentaBancariaComponent, canActivate: [GuardiaService] }
+
+  
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://gestionws.appspot.com:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://localhost:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -537,6 +552,7 @@ const stompConfig: StompConfig = {
     ViajeRemitoGSComponent,
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,
+    CambiarCobradorPrincipalDialogo,
     ListaPreciosDialogo,
     ConfimarDialogo,
     ViajeDialogo,
@@ -560,7 +576,11 @@ const stompConfig: StompConfig = {
     SoporteComponent,
     TipoFamiliarComponent,
     PersonalFamiliarComponent,
-    ContraseniaComponent
+    ContraseniaComponent,
+    CostosInsumosProductoComponent,
+    ViajeTipoComponent,
+    VencimientosChoferesComponent,
+    CuentaBancariaComponent
   ],
   imports: [
     BrowserModule,
@@ -789,6 +809,11 @@ const stompConfig: StompConfig = {
     LoaderService,
     PersonalFamiliarService,
     PersonalFamiliar,
+    CostoInsumoProducto,
+    ViajeTipo,
+    Cobrador,
+    CuentaBancaria,
+    CuentaBancariaService,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -808,6 +833,7 @@ const stompConfig: StompConfig = {
     ObservacionesDialogo,
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,
+    CambiarCobradorPrincipalDialogo,
     ListaPreciosDialogo,
     ConfimarDialogo,
     ViajeDialogo,

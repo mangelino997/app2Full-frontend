@@ -75,13 +75,13 @@ export class ClienteComponent implements OnInit {
   //Define la lista de resultados de busqueda de barrio
   public resultadosLocalidades:Array<any> = [];
   //Define la lista de resultados de busqueda de cobrador
-  public resultadosCobradores:Array<any> = [];
+  public cobradores:Array<any> = [];
   //Define la lista de resultados de busqueda de vendedor
-  public resultadosVendedores:Array<any> = [];
+  public vendedores:Array<any> = [];
   //Define la lista de resultados de busqueda de zona
-  public resultadosZonas:Array<any> = [];
+  public zonas:Array<any> = [];
   //Define la lista de resultados de busqueda de rubro
-  public resultadosRubros:Array<any> = [];
+  public rubros:Array<any> = [];
   //Define la lista de resultados de busqueda de orden venta
   public resultadosOrdenesVentas:Array<any> = [];
   //Define la lista de resultados de busqueda de cuenta principal
@@ -177,38 +177,6 @@ export class ClienteComponent implements OnInit {
         })
       }
     })
-    //Autocompletado Cobrador - Buscar por nombre
-    this.formulario.get('cobrador').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.cobradorServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosCobradores = response;
-        })
-      }
-    })
-    //Autocompletado Vendedor - Buscar por nombre
-    this.formulario.get('vendedor').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.vendedorServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosVendedores = response;
-        })
-      }
-    })
-    //Autocompletado Zona - Buscar por nombre
-    this.formulario.get('zona').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.zonaServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosZonas = response;
-        })
-      }
-    })
-    //Autocompletado Rubro - Buscar por nombre
-    this.formulario.get('rubro').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.rubroServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosRubros = response;
-        })
-      }
-    })
     //Autocompletado Orden Venta - Buscar por nombre
     this.formulario.get('ordenVenta').valueChanges.subscribe(data => {
       if(typeof data == 'string'&& data.length>2) {
@@ -249,6 +217,78 @@ export class ClienteComponent implements OnInit {
     this.listarSucursales();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
+    //Obtiene la lista de cobradores
+    this.listarCobradores();
+    //Obtiene la lista de vendedores
+    this.listarVendedores();
+    //Obtiene la lista de zonas
+    this.listarZonas();
+    //Obtiene la lista de rubros
+    this.listarRubros();
+  }
+  //Obtiene el listado de cobradores
+  private listarCobradores() {
+    this.cobradorServicio.listar().subscribe(
+      res => {
+        this.cobradores = res.json();
+        this.establecerCobrador();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Establece cobrador por defecto
+  private establecerCobrador(): void {
+    this.formulario.get('cobrador').setValue(this.cobradores[0]);
+  }
+  //Obtiene el listado de vendedores
+  private listarVendedores() {
+    this.vendedorServicio.listar().subscribe(
+      res => {
+        this.vendedores = res.json();
+        this.establecerVendedor();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Establece vendedor por defecto
+  private establecerVendedor(): void {
+    this.formulario.get('vendedor').setValue(this.vendedores[0]);
+  }
+  //Obtiene el listado de Zonas
+  private listarZonas() {
+    this.zonaServicio.listar().subscribe(
+      res => {
+        this.zonas = res.json();
+        this.establecerZona();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Establece zona por defecto
+  private establecerZona(): void {
+    this.formulario.get('zona').setValue(this.zonas[0]);
+  }
+  //Obtiene el listado de Rubros
+  private listarRubros() {
+    this.rubroServicio.listar().subscribe(
+      res => {
+        this.rubros = res.json();
+        this.establecerRubro();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Establece rubro por defecto
+  private establecerRubro(): void {
+    this.formulario.get('rubro').setValue(this.rubros[0]);
   }
   //Establece el formulario
   public establecerFormulario(): void {
@@ -272,10 +312,6 @@ export class ClienteComponent implements OnInit {
     this.resultados = [];
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
-    this.resultadosCobradores = [];
-    this.resultadosVendedores = [];
-    this.resultadosZonas = [];
-    this.resultadosRubros = [];
     this.resultadosOrdenesVentas = [];
     this.resultadosCuentasGrupos = [];
     this.resultadosCompaniasSeguros = [];
@@ -373,6 +409,10 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('resumenCliente').enable();
       this.formulario.get('situacionCliente').enable();
       this.formulario.get('esSeguroPropio').enable();
+      this.formulario.get('cobrador').enable();
+      this.formulario.get('vendedor').enable();
+      this.formulario.get('zona').enable();
+      this.formulario.get('rubro').enable();
       this.formulario.get('imprimirControlDeuda').enable();
     } else {
       this.formulario.get('sucursalLugarPago').disable();
@@ -382,6 +422,10 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('resumenCliente').disable();
       this.formulario.get('situacionCliente').disable();
       this.formulario.get('esSeguroPropio').disable();
+      this.formulario.get('cobrador').disable();
+      this.formulario.get('vendedor').disable();
+      this.formulario.get('zona').disable();
+      this.formulario.get('rubro').disable();
       this.formulario.get('imprimirControlDeuda').disable();
     }
   }

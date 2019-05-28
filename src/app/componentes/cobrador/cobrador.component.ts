@@ -1,14 +1,15 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { CobradorService } from '../../servicios/cobrador.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSort, MatTableDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { Cobrador } from 'src/app/modelos/cobrador';
 
 @Component({
   selector: 'app-cobrador',
@@ -45,12 +46,13 @@ export class CobradorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'estaHabilitada', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'nombre', 'estaHabilitada', 'correoElectronico', 'porDefectoEnClienteEventual', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: CobradorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService) {
+    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private cobrador: Cobrador,
+    public dialog: MatDialog) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -83,15 +85,7 @@ export class CobradorComponent implements OnInit {
         this.show = state.show;
       });
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      fechaAlta: new FormControl(),
-      fechaBaja: new FormControl(),
-      estaActivo: new FormControl('', Validators.required),
-      usuarioAlta: new FormControl()
-    });
+    this.formulario = this.cobrador.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
@@ -153,10 +147,10 @@ export class CobradorComponent implements OnInit {
   public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar();
+        this.verificarPrincipal(1); //agregar
         break;
       case 3:
-        this.actualizar();
+        this.verificarPrincipal(3); //actualizar
         break;
       case 4:
         this.eliminar();
@@ -164,6 +158,44 @@ export class CobradorComponent implements OnInit {
       default:
         break;
     }
+  }
+  //Agrega un registro
+  private verificarPrincipal(opcion) {
+    if (this.formulario.get('porDefectoClienteEventual').value == "true") {
+      this.servicio.obtenerPorDefecto().subscribe(
+        res => {
+          var respuesta = res.json();
+          //open modal reemplazar moneda
+          this.cambiarPrincipal(respuesta, this.formulario.value, opcion);
+        }
+      );
+    }
+    else {
+      this.formulario.get('id').setValue(null);
+      this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
+      if(opcion==1)
+        this.agregar(this.formulario.value);
+      if(opcion==3)
+      this.actualizar(this.formulario.value);
+    }
+  }
+  //Abre ventana Dialog nueva Moneda Principal
+  public cambiarPrincipal(cobradorPrincipal, cobradorAgregar, opcion): void {
+    const dialogRef = this.dialog.open(CambiarCobradorPrincipalDialogo, {
+      width: '750px',
+      data: { cobradorPrincipal: cobradorPrincipal, cobradorAgregar: cobradorAgregar },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.formulario.get('porDefectoClienteEventual').setValue(result);
+      if(opcion==1){
+        console.log("agregar");
+        this.agregar(this.formulario.value);
+      }
+      if(opcion==3){
+        console.log("actualizar");
+        this.actualizar(this.formulario.value);
+      }
+    });
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -192,11 +224,9 @@ export class CobradorComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private agregar() {
+  private agregar(cobrador) {
     this.loaderService.show();
-    this.formulario.get('id').setValue(null);
-    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.servicio.agregar(this.formulario.value).subscribe(
+    this.servicio.agregar(cobrador).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
@@ -221,10 +251,9 @@ export class CobradorComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar() {
+  private actualizar(cobrador) {
     this.loaderService.show();
-    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.servicio.actualizar(this.formulario.value).subscribe(
+    this.servicio.actualizar(cobrador).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
@@ -309,4 +338,30 @@ export class CobradorComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+}
+
+//Componente Cambiar Moneda Principal Dialogo
+@Component({
+  selector: 'cobrador-principal-dialogo',
+  templateUrl: 'cobrador-principal-dialogo.html',
+})
+export class CambiarCobradorPrincipalDialogo {
+  //Define la moneda que se desea agregar
+  public cobradorAgregar: string;
+  //Define el resultado devuelto
+  public result: any;
+  //Define la moneda principal actual
+  public cobradorPrincipal: string;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<CambiarCobradorPrincipalDialogo>, @Inject(MAT_DIALOG_DATA) public data, private servicio: CobradorService) { }
+  //Al inicializarse el componente
+  ngOnInit() {
+    this.cobradorAgregar = this.data.cobradorAgregar;
+    this.cobradorPrincipal = this.data.cobradorPrincipal;
+  }
+  //Cierra el dialogo
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+   
 }

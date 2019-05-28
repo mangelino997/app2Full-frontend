@@ -8,11 +8,11 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 @Injectable()
 export class AppService {
   //Deifne la URL origen
-  private URL_ORIGEN = 'https://jit-gestion.appspot.com';
-  // private URL_ORIGEN = 'http://localhost:4200'; //192.168.0.156
+  // private URL_ORIGEN = 'https://jit-gestion.appspot.com';
+  private URL_ORIGEN = 'http://localhost:4200'; //192.168.0.156
   //Define la IP
-  private IP = 'https://gestionws.appspot.com';
-  // private IP = 'http://localhost:8080'; //192.168.0.156:8080
+  // private IP = 'https://gestionws.appspot.com';
+  private IP = 'http://localhost:8080'; //192.168.0.156:8080
   //Define la url base
   private URL_BASE = this.IP + '/jitws/auth';
   //Define la url de subcripcion a socket
