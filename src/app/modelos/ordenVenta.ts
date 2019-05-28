@@ -20,7 +20,8 @@ export class OrdenVenta {
             observaciones: new FormControl(),
             estaActiva: new FormControl(),
             activaDesde: new FormControl(),
-            tipoOrdenVenta: new FormControl(false, Validators.required),
+            tipoOrdenVenta: new FormControl('', Validators.required),
+            esContado: new FormControl(),
             ordenesVentasEscalas: new FormControl(),
             ordenesVentasTramos: new FormControl()
         })
