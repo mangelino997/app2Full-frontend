@@ -114,58 +114,33 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group has-float-label">
                         <label for="idCobrador" class="tamanio-label">Cobrador *</label>
-                        <input id="idCobrador" class="form-control form-control-sm" type="text" matInput
-                            [formControl]="formulario.get('cobrador')" [matAutocomplete]="autoCobrador"
-                            autocomplete="off" (blur)="verificarSeleccion(formulario.get('cobrador'))">
-                        <mat-autocomplete #autoCobrador="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                            <mat-option *ngFor="let itemCobrador of resultadosCobradores" [value]="itemCobrador">
-                                {{itemCobrador.nombre}}
-                            </mat-option>
-                        </mat-autocomplete>
+                        <input id="idCobrador" type="text" [formControl]="cobrador" autocomplete="off"
+                            class="form-control form-control-sm" [readonly]="true">
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group has-float-label">
                         <label for="idZona" class="tamanio-label">Zona *</label>
-                        <input id="idZona" class="form-control form-control-sm" type="text" matInput
-                            [formControl]="formulario.get('zona')" [matAutocomplete]="autoZona" autocomplete="off"
-                            (blur)="verificarSeleccion(formulario.get('zona'))">
-                        <mat-autocomplete #autoZona="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                            <mat-option *ngFor="let itemZona of resultadosZonas" [value]="itemZona">
-                                {{itemZona.nombre}}
-                            </mat-option>
-                        </mat-autocomplete>
+                        <mat-select id="idZona" class="form-control form-control-sm" [compareWith]="compareFn"
+                          formControlName="zona">
+                          <mat-option *ngFor="let itemZona of zonas" [value]="itemZona">
+                            {{itemZona.nombre}}
+                          </mat-option>
+                        </mat-select>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-4">
                     <div class="form-group has-float-label">
                         <label for="idRubro" class="tamanio-label">Rubro *</label>
-                        <input id="idRubro" class="form-control form-control-sm" type="text" matInput
-                            [formControl]="formulario.get('rubro')" [matAutocomplete]="autoRubro" autocomplete="off"
-                            (blur)="verificarSeleccion(formulario.get('rubro'))">
-                        <mat-autocomplete #autoRubro="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                            <mat-option *ngFor="let itemRubro of resultadosRubros" [value]="itemRubro">
-                                {{itemRubro.nombre}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group has-float-label">
-                        <label for="idSucursalLugarPago" class="tamanio-label">Sucursal Lugar de Pago</label>
-                        <input id="idSucursalLugarPago" class="form-control form-control-sm" type="text" matInput
-                            [formControl]="formulario.get('sucursalLugarPago')"
-                            (blur)="verificarSeleccion(formulario.get('sucursalLugarPago'))"
-                            [matAutocomplete]="autoSucursalLugarPago" autocomplete="off">
-                        <mat-autocomplete #autoSucursalLugarPago="matAutocomplete" [displayWith]="displayFc.bind(this)">
-                            <mat-option *ngFor="let itemSucursalLugarPago of resultadosSucursalesPago"
-                                [value]="itemSucursalLugarPago">
-                                {{itemSucursalLugarPago.nombre}}, {{itemSucursalLugarPago.localidad.nombre}}
-                            </mat-option>
-                        </mat-autocomplete>
+                        <mat-select id="idRubro" class="form-control form-control-sm" [compareWith]="compareFn"
+                          formControlName="rubro">
+                          <mat-option *ngFor="let itemRubro of rubros" [value]="itemRubro">
+                            {{itemRubro.nombre}}
+                          </mat-option>
+                        </mat-select>
                     </div>
                 </div>
             </div>

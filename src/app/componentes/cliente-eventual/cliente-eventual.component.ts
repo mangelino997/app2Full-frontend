@@ -8,7 +8,7 @@ import { LocalidadService } from '../../servicios/localidad.service';
 import { CobradorService } from '../../servicios/cobrador.service';
 import { ZonaService } from '../../servicios/zona.service';
 import { RubroService } from '../../servicios/rubro.service';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ClienteEventual } from 'src/app/modelos/clienteEventual';
@@ -16,6 +16,7 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { Cobrador } from 'src/app/modelos/cobrador';
 
 @Component({
   selector: 'app-cliente-eventual',
@@ -34,13 +35,13 @@ export class ClienteEventualComponent implements OnInit {
   //Define la lista de resultados de busqueda de barrio
   public resultadosLocalidades: Array<any> = [];
   //Define la lista de resultados de busqueda de cobrador
-  public resultadosCobradores: Array<any> = [];
+  public cobrador: FormControl= new FormControl();
   //Define la lista de resultados de busqueda de zona
-  public resultadosZonas: Array<any> = [];
+  public zonas: Array<any> = [];
   //Define la lista de resultados de busqueda de rubro
-  public resultadosRubros: Array<any> = [];
+  public rubros: Array<any> = [];
   //Define la lista de resultados de busqueda de sucursal lugar pago
-  public resultadosSucursalesPago: Array<any> = [];
+  public sucursalesPago: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -80,38 +81,6 @@ export class ClienteEventualComponent implements OnInit {
         })
       }
     })
-    //Autocompletado Cobrador - Buscar por nombre
-    this.formulario.get('cobrador').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.cobradorServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosCobradores = response;
-        })
-      }
-    })
-    //Autocompletado Zona - Buscar por nombre
-    this.formulario.get('zona').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.zonaServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosZonas = response;
-        })
-      }
-    })
-    //Autocompletado Rubro - Buscar por nombre
-    this.formulario.get('rubro').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.rubroServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosRubros = response;
-        })
-      }
-    })
-    //Autocompletado Sucursal Lugar Pago - Buscar por nombre
-    this.formulario.get('sucursalLugarPago').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.sucursalServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosSucursalesPago = response;
-        })
-      }
-    })
     //Obtiene la lista de condiciones de iva
     this.listarCondicionesIva();
     //Obtiene la lista de tipos de documentos
@@ -122,6 +91,55 @@ export class ClienteEventualComponent implements OnInit {
     setTimeout(function () {
       document.getElementById('idCondicionIva').focus();
     }, 20);
+    //Obtiene la lista de cobradore
+    this.obtenerCobrador();
+    //Obtiene la lista de zonas
+    this.listarZonas();
+    //Obtiene la lista de rubros
+    this.listarRubros();
+    //Obtiene la lista de sucursales de pagos
+    this.listarSucursales();
+  }
+   //Obtiene la lista de sucursales
+   private listarSucursales(): void {
+    this.sucursalServicio.listar().subscribe(res => {
+      this.sucursalesPago = res.json();
+    });
+  }
+  //Obtiene el listado de cobradores
+  private obtenerCobrador() {
+    this.cobradorServicio.obtenerPorDefecto().subscribe(
+      res => {
+        this.cobrador.setValue(res.json().nombre);
+        this.formulario.get('cobrador').setValue(res.json());
+        console.log(this.cobrador.value);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de Zonas
+  private listarZonas() {
+    this.zonaServicio.listar().subscribe(
+      res => {
+        this.zonas = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
+  //Obtiene el listado de Rubros
+  private listarRubros() {
+    this.rubroServicio.listar().subscribe(
+      res => {
+        this.rubros = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(limite) {
@@ -235,10 +253,6 @@ export class ClienteEventualComponent implements OnInit {
   private vaciarListas() {
     this.resultadosBarrios = [];
     this.resultadosLocalidades = [];
-    this.resultadosCobradores = [];
-    this.resultadosZonas = [];
-    this.resultadosRubros = [];
-    this.resultadosSucursalesPago = [];
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

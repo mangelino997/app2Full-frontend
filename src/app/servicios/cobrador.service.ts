@@ -54,6 +54,10 @@ export class CobradorService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros
+  public obtenerPorDefecto() {
+    return this.http.get(this.url + '/obtenerPorDefecto', this.options);
+  }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
     return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
