@@ -46,6 +46,10 @@ export class CobradorService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
+  //Obtiene el por Defecto Cliente Eventual por defecto
+  public obtenerPorDefecto() {
+    return this.http.get(this.url + '/obtenerPorDefecto', this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);

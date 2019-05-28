@@ -1,0 +1,24 @@
+<div class="row justify-content-center contenedor">
+    <div class="col-md-6 text-center">
+        <h5>Cliente Eventual Principal Actual  </h5>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <span>Nombre: {{cobradorPrincipal['nombre']}}</span><br>
+            <span>Es Principal: Sí</span><br>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <h5>cobrador a Agregar  </h5>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <span>Nombre: {{cobradorAgregar['nombre']}}</span><br>
+            <span>Será Principal: Sí</span><br>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <h5>¿Cambiar el Cliente Eventual Principal por el nuevo Cobrador?  </h5>
+        <button id="idBoton" mat-raised-button color="primary" (click)="dialogRef.close(true)" >Si</button>
+        <button id="idBoton" mat-raised-button color="secondary" (click)="dialogRef.close(false)" >No</button>
+        <!-- <button id="idBoton" mat-raised-button color="secondary" (click)="dialogRef.close()">Cancelar</button> -->
+    </div>
+</div>

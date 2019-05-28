@@ -207,7 +207,7 @@ import { AreaComponent } from './componentes/area/area.component';
 import { BancoComponent } from './componentes/banco/banco.component'; //Probado
 import { BarrioComponent } from './componentes/barrio/barrio.component'; //Probado
 import { CategoriaComponent } from './componentes/categoria/categoria.component'; //Probado
-import { CobradorComponent } from './componentes/cobrador/cobrador.component'; //Probado
+import { CobradorComponent, CambiarCobradorPrincipalDialogo } from './componentes/cobrador/cobrador.component'; //Probado
 import { CompaniaSeguroComponent } from './componentes/compania-seguro/compania-seguro.component'; //Probado
 import { MarcaProductoComponent } from './componentes/marca-producto/marca-producto.component'; //Probado
 import { MarcaVehiculoComponent } from './componentes/marca-vehiculo/marca-vehiculo.component'; //Probado
@@ -312,6 +312,7 @@ import { PersonalFamiliarComponent } from './componentes/personal-familiar/perso
 import { ViajeTipoComponent } from './componentes/viaje-tipo/viaje-tipo.component';
 import { CostosInsumosProductoComponent } from './componentes/costos-insumos-producto/costos-insumos-producto.component';
 import { CostoInsumoProducto } from './modelos/costoInsumoProducto';
+import { Cobrador } from './modelos/cobrador';
 
 //Rutas
 const appRoutes: Routes = [
@@ -543,6 +544,7 @@ const stompConfig: StompConfig = {
     ViajeRemitoGSComponent,
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,
+    CambiarCobradorPrincipalDialogo,
     ListaPreciosDialogo,
     ConfimarDialogo,
     ViajeDialogo,
@@ -799,6 +801,7 @@ const stompConfig: StompConfig = {
     PersonalFamiliar,
     CostoInsumoProducto,
     ViajeTipo,
+    Cobrador,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -818,6 +821,7 @@ const stompConfig: StompConfig = {
     ObservacionesDialogo,
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,
+    CambiarCobradorPrincipalDialogo,
     ListaPreciosDialogo,
     ConfimarDialogo,
     ViajeDialogo,
