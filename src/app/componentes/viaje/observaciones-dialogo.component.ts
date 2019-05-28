@@ -25,8 +25,10 @@ export class ObservacionesDialogo {
         this.formulario = new FormGroup({
             observaciones: new FormControl()
         });
-        //Establece las observaciones
-        this.formulario.get('observaciones').setValue(this.data.elemento);
+        if(this.data.elemento) {
+            //Establece las observaciones
+            this.formulario.get('observaciones').setValue(this.data.elemento);
+        }
         //Establece solo lectura
         this.soloLectura = this.data.soloLectura;
     }

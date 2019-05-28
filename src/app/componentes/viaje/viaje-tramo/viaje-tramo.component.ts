@@ -466,12 +466,12 @@ export class ViajeTramoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Abre un dialogo para ver las observaciones
-  public abrirObservacionesDialogo(elemento): void {
+  public abrirObservacionesDialogo(): void {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
       width: '1200px',
       data: {
         tema: this.appServicio.getTema(),
-        elemento: elemento,
+        elemento: null,
         soloLectura: false
       }
     });
