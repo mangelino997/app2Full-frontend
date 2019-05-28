@@ -6,17 +6,15 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class CobradorService {
+export class CuentaBancariaService {
   //Define la ruta al servicio web
-  private ruta:string = "/cobrador";
+  private ruta:string = "/cuentabancaria";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -46,22 +44,13 @@ export class CobradorService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
-  //Obtiene el por Defecto Cliente Eventual por defecto
-  public obtenerPorDefecto() {
-    return this.http.get(this.url + '/obtenerPorDefecto', this.options);
-  }
   //Obtiene la lista de registros
   public listar() {
-    return this.http.get(this.url, this.options);
+    return this.http.get(this.url , this.options);
   }
-  
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
+  //Obtiene la lista por Empresa
+  public listarPorEmpresa(empresa) {
+    return this.http.get(this.url + '/listarPorEmpresa/' + empresa, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

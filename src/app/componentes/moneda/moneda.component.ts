@@ -159,10 +159,10 @@ export class MonedaComponent implements OnInit {
   public accion(indice) {
     switch (indice) {
       case 1:
-        this.verificarPrincipal();
+        this.verificarPrincipal(1); //agregar
         break;
       case 3:
-        this.actualizar();
+        this.verificarPrincipal(3); //actualizar
         break;
       case 4:
         this.eliminar();
@@ -198,18 +198,21 @@ export class MonedaComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private verificarPrincipal() {
+  private verificarPrincipal(opcion) {
     if (this.formulario.get('porDefecto').value == "true") {
       this.monedaServicio.obtenerPorDefecto().subscribe(
         res => {
           var respuesta = res.json();
           //open modal reemplazar moneda
-          this.cambiarPrincipal(respuesta, this.formulario.value);
+          this.cambiarPrincipal(respuesta, this.formulario.value, opcion);
         }
       );
     }
     else {
-      this.agregar(this.formulario.value);
+      if(opcion==1)
+        this.agregar(this.formulario.value);
+      if(opcion==3)
+      this.actualizar(this.formulario.value);
     }
   }
   //Metodo Agregar Moneda
@@ -233,9 +236,9 @@ export class MonedaComponent implements OnInit {
     );
   }
   //Actualiza un registro
-  private actualizar() {
+  private actualizar(moneda) {
     this.loaderService.show();
-    this.monedaServicio.actualizar(this.formulario.value).subscribe(
+    this.monedaServicio.actualizar(moneda).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
@@ -313,14 +316,22 @@ export class MonedaComponent implements OnInit {
     }
   }
   //Abre ventana Dialog nueva Moneda Principal
-  public cambiarPrincipal(monedaPrincipal, monedaAgregar): void {
+  //opcion define la accion a ejecutar (agregar==1/actualizar==3)
+  public cambiarPrincipal(monedaPrincipal, monedaAgregar, opcion): void {
     const dialogRef = this.dialog.open(CambiarMonedaPrincipalDialogo, {
       width: '750px',
       data: { monedaPrincipal: monedaPrincipal, monedaAgregar: monedaAgregar },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.formulario.get('porDefecto').setValue(result);
-      this.agregar(this.formulario.value);
+      if(opcion==1){
+        console.log("agregar");
+        this.agregar(this.formulario.value);
+      }
+      if(opcion==3){
+        console.log("actualizar");
+        this.actualizar(this.formulario.value);
+      }
     });
   }
   //Define el mostrado de datos y comparacion en campo select
@@ -338,8 +349,13 @@ export class MonedaComponent implements OnInit {
       return elemento;
     }
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  } 
 }
-
 //Componente Cambiar Moneda Principal Dialogo
 @Component({
   selector: 'cambiar-principal-dialogo',
@@ -363,10 +379,5 @@ export class CambiarMonedaPrincipalDialogo {
   onNoClick(): void {
     this.dialogRef.close();
   }
-  //Verifica si se selecciono un elemento del autocompletado
-  public verificarSeleccion(valor): void {
-    if (typeof valor.value != 'object') {
-      valor.setValue(null);
-    }
-  }  
+   
 }
