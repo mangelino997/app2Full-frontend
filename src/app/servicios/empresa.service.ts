@@ -48,6 +48,22 @@ export class EmpresaService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros
+  public listarPorRazonSocialYCAEAHabilitado(empresa) {
+    return this.http.get(this.url + '/listarPorRazonSocialYCAEAHabilitado/' + empresa, this.options);
+  }
+  //Obtiene la lista de registros
+  public listarPorRazonSocialYActiva(empresa) {
+    return this.http.get(this.url + '/listarPorRazonSocialYActiva/' + empresa, this.options);
+  }
+  //Obtiene la lista de registros
+  public listarPorRazonSocialYActivaYFe(empresa) {
+    return this.http.get(this.url + '/listarPorRazonSocialYActivaYFe/' + empresa, this.options);
+  }
+  //Obtiene la lista de registros
+  public listarEmpresasPorUsuario(usuario) {
+    return this.http.get(this.url + '/listarEmpresasPorUsuario/' + usuario, this.options);
+  }
   //Obtiene una lista por razon social
   public listarPorRazonSocial(razonSocial) {
     return this.http.get(this.url + '/listarPorRazonSocial/' + razonSocial, this.options).map(res => {

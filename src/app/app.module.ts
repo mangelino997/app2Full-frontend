@@ -313,6 +313,10 @@ import { ViajeTipoComponent } from './componentes/viaje-tipo/viaje-tipo.componen
 import { CostosInsumosProductoComponent } from './componentes/costos-insumos-producto/costos-insumos-producto.component';
 import { CostoInsumoProducto } from './modelos/costoInsumoProducto';
 import { Cobrador } from './modelos/cobrador';
+import { VencimientosChoferesComponent } from './componentes/vencimientos-choferes/vencimientos-choferes.component';
+import { CuentaBancariaComponent } from './componentes/cuenta-bancaria/cuenta-bancaria.component';
+import { CuentaBancaria } from './modelos/cuentaBancaria';
+import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -422,7 +426,11 @@ const appRoutes: Routes = [
   { path: 'legajosfamiliares', component: PersonalFamiliarComponent, canActivate: [GuardiaService] },
   { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] },
   { path: 'contablecostosinsumosproductos', component: CostosInsumosProductoComponent, canActivate: [GuardiaService] },
-  { path: 'configuracionviajetipo', component: ViajeTipoComponent, canActivate: [GuardiaService] }
+  { path: 'configuracionviajetipo', component: ViajeTipoComponent, canActivate: [GuardiaService] },
+  { path: 'legajosvencimientoschoferes', component: VencimientosChoferesComponent, canActivate: [GuardiaService] },
+  { path: 'cuentasbancariascuentas', component: CuentaBancariaComponent, canActivate: [GuardiaService] }
+
+  
 ]
 
 const stompConfig: StompConfig = {
@@ -570,7 +578,9 @@ const stompConfig: StompConfig = {
     PersonalFamiliarComponent,
     ContraseniaComponent,
     CostosInsumosProductoComponent,
-    ViajeTipoComponent
+    ViajeTipoComponent,
+    VencimientosChoferesComponent,
+    CuentaBancariaComponent
   ],
   imports: [
     BrowserModule,
@@ -802,6 +812,8 @@ const stompConfig: StompConfig = {
     CostoInsumoProducto,
     ViajeTipo,
     Cobrador,
+    CuentaBancaria,
+    CuentaBancariaService,
     {
       provide: StompConfig,
       useValue: stompConfig

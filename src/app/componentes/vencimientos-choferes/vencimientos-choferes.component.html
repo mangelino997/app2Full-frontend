@@ -1,0 +1,186 @@
+<div id="personal" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+  <div class="row">
+      <div class="col" class="centrar">
+          <nav mat-tab-nav-bar>
+              <a mat-tab-link disabled>PERSONAL</a>
+              <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+                  (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          </nav>
+      </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+      <div class="col-md-10">
+          <h5 class="text-center">{{pestaniaActual}} Vencimientos Choferes</h5>
+          <form [formGroup]="formulario" class="contenedor">
+              <div class="contenedor-top-titulo">
+                  <div class="row">
+                      <div class="col-md-9">
+                          <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+                              <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
+                              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+                                  type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto"
+                                  autocomplete="off">
+                              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                                  (optionSelected)="cambioAutocompletado()">
+                                  <mat-option *ngFor="let item of resultados" [value]="item">{{item.nombre}}
+                                  </mat-option>
+                              </mat-autocomplete>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group has-float-label">
+                    <label for="idLegajo" class="tamanio-label">N° Legajo *</label>
+                    <input id="idLegajo" type="text" formControlName="legajo" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group has-float-label">
+                    <label for="idApellido" class="tamanio-label">Apellido *</label>
+                    <input id="idApellido" type="text" formControlName="apellido" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group has-float-label">
+                    <label for="idNombre" class="tamanio-label">Nombre *</label>
+                    <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group has-float-label">
+                    <label for="idEsChofer" class="tamanio-label">Es Chofer *</label>
+                    <select id="idEsChofer" class="form-control form-control-sm" formControlName="esChofer">
+                      <option [value]="false">No</option>
+                      <option [value]="true">Si</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group has-float-label">
+                    <label for="idEsChoferLargaDistancia" class="tamanio-label">Es Chofer Larga Distancia *</label>
+                    <select id="idEsChoferLargaDistancia" class="form-control form-control-sm" formControlName="esChoferLargaDistancia">
+                      <option [value]="false">No</option>
+                      <option [value]="true">Si</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="form-group has-float-label">
+                    <label for="idVetoLic" class="tamanio-label">Vto. Lic. de Conducir *</label>
+                    <input id="idVetoLic" type="date" formControlName="vtoLicenciaConducir" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group has-float-label">
+                    <label for="idVtoCurso" class="tamanio-label">Vto. Curso *</label>
+                    <input id="idVtoCurso" type="date" formControlName="vtoCurso" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group has-float-label">
+                    <label for="idVtoCursoCargaPeligrosa" class="tamanio-label">Vto. Curso Carga Peligrosa </label>
+                    <input id="idVtoCursoCargaPeligrosa" type="date" formControlName="vtoCursoCargaPeligrosa" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="form-group has-float-label">
+                    <label for="idVtoLINTI" class="tamanio-label">Vto. LINTI </label>
+                    <input id="idVtoLINTI" type="date" formControlName="vtoLINTI" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group has-float-label">
+                    <label for="idVtoLibSanidad" class="tamanio-label">Vto. Lib. Sanidad </label>
+                    <input id="idVtoLibSanidad" type="date" formControlName="vtoLibretaSanidad" autocomplete="off"
+                    class="form-control form-control-sm" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                  <div class="centrar">
+                      <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary"
+                          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+                          {{pestaniaActual}}
+                      </button>
+                      <div class="row" *ngIf="show">
+                          <div class="col text-center">
+                              <app-progreso></app-progreso>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </form>
+      </div>
+  </div>
+  <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+  <div class="col-md-12">
+    <div class="row" *ngIf="show">
+      <div class="col text-center">
+        <app-progreso></app-progreso>
+      </div>
+    </div>
+    <br>
+    <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+      <ng-container matColumnDef="legajo" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Legajo</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento.legajo}}</td>
+      </ng-container>
+      <ng-container matColumnDef="nombre" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+      </ng-container>
+      <ng-container matColumnDef="esChofer" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Chofer</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+      </ng-container>
+      <ng-container matColumnDef="choferLargaDistancia" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Chofer Larga Distancia</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+      </ng-container>
+      <ng-container matColumnDef="vtoLicencia" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Lic. Conducir</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+      </ng-container>
+      <ng-container matColumnDef="vtoCurso" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Curso</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+      </ng-container>
+      <ng-container matColumnDef="vtoCursoCargaPeligrosa" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Curso Carga Peligrosa</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+      </ng-container>
+      <ng-container matColumnDef="vtoLINTI" sticky>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Lib. Sanidad</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+      </ng-container>
+      <ng-container matColumnDef="ver" sticky>
+        <th mat-header-cell *matHeaderCellDef>-</th>
+        <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+            class="cursor-color">ver</span></td>
+      </ng-container>
+      <ng-container matColumnDef="mod" sticky>
+        <th mat-header-cell *matHeaderCellDef>-</th>
+        <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+            class="cursor-color">editar</span></td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+    </table>
+  </div>
+</div>
+</div>
