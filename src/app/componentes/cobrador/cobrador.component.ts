@@ -9,6 +9,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { Cobrador } from 'src/app/modelos/cobrador';
 
 @Component({
   selector: 'app-cobrador',
@@ -83,17 +84,7 @@ export class CobradorComponent implements OnInit {
         this.show = state.show;
       });
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      fechaAlta: new FormControl(),
-      fechaBaja: new FormControl(),
-      estaActivo: new FormControl('', Validators.required),
-      usuarioAlta: new FormControl(),
-      porDefectoClienteEventual: new FormControl(),
-      correoElectronico: new FormControl('', [Validators.required, Validators.maxLength(60)])
-    });
+    this.formulario = new Cobrador().formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
