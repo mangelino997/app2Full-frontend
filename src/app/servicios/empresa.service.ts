@@ -56,6 +56,10 @@ export class EmpresaService {
   public listarPorRazonSocialYActiva(empresa) {
     return this.http.get(this.url + '/listarPorRazonSocialYActiva/' + empresa, this.options);
   }
+  //Obtiene la lista de registros - empresas activas
+  public listarActivas() {
+    return this.http.get(this.url + '/listarActivas', this.options);
+  }
   //Obtiene la lista de registros
   public listarPorRazonSocialYActivaYFe(empresa) {
     return this.http.get(this.url + '/listarPorRazonSocialYActivaYFe/' + empresa, this.options);

@@ -290,6 +290,7 @@ export class SucursalBancoComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.patchValue(elemento);
     this.establecerFormulario();
