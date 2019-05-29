@@ -50,13 +50,17 @@ export class CuentaBancariaComponent implements OnInit {
   public sucursales: Array<any> = [];
   public tiposCuentaBancarias: Array<any> = [];
   public monedas: Array<any> = [];
-
+  public cuentasBancarias: Array<any> = [];
   //Define la opcion activa
   public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
   public bancos: Array<any> = [];
   //Define  el autocompletado como FormControl
   public autocompletado: FormControl = new FormControl();
+  //Define  el filtro como FormControl
+  public cuentaBan: FormControl = new FormControl();
+  //Define  a Empresa como FormControl
+  public empresa: FormControl = new FormControl();
   //Define la lista de resultados de busqueda para Cuentas Bancarias
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
@@ -73,7 +77,8 @@ export class CuentaBancariaComponent implements OnInit {
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private loaderService: LoaderService, 
     private cuentaBancaria: CuentaBancaria, private servicio: CuentaBancariaService, private empresaService: EmpresaService,
     private appComponent: AppComponent, private bancoService: BancoService, private sucursalService:SucursalBancoService, 
-    private tipoCuentaBancariaService: TipoCuentaBancariaService,private monedaService:MonedaService, private toastr: ToastrService) {
+    private tipoCuentaBancariaService: TipoCuentaBancariaService,private monedaService:MonedaService, private cuentaBancariaService: CuentaBancariaService,
+    private toastr: ToastrService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -101,10 +106,10 @@ export class CuentaBancariaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de Cuentas bancarias (campo "Buscar")
     // this.listarCuentasBancarias();
+    this.inicializarValores();
     //Obtiene la lista completa de registros (Pestaña "Listar")
     this.listar();
     //Se ejecutan todos los listar necesarios
-    this.listarEmpresas();
     this.listarTiposCuentaBancaria();
     this.listarMonedas();
     //Autocompletado - Buscar Bancos por nombre
@@ -118,22 +123,17 @@ export class CuentaBancariaComponent implements OnInit {
     })
 
   }
-  //Obtiene la lista de empresas
-  private listarEmpresas(){
-    let empresa = this.appComponent.getEmpresa();
+  //Inicializa valores por defecto
+  private inicializarValores(){
+    let empresa= this.appComponent.getEmpresa();
     console.log(empresa);
-    this.empresaService.listarPorRazonSocialYActiva(empresa['razonSocial']).subscribe(
-      res=>{
-        console.log(res.json());
-        this.empresas = res.json();
-      }
-    )
+    this.empresa.setValue(empresa);
+    this.formulario.get('empresa').setValue(empresa['razonSocial']);
   }
   public cambioAutocompletado(){
     console.log(this.formulario.value);
     this.sucursalService.listarPorBanco(this.formulario.value.banco.id).subscribe(
       res=>{
-        console.log(res.json());
         this.sucursales = res.json();
       }
     )
@@ -142,7 +142,6 @@ export class CuentaBancariaComponent implements OnInit {
   private listarTiposCuentaBancaria(){
     this.tipoCuentaBancariaService.listar().subscribe(
       res=>{
-        console.log(res.json());
         this.tiposCuentaBancarias = res.json();
       }
     )
@@ -156,6 +155,15 @@ export class CuentaBancariaComponent implements OnInit {
       }
     )
   }
+  //Obtiene una lista de las Cuentas Bancarias
+  // private listarCuentasBancarias(){
+  //   this.cuentaBancariaService.listar().subscribe(
+  //     res=>{
+  //       console.log(res.json);
+  //       this.cuentasBancarias = res.json();
+  //     }
+  //   )
+  // }
   //Establece el estado de los cobos
   private establecerEstadoCampos(estado){
     if(estado){
@@ -164,12 +172,14 @@ export class CuentaBancariaComponent implements OnInit {
       this.formulario.get('tipoCuentaBancaria').enable();
       this.formulario.get('moneda').enable();
       this.formulario.get('estaActiva').enable();
+      this.formulario.get('banco').enable();
     }else{
       this.formulario.get('empresa').disable();
       this.formulario.get('sucursalBanco').disable();
       this.formulario.get('tipoCuentaBancaria').disable();
       this.formulario.get('moneda').disable();
       this.formulario.get('estaActiva').disable();
+      this.formulario.get('banco').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -192,12 +202,13 @@ export class CuentaBancariaComponent implements OnInit {
     if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
+      this.cuentasBancarias = [];
     }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, false, false, true, 'idEmpresa');
+        this.establecerValoresPestania(nombre, false, false, true, 'idAutocompletado');
         break;
       case 2:
         this.establecerEstadoCampos(false);
@@ -217,6 +228,7 @@ export class CuentaBancariaComponent implements OnInit {
       default:
         break;
     }
+    
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -235,7 +247,8 @@ export class CuentaBancariaComponent implements OnInit {
     this.servicio.listar().subscribe(
       res => {
         console.log(res.json());
-        this.resultados = res.json();
+        this.cuentasBancarias = res.json();
+        console.log(this.cuentasBancarias);
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
@@ -246,22 +259,17 @@ export class CuentaBancariaComponent implements OnInit {
       }
     );
   }
-  // //Obtiene el listado de Cuentas Bancarias
-  // private listarCuentasBancarias() {
-  //   this.loaderService.show();
-  //   this.servicio.listar().subscribe(
-  //     res => {
-  //       console.log(res.json());
-  //       this.listaCompleta = new MatTableDataSource(res.json());
-  //       this.listaCompleta.sort = this.sort;
-  //       this.loaderService.hide();
-  //     },
-  //     err => {
-  //       console.log(err);
-  //       this.loaderService.hide();
-  //     }
-  //   );
-  // }
+  //Cambio de cuenta bancaria 
+  public cambioCuentaBancaria(){
+    this.formulario.patchValue(this.cuentaBan.value);
+    console.log(this.cuentaBan.value, this.formulario.value);
+    this.formulario.get('banco').setValue(this.cuentaBan.value.sucursalBanco.banco); //Setea el banco
+    this.formulario.get('empresa').setValue(this.empresa.value.razonSocial); //Setea el banco
+
+    console.log(this.formulario.value);
+    this.cambioAutocompletado(); //Obtiene la lista de sucursales para que pueda hacer la comparacion
+  }
+  
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
     switch (indice) {
@@ -282,6 +290,9 @@ export class CuentaBancariaComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
+    let usuario = this.appComponent.getUsuario();
+    this.formulario.get('usuarioAlta').setValue(usuario);
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -303,6 +314,7 @@ export class CuentaBancariaComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    this.formulario.get('empresa').setValue(this.empresa.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -331,6 +343,10 @@ export class CuentaBancariaComponent implements OnInit {
     this.formulario.reset();
     this.autocompletado.setValue(undefined);
     this.resultados = [];
+    this.sucursales = [];
+    this.cuentasBancarias = [];
+    this.cuentaBan.setValue(null);
+    this.inicializarValores();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -342,14 +358,21 @@ export class CuentaBancariaComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    // this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.cuentaBan.setValue(elemento);
+    this.formulario.get('banco').setValue(elemento.sucursalBanco.banco);
+    this.cambioAutocompletado();
+    this.inicializarValores();
+
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    // this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.cuentaBan.setValue(elemento);
+    this.formulario.get('banco').setValue(elemento.sucursalBanco.banco); //Setea el banco
+    this.cambioAutocompletado(); //Obtiene la lista de sucursales para que pueda hacer la comparacion
+    this.inicializarValores();
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
