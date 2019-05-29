@@ -280,7 +280,7 @@
                 <label for="idTramo" class="tamanio-label">Tramo *</label>
                 <input id="idTramo" class="form-control form-control-sm" formControlName="tramo" type="text" matInput
                   [formControl]="formularioTramo.get('tramo')" [matAutocomplete]="autoTramo" autocomplete="off"
-                  [readonly]="soloLectura" required style="width: 420px;">
+                  [readonly]="soloLectura" required style="width: 380px;">
                 <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFc.bind(this)"
                   (optionSelected)="cambioAutocompletadoTramo()">
                   <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">

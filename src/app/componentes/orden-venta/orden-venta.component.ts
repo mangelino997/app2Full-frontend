@@ -383,7 +383,17 @@ export class OrdenVentaComponent implements OnInit {
   public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar();
+        this.formulario.enable();
+        this.preciosDesde.enable();
+        if(this.formulario.valid && this.preciosDesde.valid) {
+          if(this.listaDeEscalas.length > 0 || this.listaDeTramos.length > 0) {
+            this.agregar();
+          } else {
+            this.toastr.error('La lista no puede estar vacia');
+          }
+        } else {
+          this.toastr.error('Falta completar datos de formulario');
+        }
         break;
       case 3:
         this.actualizar();
@@ -691,6 +701,7 @@ export class OrdenVentaComponent implements OnInit {
       this.listaDeTramos.push(this.formularioTramo.value);
     }
     this.formularioTramo.reset();
+    this.resultadosTramos = [];
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
@@ -708,6 +719,7 @@ export class OrdenVentaComponent implements OnInit {
     }
     this.formularioTramo.reset();
     this.idModTramo = null;
+    this.resultadosTramos = [];
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
@@ -716,6 +728,7 @@ export class OrdenVentaComponent implements OnInit {
   public cancelarTramoLista() {
     this.formularioTramo.reset();
     this.idModTramo = null;
+    this.resultadosTramos = [];
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
@@ -737,6 +750,7 @@ export class OrdenVentaComponent implements OnInit {
       this.preciosDesde.enable();
       this.ordenventa.enable();
     }
+    this.resultadosTramos = [];
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
@@ -744,7 +758,24 @@ export class OrdenVentaComponent implements OnInit {
   //Modifica un Tramo de listaDeTramos
   public modificarTramoLista(tramo, indice) {
     this.idModTramo = indice;
+    if(this.indiceSeleccionado != 1) {
+      tramo.ordenVenta = { id: this.ordenventa.value.id };
+    }
     this.formularioTramo.patchValue(tramo);
+    if(tramo.importeFijoSeco != 0) {
+      this.formularioTramo.get('importeFijoSeco').setValue(parseFloat(tramo.importeFijoSeco).toFixed(2));
+      this.importeSecoPor.setValue(false);
+    } else {
+      this.formularioTramo.get('precioUnitarioSeco').setValue(parseFloat(tramo.precioUnitarioSeco).toFixed(2));
+      this.importeSecoPor.setValue(true);
+    }
+    if(tramo.importeFijoRef != 0) {
+      this.formularioTramo.get('importeFijoRef').setValue(parseFloat(tramo.importeFijoRef).toFixed(2));
+      this.importeRefPor.setValue(false);
+    } else {
+      this.formularioTramo.get('precioUnitarioRef').setValue(parseFloat(tramo.precioUnitarioRef).toFixed(2));
+      this.importeRefPor.setValue(true);
+    }
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
