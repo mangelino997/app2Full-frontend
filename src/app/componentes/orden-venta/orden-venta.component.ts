@@ -101,6 +101,8 @@ export class OrdenVentaComponent implements OnInit {
   public importeSecoPor:FormControl = new FormControl();
   //Define importes ref por
   public importeRefPor:FormControl = new FormControl();
+  //Define la escala actual
+  public escalaActual:any;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
@@ -508,6 +510,7 @@ export class OrdenVentaComponent implements OnInit {
       this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1);
     }
     this.formularioEscala.reset();
+    this.importePor.setValue(false);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -525,6 +528,7 @@ export class OrdenVentaComponent implements OnInit {
     }
     this.formularioEscala.reset();
     this.idModEscala = null;
+    this.importePor.setValue(false);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -533,6 +537,8 @@ export class OrdenVentaComponent implements OnInit {
   public cancelarEscalaLista() {
     this.formularioEscala.reset();
     this.idModEscala = null;
+    this.importePor.setValue(false);
+    this.eliminarElementoEscalas(this.escalaActual.valor);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -562,19 +568,23 @@ export class OrdenVentaComponent implements OnInit {
   //Modifica una Escala de listaDeEscalas
   public modificarEscalaLista(escala, id) {
     this.idModEscala = id;
+    this.escalaActual = escala.escalaTarifa;
     this.agregarElementoEscalas(escala.escalaTarifa);
     if(this.indiceSeleccionado != 1) {
       escala.ordenVenta = { id: this.ordenventa.value.id };
     }
     this.formularioEscala.patchValue(escala);
-    if (escala.importeFijo != 0) {
+    if (escala.importeFijo) {
       this.formularioEscala.get('importeFijo').setValue(parseFloat(escala.importeFijo).toFixed(2));
       this.formularioEscala.get('precioUnitario').setValue(null);
       this.importePor.setValue(false);
-    } else {
+      this.cambioImportesPor();
+    } 
+    if(escala.precioUnitario) {
       this.formularioEscala.get('precioUnitario').setValue(parseFloat(escala.precioUnitario).toFixed(2));
       this.formularioEscala.get('importeFijo').setValue(null);
       this.importePor.setValue(true);
+      this.cambioImportesPor();
     }
     this.formularioEscala.get('porcentaje').setValue(parseFloat(escala.porcentaje).toFixed(2));
     this.formularioEscala.get('minimo').setValue(parseFloat(escala.minimo).toFixed(2));
