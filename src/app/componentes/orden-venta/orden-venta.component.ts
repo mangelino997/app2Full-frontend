@@ -772,19 +772,25 @@ export class OrdenVentaComponent implements OnInit {
       tramo.ordenVenta = { id: this.ordenventa.value.id };
     }
     this.formularioTramo.patchValue(tramo);
-    if(tramo.importeFijoSeco != 0) {
+    if(tramo.importeFijoSeco) {
       this.formularioTramo.get('importeFijoSeco').setValue(parseFloat(tramo.importeFijoSeco).toFixed(2));
       this.importeSecoPor.setValue(false);
-    } else {
+      this.cambioImportesSecoPor();
+    } 
+    if(tramo.precioUnitarioSeco) {
       this.formularioTramo.get('precioUnitarioSeco').setValue(parseFloat(tramo.precioUnitarioSeco).toFixed(2));
       this.importeSecoPor.setValue(true);
+      this.cambioImportesSecoPor();
     }
-    if(tramo.importeFijoRef != 0) {
+    if(tramo.importeFijoRef) {
       this.formularioTramo.get('importeFijoRef').setValue(parseFloat(tramo.importeFijoRef).toFixed(2));
       this.importeRefPor.setValue(false);
-    } else {
+      this.cambioImportesRefPor();
+    }
+    if(tramo.precioUnitarioRef) {
       this.formularioTramo.get('precioUnitarioRef').setValue(parseFloat(tramo.precioUnitarioRef).toFixed(2));
       this.importeRefPor.setValue(true);
+      this.cambioImportesRefPor();
     }
     setTimeout(function () {
       document.getElementById('idTramo').focus();

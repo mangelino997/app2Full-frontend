@@ -303,7 +303,7 @@
               <div class="form-group has-float-label">
                 <label for="idImporteSecoPor" class="tamanio-label">Imp. Seco por: *</label>
                 <mat-select id="idImporteSecoPor" class="form-control form-control-sm" [formControl]="importeSecoPor"
-                  [compareWith]="compareFn" (selectionChange)="cambioImportesSecoPor()" style="width: 150px;">
+                  (selectionChange)="cambioImportesSecoPor()" style="width: 150px;">
                   <mat-option [value]="false">Imp. Fijo Seco</mat-option>
                   <mat-option [value]="true">Precio Un. Seco</mat-option>
                 </mat-select>
@@ -311,7 +311,7 @@
               <div class="form-group has-float-label">
                 <label for="idImporteRefPor" class="tamanio-label">Imp. Ref. por: *</label>
                 <mat-select id="idImporteRefPor" class="form-control form-control-sm" [formControl]="importeRefPor"
-                  [compareWith]="compareFn" (selectionChange)="cambioImportesRefPor()" style="width: 150px;">
+                  (selectionChange)="cambioImportesRefPor()" style="width: 150px;">
                   <mat-option [value]="false">Imp. Fijo Ref.</mat-option>
                   <mat-option [value]="true">Precio Un. Ref.</mat-option>
                 </mat-select>
