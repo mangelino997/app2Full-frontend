@@ -46,6 +46,8 @@ export class SubopcionComponent implements OnInit {
   private subscription: Subscription;
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'nombre', 'submodulo', 'ver', 'mod'];
+  //Define submodulo
+  public submodulo:FormControl = new FormControl();
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -101,6 +103,19 @@ export class SubopcionComponent implements OnInit {
     this.submoduloServicio.listar().subscribe(res => {
       this.submodulos = res.json();
     })
+  }
+  //Establece la lista al seleccionar un submodulo en Listar
+  public establecerLista(): void {
+    let submodulo = this.submodulo.value;
+    this.servicio.listarPorSubmodulo(submodulo.id).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
@@ -180,18 +195,6 @@ export class SubopcionComponent implements OnInit {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
         this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-        console.log(err);
-      }
-    );
-  }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
       },
       err => {
         console.log(err);
