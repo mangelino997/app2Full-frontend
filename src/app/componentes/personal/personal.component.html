@@ -491,7 +491,7 @@
                           (blur)="verificarSeleccion(formulario.get('obraSocial'))">
                         <mat-autocomplete #autoObraSocial="matAutocomplete" [displayWith]="displayFa.bind(this)">
                           <mat-option *ngFor="let itemObraSocial of resultadosObrasSociales" [value]="itemObraSocial">
-                            {{itemObraSocial.nombre}}
+                            {{itemObraSocial.alias}}
                           </mat-option>
                         </mat-autocomplete>
                       </div>
