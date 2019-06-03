@@ -3,12 +3,15 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
-import { CostoInsumoProducto } from 'src/app/modelos/costoInsumoProducto';
+import { InsumoProducto } from 'src/app/modelos/insumoProducto';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { AppService } from 'src/app/servicios/app.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ToastrService } from 'ngx-toastr';
+import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
+import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
+import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 
 @Component({
   selector: 'app-costos-insumos-producto',
@@ -16,7 +19,6 @@ import { ToastrService } from 'ngx-toastr';
   styleUrls: ['./costos-insumos-producto.component.css']
 })
 export class CostosInsumosProductoComponent implements OnInit {
-
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -39,9 +41,11 @@ export class CostosInsumosProductoComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada: number = null;
-  //Define la lista de Rubros, Marcas, Unidad de Medida
+  //Define la lista de rubros
   public rubros: Array<any> = [];
+  //Define la lista de marcas
   public marcas: Array<any> = [];
+  //Define la lista de unidades de medida
   public unidadesMedidas: Array<any> = [];
   //Define la opcion activa
   public botonOpcionActivo: boolean = null;
@@ -50,7 +54,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['codigo','nombre', 'rubro', 'marca', 'unidadMedida', 'modelo', 'precioUnitarioVenta', 'coeficienteITC', 'ver', 'mod'];
+  public columnas: string[] = ['codigo', 'nombre', 'rubro', 'marca', 'unidadMedida', 'modelo', 'precioUnitarioViaje', 'precioUnitarioVenta', 'coeficienteITC', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la lista de personales
@@ -60,8 +64,10 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: InsumoProductoService, private insumoProducto: CostoInsumoProducto, private loaderService: LoaderService,
-    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+  constructor(private servicio: InsumoProductoService, private insumoProducto: InsumoProducto, private loaderService: LoaderService,
+    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService,
+    private rubroProductoServicio: RubroProductoService, private marcaProductoServicio: MarcaProductoService,
+    private unidadMedidaServicio: UnidadMedidaService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -72,11 +78,9 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
-          console.log(res.json());
           this.pestanias = res.json();
           this.pestanias.splice(0, 1); //Saca la opcion agregar
           this.pestanias.splice(2, 1); //Saca la opcion eliminar
-          console.log(this.pestanias);
           this.activeLink = this.pestanias[0].nombre;
           this.loaderService.hide();
         },
@@ -88,22 +92,42 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data).subscribe(response => {
-          console.log(response);
           this.resultados = response;
         })
       }
     })
-   }
-
+  }
+  //Al inicializarse el componente
   ngOnInit() {
     //Define los campos para validaciones
     this.formulario = this.insumoProducto.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(2, 'Consultar', 0);
-    //Obtiene la lista completa de registros
-    this.listar();
+    //Obtiene la lista de rubros de productos
+    this.listarRubroProducto();
+    //Obtiene la lista de marcas de productos
+    this.listarMarcaProducto();
+    //Obtiene la lista de unidades de medida
+    this.listarUnidadMedida();
   }
-
+  //Obtiene la lista de rubros de productos
+  private listarRubroProducto(): void {
+    this.rubroProductoServicio.listar().subscribe(res => {
+      this.rubros = res.json();
+    });
+  }
+  //Obtiene la lista de marcas de productos
+  private listarMarcaProducto(): void {
+    this.marcaProductoServicio.listar().subscribe(res => {
+      this.marcas = res.json();
+    });
+  }
+  //Obtiene la lista de unidades de medida
+  private listarUnidadMedida(): void {
+    this.unidadMedidaServicio.listar().subscribe(res => {
+      this.unidadesMedidas = res.json();
+    });
+  }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
@@ -114,7 +138,6 @@ export class CostosInsumosProductoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -134,10 +157,9 @@ export class CostosInsumosProductoComponent implements OnInit {
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+    this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.listar();
     if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
@@ -169,11 +191,12 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    this.formulario.enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario();
           setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
@@ -182,28 +205,28 @@ export class CostosInsumosProductoComponent implements OnInit {
         }
       },
       err => {
-        let error= err;
+        let error = err;
         document.getElementById("idAutocompletado").focus();
         this.toastr.error(error.mensaje);
       }
     );
   }
   //Reestablece los campos agregar
-  private reestablecerFormulario(id) {
+  private reestablecerFormulario() {
     this.formulario.reset();
     this.autocompletado.setValue(undefined);
     this.resultados = [];
-    this.rubros= [];
-    this.marcas = [];
-    this.unidadesMedidas =[];
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
     let elemAutocompletado = this.autocompletado.value;
     this.formulario.setValue(elemAutocompletado);
+    this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioViaje, 2));
+    this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioVenta, 2));
+    this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemAutocompletado.coeficienteITC, 4));
   }
-   //Obtiene la mascara de importe
-   public mascararImporte(intLimite, decimalLimite) {
+  //Obtiene la mascara de importe
+  public mascararImporte(intLimite, decimalLimite) {
     return this.appService.mascararImporte(intLimite, decimalLimite);
   }
   //Obtiene la mascara de importe
@@ -228,7 +251,6 @@ export class CostosInsumosProductoComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
@@ -239,7 +261,6 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    console.log(a, b);
     if (a != null && b != null) {
       return a.id === b.id;
     }

@@ -199,7 +199,7 @@ import { ViajeTipo } from './modelos/viajeTipo';
 import { Chequera } from './modelos/chequera';
 import { TipoChequera } from './modelos/tipoChequera';
 import { CuentaBancaria } from './modelos/cuentaBancaria';
-import { CostoInsumoProducto } from './modelos/costoInsumoProducto';
+import { InsumoProducto } from './modelos/insumoProducto';
 import { Cobrador } from './modelos/cobrador';
 import { configuracionVehiculo } from './modelos/configuracionVehiculo';
 
@@ -817,7 +817,7 @@ const stompConfig: StompConfig = {
     LoaderService,
     PersonalFamiliarService,
     PersonalFamiliar,
-    CostoInsumoProducto,
+    InsumoProducto,
     ViajeTipo,
     Cobrador,
     CuentaBancaria,
