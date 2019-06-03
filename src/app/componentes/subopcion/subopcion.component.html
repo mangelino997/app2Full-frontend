@@ -19,7 +19,7 @@
             (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
             <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
-              {{item.nombre}}
+              {{item.nombre}} - {{item.submodulo.nombre}} - {{item.submodulo.modulo.nombre}}
             </mat-option>
           </mat-autocomplete>
         </div>
@@ -35,8 +35,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idEsABM" class="tamanio-label">Es ABM *</label>
-          <mat-select id="idEsABM" class="form-control form-control-sm" [compareWith]="compareFn"
-            formControlName="esABM">
+          <mat-select id="idEsABM" class="form-control form-control-sm" formControlName="esABM">
             <mat-option [value]="false">No</mat-option>
             <mat-option [value]="true">Si</mat-option>
           </mat-select>
@@ -63,42 +62,47 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-10">
-      <div class="form-group has-float-label">
-        <label for="idSubmodulo" class="tamanio-label">Submódulo *</label>
-        <mat-select id="idSubmodulo" class="form-control form-control-sm" formControlName="submodulo"
-          [compareWith]="compareFn">
-          <mat-option *ngFor="let itemSubmodulo of submodulos" [value]="itemSubmodulo">
-            {{itemSubmodulo.modulo.nombre}} - {{itemSubmodulo.nombre}}
-          </mat-option>
-        </mat-select>
+    <div class="col-md-12">
+      <br>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group has-float-label">
+            <label for="idSubmodulo" class="tamanio-label">Submódulo *</label>
+            <mat-select id="idSubmodulo" class="form-control form-control-sm" [formControl]="submodulo"
+              [compareWith]="compareFn" (selectionChange)="establecerLista()">
+              <mat-option *ngFor="let itemSubmodulo of submodulos" [value]="itemSubmodulo">
+                {{itemSubmodulo.modulo.nombre}} - {{itemSubmodulo.nombre}}
+              </mat-option>
+            </mat-select>
+          </div>
+        </div>
       </div>
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <app-progreso></app-progreso>
         </div>
       </div>
-      <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="id" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header><b>#</b></th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="nombre" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header><b>NOMBRE</b></th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="submodulo" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Submodulo</th>
-          <td mat-cell *matCellDef="let elemento">{{l.submodulo.nombre}}, {{l.submodulo.modulo.nombre}}</td>
+        <ng-container matColumnDef="submodulo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header><b>SUBMODULO</b></th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.submodulo.nombre}}, {{elemento.submodulo.modulo.nombre}}
+          </td>
         </ng-container>
-        <ng-container matColumnDef="ver" sticky>
-          <th mat-header-cell *matHeaderCellDef>-</th>
+        <ng-container matColumnDef="ver">
+          <th mat-header-cell *matHeaderCellDef><b>-</b></th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
         </ng-container>
-        <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef>-</th>
+        <ng-container matColumnDef="mod">
+          <th mat-header-cell *matHeaderCellDef><b>-</b></th>
           <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
               class="cursor-color">editar</span></td>
         </ng-container>

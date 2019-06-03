@@ -633,7 +633,6 @@ export class PersonalComponent implements OnInit {
             document.getElementById('idApellido').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-          this.establecerValoresPorDefecto();
         }
         this.loaderService.hide();
       },

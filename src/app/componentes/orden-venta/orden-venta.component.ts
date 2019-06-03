@@ -101,6 +101,8 @@ export class OrdenVentaComponent implements OnInit {
   public importeSecoPor:FormControl = new FormControl();
   //Define importes ref por
   public importeRefPor:FormControl = new FormControl();
+  //Define la escala actual
+  public escalaActual:any;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
@@ -304,6 +306,7 @@ export class OrdenVentaComponent implements OnInit {
     this.loaderService.show();
     switch (tipo) {
       case 'empresa':
+        this.establecerCamposSoloLectura(this.indiceSeleccionado);
         this.ordenVentaServicio.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
@@ -313,6 +316,7 @@ export class OrdenVentaComponent implements OnInit {
         break;
       case 'cliente':
         this.reestablecerCampos(this.formulario.get('cliente').value);
+        this.establecerCamposSoloLectura(this.indiceSeleccionado);
         this.formulario.get('cliente').setValue(this.formulario.get('cliente').value);
         this.formulario.get('empresa').setValue(null);
         this.ordenVentaServicio.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
@@ -355,24 +359,24 @@ export class OrdenVentaComponent implements OnInit {
       case 1:
         this.establecerCamposSoloLectura(1);
         this.establecerValoresPorDefecto(true);
-        this.cambioTipoTarifa();
         this.establecerValoresPestania(nombre, false, false, true, 'idTipoOrdenVenta');
+        this.cambioTipoTarifa();
         break;
       case 2:
-        this.establecerCamposSoloLectura(2);
         this.establecerValoresPorDefecto(true);
+        this.establecerCamposSoloLectura(2);
         this.establecerValoresPestania(nombre, true, true, false, 'idTipoOrdenVenta');
         break;
       case 3:
-        this.establecerCamposSoloLectura(3);
         this.establecerValoresPorDefecto(true);
         this.cambioTipoTarifa();
+        this.establecerCamposSoloLectura(3);
         this.establecerValoresPestania(nombre, true, false, true, 'idTipoOrdenVenta');
         break;
       case 4:
-        this.establecerCamposSoloLectura(4);
         this.establecerValoresPorDefecto(true);
         this.cambioTipoTarifa();
+        this.establecerCamposSoloLectura(4);
         this.establecerValoresPestania(nombre, true, true, true, 'idTipoOrdenVenta');
         break;
       default:
@@ -383,7 +387,17 @@ export class OrdenVentaComponent implements OnInit {
   public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar();
+        this.formulario.enable();
+        this.preciosDesde.enable();
+        if(this.formulario.valid && this.preciosDesde.valid) {
+          if(this.listaDeEscalas.length > 0 || this.listaDeTramos.length > 0) {
+            this.agregar();
+          } else {
+            this.toastr.error('La lista no puede estar vacia');
+          }
+        } else {
+          this.toastr.error('Falta completar datos de formulario');
+        }
         break;
       case 3:
         this.actualizar();
@@ -401,24 +415,40 @@ export class OrdenVentaComponent implements OnInit {
       case 1:
         this.formulario.get('vendedor').enable();
         this.formulario.get('tipoTarifa').enable();
+        this.formulario.get('esContado').enable();
+        this.formularioEscala.get('importeFijo').enable();
+        this.importePor.enable();
         this.formularioEscala.enable();
         this.formularioTramo.enable();
+        this.cambioTipoTarifa();
+        this.cambioImportesPor();
         break;
       case 2:
         this.formulario.get('vendedor').disable();
         this.formulario.get('tipoTarifa').disable();
+        this.formulario.get('esContado').disable();
+        this.formularioEscala.get('importeFijo').disable();
+        this.importePor.disable();
         this.formularioEscala.disable();
         this.formularioTramo.disable();
         break;
       case 3:
         this.formulario.get('vendedor').enable();
         this.formulario.get('tipoTarifa').disable();
+        this.formulario.get('esContado').enable();
+        this.formularioEscala.get('importeFijo').enable();
+        this.importePor.enable();
         this.formularioEscala.enable();
         this.formularioTramo.enable();
+        this.cambioTipoTarifa();
+        this.cambioImportesPor();
         break;
       case 4:
         this.formulario.get('vendedor').disable();
         this.formulario.get('tipoTarifa').disable();
+        this.formulario.get('esContado').disable();
+        this.formularioEscala.get('importeFijo').disable();
+        this.importePor.disable();
         this.formularioEscala.disable();
         this.formularioTramo.disable();
         break;
@@ -465,6 +495,9 @@ export class OrdenVentaComponent implements OnInit {
     if(formulario.get('precioUnitario').value == 'NaN') {
       formulario.get('precioUnitario').setValue('0.00');
     }
+    if(formulario.get('porcentaje').value == 'NaN') {
+      formulario.get('porcentaje').setValue('0.00');
+    }
     if(formulario.get('minimo').value == 'NaN') {
       formulario.get('minimo').setValue('0.00');
     }
@@ -498,23 +531,26 @@ export class OrdenVentaComponent implements OnInit {
       this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1);
     }
     this.formularioEscala.reset();
+    this.importePor.setValue(false);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
   }
   //Actualiza una Escala a listaDeEscalas
   public actualizarEscalaLista() {
+    this.controlarCamposVaciosEscala(this.formularioEscala);
     if (this.indiceSeleccionado == 3) {
       this.loaderService.show();
       this.ordenVentaEscalaServicio.actualizar(this.formularioEscala.value).subscribe(res => {
-        this.loaderService.hide();
         this.cambioPreciosDesde();
+        this.loaderService.hide();
       });
     } else {
       this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
     }
     this.formularioEscala.reset();
     this.idModEscala = null;
+    this.importePor.setValue(false);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -523,6 +559,8 @@ export class OrdenVentaComponent implements OnInit {
   public cancelarEscalaLista() {
     this.formularioEscala.reset();
     this.idModEscala = null;
+    this.importePor.setValue(false);
+    this.eliminarElementoEscalas(this.escalaActual.valor);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -552,19 +590,29 @@ export class OrdenVentaComponent implements OnInit {
   //Modifica una Escala de listaDeEscalas
   public modificarEscalaLista(escala, id) {
     this.idModEscala = id;
+    this.escalaActual = escala.escalaTarifa;
     this.agregarElementoEscalas(escala.escalaTarifa);
     if(this.indiceSeleccionado != 1) {
       escala.ordenVenta = { id: this.ordenventa.value.id };
     }
     this.formularioEscala.patchValue(escala);
-    if (escala.importeFijo != 0) {
+    if (escala.importeFijo) {
       this.formularioEscala.get('importeFijo').setValue(parseFloat(escala.importeFijo).toFixed(2));
       this.formularioEscala.get('precioUnitario').setValue(null);
       this.importePor.setValue(false);
-    } else {
+      this.cambioImportesPor();
+    } 
+    if(escala.precioUnitario) {
       this.formularioEscala.get('precioUnitario').setValue(parseFloat(escala.precioUnitario).toFixed(2));
       this.formularioEscala.get('importeFijo').setValue(null);
       this.importePor.setValue(true);
+      this.cambioImportesPor();
+    }
+    let tipoTarifa = this.formulario.get('tipoTarifa').value;
+    if(tipoTarifa.porPorcentaje) {
+      this.formularioEscala.get('porcentaje').enable();
+    } else {
+      this.formularioEscala.get('porcentaje').disable();
     }
     this.formularioEscala.get('porcentaje').setValue(parseFloat(escala.porcentaje).toFixed(2));
     this.formularioEscala.get('minimo').setValue(parseFloat(escala.minimo).toFixed(2));
@@ -691,12 +739,14 @@ export class OrdenVentaComponent implements OnInit {
       this.listaDeTramos.push(this.formularioTramo.value);
     }
     this.formularioTramo.reset();
+    this.resultadosTramos = [];
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
   }
   //Actualiza un tramo de lista de tramos
   public actualizarTramoLista() {
+    this.controlarCamposVaciosTramo(this.formularioTramo);
     if (this.indiceSeleccionado == 3) {
       this.loaderService.show();
       this.ordenVentaTramoServicio.actualizar(this.formularioTramo.value).subscribe(res => {
@@ -708,6 +758,7 @@ export class OrdenVentaComponent implements OnInit {
     }
     this.formularioTramo.reset();
     this.idModTramo = null;
+    this.resultadosTramos = [];
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
@@ -716,6 +767,7 @@ export class OrdenVentaComponent implements OnInit {
   public cancelarTramoLista() {
     this.formularioTramo.reset();
     this.idModTramo = null;
+    this.resultadosTramos = [];
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
@@ -737,6 +789,7 @@ export class OrdenVentaComponent implements OnInit {
       this.preciosDesde.enable();
       this.ordenventa.enable();
     }
+    this.resultadosTramos = [];
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
@@ -744,7 +797,30 @@ export class OrdenVentaComponent implements OnInit {
   //Modifica un Tramo de listaDeTramos
   public modificarTramoLista(tramo, indice) {
     this.idModTramo = indice;
+    if(this.indiceSeleccionado != 1) {
+      tramo.ordenVenta = { id: this.ordenventa.value.id };
+    }
     this.formularioTramo.patchValue(tramo);
+    if(tramo.importeFijoSeco) {
+      this.formularioTramo.get('importeFijoSeco').setValue(parseFloat(tramo.importeFijoSeco).toFixed(2));
+      this.importeSecoPor.setValue(false);
+      this.cambioImportesSecoPor();
+    } 
+    if(tramo.precioUnitarioSeco) {
+      this.formularioTramo.get('precioUnitarioSeco').setValue(parseFloat(tramo.precioUnitarioSeco).toFixed(2));
+      this.importeSecoPor.setValue(true);
+      this.cambioImportesSecoPor();
+    }
+    if(tramo.importeFijoRef) {
+      this.formularioTramo.get('importeFijoRef').setValue(parseFloat(tramo.importeFijoRef).toFixed(2));
+      this.importeRefPor.setValue(false);
+      this.cambioImportesRefPor();
+    }
+    if(tramo.precioUnitarioRef) {
+      this.formularioTramo.get('precioUnitarioRef').setValue(parseFloat(tramo.precioUnitarioRef).toFixed(2));
+      this.importeRefPor.setValue(true);
+      this.cambioImportesRefPor();
+    }
     setTimeout(function () {
       document.getElementById('idTramo').focus();
     }, 20);
