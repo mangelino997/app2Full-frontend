@@ -244,19 +244,13 @@ export class CostosInsumosProductoComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[0].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
-    this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(elemento.precioUnitarioViaje, 2));
-    this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2));
-    this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemento.coeficienteITC, 4));
+    this.cambioAutocompletado();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
-    this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(elemento.precioUnitarioViaje, 2));
-    this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2));
-    this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemento.coeficienteITC, 4));
+    this.cambioAutocompletado();
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
