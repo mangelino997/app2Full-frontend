@@ -140,6 +140,9 @@ import { ViajePropioEfectivoService } from './servicios/viaje-propio-efectivo';
 import { ViajePropioInsumoService } from './servicios/viaje-propio-insumo';
 import { ViajePropioGastoService } from './servicios/viaje-propio-gasto';
 import { ViajePropioPeajeService } from './servicios/viaje-propio-peaje';
+import { ChequeraService } from './servicios/chequera.service';
+import { TipoChequeraService } from './servicios/tipo-chequera.service';
+import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
 
 //Modelos
 import { ViajePropio } from './modelos/viajePropio';
@@ -193,6 +196,12 @@ import { TipoFamiliar } from './modelos/tipo-familiar';
 import { PersonalFamiliar } from './modelos/personal-familiar';
 import { Usuario } from './modelos/usuario';
 import { ViajeTipo } from './modelos/viajeTipo';
+import { Chequera } from './modelos/chequera';
+import { TipoChequera } from './modelos/tipoChequera';
+import { CuentaBancaria } from './modelos/cuentaBancaria';
+import { CostoInsumoProducto } from './modelos/costoInsumoProducto';
+import { Cobrador } from './modelos/cobrador';
+import { configuracionVehiculo } from './modelos/configuracionVehiculo';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -303,7 +312,6 @@ import { BasicoCategoriaComponent } from './componentes/basico-categoria/basico-
 import { ObservacionesDialogo } from './componentes/viaje/observaciones-dialogo.component';
 import { RolOpcionComponent, RolOpcionDialog } from './componentes/rol-opcion/rol-opcion.component';
 import { ProgresoComponent } from './componentes/progreso/progreso.component';
-import { configuracionVehiculo } from './modelos/configuracionVehiculo';
 import { ErrorPuntoVentaComponent } from './componentes/error-punto-venta/error-punto-venta.component';
 import { SoporteComponent } from './componentes/soporte/soporte.component';
 import { TipoFamiliarComponent } from './componentes/tipo-familiar/tipo-familiar.component';
@@ -311,18 +319,10 @@ import { ContraseniaComponent } from './componentes/contrasenia/contrasenia.comp
 import { PersonalFamiliarComponent } from './componentes/personal-familiar/personal-familiar.component';
 import { ViajeTipoComponent } from './componentes/viaje-tipo/viaje-tipo.component';
 import { CostosInsumosProductoComponent } from './componentes/costos-insumos-producto/costos-insumos-producto.component';
-import { CostoInsumoProducto } from './modelos/costoInsumoProducto';
-import { Cobrador } from './modelos/cobrador';
 import { VencimientosChoferesComponent } from './componentes/vencimientos-choferes/vencimientos-choferes.component';
 import { CuentaBancariaComponent } from './componentes/cuenta-bancaria/cuenta-bancaria.component';
-import { CuentaBancaria } from './modelos/cuentaBancaria';
-import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
 import { TipoChequeraComponent } from './componentes/tipo-chequera/tipo-chequera.component';
-import { TipoChequera } from './modelos/tipoChequera';
-import { TipoChequeraService } from './servicios/tipo-chequera.service';
 import { ChequeraComponent } from './componentes/chequera/chequera.component';
-import { ChequeraService } from './servicios/chequera.service';
-import { Chequera } from './modelos/chequera';
 
 //Rutas
 const appRoutes: Routes = [
@@ -437,12 +437,10 @@ const appRoutes: Routes = [
   { path: 'cuentasbancariascuentas', component: CuentaBancariaComponent, canActivate: [GuardiaService] },
   { path: 'sindicatostipochequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
   { path: 'cuentasbancariaschequeras', component: ChequeraComponent, canActivate: [GuardiaService] }
-
-    
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.123:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://localhost:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,

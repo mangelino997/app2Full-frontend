@@ -394,9 +394,13 @@ export class OrdenVentaComponent implements OnInit {
             this.agregar();
           } else {
             this.toastr.error('La lista no puede estar vacia');
+            this.formulario.disable();
+            this.preciosDesde.disable();
           }
         } else {
           this.toastr.error('Falta completar datos de formulario');
+          this.formulario.disable();
+          this.preciosDesde.disable();
         }
         break;
       case 3:
@@ -531,7 +535,6 @@ export class OrdenVentaComponent implements OnInit {
       this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1);
     }
     this.formularioEscala.reset();
-    this.importePor.setValue(false);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -550,7 +553,6 @@ export class OrdenVentaComponent implements OnInit {
     }
     this.formularioEscala.reset();
     this.idModEscala = null;
-    this.importePor.setValue(false);
     setTimeout(function () {
       document.getElementById('idEscala').focus();
     }, 20);
@@ -902,6 +904,9 @@ export class OrdenVentaComponent implements OnInit {
     let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
     if (!tipoOrdenVenta) {
       this.listarOrdenesVentas('empresa');
+      this.formulario.get('cliente').setValidators([]);
+    } else {
+      this.formulario.get('cliente').setValidators([Validators.required]);
     }
   }
   //Reestablecer campos
