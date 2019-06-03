@@ -317,6 +317,12 @@ import { VencimientosChoferesComponent } from './componentes/vencimientos-chofer
 import { CuentaBancariaComponent } from './componentes/cuenta-bancaria/cuenta-bancaria.component';
 import { CuentaBancaria } from './modelos/cuentaBancaria';
 import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
+import { TipoChequeraComponent } from './componentes/tipo-chequera/tipo-chequera.component';
+import { TipoChequera } from './modelos/tipoChequera';
+import { TipoChequeraService } from './servicios/tipo-chequera.service';
+import { ChequeraComponent } from './componentes/chequera/chequera.component';
+import { ChequeraService } from './servicios/chequera.service';
+import { Chequera } from './modelos/chequera';
 
 //Rutas
 const appRoutes: Routes = [
@@ -428,13 +434,15 @@ const appRoutes: Routes = [
   { path: 'contablecostosinsumosproductos', component: CostosInsumosProductoComponent, canActivate: [GuardiaService] },
   { path: 'configuracionviajetipo', component: ViajeTipoComponent, canActivate: [GuardiaService] },
   { path: 'legajosvencimientoschoferes', component: VencimientosChoferesComponent, canActivate: [GuardiaService] },
-  { path: 'cuentasbancariascuentas', component: CuentaBancariaComponent, canActivate: [GuardiaService] }
+  { path: 'cuentasbancariascuentas', component: CuentaBancariaComponent, canActivate: [GuardiaService] },
+  { path: 'sindicatostipochequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
+  { path: 'cuentasbancariaschequeras', component: ChequeraComponent, canActivate: [GuardiaService] }
 
-  
+    
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.156:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://192.168.0.123:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -580,7 +588,9 @@ const stompConfig: StompConfig = {
     CostosInsumosProductoComponent,
     ViajeTipoComponent,
     VencimientosChoferesComponent,
-    CuentaBancariaComponent
+    CuentaBancariaComponent,
+    TipoChequeraComponent,
+    ChequeraComponent
   ],
   imports: [
     BrowserModule,
@@ -813,6 +823,10 @@ const stompConfig: StompConfig = {
     ViajeTipo,
     Cobrador,
     CuentaBancaria,
+    TipoChequera,
+    TipoChequeraService,
+    Chequera,
+    ChequeraService,
     CuentaBancariaService,
     {
       provide: StompConfig,

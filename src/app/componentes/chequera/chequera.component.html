@@ -1,0 +1,123 @@
+<div id="sindicato" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+  <div class="row">
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>CHEQUERA </a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-4 text-center">
+      <h5>{{pestaniaActual}} Chequera</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+          <label for="idAutocompletado" class="tamanio-label">Buscar por Número de Cuenta Bancaria</label>
+          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cambioAutocompletado(item)">
+              {{item.nombre}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCodigo" class="tamanio-label">Código</label>
+          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
+        </div>
+        <div class="form-group has-float-label">
+          <label id="labelEmpresa" for="idEmpresa" class="tamanio-label">Empresa</label>
+          <input id="idEmpresa" type="text" [formControl]="empresaDatos" autocomplete="off"
+            class="form-control form-control-sm" readonly>
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idCuentaBancaria" class="tamanio-label">Cuenta Bancaria *</label>
+          <mat-select id="idCuentaBancaria" class="form-control form-control-sm" formControlName="cuentaBancaria"
+            [compareWith]="compareFn">
+            <mat-option *ngFor="let item of cuentasBancarias" [value]="item">
+              {{item.numeroCuenta}}
+            </mat-option>
+          </mat-select>
+        </div>
+        <div class="form-group has-float-label">
+          <label for="idTipoChequera" class="tamanio-label">Tipo de Chequera *</label>
+          <mat-select id="idTipoChequera" class="form-control form-control-sm" formControlName="tipoChequera"
+            [compareWith]="compareFn">
+            <mat-option *ngFor="let item of tiposChequeras" [value]="item">
+              {{item.nombre}}
+            </mat-option>
+          </mat-select>
+        </div>
+        <div class="form-group has-float-label">
+          <label id="labelDesde" for="idDesde" class="tamanio-label">Desde </label>
+          <input id="idDesde" type="text" formControlName="desde" autocomplete="off" (blur)="establecerCerosIzq(formulario.get('desde'), '0000000', -8)"
+            class="form-control form-control-sm" [readonly]="soloLectura">
+        </div>
+        <div class="form-group has-float-label">
+          <label id="labelHasta" for="idHasta" class="tamanio-label">Hasta </label>
+          <input id="idHasta" type="text" formControlName="hasta" autocomplete="off" (blur)="validarMayor()"
+            class="form-control form-control-sm" [readonly]="soloLectura">
+        </div>
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+          {{pestaniaActual}}
+        </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-8">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
+      </div>
+      <br>
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="id" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+          <td mat-cell *matCellDef="let elemento, let i=index;">{{i + 1}}</td>
+        </ng-container>
+        <ng-container matColumnDef="empresa" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.cuentaBancaria.empresa.abreviatura}}</td>
+        </ng-container>
+        <ng-container matColumnDef="cuentaBancaria" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Bancaria</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.cuentaBancaria.numeroCuenta}}</td>
+        </ng-container>
+        <ng-container matColumnDef="tipoChequera" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Chequera</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.tipoChequera.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="desde" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Desde</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.desde}}</td>
+        </ng-container>
+        <ng-container matColumnDef="hasta" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Hasta</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.hasta}}</td>
+        </ng-container>
+        <ng-container matColumnDef="ver" sticky>
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+              class="cursor-color">ver</span></td>
+        </ng-container>
+        <ng-container matColumnDef="mod" sticky>
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+              class="cursor-color">editar</span></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+    </div>
+  </div>
+</div>
