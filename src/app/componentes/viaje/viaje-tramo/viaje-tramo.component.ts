@@ -162,10 +162,10 @@ export class ViajeTramoComponent implements OnInit {
           //Viaje Tercero
         }
       } else {
-        this.formularioViajePropioTramo.get('cantidad').reset();
-        this.formularioViajePropioTramo.get('precioUnitario').reset();
         this.formularioViajePropioTramo.get('cantidad').enable();
         this.formularioViajePropioTramo.get('precioUnitario').enable();
+        this.formularioViajePropioTramo.get('cantidad').reset();
+        this.formularioViajePropioTramo.get('precioUnitario').reset();
       }
     }
   }
@@ -266,14 +266,14 @@ export class ViajeTramoComponent implements OnInit {
     }
   }
   //Verifica el elemento seleccionado en Tarifa para determinar si coloca cantidad e importe en solo lectura
-  public estadoTarifa(): boolean {
-    try {
-      let viajeTarifa = this.formularioViajePropioTramo.get('viajeTarifa').value.id;
-      return viajeTarifa == 2 || viajeTarifa == 5;
-    } catch (e) {
-      return false;
-    }
-  }
+  // public estadoTarifa(): boolean {
+  //   try {
+  //     let viajeTarifa = this.formularioViajePropioTramo.get('viajeTarifa').value.id;
+  //     return viajeTarifa == 2 || viajeTarifa == 5;
+  //   } catch (e) {
+  //     return false;
+  //   }
+  // }
   //Agrega datos a la tabla de tramos
   public agregarTramo(): void {
     this.formularioViajePropioTramo.enable();

@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-md-3">
             <div class="form-group has-float-label">
-                <label for="idTramoFecha" class="tamanio-label">Fecha</label>
+                <label for="idTramoFecha" class="tamanio-label">Fecha *</label>
                 <input id="idTramoFecha" type="date" formControlName="fechaTramo" autocomplete="off"
                     class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
@@ -12,7 +12,7 @@
                 <label for="idTramo" class="tamanio-label">Tramo *</label>
                 <input id="idTramo" class="form-control form-control-sm" type="text" matInput
                     [formControl]="formularioViajePropioTramo.get('tramo')" [matAutocomplete]="autoTramo"
-                    autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por Ciudad Origen"
+                    autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por Origen"
                     (blur)="verificarSeleccion(formularioViajePropioTramo.get('tramo'))">
                 <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFn.bind(this)"
                     (optionSelected)="establecerKm()">
@@ -82,7 +82,7 @@
             <div class="form-group has-float-label">
                 <label for="idTramoViajeTarifa" class="tamanio-label">Tarifa *</label>
                 <mat-select id="idTramoViajeTarifa" class="form-control form-control-sm" formControlName="viajeTarifa"
-                    [compareWith]="compareFn" (optionSelected)="establecerTipoViaje(tipoViaje)">
+                    [compareWith]="compareFn" (selectionChange)="establecerTipoViaje(tipoViaje)">
                     <mat-option *ngFor="let itemViajeTarifa of viajesTarifas" [value]="itemViajeTarifa">
                         {{itemViajeTarifa.nombre}}
                     </mat-option>
@@ -96,7 +96,7 @@
                 <label for="idTramoCantidad" class="tamanio-label">Cantidad *</label>
                 <input id="idTramoCantidad" [textMask]="mascararEnteros(4)" type="text" formControlName="cantidad"
                     autocomplete="off" class="form-control form-control-sm number-right"
-                    [readonly]="soloLectura || estadoTarifa()"
+                    [readonly]="soloLectura"
                     (blur)="calcularImporte(formularioViajePropioTramo, null, null)" placeholder="0">
             </div>
         </div>
@@ -105,7 +105,7 @@
                 <label for="idTramoPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
                 <input id="idTramoPrecioUnitario" [textMask]="mascararImporte(8, 3)" type="text"
                     formControlName="precioUnitario" autocomplete="off"
-                    class="form-control form-control-sm number-right" [readonly]="soloLectura || estadoTarifa()"
+                    class="form-control form-control-sm number-right" [readonly]="soloLectura"
                     placeholder="$ 0.000"
                     (blur)="calcularImporte(formularioViajePropioTramo, formularioViajePropioTramo.get('precioUnitario'), 3)">
             </div>
@@ -121,7 +121,9 @@
         <div class="col-md-4">
             <div class="inline">
                 <button mat-raised-button (click)="verDadorDestinatarioDialogo()"
-                    [disabled]="soloLectura">Dador-Destinatario</button>
+                    [disabled]="soloLectura">Dador-Destinatario 
+                    <span *ngIf="formularioViajePropioTramo.get('viajeTipo').value ? formularioViajePropioTramo.get('viajeTipo').value.id != 3 : false">*</span>
+                </button>
                 <button mat-raised-button (click)="abrirObservacionesDialogo()">Observaciones</button>
                 <button mat-raised-button color="primary" (click)="agregarTramo()"
                     [disabled]="!formularioViajePropioTramo.valid" *ngIf="btnTramo">Agregar Tramo</button>
