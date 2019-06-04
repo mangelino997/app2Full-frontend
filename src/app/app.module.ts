@@ -432,7 +432,7 @@ const appRoutes: Routes = [
   { path: 'legajosfamiliares', component: PersonalFamiliarComponent, canActivate: [GuardiaService] },
   { path: 'usuarioscontrasenas', component: ContraseniaComponent, canActivate: [GuardiaService] },
   { path: 'contablecostosinsumosproductos', component: CostosInsumosProductoComponent, canActivate: [GuardiaService] },
-  { path: 'configuracionviajetipo', component: ViajeTipoComponent, canActivate: [GuardiaService] },
+  { path: 'contablecostosdeviajesgs', component: ViajeTipoComponent, canActivate: [GuardiaService] },
   { path: 'legajosvencimientoschoferes', component: VencimientosChoferesComponent, canActivate: [GuardiaService] },
   { path: 'cuentasbancariascuentas', component: CuentaBancariaComponent, canActivate: [GuardiaService] },
   { path: 'sindicatostipochequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
