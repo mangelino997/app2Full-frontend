@@ -62,7 +62,8 @@ export class ViajeRemitoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['sucursal', 'fecha', 'tipoComprobante', 'puntoVenta', 'numero', 'bultos', 'observaciones', 'ver', 'mod'];
+  public columnas: string[] = ['numeroCamion', 'sucursal', 'fecha', 'tipoComprobante', 'puntoVenta', 'letra', 
+    'numero', 'remitente', 'destinatario', 'bultos', 'observaciones', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -106,8 +107,8 @@ export class ViajeRemitoComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      sucursalEmision: new FormControl(),
-      empresaEmision: new FormControl(),
+      sucursalIngreso: new FormControl(),
+      empresa: new FormControl(),
       usuario: new FormControl(),
       fecha: new FormControl('', Validators.required),
       numeroCamion: new FormControl('', Validators.required),
@@ -355,8 +356,8 @@ export class ViajeRemitoComponent implements OnInit {
     var numeroCamion = this.formulario.get('numeroCamion').value;
     var sucursalDestino = this.formulario.get('sucursalDestino').value;
     this.formulario.get('letra').enable();
-    this.formulario.get('sucursalEmision').setValue(this.appService.getUsuario().sucursal);
-    this.formulario.get('empresaEmision').setValue(this.appService.getEmpresa());
+    this.formulario.get('sucursalIngreso').setValue(this.appService.getUsuario().sucursal);
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
     console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
