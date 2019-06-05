@@ -80,6 +80,13 @@ export class ViajeTipoComponent implements OnInit {
         this.show = state.show;
       });
   }
+  //Establece el formulario
+  public establecerFormulario(): void {
+    let elemento = this.autocompletado.value;
+    this.formulario.setValue(elemento);
+    this.formulario.get('costoPorKmPropio').setValue(this.appService.establecerDecimales(elemento.costoPorKmPropio, 3));
+    this.formulario.get('costoPorKmTercero').setValue(this.appService.establecerDecimales(elemento.costoPorKmTercero, 3));
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -243,13 +250,13 @@ export class ViajeTipoComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.establecerFormulario();
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

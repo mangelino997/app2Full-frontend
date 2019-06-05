@@ -409,7 +409,7 @@ const appRoutes: Routes = [
   { path: 'repartosplanillasentrantes', component: RepartoEntranteComponent, canActivate: [GuardiaService] },
   { path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService] },
   { path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService] },
-  { path: 'logisticaproductos', component: ProductoComponent, canActivate: [GuardiaService] },
+  { path: 'logisticainsumosproductos', component: ProductoComponent, canActivate: [GuardiaService] },
   { path: 'menuopciones', component: OpcionComponent, canActivate: [GuardiaService] },
   { path: 'plandecuentasdefinicion', component: PlanCuentaComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdecomprobantes', component: TipoComprobanteComponent, canActivate: [GuardiaService] },
