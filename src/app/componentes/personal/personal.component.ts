@@ -323,6 +323,28 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('esChoferLargaDistancia').setValue(false);
     this.formulario.get('enConvenioColectivo').setValue(true);
     this.formulario.get('conCoberturaSCVO').setValue(true);
+    this.formulario.get('vtoLicenciaConducir').disable();
+    this.formulario.get('vtoCurso').disable();
+    this.formulario.get('vtoCursoCargaPeligrosa').disable();
+    this.formulario.get('vtoLINTI').disable();
+    this.formulario.get('vtoLibretaSanidad').disable();
+  }
+  //Al cambiar elemento de select esChofer
+  public cambioEsChofer(): void {
+    let esChofer = this.formulario.get('esChofer').value;
+    if(esChofer) {
+      this.formulario.get('vtoLicenciaConducir').enable();
+      this.formulario.get('vtoCurso').enable();
+      this.formulario.get('vtoCursoCargaPeligrosa').enable();
+      this.formulario.get('vtoLINTI').enable();
+      this.formulario.get('vtoLibretaSanidad').enable();
+    } else {
+      this.formulario.get('vtoLicenciaConducir').disable();
+      this.formulario.get('vtoCurso').disable();
+      this.formulario.get('vtoCursoCargaPeligrosa').disable();
+      this.formulario.get('vtoLINTI').disable();
+      this.formulario.get('vtoLibretaSanidad').disable();
+    }
   }
   //Obtiene el listado de sexos
   private listarSexos() {
@@ -508,18 +530,22 @@ export class PersonalComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerValoresPorDefecto();
         this.establecerEstadoCampos(true, 1);
         this.establecerValoresPestania(nombre, false, false, true, 'idApellido');
         break;
       case 2:
+        this.establecerValoresPorDefecto();
         this.establecerEstadoCampos(false, 2);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+        this.establecerValoresPorDefecto();
         this.establecerEstadoCampos(true, 3);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+        this.establecerValoresPorDefecto();
         this.establecerEstadoCampos(false, 4);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
@@ -847,10 +873,18 @@ export class PersonalComponent implements OnInit {
       return elemento;
     }
   }
-  //Define como se muestra los datos en el autcompletado a
+  //Define como se muestra los datos en el autcompletado d
   public displayFd(elemento) {
     if (elemento != undefined) {
       return elemento.nombre ? elemento.codigoAfip + ' - ' + elemento.nombre : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Define como se muestra los datos en el autcompletado d
+  public displayFe(elemento) {
+    if (elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
     }

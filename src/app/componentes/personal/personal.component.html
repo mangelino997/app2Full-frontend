@@ -489,7 +489,7 @@
                           [formControl]="formulario.get('obraSocial')" [matAutocomplete]="autoObraSocial"
                           autocomplete="off" [readonly]="soloLectura"
                           (blur)="verificarSeleccion(formulario.get('obraSocial'))">
-                        <mat-autocomplete #autoObraSocial="matAutocomplete" [displayWith]="displayFa.bind(this)">
+                        <mat-autocomplete #autoObraSocial="matAutocomplete" [displayWith]="displayFe.bind(this)">
                           <mat-option *ngFor="let itemObraSocial of resultadosObrasSociales" [value]="itemObraSocial">
                             {{itemObraSocial.alias}}
                           </mat-option>
@@ -566,7 +566,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idEsChofer" class="tamanio-label">Es Chofer *</label>
-                        <mat-select id="idEsChofer" class="form-control form-control-sm" formControlName="esChofer">
+                        <mat-select id="idEsChofer" class="form-control form-control-sm" formControlName="esChofer"
+                          (selectionChange)="cambioEsChofer()">
                           <mat-option [value]="false">No</mat-option>
                           <mat-option [value]="true">Si</mat-option>
                         </mat-select>
