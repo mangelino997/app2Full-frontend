@@ -292,6 +292,7 @@ export class CuentaBancariaComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     let usuario = this.appComponent.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
+    this.formulario.get('empresa').setValue(this.empresa.value);
     console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {

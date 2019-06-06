@@ -44,6 +44,7 @@ export class PersonalFamiliarComponent implements OnInit {
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
+  public listaCompletaArray: Array<any> = [];
   //Define la opcion seleccionada
   public opcionSeleccionada: number = null;
   //Define la lista de sexos
@@ -62,6 +63,9 @@ export class PersonalFamiliarComponent implements OnInit {
   public nacionalidadNacimiento: FormControl = new FormControl();
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
+  //Define el Familiar seleccionado control para las busquedas
+  public familiar: FormControl = new FormControl();
+  
   //Define el form control para las busquedas
   public autocompletadopersonal: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
@@ -71,11 +75,13 @@ export class PersonalFamiliarComponent implements OnInit {
   //Define la lista de resultados de busqueda de localidades
   public resultadosLocalidades: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['legajo','familiar', 'apellido', 'nombre', 'fechaNacimiento', 'lugarNacimiento', 'nacionalidad', 'sexo', 'ver', 'mod'];
+  public columnas: string[] = ['legajo','familiar', 'apellido', 'nombre', 'fechaNacimiento', 'cuil', 'lugarNacimiento', 'nacionalidad', 'sexo', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la lista de personales
   public personales: Array<any> = [];
+  //Define la lista para los Familiares del Personal que se seleccione
+  public personasFamiliares: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -210,7 +216,6 @@ export class PersonalFamiliarComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado, opcionPestania) {
     if (estado) {
-      this.formulario.get('personal').enable();
       this.formulario.get('tipoFamiliar').enable();
       // this.formulario.get('fechaNacimiento').enable();
       this.formulario.get('localidadNacimiento').enable();
@@ -222,7 +227,6 @@ export class PersonalFamiliarComponent implements OnInit {
       this.formulario.get('anioBajaImpGan').enable();
       this.formulario.get('anioAltaImpGan').enable();
     } else {
-      this.formulario.get('personal').disable();
       this.formulario.get('tipoFamiliar').disable();
       // this.formulario.get('fechaNacimiento').disable();
       this.formulario.get('localidadNacimiento').disable();
@@ -276,15 +280,15 @@ export class PersonalFamiliarComponent implements OnInit {
         break;
       case 2:
         this.establecerEstadoCampos(false, 2);
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idPersonal');
         break;
       case 3:
         this.establecerEstadoCampos(true, 3);
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idPersonal');
         break;
       case 4:
         this.establecerEstadoCampos(false, 4);
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idPersonal');
         break;
       case 5:
         this.listar();
@@ -355,6 +359,7 @@ export class PersonalFamiliarComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompletaArray = res.json();
         this.loaderService.hide();
       },
       err => {
@@ -404,8 +409,22 @@ export class PersonalFamiliarComponent implements OnInit {
       },
       err => {
         let error= err;
-        document.getElementById("idApellido").focus();
-        this.toastr.error(error.mensaje);
+        if(error.codigo == 11007){
+          this.toastr.error(error.mensaje);
+          setTimeout(function () {
+            document.getElementById("labelCuil").classList.add('label-error');
+            document.getElementById("idCuil").classList.add('is-invalid');
+            document.getElementById("idCuil").focus();
+          }, 20);
+        }
+        if(error.codigo == 11012){
+          this.toastr.error(error.mensaje);
+          setTimeout(function () {
+            document.getElementById("labelCuil").classList.add('label-error');
+            document.getElementById("idCuil").classList.add('is-invalid');
+            document.getElementById("idCuil").focus();
+          }, 20);
+        }
       }
     );
   }
@@ -418,10 +437,29 @@ export class PersonalFamiliarComponent implements OnInit {
     if(typeof valor.value != 'object') {
       valor.setValue(null);
     }
+    if(this.indiceSeleccionado == 2 || this.indiceSeleccionado==3 || this.indiceSeleccionado == 4){
+      this.obtenerFamiliaresPersonal();
+    }
+  }
+  //Obtiene una lista de familiares del Personal seleccionado
+  private obtenerFamiliaresPersonal(){
+    this.loaderService.show();
+    this.servicio.listarPorPersonal(this.formulario.get('personal').value.id).subscribe(
+      res=>{
+        console.log(res.json());
+        this.personasFamiliares = res.json();
+        this.loaderService.hide();
+      },
+      err=>{
+        this.toastr.warning("El Personal seleccionado no tiene ningún Familiar asociado.");
+        this.loaderService.hide();
+      }
+    )
   }
   //Reestablece los campos agregar
   private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.familiar.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.nacionalidadNacimiento.setValue(undefined);
@@ -461,14 +499,14 @@ export class PersonalFamiliarComponent implements OnInit {
           let respuesta = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta) {
             let err = { codigo: 11007, mensaje: 'CUIT Incorrecto!' };
-            this.lanzarErrorDocumento(err);
+            this.lanzarError(err);
           }
           break;
         case 2:
           let respuesta2 = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta2) {
             let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
-            this.lanzarErrorDocumento(err);
+            this.lanzarError(err);
           }
           break;
         case 8:
@@ -484,6 +522,8 @@ export class PersonalFamiliarComponent implements OnInit {
   //Valida el CUIL
   public validarCUIL(): void {
     let cuil = this.formulario.get('cuil').value;
+    console.log(cuil);
+    //Primero valida que la cantidad de numeros sean validos
     if (cuil) {
       let respuesta = this.appServicio.validarCUIT(cuil + '');
       if (!respuesta) {
