@@ -3,8 +3,10 @@
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CHEQUERA </a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">
+            {{pestania.nombre}}
+        </a>
       </nav>
     </div>
   </div>
@@ -13,15 +15,13 @@
       <h5>{{pestaniaActual}} Chequera</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-          <label for="idAutocompletado" class="tamanio-label">Buscar por Número de Cuenta Bancaria</label>
-          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-            (blur)="verificarSeleccion(autocompletado)">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cambioAutocompletado(item)">
-              {{item.nombre}}
+          <label for="idAutocompletado" class="tamanio-label">Cuenta Bancaria *</label>
+          <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="cuentaSeleccionada"
+            [compareWith]="compareFn" (selectionChange)="cambioCuentaBancaria()">
+            <mat-option *ngFor="let item of listarCuentasBancariasEmpresa" [value]="item">
+              {{item.cuentaBancaria.sucursalBanco.banco.nombre}} - {{item.cuentaBancaria.sucursalBanco.nombre}} - {{item.cuentaBancaria.numeroCuenta}}
             </mat-option>
-          </mat-autocomplete>
+          </mat-select>
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Código</label>
@@ -32,12 +32,12 @@
           <input id="idEmpresa" type="text" [formControl]="empresaDatos" autocomplete="off"
             class="form-control form-control-sm" readonly>
         </div>
-        <div class="form-group has-float-label">
+        <div class="form-group has-float-label" *ngIf="!mostrarAutocompletado">
           <label for="idCuentaBancaria" class="tamanio-label">Cuenta Bancaria *</label>
           <mat-select id="idCuentaBancaria" class="form-control form-control-sm" formControlName="cuentaBancaria"
             [compareWith]="compareFn">
             <mat-option *ngFor="let item of cuentasBancarias" [value]="item">
-              {{item.numeroCuenta}}
+              {{item.sucursalBanco.banco.nombre}} - {{item.sucursalBanco.nombre}} - {{item.numeroCuenta}}
             </mat-option>
           </mat-select>
         </div>
@@ -51,12 +51,12 @@
           </mat-select>
         </div>
         <div class="form-group has-float-label">
-          <label id="labelDesde" for="idDesde" class="tamanio-label">Desde </label>
+          <label id="labelDesde" for="idDesde" class="tamanio-label">Desde *</label>
           <input id="idDesde" type="text" formControlName="desde" autocomplete="off" (blur)="establecerCerosIzq(formulario.get('desde'), '0000000', -8)"
             class="form-control form-control-sm" [readonly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
-          <label id="labelHasta" for="idHasta" class="tamanio-label">Hasta </label>
+          <label id="labelHasta" for="idHasta" class="tamanio-label">Hasta *</label>
           <input id="idHasta" type="text" formControlName="hasta" autocomplete="off" (blur)="validarMayor()"
             class="form-control form-control-sm" [readonly]="soloLectura">
         </div>
@@ -73,7 +73,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-8">
+    <div class="col-md-10">
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <app-progreso></app-progreso>
@@ -91,7 +91,11 @@
         </ng-container>
         <ng-container matColumnDef="cuentaBancaria" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Bancaria</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.cuentaBancaria.numeroCuenta}}</td>
+          <td mat-cell *matCellDef="let elemento">
+            {{elemento.cuentaBancaria.sucursalBanco.banco.nombre}} 
+            - {{elemento.cuentaBancaria.sucursalBanco.nombre}} 
+            - {{elemento.cuentaBancaria.numeroCuenta}}
+          </td>
         </ng-container>
         <ng-container matColumnDef="tipoChequera" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Chequera</th>

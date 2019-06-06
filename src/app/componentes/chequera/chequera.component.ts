@@ -21,6 +21,8 @@ import { AppComponent } from 'src/app/app.component';
 export class ChequeraComponent implements OnInit {
   //Define la lista de Cuentas Bancarias
   public cuentasBancarias:Array<any> = [];
+  //Define la lista de Cuentas Bancarias para las Consultas
+  public listarCuentasBancariasEmpresa:Array<any> = [];
   //Define la lista de Tipos de Chequeras
   public tiposChequeras:Array<any> = [];
   //Define la pestania activa
@@ -47,6 +49,8 @@ export class ChequeraComponent implements OnInit {
   public autocompletado: FormControl = new FormControl();
   //Define el campo empresa como un FormControl
   public empresaDatos: FormControl = new FormControl();
+  //Define la cuenta Seleccionada como un FormControl
+  public cuentaSeleccionada: FormControl = new FormControl();
   //Define la lista de resultados del autocompletado
   public resultados: Array<any> = [];
   //Define el mostrar del circulo de progreso
@@ -67,19 +71,12 @@ export class ChequeraComponent implements OnInit {
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
+          this.pestanias.splice(2, 1);
         },
         err => {
           console.log(err);
         }
       );
-    //Autocompletado - Buscar por nombre
-    this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorCuentaBancaria(data).subscribe(res => {
-          this.resultados = res;
-        })
-      }
-    })
    }
 
   ngOnInit() {
@@ -98,6 +95,8 @@ export class ChequeraComponent implements OnInit {
     this.listar();
     //Obtiene la lista de Cuentas Bancarias
     this.listarCuentasBancarias();
+    //Obtiene las diferentes cuentas bancarias de la empresa para realizar la Consultas
+    this.listarCuentasBancariasConsultas();
     //Obtiene la lista de Tipos de Chequeras
     this.listarTiposChequeras();
   }
@@ -115,6 +114,14 @@ export class ChequeraComponent implements OnInit {
       }
     )
   }
+  private listarCuentasBancariasConsultas(){
+    this.servicio.listarPorEmpresa(this.empresa.id).subscribe(
+      res=>{
+        console.log(res.json());
+        this.listarCuentasBancariasEmpresa = res.json();
+      }
+    )
+  }
   //Obtiene la lista de Tipos de Chequeras
   private listarTiposChequeras(){
     this.tipoChequeraService.listar().subscribe(
@@ -124,6 +131,11 @@ export class ChequeraComponent implements OnInit {
       }
     )
   }
+  //Obtiene los datos de la cuenta bancaria seleccionada
+  public cambioCuentaBancaria(){
+    console.log(this.cuentaSeleccionada.value);
+    this.formulario.patchValue(this.cuentaSeleccionada.value);
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -131,10 +143,8 @@ export class ChequeraComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     if(soloLectura){
-      this.formulario.get('cuentaBancaria').disable();
       this.formulario.get('tipoChequera').disable();
     }else{
-      this.formulario.get('cuentaBancaria').enable();
       this.formulario.get('tipoChequera').enable();
     }
     setTimeout(function () {
@@ -204,6 +214,7 @@ export class ChequeraComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
+        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
@@ -216,12 +227,12 @@ export class ChequeraComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
-    console.log(this.formulario.value);
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     let usuario= this.appComponent.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
-    this.formulario.get('empresa').setValue(this.empresa);
+    // this.formulario.get('empresa').setValue(this.empresa.value);
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -307,6 +318,7 @@ export class ChequeraComponent implements OnInit {
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.resultados = [];
+    this.cuentaSeleccionada.reset();
   }
   //Manejo de colores de campos y labels con error
   public cambioCampo(id, label) {
