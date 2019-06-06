@@ -264,7 +264,7 @@
         </ng-container>
         <ng-container matColumnDef="fecha">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.fecha}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
         </ng-container>
         <ng-container matColumnDef="tipoComprobante">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Comprobante</th>
