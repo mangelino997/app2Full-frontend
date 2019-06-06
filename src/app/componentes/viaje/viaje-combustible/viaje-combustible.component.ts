@@ -97,6 +97,19 @@ export class ViajeCombustibleComponent implements OnInit {
       }
     );
   }
+  //Obtiene el ultimo valor de precio unitario de un insumo
+  public obtenerPrecioUnitario(): void {
+    let insumoProducto = this.formularioViajePropioCombustible.get('insumo').value;
+    this.insumoProductoServicio.obtenerPrecioUnitario(insumoProducto.id).subscribe(
+      res => {
+        console.log(res.text());
+        this.formularioViajePropioCombustible.get('precioUnitario').setValue(res.text());
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
     this.establecerDecimales(formulario.get('precioUnitario'), 2);
@@ -111,15 +124,23 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Establece el precio unitario
   public establecerPrecioUnitario(formulario, elemento): void {
-    let precioUnitarioVenta = parseFloat(formulario.get(elemento).value.precioUnitarioViaje);
-    if (precioUnitarioVenta != 0) {
-      formulario.get('precioUnitario').setValue(precioUnitarioVenta);
-      this.establecerCeros(formulario.get('precioUnitario'));
-      formulario.get('precioUnitario').disable();
-    } else {
-      formulario.get('precioUnitario').enable();
-      formulario.get('precioUnitario').reset();
-    }
+    let insumoProducto = formulario.get(elemento).value;
+    this.insumoProductoServicio.obtenerPrecioUnitario(insumoProducto.id).subscribe(
+      res => {
+        let precioUnitarioViaje = parseFloat(res.text());
+        if (precioUnitarioViaje != 0) {
+          formulario.get('precioUnitario').setValue(precioUnitarioViaje);
+          this.establecerCeros(formulario.get('precioUnitario'));
+          formulario.get('precioUnitario').disable();
+        } else {
+          formulario.get('precioUnitario').enable();
+          formulario.get('precioUnitario').reset();
+        }
+      },
+      err => {
+        console.log(err);
+      }
+    );
   }
   //Agrega datos a la tabla de combustibles
   public agregarCombustible(): void {

@@ -66,6 +66,10 @@ export class InsumoProductoService {
   public listarInsumos() {
     return this.http.get(this.url + '/listarInsumos', this.options);
   }
+  //Obtiene precio unitario por insumo
+  public obtenerPrecioUnitario(idInsumoProducto) {
+    return this.http.get(this.url + '/obtenerPrecioUnitario/' + idInsumoProducto, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
