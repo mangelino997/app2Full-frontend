@@ -358,7 +358,7 @@ const appRoutes: Routes = [
   { path: 'generalesclientessucursales', component: SucursalClienteComponent, canActivate: [GuardiaService] },
   { path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService] },
   { path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService] },
-  { path: 'configuraciontiposdecuentasbancarias', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontiposdecuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipodecuentascontables', component: TipoCuentaContableComponent, canActivate: [GuardiaService] },
   // { path: 'configuraciongruposdecuentascontables', component: GrupoCuentaContableComponent, canActivate: [GuardiaService] },
   { path: 'ejerciciosadministrar', component: EjercicioComponent, canActivate: [GuardiaService] },  
@@ -440,7 +440,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.123:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://192.168.0.156:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,

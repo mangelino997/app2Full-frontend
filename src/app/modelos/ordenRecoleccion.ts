@@ -9,7 +9,7 @@ export class OrdenRecoleccion {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            fechaEmision: new FormControl('', Validators.required),
+            fechaEmision: new FormControl(),
             cliente: new FormControl(null, Validators.required),
             fecha: new FormControl('', Validators.required),
             domicilio: new FormControl(),

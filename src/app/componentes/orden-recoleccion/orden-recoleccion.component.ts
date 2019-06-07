@@ -14,7 +14,7 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { BarrioService } from 'src/app/servicios/barrio.service';
 import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 import { Router } from '@angular/router';
 import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
 import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
@@ -22,6 +22,9 @@ import { CobradorService } from 'src/app/servicios/cobrador.service';
 import { ZonaService } from 'src/app/servicios/zona.service';
 import { RubroService } from 'src/app/servicios/rubro.service';
 import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.component';
+import { Subscription } from 'rxjs';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
 
 
 @Component({
@@ -59,11 +62,12 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Define el siguiente id
   public siguienteId:number = null;
   //Define la lista completa de registros
-  public listaCompleta:any = null;
+  public listaCompleta = new MatTableDataSource([]);
   //Define el form control para el remitente
   public cliente:FormControl = new FormControl();
   public domicilioBarrio:FormControl = new FormControl();
   public localidadProvincia:FormControl = new FormControl();
+  public fechaEmision: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados = [];
   //Define el form control para las busquedas cliente
@@ -76,14 +80,21 @@ export class OrdenRecoleccionComponent implements OnInit {
   public resultadosSucursales = [];
   //Define el autocompletado para las busquedas
   public autocompletado:FormControl = new FormControl();
-  
   //Define la lista de resultados de busqueda barrio
   public resultadosBarrios = [];
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'fechaEmision', 'cliente', 'domicilio', 'horaDesde', 'horaHasta', 'bultos', 'kgEfectivo', 'pagoEnOrigen', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   constructor(
     private ordenRecoleccion: OrdenRecoleccion, private subopcionPestaniaService: SubopcionPestaniaService, 
     private fechaServicio: FechaService, private localidadService: LocalidadService, private clienteService: ClienteService, private toastr: ToastrService,
     private barrioService: BarrioService, private appService: AppService, private servicio: OrdenRecoleccionService, 
-    private sucursalService: SucursalService,  public dialog: MatDialog, public clienteServicio: ClienteService) {
+    private sucursalService: SucursalService,  public dialog: MatDialog, public clienteServicio: ClienteService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
@@ -97,6 +108,11 @@ export class OrdenRecoleccionComponent implements OnInit {
     
    }
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario de orden venta
     this.formulario = this.ordenRecoleccion.formulario;
     this.reestablecerFormulario(undefined);
@@ -141,38 +157,64 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;    
+        this.loaderService.hide();
       },
       err => {
+        this.loaderService.hide();
       }
     );
   }
   //Obtiene el listado de Sucursales
   private listarSucursales() {
+    this.loaderService.show();
     this.sucursalService.listar().subscribe(
       res => {
         this.resultadosSucursales = res.json();
+        this.loaderService.hide();
       },
       err => {
+        this.loaderService.hide();
       }
     );
   }
   //Controla el cambio del autocompletado para el Remitente
   public cambioRemitente(){
+    let cliente= this.formulario.get('cliente').value;
+    let domicilio = null;
+    let barrio = null;
+    let provincia = null;
+    let localidad = null;
+    let domicilioYBarrio= null;
+    let localidadYProvincia= null;
+    if(cliente.domicilio)
+      domicilio =cliente.domicilio;
+    if(cliente.barrio)
+      barrio = cliente.barrio;
+    if(cliente.localidad)
+      localidad = cliente.localidad;
+    if(cliente.localidad.provincia)
+      provincia = cliente.localidad.provincia.nombre;
+
     this.mostrarCliente=true;
-    let domicilioYBarrio= this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
-    let localidadYProvincia= this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
+    if(barrio)
+      domicilioYBarrio= domicilio + ' - ' + barrio['nombre'];
+      else
+      domicilioYBarrio= domicilio + ' - ';
+    if(localidad)
+      localidadYProvincia= localidad['nombre'] + ' - ' + provincia;
+      else
+      localidadYProvincia= provincia;
+
     this.domicilioBarrio.setValue(domicilioYBarrio);
     this.localidadProvincia.setValue(localidadYProvincia);
-    // console.log(this.formulario.get('cliente').value.localidad);
-    // console.log(this.formulario.get('cliente').value.barrio);
-
-    this.formulario.get('localidad').setValue(this.formulario.get('cliente').value.localidad);
-    this.formulario.get('barrio').setValue(this.formulario.get('cliente').value.barrio);
-    this.formulario.get('domicilio').setValue(this.formulario.get('cliente').value.domicilio);
-    // console.log(this.formulario.get('barrio').value)
+    this.formulario.get('localidad').setValue(localidad);
+    this.formulario.get('barrio').setValue(barrio);
+    this.formulario.get('domicilio').setValue(domicilio);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, selectSoloLectura, componente) {
@@ -252,10 +294,10 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Agrega un registro
   private agregar() {
+    this.loaderService.show();
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
-    this.formulario.get('fechaEmision').setValue(this.formulario.get('fechaEmision').value+'T00:00:00');
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -265,22 +307,23 @@ export class OrdenRecoleccionComponent implements OnInit {
             document.getElementById('idCliente').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
         var respuesta = err.json();
         document.getElementById("idCliente").focus();
         this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
   private actualizar() {
+    this.loaderService.show();
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
-    this.formulario.get('fechaEmision').setValue(this.formulario.get('fechaEmision').value+'T00:00:00');
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -290,6 +333,7 @@ export class OrdenRecoleccionComponent implements OnInit {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
         }
       },
       err => {
@@ -297,6 +341,7 @@ export class OrdenRecoleccionComponent implements OnInit {
         if(respuesta.codigo == 11002) {
           document.getElementById("idCliente").focus();
           this.toastr.error(respuesta.mensaje);
+          this.loaderService.hide();
         }
       }
     );
@@ -345,10 +390,10 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.localidadProvincia.setValue(null);
     //Setea la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res=>{
-    this.formulario.get('fechaEmision').setValue(res.json());});
-    setTimeout(function() {
-      document.getElementById('idCliente').focus();
-    }, 20);
+      let respuesta= res.json();
+      let anio =respuesta.split('-');
+      this.fechaEmision.setValue(anio[2] + '-' + anio[1] + '-' + anio[0]);
+    });
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

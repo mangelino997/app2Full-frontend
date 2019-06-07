@@ -96,7 +96,6 @@ export class CuentaBancariaComponent implements OnInit {
           console.log(err);
         }
       );
-    
    }
 
   ngOnInit() {
@@ -126,12 +125,11 @@ export class CuentaBancariaComponent implements OnInit {
   //Inicializa valores por defecto
   private inicializarValores(){
     let empresa= this.appComponent.getEmpresa();
-    console.log(empresa);
     this.empresa.setValue(empresa);
     this.formulario.get('empresa').setValue(empresa['razonSocial']);
+    this.formulario.get('estaActiva').setValue(true);
   }
   public cambioAutocompletado(){
-    console.log(this.formulario.value);
     this.sucursalService.listarPorBanco(this.formulario.value.banco.id).subscribe(
       res=>{
         this.sucursales = res.json();
@@ -246,9 +244,7 @@ export class CuentaBancariaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
-        console.log(res.json());
         this.cuentasBancarias = res.json();
-        console.log(this.cuentasBancarias);
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
@@ -262,14 +258,24 @@ export class CuentaBancariaComponent implements OnInit {
   //Cambio de cuenta bancaria 
   public cambioCuentaBancaria(){
     this.formulario.patchValue(this.cuentaBan.value);
-    console.log(this.cuentaBan.value, this.formulario.value);
-    this.formulario.get('banco').setValue(this.cuentaBan.value.sucursalBanco.banco); //Setea el banco
-    this.formulario.get('empresa').setValue(this.empresa.value.razonSocial); //Setea el banco
+    this.formulario.value.banco = this.cuentaBan.value.sucursalBanco.banco; //Setea el banco
+    this.formulario.get('banco').setValue(this.cuentaBan.value.sucursalBanco.banco);//Setea el banco
+    let empresa= this.appComponent.getEmpresa();
+    this.empresa.setValue(empresa);
+    this.formulario.get('empresa').setValue(empresa['razonSocial']);
+    this.establecerSucursal(this.cuentaBan.value.sucursalBanco.banco.id, this.cuentaBan.value.sucursalBanco ); //Obtiene la lista de sucursales para que pueda hacer la comparacion
 
-    console.log(this.formulario.value);
-    this.cambioAutocompletado(); //Obtiene la lista de sucursales para que pueda hacer la comparacion
   }
-  
+  //Obtiene las sucursales del banco seleccionado y setea la correcta
+  private establecerSucursal(idBanco,sucursal){
+    this.sucursalService.listarPorBanco(idBanco).subscribe(
+      res=>{
+        this.sucursales = res.json();
+      }
+    )
+    this.formulario.value.sucursalBanco = sucursal; //Setea el banco
+
+  }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
     switch (indice) {
@@ -293,7 +299,6 @@ export class CuentaBancariaComponent implements OnInit {
     let usuario = this.appComponent.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
     this.formulario.get('empresa').setValue(this.empresa.value);
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -337,7 +342,6 @@ export class CuentaBancariaComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Reestablece los campos agregar
   private reestablecerFormulario(id) {
@@ -362,7 +366,7 @@ export class CuentaBancariaComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.cuentaBan.setValue(elemento);
     this.formulario.get('banco').setValue(elemento.sucursalBanco.banco);
-    this.cambioAutocompletado();
+    this.establecerSucursal(elemento.sucursalBanco.banco.id, elemento.sucursalBanco);
     this.inicializarValores();
 
   }
@@ -375,6 +379,34 @@ export class CuentaBancariaComponent implements OnInit {
     this.cambioAutocompletado(); //Obtiene la lista de sucursales para que pueda hacer la comparacion
     this.inicializarValores();
   }
+  //Marcarar enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
+  }
+  //Valida el CBU
+  public validarCBU(){
+    let cbu = this.formulario.value.cbu;
+    if(cbu){
+      let respuesta = this.appService.validarCBU(cbu);
+      if(!respuesta) {
+        let err = {codigo: 11010, mensaje: 'CBU Incorrecto!'};
+        document.getElementById('idCBU').focus();
+        document.getElementById("idCBU").classList.add('label-error');
+        document.getElementById("idCBU").classList.add('is-invalid');
+        this.toastr.error(err.mensaje);
+      }else{
+        this.cambioCampo('idCBU', 'idCBU');
+      }
+    }else{
+      this.cambioCampo('idCBU', 'idCBU');
+    }
+    
+  }
+  //Manejo de colores de campos y labels
+  public cambioCampo(id, label) {
+    document.getElementById(id).classList.remove('is-invalid');
+    document.getElementById(label).classList.remove('label-error');
+  };
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
@@ -415,4 +447,6 @@ export class CuentaBancariaComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+  
+
 }
