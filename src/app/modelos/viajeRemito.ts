@@ -8,7 +8,6 @@ export class ViajeRemito {
     //constructor
     constructor(private fb: FormBuilder) {
         this.formulario = this.fb.group({
-            tipoRemito: new FormControl,
             tramo: new FormControl(),
             numeroCamion: new FormControl(),
             sucursalDestino: new FormControl(),

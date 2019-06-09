@@ -1,14 +1,5 @@
 <form [formGroup]="formularioViajeRemito">
   <div class="row">
-    <div class="col-md-2">
-      <div class="form-group has-float-label">
-        <label for="idTipoRemitoRG" class="tamanio-label">Tipo de Remito *</label>
-        <mat-select id="idTipoRemitoRG" class="form-control form-control-sm" formControlName="tipoRemito">
-          <mat-option [value]="false">Pendientes</mat-option>
-          <mat-option [value]="true">Asignados</mat-option>
-        </mat-select>
-      </div>
-    </div>
     <div class="col-md-5">
       <div class="form-group has-float-label">
         <label for="idTramoRG" class="tamanio-label">Tramo *</label>
@@ -89,9 +80,6 @@
     </div>
   </div>
   <div class="row justify-content-end">
-    <button mat-raised-button color="primary"
-      (click)="cambiarEstadoRemitos(formularioViajeRemito.get('tipoRemito').value)">
-      {{formularioViajeRemito.get('tipoRemito').value ? 'Quitar' : 'Asignar'}}
-    </button>
+    <button mat-raised-button color="primary" (click)="asignarRemitos()">Agregar</button>
   </div>
 </form>

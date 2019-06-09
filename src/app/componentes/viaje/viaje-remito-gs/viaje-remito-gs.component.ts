@@ -2,9 +2,9 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormArray, FormGroup } from '@angular/forms';
 import { ViajeRemito } from 'src/app/modelos/viajeRemito';
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
-import { AppComponent } from 'src/app/app.component';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
 import { ToastrService } from 'ngx-toastr';
+import { AppService } from 'src/app/servicios/app.service';
 
 @Component({
   selector: 'app-viaje-remito-gs',
@@ -24,7 +24,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   public sucursales: Array<any> = [];
   //Constructor
   constructor(private viajeRemito: ViajeRemito, private viajeRemitoServicio: ViajeRemitoService,
-    private appComponent: AppComponent, private sucursalServicio: SucursalService,
+    private appService: AppService, private sucursalServicio: SucursalService,
     private toast: ToastrService) { }
   //Al inicializarse el componente
   ngOnInit() {
@@ -41,60 +41,61 @@ export class ViajeRemitoGSComponent implements OnInit {
   }
   //Obtiene la lista de remitos pendiente por filtro (sucursal, sucursal destino y numero de camion)
   public listarRemitosPorFiltro(): void {
-    let tipo = this.formularioViajeRemito.get('tipoRemito').value;
-    let sucursal = this.appComponent.getUsuario().sucursal;
+    let sucursal = this.appService.getUsuario().sucursal;
     let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
     let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
     let viajePropio = this.formularioViajeRemito.get('tramo').value;
-    if (tipo) {
-      this.viajeRemitoServicio.listarAsignadosPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion, viajePropio.id).subscribe(res => {
-        let listaRemitosAsignados = res.json();
-        for (var i = 0; i < listaRemitosAsignados.length; i++) {
-          listaRemitosAsignados[i].viajePropioTramo = this.formularioViajeRemito.get('tramo').value;
-          this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
-          this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosAsignados[i]));
-        }
-      })
-    } else {
-      this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
-        let listaRemitosPendientes = res.json();
-        for (var i = 0; i < listaRemitosPendientes.length; i++) {
-          listaRemitosPendientes[i].viajePropioTramo = this.formularioViajeRemito.get('tramo').value;
-          this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
-          this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosPendientes[i]));
-        }
-      });
-    }
+    this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
+      let listaRemitosPendientes = res.json();
+      for (var i = 0; i < listaRemitosPendientes.length; i++) {
+        listaRemitosPendientes[i].viajePropioTramo = viajePropio;
+        this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
+        this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosPendientes[i]));
+      }
+    });
+    // if (tipo) {
+    //   this.viajeRemitoServicio.listarAsignadosPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion, viajePropio.id).subscribe(res => {
+    //     let listaRemitosAsignados = res.json();
+    //     for (var i = 0; i < listaRemitosAsignados.length; i++) {
+    //       listaRemitosAsignados[i].viajePropioTramo = this.formularioViajeRemito.get('tramo').value;
+    //       this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
+    //       this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosAsignados[i]));
+    //     }
+    //   })
+    // } else {
+      
+    // }
   }
   //Asigna o Quita remitos de tramo
-  public cambiarEstadoRemitos(opcion): void {
-    if (opcion) {
-      this.viajeRemitoServicio.quitar(this.formularioViajeRemito.value.remitos).subscribe(
-        res => {
-          let respuesta = res.json();
-          this.reestablecerFormulario();
-          document.getElementById('idTipoRemitoRG').focus();
-          this.toast.success(respuesta.mensaje);
-        },
-        err => {
-          let respuesta = err.json();
-          this.toast.error(respuesta.mensaje);
-        }
-      )
-    } else {
-      this.viajeRemitoServicio.asignar(this.formularioViajeRemito.value.remitos).subscribe(
-        res => {
-          let respuesta = res.json();
-          this.reestablecerFormulario();
-          document.getElementById('idTipoRemitoRG').focus();
-          this.toast.success(respuesta.mensaje);
-        },
-        err => {
-          let respuesta = err.json();
-          this.toast.error(respuesta.mensaje);
-        }
-      )
-    }
+  public asignarRemitos(): void {
+    this.viajeRemitoServicio.asignar(this.formularioViajeRemito.value.remitos).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.reestablecerFormulario();
+        document.getElementById('idTramoRG').focus();
+        this.toast.success(respuesta.mensaje);
+      },
+      err => {
+        let respuesta = err.json();
+        this.toast.error(respuesta.mensaje);
+      }
+    );
+    // if (opcion) {
+    //   this.viajeRemitoServicio.quitar(this.formularioViajeRemito.value.remitos).subscribe(
+    //     res => {
+    //       let respuesta = res.json();
+    //       this.reestablecerFormulario();
+    //       document.getElementById('idTipoRemitoRG').focus();
+    //       this.toast.success(respuesta.mensaje);
+    //     },
+    //     err => {
+    //       let respuesta = err.json();
+    //       this.toast.error(respuesta.mensaje);
+    //     }
+    //   )
+    // } else {
+      
+    // }
   }
   //Reestablece el formulario
   private reestablecerFormulario(): void {
@@ -118,7 +119,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Establece el foco en fecha
   public establecerFoco(): void {
     setTimeout(function() {
-      document.getElementById('idTipoRemitoRG').focus();
+      document.getElementById('idTramoRG').focus();
     }, 100);
   }
   //Define como se muestran los ceros a la izquierda en tablas
