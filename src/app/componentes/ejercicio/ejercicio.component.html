@@ -17,7 +17,7 @@
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado) ">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
+            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.patchValue(item)">
               {{item.nombre}}
             </mat-option>
           </mat-autocomplete>
@@ -35,7 +35,7 @@
         <div class="form-group has-float-label">
           <label for="idAnioInicio" class="tamanio-label">Año de Inicio *</label>
           <mat-select id="idAnioInicio" class="form-control form-control-sm" formControlName="anioInicio"
-            [compareWith]="compareFn">
+            [compareWith]="compareF">
             <mat-option *ngFor="let anio of anios" [value]="anio">
               {{anio}}
             </mat-option>
@@ -44,7 +44,7 @@
         <div class="form-group has-float-label">
           <label for="idMesInicio" class="tamanio-label">Mes de Inicio *</label>
           <mat-select id="idMesInicio" class="form-control form-control-sm" formControlName="mesInicio"
-            [compareWith]="compareFn">
+            [compareWith]="compareF">
             <mat-option *ngFor="let mes of meses" [value]="mes">
               {{mes.nombre}}
             </mat-option>

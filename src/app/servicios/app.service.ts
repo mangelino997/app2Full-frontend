@@ -162,6 +162,13 @@ export class AppService {
     }
     return true;
   }
+  //Valida el dni
+  public validarCBU(dni) {
+    if (dni.length != 22) {
+      return false
+    }
+    return true;
+  }
   //Obtiene la mascara de importe
   public mascararImporte(intLimite, decimalLimite) {
     let mascara = {

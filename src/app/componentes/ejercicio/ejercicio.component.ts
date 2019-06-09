@@ -53,8 +53,7 @@ export class EjercicioComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: EjercicioService, private subopcionPestaniaService: SubopcionPestaniaService, private mesService: MesService,
-    private ejercicio: Ejercicio, private appService: AppService, private toastr: ToastrService,
-    private loaderService: LoaderService) {
+    private ejercicio: Ejercicio, private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -298,15 +297,20 @@ export class EjercicioComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
+    console.log(this.formulario.value);
+    console.log(this.anios);
+
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
+
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
@@ -321,6 +325,13 @@ export class EjercicioComponent implements OnInit {
   private compararFn(a, b) {
     if (a != null && b != null) {
       return a.id === b.id;
+    }
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareF = this.compararF.bind(this);
+  private compararF(a, b) {
+    if (a != null && b != null) {
+      return a === b;
     }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)

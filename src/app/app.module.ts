@@ -358,7 +358,7 @@ const appRoutes: Routes = [
   { path: 'generalesclientessucursales', component: SucursalClienteComponent, canActivate: [GuardiaService] },
   { path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService] },
   { path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService] },
-  { path: 'configuraciontiposdecuentasbancarias', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontiposdecuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipodecuentascontables', component: TipoCuentaContableComponent, canActivate: [GuardiaService] },
   // { path: 'configuraciongruposdecuentascontables', component: GrupoCuentaContableComponent, canActivate: [GuardiaService] },
   { path: 'ejerciciosadministrar', component: EjercicioComponent, canActivate: [GuardiaService] },  
