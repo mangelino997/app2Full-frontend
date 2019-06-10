@@ -11,12 +11,61 @@
                     </div>
                 </div>
                 <div class="col-md-1">
-                    <button class="btn btn-sm btn-custom margin-left-button" (click)="listarTramos()">Consultar</button>
+                    <button class="btn btn-primary" type="button" (click)="listarTramos()">Consultar</button>
                 </div>
             </div>
             <div class="row">
                 <div style="width: 100%; height: 150px; overflow-y: scroll; overflow-x: scroll;">
-                    <table class="table table-bordered table-striped table-condensed">
+                    <table mat-table [dataSource]="resultadosTramos" matSort class="mat-elevation-z1">
+                        <ng-container matColumnDef="tramo" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            Origen: {{tramo.origen.nombre}} - Destino: {{tramo.destino.nombre}}
+                        </td>
+                        </ng-container>
+                        <ng-container matColumnDef="id" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Remito</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="bultos" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.bultos}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="fecha" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.fecha}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="numeroViaje" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Viaje</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.numero}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="remitente" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Remitente</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.clienteRemitente.alias}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="destinatario" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Destinatario</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.clienteDestinatario.razonSocial}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="sucursalDestino" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Suc. Entrega</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.sucursalDestino.domicilio}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="observaciones" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Obervaciones</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span *ngIf="elemento.observaciones">
+                                <a (click)="verObservaciones(elemento.observaciones)" style="font-weight: 700; color:red;">Ver</a>
+                            </span>
+                            <span *ngIf="!elemento.observaciones">
+                                --
+                            </span>
+                        </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnasRemitos"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasRemitos; let i=index;" (click)="cambioRemito(i, row)"></tr>
+                    </table>
+                    <!-- <table class="table table-bordered table-striped table-condensed">
                         <thead>
                             <tr>
                                 <th class="text-center">Tramo</th>
@@ -49,7 +98,7 @@
                                 <td *ngIf="remito.observaciones==null" align="center"></td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table> -->
                 </div>
             </div>
             <div class="row">

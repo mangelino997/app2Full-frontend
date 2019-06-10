@@ -198,9 +198,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     if(cliente.localidad)
       localidad = cliente.localidad;
     if(cliente.localidad.provincia)
-      provincia = cliente.localidad.provincia.nombre;
-
-    this.mostrarCliente=true;
+      provincia = cliente.localidad.provincia.nombre;    
     if(barrio)
       domicilioYBarrio= domicilio + ' - ' + barrio['nombre'];
       else
@@ -209,7 +207,7 @@ export class OrdenRecoleccionComponent implements OnInit {
       localidadYProvincia= localidad['nombre'] + ' - ' + provincia;
       else
       localidadYProvincia= provincia;
-
+    this.mostrarCliente=true;
     this.domicilioBarrio.setValue(domicilioYBarrio);
     this.localidadProvincia.setValue(localidadYProvincia);
     this.formulario.get('localidad').setValue(localidad);
@@ -298,6 +296,8 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
+    this.formulario.get('tipoComprobante').setValue({ id: 3});
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -376,10 +376,49 @@ export class OrdenRecoleccionComponent implements OnInit {
       }, 20);
     }
   }
+  //Valida que la Hora Hasta no sea menor a Hora Desde
+  public validarHoraHastaDesde(){
+    if(!this.formulario.value.horaDesde){
+      this.toastr.error("Debe ingresar una Hora Desde");
+      document.getElementById('idHoraDesde').focus();
+    }else{
+      if(this.formulario.value.horaHasta<this.formulario.value.horaDesde){
+        this.toastr.error("Hora Hasta no puede ser menor a Hora Desde");
+        document.getElementById('idHoraHasta').focus();
+      }
+    }
+  }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
   }
+  //Establece los decimales
+  public establecerDecimales(formulario, cantidad): void {
+    let valor = formulario.value;
+    if(valor) {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
+  }
+  //Establece los enteros
+  public establecerEnteros(formulario): void {
+    let valor = formulario.value;
+    if(valor) {
+      formulario.setValue(this.appService.establecerEnteros(valor));
+    }
+  }
+  //Obtiene la mascara de importe
+  public mascararEnterosConDecimales(intLimite) {
+    return this.appService.mascararEnterosConDecimales(intLimite);
+  }
+   //Obtiene la mascara de enteros
+   public mascararEnteros(intLimite) {
+    return this.appService.mascararEnteros(intLimite);
+  }
+  //Obtiene la mascara de enteros con separador de miles
+  public mascararEnterosSinDecimales(intLimite) {
+    return this.appService.mascararEnterosSinDecimales(intLimite);
+  }
+  
   //Reestablece el formulario
   public reestablecerFormulario(id){
     this.resultadosClientes=[];

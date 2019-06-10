@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Pipe } from '@angular/core';
+import { Component, OnInit, Inject, Pipe, ViewChild } from '@angular/core';
 import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -12,7 +12,7 @@ import { PuntoVentaService } from 'src/app/servicios/punto-venta.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 import { ViajePropioTramoService } from 'src/app/servicios/viaje-propio-tramo.service';
 import { ViajeTerceroTramoService } from 'src/app/servicios/viaje-tercero-tramo.service';
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
@@ -74,6 +74,8 @@ export class EmitirFacturaComponent implements OnInit {
   public resultadosItems = [];
   //Define la lista de Remitos
   public resultadosRemitos = [];
+  //Define la lista de Remitos pero con otro formato
+  public listaRemitos = new MatTableDataSource([]);
   //Define la lista de Tarifas O. Vta.
   public resultadosTarifas = [];
   //Define la lista de Conceptos Varios
@@ -109,6 +111,10 @@ export class EmitirFacturaComponent implements OnInit {
   public resultadosBarrios = [];
   //Valor de prueba para calcular el subtotal con coma
   public flete:number=0;
+  //Define las columnas de la tabla
+  public columnasRemitos: string[] = ['tramo', 'id', 'bultos', 'fecha', 'numeroViaje', 'remitente', 'destinatario', 'sucursalDestino', 'observaciones'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   constructor(
     private appComponent: AppComponent, public dialog: MatDialog, private fechaService: FechaService, private ventaComprobanteService: VentaComprobanteService,
     public clienteService: ClienteService, private toastr: ToastrService, private factura: EmitirFactura, private appService: AppService,
@@ -368,6 +374,8 @@ export class EmitirFacturaComponent implements OnInit {
     this.resultadosSucursalesRem = [];
     this.resultadosSucursalesDes = [];
     this.resultadosRemitos = [];
+    this.listaRemitos = new MatTableDataSource([]);
+
     //Establece valores por defecto
     this.autocompletado.setValue(undefined);
     this.formulario.reset();
@@ -1067,8 +1075,14 @@ export class ViajeDialogo {
   public resultadosRemitos = [];
   //Define la lista de tramos
   public resultadosTramos = [];
+  //Define la lista de Remitos/Tramos pero con otro formato
+  public listaTramos = new MatTableDataSource([]);
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define las columnas de la tabla
+  public columnasRemitos: string[] = ['tramo', 'id', 'bultos', 'fecha', 'numeroViaje', 'remitente', 'destinatario', 'sucursalDestino', 'observaciones'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   constructor(public dialogRef: MatDialogRef<ViajeDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private viajePropioTramoService: ViajePropioTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService,
     public dialog: MatDialog) { }
@@ -1087,6 +1101,8 @@ export class ViajeDialogo {
         res => {
           let respuesta = res.json();
           this.resultadosTramos = respuesta[0].viajeRemitos;
+          this.listaTramos = new MatTableDataSource(res.json());
+          this.listaTramos.sort = this.sort;
           this.formulario.get('tramo').setValue(respuesta[0].tramo);
           this.tramo = respuesta[0].tramo;
         }
@@ -1097,6 +1113,8 @@ export class ViajeDialogo {
         res => {
           let respuesta = res.json();
           this.resultadosTramos = respuesta[0].viajeRemitos;
+          this.listaTramos = new MatTableDataSource(res.json());
+          this.listaTramos.sort = this.sort;
           this.formulario.get('tramo').setValue(respuesta[0].tramo);
           this.tramo = respuesta[0].tramo;
         }

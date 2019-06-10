@@ -41,6 +41,8 @@ export class CobradorComponent implements OnInit {
   public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
+  //Define el nombre original del cobrador que se quiere actualizar
+  public nombreOriginal: string = null;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -91,6 +93,12 @@ export class CobradorComponent implements OnInit {
     //Obtiene la lista completa de registros
     //this.listar();
   }
+  //Establece el formulario al seleccionar elemento del autocompletado
+  public cambioAutocompletado() {
+    let elemento = this.autocompletado.value;
+    this.formulario.patchValue(elemento);
+    this.nombreOriginal = this.formulario.value.nombre;
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -112,6 +120,7 @@ export class CobradorComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.formulario.reset();
+    this.nombreOriginal = null;
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
@@ -164,14 +173,15 @@ export class CobradorComponent implements OnInit {
     if (this.formulario.get('porDefectoClienteEventual').value == "true") {
       this.servicio.obtenerPorDefecto().subscribe(
         res => {
+          console.log(res);
           var respuesta = res.json();
-          //open modal reemplazar moneda
+          //open modal
           this.cambiarPrincipal(respuesta, this.formulario.value, opcion);
         }
       );
     }
     else {
-      this.formulario.get('id').setValue(null);
+      // this.formulario.get('id').setValue(null);
       this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
       if(opcion==1)
         this.agregar(this.formulario.value);
@@ -253,29 +263,74 @@ export class CobradorComponent implements OnInit {
   //Actualiza un registro
   private actualizar(cobrador) {
     this.loaderService.show();
-    this.servicio.actualizar(cobrador).subscribe(
-      res => {
-        var respuesta = res.json();
-        if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
+    console.log(this.nombreOriginal, this.formulario.value.nombre);
+    if(this.nombreOriginal!= this.formulario.value.nombre){
+      this.servicio.listarPorNombre(this.formulario.value.nombre).subscribe(
+        res=>{
+          console.log(res);
+          let respuesta = res;
+          if(respuesta.length == 0){
+            console.log(this.formulario.value);
+            this.servicio.actualizar(cobrador).subscribe(
+              res => {
+                var respuesta = res.json();
+                if (respuesta.codigo == 200) {
+                  this.reestablecerFormulario(undefined);
+                  setTimeout(function () {
+                    document.getElementById('idAutocompletado').focus();
+                  }, 20);
+                  this.toastr.success(respuesta.mensaje);
+                  this.loaderService.hide();
+                }
+              },
+              err => {
+                var respuesta = err.json();
+                console.log(err.mensaje);
+                if (respuesta.codigo == 11002) {
+                  document.getElementById("labelNombre").classList.add('label-error');
+                  document.getElementById("idNombre").classList.add('is-invalid');
+                  document.getElementById("idNombre").focus();
+                  this.toastr.error(respuesta.mensaje);
+                  this.loaderService.hide();
+                }
+              }
+            );
+          }else{
+            this.toastr.error("¡El Nombre ingresado ya existe! ");
+            document.getElementById("labelNombre").classList.add('label-error');
+            document.getElementById("idNombre").classList.add('is-invalid');
+            document.getElementById("idNombre").focus();
+            this.loaderService.hide();
+          }
         }
-      },
-      err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-          this.loaderService.hide();
+      );
+    }else{
+      this.servicio.actualizar(cobrador).subscribe(
+        res => {
+          var respuesta = res.json();
+          if (respuesta.codigo == 200) {
+            this.reestablecerFormulario(undefined);
+            setTimeout(function () {
+              document.getElementById('idAutocompletado').focus();
+            }, 20);
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+          }
+        },
+        err => {
+          var respuesta = err.json();
+          console.log(err.mensaje);
+          if (respuesta.codigo == 11002) {
+            document.getElementById("labelNombre").classList.add('label-error');
+            document.getElementById("idNombre").classList.add('is-invalid');
+            document.getElementById("idNombre").focus();
+            this.toastr.error(respuesta.mensaje);
+            this.loaderService.hide();
+          }
         }
-      }
-    );
+      );
+    }
+    
   }
   //Elimina un registro
   private eliminar() {
@@ -304,6 +359,7 @@ export class CobradorComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.nombreOriginal = elemento.nombre;
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
