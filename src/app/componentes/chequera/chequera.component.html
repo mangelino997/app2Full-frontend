@@ -18,7 +18,7 @@
           <label for="idAutocompletado" class="tamanio-label">Cuenta Bancaria *</label>
           <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="cuentaSeleccionada"
             [compareWith]="compareFn" (selectionChange)="cambioCuentaBancaria()">
-            <mat-option *ngFor="let item of listarCuentasBancariasEmpresa" [value]="item">
+            <mat-option *ngFor="let item of listaCuentasBancariasEmpresa" [value]="item">
               {{item.cuentaBancaria.sucursalBanco.banco.nombre}} - {{item.cuentaBancaria.sucursalBanco.nombre}} - {{item.cuentaBancaria.numeroCuenta}}
             </mat-option>
           </mat-select>
@@ -113,11 +113,6 @@
           <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
-        </ng-container>
-        <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-              class="cursor-color">editar</span></td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

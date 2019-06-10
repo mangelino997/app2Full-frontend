@@ -22,7 +22,7 @@ export class ChequeraComponent implements OnInit {
   //Define la lista de Cuentas Bancarias
   public cuentasBancarias:Array<any> = [];
   //Define la lista de Cuentas Bancarias para las Consultas
-  public listarCuentasBancariasEmpresa:Array<any> = [];
+  public listaCuentasBancariasEmpresa:Array<any> = [];
   //Define la lista de Tipos de Chequeras
   public tiposChequeras:Array<any> = [];
   //Define la pestania activa
@@ -58,7 +58,7 @@ export class ChequeraComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'empresa', 'cuentaBancaria', 'tipoChequera', 'desde', 'hasta', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'empresa', 'cuentaBancaria', 'tipoChequera', 'desde', 'hasta', 'ver'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -80,15 +80,15 @@ export class ChequeraComponent implements OnInit {
    }
 
   ngOnInit() {
-    //Define los campos para validaciones
-    this.formulario = this.chquera.formulario;
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
+    //Define los campos para validaciones
+    this.formulario = this.chquera.formulario;
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la empresa por defecto
     this.establecerEmpresa();
     //Obtiene la lista completa de registros
@@ -115,10 +115,11 @@ export class ChequeraComponent implements OnInit {
     )
   }
   private listarCuentasBancariasConsultas(){
+    this.empresa = this.appComponent.getEmpresa();
     this.servicio.listarPorEmpresa(this.empresa.id).subscribe(
       res=>{
         console.log(res.json());
-        this.listarCuentasBancariasEmpresa = res.json();
+        this.listaCuentasBancariasEmpresa = res.json();
       }
     )
   }

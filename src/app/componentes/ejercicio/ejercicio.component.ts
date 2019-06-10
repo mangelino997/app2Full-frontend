@@ -320,18 +320,19 @@ export class EjercicioComponent implements OnInit {
       return elemento;
     }
   }
+  
   //Funcion para comparar y mostrar elemento de campo select
-  public compareFn = this.compararFn.bind(this);
-  private compararFn(a, b) {
+  public compareFn = this.compararFa.bind(this);
+  private compararFa(a, b) {
     if (a != null && b != null) {
-      return a.id === b.id;
+      return a === b;
     }
   }
   //Funcion para comparar y mostrar elemento de campo select
-  public compareF = this.compararF.bind(this);
+  public compareFMes = this.compararF.bind(this);
   private compararF(a, b) {
     if (a != null && b != null) {
-      return a === b;
+      return a.nombre === b.nombre;
     }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)

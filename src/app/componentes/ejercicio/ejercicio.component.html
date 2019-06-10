@@ -35,7 +35,7 @@
         <div class="form-group has-float-label">
           <label for="idAnioInicio" class="tamanio-label">Año de Inicio *</label>
           <mat-select id="idAnioInicio" class="form-control form-control-sm" formControlName="anioInicio"
-            [compareWith]="compareF">
+            [compareWith]="compareFn">
             <mat-option *ngFor="let anio of anios" [value]="anio">
               {{anio}}
             </mat-option>
@@ -44,7 +44,7 @@
         <div class="form-group has-float-label">
           <label for="idMesInicio" class="tamanio-label">Mes de Inicio *</label>
           <mat-select id="idMesInicio" class="form-control form-control-sm" formControlName="mesInicio"
-            [compareWith]="compareF">
+            [compareWith]="compareFMes">
             <mat-option *ngFor="let mes of meses" [value]="mes">
               {{mes.nombre}}
             </mat-option>
