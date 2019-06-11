@@ -167,7 +167,7 @@
         <div class="row">
             <div class="col-md-4">
               <div class="form-group has-float-label">
-                <label for="idDescripcion" class="tamanio-label">Descripción de la Carga*</label>
+                <label for="idDescripcion" class="tamanio-label">Descripción de la Carga *</label>
                 <input id="idDescripcion" type="text" formControlName="descripcionCarga" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
@@ -208,7 +208,7 @@
           <div class="row">
             <div class="col-md-4">
               <div class="form-group has-float-label">
-                <label for="idSucursal" class="tamanio-label">Sucursal Destino*</label>
+                <label for="idSucursal" class="tamanio-label">Sucursal Destino *</label>
                 <mat-select id="idRubro" class="form-control form-control-sm" [formControl]="formulario.get('sucursalDestino')"
                   [compareWith]="compareFn">
                   <mat-option *ngFor="let itemSucursal of resultadosSucursales" [value]="itemSucursal">

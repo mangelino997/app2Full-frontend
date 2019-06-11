@@ -10,7 +10,7 @@ export class OrdenRecoleccion {
             id: new FormControl(),
             version: new FormControl(),
             fechaEmision: new FormControl(),
-            cliente: new FormControl('', Validators.required),
+            cliente: new FormControl(),
             fecha: new FormControl(),
             domicilio: new FormControl(),
             localidad: new FormControl(),
