@@ -67,7 +67,8 @@ export class OrdenRecoleccionComponent implements OnInit {
   public cliente:FormControl = new FormControl();
   public domicilioBarrio:FormControl = new FormControl();
   public localidadProvincia:FormControl = new FormControl();
-  public fechaEmision: FormControl = new FormControl();
+  public fechaEmisionFormatoNuevo: FormControl = new FormControl();
+  public fechaEmisionFormatoOrig: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados = [];
   //Define el form control para las busquedas cliente
@@ -363,17 +364,44 @@ export class OrdenRecoleccionComponent implements OnInit {
       this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
         var cliente = res.json();
         this.formulario.get('cliente').setValue(cliente);
+        this.cambioRemitente();
       })
     });
   }
   //Comprueba que la fecha de Recolección sea igual o mayor a la fecha actual 
   public verificarFecha(){
-    if(this.formulario.get('fecha').value < this.formulario.get('fechaEmision').value){
+    if(this.formulario.get('fecha').value < this.fechaEmisionFormatoOrig.value){
       this.formulario.get('fecha').reset();
       this.toastr.error("La Fecha de recolección no puede ser menor a la fecha actual");
       setTimeout(function() {
         document.getElementById('idFecha').focus();
       }, 20);
+    }
+  }
+  //Verifica que el formato de las horas sea el correcto
+  public verificarHora(){
+    let horaDesde = this.formulario.get('horaDesde').value;
+    let horaHasta = this.formulario.get('horaHasta').value;
+    let splitHoraDesde = horaDesde.split(":");
+    let splitHoraHasta = horaHasta.split(":");
+    console.log(splitHoraDesde, splitHoraHasta);
+    //Si el array del horario es vacio significa que en el front no es correcto (--:00 || 00:-- || --:--)
+    if(splitHoraDesde[0] == ""){
+      this.toastr.error("El formato del horario no es el adecuado. No puede haber '--'");
+      setTimeout(function() {
+        document.getElementById('idHoraDesde').focus();
+      }, 20);
+      return false;
+    }
+    else if(splitHoraHasta[0]== ""){
+      this.toastr.error("El formato del horario no es el adecuado. No puede haber '--'");
+      setTimeout(function() {
+        document.getElementById('idHoraHasta').focus();
+      }, 20);
+      return false
+    }
+    else {
+      this.validarHoraHastaDesde();
     }
   }
   //Valida que la Hora Hasta no sea menor a Hora Desde
@@ -427,12 +455,18 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.formulario.reset();
     this.domicilioBarrio.setValue(null);
     this.localidadProvincia.setValue(null);
-    //Setea la fecha actual
+    //Setea la fecha actual en los campos correspondientes
     this.fechaServicio.obtenerFecha().subscribe(res=>{
       let respuesta= res.json();
       let anio =respuesta.split('-');
-      this.fechaEmision.setValue(anio[2] + '-' + anio[1] + '-' + anio[0]);
+      this.fechaEmisionFormatoOrig.setValue(respuesta);
+      this.fechaEmisionFormatoNuevo.setValue(anio[2] + '-' + anio[1] + '-' + anio[0]);
+      this.formulario.get('fecha').setValue(respuesta);
+      //Inicializo los valores para las horas
+      this.formulario.get('horaDesde').setValue('00:00');
+      this.formulario.get('horaHasta').setValue('00:00');
     });
+    
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

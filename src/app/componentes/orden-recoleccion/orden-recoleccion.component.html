@@ -39,7 +39,7 @@
                           <mat-icon>date_range</mat-icon>
                         </span>
                       </div>
-                      <input id="idFechaEmision" type="text" [formControl]="fechaEmision" autocomplete="off" class="form-control form-control-sm" readonly>
+                      <input id="idFechaEmision" type="text" [formControl]="fechaEmisionFormatoNuevo" autocomplete="off" class="form-control form-control-sm" readonly>
                     </div>
                   </div>
                 </div>
@@ -130,7 +130,7 @@
                       <mat-icon>date_range</mat-icon>
                     </span>
                   </div>
-                  <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" (blur)="verificarFecha()"
+                  <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" (change)="verificarFecha()"
                   class="form-control form-control-sm" [readonly]="soloLectura">                  
               </div>
             </div>
@@ -138,15 +138,15 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idHoraDesde" class="tamanio-label">Hora Desde *</label>
-              <input id="idHoraDesde" type="time" formControlName="horaDesde" autocomplete="off"
+              <input id="idHoraDesde" type="time" formControlName="horaDesde" autocomplete="off" (blur)="verificarHora()"
               class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idHoraHasta" class="tamanio-label">Hora Hasta *</label>
-              <input id="idHoraHasta"  type="time" formControlName="horaHasta" autocomplete="off"
-              class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarHoraHastaDesde()">
+              <label for="idHoraHasta" class="tamanio-label">Hora Hasta *</label> 
+              <input id="idHoraHasta"  type="time" formControlName="horaHasta" autocomplete="off" (blur)="verificarHora()"
+              class="form-control form-control-sm" [readonly]="soloLectura" >
             </div>
           </div>
           <div class="col-md-2">

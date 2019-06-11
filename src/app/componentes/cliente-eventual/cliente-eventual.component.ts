@@ -171,7 +171,10 @@ export class ClienteEventualComponent implements OnInit {
       }
     );
   }
-  onNoClick(): void { }
+  //Cierra el mat dialog
+  private closeDialog(){
+    this.dialogRef.close(this.data.formulario);
+  }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.clienteServicio.obtenerSiguienteId().subscribe(
@@ -199,6 +202,7 @@ export class ClienteEventualComponent implements OnInit {
           this.data.formulario = respuesta.id - 1;
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
+          this.closeDialog();
         }
       },
       err => {
