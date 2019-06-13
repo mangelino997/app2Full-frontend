@@ -98,7 +98,7 @@
                   *ngIf="!esVehiculoRemolque">*</span></label>
               <input id="idNumeroMotor" type="text" formControlName="numeroMotor" autocomplete="off"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                [required]="!esVehiculoRemolque" [textMask]="mascararNumero(25)">
+                [required]="!esVehiculoRemolque" (blur)="validarMotorChasis('numeroDeMotor')">
             </div>
           </div>
         </div>
@@ -127,7 +127,7 @@
               <label for="idNumeroChasis" class="tamanio-label">Número de Chasis</label>
               <input id="idNumeroChasis" type="text" formControlName="numeroChasis" autocomplete="off"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                [textMask]="mascararNumero(25)">
+                (blur)="validarMotorChasis('numeroDeChasis')">
             </div>
           </div>
         </div>
