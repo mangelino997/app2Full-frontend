@@ -518,19 +518,19 @@ export class OrdenVentaComponent implements OnInit {
   public agregarEscalaLista() {
     this.idModEscala = null;
     this.eliminarElementoEscalas(this.formularioEscala.get('escalaTarifa').value.valor);
-    this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
     this.controlarCamposVaciosEscala(this.formularioEscala);
     if (this.indiceSeleccionado == 3) {
       this.loaderService.show();
       this.formularioEscala.get('id').setValue(null);
       this.formularioEscala.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
+      this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
       this.ordenVentaEscalaServicio.agregar(this.formularioEscala.value).subscribe(res => {
         this.loaderService.hide();
         this.cambioPreciosDesde();
       });
     } else {
-      this.formulario.disable();
-      this.preciosDesde.disable();
+      // this.formulario.disable();
+      // this.preciosDesde.disable();
       this.listaDeEscalas.push(this.formularioEscala.value);
       this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1);
     }
@@ -581,8 +581,6 @@ export class OrdenVentaComponent implements OnInit {
       this.listaDeEscalas.splice(indice, 1);
     }
     if (this.listaDeEscalas.length == 0) {
-      this.preciosDesde.enable();
-      this.formulario.enable();
       this.ordenventa.enable();
     }
     setTimeout(function () {
@@ -723,16 +721,12 @@ export class OrdenVentaComponent implements OnInit {
   //Agrega un Tramo a listaDeTramos
   public agregarTramoLista() {
     this.idModTramo = null;
-    if (this.indiceSeleccionado != 3) {
-      this.formulario.disable();
-      this.preciosDesde.disable();
-    }
-    this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
     this.controlarCamposVaciosTramo(this.formularioTramo);
     if (this.indiceSeleccionado == 3) {
       this.loaderService.show();
       this.formularioTramo.get('id').setValue(null);
       this.formularioTramo.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
+      this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
       this.ordenVentaTramoServicio.agregar(this.formularioTramo.value).subscribe(res => {
         this.loaderService.hide();
         this.cambioPreciosDesde();
@@ -787,8 +781,6 @@ export class OrdenVentaComponent implements OnInit {
       this.listaDeTramos.splice(indice, 1);
     }
     if (this.listaDeTramos.length == 0) {
-      this.formulario.enable();
-      this.preciosDesde.enable();
       this.ordenventa.enable();
     }
     this.resultadosTramos = [];
@@ -832,6 +824,7 @@ export class OrdenVentaComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('ordenesVentasEscalas').setValue(this.listaDeEscalas);
     this.formulario.get('ordenesVentasTramos').setValue(this.listaDeTramos);
+    this.formulario.get('activaDesde').setValue(this.preciosDesde.value);
     this.ordenVentaServicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
