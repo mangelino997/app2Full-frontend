@@ -394,13 +394,9 @@ export class OrdenVentaComponent implements OnInit {
             this.agregar();
           } else {
             this.toastr.error('La lista no puede estar vacia');
-            this.formulario.disable();
-            this.preciosDesde.disable();
           }
         } else {
           this.toastr.error('Falta completar datos de formulario');
-          this.formulario.disable();
-          this.preciosDesde.disable();
         }
         break;
       case 3:
@@ -529,8 +525,6 @@ export class OrdenVentaComponent implements OnInit {
         this.cambioPreciosDesde();
       });
     } else {
-      // this.formulario.disable();
-      // this.preciosDesde.disable();
       this.listaDeEscalas.push(this.formularioEscala.value);
       this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1);
     }
