@@ -238,6 +238,27 @@
           <app-progreso></app-progreso>
         </div>
       </div>
+      <div class="row" *ngIf="!show">
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idPersonal" class="tamanio-label">Personal </label>
+                    <input id="idPersonal" class="form-control form-control-sm color-busqueda"
+                        type="text" matInput [formControl]="autocompletadoListar" [matAutocomplete]="autoPersonalListar"
+                        autocomplete="off" >
+                    <mat-autocomplete #autoPersonalListar="matAutocomplete" [displayWith]="displayF.bind(this)" >
+                        <mat-option *ngFor="let item of resultadosPersonal" [value]="item">
+                            {{item.alias}}
+                    </mat-option>
+                </mat-autocomplete>
+            </div>
+        </div>
+        <div class="col-md-1">
+            <button id="idBoton" *ngIf="!show" mat-raised-button color="primary"
+            formnovalidate (click)="listarPorPersonal()" >
+                Buscar
+            </button>
+        </div>
+    </div>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="legajo" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Legajo-Personal</th>

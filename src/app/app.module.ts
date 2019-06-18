@@ -326,6 +326,7 @@ import { ChequeraComponent } from './componentes/chequera/chequera.component';
 import { DepositoInsumoProductoComponent } from './componentes/deposito-insumo-producto/deposito-insumo-producto.component';
 import { DepositoInsumoProducto } from './modelos/depositoInsumoProducto';
 import { DepositoInsumoProductoService } from './servicios/deposito-insumo-producto.service';
+import { TalonarioReciboCobradorComponent } from './componentes/talonario-recibo-cobrador/talonario-recibo-cobrador.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -593,7 +594,8 @@ const stompConfig: StompConfig = {
     CuentaBancariaComponent,
     TipoChequeraComponent,
     ChequeraComponent,
-    DepositoInsumoProductoComponent
+    DepositoInsumoProductoComponent,
+    TalonarioReciboCobradorComponent
   ],
   imports: [
     BrowserModule,

@@ -17,6 +17,8 @@ import { Router } from '@angular/router';
 export class ContraseniaComponent implements OnInit {
   //Define el formulario
   public formulario:FormGroup;
+  //Define los datos del usuario del autocompletado
+  public user:any;
   //Define el autocompletado para las busquedas
   public autocompletado: FormControl = new FormControl('', Validators.required);
   //Define el estado del autocompletado
@@ -34,7 +36,16 @@ export class ContraseniaComponent implements OnInit {
   //Constructor
   constructor(private servicio: UsuarioService, private usuario: Usuario, private toastr: ToastrService,
     private loaderService: LoaderService, private appService: AppService,
-    private router: Router) { }
+    private router: Router) {
+       //Autocompletado - Buscar por nombre
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    });
+     }
   //Al inicializar el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -47,6 +58,7 @@ export class ContraseniaComponent implements OnInit {
     this.formulario.reset();
     //Establece el usuario actual
     let usuario = this.appService.getUsuario();
+    this.user = usuario;
     if(usuario.rol.id > 2) {
       this.formulario.patchValue(usuario);
       this.formulario.get('password').reset();
@@ -61,14 +73,7 @@ export class ContraseniaComponent implements OnInit {
         document.getElementById('idAutocompletado').focus();
       }, 20);
     }
-    //Autocompletado - Buscar por nombre
-    this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
-      }
-    });
+   
   }
   //Establece el formulario al seleccionar un elemento de autocompletado
   public establecerFormulario(): void {
@@ -83,7 +88,7 @@ export class ContraseniaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          if(this.formulario.value.rol.id > 2) {
+          if(this.user.rol.id > 2) {
             localStorage.removeItem('token');
             this.router.navigate(['login'], { replaceUrl: true });
           } else {

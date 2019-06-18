@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class CobradorService {
+export class TalonarioReciboService {
   //Define la ruta al servicio web
-  private ruta:string = "/cobrador";
+  private ruta:string = "/talonariorecibo";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -46,25 +46,9 @@ export class CobradorService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
-  //Obtiene el por Defecto Cliente Eventual por defecto
-  public obtenerPorDefecto() {
-    return this.http.get(this.url + '/obtenerPorDefecto', this.options);
-  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
-  }
-  //Obtiene la lista de registros por estaActivoTrue
-  public listarPorEstaActivoTrue() {
-    return this.http.get(this.url + '/listarPorEstaActivoTrue', this.options);
-  }
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
   }
   //Agrega un registro
   public agregar(elemento) {

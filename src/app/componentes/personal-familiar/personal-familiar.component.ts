@@ -18,6 +18,7 @@ import { MesService } from 'src/app/servicios/mes.service';
 import { TipoFamiliar } from 'src/app/modelos/tipo-familiar';
 import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
 import { PersonalFamiliarService } from 'src/app/servicios/personal-familiar.service';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-personal-familiar',
@@ -63,6 +64,8 @@ export class PersonalFamiliarComponent implements OnInit {
   public nacionalidadNacimiento: FormControl = new FormControl();
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
+  public autocompletadoListar: FormControl = new FormControl();
+
   //Define el Familiar seleccionado control para las busquedas
   public familiar: FormControl = new FormControl();
   
@@ -90,7 +93,7 @@ export class PersonalFamiliarComponent implements OnInit {
   constructor(private servicio: PersonalFamiliarService,private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
     private personalFamiliar: PersonalFamiliar, private appService: AppService, private appServicio: AppService, 
     private toastr: ToastrService,private localidadServicio: LocalidadService, private sexoServicio: SexoService, 
-    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, 
+    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, private appComponent: AppComponent, 
      private anio: FechaService, private mes: MesService, private tipoFamiliar: TipoFamiliarService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -110,18 +113,28 @@ export class PersonalFamiliarComponent implements OnInit {
           console.log(err);
         }
       );
+    let empresa = this.appComponent.getEmpresa();
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
+        this.personalServicio.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
           console.log(response);
           this.resultados = response;
+        })
+      }
+    })
+    //Autocompletado - Buscar personal por alias
+    this.autocompletadoListar.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.personalServicio.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
+          this.resultadosPersonal = response;
         })
       }
     })
   }
   //Al iniciarse el componente
   ngOnInit() {
+    let empresa = this.appComponent.getEmpresa();
     //Define los campos para validaciones
     this.formulario = this.personalFamiliar.formulario;
     //Autocompletado Localidad Nacimiento - Buscar por nombre
@@ -136,8 +149,6 @@ export class PersonalFamiliarComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(15, 0);
-    //Obtiene la lista completa de registros
-    this.listar();
     //Obtiene la lista de sexos
     this.listarSexos();
     //Obtiene la lista de tipos de documentos
@@ -151,8 +162,7 @@ export class PersonalFamiliarComponent implements OnInit {
     //Autocompletado - Buscar personal por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarPorAlias(data).subscribe(response => {
-          console.log(response);
+        this.personalServicio.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
           this.resultadosPersonal = response;
         })
       }
@@ -212,6 +222,7 @@ export class PersonalFamiliarComponent implements OnInit {
   private vaciarListas() {
     this.resultados = [];
     this.resultadosLocalidades = [];
+    this.resultadosPersonal = [];
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado, opcionPestania) {
@@ -267,7 +278,6 @@ export class PersonalFamiliarComponent implements OnInit {
     this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.listar();
     if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
@@ -291,7 +301,6 @@ export class PersonalFamiliarComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, false, true, 'idPersonal');
         break;
       case 5:
-        this.listar();
         break;
       default:
         break;
@@ -352,10 +361,10 @@ export class PersonalFamiliarComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
+  //Obtiene el listado de registros en la Pestaña Listar
+  public listarPorPersonal() {
     this.loaderService.show();
-    this.servicio.listar().subscribe(
+    this.servicio.listarPorPersonal(this.autocompletadoListar.value.id).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -446,7 +455,6 @@ export class PersonalFamiliarComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listarPorPersonal(this.formulario.get('personal').value.id).subscribe(
       res=>{
-        console.log(res.json());
         this.personasFamiliares = res.json();
         this.loaderService.hide();
       },
@@ -462,6 +470,7 @@ export class PersonalFamiliarComponent implements OnInit {
     this.familiar.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
+    this.autocompletadoListar.setValue(undefined);
     this.nacionalidadNacimiento.setValue(undefined);
     this.vaciarListas();
   }
