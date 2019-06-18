@@ -77,10 +77,6 @@ export class ChoferProveedorComponent implements OnInit {
         console.log(err);
       }
     );
-    // //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -267,6 +263,7 @@ export class ChoferProveedorComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

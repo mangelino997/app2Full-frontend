@@ -24,6 +24,7 @@ export class ChoferProveedor {
             vtoCursoCargaPeligrosa: new FormControl(),
             vtoLINTI: new FormControl('', Validators.required),
             vtoLibretaSanidad: new FormControl(),
+            vtoPsicoFisico: new FormControl('', Validators.required),
             usuarioAlta: new FormControl(),
             fechaAlta: new FormControl(),
             usuarioMod: new FormControl(),

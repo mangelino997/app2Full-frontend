@@ -323,6 +323,9 @@ import { VencimientosChoferesComponent } from './componentes/vencimientos-chofer
 import { CuentaBancariaComponent } from './componentes/cuenta-bancaria/cuenta-bancaria.component';
 import { TipoChequeraComponent } from './componentes/tipo-chequera/tipo-chequera.component';
 import { ChequeraComponent } from './componentes/chequera/chequera.component';
+import { DepositoInsumoProductoComponent } from './componentes/deposito-insumo-producto/deposito-insumo-producto.component';
+import { DepositoInsumoProducto } from './modelos/depositoInsumoProducto';
+import { DepositoInsumoProductoService } from './servicios/deposito-insumo-producto.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -359,7 +362,7 @@ const appRoutes: Routes = [
   { path: 'tipocomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService] },
   { path: 'tipocontacto', component: TipoContactoComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdecuentabancaria', component: TipoCuentaBancariaComponent, canActivate: [GuardiaService] },
-  { path: 'configuraciontipodecuentascontables', component: TipoCuentaContableComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontiposdecuentascontables', component: TipoCuentaContableComponent, canActivate: [GuardiaService] },
   // { path: 'configuraciongruposdecuentascontables', component: GrupoCuentaContableComponent, canActivate: [GuardiaService] },
   { path: 'ejerciciosadministrar', component: EjercicioComponent, canActivate: [GuardiaService] },  
   { path: 'tipodocumento', component: TipoDocumentoComponent, canActivate: [GuardiaService] },
@@ -410,12 +413,13 @@ const appRoutes: Routes = [
   { path: 'usuariosusuariosempresas', component: UsuarioEmpresasComponent, canActivate: [GuardiaService] },
   { path: 'rolesadministrarmenu', component: RolSubopcionMenuComponent, canActivate: [GuardiaService] },
   { path: 'logisticainsumosproductos', component: ProductoComponent, canActivate: [GuardiaService] },
+  { path: 'logisticadepositosinsumosproductos', component: DepositoInsumoProductoComponent, canActivate: [GuardiaService] },
   { path: 'menuopciones', component: OpcionComponent, canActivate: [GuardiaService] },
   { path: 'plandecuentasdefinicion', component: PlanCuentaComponent, canActivate: [GuardiaService] },
-  { path: 'configuraciontiposdecomprobantes', component: TipoComprobanteComponent, canActivate: [GuardiaService] },
-  { path: 'configuraciontiposdecontactos', component: TipoContactoComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontiposdecomprobante', component: TipoComprobanteComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontiposdecontacto', component: TipoContactoComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdedocumentos', component: TipoDocumentoComponent, canActivate: [GuardiaService] },
-  // { path: 'configuraciontiposdemedida', component: Tipo, canActivate: [GuardiaService] },
+  // { path: 'configuraciontiposdemedida', component: UnidadMedidaComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdeproveedor', component: TipoProveedorComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiposdetarifa', component: TipoTarifaComponent, canActivate: [GuardiaService] },
   { path: 'configuracionviajeunidadnegocio', component: ViajeUnidadNegocioComponent, canActivate: [GuardiaService] },
@@ -440,7 +444,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://192.168.0.156:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -588,7 +592,8 @@ const stompConfig: StompConfig = {
     VencimientosChoferesComponent,
     CuentaBancariaComponent,
     TipoChequeraComponent,
-    ChequeraComponent
+    ChequeraComponent,
+    DepositoInsumoProductoComponent
   ],
   imports: [
     BrowserModule,
@@ -826,6 +831,8 @@ const stompConfig: StompConfig = {
     Chequera,
     ChequeraService,
     CuentaBancariaService,
+    DepositoInsumoProducto,
+    DepositoInsumoProductoService,
     {
       provide: StompConfig,
       useValue: stompConfig

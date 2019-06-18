@@ -59,10 +59,14 @@ export class TipoTarifaComponent implements OnInit {
           console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
+      //Autocompletado - Buscar por nombre
+      this.autocompletado.valueChanges.subscribe(data => {
+        if (typeof data == 'string' && data.length > 2) {
+          this.servicio.listarPorNombre(data).subscribe(res => {
+            this.resultados = res;
+          })
+        }
+      })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -87,11 +91,11 @@ export class TipoTarifaComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if (estado) {
-      this.formulario.get('porEscala').enabled;
-      this.formulario.get('porPorcentaje').enabled;
+      this.formulario.get('porEscala').enable();
+      this.formulario.get('porPorcentaje').enable();
     } else {
-      this.formulario.get('porEscala').disabled;
-      this.formulario.get('porPorcentaje').disabled;
+      this.formulario.get('porEscala').disable();
+      this.formulario.get('porPorcentaje').disable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -259,6 +263,7 @@ export class TipoTarifaComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
@@ -273,7 +278,7 @@ export class TipoTarifaComponent implements OnInit {
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
     if (a != null && b != null) {
-      return a.id === b.id;
+      return a === b;
     }
   }
   //Define como se muestra los datos en el autcompletado
