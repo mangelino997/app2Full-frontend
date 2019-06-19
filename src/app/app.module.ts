@@ -330,6 +330,8 @@ import { TalonarioReciboCobradorComponent } from './componentes/talonario-recibo
 import { TalonarioReciboCobrador } from './modelos/talonarioReciboCobrador';
 import { TalonarioReciboService } from './servicios/talonario-recibo.service';
 import { TalonarioReciboLoteService } from './servicios/talonario-recibo-lote.service';
+import { SoporteService } from './servicios/soporte.service';
+import { Soporte } from './modelos/soporte';
 
 //Rutas
 const appRoutes: Routes = [
@@ -843,6 +845,8 @@ const stompConfig: StompConfig = {
     DepositoInsumoProductoService,
     TalonarioReciboService,
     TalonarioReciboLoteService,
+    SoporteService,
+    Soporte,
     {
       provide: StompConfig,
       useValue: stompConfig
