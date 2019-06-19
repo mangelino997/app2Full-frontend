@@ -9,10 +9,10 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 export class AppService {
   //Deifne la URL origen
   // private URL_ORIGEN = 'https://jit-gestion.appspot.com';
-  private URL_ORIGEN = 'http://localhost:4200'; //192.168.0.123
+  private URL_ORIGEN = 'http://192.168.0.156:4200'; //192.168.0.123
   //Define la IP
   // private IP = 'https://gestionws.appspot.com';
-  private IP = 'http://localhost:8080'; //192.168.0.156:8080
+  private IP = 'http://192.168.0.156:8080'; //192.168.0.156:8080
   //Define la url base
   private URL_BASE = this.IP + '/jitws/auth';
   //Define la url de subcripcion a socket
@@ -158,6 +158,13 @@ export class AppService {
   //Valida el dni
   public validarDNI(dni) {
     if (dni.length != 8) {
+      return false
+    }
+    return true;
+  }
+  //Valida longitud (solo enteros para campos DESDE, HASTA)
+  public validarLongitud(longitud, elemento) {
+    if (elemento.length != longitud) {
       return false
     }
     return true;

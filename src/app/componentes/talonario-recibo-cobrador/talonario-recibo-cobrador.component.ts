@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TalonarioReciboLoteService } from 'src/app/servicios/talonario-recibo-lote.service';
 import { CobradorService } from 'src/app/servicios/cobrador.service';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-talonario-recibo-cobrador',
@@ -19,7 +20,7 @@ import { CobradorService } from 'src/app/servicios/cobrador.service';
 })
 export class TalonarioReciboCobradorComponent implements OnInit {
 //Define los datos de la Empresa
-public empresa: any;
+public empresa: FormControl = new FormControl();
   //Define la pestania activa
 public activeLink: any = null;
 //Define el indice seleccionado de pestania
@@ -34,8 +35,6 @@ public soloLectura: boolean = false;
 public mostrarBoton: boolean = null;
 //Define la lista de pestanias
 public pestanias: Array<any> = [];
-//Define la lista de Cobradores
-public cobradores: Array<any> = [];
 //Define un formulario para validaciones de campos
 public formulario: FormGroup;
 //Define la lista completa de registros
@@ -46,6 +45,10 @@ public autocompletado: FormControl = new FormControl();
 public resultados: Array<any> = [];
 //Define los resultados de autocompletado localidad
 public resultadosLocalidades: Array<any> = [];
+//Define la lista de Cobradores
+public listaCobradores: Array<any>= [];
+//Define la lista para Talonarios Recibos Lote
+public listaTalRecLote: Array<any>= [];
 //Define el mostrar del circulo de progreso
 public show = false;
 //Define la subscripcion a loader.service
@@ -55,7 +58,7 @@ public columnas: string[] = ['id', 'empresa', 'cobrador', 'talreclote', 'pVenta'
 //Define la matSort
 @ViewChild(MatSort) sort: MatSort;
 //Constructor
-constructor(private servicio: TalonarioReciboService, private subopcionPestaniaService: SubopcionPestaniaService,
+constructor(private servicio: TalonarioReciboService, private subopcionPestaniaService: SubopcionPestaniaService, private appComponent: AppComponent,
   private talonarioReciboLoteService: TalonarioReciboLoteService, private appService: AppService, private modelo: TalonarioReciboCobrador,
   private toastr: ToastrService, private loaderService: LoaderService, private cobradorService: CobradorService) {
   //Obtiene la lista de pestania por rol y subopcion
@@ -87,10 +90,13 @@ ngOnInit() {
     });
   //Define el formulario y validaciones
   this.formulario = this.modelo.formulario;
-  //Obtiene la lista de Cobradores
-  this.listarCobradores();
   //Iniciliza los campos
   this.inicializarCampos();
+  //Obtiene la lista de Cobradores
+  this.listarCobradores();
+  //Obtiene los talonarios recibo lote
+  this.listarTalRecLote();
+ 
   //Defiene autocompletado localidad
   // this.formulario.get('localidad').valueChanges.subscribe(data => {
   //   if (typeof data == 'string' && data.length > 2) {
@@ -113,7 +119,8 @@ public cambioAutocompletado(elemento) {
 private listarCobradores() {
   this.cobradorService.listarPorEstaActivoTrue().subscribe(
     res => {
-      this.cobradores = res.json();
+      console.log(res.json());
+      this.listaCobradores = res.json();
       // this.establecerCobrador();
     },
     err => {
@@ -121,31 +128,34 @@ private listarCobradores() {
     }
   );
 }
+//Obtiene el listado de Talonario Recibo Lote
+private listarTalRecLote(){
+  console.log(this.empresa.value.id);
+  this.talonarioReciboLoteService.listarPorEmpresaYLoteEntregadoFalse(this.empresa.value.id).subscribe(
+    res=>{
+      console.log(res);
+      // this.listaTalRecLote = res.json();
+    }
+  )
+}
 //iniciliza los campos
 private inicializarCampos(){
-  this.empresa = this.appService.getEmpresa();
-  this.formulario.get('empresa').setValue(this.empresa.razonSocial);
-}
-//Formatea el valor del autocompletado
-public displayFn(elemento) {
-  if (elemento != undefined) {
-    return elemento.nombre ? elemento.nombre : elemento;
-  } else {
-    return elemento;
-  }
-}
-//Formatea el valor del autocompletado a
-public displayFa(elemento) {
-  if (elemento != undefined) {
-    return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
-  } else {
-    return elemento;
-  }
+  this.empresa.setValue(this.appService.getEmpresa());
+  this.formulario.get('empresa').setValue(this.empresa.value.razonSocial);
+  console.log(this.empresa);
+
 }
 //Vacia la lista de autocompletados
 public vaciarListas() {
   this.resultados = [];
   this.resultadosLocalidades = [];
+}
+//Maneja el cambio en el select de Talonario Recibo Lote
+public cambioTalRecLote(){
+  let talonarioReciboLote = this.formulario.value.talonarioReciboLote;
+  console.log(talonarioReciboLote);
+  this.formulario.get('letra').setValue(talonarioReciboLote.letra);
+  this.formulario.get('puntoVenta').setValue(talonarioReciboLote.puntoVenta);
 }
 //Funcion para establecer los valores de las pestañas
 private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -237,6 +247,9 @@ private listar() {
 private agregar() {
   this.loaderService.show();
   this.formulario.get('id').setValue(null);
+  let usuario= this.appComponent.getUsuario();
+  this.formulario.get('usuarioAlta').setValue(usuario);
+  console.log(this.formulario.value);
   this.servicio.agregar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
@@ -326,6 +339,44 @@ public validarPatron(patron, campo) {
     }
   }
 }
+//Obtiene la mascara de enteros SIN decimales
+public obtenerMascaraEnteroSinDecimales(intLimite) {
+  return this.appService.mascararEnterosSinDecimales(intLimite);
+}
+//Valida longitud
+public validarLongitud(elemento, intLimite) {
+  switch(elemento){
+    case 'desde':
+      return this.appService.validarLongitud(intLimite, this.formulario.value.desde);
+    case 'hasta':
+    return this.appService.validarLongitud(intLimite, this.formulario.value.hasta);
+    default:
+      break;
+  }
+}
+//Formatea el valor del autocompletado
+public displayFn(elemento) {
+  if (elemento != undefined) {
+    return elemento.nombre ? elemento.nombre : elemento;
+  } else {
+    return elemento;
+  }
+}
+//Formatea el valor del autocompletado a
+public displayFa(elemento) {
+  if (elemento != undefined) {
+    return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre : elemento;
+  } else {
+    return elemento;
+  }
+}
+//Funcion para comparar y mostrar elemento de campo select
+public compareFn = this.compararFn.bind(this);
+private compararFn(a, b) {
+  if (a != null && b != null) {
+    return a.id === b.id;
+  }
+}
 //Muestra en la pestania buscar el elemento seleccionado de listar
 public activarConsultar(elemento) {
   this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
@@ -355,4 +406,5 @@ public verificarSeleccion(valor): void {
     valor.setValue(null);
   }
 } 
+
 }
