@@ -15,7 +15,6 @@
           <div class="row">
             <div class="col-md-8">
               <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                <!-- <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label> -->
                 <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                   placeholder="Buscar por Id, Número documento o Nombre de Personal"
                   [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
@@ -40,8 +39,8 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group has-float-label">
-                <label for="idNombre" class="tamanio-label">Empresa </label>
-                <input id="idNombre" type="text" [formControlName]="empresa" autocomplete="off"
+                <label for="idEmpresa" class="tamanio-label">Empresa </label>
+                <input id="idEmpresa" type="text" [formControl]="empresa" autocomplete="off"
                   class="form-control form-control-sm" readonly>
               </div>
             </div>
@@ -49,9 +48,8 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group has-float-label">
-                <label for="idDomicilio" class="tamanio-label">Cobrador *</label>
-                <mat-select class="form-control form-control-sm" formControlName="cobrador"
-                  (selectionChange)="filtrarPorPrecioDesde()">
+                <label id="idCobrador" for="idCobrador" class="tamanio-label">Cobrador *</label>
+                <mat-select class="form-control form-control-sm" formControlName="cobrador"  >
                   <mat-option *ngFor="let item of listaCobradores" [value]="item">
                     {{item.nombre}}
                   </mat-option>
@@ -60,9 +58,9 @@
             </div>
             <div class="col-md-6">
               <div class="form-group has-float-label">
-                <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Talonario Recibo Lote *</label>
+                <label id="labelTalonarioReciboLote" for="idTalonarioReciboLote" class="tamanio-label">Talonario Recibo Lote *</label>
                 <mat-select class="form-control form-control-sm" formControlName="talonarioReciboLote"
-                  (selectionChange)="cambioTalRecLote()">
+                  (selectionChange)="cambioTalRecLote()"  >
                   <mat-option *ngFor="let item of listaTalRecLote" [value]="item">
                     {{item.puntoVenta}} - {{item.letra}} - {{item.desde}} -> {{item.hasta}}
                   </mat-option>
@@ -73,15 +71,15 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group has-float-label">
-                <label for="idDomicilio" class="tamanio-label">Punto de Venta</label>
-                <input id="idDomicilio" type="text" formControlName="puntoVenta" autocomplete="off"
+                <label for="idPuntoVenta" class="tamanio-label">Punto de Venta</label>
+                <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off"
                   class="form-control form-control-sm" readonly>
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group has-float-label">
-                <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Letra</label>
-                <input id="idTelefonoFijo" type="tel" formControlName="letra" autocomplete="off"
+                <label id="labelLetra" for="idLetra" class="tamanio-label">Letra</label>
+                <input id="idLetra" type="tel" formControlName="letra" autocomplete="off"
                   class="form-control form-control-sm" readonly>
               </div>
             </div>
@@ -89,15 +87,15 @@
           <div class="row">
             <div class="col-md-6">
               <div class="form-group has-float-label">
-                <label for="idDomicilio" class="tamanio-label">Desde *</label>
-                <input id="idDomicilio" type="text" formControlName="desde" autocomplete="off" [textMask]="obtenerMascaraEnteroSinDecimales(8)"
+                <label for="idDesde" class="tamanio-label">Desde *</label>
+                <input id="idDesde" type="text" formControlName="desde" autocomplete="off" [textMask]="obtenerMascaraEnteroSinDecimales(8)"
                   class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarLongitud('desde', 8)">
               </div>
             </div>
             <div class="col-md-6">
               <div class="form-group has-float-label">
-                <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Hasta *</label>
-                <input id="idTelefonoFijo" type="text" formControlName="hasta" autocomplete="off" [textMask]="obtenerMascaraEnteroSinDecimales(8)"
+                <label id="labelHasta" for="idHasta" class="tamanio-label">Hasta *</label>
+                <input id="idHasta" type="text" formControlName="hasta" autocomplete="off" [textMask]="obtenerMascaraEnteroSinDecimales(8)"
                   class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarLongitud('hasta', 8)">
               </div>
             </div>
@@ -129,23 +127,25 @@
           </ng-container>
           <ng-container matColumnDef="empresa" sticky>
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.empresa}}</td>
+            <td mat-cell *matCellDef="let elemento">{{elemento.talonarioReciboLote.empresa.razonSocial}}</td>
           </ng-container>
           <ng-container matColumnDef="cobrador" sticky>
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Cobrador</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.cobrador}}</td>
+            <td mat-cell *matCellDef="let elemento">{{elemento.cobrador.nombre}}</td>
           </ng-container>
           <ng-container matColumnDef="talreclote" sticky>
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Talonario Recibo Lote</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.talonarioReciboLote}}</td>
+            <td mat-cell *matCellDef="let elemento">
+              Desde: {{elemento.talonarioReciboLote.desde}} - Hasta: Desde: {{elemento.talonarioReciboLote.hasta}}
+            </td>
           </ng-container>
           <ng-container matColumnDef="pVenta" sticky>
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.puntoVenta}}</td>
+            <td mat-cell *matCellDef="let elemento">{{elemento.talonarioReciboLote.puntoVenta}}</td>
           </ng-container>
           <ng-container matColumnDef="letra" sticky>
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.letra}}</td>
+            <td mat-cell *matCellDef="let elemento">{{elemento.talonarioReciboLote.letra}}</td>
           </ng-container>
           <ng-container matColumnDef="desde" sticky>
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Desde</th>
