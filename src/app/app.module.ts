@@ -327,6 +327,8 @@ import { DepositoInsumoProductoComponent } from './componentes/deposito-insumo-p
 import { DepositoInsumoProducto } from './modelos/depositoInsumoProducto';
 import { DepositoInsumoProductoService } from './servicios/deposito-insumo-producto.service';
 import { TalonarioReciboCobradorComponent } from './componentes/talonario-recibo-cobrador/talonario-recibo-cobrador.component';
+import { TalonarioReciboCobrador } from './modelos/talonarioReciboCobrador';
+import { TalonarioReciboService } from './servicios/talonario-recibo.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -441,7 +443,10 @@ const appRoutes: Routes = [
   { path: 'legajosvencimientoschoferes', component: VencimientosChoferesComponent, canActivate: [GuardiaService] },
   { path: 'cuentasbancariascuentas', component: CuentaBancariaComponent, canActivate: [GuardiaService] },
   { path: 'sindicatostipochequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
-  { path: 'cuentasbancariaschequeras', component: ChequeraComponent, canActivate: [GuardiaService] }
+  { path: 'cuentasbancariaschequeras', component: ChequeraComponent, canActivate: [GuardiaService] },
+  { path: 'gestiondecobrostalonariosreciboscobradores', component: TalonarioReciboCobradorComponent, canActivate: [GuardiaService] },
+
+  
 ]
 
 const stompConfig: StompConfig = {
@@ -594,8 +599,7 @@ const stompConfig: StompConfig = {
     CuentaBancariaComponent,
     TipoChequeraComponent,
     ChequeraComponent,
-    DepositoInsumoProductoComponent,
-    TalonarioReciboCobradorComponent
+    DepositoInsumoProductoComponent
   ],
   imports: [
     BrowserModule,
@@ -834,7 +838,9 @@ const stompConfig: StompConfig = {
     ChequeraService,
     CuentaBancariaService,
     DepositoInsumoProducto,
+    TalonarioReciboCobrador,
     DepositoInsumoProductoService,
+    TalonarioReciboService,
     {
       provide: StompConfig,
       useValue: stompConfig
