@@ -8,7 +8,7 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class SoporteService {
   //Define la ruta al servicio web
-  private ruta:string = "/soporteestado";
+  private ruta:string = "/soporte";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -60,7 +60,7 @@ export class SoporteService {
   }
   //Obtiene un listado por usuario
   public listarPorAliasYUsuario(alias, idUsuario) {
-    return this.http.get(this.url + '/listarPorAliasYidUsuario/' + alias + '/' + idUsuario, this.options).map(res => {
+    return this.http.get(this.url + '/listarPorAliasYUsuario/' + alias + '/' + idUsuario, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })
@@ -86,12 +86,13 @@ export class SoporteService {
       },
       body: formData
     });
+
   }
   //Actualiza un registro
   public actualizar(soporte) {
     let obj = Object.assign({}, soporte);
     let idFoto = soporte.bugImagen.id;
-    let foto = obj.usuario.bugImagen;
+    let foto = obj.bugImagen;
     let blob = new Blob([foto.datos], {type : 'image/jpeg'});
     const formData = new FormData(); 
     formData.append('archivo', blob, foto.nombre);

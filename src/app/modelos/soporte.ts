@@ -7,11 +7,9 @@ export class Soporte {
     constructor() {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
-            id: new FormControl('', Validators.required),
+            id: new FormControl(),
             version: new FormControl(),
             empresa: new FormControl('', Validators.required),
-            modulo: new FormControl('', Validators.required), 
-            submodulo: new FormControl('', Validators.required),
             subopcion: new FormControl('', Validators.required),
             mensaje: new FormControl('', Validators.required),
             usuario: new FormControl(),

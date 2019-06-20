@@ -22,7 +22,7 @@
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                   <mat-option *ngFor="let item of resultados" [value]="item"
                     (onSelectionChange)="cambioAutocompletado(item)">
-                    {{item.nombre}}
+                    {{item.alias}}
                   </mat-option>
                 </mat-autocomplete>
               </div>
@@ -38,8 +38,8 @@
             <div class="col-md-4">
               <div class="form-group has-float-label">
                 <label for="idEmpresa" class="tamanio-label">Empresa </label>
-                <mat-select class="form-control form-control-sm" formControlName="empresa"  >
-                  <mat-option *ngFor="let item of listaEmpresas" [value]="item">
+                <mat-select class="form-control form-control-sm" formControlName="empresa" [compareWith]="compareFn" >
+                  <mat-option *ngFor="let item of listaEmpresas" [value]="item" >
                     {{item.razonSocial}}
                   </mat-option>
                 </mat-select>
@@ -50,7 +50,7 @@
             <div class="col-md-4">
               <div class="form-group has-float-label">
                 <label id="idCobrador" for="idCobrador" class="tamanio-label">Módulo *</label>
-                <mat-select class="form-control form-control-sm" formControlName="modulo" (selectionChange)="cambioModulo()">
+                <mat-select class="form-control form-control-sm" [formControl]="modulo" (selectionChange)="cambioModulo()" [compareWith]="compareFn">
                   <mat-option *ngFor="let item of listaModulos" [value]="item">
                     {{item.nombre}}
                   </mat-option>
@@ -60,7 +60,7 @@
             <div class="col-md-4">
               <div class="form-group has-float-label">
                 <label id="idSubmodulo" for="idSubmodulo" class="tamanio-label">Submódulo *</label>
-                <mat-select class="form-control form-control-sm" formControlName="submodulo" (selectionChange)="cambioSubmodulo()">
+                <mat-select class="form-control form-control-sm" [formControl]="submodulo" (selectionChange)="cambioSubmodulo()" [compareWith]="compareFn">
                   <mat-option *ngFor="let item of listaSubmodulos" [value]="item">
                     {{item.nombre}}
                   </mat-option>
@@ -70,7 +70,7 @@
             <div class="col-md-4">
               <div class="form-group has-float-label">
                 <label id="idSubopcion" for="idSubopcion" class="tamanio-label">Subopción *</label>
-                <mat-select class="form-control form-control-sm" formControlName="subopcion" >
+                <mat-select class="form-control form-control-sm" formControlName="subopcion" [compareWith]="compareFn" >
                   <mat-option *ngFor="let item of listaSubopciones" [value]="item">
                     {{item.nombre}}
                   </mat-option>
@@ -82,7 +82,10 @@
             <div class="col-md-12">
               <div class="form-group has-float-label">
                 <label id="idMensaje" for="idMensaje" class="tamanio-label">Mensaje *</label>
-                <textarea rows="3" formControlName="mensaje" maxlength="400" id="idOMensaje" class="form-control form-control-sm"></textarea>
+                <textarea rows="3" formControlName="mensaje" maxlength="400" id="idOMensaje" class="form-control form-control-sm"
+                [readOnly]="soloLectura">
+
+                </textarea>
               </div>
             </div>
           </div>
@@ -111,7 +114,7 @@
       </div>
     </div>
     <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-      <div class="col-md-10">
+      <div class="col-md-12">
         <div class="row" *ngIf="show">
           <div class="col text-center">
             <app-progreso></app-progreso>

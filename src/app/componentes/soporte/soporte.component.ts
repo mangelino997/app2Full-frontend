@@ -14,6 +14,7 @@ import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubopcionService } from 'src/app/servicios/subopcion.service';
 import { SubmoduloService } from 'src/app/servicios/submodulo.service';
 import { LoaderState } from 'src/app/modelos/loader';
+import { Usuario } from 'src/app/modelos/usuario';
 
 @Component({
   selector: 'app-soporte',
@@ -23,6 +24,10 @@ import { LoaderState } from 'src/app/modelos/loader';
 export class SoporteComponent implements OnInit {
   //Define los datos de la Empresa
 public empresa: FormControl = new FormControl();
+//Define el modulo como un formControl
+public modulo: FormControl = new FormControl();
+//Define el submodulo como un formControl
+public submodulo: FormControl = new FormControl();
 //Define la pestania activa
 public activeLink: any = null;
 //Define el indice seleccionado de pestania
@@ -78,25 +83,15 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     private appComponent: AppComponent, private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService,
     private empresaService: EmpresaService, private moduloService: ModuloService, private subopcionService: SubopcionService,
     private submoduloService: SubmoduloService ) { 
-      // //Obtiene la lista de pestania por rol y subopcion
-      // this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-      // .subscribe(
-      //   res => {
-      //     this.pestanias = res.json();
-      //     this.activeLink = this.pestanias[0].nombre;
-      //   },
-      //   err => {
-      //     console.log(err);
-      //   }
-      // );
       //Defiene autocompletado
-      // this.autocompletado.valueChanges.subscribe(data => {
-      //   if (typeof data == 'string' && data.length > 2) {
-      //     this.servicio.listarPorNombre(data).subscribe(res => {
-      //       this.resultados = res;
-      //     })
-      //   }
-      // })
+      let usuario = this.appService.getUsuario();
+      this.autocompletado.valueChanges.subscribe(data => {
+        if (typeof data == 'string' && data.length > 2) {
+          this.servicio.listarPorAliasYUsuario(data, usuario.id).subscribe(res => {
+            this.resultados = res;
+          })
+        }
+      })
     }
   //Al inicializarse el componente
   ngOnInit() {
@@ -141,20 +136,35 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
   }
   //Maneja el cambio de Módulos
   public cambioModulo(){
-    this.submoduloService.listarPorModulo(this.formulario.value.modulo.id).subscribe(
+    this.submoduloService.listarPorModulo(this.modulo.value.id).subscribe(
       res=>{
-        console.log(res.json());
         this.listaSubmodulos = res.json();
       }
     )
   }
   //Maneja el cambio de SubMódulos
   public cambioSubmodulo(){
-    this.subopcionService.listarPorSubmodulo(this.formulario.value.submodulo.id).subscribe(
+    this.subopcionService.listarPorSubmodulo(this.submodulo.value.id).subscribe(
       res=>{
         this.listaSubopciones = res.json();
       }
     )
+  }
+  //Maneja el cambio en el autocompletado
+  public cambioAutocompletado(elemento){
+    this.establecerElemento(elemento);
+  }
+  //Establece los datos del elemento al formulario
+  private establecerElemento(elemento){
+    this.autocompletado.setValue(elemento.alias);
+    this.formulario.patchValue(elemento);
+    this.formulario.get('subopcion').setValue(elemento.subopcion);
+    this.modulo.setValue(elemento.subopcion.submodulo.modulo);
+    this.submodulo.setValue(elemento.subopcion.submodulo);
+    this.cambioModulo();
+    this.cambioSubmodulo();
+    this.formulario.get('empresa').setValue(elemento.empresa);
+    this.formulario.get('bugImagen').setValue({ id: elemento.bugImagen.id, nombre: elemento.bugImagen.nombre });
   }
   //Carga la imagen del paciente
   public readURL(event): void {
@@ -168,11 +178,24 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
           datos: reader.result
         }
         this.formulario.get('bugImagen').setValue(foto);
-        console.log(foto);
-        console.log(this.formulario);
       }
       reader.readAsDataURL(file);
     }
+  }
+  //Establece el habilitado o deshabilitado de los campos
+  private establecerCampos(estado){
+    if(estado){
+      this.modulo.enable();
+      this.submodulo.enable();
+      this.formulario.get('subopcion').enable();
+      this.formulario.get('empresa').enable();
+    }else{
+      this.modulo.disable();
+      this.submodulo.disable();
+      this.formulario.get('subopcion').disable();
+      this.formulario.get('empresa').disable();
+    }
+
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -189,10 +212,6 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
-    */
     if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
@@ -201,15 +220,19 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
       case 1:
         this.obtenerSiguienteId();
         this.establecerValoresPestania(nombre, false, false, true, 'idCobrador');
+        this.establecerCampos(true);
         break;
       case 2:
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerCampos(false);
         break;
       case 3:
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerCampos(true);
         break;
       case 4:
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerCampos(false);
         break;
       case 5:
         this.listar();
@@ -251,8 +274,7 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     let usuario = this.appService.getUsuario();
     this.servicio.listarPorUsuario(usuario.id).subscribe(
       res => {
-        console.log(res.json());
-        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta = new MatTableDataSource(res);
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
@@ -269,7 +291,6 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     let usuario= this.appComponent.getUsuario();
     this.formulario.get('usuario').setValue(usuario);
     this.formulario.get('soporteEstado').setValue({id: 1});
-
     this.servicio.agregar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
@@ -330,6 +351,8 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
   private reestablecerFormulario(estado){
     this.formulario.reset();
     this.autocompletado.reset();
+    this.modulo.setValue(null);
+    this.submodulo.setValue(null);
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -350,34 +373,19 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if (a.id != null && b.id != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
-    this.formulario.get('puntoVenta').setValue(elemento.talonarioReciboLote.puntoVenta);
-    this.formulario.get('letra').setValue(elemento.talonarioReciboLote.letra);
-    this.formulario.get('cobrador').setValue(elemento.cobrador);
-    this.formulario.get('talonarioReciboLote').setValue(elemento.talonarioReciboLote);
-    this.formulario.get('archivo').setValue({ id: elemento.archivo.id, nombre: elemento.archivo.nombre, datos: atob(elemento.archivo.datos) });
-
-
+    this.establecerElemento(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
-    this.formulario.get('puntoVenta').setValue(elemento.talonarioReciboLote.puntoVenta);
-    this.formulario.get('letra').setValue(elemento.talonarioReciboLote.letra);
-    this.formulario.get('cobrador').setValue(elemento.cobrador);
-    this.formulario.get('talonarioReciboLote').setValue(elemento.talonarioReciboLote);
-    this.formulario.get('archivo').setValue({ id: elemento.archivo.id, nombre: elemento.archivo.nombre, datos: atob(elemento.archivo.datos) });
-
+    this.establecerElemento(elemento);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
