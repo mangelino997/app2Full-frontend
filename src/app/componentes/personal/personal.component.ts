@@ -191,76 +191,40 @@ export class PersonalComponent implements OnInit {
       }
     })
     //Autocompletado Categoria - Buscar por nombre
-    this.formulario.get('categoria').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.categoriaServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosCategorias = response;
-        })
-      }
+    this.categoriaServicio.listar().subscribe(response => {
+      this.resultadosCategorias = response.json();
     })
     //Autocompletado Seguridad Social - Buscar por nombre
-    this.formulario.get('seguridadSocial').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.seguridadSocialServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosSeguridadesSociales = response;
-        })
-      }
+    this.seguridadSocialServicio.listar().subscribe(response => {
+      this.resultadosSeguridadesSociales = response.json();
     })
     //Autocompletado Obra Social - Buscar por nombre
-    this.formulario.get('obraSocial').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.obraSocialServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosObrasSociales = response;
-        })
-      }
+    this.obraSocialServicio.listar().subscribe(response => {
+      this.resultadosObrasSociales = response.json();
     })
     //Autocompletado Afip Actividad - Buscar por nombre
-    this.formulario.get('afipActividad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 1) {
-        this.afipActividadServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosAfipActividades = response;
-        })
-      }
+    this.afipActividadServicio.listar().subscribe(response => {
+      this.resultadosAfipActividades = response.json();
     })
     //Autocompletado Afip Condicion - Buscar por nombre
-    this.formulario.get('afipCondicion').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 1) {
-        this.afipCondicionServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosAfipCondiciones = response;
-        })
-      }
+    this.afipCondicionServicio.listar().subscribe(response => {
+      this.resultadosAfipCondiciones = response.json();
     })
     //Autocompletado Afip Localidad - Buscar por nombre
-    this.formulario.get('afipLocalidad').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 1) {
-        this.afipLocalidadServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosAfipLocalidades = response;
-        })
-      }
+    this.afipLocalidadServicio.listar().subscribe(response => {
+      this.resultadosAfipLocalidades = response.json();
     })
     //Autocompletado Afip Mod Contratacion - Buscar por nombre
-    this.formulario.get('afipModContratacion').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 1) {
-        this.afipModContratacionServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosAfipModContrataciones = response;
-        })
-      }
+    this.afipModContratacionServicio.listar().subscribe(response => {
+      this.resultadosAfipModContrataciones = response.json();
     })
     //Autocompletado Afip Siniestrado - Buscar por nombre
-    this.formulario.get('afipSiniestrado').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 1) {
-        this.afipSiniestradoServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosAfipSiniestrados = response;
-        })
-      }
+    this.afipSiniestradoServicio.listar().subscribe(response => {
+      this.resultadosAfipSiniestrados = response.json();
     })
     //Autocompletado Afip Situacion - Buscar por nombre
-    this.formulario.get('afipSituacion').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 1) {
-        this.afipSituacionServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosAfipSituaciones = response;
-        })
-      }
+    this.afipSituacionServicio.listar().subscribe(response => {
+      this.resultadosAfipSituaciones = response.json();
     })
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
@@ -332,18 +296,29 @@ export class PersonalComponent implements OnInit {
   //Al cambiar elemento de select esChofer
   public cambioEsChofer(): void {
     let esChofer = this.formulario.get('esChofer').value;
-    if(esChofer) {
+    let esChoferLargaDistancia = this.formulario.get('esChoferLargaDistancia').value;
+    if(esChofer && esChoferLargaDistancia) {
       this.formulario.get('vtoLicenciaConducir').enable();
       this.formulario.get('vtoCurso').enable();
       this.formulario.get('vtoCursoCargaPeligrosa').enable();
       this.formulario.get('vtoLINTI').enable();
       this.formulario.get('vtoLibretaSanidad').enable();
-    } else {
+      this.formulario.get('vtoPsicoFisico').enable();      
+    }else if(esChofer && !esChoferLargaDistancia){
+      this.formulario.get('vtoLicenciaConducir').enable();
+      this.formulario.get('vtoCurso').disable();
+      this.formulario.get('vtoCursoCargaPeligrosa').disable();
+      this.formulario.get('vtoLINTI').disable();
+      this.formulario.get('vtoLibretaSanidad').disable();
+      this.formulario.get('vtoPsicoFisico').disable();      
+    } 
+    else {
       this.formulario.get('vtoLicenciaConducir').disable();
       this.formulario.get('vtoCurso').disable();
       this.formulario.get('vtoCursoCargaPeligrosa').disable();
       this.formulario.get('vtoLINTI').disable();
       this.formulario.get('vtoLibretaSanidad').disable();
+      this.formulario.get('vtoPsicoFisico').disable();      
     }
   }
   //Obtiene el listado de sexos
@@ -446,6 +421,16 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('esChoferLargaDistancia').enable();
       this.formulario.get('turnoRotativo').enable();
       this.formulario.get('turnoFueraConvenio').enable();
+
+      this.formulario.get('seguridadSocial').enable();
+      this.formulario.get('afipSituacion').enable();
+      this.formulario.get('afipCondicion').enable();
+      this.formulario.get('afipActividad').enable();
+      this.formulario.get('afipModContratacion').enable();
+      this.formulario.get('afipSiniestrado').enable();
+      this.formulario.get('afipLocalidad').enable();
+      this.formulario.get('obraSocial').enable();
+
       if(opcionPestania==3){
         this.formulario.get('fechaFin').enable();
       }else{
@@ -467,6 +452,15 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('esChoferLargaDistancia').disable();
       this.formulario.get('turnoRotativo').disable();
       this.formulario.get('turnoFueraConvenio').disable();
+
+      this.formulario.get('seguridadSocial').disable();
+      this.formulario.get('afipSituacion').disable();
+      this.formulario.get('afipCondicion').disable();
+      this.formulario.get('afipActividad').disable();
+      this.formulario.get('afipModContratacion').disable();
+      this.formulario.get('afipSiniestrado').disable();
+      this.formulario.get('afipLocalidad').disable();
+      this.formulario.get('obraSocial').disable();
     }
   }
   //Cambio en elemento autocompletado
@@ -813,6 +807,23 @@ export class PersonalComponent implements OnInit {
         let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
         this.lanzarError(err);
       }
+    }
+  }
+  //Carga la imagen del paciente
+  public readURL(event): void {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        let foto = {
+          id: this.formulario.get('usuario.foto').value.id,
+          nombre: file.name,
+          datos: reader.result
+        }
+        this.formulario.get('usuario.foto').setValue(foto);
+        console.log(foto);
+      }
+      reader.readAsDataURL(file);
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
