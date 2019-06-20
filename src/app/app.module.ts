@@ -332,6 +332,8 @@ import { TalonarioReciboService } from './servicios/talonario-recibo.service';
 import { TalonarioReciboLoteService } from './servicios/talonario-recibo-lote.service';
 import { SoporteService } from './servicios/soporte.service';
 import { Soporte } from './modelos/soporte';
+import { TalonarioReciboLoteComponent } from './componentes/talonario-recibo-lote/talonario-recibo-lote.component';
+import { TalonarioReciboLote } from './modelos/talonarioReciboLote';
 
 //Rutas
 const appRoutes: Routes = [
@@ -448,11 +450,13 @@ const appRoutes: Routes = [
   { path: 'sindicatostipochequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
   { path: 'cuentasbancariaschequeras', component: ChequeraComponent, canActivate: [GuardiaService] },
   { path: 'gestiondecobrostalonariosreciboscobradores', component: TalonarioReciboCobradorComponent, canActivate: [GuardiaService] },
+  { path: 'gestiondecobrostalonariosreciboslote', component: TalonarioReciboLoteComponent, canActivate: [GuardiaService] },
 
+  
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.156:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://192.168.0.123:8080/jitws/socket', // ws://localhost:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -602,7 +606,8 @@ const stompConfig: StompConfig = {
     TipoChequeraComponent,
     ChequeraComponent,
     DepositoInsumoProductoComponent,
-    TalonarioReciboCobradorComponent
+    TalonarioReciboCobradorComponent,
+    TalonarioReciboLoteComponent
   ],
   imports: [
     BrowserModule,
@@ -847,6 +852,7 @@ const stompConfig: StompConfig = {
     TalonarioReciboLoteService,
     SoporteService,
     Soporte,
+    TalonarioReciboLote,
     {
       provide: StompConfig,
       useValue: stompConfig

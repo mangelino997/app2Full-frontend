@@ -50,6 +50,10 @@ export class TalonarioReciboLoteService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros por Empresa
+  public listarPorEmpresa(idEmpresa) {
+    return this.http.get(this.url + '/listarPorEmpresa/' + idEmpresa, this.options);
+  }
   //Obtiene un listado por filtros
   public listarPorEmpresaYLoteEntregadoFalse(idEmpresa) {
     return this.http.get(this.url + '/listarPorEmpresaYLoteEntregadoFalse/' + idEmpresa, this.options).map(res => {
