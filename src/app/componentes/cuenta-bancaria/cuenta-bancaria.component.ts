@@ -242,7 +242,7 @@ export class CuentaBancariaComponent implements OnInit {
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
-    this.servicio.listar().subscribe(
+    this.servicio.listarPorEmpresa(this.appComponent.getEmpresa().id).subscribe(
       res => {
         this.cuentasBancarias = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());

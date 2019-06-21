@@ -54,14 +54,6 @@ export class ChequeraService {
   public listarPorEmpresa(idEmpresa) {
     return this.http.get(this.url + '/listarPorEmpresa/' + idEmpresa, this.options);
   }
-  //Obtiene un listado por nombre
-  public listarPorCuentaBancaria(nombre) {
-    return this.http.get(this.url + '/listarPorCuentaBancaria/' + nombre, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
-  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
