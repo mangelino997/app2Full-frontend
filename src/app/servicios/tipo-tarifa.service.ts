@@ -50,6 +50,14 @@ export class TipoTarifaService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros para Escala
+  public listarPorEscala() {
+    return this.http.get(this.url + '/listarPorEscala', this.options);
+  }
+  //Obtiene la lista de registros para Tramo
+  public listarPorTramo() {
+    return this.http.get(this.url + '/listarPorTramo', this.options);
+  }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
     return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {

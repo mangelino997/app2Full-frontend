@@ -59,10 +59,12 @@ export class OrdenVentaComponent implements OnInit {
   public idModTramo: number = null;
   //Define la lista completa de registros
   public listaCompleta: any = null;
-  //Define la lista de empresas
-  public empresas: any = null;
-  //Define la lista de tipos de tarifas
-  public tiposTarifas: any = [];
+  //Define el nombre de la Empresa Actual
+  public empresa: FormControl = new FormControl();
+  //Define la opcion Tipo Tarifa como un FormControl
+  public tipoTarifa: FormControl = new FormControl();
+  //Define la lista de tarifas para el Tipo Tarifa
+  public listaTarifas: any = [];
   //Define la lista de tramos para la segunda tabla
   public listaTramos: any = [];
   //Define el form control para las busquedas
@@ -112,8 +114,8 @@ export class OrdenVentaComponent implements OnInit {
     private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo,
     private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ordenVentaTramoServicio: OrdenVentaTramoService,
     private loaderService: LoaderService) {
-    //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+      //Obtiene la lista de pestania por rol y subopcion
+      this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -123,40 +125,28 @@ export class OrdenVentaComponent implements OnInit {
           console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
-    //Se subscribe al servicio de lista por orden venta
-    // this.ordenVentaEscalaServicio.listaEscalas.subscribe(res => {
-    //   this.listaDeEscalas = res;
-    // });
-    //Autocompletado - Buscar por nombre
-    this.buscar.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(response => {
-          this.resultados = response;
-        })
-      }
-    });
-  }
-  //Al iniciarse el componente
+      //Autocompletado - Buscar por nombre
+      this.buscar.valueChanges.subscribe(data => {
+        if (typeof data == 'string' && data.length > 2) {
+          this.servicio.listarPorNombre(data).subscribe(response => {
+            this.resultados = response;
+          })
+        }
+      });
+     }
+
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
         this.show = state.show;
-      });
+    });
     //Define el formulario de orden venta
     this.formulario = this.ordenVenta.formulario;
     //Define el formulario de orden venta escala
     this.formularioEscala = this.ordenVentaEscala.formulario;
     //Define el formulario de orden venta tramo
     this.formularioTramo = this.ordenVentaTramo.formulario;
-    //Obtiene la lista de tipos de tarifa
-    this.listarTiposTarifas();
-    //Obtiene la lista de empresas
-    this.listarEmpresas();
     //Obtiene la lista de Vendedores
     this.listarVendedores();
     //Selecciona la pestania agregar por defecto
@@ -169,144 +159,75 @@ export class OrdenVentaComponent implements OnInit {
         })
       }
     });
-    //Autocompletado Tramo - Buscar por nombre
-    this.formularioTramo.get('tramo').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.tramoServicio.listarPorOrigen(data).subscribe(response => {
-          this.resultadosTramos = response;
-        })
-      }
-    });
   }
-  //Obtiene la mascara de importe
-  public mascaraImporte(intLimite, decimalLimite) {
-    return this.appService.mascararImporte(intLimite, decimalLimite);
-  }
-  //Obtiene la mascara de porcentaje
-  public mascararPorcentaje() {
-    return this.appService.mascararPorcentaje();
-  }
-  //Obtiene la mascara de km
-  public obtenerMascaraKm(intLimite) {
-    return this.appService.mascararKm(intLimite);
-  }
-  //Obtiene la lista de precios desde
-  private obtenerPreciosDesde() {
-    this.loaderService.show();
-    let opcion = this.formulario.get('tipoTarifa').value.porEscala;
-    if (opcion) {
-      this.ordenVentaEscalaServicio.listarFechasPorOrdenVenta(this.ordenventa.value.id).subscribe(
-        res => {
-          this.preciosDesdeLista = res.json();
-          this.loaderService.hide();
-        }
-      );
-    } else {
-      this.ordenVentaTramoServicio.listarFechasPorOrdenVenta(this.ordenventa.value.id).subscribe(
-        res => {
-          this.preciosDesdeLista = res.json();
-          this.loaderService.hide();
-        }
-      );
-    }
-  }
-  //Obtiene la lista de orden venta escala o orden venta tramo
-  public cambioPreciosDesde(): void {
-    this.loaderService.show();
-    let tipoTarifa = this.formulario.get('tipoTarifa').value.porEscala;
-    let ordenVenta = this.ordenventa.value.id;
-    let precioDesde = this.preciosDesde.value;
-    if (tipoTarifa) {
-      this.ordenVentaEscalaServicio.listarPorOrdenVentaYPreciosDesde(ordenVenta, precioDesde).subscribe(res => {
-        this.listaDeEscalas = res.json();
-        for (let i = 0; i < this.listaDeEscalas.length; i++) {
-          this.eliminarElementoEscalas(this.listaDeEscalas[i].escalaTarifa.valor);
-        }
-        this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1);
-        this.loaderService.hide();
-      });
-    } else {
-      this.ordenVentaTramoServicio.listarPorOrdenVentaYPreciosDesde(ordenVenta, precioDesde).subscribe(res => {
-        this.listaDeTramos = res.json();
-        this.loaderService.hide();
-      });
-    }
-  }
-  //Cambio tipo tarifa
-  public cambioTipoTarifa(): void {
-    let tipoTarifa = this.formulario.get('tipoTarifa').value;
-    if (tipoTarifa) {
-      if (!tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
-        this.formularioEscala.get('porcentaje').setValue(null);
-        this.formularioEscala.get('porcentaje').disable();
-        this.tipoTarifaEstado = false;
-      } else if (tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
-        this.formularioEscala.get('importeFijo').setValue(null);
-        this.formularioEscala.get('precioUnitario').setValue(null);
-        this.formularioEscala.get('importeFijo').disable();
-        this.formularioEscala.get('precioUnitario').disable();
-        this.formularioEscala.get('porcentaje').enable();
-        this.tipoTarifaEstado = true;
-      } else if(!tipoTarifa.porPorcentaje && !tipoTarifa.porEscala) {
-        this.importeSecoPor.setValue(false);
-        this.importeRefPor.setValue(false);
-        this.cambioImportesSecoPor();
-        this.cambioImportesRefPor();
-      }
-    }
-  }
-  //Establece los valores por defecto
-  private establecerValoresPorDefecto(tipoOrdenVenta) {
-    this.formulario.get('tipoOrdenVenta').setValue(tipoOrdenVenta);
-    this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
-    this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
-    this.formulario.get('esContado').setValue(false);
-    this.importePor.setValue(false);
-    this.cambioImportesPor();
-  }
-  //Obtiene la lista de empresas
-  private listarEmpresas() {
-    this.empresaSevicio.listar().subscribe(
-      res => {
-        this.empresas = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    )
-  }
-  //Obtiene la lista de tipos de tarifas
-  private listarTiposTarifas() {
-    this.tipoTarifaServicio.listar().subscribe(
-      res => {
-        this.tiposTarifas = res.json();
-        this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
-        this.establecerValoresPorDefecto(true);
-        this.cambioTipoTarifa();
-      },
-      err => {
-        console.log(err);
-      }
-    )
-  }
+
   //Obtiene la lista de vendedores
   private listarVendedores() {
     this.vendedorServicio.listar().subscribe(res => {
       this.vendedores = res.json();
     });
   }
-  //Obtiene una lista de escalas tarifas
-  private listarEscalaTarifa() {
-    this.escalaTarifaServicio.listar().subscribe(res => {
-      this.escalas = res.json();
-    });
+  //Cambio tipo tarifa
+  public cambioTipoTarifa(): void {
+    this.listaTarifas = [];
+    console.log(this.tipoTarifa.value);
+    if(this.tipoTarifa.value=='porEscala'){
+      this.tipoTarifaServicio.listarPorEscala().subscribe(
+        res=>{
+          this.listaTarifas = res.json();
+        },
+        err=>{
+          this.toastr.error("Error al obtener la lista de Tarifas por Escala");
+        }
+      )
+    }else {
+      this.tipoTarifaServicio.listarPorTramo().subscribe(
+        res=>{
+          this.listaTarifas = res.json();
+        },
+        err=>{
+          this.toastr.error("Error al obtener la lista de Tarifas por Tramo");
+        }
+      )
+    }
+    // if (tipoTarifa) {
+    //   if (!tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
+    //     this.formularioEscala.get('porcentaje').setValue(null);
+    //     this.formularioEscala.get('porcentaje').disable();
+    //     this.tipoTarifaEstado = false;
+    //   } else if (tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
+    //     this.formularioEscala.get('importeFijo').setValue(null);
+    //     this.formularioEscala.get('precioUnitario').setValue(null);
+    //     this.formularioEscala.get('importeFijo').disable();
+    //     this.formularioEscala.get('precioUnitario').disable();
+    //     this.formularioEscala.get('porcentaje').enable();
+    //     this.tipoTarifaEstado = true;
+    //   } else if(!tipoTarifa.porPorcentaje && !tipoTarifa.porEscala) {
+    //     this.importeSecoPor.setValue(false);
+    //     this.importeRefPor.setValue(false);
+    //     this.cambioImportesSecoPor();
+    //     this.cambioImportesRefPor();
+    //   }
+    // }
+  }
+  //Establece el tipo (empresa o cliente)
+  public establecerTipo(): void {
+    // this.reestablecerCampos(null);
+    let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
+    console.log(tipoOrdenVenta);
+    if (!tipoOrdenVenta) {
+      this.listarOrdenesVentas('empresa');
+      // this.formulario.get('cliente').setValidators([]);
+    } 
   }
   //Listar ordenes de ventas por Empresa/Cliente
   public listarOrdenesVentas(tipo) {
     this.loaderService.show();
     switch (tipo) {
       case 'empresa':
-        this.establecerCamposSoloLectura(this.indiceSeleccionado);
+        // this.establecerCamposSoloLectura(this.indiceSeleccionado);
+        this.establecerEmpresa();
+        this.formulario.get('cliente').setValue(null);
         this.ordenVentaServicio.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
@@ -315,9 +236,9 @@ export class OrdenVentaComponent implements OnInit {
         );
         break;
       case 'cliente':
-        this.reestablecerCampos(this.formulario.get('cliente').value);
-        this.establecerCamposSoloLectura(this.indiceSeleccionado);
-        this.formulario.get('cliente').setValue(this.formulario.get('cliente').value);
+        // this.reestablecerCampos(this.formulario.get('cliente').value);
+        // this.establecerCamposSoloLectura(this.indiceSeleccionado);
+        // this.formulario.get('cliente').setValue(this.formulario.get('cliente').value);
         this.formulario.get('empresa').setValue(null);
         this.ordenVentaServicio.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
           res => {
@@ -327,6 +248,40 @@ export class OrdenVentaComponent implements OnInit {
         );
         break;
     }
+  }
+  //Establece los datos de la empresa actual
+  private establecerEmpresa(){
+    let empresa = this.appService.getEmpresa();
+    this.formulario.get('empresa').setValue(empresa);
+    this.empresa.setValue(empresa.razonSocial);
+  }
+  
+  //Reestablecer campos
+  private reestablecerCampos(id) {
+    this.formulario.reset();
+    this.formularioEscala.reset();
+    this.formularioTramo.reset();
+    this.ordenventa.reset();
+    this.listaDeEscalas = [];
+    this.listaDeTramos = [];
+    this.tipoTarifa.setValue('porEscala');
+    this.establecerValoresPorDefecto();
+    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+    this.formulario.get('empresa').disable();
+    if (this.indiceSeleccionado != 1) {
+      this.formulario.get('tipoTarifa').disable();
+    }
+    if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
+      this.formulario.get('vendedor').disable();
+    }
+  }
+  //Establece los valores por defecto
+  private establecerValoresPorDefecto() {
+    // this.formulario.get('tipoOrdenVenta').setValue(tipoOrdenVenta);
+    this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
+    this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
+    this.formulario.get('esContado').setValue(false);
+    // this.cambioImportesPor();
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
@@ -347,35 +302,31 @@ export class OrdenVentaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerCampos(null);
+    // this.reestablecerCampos(null);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
       this.elemAutocompletado = null;
       this.resultados = [];
     }
-    this.listarEscalaTarifa();
     switch (id) {
       case 1:
         this.establecerCamposSoloLectura(1);
-        this.establecerValoresPorDefecto(true);
+        this.establecerValoresPorDefecto();
         this.establecerValoresPestania(nombre, false, false, true, 'idTipoOrdenVenta');
-        this.cambioTipoTarifa();
         break;
       case 2:
-        this.establecerValoresPorDefecto(true);
+        this.establecerValoresPorDefecto();
         this.establecerCamposSoloLectura(2);
         this.establecerValoresPestania(nombre, true, true, false, 'idTipoOrdenVenta');
         break;
       case 3:
-        this.establecerValoresPorDefecto(true);
-        this.cambioTipoTarifa();
+        this.establecerValoresPorDefecto();
         this.establecerCamposSoloLectura(3);
         this.establecerValoresPestania(nombre, true, false, true, 'idTipoOrdenVenta');
         break;
       case 4:
-        this.establecerValoresPorDefecto(true);
-        this.cambioTipoTarifa();
+        this.establecerValoresPorDefecto();
         this.establecerCamposSoloLectura(4);
         this.establecerValoresPestania(nombre, true, true, true, 'idTipoOrdenVenta');
         break;
@@ -403,415 +354,11 @@ export class OrdenVentaComponent implements OnInit {
         this.actualizar();
         break;
       case 4:
-        this.eliminar();
+        // this.eliminar();
         break;
       default:
         break;
     }
-  }
-  //Establece campos solo lectura
-  private establecerCamposSoloLectura(pestania): void {
-    switch (pestania) {
-      case 1:
-        this.formulario.get('vendedor').enable();
-        this.formulario.get('tipoTarifa').enable();
-        this.formulario.get('esContado').enable();
-        this.formularioEscala.get('importeFijo').enable();
-        this.importePor.enable();
-        this.formularioEscala.enable();
-        this.formularioTramo.enable();
-        this.cambioTipoTarifa();
-        this.cambioImportesPor();
-        break;
-      case 2:
-        this.formulario.get('vendedor').disable();
-        this.formulario.get('tipoTarifa').disable();
-        this.formulario.get('esContado').disable();
-        this.formularioEscala.get('importeFijo').disable();
-        this.importePor.disable();
-        this.formularioEscala.disable();
-        this.formularioTramo.disable();
-        break;
-      case 3:
-        this.formulario.get('vendedor').enable();
-        this.formulario.get('tipoTarifa').disable();
-        this.formulario.get('esContado').enable();
-        this.formularioEscala.get('importeFijo').enable();
-        this.importePor.enable();
-        this.formularioEscala.enable();
-        this.formularioTramo.enable();
-        this.cambioTipoTarifa();
-        this.cambioImportesPor();
-        break;
-      case 4:
-        this.formulario.get('vendedor').disable();
-        this.formulario.get('tipoTarifa').disable();
-        this.formulario.get('esContado').disable();
-        this.formularioEscala.get('importeFijo').disable();
-        this.importePor.disable();
-        this.formularioEscala.disable();
-        this.formularioTramo.disable();
-        break;
-    }
-  }
-  //Al cambiar select importes por
-  public cambioImportesPor(): void {
-    let importesPor = this.importePor.value;
-    if(importesPor) {
-      this.formularioEscala.get('precioUnitario').enable();
-      this.formularioEscala.get('precioUnitario').setValidators([Validators.required]);
-      this.formularioEscala.get('importeFijo').setValidators([]);
-      this.formularioEscala.get('importeFijo').setValue(null);
-      this.formularioEscala.get('importeFijo').disable();
-      this.formularioEscala.get('minimo').enable();
-    } else {
-      this.formularioEscala.get('importeFijo').enable();
-      this.formularioEscala.get('importeFijo').setValidators([Validators.required]);
-      this.formularioEscala.get('precioUnitario').setValidators([]);
-      this.formularioEscala.get('precioUnitario').setValue(null);
-      this.formularioEscala.get('precioUnitario').disable();
-      this.formularioEscala.get('minimo').disable();
-    }
-  }
-  //Agrega un elemento a la lista de escalas
-  private agregarElementoEscalas(elemento): void {
-    this.escalas.push(elemento);
-    this.escalas.sort((a, b) => (a.valor > b.valor) ? 1 : -1);
-  }
-  //Elimina un elemento de la lista de escalas
-  private eliminarElementoEscalas(valor): void {
-    for (let i = 0; i < this.escalas.length; i++) {
-      if (this.escalas[i].valor == valor) {
-        this.escalas.splice(i, 1);
-        break;
-      }
-    }
-  }
-  //Contrala campos vacios
-  public controlarCamposVaciosEscala(formulario) {
-    if(formulario.get('importeFijo').value == 'NaN') {
-      formulario.get('importeFijo').setValue('0.00');
-    } 
-    if(formulario.get('precioUnitario').value == 'NaN') {
-      formulario.get('precioUnitario').setValue('0.00');
-    }
-    if(formulario.get('porcentaje').value == 'NaN') {
-      formulario.get('porcentaje').setValue('0.00');
-    }
-    if(formulario.get('minimo').value == 'NaN') {
-      formulario.get('minimo').setValue('0.00');
-    }
-  }
-  //Vacia el campo
-  public vaciarCampo(opcion): void {
-    if(opcion == 1) {
-      this.formularioEscala.get('precioUnitario').reset();
-    } else {
-      this.formularioEscala.get('importeFijo').reset();
-    }
-  }
-  //Agrega una Escala a listaDeEscalas
-  public agregarEscalaLista() {
-    this.idModEscala = null;
-    this.eliminarElementoEscalas(this.formularioEscala.get('escalaTarifa').value.valor);
-    this.controlarCamposVaciosEscala(this.formularioEscala);
-    if (this.indiceSeleccionado == 3) {
-      this.loaderService.show();
-      this.formularioEscala.get('id').setValue(null);
-      this.formularioEscala.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
-      this.formularioEscala.get('preciosDesde').setValue(this.preciosDesde.value);
-      this.ordenVentaEscalaServicio.agregar(this.formularioEscala.value).subscribe(res => {
-        this.loaderService.hide();
-        this.cambioPreciosDesde();
-      });
-    } else {
-      this.listaDeEscalas.push(this.formularioEscala.value);
-      this.listaDeEscalas.sort((a, b) => (a.escalaTarifa.valor > b.escalaTarifa.valor) ? 1 : -1);
-    }
-    this.formularioEscala.reset();
-    setTimeout(function () {
-      document.getElementById('idEscala').focus();
-    }, 20);
-  }
-  //Actualiza una Escala a listaDeEscalas
-  public actualizarEscalaLista() {
-    this.controlarCamposVaciosEscala(this.formularioEscala);
-    if (this.indiceSeleccionado == 3) {
-      this.loaderService.show();
-      this.ordenVentaEscalaServicio.actualizar(this.formularioEscala.value).subscribe(res => {
-        this.cambioPreciosDesde();
-        this.loaderService.hide();
-      });
-    } else {
-      this.listaDeEscalas[this.idModEscala] = this.formularioEscala.value;
-    }
-    this.formularioEscala.reset();
-    this.idModEscala = null;
-    setTimeout(function () {
-      document.getElementById('idEscala').focus();
-    }, 20);
-  }
-  //Cancela una Escala a listaDeEscalas
-  public cancelarEscalaLista() {
-    this.formularioEscala.reset();
-    this.idModEscala = null;
-    this.importePor.setValue(false);
-    this.eliminarElementoEscalas(this.escalaActual.valor);
-    setTimeout(function () {
-      document.getElementById('idEscala').focus();
-    }, 20);
-  }
-  //Elimina una Escala a listaDeEscalas
-  public eliminarEscalaLista(indice, elemento) {
-    this.agregarElementoEscalas(elemento.escalaTarifa);
-    if (this.indiceSeleccionado == 3) {
-      this.loaderService.show();
-      elemento.ordenVenta = { id: this.ordenventa.value.id };
-      this.ordenVentaEscalaServicio.eliminar(elemento).subscribe(res => {
-        this.loaderService.hide();
-        this.cambioPreciosDesde();
-      });
-    } else {
-      this.listaDeEscalas.splice(indice, 1);
-    }
-    if (this.listaDeEscalas.length == 0) {
-      this.ordenventa.enable();
-    }
-    setTimeout(function () {
-      document.getElementById('idEscala').focus();
-    }, 20);
-  }
-  //Modifica una Escala de listaDeEscalas
-  public modificarEscalaLista(escala, id) {
-    this.idModEscala = id;
-    this.escalaActual = escala.escalaTarifa;
-    this.agregarElementoEscalas(escala.escalaTarifa);
-    if(this.indiceSeleccionado != 1) {
-      escala.ordenVenta = { id: this.ordenventa.value.id };
-    }
-    this.formularioEscala.patchValue(escala);
-    if (escala.importeFijo) {
-      this.formularioEscala.get('importeFijo').setValue(parseFloat(escala.importeFijo).toFixed(2));
-      this.formularioEscala.get('precioUnitario').setValue(null);
-      this.importePor.setValue(false);
-      this.cambioImportesPor();
-    } 
-    if(escala.precioUnitario) {
-      this.formularioEscala.get('precioUnitario').setValue(parseFloat(escala.precioUnitario).toFixed(2));
-      this.formularioEscala.get('importeFijo').setValue(null);
-      this.importePor.setValue(true);
-      this.cambioImportesPor();
-    }
-    let tipoTarifa = this.formulario.get('tipoTarifa').value;
-    if(tipoTarifa.porPorcentaje) {
-      this.formularioEscala.get('porcentaje').enable();
-    } else {
-      this.formularioEscala.get('porcentaje').disable();
-    }
-    this.formularioEscala.get('porcentaje').setValue(parseFloat(escala.porcentaje).toFixed(2));
-    this.formularioEscala.get('minimo').setValue(parseFloat(escala.minimo).toFixed(2));
-    setTimeout(function () {
-      document.getElementById('idEscala').focus();
-    }, 20);
-  }
-  //Al cambiar select importes seco por
-  public cambioImportesSecoPor(): void {
-    let importesPor = this.importeSecoPor.value;
-    if(!importesPor) {
-      this.formularioTramo.get('importeFijoSeco').enable();
-      this.formularioTramo.get('importeFijoSeco').setValidators([Validators.required]);
-      this.formularioTramo.get('precioUnitarioSeco').setValidators([]);
-      this.formularioTramo.get('precioUnitarioSeco').setValue(null);
-      this.formularioTramo.get('precioUnitarioSeco').disable();
-    } else {
-      this.formularioTramo.get('precioUnitarioSeco').enable();
-      this.formularioTramo.get('precioUnitarioSeco').setValidators([Validators.required]);
-      this.formularioTramo.get('importeFijoSeco').setValidators([]);
-      this.formularioTramo.get('importeFijoSeco').setValue(null);
-      this.formularioTramo.get('importeFijoSeco').disable();
-    }
-  }
-  //Al cambiar select importes ref por
-  public cambioImportesRefPor(): void {
-    let importesPor = this.importeRefPor.value;
-    if(!importesPor) {
-      this.formularioTramo.get('importeFijoRef').enable();
-      this.formularioTramo.get('importeFijoRef').setValidators([Validators.required]);
-      this.formularioTramo.get('precioUnitarioRef').setValidators([]);
-      this.formularioTramo.get('precioUnitarioRef').setValue(null);
-      this.formularioTramo.get('precioUnitarioRef').disable();
-    } else {
-      this.formularioTramo.get('precioUnitarioRef').enable();
-      this.formularioTramo.get('precioUnitarioRef').setValidators([Validators.required]);
-      this.formularioTramo.get('importeFijoRef').setValidators([]);
-      this.formularioTramo.get('importeFijoRef').setValue(null);
-      this.formularioTramo.get('importeFijoRef').disable();
-    }
-  }
-  //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA TRAMO
-  public controlPreciosTramo(tipoPrecio) {
-    switch (tipoPrecio) {
-      case 1:
-        let importeFijoSeco = this.formularioTramo.get('importeFijoSeco').value;
-        if (importeFijoSeco) {
-          this.formularioTramo.get('importeFijoSeco').setValue(this.appService.establecerDecimales(importeFijoSeco, 2));
-          this.formularioTramo.get('importeFijoSeco').setValidators([Validators.required]);
-          this.formularioTramo.get('precioUnitarioSeco').setValidators([]);
-          this.formularioTramo.get('precioUnitarioSeco').setValue(null);
-        }
-        break;
-      case 2:
-        let precioUnitarioSeco = this.formularioTramo.get('precioUnitarioSeco').value;
-        if (precioUnitarioSeco) {
-          this.formularioTramo.get('precioUnitarioSeco').setValue(this.appService.establecerDecimales(precioUnitarioSeco, 2));
-          this.formularioTramo.get('precioUnitarioSeco').setValidators([Validators.required]);
-          this.formularioTramo.get('importeFijoSeco').setValidators([]);
-          this.formularioTramo.get('importeFijoSeco').setValue(null);
-        }
-        break;
-    }
-  }
-  //Controla el valor en los campos de Precio Fijo y Precio Unitario en TABLA TRAMO
-  public controlPreciosTramoRef(tipoPrecio) {
-    switch (tipoPrecio) {
-      case 1:
-        let importeFijoRef = this.formularioTramo.get('importeFijoRef').value;
-        if (importeFijoRef) {
-          this.formularioTramo.get('importeFijoRef').setValue(this.appService.establecerDecimales(importeFijoRef, 2));
-          this.formularioTramo.get('importeFijoRef').setValidators([Validators.required]);
-          this.formularioTramo.get('precioUnitarioRef').setValidators([]);
-          this.formularioTramo.get('precioUnitarioRef').setValue(null);
-        }
-        break;
-      case 2:
-        let precioUnitarioRef = this.formularioTramo.get('precioUnitarioRef').value;
-        if (precioUnitarioRef) {
-          this.formularioTramo.get('precioUnitarioRef').setValue(this.appService.establecerDecimales(precioUnitarioRef, 2));
-          this.formularioTramo.get('precioUnitarioRef').setValidators([Validators.required]);
-          this.formularioTramo.get('importeFijoRef').setValidators([]);
-          this.formularioTramo.get('importeFijoRef').setValue(null);
-        }
-        break;
-    }
-  }
-  //Contrala campos vacios
-  public controlarCamposVaciosTramo(formulario) {
-    if(formulario.get('importeFijoSeco').value == 'NaN') {
-      formulario.get('importeFijo').setValue('0.00');
-    } 
-    if(formulario.get('precioUnitarioSeco').value == 'NaN') {
-      formulario.get('precioUnitario').setValue('0.00');
-    }
-    if(formulario.get('importeFijoRef').value == 'NaN') {
-      formulario.get('minimo').setValue('0.00');
-    }
-    if(formulario.get('precioUnitarioRef').value == 'NaN') {
-      formulario.get('minimo').setValue('0.00');
-    }
-    if(formulario.get('kmPactado').value == 'NaN') {
-      formulario.get('minimo').setValue('0.00');
-    }
-  }
-  //Agrega un Tramo a listaDeTramos
-  public agregarTramoLista() {
-    this.idModTramo = null;
-    this.controlarCamposVaciosTramo(this.formularioTramo);
-    if (this.indiceSeleccionado == 3) {
-      this.loaderService.show();
-      this.formularioTramo.get('id').setValue(null);
-      this.formularioTramo.get('ordenVenta').setValue({ id: this.ordenventa.value.id });
-      this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
-      this.ordenVentaTramoServicio.agregar(this.formularioTramo.value).subscribe(res => {
-        this.loaderService.hide();
-        this.cambioPreciosDesde();
-      });
-    } else {
-      this.listaDeTramos.push(this.formularioTramo.value);
-    }
-    this.formularioTramo.reset();
-    this.resultadosTramos = [];
-    setTimeout(function () {
-      document.getElementById('idTramo').focus();
-    }, 20);
-  }
-  //Actualiza un tramo de lista de tramos
-  public actualizarTramoLista() {
-    this.controlarCamposVaciosTramo(this.formularioTramo);
-    if (this.indiceSeleccionado == 3) {
-      this.loaderService.show();
-      this.ordenVentaTramoServicio.actualizar(this.formularioTramo.value).subscribe(res => {
-        this.loaderService.hide();
-        this.cambioPreciosDesde();
-      });
-    } else {
-      this.listaDeTramos[this.idModTramo] = this.formularioTramo.value;
-    }
-    this.formularioTramo.reset();
-    this.idModTramo = null;
-    this.resultadosTramos = [];
-    setTimeout(function () {
-      document.getElementById('idTramo').focus();
-    }, 20);
-  }
-  //Cancela una Escala a listaDeEscalas
-  public cancelarTramoLista() {
-    this.formularioTramo.reset();
-    this.idModTramo = null;
-    this.resultadosTramos = [];
-    setTimeout(function () {
-      document.getElementById('idTramo').focus();
-    }, 20);
-  }
-  //Elimina un Tramo a listaDeTramos
-  public eliminarTramoLista(indice, elemento) {
-    if (this.indiceSeleccionado == 3) {
-      this.loaderService.show();
-      elemento.ordenVenta = { id: this.ordenventa.value.id };
-      this.ordenVentaTramoServicio.eliminar(elemento).subscribe(res => {
-        this.loaderService.hide();
-        this.cambioPreciosDesde();
-      });
-    } else {
-      this.listaDeTramos.splice(indice, 1);
-    }
-    if (this.listaDeTramos.length == 0) {
-      this.ordenventa.enable();
-    }
-    this.resultadosTramos = [];
-    setTimeout(function () {
-      document.getElementById('idTramo').focus();
-    }, 20);
-  }
-  //Modifica un Tramo de listaDeTramos
-  public modificarTramoLista(tramo, indice) {
-    this.idModTramo = indice;
-    if(this.indiceSeleccionado != 1) {
-      tramo.ordenVenta = { id: this.ordenventa.value.id };
-    }
-    this.formularioTramo.patchValue(tramo);
-    if(tramo.importeFijoSeco) {
-      this.formularioTramo.get('importeFijoSeco').setValue(parseFloat(tramo.importeFijoSeco).toFixed(2));
-      this.importeSecoPor.setValue(false);
-      this.cambioImportesSecoPor();
-    } 
-    if(tramo.precioUnitarioSeco) {
-      this.formularioTramo.get('precioUnitarioSeco').setValue(parseFloat(tramo.precioUnitarioSeco).toFixed(2));
-      this.importeSecoPor.setValue(true);
-      this.cambioImportesSecoPor();
-    }
-    if(tramo.importeFijoRef) {
-      this.formularioTramo.get('importeFijoRef').setValue(parseFloat(tramo.importeFijoRef).toFixed(2));
-      this.importeRefPor.setValue(false);
-      this.cambioImportesRefPor();
-    }
-    if(tramo.precioUnitarioRef) {
-      this.formularioTramo.get('precioUnitarioRef').setValue(parseFloat(tramo.precioUnitarioRef).toFixed(2));
-      this.importeRefPor.setValue(true);
-      this.cambioImportesRefPor();
-    }
-    setTimeout(function () {
-      document.getElementById('idTramo').focus();
-    }, 20);
   }
   //Agrega un registro
   private agregar() {
@@ -823,8 +370,8 @@ export class OrdenVentaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
-          this.reestablecerCampos(null);
-          this.listarEscalaTarifa();
+          // this.reestablecerCampos(null);
+          // this.listarEscalaTarifa();
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
@@ -853,8 +400,8 @@ export class OrdenVentaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerCampos(null);
-          this.establecerValoresPorDefecto(true);
+          // this.reestablecerCampos(null);
+          this.establecerValoresPorDefecto();
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
@@ -873,66 +420,82 @@ export class OrdenVentaComponent implements OnInit {
       }
     );
   }
-  //Carga los datos de la orden de venta seleccionada en los input
-  public cargarDatosOrden() {
-    this.listarEscalaTarifa();
-    let orden = this.ordenventa.value;
-    this.formulario.patchValue(orden);
-    this.formulario.get('seguro').setValue(parseFloat(orden.seguro).toFixed(2));
-    this.formulario.get('comisionCR').setValue(parseFloat(orden.comisionCR).toFixed(2));
-    this.preciosDesde.reset();
-    this.listaDeEscalas = [];
-    this.listaDeTramos = [];
-    this.obtenerPreciosDesde();
+  //Establece campos solo lectura
+  private establecerCamposSoloLectura(pestania): void {
+    switch (pestania) {
+      case 1:
+        this.formulario.get('vendedor').enable();
+        this.formulario.get('tipoTarifa').enable();
+        this.formulario.get('esContado').enable();
+        // this.formularioEscala.get('importeFijo').enable();
+        // this.importePor.enable();
+        this.formularioEscala.enable();
+        this.formularioTramo.enable();
+        // this.cambioTipoTarifa();
+        // this.cambioImportesPor();
+        break;
+      case 2:
+        this.formulario.get('vendedor').disable();
+        this.formulario.get('tipoTarifa').disable();
+        this.formulario.get('esContado').disable();
+        // this.formularioEscala.get('importeFijo').disable();
+        // this.importePor.disable();
+        this.formularioEscala.disable();
+        this.formularioTramo.disable();
+        break;
+      case 3:
+        this.formulario.get('vendedor').enable();
+        this.formulario.get('tipoTarifa').disable();
+        this.formulario.get('esContado').enable();
+        this.formularioEscala.get('importeFijo').enable();
+        this.importePor.enable();
+        this.formularioEscala.enable();
+        this.formularioTramo.enable();
+        // this.cambioTipoTarifa();
+        // this.cambioImportesPor();
+        break;
+      case 4:
+        this.formulario.get('vendedor').disable();
+        this.formulario.get('tipoTarifa').disable();
+        this.formulario.get('esContado').disable();
+        this.formularioEscala.get('importeFijo').disable();
+        this.importePor.disable();
+        this.formularioEscala.disable();
+        this.formularioTramo.disable();
+        break;
+    }
   }
-  //Establece el tipo (empresa o cliente)
-  public establecerTipo(): void {
-    this.reestablecerCampos(null);
-    let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
-    if (!tipoOrdenVenta) {
-      this.listarOrdenesVentas('empresa');
-      this.formulario.get('cliente').setValidators([]);
+  //Obtiene la lista de precios desde (cuando indiceSeleccionado!=1)
+  private obtenerPreciosDesde() {
+    this.loaderService.show();
+    let opcion = this.formulario.get('tipoTarifa').value.porEscala;
+    if (opcion) {
+      this.ordenVentaEscalaServicio.listarFechasPorOrdenVenta(this.ordenventa.value.id).subscribe(
+        res => {
+          this.preciosDesdeLista = res.json();
+          this.loaderService.hide();
+        }
+      );
     } else {
-      this.formulario.get('cliente').setValidators([Validators.required]);
+      this.ordenVentaTramoServicio.listarFechasPorOrdenVenta(this.ordenventa.value.id).subscribe(
+        res => {
+          this.preciosDesdeLista = res.json();
+          this.loaderService.hide();
+        }
+      );
     }
   }
-  //Reestablecer campos
-  private reestablecerCampos(cliente) {
-    let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
-    this.preciosDesde.enable();
-    this.preciosDesde.reset();
-    this.formulario.enable();
-    this.formulario.reset();
-    this.formularioEscala.reset();
-    this.formularioTramo.reset();
-    this.ordenventa.reset();
-    this.listaDeEscalas = [];
-    this.listaDeTramos = [];
-    this.formulario.get('tipoTarifa').setValue(this.tiposTarifas[0]);
-    this.establecerValoresPorDefecto(tipoOrdenVenta);
-    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
-    this.formulario.get('empresa').disable();
-    if (cliente != null) {
-      this.formulario.get('cliente').setValue(cliente);
-    }
-    if (this.indiceSeleccionado != 1) {
-      this.formulario.get('tipoTarifa').disable();
-    }
-    if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
-      this.formulario.get('vendedor').disable();
-    }
+  //Obtiene la mascara de importe
+  public mascaraImporte(intLimite, decimalLimite) {
+    return this.appService.mascararImporte(intLimite, decimalLimite);
   }
-  //Elimina un registro
-  private eliminar() {
+  //Obtiene la mascara de porcentaje
+  public mascararPorcentaje() {
+    return this.appService.mascararPorcentaje();
   }
-  //Manejo de colores de campos y labels
-  public cambioCampo(id, label) {
-    document.getElementById(id).classList.remove('is-invalid');
-    document.getElementById(label).classList.remove('label-error');
-  }
-  //Manejo de cambio de autocompletado tramo
-  public cambioAutocompletadoTramo() {
-    this.formularioTramo.get('kmTramo').setValue(this.formularioTramo.get('tramo').value.km);
+  //Obtiene la mascara de km
+  public obtenerMascaraKm(intLimite) {
+    return this.appService.mascararKm(intLimite);
   }
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {
@@ -954,14 +517,6 @@ export class OrdenVentaComponent implements OnInit {
   //Desenmascara km
   public establecerKm(formulario, cantidad): void {
     formulario.setValue(this.appService.desenmascararKm(formulario.value));
-  }
-  //Habilita el boton agregar a tabla
-  public habilitarBoton(formA, formB): boolean {
-    if (this.listaDeEscalas.length != 0) {
-      return formB;
-    } else {
-      return formA && formB;
-    }
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
