@@ -388,25 +388,27 @@ export class VehiculoComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.servicio.agregar(this.formulario.value).subscribe(
+    this.servicio.agregar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
-        if (respuesta.codigo == 201) {
-          this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idTipoVehiculo').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
+        if (res.status == 201) {
+          respuesta.then(data => {
+            this.reestablecerFormulario(data.id);
+            setTimeout(function () {
+              document.getElementById('idTipoVehiculo').focus();
+            }, 20);
+            this.toastr.success(data.mensaje);
+          })
           this.loaderService.hide();
         }
       },
       err => {
         var respuesta = err.json();
-        if (respuesta.codigo == 11017) {
+        if (respuesta.status == 11017) {
           document.getElementById("labelDominio").classList.add('label-error');
           document.getElementById("idDominio").classList.add('is-invalid');
           document.getElementById("idDominio").focus();
-        } else if (respuesta.codigo == 11018) {
+        } else if (respuesta.status == 11018) {
           document.getElementById("labelNumeroInterno").classList.add('label-error');
           document.getElementById("idNumeroInterno").classList.add('is-invalid');
           document.getElementById("idNumeroInterno").focus();
@@ -421,15 +423,17 @@ export class VehiculoComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-    this.servicio.actualizar(this.formulario.value).subscribe(
+    this.servicio.actualizar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
-        if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
+        if (res.status == 200) {
+          respuesta.then(data => {
+            this.reestablecerFormulario(data.id);
+            setTimeout(function () {
+              document.getElementById('idTipoVehiculo').focus();
+            }, 20);
+            this.toastr.success(data.mensaje);
+          })
           this.loaderService.hide();
         }
       },
@@ -510,6 +514,36 @@ export class VehiculoComponent implements OnInit {
     this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
     this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
     this.establecerConfiguracion(elemento);
+  }
+  //Carga la imagen del paciente
+  public readURL(event, campo): void {
+    let file = event.target.files[0];
+    let extension = file.name.split('.');
+    extension = extension[extension.length-1];
+    if (event.target.files && event.target.files[0] && extension == 'pdf') {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        let foto = {
+          id: this.formulario.value.id,
+          nombre: file.name,
+          datos: reader.result
+        }
+        this.formulario.get(campo).setValue(foto);
+        console.log(foto);
+      }
+      reader.readAsDataURL(file);
+    }else{
+      this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
+    }
+  }
+  //Elimina un pdf ya cargado, se pasa el campo como parametro
+  public eliminarPdf(campo){
+    if(!this.formulario.get(campo).value){
+      this.toastr.success("Sin archivo adjunto");
+    }else{
+      this.formulario.get(campo).setValue(null);
+    }
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

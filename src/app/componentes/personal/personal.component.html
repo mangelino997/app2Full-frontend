@@ -215,7 +215,7 @@
                       </div>
                     </div>
                     <div class="col-md-3 text-center">
-                      <img [src]="formulario.get('usuario.foto').value ? formulario.get('usuario.foto').value.datos : ''" width="100%" height="90%" />
+                      <img [src]="formulario.get('foto').value ? formulario.get('foto').value.datos : ''" width="100%" height="90%" />
                       <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
                       <button style="margin-top: 10px;" mat-raised-button color="primary" (click)="fileInput.click()">Subir
                         Foto

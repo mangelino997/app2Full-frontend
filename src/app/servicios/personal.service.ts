@@ -91,11 +91,39 @@ export class PersonalService {
   }
   //Agrega un registro
   public agregar(elemento) {
-    return this.http.post(this.url, elemento, this.options);
+    let obj = Object.assign({}, elemento);
+    let foto = obj.foto;
+    let blob = new Blob([foto.datos], {type : 'image/jpeg'});
+    const formData = new FormData(); 
+    formData.append('archivo', blob, foto.nombre);
+    obj.bugImagen = null;
+    formData.append('personal', JSON.stringify(obj));
+		return fetch(this.url, {
+      method: "POST",
+      headers: {
+        'Authorization': localStorage.getItem('tokenLesion')
+      },
+      body: formData
+    });
   }
   //Actualiza un registro
   public actualizar(elemento) {
-    return this.http.put(this.url, elemento, this.options);
+    let obj = Object.assign({}, elemento);
+    let idFoto = elemento.foto.id;
+    let foto = obj.foto;
+    let blob = new Blob([foto.datos], {type : 'image/jpeg'});
+    const formData = new FormData(); 
+    formData.append('archivo', blob, foto.nombre);
+    obj.foto = {};
+    obj.foto.id = idFoto;
+    formData.append('personal', JSON.stringify(obj));
+		return fetch(this.url, {
+      method: "PUT",
+      headers: {
+        'Authorization': localStorage.getItem('tokenLesion')
+      },
+      body: formData
+    });
   }
   //Elimina un registro
   public eliminar(id) {

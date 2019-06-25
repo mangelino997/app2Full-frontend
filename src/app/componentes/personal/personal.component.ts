@@ -642,19 +642,20 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
-    this.servicio.agregar(this.formulario.value).subscribe(
+    this.servicio.agregar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
-        if (respuesta.codigo == 201) {
-          this.reestablecerFormulario(respuesta.id);
-          this.establecerValoresPorDefecto();
-          this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
-          setTimeout(function () {
-            document.getElementById('idApellido').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
+        if (res.status == 201) {
+          respuesta.then(data => {
+            this.reestablecerFormulario(data.id);
+            this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
+            setTimeout(function () {
+              document.getElementById('idApellido').focus();
+            }, 20);
+            this.toastr.success(data.mensaje);
+            this.loaderService.hide();
+          })
         }
-        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err.json());
@@ -669,16 +670,18 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
-    this.servicio.actualizar(this.formulario.value).subscribe(
+    this.servicio.actualizar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
-        if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
+        if (res.status == 200) {
+          respuesta.then(data => {
+            this.reestablecerFormulario(data.id);
+            setTimeout(function () {
+              document.getElementById('idAutocompletado').focus();
+            }, 20);
+            this.toastr.success(data.mensaje);
+            this.loaderService.hide();
+          })
         }
       },
       err => {
@@ -816,11 +819,11 @@ export class PersonalComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let foto = {
-          id: this.formulario.get('usuario.foto').value.id,
+          id: this.formulario.value.id,
           nombre: file.name,
           datos: reader.result
         }
-        this.formulario.get('usuario.foto').setValue(foto);
+        this.formulario.get('foto').setValue(foto);
         console.log(foto);
       }
       reader.readAsDataURL(file);

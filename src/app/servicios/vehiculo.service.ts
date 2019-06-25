@@ -81,14 +81,65 @@ export class VehiculoService {
   }
   //Agrega un registro
   public agregar(elemento) {
-    return this.http.post(this.url, elemento, this.options);
+    let obj = Object.assign({}, elemento);
+    let tituloFile = obj.pdfTitulo;
+    let cedulaIdentFile = obj.pdfCedulaIdent;
+    let vtoRutaFile = obj.pdfVtoRuta;
+    let vtoInspTecnicaFile = obj.pdfVtoInspTecnica;
+    let vtoSenasaFile = obj.pdfVtoSenasa;
+    let habBromatFile = obj.pdfHabBromat;
+    
+    let blob = new Blob([tituloFile.datos], {type : 'image/jpeg'});
+    const formData = new FormData(); 
+    formData.append('titulo', blob, tituloFile.nombre);
+    blob = new Blob([cedulaIdentFile.datos], {type : 'image/jpeg'});
+    formData.append('cedulaIdent', blob, cedulaIdentFile.nombre);
+    blob = new Blob([vtoRutaFile.datos], {type : 'image/jpeg'});
+    formData.append('vtoRuta', blob, vtoRutaFile.nombre);
+    blob = new Blob([vtoInspTecnicaFile.datos], {type : 'image/jpeg'});
+    formData.append('vtoInspTecnica', blob, vtoInspTecnicaFile.nombre);
+    blob = new Blob([vtoSenasaFile.datos], {type : 'image/jpeg'});
+    formData.append('vtoSenasa', blob, vtoSenasaFile.nombre);
+    blob = new Blob([habBromatFile.datos], {type : 'image/jpeg'});
+    formData.append('habBromat', blob, habBromatFile.nombre);
+    obj.tituloFile = null;
+    obj.cedulaIdentFile = null;
+    obj.cedulaIdentFile = null;
+    obj.vtoRutaFile = null;
+    obj.vtoInspTecnicaFile = null;
+    obj.habBromatFile = null;
+
+    formData.append('vehiculo', JSON.stringify(obj));
+		return fetch(this.url, {
+      method: "POST",
+      headers: {
+        'Authorization': localStorage.getItem('tokenLesion')
+      },
+      body: formData
+    });
   }
   //Actualiza un registro
   public actualizar(elemento) {
-    return this.http.put(this.url, elemento, this.options);
+    let obj = Object.assign({}, elemento);
+    let idFoto = elemento.bugImagen.id;
+    let foto = obj.bugImagen;
+    let blob = new Blob([foto.datos], {type : 'image/jpeg'});
+    const formData = new FormData(); 
+    formData.append('archivo', blob, foto.nombre);
+    obj.bugImagen = {};
+    obj.bugImagen.id = idFoto;
+    formData.append('vehiculo', JSON.stringify(obj));
+		return fetch(this.url, {
+      method: "PUT",
+      headers: {
+        'Authorization': localStorage.getItem('tokenLesion')
+      },
+      body: formData
+    });
   }
   //Elimina un registro
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);
   }
+  
 }

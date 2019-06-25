@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-    <div class="col-md-8 text-center">
+    <div class="col-md-12 text-center">
       <h5>{{pestaniaActual}} Vehículo</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row" *ngIf="mostrarAutocompletado">
@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
               <mat-select id="idTipoVehiculo" class="form-control form-control-sm" [formControl]="tipoVehiculo"
@@ -40,7 +40,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
               <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" [formControl]="marcaVehiculo"
@@ -51,7 +51,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-8" *ngIf="mostrarConfiguracionVehiculo">
+          <div class="col-md-6" *ngIf="mostrarConfiguracionVehiculo">
             <div class="form-group has-float-label">
               <label for="idConfiguracionVehiculo" class="tamanio-label">Lista de Configuraciones</label>
               <mat-select id="idConfiguracionVehiculo" class="form-control form-control-sm"
@@ -68,7 +68,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-8">
+          <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idConfiguracion" class="tamanio-label">Configuración *</label>
               <textarea id="idConfiguracion" class="form-control form-control-sm" [formControl]="configuracion" rows="3"
@@ -77,14 +77,14 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idDominio" class="tamanio-label">Dominio *</label>
               <input id="idDominio" type="text" formControlName="dominio" autocomplete="off"
                 class="form-control form-control-sm upper-case number-right" [readonly]="soloLectura" maxlength="10">
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNumeroInterno" class="tamanio-label">Número Interno</label>
               <input id="idNumeroInterno" type="text" formControlName="numeroInterno" autocomplete="off"
@@ -92,7 +92,7 @@
                 [textMask]="mascararNumero(5)">
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNumeroMotor" class="tamanio-label">Número de Motor<span
                   *ngIf="!esVehiculoRemolque">*</span></label>
@@ -101,9 +101,17 @@
                 [required]="!esVehiculoRemolque" (blur)="validarMotorChasis('numeroDeMotor')">
             </div>
           </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idNumeroChasis" class="tamanio-label">Número de Chasis</label>
+              <input id="idNumeroChasis" type="text" formControlName="numeroChasis" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                (blur)="validarMotorChasis('numeroDeChasis')">
+            </div>
+          </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Titular *</label>
               <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
@@ -114,7 +122,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idAnioFabricacion" class="tamanio-label">Año de Fabricación *</label>
               <input id="idAnioFabricacion" type="text" formControlName="anioFabricacion" autocomplete="off"
@@ -122,45 +130,7 @@
                 [textMask]="mascararNumero(4)">
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idNumeroChasis" class="tamanio-label">Número de Chasis</label>
-              <input id="idNumeroChasis" type="text" formControlName="numeroChasis" autocomplete="off"
-                class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                (blur)="validarMotorChasis('numeroDeChasis')">
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idPersonal" class="tamanio-label">Chofer Habitual</label>
-              <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal" autocomplete="off"
-                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('personal'))">
-              <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
-                <mat-option *ngFor="let itemPersonal of resultadosPersonales" [value]="itemPersonal">
-                  {{itemPersonal.alias}}
-                </mat-option>
-              </mat-autocomplete>
-            </div>
-          </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idVehiculoRemolque" class="tamanio-label">Remolque Habitual</label>
-              <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text" matInput
-                [formControl]="formulario.get('vehiculoRemolque')" [matAutocomplete]="autoVehiculoRemolque"
-                autocomplete="off" [readonly]="soloLectura"
-                (blur)="verificarSeleccion(formulario.get('vehiculoRemolque'))">
-              <mat-autocomplete #autoVehiculoRemolque="matAutocomplete" [displayWith]="displayF.bind(this)">
-                <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
-                  [value]="itemVehiculoRemolque">
-                  {{itemVehiculoRemolque.alias}}
-                </mat-option>
-              </mat-autocomplete>
-            </div>
-          </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idLocalidad" class="tamanio-label">Radicación Localidad *</label>
               <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
@@ -175,7 +145,35 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idPersonal" class="tamanio-label">Chofer Habitual</label>
+              <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal" autocomplete="off"
+                [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('personal'))">
+              <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
+                <mat-option *ngFor="let itemPersonal of resultadosPersonales" [value]="itemPersonal">
+                  {{itemPersonal.alias}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVehiculoRemolque" class="tamanio-label">Remolque Habitual</label>
+              <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('vehiculoRemolque')" [matAutocomplete]="autoVehiculoRemolque"
+                autocomplete="off" [readonly]="soloLectura"
+                (blur)="verificarSeleccion(formulario.get('vehiculoRemolque'))">
+              <mat-autocomplete #autoVehiculoRemolque="matAutocomplete" [displayWith]="displayF.bind(this)">
+                <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
+                  [value]="itemVehiculoRemolque">
+                  {{itemVehiculoRemolque.alias}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro *</label>
               <mat-select id="idCompaniaSeguro" class="form-control form-control-sm" [formControl]="companiaSeguro"
@@ -186,19 +184,9 @@
               </mat-select>
             </div>
           </div>
+        </div>
+        <!-- <div class="row">
           <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idCompaniaSeguroPoliza" class="tamanio-label">Póliza *</label>
-              <mat-select id="idCompaniaSeguroPoliza" class="form-control form-control-sm"
-                formControlName="companiaSeguroPoliza" [compareWith]="compareFn">
-                <mat-option *ngFor="let itemCompaniaSeguroPoliza of companiasSegurosPolizas"
-                  [value]="itemCompaniaSeguroPoliza">
-                  {{itemCompaniaSeguroPoliza.numeroPoliza}}
-                </mat-option>
-              </mat-select>
-            </div>
-          </div>
-          <!-- <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNumeroPoliza" class="tamanio-label">Número de Póliza</label>
               <input id="idNumeroPoliza" type="number" formControlName="numeroPoliza" autocomplete="off"
@@ -211,10 +199,10 @@
               <input id="idVtoPoliza" type="date" formControlName="vtoPoliza"
                 autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
-          </div> -->
-        </div>
+          </div> 
+        </div> -->
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNumeroRuta" class="tamanio-label">Número de Ruta *</label>
               <input id="idNumeroRuta" type="text" formControlName="numeroRuta" autocomplete="off"
@@ -222,38 +210,179 @@
                 [textMask]="mascararNumero(15)">
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idVtoRuta" class="tamanio-label">Vto. Ruta *</label>
-              <input id="idVtoRuta" type="date" formControlName="vtoRuta" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <label for="idCompaniaSeguroPoliza" class="tamanio-label">Póliza *</label>
+              <mat-select id="idCompaniaSeguroPoliza" class="form-control form-control-sm"
+                formControlName="companiaSeguroPoliza" [compareWith]="compareFn">
+                <mat-option *ngFor="let itemCompaniaSeguroPoliza of companiasSegurosPolizas"
+                  [value]="itemCompaniaSeguroPoliza">
+                  {{itemCompaniaSeguroPoliza.numeroPoliza}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idVtoRTO" class="tamanio-label">Vto. Inspección Técnica *</label>
-              <input id="idVtoRTO" type="date" formControlName="vtoRTO" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+          <div class="col-md-3">
+            <div class="row">
+              <div class="col-md-8">
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInput />
+                <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                  <span *ngIf="!formulario.value.pdfTitulo">Adj. Título </span>
+                  <span *ngIf="formulario.value.pdfTitulo">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.value.pdfTitulo">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.value.pdfTitulo">warning</i>
+                </button>
+              </div>
+              <div class="col-md-2">
+                <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo')" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                  <i class="material-icons" >close</i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="row">
+              <div class="col-md-8">
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')" #fileInput />
+                <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                  <span *ngIf="!formulario.value.pdfCedulaIdent">Adj. Ced. de Id. </span>
+                  <span *ngIf="formulario.value.pdfCedulaIdent">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.value.pdfCedulaIdent">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.value.pdfCedulaIdent">warning</i>
+                </button>
+              </div>
+              <div class="col-md-2">
+                <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfCedulaIdent')" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                  <i class="material-icons" >close</i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idVtoSenasa" class="tamanio-label">Vto. Senasa</label>
-              <input id="idVtoSenasa" type="date" formControlName="vtoSenasa" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+          <div class="col-md-3">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group has-float-label">
+                  <label for="idVtoRuta" class="tamanio-label">Vto. Ruta *</label>
+                  <input id="idVtoRuta" type="date" formControlName="vtoRuta" autocomplete="off"
+                    class="form-control form-control-sm" [readonly]="soloLectura">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-8">
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoRuta')" #fileInput />
+                <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                  <span *ngIf="!formulario.value.pdfVtoRuta">Adj. Vto. Ruta </span>
+                  <span *ngIf="formulario.value.pdfVtoRuta">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.value.pdfVtoRuta">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.value.pdfVtoRuta">warning</i>
+                </button>
+              </div>
+              <div class="col-md-2">
+                <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoRuta')" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                  <i class="material-icons" >close</i>
+                </button>
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idVtoHabBromatologica" class="tamanio-label">Vto. Hab. Bromatológica</label>
-              <input id="idVtoHabBromatologica" type="date" formControlName="vtoHabBromatologica" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+          <div class="col-md-3">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group has-float-label">
+                  <label for="idVtoRTO" class="tamanio-label">Vto. Inspección Técnica *</label>
+                  <input id="idVtoRTO" type="date" formControlName="vtoRTO" autocomplete="off"
+                    class="form-control form-control-sm" [readonly]="soloLectura">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-8">
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoInspTecnica')" #fileInput />
+                <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                  <span *ngIf="!formulario.value.pdfVtoInspTecnica">Adj. Vto. Insp. Téc. </span>
+                  <span *ngIf="formulario.value.pdfVtoInspTecnica">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.value.pdfVtoInspTecnica">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.value.pdfVtoInspTecnica">warning</i>
+                </button>
+              </div>
+              <div class="col-md-2">
+                <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoInspTecnica')"
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
+                  <i class="material-icons" >close</i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group has-float-label">
+                  <label for="idVtoSenasa" class="tamanio-label">Vto. Senasa</label>
+                  <input id="idVtoSenasa" type="date" formControlName="vtoSenasa" autocomplete="off"
+                    class="form-control form-control-sm" [readonly]="soloLectura">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-8">
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoSenasa')" #fileInput />
+                <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                  <span *ngIf="!formulario.value.pdfVtoSenasa">Adj. Vto. Senasa </span>
+                  <span *ngIf="formulario.value.pdfVtoSenasa">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.value.pdfVtoSenasa">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.value.pdfVtoSenasa">warning</i>
+                </button>
+              </div>
+              <div class="col-md-2">
+                <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoSenasa')"
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
+                  <i class="material-icons" >close</i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group has-float-label">
+                  <label for="idVtoHabBromatologica" class="tamanio-label">Vto. Hab. Bromatológica</label>
+                  <input id="idVtoHabBromatologica" type="date" formControlName="vtoHabBromatologica" autocomplete="off"
+                    class="form-control form-control-sm" [readonly]="soloLectura">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-8">
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfHabBromat')" #fileInput />
+                <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                  <span *ngIf="!formulario.value.pdfHabBromat">Adj. Vto. Hab. Bromato. </span>
+                  <span *ngIf="formulario.value.pdfHabBromat">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.value.pdfHabBromat">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.value.pdfHabBromat">warning</i>
+                </button>
+              </div>
+              <div class="col-md-2">
+                <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfHabBromat')"
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
+                  <i class="material-icons" >close</i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+        <br>
+        <button *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

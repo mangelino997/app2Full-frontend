@@ -31,7 +31,15 @@ export class Vehiculo {
             fechaBaja: new FormControl(),
             usuarioMod: new FormControl(),
             fechaUltimaMod: new FormControl(),
-            alias: new FormControl('', Validators.maxLength(100))
+            alias: new FormControl('', Validators.maxLength(100)),
+            pdfTitulo: new FormControl(),
+            pdfCedulaIdent: new FormControl(),
+            pdfVtoRuta: new FormControl(),
+            pdfVtoInspTecnica: new FormControl(),
+            pdfTVtoSenasa: new FormControl(),
+            pdfHabBrotmat: new FormControl(),
+
+
         })
     }
 }

@@ -97,7 +97,9 @@ export class Personal {
             esChoferLargaDistancia: new FormControl('', Validators.required),
             esAcompReparto: new FormControl('', Validators.required),
             observaciones: new FormControl('', Validators.maxLength(200)),
-            alias: new FormControl('', Validators.maxLength(100))
+            alias: new FormControl('', Validators.maxLength(100)),
+            foto: new FormControl()
+
         })
     }
 }
