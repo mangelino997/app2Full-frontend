@@ -78,7 +78,7 @@
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idCai" class="tamanio-label"> C.A.I</label>
-              <input id="idCai" type="number" formControlName="cai" autocomplete="off"
+              <input id="idCai" type="text" formControlName="cai" autocomplete="off" [textMask]="obtenerMascaraEnteroSinDecimales(14)"
                 class="form-control form-control-sm" [readonly]="soloLectura" >
             </div>
           </div>

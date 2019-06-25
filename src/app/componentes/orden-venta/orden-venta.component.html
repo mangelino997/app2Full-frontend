@@ -68,7 +68,7 @@
               <div class="form-group has-float-label">
                 <label for="idVendedor" class="tamanio-label">Vendedor *</label>
                 <mat-select id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
-                  [compareWith]="compareFn" [readonly]="soloLectura">
+                  [compareWith]="compareFn">
                   <mat-option *ngFor="let itemVendedor of vendedores" [value]="itemVendedor">
                     {{itemVendedor.nombre}}
                   </mat-option>

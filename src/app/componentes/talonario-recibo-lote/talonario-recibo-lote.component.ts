@@ -238,11 +238,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if (respuesta.codigo == 11003) {
-          document.getElementById("idPuntoVenta").classList.add('is-invalid');
-          document.getElementById("idPuntoVenta").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
       }
     );
@@ -264,11 +260,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("idAutocompletado").classList.add('is-invalid');
-          document.getElementById("idAutocompletado").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
       }
     );
@@ -297,13 +289,14 @@ export class TalonarioReciboLoteComponent implements OnInit {
   public validarLongitud(elemento, intLimite) {
     switch(elemento){
       case 'desde':
-        return this.appService.validarLongitud(intLimite, this.formulario.value.desde);
+        if(this.formulario.value.desde!=null)
+          return this.appService.validarLongitud(intLimite, this.formulario.value.desde);
       case 'hasta':
         if(!this.formulario.value.desde){
           setTimeout(function () {
             document.getElementById('idDesde').focus();
           }, 20);
-          this.toastr.warning("El campo Desde es requerido");
+          this.toastr.error("El campo Desde es requerido");
         }else{
           this.validarMayor();
         }
@@ -313,7 +306,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
   }
   //Valida que el campo Hasta sea mayor al campo Desde
   private validarMayor(){
-    if(this.formulario.value.desde < this.formulario.value.hasta){
+    if(this.formulario.value.desde < this.formulario.value.hasta && this.formulario.value.hasta!=null){
       return this.appService.validarLongitud(8, this.formulario.value.hasta);
     }else{
       this.formulario.get('desde').setValue(null);
@@ -321,7 +314,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
       setTimeout(function () {
         document.getElementById('idDesde').focus();
       }, 20);
-      this.toastr.warning("El campo Hasta debe ser Mayor que el campo Desde");
+      this.toastr.error("El campo Hasta debe ser Mayor que el campo Desde");
     }
   }
   //Formatea el valor del autocompletado

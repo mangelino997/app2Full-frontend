@@ -72,14 +72,6 @@ constructor(private servicio: TalonarioReciboService, private subopcionPestaniaS
         console.log(err);
       }
     );
-  //Defiene autocompletado
-  // this.autocompletado.valueChanges.subscribe(data => {
-  //   if (typeof data == 'string' && data.length > 2) {
-  //     this.servicio.listarPorNombre(data).subscribe(res => {
-  //       this.resultados = res;
-  //     })
-  //   }
-  // })
 }
 //Al iniciarse el componente
 ngOnInit() {
@@ -96,15 +88,6 @@ ngOnInit() {
   this.listarCobradores();
   //Obtiene los talonarios recibo lote
   this.listarTalRecLote();
- 
-  //Defiene autocompletado localidad
-  // this.formulario.get('localidad').valueChanges.subscribe(data => {
-  //   if (typeof data == 'string' && data.length > 2) {
-  //     this.localidadServicio.listarPorNombre(data).subscribe(res => {
-  //       this.resultadosLocalidades = res;
-  //     })
-  //   }
-  // })
   //Establece los valores de la primera pestania activa
   this.seleccionarPestania(1, 'Agregar', 0);
   //Obtiene la lista completa de registros
@@ -246,13 +229,14 @@ private agregar() {
   this.formulario.get('id').setValue(null);
   let usuario= this.appComponent.getUsuario();
   this.formulario.get('usuarioAlta').setValue(usuario);
+  console.log(this.formulario.value);
   this.servicio.agregar(this.formulario.value).subscribe(
     res => {
       var respuesta = res.json();
       if (respuesta.codigo == 201) {
         this.reestablecerFormulario(respuesta.id);
         setTimeout(function () {
-          document.getElementById('idNombre').focus();
+          document.getElementById('idCobrador').focus();
         }, 20);
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
@@ -260,12 +244,7 @@ private agregar() {
     },
     err => {
       var respuesta = err.json();
-      if (respuesta.codigo == 11003) {
-        document.getElementById("labelCorreoelectronico").classList.add('label-error');
-        document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-        document.getElementById("idCorreoelectronico").focus();
-        this.toastr.error(respuesta.mensaje);
-      }
+      this.toastr.error(respuesta.mensaje);
       this.loaderService.hide();
     }
   );
@@ -287,12 +266,7 @@ private actualizar() {
     },
     err => {
       var respuesta = err.json();
-      if (respuesta.codigo == 11002) {
-        document.getElementById("labelNombre").classList.add('label-error');
-        document.getElementById("idNombre").classList.add('is-invalid');
-        document.getElementById("idNombre").focus();
-        this.toastr.error(respuesta.mensaje);
-      }
+      this.toastr.error(respuesta.mensaje);
       this.loaderService.hide();
     }
   );
@@ -321,13 +295,14 @@ public obtenerMascaraEnteroSinDecimales(intLimite) {
 public validarLongitud(elemento, intLimite) {
   switch(elemento){
     case 'desde':
-      return this.appService.validarLongitud(intLimite, this.formulario.value.desde);
+      if(this.formulario.value.desde!=null)
+        return this.appService.validarLongitud(intLimite, this.formulario.value.desde);
     case 'hasta':
       if(!this.formulario.value.desde){
         setTimeout(function () {
           document.getElementById('idDesde').focus();
         }, 20);
-        this.toastr.warning("El campo Desde es requerido");
+        this.toastr.error("El campo Desde es requerido");
       }else{
         this.validarMayor();
       }
@@ -337,7 +312,7 @@ public validarLongitud(elemento, intLimite) {
 }
 //Valida que el campo Hasta sea mayor al campo Desde
 private validarMayor(){
-  if(this.formulario.value.desde < this.formulario.value.hasta){
+  if(this.formulario.value.desde < this.formulario.value.hasta && this.formulario.value.hasta!=null){
     return this.appService.validarLongitud(8, this.formulario.value.hasta);
   }else{
     this.formulario.get('desde').setValue(null);
@@ -345,7 +320,7 @@ private validarMayor(){
     setTimeout(function () {
       document.getElementById('idDesde').focus();
     }, 20);
-    this.toastr.warning("El campo Hasta debe ser Mayor que el campo Desde");
+    this.toastr.error("El campo Hasta debe ser Mayor que el campo Desde");
   }
 }
 //Formatea el valor del autocompletado
@@ -367,7 +342,7 @@ public displayFa(elemento) {
 //Funcion para comparar y mostrar elemento de campo select
 public compareFn = this.compararFn.bind(this);
 private compararFn(a, b) {
-  if (a.id != null && b.id != null) {
+  if (a != null && b != null) {
     return a.id === b.id;
   }
 }

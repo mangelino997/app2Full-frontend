@@ -49,8 +49,8 @@
             <div class="col-md-6">
               <div class="form-group has-float-label">
                 <label id="idCobrador" for="idCobrador" class="tamanio-label">Cobrador *</label>
-                <mat-select class="form-control form-control-sm" formControlName="cobrador"  >
-                  <mat-option *ngFor="let item of listaCobradores" [value]="item">
+                <mat-select class="form-control form-control-sm" formControlName="cobrador" [compareWith]="compareFn" >
+                  <mat-option *ngFor="let item of listaCobradores" [value]="item" >
                     {{item.nombre}}
                   </mat-option>
                 </mat-select>
@@ -60,7 +60,7 @@
               <div class="form-group has-float-label">
                 <label id="labelTalonarioReciboLote" for="idTalonarioReciboLote" class="tamanio-label">Talonario Recibo Lote *</label>
                 <mat-select class="form-control form-control-sm" formControlName="talonarioReciboLote"
-                  (selectionChange)="cambioTalRecLote()"  >
+                  (selectionChange)="cambioTalRecLote()" [compareWith]="compareFn" >
                   <mat-option *ngFor="let item of listaTalRecLote" [value]="item">
                     {{item.puntoVenta}} - {{item.letra}} - {{item.desde}} -> {{item.hasta}}
                   </mat-option>
