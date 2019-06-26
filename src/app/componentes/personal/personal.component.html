@@ -215,11 +215,30 @@
                       </div>
                     </div>
                     <div class="col-md-3 text-center">
-                      <img [src]="formulario.get('foto').value ? formulario.get('foto').value.datos : ''" width="100%" height="90%" />
-                      <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
-                      <button style="margin-top: 10px;" mat-raised-button color="primary" (click)="fileInput.click()">Subir
-                        Foto
-                      </button>
+                      <div class="row">
+                        <div class="col-md-12">
+                          <img [src]="formulario.get('foto').value ? formulario.get('foto').value.datos : ''" width="100%" height="90%" />
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-5">
+                          <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
+                          <button id="idBoton"  mat-raised-button color="primary" (click)="fileInput.click()"
+                          [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                            <span *ngIf="!formulario.value.foto">Subir Foto </span>
+                            <span *ngIf="formulario.value.foto">Foto Adjunta</span>
+                            <i class="material-icons" *ngIf="formulario.value.foto">check_circle</i>
+                            <i class="material-icons" *ngIf="!formulario.value.foto">warning</i>
+                          </button>
+                        </div>
+                        <div class="col">
+                          <button id="idBoton" mat-raised-button color="warn" (click)="eliminarFoto()" 
+                          [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                            <i class="material-icons" >close</i>
+                          </button>
+                        </div>
+                      </div>
+                      
                     </div>
                   </div>
                 </div>
@@ -563,9 +582,9 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idVtoLicenciaConducir" class="tamanio-label">Vto. Licencia de Conducir *</label>
-                        <input id="idVtoLicenciaConducir" type="date" formControlName="vtoLicenciaConducir"
-                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                        <label for="idVtoPsicoFísico" class="tamanio-label">Vto. PsicoFísico *</label>
+                        <input id="idVtoPsicoFísico" type="date" formControlName="vtoPsicoFisico" autocomplete="off"
+                          class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -582,6 +601,37 @@
                           class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group has-float-label">
+                        <label for="idVtoLicenciaConducir" class="tamanio-label">Vto. Licencia de Conducir *</label>
+                        <input id="idVtoLicenciaConducir" type="date" formControlName="vtoLicenciaConducir"
+                          autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="row">
+                          <div class="col-md-8">
+                            <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')" #fileInputCedulaIdent />
+                            <button id="idBoton" mat-raised-button color="primary" (click)="fileInputCedulaIdent.click()"
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                              <span *ngIf="!formulario.value.pdfCedulaIdent">Adjuntar </span>
+                              <span *ngIf="formulario.value.pdfCedulaIdent">Archivo Adjunto</span>
+                              <i class="material-icons" *ngIf="formulario.value.pdfCedulaIdent">check_circle</i>
+                              <i class="material-icons" *ngIf="!formulario.value.pdfCedulaIdent">warning</i>
+                            </button>
+                          </div>
+                          <div class="col-md-2">
+                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfCedulaIdent')" 
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                              <i class="material-icons" >close</i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                  <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idVtoLINTI" class="tamanio-label">Vto. LINTI *</label>
@@ -589,9 +639,29 @@
                           class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
+                    <div class="col-md-3">
+                      <div class="row">
+                          <div class="col-md-8">
+                            <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')" #fileInputCedulaIdent />
+                            <button id="idBoton" mat-raised-button color="primary" (click)="fileInputCedulaIdent.click()"
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                              <span *ngIf="!formulario.value.pdfCedulaIdent">Adjuntar </span>
+                              <span *ngIf="formulario.value.pdfCedulaIdent">Archivo Adjunto</span>
+                              <i class="material-icons" *ngIf="formulario.value.pdfCedulaIdent">check_circle</i>
+                              <i class="material-icons" *ngIf="!formulario.value.pdfCedulaIdent">warning</i>
+                            </button>
+                          </div>
+                          <div class="col-md-2">
+                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfCedulaIdent')" 
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                              <i class="material-icons" >close</i>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                   </div>
                   <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idVtoLibretaSanidad" class="tamanio-label">Vto. Lib. Sanidad</label>
                         <input id="idVtoLibretaSanidad" type="date" formControlName="vtoLibretaSanidad"
@@ -599,12 +669,25 @@
                       </div>
                     </div>
                     <div class="col-md-3">
-                      <div class="form-group has-float-label">
-                        <label for="idVtoPsicoFísico" class="tamanio-label">Vto. PsicoFísico *</label>
-                        <input id="idVtoPsicoFísico" type="date" formControlName="vtoPsicoFisico" autocomplete="off"
-                          class="form-control form-control-sm" [readonly]="soloLectura">
+                      <div class="row">
+                          <div class="col-md-8">
+                            <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')" #fileInputCedulaIdent />
+                            <button id="idBoton" mat-raised-button color="primary" (click)="fileInputCedulaIdent.click()"
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                              <span *ngIf="!formulario.value.pdfCedulaIdent">Adjuntar </span>
+                              <span *ngIf="formulario.value.pdfCedulaIdent">Archivo Adjunto</span>
+                              <i class="material-icons" *ngIf="formulario.value.pdfCedulaIdent">check_circle</i>
+                              <i class="material-icons" *ngIf="!formulario.value.pdfCedulaIdent">warning</i>
+                            </button>
+                          </div>
+                          <div class="col-md-2">
+                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfCedulaIdent')" 
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                              <i class="material-icons" >close</i>
+                            </button>
+                          </div>
+                        </div>
                       </div>
-                    </div>
                   </div>
                 </div>
                 <div class="contenedor-top" *ngIf="opcionSeleccionada == 20">

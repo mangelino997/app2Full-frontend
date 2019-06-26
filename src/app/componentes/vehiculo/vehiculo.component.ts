@@ -177,6 +177,8 @@ export class VehiculoComponent implements OnInit {
     this.listarEmpresas();
     //Obtiene la lista completa de registros
     // this.listar();
+    //Obtiene la lista de Compania de Seguro
+    this.listarCompaniasSeguroPorEmpresa();
   }
   //Obtiene la lista de tipos de vehiculos
   private listarTiposVehiculos() {
@@ -202,8 +204,9 @@ export class VehiculoComponent implements OnInit {
     this.companiaSeguro.reset();
     this.companiasSeguros = [];
     this.companiasSegurosPolizas = [];
-    let empresa = this.formulario.get('empresa').value;
+    let empresa = this.appService.getEmpresa();//this.formulario.get('empresa').value;
     this.companiaSeguroService.listarPorEmpresa(empresa.id).subscribe(res => {
+      console.log(res);
       this.companiasSeguros = res.json();
     })
   }
@@ -388,6 +391,7 @@ export class VehiculoComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
@@ -398,21 +402,20 @@ export class VehiculoComponent implements OnInit {
               document.getElementById('idTipoVehiculo').focus();
             }, 20);
             this.toastr.success(data.mensaje);
+          },
+          err=>{
+            console.log(err.json());
           })
-          this.loaderService.hide();
+        }else{
+          respuesta.then(err=>{
+            this.toastr.error(err.mensaje);
+          })
         }
+        this.loaderService.hide();
       },
       err => {
+        console.log(err);
         var respuesta = err.json();
-        if (respuesta.status == 11017) {
-          document.getElementById("labelDominio").classList.add('label-error');
-          document.getElementById("idDominio").classList.add('is-invalid');
-          document.getElementById("idDominio").focus();
-        } else if (respuesta.status == 11018) {
-          document.getElementById("labelNumeroInterno").classList.add('label-error');
-          document.getElementById("idNumeroInterno").classList.add('is-invalid');
-          document.getElementById("idNumeroInterno").focus();
-        }
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
       }
@@ -517,6 +520,7 @@ export class VehiculoComponent implements OnInit {
   }
   //Carga la imagen del paciente
   public readURL(event, campo): void {
+    console.log(event);
     let file = event.target.files[0];
     let extension = file.name.split('.');
     extension = extension[extension.length-1];
@@ -529,6 +533,8 @@ export class VehiculoComponent implements OnInit {
           nombre: file.name,
           datos: reader.result
         }
+        console.log(foto, campo);
+
         this.formulario.get(campo).setValue(foto);
         console.log(foto);
       }

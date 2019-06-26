@@ -27,10 +27,13 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { FotoService } from 'src/app/servicios/foto.service';
 
 @Component({
   selector: 'app-personal',
-  templateUrl: './personal.component.html'
+  templateUrl: './personal.component.html',
+  styleUrls: ['./personal.component.css']
+
 })
 export class PersonalComponent implements OnInit {
   //Define la pestania activa
@@ -116,7 +119,8 @@ export class PersonalComponent implements OnInit {
     private seguridadSocialServicio: SeguridadSocialService, private obraSocialServicio: ObraSocialService,
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
-    private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService) {
+    private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService,
+    private fotoService: FotoService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -279,6 +283,14 @@ export class PersonalComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
+    this.fotoService.obtenerPorId(1).subscribe(
+      res=>{
+        let respuesta= res.json();
+        console.log(respuesta);
+        this.formulario.get('foto').setValue(respuesta);
+        this.formulario.value.foto.datos = atob(this.formulario.value.foto.datos);
+      }
+    );
     this.formulario.get('esAcompReparto').setValue(false);
     this.formulario.get('recibeAdelanto').setValue(false);
     this.formulario.get('recibePrestamo').setValue(false);
@@ -292,6 +304,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('vtoCursoCargaPeligrosa').disable();
     this.formulario.get('vtoLINTI').disable();
     this.formulario.get('vtoLibretaSanidad').disable();
+    console.log(this.formulario.value);
   }
   //Al cambiar elemento de select esChofer
   public cambioEsChofer(): void {
@@ -812,7 +825,7 @@ export class PersonalComponent implements OnInit {
       }
     }
   }
-  //Carga la imagen del paciente
+  //Carga la imagen del personal
   public readURL(event): void {
     if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
@@ -827,6 +840,47 @@ export class PersonalComponent implements OnInit {
         console.log(foto);
       }
       reader.readAsDataURL(file);
+    }
+  }
+  //Elimina la foto del personal
+  public eliminarFoto(){
+    if(!this.formulario.get('foto').value){
+      this.toastr.error("Sin foto adjunta");
+    }else{
+      this.formulario.get('foto').setValue(null);
+    }
+  }
+  //Carga el archivo PDF 
+  public readPdfURL(event, campo): void {
+    console.log(event);
+    let file = event.target.files[0];
+    let extension = file.name.split('.');
+    extension = extension[extension.length-1];
+    if (event.target.files && event.target.files[0] && extension == 'pdf') {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        let foto = {
+          id: this.formulario.value.id,
+          nombre: file.name,
+          datos: reader.result
+        }
+        console.log(foto, campo);
+
+        this.formulario.get(campo).setValue(foto);
+        console.log(foto);
+      }
+      reader.readAsDataURL(file);
+    }else{
+      this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
+    }
+  }
+  //Elimina un pdf ya cargado, se pasa el campo como parametro
+  public eliminarPdf(campo){
+    if(!this.formulario.get(campo).value){
+      this.toastr.success("Sin archivo adjunto");
+    }else{
+      this.formulario.get(campo).setValue(null);
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar

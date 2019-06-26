@@ -95,7 +95,7 @@ export class PersonalService {
     let foto = obj.foto;
     let blob = new Blob([foto.datos], {type : 'image/jpeg'});
     const formData = new FormData(); 
-    formData.append('archivo', blob, foto.nombre);
+    formData.append('foto', blob, foto.nombre);
     obj.bugImagen = null;
     formData.append('personal', JSON.stringify(obj));
 		return fetch(this.url, {
@@ -113,7 +113,7 @@ export class PersonalService {
     let foto = obj.foto;
     let blob = new Blob([foto.datos], {type : 'image/jpeg'});
     const formData = new FormData(); 
-    formData.append('archivo', blob, foto.nombre);
+    formData.append('foto', blob, foto.nombre);
     obj.foto = {};
     obj.foto.id = idFoto;
     formData.append('personal', JSON.stringify(obj));

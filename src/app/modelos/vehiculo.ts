@@ -36,8 +36,8 @@ export class Vehiculo {
             pdfCedulaIdent: new FormControl(),
             pdfVtoRuta: new FormControl(),
             pdfVtoInspTecnica: new FormControl(),
-            pdfTVtoSenasa: new FormControl(),
-            pdfHabBrotmat: new FormControl(),
+            pdfVtoSenasa: new FormControl(),
+            pdfHabBromat: new FormControl(),
 
 
         })

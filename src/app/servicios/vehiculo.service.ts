@@ -88,28 +88,59 @@ export class VehiculoService {
     let vtoInspTecnicaFile = obj.pdfVtoInspTecnica;
     let vtoSenasaFile = obj.pdfVtoSenasa;
     let habBromatFile = obj.pdfHabBromat;
-    
-    let blob = new Blob([tituloFile.datos], {type : 'image/jpeg'});
+    let blob = new Blob([], {type : 'image/jpeg'});
     const formData = new FormData(); 
-    formData.append('titulo', blob, tituloFile.nombre);
-    blob = new Blob([cedulaIdentFile.datos], {type : 'image/jpeg'});
-    formData.append('cedulaIdent', blob, cedulaIdentFile.nombre);
-    blob = new Blob([vtoRutaFile.datos], {type : 'image/jpeg'});
-    formData.append('vtoRuta', blob, vtoRutaFile.nombre);
-    blob = new Blob([vtoInspTecnicaFile.datos], {type : 'image/jpeg'});
-    formData.append('vtoInspTecnica', blob, vtoInspTecnicaFile.nombre);
-    blob = new Blob([vtoSenasaFile.datos], {type : 'image/jpeg'});
-    formData.append('vtoSenasa', blob, vtoSenasaFile.nombre);
-    blob = new Blob([habBromatFile.datos], {type : 'image/jpeg'});
-    formData.append('habBromat', blob, habBromatFile.nombre);
-    obj.tituloFile = null;
-    obj.cedulaIdentFile = null;
-    obj.cedulaIdentFile = null;
-    obj.vtoRutaFile = null;
-    obj.vtoInspTecnicaFile = null;
-    obj.habBromatFile = null;
+    if(tituloFile!=null){
+      blob = new Blob([tituloFile.datos], {type : 'image/jpeg'});
+      formData.append('titulo', blob, tituloFile.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('titulo', blob, '');
+    }
+    if(cedulaIdentFile!=null){
+      blob = new Blob([cedulaIdentFile.datos], {type : 'image/jpeg'});
+      formData.append('cedulaIdent', blob, cedulaIdentFile.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('cedulaIdent', blob, '');
+    }
+    if(vtoRutaFile!=null){
+      blob = new Blob([vtoRutaFile.datos], {type : 'image/jpeg'});
+      formData.append('vtoRuta', blob, vtoRutaFile.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('vtoRuta', blob, '');
+    }
+    if(vtoInspTecnicaFile!=null){
+      blob = new Blob([vtoInspTecnicaFile.datos], {type : 'image/jpeg'});
+      formData.append('vtoInspTecnica', blob, vtoInspTecnicaFile.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('vtoInspTecnica', blob, '');
+    }
+    if(vtoSenasaFile!=null){
+      blob = new Blob([vtoSenasaFile.datos], {type : 'image/jpeg'});
+      formData.append('vtoSenasa', blob, vtoSenasaFile.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('vtoSenasa', blob, '');
+    }
+    if(habBromatFile!=null){
+      blob = new Blob([habBromatFile.datos], {type : 'image/jpeg'});
+      formData.append('habBromat', blob, habBromatFile.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('habBromat', blob, '');
+    }
+    obj.pdfTitulo = null;
+    obj.pdfCedulaIdent = null;
+    obj.pdfVtoRuta = null;
+    obj.pdfVtoInspTecnica = null;
+    obj.pdfVtoSenasa = null;
+    obj.pdfHabBromat = null;
 
     formData.append('vehiculo', JSON.stringify(obj));
+    console.log(obj);
 		return fetch(this.url, {
       method: "POST",
       headers: {
