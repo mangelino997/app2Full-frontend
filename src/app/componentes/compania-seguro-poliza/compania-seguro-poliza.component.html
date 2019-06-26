@@ -3,20 +3,23 @@
     <div class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>POLIZA COMPANIA SEGURO</a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
-    <div class="col-md-6 text-center">
+    <div class="col-md-5 text-center">
       <h5>{{pestaniaActual}} Póliza de Compañia de Seguro</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row justify-content-center">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
-              <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput [formControl]="formulario.get('companiaSeguro')"
-                [matAutocomplete]="autoCompaniaSeguro" autocomplete="off" [readonly]="soloLectura" (blur)="verificarSeleccion(formulario.get('companiaSeguro'))">
+              <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
+                autocomplete="off" [readonly]="soloLectura"
+                (blur)="verificarSeleccion(formulario.get('companiaSeguro'))">
               <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFn.bind(this)"
                 (optionSelected)="listarPorCompaniaSeguroYEmpresa()">
                 <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
@@ -27,11 +30,11 @@
           </div>
         </div>
         <div class="row justify-content-center">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-              <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa" [compareWith]="compareFn"
-                (selectionChange)="listarPorCompaniaSeguroYEmpresa()">
+              <mat-select id="idEmpresa" class="form-control form-control-sm" formControlName="empresa"
+                [compareWith]="compareFn" (selectionChange)="listarPorCompaniaSeguroYEmpresa()">
                 <mat-option *ngFor="let itemEmpresa of empresas" [value]="itemEmpresa">
                   {{itemEmpresa.razonSocial}}
                 </mat-option>
@@ -40,11 +43,11 @@
           </div>
         </div>
         <div class="row justify-content-center" *ngIf="indiceSeleccionado == 3">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idPoliza" class="tamanio-label">Póliza *</label>
-              <mat-select id="idPoliza" class="form-control form-control-sm" [formControl]="poliza" [compareWith]="compareFn"
-                (selectionChange)="establecerPoliza()">
+              <mat-select id="idPoliza" class="form-control form-control-sm" [formControl]="poliza"
+                [compareWith]="compareFn" (selectionChange)="establecerPoliza()">
                 <mat-option *ngFor="let poliza of polizas" [value]="poliza">
                   Numero: <b>{{poliza.numeroPoliza}}</b> - Vto.: <b>{{poliza.vtoPoliza | date: 'dd/MM/yyyy'}}</b>
                 </mat-option>
@@ -53,25 +56,45 @@
           </div>
         </div>
         <div class="row justify-content-center">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idNumeroPoliza" class="tamanio-label">Número de Póliza</label>
-              <input id="idNumeroPoliza" type="text" formControlName="numeroPoliza" 
-                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idNumeroPoliza" type="text" formControlName="numeroPoliza" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
         </div>
-        <div class="row justify-content-center">
-          <div class="col-md-8">
+        <div class="row justify-content-start">
+          <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idVtoPoliza" class="tamanio-label">Vencimiento de Póliza</label>
-              <input id="idVtoPoliza" type="date" formControlName="vtoPoliza" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura">
+              <input id="idVtoPoliza" type="date" formControlName="vtoPoliza" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
+          <div class="col-md-2">
+            <input style="display: none;margin-left: 2%" type="file" (change)="readURL($event)" #fileInput />
+            <button mat-raised-button color="primary" (click)="fileInput.click()">Adjuntar PDF</button>
+          </div>
+          <div class="col-md-1">
+            <input style="display: none;margin-left: 2%" type="file" (change)="readURL($event)" #fileInput />
+            <button mat-button color="primary" (click)="fileInput.click()"><mat-icon>close</mat-icon></button>
+          </div>
+          <div class="col-md-1" *ngIf="indiceSeleccionado == 3">
+            <input style="display: none;margin-left: 2%" type="file" (change)="readURL($event)" #fileInput />
+            <button mat-raised-button color="primary" (click)="fileInput.click()">Ver PDF</button>
+          </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate (click)="accion(indiceSeleccionado)"
-          [disabled]="!formulario.valid">
+        <div class="row justify-content-end">
+          <div class="col-md-4 mensaje-adjunto" *ngIf="formulario.get('pdf').value">
+            <i class="material-icons">check_circle</i><span> Archivo Adjunto! </span>
+          </div>
+          <div class="col-md-4 mensaje-adjunto" *ngIf="!formulario.get('pdf').value">
+            <i class="material-icons">warning</i><span> Seleccione un archivo</span>
+          </div>
+        </div>
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
         <div class="row" *ngIf="show">
@@ -82,16 +105,19 @@
       </form>
     </div>
   </div>
-  <div class="row contenedor justify-content-center" *ngIf="indiceSeleccionado == 5 || indiceSeleccionado == 2 || indiceSeleccionado == 4">
+  <div class="row contenedor justify-content-center"
+    *ngIf="indiceSeleccionado == 5 || indiceSeleccionado == 2 || indiceSeleccionado == 4">
     <div class="col-md-8">
       <div class="row">
         <div class="col-md-4">
           <form [formGroup]="formulario" class="contenedor">
             <div class="form-group has-float-label">
               <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
-              <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput [formControl]="formulario.get('companiaSeguro')"
-                [matAutocomplete]="autoCompaniaSeguro" autocomplete="off">
-              <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="listarPorCompaniaSeguro()">
+              <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
+                autocomplete="off">
+              <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                (optionSelected)="listarPorCompaniaSeguro()">
                 <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
                   {{itemCompaniaSeguro.nombre}}
                 </mat-option>
@@ -124,17 +150,24 @@
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Póliza</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.vtoPoliza | date: 'dd/MM/yyyy'}}</td>
             </ng-container>
+            <ng-container matColumnDef="pdf" sticky>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.pdf.nombre}}</td>
+            </ng-container>
             <ng-container matColumnDef="ver" sticky>
               <th mat-header-cell *matHeaderCellDef [hidden]="indiceSeleccionado != 5">-</th>
-              <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)" [hidden]="indiceSeleccionado != 5"><span class="cursor-color">ver</span></td>
+              <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"
+                [hidden]="indiceSeleccionado != 5"><span class="cursor-color">ver</span></td>
             </ng-container>
             <ng-container matColumnDef="mod" sticky>
               <th mat-header-cell *matHeaderCellDef [hidden]="indiceSeleccionado != 5">-</th>
-              <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)" [hidden]="indiceSeleccionado != 5"><span class="cursor-color">mod</span></td>
+              <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"
+                [hidden]="indiceSeleccionado != 5"><span class="cursor-color">mod</span></td>
             </ng-container>
             <ng-container matColumnDef="eliminar" sticky >
               <th mat-header-cell *matHeaderCellDef [hidden]="indiceSeleccionado != 4">-</th>
-              <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)" [hidden]="indiceSeleccionado != 4"><span class="cursor-color">X</span></td>
+              <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"
+                [hidden]="indiceSeleccionado != 4"><span class="cursor-color">X</span></td>
             </ng-container>
             <tr mat-header-row *matHeaderRowDef="columnas"></tr>
             <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

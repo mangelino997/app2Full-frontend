@@ -69,8 +69,33 @@ export class CompaniaSeguroPolizaService {
     })
   }
   //Agrega un registro
-  public agregar(elemento) {
-    return this.http.post(this.url, elemento, this.options);
+  // public agregar(elemento) {
+  //   return this.http.post(this.url, elemento, this.options);
+  // }
+  //Agrega un registro
+  public agregar(formulario) {
+    let obj = Object.assign({}, formulario);
+    let pdf = obj.pdf;
+    const formData = new FormData(); 
+    console.log(pdf)
+    if(pdf==null) {
+      let blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('archivo', blob, '');
+    } else {
+    let blob = new Blob([pdf.datos], {type : 'image/jpeg'});
+      formData.append('archivo', blob, pdf.nombre);
+    }
+    
+    obj.pdf = null;
+    formData.append('formulario', JSON.stringify(obj));
+		return fetch(this.url, {
+      method: "POST",
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      },
+      body: formData
+    });
+
   }
   //Actualiza un registro
   public actualizar(elemento) {
