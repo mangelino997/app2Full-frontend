@@ -12,7 +12,6 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
-import { EventEmitter } from 'events';
 import { PdfService } from 'src/app/servicios/pdf.service';
 
 @Component({
@@ -22,39 +21,39 @@ import { PdfService } from 'src/app/servicios/pdf.service';
 })
 export class CompaniaSeguroPolizaComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la imagen 
   public imagen: any = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define un formulario para validaciones de campos
-  public formularioPdf:FormGroup;
+  public formularioPdf: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define empresa para las busquedas
-  public empresaBusqueda:FormControl = new FormControl();
+  public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
-  public resultados:Array<any> = [];
+  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda companias seguros
-  public resultadosCompaniasSeguros:Array<any> = [];
+  public resultadosCompaniasSeguros: Array<any> = [];
   //Defien la lista de empresas
-  public empresas:Array<any> = [];
+  public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'empresa', 'numeroPoliza', 'vtoPoliza','pdf', 'ver', 'mod', 'eliminar'];
+  public columnas: string[] = ['id', 'empresa', 'numeroPoliza', 'vtoPoliza', 'pdf', 'ver', 'mod', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -62,12 +61,12 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Defiene la poliza
-  public poliza:FormControl = new FormControl();
+  public poliza: FormControl = new FormControl();
   //Define la lista de polizas de una compania seguro y empresa
-  public polizas:Array<any> = [];
+  public polizas: Array<any> = [];
   //Constructor
   constructor(private servicio: CompaniaSeguroPolizaService,
-     private subopcionPestaniaService: SubopcionPestaniaService,
+    private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService,
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaModelo: CompaniaSeguroPoliza, private loaderService: LoaderService,
@@ -84,19 +83,19 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-      this.loaderService.show();
-      //Obtiene la lista de pestania por rol y subopcion
+    this.loaderService.show();
+    //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-        this.loaderService.hide();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+          this.loaderService.hide();
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Define el formulario y validaciones
     this.formulario = this.companiaSeguroPolizaModelo.formulario;
     //Define el formulario pdf y validaciones
@@ -105,13 +104,13 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(30)]),
       tipo: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-      tamanio: new FormControl('',Validators.required),
+      tamanio: new FormControl('', Validators.required),
       datos: new FormControl('', Validators.required),
       tabla: new FormControl('', [Validators.required, Validators.maxLength(60)])
-  })
+    })
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.companiaSeguroServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosCompaniasSeguros = res;
         })
@@ -122,12 +121,11 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     //Obtiene la lista de empresas
     this.listarEmpresas();
   }
-
-  public readURL(event):void {
-    if(event.target.files && event.target.files[0]) {
+  public readURL(event): void {
+    if (event.target.files && event.target.files[0]) {
       const file = event.target.files[0];
       const reader = new FileReader();
-      reader.onload= e => {
+      reader.onload = e => {
         let foto = {
           id: this.formulario.value.id,
           nombre: file.name,
@@ -148,7 +146,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Vacia la listas de resultados autocompletados
   private vaciarListas() {
-    this.listaCompleta =new MatTableDataSource([]);
+    this.listaCompleta = new MatTableDataSource([]);
     this.resultadosCompaniasSeguros = [];
   }
   //Funcion para establecer los valores de las pestañas
@@ -163,7 +161,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   };
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
-    if(estado) {
+    if (estado) {
       this.formulario.get('empresa').enable();
     } else {
       this.formulario.get('empresa').disable();
@@ -171,7 +169,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.empresaBusqueda.setValue(undefined);
       this.vaciarListas();
@@ -198,7 +196,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
         break;
       case 5:
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idCompaniaSeguro').focus();
         }, 20);
       default:
@@ -236,20 +234,19 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
-        if(res.status == 201) {
+        if (res.status == 201) {
           respuesta.then(data => {
-          this.reestablecerFormulario(data.id);
-          setTimeout(function() {
-            document.getElementById('idCompaniaSeguro').focus();
-          }, 20);
-          this.toastr.success('Registro agregado con éxito');
-        })
-      }
-          this.loaderService.hide();
+            this.reestablecerFormulario(data.id);
+            setTimeout(function () {
+              document.getElementById('idCompaniaSeguro').focus();
+            }, 20);
+            this.toastr.success('Registro agregado con éxito');
+          })
+        }
+        this.loaderService.hide();
       },
       err => {
         var respuesta = err.json();
@@ -264,9 +261,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idCompaniaSeguro').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -287,7 +284,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Obtiene un listado por empresa
   public listarPorEmpresa(elemento) {
     this.resultados = [];
-    if(this.mostrarAutocompletado) {
+    if (this.mostrarAutocompletado) {
       this.servicio.listarPorEmpresa(elemento.id).subscribe(res => {
         this.resultados = res.json();
       })
@@ -303,10 +300,10 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguroYEmpresa() {
-    if(this.indiceSeleccionado != 1) {
+    if (this.indiceSeleccionado != 1) {
       let companiaSeguro = this.formulario.get('companiaSeguro').value;
       let empresa = this.formulario.get('empresa').value;
-      if(companiaSeguro != null && empresa != null) {
+      if (companiaSeguro != null && empresa != null) {
         this.servicio.listarPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
           this.polizas = res.json();
         })
@@ -352,13 +349,13 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -366,7 +363,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Formatea el valor del autocompletado a
   public displayFa(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.razonSocial ? elemento.razonSocial : elemento;
     } else {
       return elemento;
@@ -374,7 +371,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Formatea el valor del autocompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.numeroPoliza ? elemento.numeroPoliza + ' - ' + elemento.companiaSeguro.nombre : elemento;
     } else {
       return elemento;
@@ -383,9 +380,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
@@ -399,22 +396,19 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene el pdf para mostrarlo
   public obtenerPDF() {
-    if(this.mostrarAutocompletado) {
-      console.log(this.formulario.get('pdf').value.id);
+    if (this.mostrarAutocompletado) {
       this.pdfServicio.obtenerPorId(this.formulario.get('pdf').value.id).subscribe(res => {
-        let resultados = res.json();
-        console.log(resultados.datos);
-        const fileURL = URL.createObjectURL(new Blob([resultados], { type: 'application/pdf' }));
-        window.open(fileURL, '_blank');
+        let resultado = res.json();
+        window.open(atob(resultado.datos), '_blank');
       })
     }
   }
-   //Elimina un pdf ya cargado, se pasa el campo como parametro
-   public eliminarPdf(campo){
-    if(!this.formulario.get(campo).value){
+  //Elimina un pdf ya cargado, se pasa el campo como parametro
+  public eliminarPdf(campo) {
+    if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
-    }else{
+    } else {
       this.formulario.get(campo).setValue(null);
     }
   }
-}  
+}
