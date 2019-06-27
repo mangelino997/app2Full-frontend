@@ -10,21 +10,16 @@ export class OrdenVenta {
             id: new FormControl(),
             version: new FormControl(),
             nombre: new FormControl('', Validators.required),
-            cliente: new FormControl('', [Validators.required]),
+            cliente: new FormControl(),
             empresa: new FormControl(),
-            descripcion: new FormControl(),
             vendedor: new FormControl('', Validators.required),
-            fechaAlta: new FormControl(),
-            tipoTarifa: new FormControl('', Validators.required),
             seguro: new FormControl('', Validators.required),
             comisionCR: new FormControl(),
             observaciones: new FormControl(),
-            estaActiva: new FormControl(),
-            activaDesde: new FormControl(),
-            tipoOrdenVenta: new FormControl(),
             esContado: new FormControl(),
-            ordenesVentasEscalas: new FormControl(),
-            ordenesVentasTramos: new FormControl()
+            tipoOrdenVenta: new FormControl(),
+
+            
         })
     }
 }

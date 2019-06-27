@@ -93,9 +93,9 @@ export class PersonalService {
   public agregar(elemento) {
     let obj = Object.assign({}, elemento);
     let foto = obj.foto;
-    let licConducir = obj.licConducir;
-    let libSanidad = obj.libSanidad;
-    let linti = obj.linti;
+    let licConducir = obj.pdfLicConducir;
+    let libSanidad = obj.pdfLibSanidad;
+    let linti = obj.pdfLinti;
     let blob = new Blob([foto.datos], {type : 'image/jpeg'});
     const formData = new FormData(); 
 
@@ -129,9 +129,9 @@ export class PersonalService {
     }
 
     obj.foto = null;
-    obj.licConducir = null;
-    obj.libSanidad = null;
-    obj.linti = null;
+    obj.pdfLicConducir = null;
+    obj.pdfLibSanidad = null;
+    obj.pdfLinti = null;
 
     formData.append('personal', JSON.stringify(obj));
     console.log(obj);
