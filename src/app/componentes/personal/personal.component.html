@@ -613,17 +613,17 @@
                     <div class="col-md-3">
                       <div class="row">
                           <div class="col-md-8">
-                            <input style="display: none;" type="file" (change)="readPdfURL($event, 'licConducir')" #fileInputLicConducir />
+                            <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')" #fileInputLicConducir />
                             <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLicConducir.click()"
                             [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir">
-                              <span *ngIf="!formulario.value.licConducir">Adjuntar </span>
-                              <span *ngIf="formulario.value.licConducir">Archivo Adjunto</span>
-                              <i class="material-icons" *ngIf="formulario.value.licConducir">check_circle</i>
-                              <i class="material-icons" *ngIf="!formulario.value.licConducir">warning</i>
+                              <span *ngIf="!formulario.value.pdfLicConducir">Adjuntar </span>
+                              <span *ngIf="formulario.value.pdfLicConducir">Archivo Adjunto</span>
+                              <i class="material-icons" *ngIf="formulario.value.pdfLicConducir">check_circle</i>
+                              <i class="material-icons" *ngIf="!formulario.value.pdfLicConducir">warning</i>
                             </button>
                           </div>
                           <div class="col-md-2">
-                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('licConducir')" 
+                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLicConducir')" 
                             [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir">
                               <i class="material-icons" >close</i>
                             </button>
@@ -642,17 +642,17 @@
                     <div class="col-md-3">
                       <div class="row">
                           <div class="col-md-8">
-                            <input style="display: none;" type="file" (change)="readPdfURL($event, 'linti')" #fileInputLINTI />
+                            <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLinti')" #fileInputLINTI />
                             <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLINTI.click()"
                             [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti">
-                              <span *ngIf="!formulario.value.linti">Adjuntar </span>
-                              <span *ngIf="formulario.value.linti">Archivo Adjunto</span>
-                              <i class="material-icons" *ngIf="formulario.value.linti">check_circle</i>
-                              <i class="material-icons" *ngIf="!formulario.value.linti">warning</i>
+                              <span *ngIf="!formulario.value.pdfLinti">Adjuntar </span>
+                              <span *ngIf="formulario.value.pdfLinti">Archivo Adjunto</span>
+                              <i class="material-icons" *ngIf="formulario.value.pdfLinti">check_circle</i>
+                              <i class="material-icons" *ngIf="!formulario.value.pdfLinti">warning</i>
                             </button>
                           </div>
                           <div class="col-md-2">
-                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('linti')" 
+                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti')" 
                             [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti">
                               <i class="material-icons" >close</i>
                             </button>
@@ -671,17 +671,17 @@
                     <div class="col-md-3">
                       <div class="row">
                           <div class="col-md-8">
-                            <input style="display: none;" type="file" (change)="readPdfURL($event, 'libSanidad')" #fileInputLibSanidad />
+                            <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')" #fileInputLibSanidad />
                             <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLibSanidad.click()"
                             [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad">
-                              <span *ngIf="!formulario.value.libSanidad">Adjuntar </span>
-                              <span *ngIf="formulario.value.libSanidad">Archivo Adjunto</span>
-                              <i class="material-icons" *ngIf="formulario.value.libSanidad">check_circle</i>
-                              <i class="material-icons" *ngIf="!formulario.value.libSanidad">warning</i>
+                              <span *ngIf="!formulario.value.pdfLibSanidad">Adjuntar </span>
+                              <span *ngIf="formulario.value.pdfLibSanidad">Archivo Adjunto</span>
+                              <i class="material-icons" *ngIf="formulario.value.pdfLibSanidad">check_circle</i>
+                              <i class="material-icons" *ngIf="!formulario.value.pdfLibSanidad">warning</i>
                             </button>
                           </div>
                           <div class="col-md-2">
-                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('libSanidad')" 
+                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad')" 
                             [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad">
                               <i class="material-icons" >close</i>
                             </button>

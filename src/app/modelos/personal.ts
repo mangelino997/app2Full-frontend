@@ -99,9 +99,9 @@ export class Personal {
             observaciones: new FormControl('', Validators.maxLength(200)),
             alias: new FormControl('', Validators.maxLength(100)),
             foto: new FormControl(),
-            licConducir: new FormControl(),
-            libSanidad: new FormControl(),
-            linti: new FormControl()
+            pdfLicConducir: new FormControl(),
+            pdfLibSanidad: new FormControl(),
+            pdfLinti: new FormControl()
 
 
         })
