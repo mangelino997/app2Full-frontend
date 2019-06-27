@@ -140,7 +140,6 @@ export class VehiculoService {
     obj.pdfHabBromat = null;
 
     formData.append('vehiculo', JSON.stringify(obj));
-    console.log(obj);
 		return fetch(this.url, {
       method: "POST",
       headers: {

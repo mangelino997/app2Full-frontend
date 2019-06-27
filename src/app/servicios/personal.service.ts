@@ -93,11 +93,48 @@ export class PersonalService {
   public agregar(elemento) {
     let obj = Object.assign({}, elemento);
     let foto = obj.foto;
+    let licConducir = obj.licConducir;
+    let libSanidad = obj.libSanidad;
+    let linti = obj.linti;
     let blob = new Blob([foto.datos], {type : 'image/jpeg'});
     const formData = new FormData(); 
-    formData.append('foto', blob, foto.nombre);
-    obj.bugImagen = null;
+
+    if(foto!=null){
+      blob = new Blob([foto.datos], {type : 'image/jpeg'});
+      formData.append('foto', blob, foto.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('foto', blob, '');
+    }
+    if(licConducir!=null){
+      blob = new Blob([licConducir.datos], {type : 'image/jpeg'});
+      formData.append('licConducir', blob, licConducir.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('licConducir', blob, '');
+    }
+    if(libSanidad!=null){
+      blob = new Blob([libSanidad.datos], {type : 'image/jpeg'});
+      formData.append('libSanidad', blob, libSanidad.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('libSanidad', blob, '');
+    }
+    if(linti!=null){
+      blob = new Blob([linti.datos], {type : 'image/jpeg'});
+      formData.append('linti', blob, linti.nombre);
+    }else{
+      blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('linti', blob, '');
+    }
+
+    obj.foto = null;
+    obj.licConducir = null;
+    obj.libSanidad = null;
+    obj.linti = null;
+
     formData.append('personal', JSON.stringify(obj));
+    console.log(obj);
 		return fetch(this.url, {
       method: "POST",
       headers: {

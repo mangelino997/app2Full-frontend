@@ -108,6 +108,10 @@ export class PersonalComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Define los botones para los pdf
+  public btnPdfLicConducir: boolean = null;
+  public btnPdfLibSanidad: boolean = null;
+  public btnPdflinti: boolean = null;
   //Constructor
   constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, private personal: Personal,
     private appService: AppService, private appServicio: AppService, private toastr: ToastrService,
@@ -316,14 +320,20 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('vtoCursoCargaPeligrosa').enable();
       this.formulario.get('vtoLINTI').enable();
       this.formulario.get('vtoLibretaSanidad').enable();
-      this.formulario.get('vtoPsicoFisico').enable();      
+      this.formulario.get('vtoPsicoFisico').enable(); 
+      this.btnPdfLibSanidad = true;
+      this.btnPdfLicConducir = true;
+      this.btnPdflinti = true;     
     }else if(esChofer && !esChoferLargaDistancia){
       this.formulario.get('vtoLicenciaConducir').enable();
       this.formulario.get('vtoCurso').disable();
       this.formulario.get('vtoCursoCargaPeligrosa').disable();
       this.formulario.get('vtoLINTI').disable();
       this.formulario.get('vtoLibretaSanidad').disable();
-      this.formulario.get('vtoPsicoFisico').disable();      
+      this.formulario.get('vtoPsicoFisico').disable();  
+      this.btnPdfLibSanidad = false;
+      this.btnPdfLicConducir = true;
+      this.btnPdflinti = false;     
     } 
     else {
       this.formulario.get('vtoLicenciaConducir').disable();
@@ -331,7 +341,10 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('vtoCursoCargaPeligrosa').disable();
       this.formulario.get('vtoLINTI').disable();
       this.formulario.get('vtoLibretaSanidad').disable();
-      this.formulario.get('vtoPsicoFisico').disable();      
+      this.formulario.get('vtoPsicoFisico').disable();     
+      this.btnPdfLibSanidad = false;
+      this.btnPdfLicConducir = false;
+      this.btnPdflinti = false;  
     }
   }
   //Obtiene el listado de sexos
@@ -666,9 +679,16 @@ export class PersonalComponent implements OnInit {
               document.getElementById('idApellido').focus();
             }, 20);
             this.toastr.success(data.mensaje);
-            this.loaderService.hide();
+          },
+          err=>{
+            console.log(err.json());
+          })
+        }else{
+          respuesta.then(err=>{
+            this.toastr.error(err.mensaje);
           })
         }
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err.json());

@@ -98,7 +98,11 @@ export class Personal {
             esAcompReparto: new FormControl('', Validators.required),
             observaciones: new FormControl('', Validators.maxLength(200)),
             alias: new FormControl('', Validators.maxLength(100)),
-            foto: new FormControl()
+            foto: new FormControl(),
+            licConducir: new FormControl(),
+            libSanidad: new FormControl(),
+            linti: new FormControl()
+
 
         })
     }
