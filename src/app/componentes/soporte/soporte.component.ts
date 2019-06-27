@@ -15,6 +15,7 @@ import { SubopcionService } from 'src/app/servicios/subopcion.service';
 import { SubmoduloService } from 'src/app/servicios/submodulo.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Usuario } from 'src/app/modelos/usuario';
+import { BugImagenService } from 'src/app/servicios/bug-imagen.service';
 
 @Component({
   selector: 'app-soporte',
@@ -82,7 +83,7 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
   constructor(private servicio: SoporteService, private modelo: Soporte, private loaderService: LoaderService, private toastr: ToastrService,
     private appComponent: AppComponent, private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService,
     private empresaService: EmpresaService, private moduloService: ModuloService, private subopcionService: SubopcionService,
-    private submoduloService: SubmoduloService ) { 
+    private submoduloService: SubmoduloService, private bugServicio: BugImagenService) { 
       //Defiene autocompletado
       let usuario = this.appService.getUsuario();
       this.autocompletado.valueChanges.subscribe(data => {
@@ -404,4 +405,24 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
       valor.setValue(null);
     }
   } 
+    //Obtiene el pdf para mostrarlo
+    public obtenerBugImagen() {
+      if(this.mostrarAutocompletado) {
+        console.log(this.formulario.get('bugImagen').value.id);
+        this.bugServicio.obtenerPorId(this.formulario.get('bugImagen').value.id).subscribe(res => {
+          let resultados = res.json();
+          console.log(resultados.datos);
+          const fileURL = URL.createObjectURL(new Blob([resultados], { type: 'application/bugImagen' }));
+          window.open(fileURL, '_blank');
+        })
+      }
+    }
+     //Elimina un pdf ya cargado, se pasa el campo como parametro
+   public eliminarBug(){
+    if(!this.formulario.get('bugImagen').value){
+      this.toastr.success("Sin archivo adjunto");
+    }else{
+      this.formulario.get('bugImagen').setValue(null);
+    }
+  }
 }
