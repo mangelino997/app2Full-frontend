@@ -28,6 +28,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { FotoService } from 'src/app/servicios/foto.service';
+import { PdfService } from 'src/app/servicios/pdf.service';
 
 @Component({
   selector: 'app-personal',
@@ -124,7 +125,7 @@ export class PersonalComponent implements OnInit {
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService,
-    private fotoService: FotoService) {
+    private fotoService: FotoService, private pdfServicio: PdfService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -901,6 +902,18 @@ export class PersonalComponent implements OnInit {
       this.toastr.success("Sin archivo adjunto");
     }else{
       this.formulario.get(campo).setValue(null);
+    }
+  }
+  //Obtiene el pdf para mostrarlo
+  public obtenerPDF(campo) {
+    if(this.mostrarAutocompletado) {
+      console.log(this.formulario.get(campo).value.id);
+      this.pdfServicio.obtenerPorId(this.formulario.get(campo).value.id).subscribe(res => {
+        let resultados = res.json();
+        console.log(resultados.datos);
+        const fileURL = URL.createObjectURL(new Blob([resultados], { type: 'application/pdf' }));
+        window.open(fileURL, '_blank');
+      })
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
