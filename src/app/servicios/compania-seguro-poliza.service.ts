@@ -79,10 +79,10 @@ export class CompaniaSeguroPolizaService {
     const formData = new FormData(); 
     console.log(pdf)
     if(pdf==null) {
-      let blob = new Blob([null], {type : 'image/jpeg'});
+      let blob = new Blob([null], {type : 'application/pdf'});
       formData.append('archivo', blob, '');
     } else {
-    let blob = new Blob([pdf.datos], {type : 'image/jpeg'});
+    let blob = new Blob([pdf.datos], {type : 'application/pdf'});
       formData.append('archivo', blob, pdf.nombre);
     }
     

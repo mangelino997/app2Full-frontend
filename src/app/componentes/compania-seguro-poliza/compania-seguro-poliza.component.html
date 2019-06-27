@@ -72,17 +72,29 @@
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-2">
-            <input style="display: none;margin-left: 2%" type="file" (change)="readURL($event)" #fileInput />
-            <button mat-raised-button color="primary" (click)="fileInput.click()">Adjuntar PDF</button>
-          </div>
-          <div class="col-md-1">
-            <input style="display: none;margin-left: 2%" type="file" (change)="readURL($event)" #fileInput />
-            <button mat-button color="primary" (click)="fileInput.click()"><mat-icon>close</mat-icon></button>
-          </div>
+          <div class="col-md-3">
+            <div class="row">
+                <div class="col-md-8">
+                  <input style="display: none;" type="file" (change)="readURL($event)" />
+                  <button id="idBoton" mat-raised-button color="primary" (click)="fileInput"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                    <span *ngIf="!formulario.get('pdf').value">Adjuntar </span>
+                    <span *ngIf="formulario.get('pdf').value">Archivo Adjunto</span>
+                    <i class="material-icons" *ngIf="formulario.get('pdf').value">check_circle</i>
+                    <i class="material-icons" *ngIf="!formulario.get('pdf').value">warning</i>
+                  </button>
+                </div>
+                <div class="col-md-2">
+                  <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdf')" 
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                    <i class="material-icons" >close</i>
+                  </button>
+                </div>
+              </div>
+            </div>
           <div class="col-md-1" *ngIf="indiceSeleccionado == 3">
-            <input style="display: none;margin-left: 2%" type="file" (change)="readURL($event)" #fileInput />
-            <button mat-raised-button color="primary" (click)="fileInput.click()">Ver PDF</button>
+            <input style="display: none;margin-left: 2%" type="file" (change)="obtenerPDF()" />
+            <button mat-raised-button color="primary" (click)="obtenerPDF()">Ver PDF</button>
           </div>
         </div>
         <div class="row justify-content-end">
@@ -93,7 +105,7 @@
             <i class="material-icons">warning</i><span> Seleccione un archivo</span>
           </div>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+        <button id="boton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

@@ -4,7 +4,7 @@ import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { EmpresaService } from '../../servicios/empresa.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CompaniaSeguroPoliza } from 'src/app/modelos/companiaSeguroPoliza';
 import { MatSort, MatTableDataSource } from '@angular/material';
@@ -13,6 +13,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { EventEmitter } from 'events';
+import { PdfService } from 'src/app/servicios/pdf.service';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -38,6 +39,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public pestanias:Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
+  //Define un formulario para validaciones de campos
+  public formularioPdf:FormGroup;
   //Define la lista completa de registros
   public listaCompleta=new MatTableDataSource([]);
   //Define el autocompletado
@@ -67,7 +70,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
      private subopcionPestaniaService: SubopcionPestaniaService,
     private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService,
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
-    private companiaSeguroPolizaModelo: CompaniaSeguroPoliza, private loaderService: LoaderService) {
+    private companiaSeguroPolizaModelo: CompaniaSeguroPoliza, private loaderService: LoaderService,
+    private pdfServicio: PdfService) {
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
@@ -95,6 +99,16 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     );
     //Define el formulario y validaciones
     this.formulario = this.companiaSeguroPolizaModelo.formulario;
+    //Define el formulario pdf y validaciones
+    this.formularioPdf = new FormGroup({
+      id: new FormControl(),
+      version: new FormControl(),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(30)]),
+      tipo: new FormControl('', [Validators.required, Validators.maxLength(20)]),
+      tamanio: new FormControl('',Validators.required),
+      datos: new FormControl('', Validators.required),
+      tabla: new FormControl('', [Validators.required, Validators.maxLength(60)])
+  })
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
       if(typeof data == 'string'&& data.length>2) {
@@ -381,6 +395,26 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
+    }
+  }
+  //Obtiene el pdf para mostrarlo
+  public obtenerPDF() {
+    if(this.mostrarAutocompletado) {
+      console.log(this.formulario.get('pdf').value.id);
+      this.pdfServicio.obtenerPorId(this.formulario.get('pdf').value.id).subscribe(res => {
+        let resultados = res.json();
+        console.log(resultados.datos);
+        const fileURL = URL.createObjectURL(new Blob([resultados], { type: 'application/pdf' }));
+        window.open(fileURL, '_blank');
+      })
+    }
+  }
+   //Elimina un pdf ya cargado, se pasa el campo como parametro
+   public eliminarPdf(campo){
+    if(!this.formulario.get(campo).value){
+      this.toastr.success("Sin archivo adjunto");
+    }else{
+      this.formulario.get(campo).setValue(null);
     }
   }
 }  
