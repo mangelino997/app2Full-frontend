@@ -121,21 +121,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     //Obtiene la lista de empresas
     this.listarEmpresas();
   }
-  public readURL(event): void {
-    if (event.target.files && event.target.files[0]) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = e => {
-        let foto = {
-          id: this.formulario.value.id,
-          nombre: file.name,
-          datos: reader.result
-        }
-        this.formulario.get('pdf').setValue(foto);
-      }
-      reader.readAsDataURL(file);
-    }
-  }
   //Obtiene la lista de empresas
   private listarEmpresas() {
     this.loaderService.show();
@@ -257,18 +242,17 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Actualiza un registro
   private actualizar() {
-    this.loaderService.hide();
+    this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).then(
       res => {
-        var respuesta = res.json();
-        // if (respuesta.status == 200) {
-        //   this.reestablecerFormulario(undefined);
-        //   setTimeout(function () {
-        //     document.getElementById('idCompaniaSeguro').focus();
-        //   }, 20);
-        //   this.toastr.success(respuesta.mensaje);
-        //   this.loaderService.hide();
-        // }
+        if (res.status == 200) {
+          this.reestablecerFormulario(undefined);
+          setTimeout(function () {
+            document.getElementById('idCompaniaSeguro').focus();
+          }, 20);
+          this.toastr.success('Registro actualizado con éxito');
+        }
+        this.loaderService.hide();
       },
       err => {
         var respuesta = err.json();
@@ -314,6 +298,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public establecerPoliza(): void {
     let poliza = this.poliza.value;
     this.formulario.setValue(poliza);
+    this.obtenerPDF();
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -396,12 +381,15 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene el pdf para mostrarlo
   public obtenerPDF() {
-    if (this.mostrarAutocompletado) {
-      this.pdfServicio.obtenerPorId(this.formulario.get('pdf').value.id).subscribe(res => {
-        let resultado = res.json();
-        window.open(atob(resultado.datos), '_blank');
-      })
-    }
+    this.pdfServicio.obtenerPorId(this.formulario.get('pdf').value.id).subscribe(res => {
+      let resultado = res.json();
+      let pdf = {
+        id: resultado.id,
+        nombre: resultado.nombre,
+        datos: atob(resultado.datos)
+      }
+      this.formulario.get('pdf').setValue(pdf);
+    })
   }
   //Elimina un pdf ya cargado, se pasa el campo como parametro
   public eliminarPdf(campo) {
@@ -411,8 +399,25 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       this.formulario.get(campo).setValue(null);
     }
   }
-  //Metodo para la comprobacion de un pdf cargado
-  public establecerPDF() {
-    
+  //Muestra el pdf en una pestana nueva
+  public verPDF() {
+    let datos = this.formulario.get('pdf').value.datos;
+    window.open(datos, '_blank');
+  }
+  //Carga el pdf
+  public readURL(event): void {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        let pdf = {
+          id: this.formulario.get('pdf').value ? this.formulario.get('pdf').value.id : null,
+          nombre: file.name,
+          datos: reader.result
+        }
+        this.formulario.get('pdf').setValue(pdf);
+      }
+      reader.readAsDataURL(file);
+    }
   }
 }

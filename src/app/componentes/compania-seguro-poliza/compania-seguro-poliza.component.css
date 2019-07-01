@@ -1,4 +1,6 @@
-#idBoton {
-    display: inline-block !important;
-    width: 100% !important;
+.btn-height {
+    height: 30px;
+}
+.margin-left-10 {
+    margin-left: 10px;
 }

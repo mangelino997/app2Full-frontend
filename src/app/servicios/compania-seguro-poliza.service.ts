@@ -95,19 +95,18 @@ export class CompaniaSeguroPolizaService {
   public actualizar(elemento) {
     let obj = Object.assign({}, elemento);
     let pdf = obj.pdf;
-    const formData = new FormData(); 
-    console.log(pdf)
-    if(pdf==null) {
-      let blob = new Blob([null], {type : 'application/pdf'});
+    const formData = new FormData();
+    if (pdf == null) {
+      let blob = new Blob([null], { type: 'application/pdf' });
       formData.append('archivo', blob, '');
     } else {
-    let blob = new Blob([pdf.datos], {type : 'application/pdf'});
+      let blob = new Blob([pdf.datos], { type: 'application/pdf' });
       formData.append('archivo', blob, pdf.nombre);
     }
-    obj.pdf = null;
+    obj.pdf.datos = null;
     formData.append('formulario', JSON.stringify(obj));
-		return fetch(this.url, {
-      method: "POST",
+    return fetch(this.url, {
+      method: "PUT",
       headers: {
         'Authorization': localStorage.getItem('token')
       },
