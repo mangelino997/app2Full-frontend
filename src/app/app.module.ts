@@ -249,7 +249,7 @@ import { VendedorComponent } from './componentes/vendedor/vendedor.component';
 import { ZonaComponent } from './componentes/zona/zona.component'; //Probado
 import { ClienteComponent } from './componentes/cliente/cliente.component'; //Probado
 import { ResumenClienteComponent } from './componentes/resumen-cliente/resumen-cliente.component';
-import { OrdenVentaComponent, VerTarifaDialogo, ModificarTarifaDialogo, EliminarTarifaDialogo } from './componentes/orden-venta/orden-venta.component';
+import { OrdenVentaComponent, VerTarifaDialogo } from './componentes/orden-venta/orden-venta.component';
 import { ProveedorComponent } from './componentes/proveedor/proveedor.component'; //Probado
 import { CondicionCompraComponent } from './componentes/condicion-compra/condicion-compra.component';
 import { PersonalComponent } from './componentes/personal/personal.component'; //Probado
@@ -601,8 +601,7 @@ const stompConfig: StompConfig = {
     TalonarioReciboCobradorComponent,
     TalonarioReciboLoteComponent,
     VerTarifaDialogo,
-    ModificarTarifaDialogo,
-    EliminarTarifaDialogo,
+    
   ],
   imports: [
     BrowserModule,
@@ -885,8 +884,6 @@ const stompConfig: StompConfig = {
     PersonalFamiliarComponent,
     PlanCuentaDialogo,
     VerTarifaDialogo,
-    ModificarTarifaDialogo,
-    EliminarTarifaDialogo
   ]
 })
 export class AppModule { }

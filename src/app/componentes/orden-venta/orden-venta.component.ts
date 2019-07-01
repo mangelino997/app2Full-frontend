@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { EmpresaService } from '../../servicios/empresa.service';
@@ -20,7 +20,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { OrdenVentaTarifa } from 'src/app/modelos/ordenVentaTarifa';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 
 @Component({
   selector: 'app-orden-venta',
@@ -70,7 +70,7 @@ export class OrdenVentaComponent implements OnInit {
   //Define la lista de tarifas para el Tipo Tarifa
   public listaTarifas: any = [];
   //Define la lista de Tarifas para un id Orden de Venta 
-  public listaTarifasDeOrdVta: Array<any> = [];
+  public listaTarifasDeOrdVta= new MatTableDataSource([]);
   //Define la lista de tramos para la segunda tabla
   public listaTramos: any = [];
   //Define el form control para las busquedas
@@ -113,6 +113,10 @@ export class OrdenVentaComponent implements OnInit {
   public escalaActual:any;
   //Bandera boolean para determinar si ya se creo una orden venta (cambia el boton "crear orden venta" a "actualizar orden venta")
   public btnActualizarOrdVta: boolean= false;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'listaPrecio', 'precioDesde', 'ver', 'mod', 'eliminar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
@@ -511,7 +515,9 @@ export class OrdenVentaComponent implements OnInit {
     this.ordenVentaTarifaService.listarPorOrdenVenta(this.formulario.value.id).subscribe(
       res=>{
         console.log(res.json());
-        this.listaTarifasDeOrdVta = res.json();
+        // this.listaTarifasDeOrdVta = res.json();
+        this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
+        this.listaTarifasDeOrdVta.sort = this.sort;
       },
       err=>{
         let error= err.json();
@@ -532,10 +538,12 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public verOrdenVentaTarifa(tarifa, indice){
+    console.log(tarifa);
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '1100px',
       data: {
-        tarifa: tarifa
+        tarifa: tarifa.tipoTarifa,
+        ordenVentaTarifa: tarifa.ordenVenta
       },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -545,12 +553,28 @@ export class OrdenVentaComponent implements OnInit {
     });
   }
   //Abre el modal de ver Orden Venta Tarifa
-  public modificarOrdenVentaTarifa(tarifa, indice){
+  public modificarOrdenVentaTarifa(elemento){
+    this.formularioTarifa.patchValue(elemento);
+    console.log(this.formulario.value);
     
   }
   //Abre el modal de ver Orden Venta Tarifa
-  public eliminarOrdenVentaTarifa(tarifa, indice){
-    
+  public eliminarOrdenVentaTarifa(elemento){
+    console.log(elemento);
+    this.loaderService.show();
+    this.ordenVentaTarifaService.eliminar(elemento.id).subscribe(
+      res=>{
+        var respuesta = res.json();
+        this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
+        this.listarOrdenVentaTarifas()
+      },
+      err=>{
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    )
   }
   //Obtiene la mascara de importe
   public mascaraImporte(intLimite, decimalLimite) {
@@ -649,72 +673,310 @@ export class OrdenVentaComponent implements OnInit {
   templateUrl: 'ver-tarifa-dialogo.html',
 })
 export class VerTarifaDialogo {
-  //Define la empresa 
-  public fecha: string;
-  //Define la variable como un booleano
-  public porEscala: boolean;
-  //Define la lista de usuarios activos de la empresa
-  public listaPrecios: Array<any> = [];
+  //Define un formulario para Orden Venta Escala o Tramo
+  public formularioTramo: FormGroup;
+  public formularioEscala: FormGroup;
+  //Define tipo tarifa
+  public tipoTarifa: any = null;
+  //Define la Orden Venta
+  public ordenVentaTarifa: any=null;
+  //Define el campo importe por
+  public importePor: any = null;
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define la lista de Escalas Tarifas
+  public listaEscalasTarifas: Array<any> = [];
+  //Define a escala como un FormControl
+  public escala: FormControl = new FormControl();
+  //Define a tramo como un FormControl
+  public tramo: FormControl = new FormControl();
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'escala', 'precioFijo', 'precioUnitario', 'porcentaje', 'minimo', 'mod', 'eliminar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<VerTarifaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<VerTarifaDialogo>, @Inject(MAT_DIALOG_DATA) public data, private ordenVentaEscala: OrdenVentaEscala,
+  private ordenVentaTramo: OrdenVentaTramo, private ordenVentaEscalaService: OrdenVentaEscalaService, private toastr: ToastrService,
+  private ordenVentaTramoService: OrdenVentaTramoService, private loaderService: LoaderService, private escalaTarifaService: EscalaTarifaService) {
+
+   }
   //Al inicializarse el componente
   ngOnInit() {
-    this.listaPrecios = this.data.listaFiltrada;
-    this.fecha = this.data.fecha;
-    this.porEscala = this.data.porEscala; //controlo que tabla muestro en el modal
+    //Inicializa valores
+    this.tipoTarifa = this.data.tarifa; 
+    this.ordenVentaTarifa = this.data.ordenVentaTarifa;
+    console.log(this.tipoTarifa, this.ordenVentaTarifa);
+    //Inicializa el Formulario 
+    this.formularioEscala = this.ordenVentaEscala.formulario;
+    this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
+    this.formularioTramo = this.ordenVentaTramo.formulario;
+    this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
+    //Obtiene la lista de Escalas 
+    this.listarEscalasTarifas();
+    //Obtiene la lista de registros segun el tipoTarifa
+    this.listar();
+    console.log(this.formularioTramo.value, this.formularioEscala.value);
+  }
+  //Obtiene la lista de Escalas Tarifas
+  private listarEscalasTarifas(){
+    this.escalaTarifaService.listar().subscribe(
+      res=>{
+        this.listaEscalasTarifas = res.json();
+      }
+    )
+  }
+  //Agrega un Registro a la Lista de Tarifa
+  public agregar(){
+    this.loaderService.show();
+    if(this.tipoTarifa == 'porEscala'){
+      this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
+        res=>{
+          var respuesta = res.json();
+          if (respuesta.codigo == 201) {
+            setTimeout(function () {
+              document.getElementById('idEscala').focus();
+            }, 20);
+          this.toastr.success(respuesta.mensaje);
+          this.formularioEscala.reset();
+          this.loaderService.hide();
+          this.listar();
+          }        
+        },
+        err=>{
+          let error= err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    } 
+    if(this.tipoTarifa == 'porTramo'){
+      this.ordenVentaTramoService.agregar(this.formularioTramo.value).subscribe(
+        res=>{
+          var respuesta = res.json();
+          if (respuesta.codigo == 201) {
+            setTimeout(function () {
+              document.getElementById('idEscala').focus();
+            }, 20);
+          this.toastr.success(respuesta.mensaje);
+          this.formularioTramo.reset();
+          this.loaderService.hide();
+          this.listar();
+          }        
+        },
+        err=>{
+          let error= err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    }
+  }
+  //Obtiene la lista de registros segun el tipoTarifa
+  public listar(){
+    this.loaderService.show();
+    if(this.tipoTarifa == 'porEscala'){
+      this.ordenVentaEscalaService.listarPorOrdenVenta(this.ordenVentaTarifa.id).subscribe(
+        res=>{
+          console.log(res.json());
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.loaderService.hide();
+        },
+        err=>{
+          let error= err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    }
+    if(this.tipoTarifa == 'porTramo'){
+      this.ordenVentaTramoService.listarPorOrdenVenta(this.ordenVentaTarifa.id).subscribe(
+        res=>{
+          console.log(res.json());
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.loaderService.hide();
+        },
+        err=>{
+          let error= err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    }
+  }
+  //Elimina un registro segun el tipoTarifa
+  public eliminar(elemento){
+    console.log(elemento.id);
+    this.loaderService.show();
+    if(this.tipoTarifa == 'porEscala'){
+      this.ordenVentaEscalaService.eliminar(elemento.id).subscribe(
+        res=>{
+          var respuesta = res.json();
+          this.toastr.success(respuesta.mensaje);
+          this.formularioEscala.reset();
+          this.loaderService.hide();
+          this.listar();
+        },
+        err=>{
+          let error= err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    } 
+    if(this.tipoTarifa == 'porTramo'){
+      this.ordenVentaTramoService.eliminar(elemento.id).subscribe(
+        res=>{
+          var respuesta = res.json();
+          this.toastr.success(respuesta.mensaje);
+          this.formularioTramo.reset();
+          this.listar();
+          this.loaderService.hide();          
+        },
+        err=>{
+          let error= err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    }
+  }
+  //Modifica los datos del registro seleccionado segun el tipoTarifa
+  public modificar(elemento){
+    this.loaderService.show();
+    if(this.tipoTarifa == 'porEscala'){
+      this.formularioEscala.patchValue(elemento);
+      this.ordenVentaEscalaService.actualizar(elemento.id).subscribe(
+        res=>{
+          let respuesta = res.json();
+          if (respuesta.codigo == 200) {
+            setTimeout(function () {
+              document.getElementById('idTipoOrdenVenta').focus();
+            }, 20);
+          }
+          this.toastr.success(respuesta.mensaje);
+          this.formularioEscala.reset();
+          this.listar();
+          this.loaderService.hide();
+        },
+        err=>{
+          let error= err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    } 
+    if(this.tipoTarifa == 'porTramo'){
+      this.formularioTramo.patchValue(elemento);
+      this.ordenVentaTramoService.actualizar(elemento.id).subscribe(
+        res=>{
+          var respuesta = res.json();
+          if (respuesta.codigo == 200) {
+            setTimeout(function () {
+              document.getElementById('idTipoOrdenVenta').focus();
+            }, 20);
+          }
+          this.toastr.success(respuesta.mensaje);
+          this.formularioTramo.reset();
+          this.listar();
+          this.loaderService.hide();
+        },
+        err=>{
+          let error= err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      )
+    }
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Muestra el valor en los autocompletados
+  public displayFn(elemento) {
+    if (elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
   }
   onNoClick(): void {
     this.dialogRef.close();
     document.getElementById('idActualizacion').focus();
   }
 }
-//Componente: dialogo para modificar tarifa de Orden Venta
-@Component({
-  selector: 'modificar-tarifa-dialogo',
-  templateUrl: 'modificar-tarifa-dialogo.html',
-})
-export class ModificarTarifaDialogo {
-  //Define la empresa 
-  public fecha: string;
-  //Define la variable como un booleano
-  public porEscala: boolean;
-  //Define la lista de usuarios activos de la empresa
-  public listaPrecios: Array<any> = [];
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<ModificarTarifaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  //Al inicializarse el componente
-  ngOnInit() {
-    this.listaPrecios = this.data.listaFiltrada;
-    this.fecha = this.data.fecha;
-    this.porEscala = this.data.porEscala; //controlo que tabla muestro en el modal
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
-    document.getElementById('idActualizacion').focus();
-  }
-}
-//Componente: dialogo para eliminar tarifa de Orden Venta
-@Component({
-  selector: 'eliminar-tarifa-dialogo',
-  templateUrl: 'eliminar-tarifa-dialogo.html',
-})
-export class EliminarTarifaDialogo {
-  //Define la empresa 
-  public fecha: string;
-  //Define la variable como un booleano
-  public porEscala: boolean;
-  //Define la lista de usuarios activos de la empresa
-  public listaPrecios: Array<any> = [];
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<EliminarTarifaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  //Al inicializarse el componente
-  ngOnInit() {
-    this.listaPrecios = this.data.listaFiltrada;
-    this.fecha = this.data.fecha;
-    this.porEscala = this.data.porEscala; //controlo que tabla muestro en el modal
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
-    document.getElementById('idActualizacion').focus();
-  }
-}
+// //Componente: dialogo para modificar tarifa de Orden Venta
+// @Component({
+//   selector: 'modificar-tarifa-dialogo',
+//   templateUrl: 'modificar-tarifa-dialogo.html',
+// })
+// export class ModificarTarifaDialogo {
+//   //Define la empresa 
+//   public fecha: string;
+//   //Define la variable como un booleano
+//   public porEscala: boolean;
+//   //Define la lista de usuarios activos de la empresa
+//   public listaPrecios: Array<any> = [];
+//   //Define las columnas de la tabla
+//   public columnas: string[] = ['id', 'escala', 'precioFijo', 'precioUnitario', 'porcentaje', 'minimo', 'mod', 'eliminar'];
+//   //Define la matSort
+//   @ViewChild(MatSort) sort: MatSort;
+//   //Define el mostrar del circulo de progreso
+//   public show = false;
+//   //Define la subscripcion a loader.service
+//   private subscription: Subscription;
+//   //Constructor
+//   constructor(public dialogRef: MatDialogRef<ModificarTarifaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+//   //Al inicializarse el componente
+//   ngOnInit() {
+//     this.listaPrecios = this.data.listaFiltrada;
+//     this.fecha = this.data.fecha;
+//     this.porEscala = this.data.porEscala; //controlo que tabla muestro en el modal
+//   }
+//   onNoClick(): void {
+//     this.dialogRef.close();
+//     document.getElementById('idActualizacion').focus();
+//   }
+// }
+// //Componente: dialogo para eliminar tarifa de Orden Venta
+// @Component({
+//   selector: 'eliminar-tarifa-dialogo',
+//   templateUrl: 'eliminar-tarifa-dialogo.html',
+// })
+// export class EliminarTarifaDialogo {
+//   //Define la empresa 
+//   public fecha: string;
+//   //Define la variable como un booleano
+//   public porEscala: boolean;
+//   //Define la lista de usuarios activos de la empresa
+//   public listaPrecios: Array<any> = [];
+//   //Define las columnas de la tabla
+//   public columnas: string[] = ['id', 'escala', 'precioFijo', 'precioUnitario', 'porcentaje', 'minimo', 'mod', 'eliminar'];
+//   //Define la matSort
+//   @ViewChild(MatSort) sort: MatSort;
+//   //Define el mostrar del circulo de progreso
+//   public show = false;
+//   //Define la subscripcion a loader.service
+//   private subscription: Subscription;
+//   //Constructor
+//   constructor(public dialogRef: MatDialogRef<EliminarTarifaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+//   //Al inicializarse el componente
+//   ngOnInit() {
+//     this.listaPrecios = this.data.listaFiltrada;
+//     this.fecha = this.data.fecha;
+//     this.porEscala = this.data.porEscala; //controlo que tabla muestro en el modal
+//   }
+//   onNoClick(): void {
+//     this.dialogRef.close();
+//     document.getElementById('idActualizacion').focus();
+//   }
+// }

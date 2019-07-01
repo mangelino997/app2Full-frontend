@@ -1,25 +1,190 @@
-<div class="row justify-content-center contenedor">
-    <div class="col-md-6 text-center">
-            <!-- <h5>Moneda Principal Actual  </h5>
-            <div class="row justify-content-center">
-              <div class="col-md-12">
-                <span>Nombre: {{monedaPrincipal['nombre']}}</span><br>
-                <span>Símbolo: {{monedaPrincipal['simbolo']}}</span><br>
-                <span>Es Principal: Sí</span><br>
+  <div class="row justify-content-center contenedor">
+    <h5>Lista de Precio -  {{tipoTarifa.nombre}} </h5>
+    <div class="col-md-12 text-center">
+        <!--Formulario para Orden Venta Tarifa por Escala-->
+          <div class="row" *ngIf="tipoTarifa.nombre == 'por Escala'"> 
+            <form [formGroup]="formularioEscala">
+            <div class="col-md-12">
+              <div class="row">
+                <div class="col-md-2">
+                  <div class="form-group has-float-label">
+                    <label for="idEscala" class="tamanio-label">Escala *</label>
+                    <mat-select id="idVendedor" class="form-control form-control-sm" [formControl]="escala"
+                      [compareWith]="compareFn">
+                      <mat-option *ngFor="let item of listaEscalasTarifas" [value]="item">
+                        {{item.valor}}
+                      </mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="form-group has-float-label">
+                    <label for="idTipoImportePor" class="tamanio-label">Importe Por *</label>
+                    <mat-select id="idTipoImportePor" [formControl]="importePor" class="form-control form-control-sm"
+                      required> <!--(selectionChange)=""-->
+                      <mat-option [value]="false">Por Empresa</mat-option>
+                      <mat-option [value]="true">Por Cliente</mat-option>
+                    </mat-select>
+                  </div>
+                </div>
+                <div class="col-md-2" >
+                  <div class="form-group has-float-label">
+                    <label for="idPrecioFijo" class="tamanio-label">Precio Fijo *</label>
+                    <input id="idPrecioFijo" type="number" formControlName="importeFijo" autocomplete="off"
+                      class="form-control form-control-sm" [readonly]="soloLectura">
+                  </div>
+                </div>
+                <div class="col-md-2" >
+                  <div class="form-group has-float-label">
+                    <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
+                    <input id="idPrecioUnitario" type="number" formControlName="precioUnitario" autocomplete="off"
+                      class="form-control form-control-sm" [readonly]="soloLectura">
+                  </div>
+                </div>
+                <div class="col-md-2" >
+                  <div class="form-group has-float-label">
+                    <label for="idPorcentaje" class="tamanio-label">% Según Tarifa *</label>
+                    <input id="idPorcentaje" type="number" formControlName="porcentaje" autocomplete="off"
+                      class="form-control form-control-sm" [readonly]="soloLectura">
+                  </div>
+                </div>
+                <div class="col" >
+                  <div class="form-group has-float-label">
+                    <label for="idPreciosDesde" class="tamanio-label">Mínimo *</label>
+                    <input id="idPreciosDesde" type="number" formControlName="minimo" autocomplete="off"
+                      class="form-control form-control-sm" [readonly]="soloLectura">
+                  </div>
+                </div>
+                <div class="col">
+                  <button id="idBoton" mat-raised-button color="primary" (click)="agregar()" >Agregar</button>
+                </div>
               </div>
             </div>
-            <mat-divider></mat-divider>
-            <h5>Moneda a Agregar  </h5>
-            <div class="row justify-content-center">
+          </form>
+          </div>
+          <!--Formulario para Orden Venta Tarifa por Tramo-->
+          <div class="row" *ngIf="tipoTarifa.nombre == 'por Tramo'"> 
+            <form [formGroup]="formularioTramo">
               <div class="col-md-12">
-                <span>Nombre: {{monedaAgregar['nombre']}}</span><br>
-                <span>Símbolo: {{monedaAgregar['simbolo']}}</span><br>
-                <span>Será Principal: Sí</span><br>
+                <div class="row">
+                  <div class="col-md-2">
+                    <div class="form-group has-float-label">
+                      <label for="idEscala" class="tamanio-label">Tramo *</label>
+                      <mat-select id="idVendedor" class="form-control form-control-sm" [formControl]="tramo"
+                        [compareWith]="compareFn">
+                        <mat-option *ngFor="let item of listaEscalasTarifas" [value]="item">
+                          {{item.valor}}
+                        </mat-option>
+                      </mat-select>
+                    </div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="form-group has-float-label">
+                      <label for="idTipoImportePor" class="tamanio-label">Km Pactado *</label>
+                      <mat-select id="idTipoImportePor" formControlName="kmPactado" class="form-control form-control-sm"
+                        required> <!--(selectionChange)=""-->
+                        <mat-option [value]="false">Por Empresa</mat-option>
+                        <mat-option [value]="true">Por Cliente</mat-option>
+                      </mat-select>
+                    </div>
+                  </div>
+                  <div class="col-md-2" >
+                    <div class="form-group has-float-label">
+                      <label for="idPrecioFijo" class="tamanio-label">Importe Fijo Seco *</label>
+                      <input id="idPrecioFijo" type="number" formControlName="importeFijoSeco" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                  <div class="col-md-2" >
+                    <div class="form-group has-float-label">
+                      <label for="idPrecioFijo" class="tamanio-label">Importe Fijo Ref *</label>
+                      <input id="idPrecioFijo" type="number" formControlName="importeFijoRef" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                  <div class="col-md-2" >
+                    <div class="form-group has-float-label">
+                      <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario Seco *</label>
+                      <input id="idPrecioUnitario" type="number" formControlName="precioUnitarioSeco" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                  <div class="col-md-2" >
+                    <div class="form-group has-float-label">
+                      <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario Ref *</label>
+                      <input id="idPrecioUnitario" type="number" formControlName="precioUnitarioRef" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                  <div class="col-md-2" >
+                    <div class="form-group has-float-label">
+                      <label for="idPorcentaje" class="tamanio-label">% Según Tarifa *</label>
+                      <input id="idPorcentaje" type="number" formControlName="porcentaje" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                  <div class="col" >
+                    <div class="form-group has-float-label">
+                      <label for="idPreciosDesde" class="tamanio-label">Mínimo *</label>
+                      <input id="idPreciosDesde" type="number" formControlName="minimo" autocomplete="off"
+                        class="form-control form-control-sm" [readonly]="soloLectura">
+                    </div>
+                  </div>
+                  <div class="col">
+                    <button id="idBoton" mat-raised-button color="primary" (click)="agregar()" >Agregar</button>
+                  </div>
+                </div>
               </div>
+          </form>
+          </div>
+
+          <div class="row">
+            <div class="col-md-10 text-center">
+              <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="id" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                </ng-container>
+                <ng-container matColumnDef="escala" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                </ng-container>
+                <ng-container matColumnDef="preciofijo" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                </ng-container>
+                <ng-container matColumnDef="precioUnitario" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                </ng-container>
+                <ng-container matColumnDef="porcentaje" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>% Según Tarifa</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                </ng-container>
+                <ng-container matColumnDef="minimo" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Mínimo</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                </ng-container>
+                <ng-container matColumnDef="mod" sticky>
+                  <th mat-header-cell *matHeaderCellDef>-</th>
+                  <td mat-cell *matCellDef="let elemento" (click)="modificar(elemento)"><span
+                      class="cursor-color">mod</span></td>
+                </ng-container>
+                <ng-container matColumnDef="eliminar" sticky>
+                  <th mat-header-cell *matHeaderCellDef>-</th>
+                  <td mat-cell *matCellDef="let elemento; let i = index;" (click)="eliminar(elemento)"><span
+                      class="cursor-color">X</span></td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+              </table>
             </div>
-            <mat-divider></mat-divider>
-            <h5>¿Cambiar la Moneda Principal por la nueva Moneda?  </h5>
-            <button id="idBoton" mat-raised-button color="primary" (click)="dialogRef.close(true)" >Si</button>
-            <button id="idBoton" mat-raised-button color="secondary" (click)="dialogRef.close(false)" >No</button> -->
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-md-12 text-center">
+              <button id="idBoton" mat-raised-button color="secondary"  >Cerrar</button> 
+            </div>
+          </div>
     </div>
-</div>
+  </div>
