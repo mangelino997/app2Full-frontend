@@ -620,37 +620,4 @@ export class VehiculoComponent implements OnInit {
   public mascararNumero(limit) {
     return this.appService.mascararEnteros(limit);
   }
-  //Controla que el chasis y el motor (campos alfanumericos) no pasen los 25 caracteres
-  public validarMotorChasis(opcion) {
-    let elemento;
-    let limit = 25;
-    switch (opcion) {
-      case 'numeroDeMotor':
-        elemento = this.formulario.get('numeroMotor').value;
-        break;
-      case 'numeroDeChasis':
-        elemento = this.formulario.get('numeroChasis').value;
-        break;
-    }
-    let respuesta = this.appService.validarMotorChasis(elemento, limit);
-    if (!respuesta && opcion == 'numeroDeMotor') {
-      let err = { codigo: 11010, mensaje: 'El máximo de carácteres es 25!' };
-      document.getElementById('idNumeroMotor').focus();
-      document.getElementById("idNumeroMotor").classList.add('label-error');
-      document.getElementById("idNumeroMotor").classList.add('is-invalid');
-      this.toastr.error(err.mensaje);
-    } else {
-      this.cambioCampo('idNumeroMotor', 'idNumeroMotor');
-    }
-
-    if (!respuesta && opcion == 'numeroDeChasis') {
-      let err = { codigo: 11010, mensaje: 'El máximo de carácteres es 25!' };
-      document.getElementById('idNumeroChasis').focus();
-      document.getElementById("idNumeroChasis").classList.add('label-error');
-      document.getElementById("idNumeroChasis").classList.add('is-invalid');
-      this.toastr.error(err.mensaje);
-    } else {
-      this.cambioCampo('idNumeroChasis', 'idNumeroChasis');
-    }
-  }
 }
