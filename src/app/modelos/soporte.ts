@@ -13,7 +13,8 @@ export class Soporte {
             subopcion: new FormControl('', Validators.required),
             mensaje: new FormControl('', Validators.required),
             usuario: new FormControl(),
-            bugImagen: new FormControl('', Validators.required),
+            fecha: new FormControl(),
+            bugImagen: new FormControl(),
             soporteEstado: new FormControl(),
         });
     }

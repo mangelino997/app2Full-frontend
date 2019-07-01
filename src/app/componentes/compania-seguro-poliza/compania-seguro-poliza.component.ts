@@ -411,4 +411,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       this.formulario.get(campo).setValue(null);
     }
   }
+  //Metodo para la comprobacion de un pdf cargado
+  public establecerPDF() {
+    
+  }
 }

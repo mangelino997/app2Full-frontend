@@ -74,15 +74,20 @@ export class SoporteService {
   public agregar(soporte) {
     let obj = Object.assign({}, soporte);
     let foto = obj.bugImagen;
-    let blob = new Blob([foto.datos], {type : 'image/jpeg'});
     const formData = new FormData(); 
-    formData.append('archivo', blob, foto.nombre);
+    if(foto==null) {
+      let blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('archivo', blob, '');
+    } else {
+    let blob = new Blob([foto.datos], {type :'image/jpeg'});
+      formData.append('archivo', blob, foto.nombre);
+    }
     obj.bugImagen = null;
     formData.append('soporte', JSON.stringify(obj));
 		return fetch(this.url, {
       method: "POST",
       headers: {
-        'Authorization': localStorage.getItem('tokenLesion')
+        'Authorization': localStorage.getItem('token')
       },
       body: formData
     });
@@ -91,18 +96,27 @@ export class SoporteService {
   //Actualiza un registro
   public actualizar(soporte) {
     let obj = Object.assign({}, soporte);
-    let idFoto = soporte.bugImagen.id;
     let foto = obj.bugImagen;
-    let blob = new Blob([foto.datos], {type : 'image/jpeg'});
+    console.log(soporte);
+    let idFoto;
+    if(soporte.bugImagen.id!=0){
+      idFoto = soporte.bugImagen.id;
+    }
     const formData = new FormData(); 
-    formData.append('archivo', blob, foto.nombre);
+    if(foto==null) {
+      let blob = new Blob([null], {type : 'image/jpeg'});
+      formData.append('archivo', blob, '');
+    } else {
+    let blob = new Blob([foto.datos], {type :'image/jpeg'});
+      formData.append('archivo', blob, foto.nombre);
+    }
     obj.bugImagen = {};
     obj.bugImagen.id = idFoto;
     formData.append('soporte', JSON.stringify(obj));
 		return fetch(this.url, {
       method: "PUT",
       headers: {
-        'Authorization': localStorage.getItem('tokenLesion')
+        'Authorization': localStorage.getItem('token')
       },
       body: formData
     });

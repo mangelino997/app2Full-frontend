@@ -38,7 +38,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idEmpresa" class="tamanio-label">Empresa </label>
+              <label for="idEmpresa" class="tamanio-label">Empresa *</label>
               <mat-select class="form-control form-control-sm" formControlName="empresa" [compareWith]="compareFn">
                 <mat-option *ngFor="let item of listaEmpresas" [value]="item">
                   {{item.razonSocial}}
@@ -87,7 +87,6 @@
               <label id="idMensaje" for="idMensaje" class="tamanio-label">Mensaje *</label>
               <textarea rows="3" formControlName="mensaje" maxlength="400" id="idOMensaje"
                 class="form-control form-control-sm" [readOnly]="soloLectura">
-
                 </textarea>
             </div>
           </div>
@@ -96,7 +95,7 @@
           <div class="col-md-3">
             <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
             <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()"
-              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnBugImagen">
+              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 ">
               <span *ngIf="!formulario.get('bugImagen').value">Adjuntar </span>
               <span *ngIf="formulario.get('bugImagen').value">Archivo Adjunto</span>
               <i class="material-icons" *ngIf="formulario.get('bugImagen').value">check_circle</i>
@@ -105,13 +104,13 @@
           </div>
           <div class="col-md-2">
             <button id="idBoton" mat-raised-button color="warn" (click)="eliminarBug()"
-              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnBugImagen">
+              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 ">
               <i class="material-icons">close</i>
             </button>
           </div>
-          <div class="col-md-2" *ngIf="indiceSeleccionado != 1 && indiceSeleccionado != 4 ">
+          <div class="col-md-2">
             <button mat-raised-button color="primary" (click)="obtenerBugImagen()"
-              [disabled]="!formulario.get('bugImagen').value">
+              [disabled]="!formulario.get('bugImagen').value ||indiceSeleccionado == 1">
               <i class="material-icons">visibility</i>
             </button><br>
           </div>
@@ -143,10 +142,7 @@
         </ng-container>
         <ng-container matColumnDef="fecha" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-          <td mat-cell *matCellDef="let elemento">
-            {{elemento.fecha.dayOfMonth}} /
-            {{elemento.fecha.dayOfMonth<'10'? '0'+ elemento.fecha.dayOfMonth: elemento.fecha.dayOfMonth}} /
-            {{elemento.fecha.year}}
+          <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}
           </td>
         </ng-container>
         <ng-container matColumnDef="empresa" sticky>

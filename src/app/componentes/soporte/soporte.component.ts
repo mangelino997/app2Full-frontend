@@ -408,10 +408,8 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     //Obtiene el pdf para mostrarlo
     public obtenerBugImagen() {
       if(this.mostrarAutocompletado) {
-        console.log(this.formulario.get('bugImagen').value.id);
         this.bugServicio.obtenerPorId(this.formulario.get('bugImagen').value.id).subscribe(res => {
           let resultados = res.json();
-          console.log(resultados.datos);
           const fileURL = URL.createObjectURL(new Blob([resultados], { type: 'application/bugImagen' }));
           window.open(fileURL, '_blank');
         })
@@ -422,7 +420,8 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     if(!this.formulario.get('bugImagen').value){
       this.toastr.success("Sin archivo adjunto");
     }else{
-      this.formulario.get('bugImagen').setValue(null);
+      console.log(this.formulario.get('bugImagen').value.nombre);
+      this.formulario.get('bugImagen').value.nombre = "";
     }
   }
 }

@@ -85,7 +85,6 @@ export class CompaniaSeguroPolizaService {
     let blob = new Blob([pdf.datos], {type : 'application/pdf'});
       formData.append('archivo', blob, pdf.nombre);
     }
-    
     obj.pdf = null;
     formData.append('formulario', JSON.stringify(obj));
 		return fetch(this.url, {
@@ -99,7 +98,26 @@ export class CompaniaSeguroPolizaService {
   }
   //Actualiza un registro
   public actualizar(elemento) {
-    return this.http.put(this.url, elemento, this.options);
+    let obj = Object.assign({}, elemento);
+    let pdf = obj.pdf;
+    const formData = new FormData(); 
+    console.log(pdf)
+    if(pdf==null) {
+      let blob = new Blob([null], {type : 'application/pdf'});
+      formData.append('archivo', blob, '');
+    } else {
+    let blob = new Blob([pdf.datos], {type : 'application/pdf'});
+      formData.append('archivo', blob, pdf.nombre);
+    }
+    obj.pdf = null;
+    formData.append('formulario', JSON.stringify(obj));
+		return fetch(this.url, {
+      method: "POST",
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      },
+      body: formData
+    });
   }
   //Elimina un registro
   public eliminar(id) {

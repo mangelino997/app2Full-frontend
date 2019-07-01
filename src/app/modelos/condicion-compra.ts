@@ -10,7 +10,8 @@ export class CondicionCompra {
             id: new FormControl(),
             version: new FormControl(),
             nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-            esContado: new FormControl('', Validators.required)
+            esContado: new FormControl('', Validators.required),
+            cuotas: new FormControl('', Validators.required)
         })
     }
 }

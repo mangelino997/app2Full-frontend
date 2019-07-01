@@ -27,6 +27,8 @@ export class CondicionCompraComponent implements OnInit {
   public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
   public soloLectura: boolean = false;
+  //Define si el campo es de solo lectura
+  public soloLecturaCuota: boolean = null;
   //Define si mostrar el boton
   public mostrarBoton: boolean = null;
   //Define la lista de pestanias
@@ -46,7 +48,7 @@ export class CondicionCompraComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'esContado', 'ver', 'mod'];
+  public columnas:string[] = ['id', 'nombre', 'esContado','cuotas', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -295,5 +297,20 @@ export class CondicionCompraComponent implements OnInit {
     } else {
       return elemento;
     }
+  }
+  public mascararEnteros(cant) {
+  return this.appService.mascararEnteros(cant);
+  }
+  public cambioEsContado() {
+    let esContado = this.formulario.get('esContado').value;
+    console.log(esContado);
+    if(!this.formulario.get('esContado').value) {
+      this.soloLecturaCuota=false;
+    }
+    if(this.formulario.get('esContado').value){
+      this.soloLecturaCuota=true;
+      this.formulario.get('cuotas').setValue(0);
+    }
+    console.log(this.soloLecturaCuota);
   }
 }
