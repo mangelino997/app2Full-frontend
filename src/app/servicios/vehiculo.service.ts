@@ -8,11 +8,11 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class VehiculoService {
   //Define la ruta al servicio web
-  private ruta:string = "/vehiculo";
+  private ruta: string = "/vehiculo";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la lista obtenida por nombre
@@ -22,7 +22,7 @@ export class VehiculoService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -33,7 +33,7 @@ export class VehiculoService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -88,48 +88,48 @@ export class VehiculoService {
     let vtoInspTecnicaFile = obj.pdfVtoInspTecnica;
     let vtoSenasaFile = obj.pdfVtoSenasa;
     let habBromatFile = obj.pdfHabBromat;
-    let blob = new Blob([], {type : 'image/jpeg'});
-    const formData = new FormData(); 
-    if(tituloFile!=null){
-      blob = new Blob([tituloFile.datos], {type : 'image/jpeg'});
+    let blob = new Blob([], { type: 'application/pdf' });
+    const formData = new FormData();
+    if (tituloFile != null) {
+      blob = new Blob([tituloFile.datos], { type: 'application/pdf' });
       formData.append('titulo', blob, tituloFile.nombre);
-    }else{
-      blob = new Blob([null], {type : 'image/jpeg'});
+    } else {
+      blob = new Blob([null], { type: 'application/pdf' });
       formData.append('titulo', blob, '');
     }
-    if(cedulaIdentFile!=null){
-      blob = new Blob([cedulaIdentFile.datos], {type : 'image/jpeg'});
+    if (cedulaIdentFile != null) {
+      blob = new Blob([cedulaIdentFile.datos], { type: 'application/pdf' });
       formData.append('cedulaIdent', blob, cedulaIdentFile.nombre);
-    }else{
-      blob = new Blob([null], {type : 'image/jpeg'});
+    } else {
+      blob = new Blob([null], { type: 'application/pdf' });
       formData.append('cedulaIdent', blob, '');
     }
-    if(vtoRutaFile!=null){
-      blob = new Blob([vtoRutaFile.datos], {type : 'image/jpeg'});
+    if (vtoRutaFile != null) {
+      blob = new Blob([vtoRutaFile.datos], { type: 'application/pdf' });
       formData.append('vtoRuta', blob, vtoRutaFile.nombre);
-    }else{
-      blob = new Blob([null], {type : 'image/jpeg'});
+    } else {
+      blob = new Blob([null], { type: 'application/pdf' });
       formData.append('vtoRuta', blob, '');
     }
-    if(vtoInspTecnicaFile!=null){
-      blob = new Blob([vtoInspTecnicaFile.datos], {type : 'image/jpeg'});
+    if (vtoInspTecnicaFile != null) {
+      blob = new Blob([vtoInspTecnicaFile.datos], { type: 'application/pdf' });
       formData.append('vtoInspTecnica', blob, vtoInspTecnicaFile.nombre);
-    }else{
-      blob = new Blob([null], {type : 'image/jpeg'});
+    } else {
+      blob = new Blob([null], { type: 'application/pdf' });
       formData.append('vtoInspTecnica', blob, '');
     }
-    if(vtoSenasaFile!=null){
-      blob = new Blob([vtoSenasaFile.datos], {type : 'image/jpeg'});
+    if (vtoSenasaFile != null) {
+      blob = new Blob([vtoSenasaFile.datos], { type: 'application/pdf' });
       formData.append('vtoSenasa', blob, vtoSenasaFile.nombre);
-    }else{
-      blob = new Blob([null], {type : 'image/jpeg'});
+    } else {
+      blob = new Blob([null], { type: 'application/pdf' });
       formData.append('vtoSenasa', blob, '');
     }
-    if(habBromatFile!=null){
-      blob = new Blob([habBromatFile.datos], {type : 'image/jpeg'});
+    if (habBromatFile != null) {
+      blob = new Blob([habBromatFile.datos], { type: 'application/pdf' });
       formData.append('habBromat', blob, habBromatFile.nombre);
-    }else{
-      blob = new Blob([null], {type : 'image/jpeg'});
+    } else {
+      blob = new Blob([null], { type: 'application/pdf' });
       formData.append('habBromat', blob, '');
     }
     obj.pdfTitulo = null;
@@ -138,12 +138,11 @@ export class VehiculoService {
     obj.pdfVtoInspTecnica = null;
     obj.pdfVtoSenasa = null;
     obj.pdfHabBromat = null;
-
     formData.append('vehiculo', JSON.stringify(obj));
-		return fetch(this.url, {
+    return fetch(this.url, {
       method: "POST",
       headers: {
-        'Authorization': localStorage.getItem('tokenLesion')
+        'Authorization': localStorage.getItem('token')
       },
       body: formData
     });
@@ -153,13 +152,13 @@ export class VehiculoService {
     let obj = Object.assign({}, elemento);
     let idFoto = elemento.bugImagen.id;
     let foto = obj.bugImagen;
-    let blob = new Blob([foto.datos], {type : 'image/jpeg'});
-    const formData = new FormData(); 
+    let blob = new Blob([foto.datos], { type: 'image/jpeg' });
+    const formData = new FormData();
     formData.append('archivo', blob, foto.nombre);
     obj.bugImagen = {};
     obj.bugImagen.id = idFoto;
     formData.append('vehiculo', JSON.stringify(obj));
-		return fetch(this.url, {
+    return fetch(this.url, {
       method: "PUT",
       headers: {
         'Authorization': localStorage.getItem('tokenLesion')
@@ -171,5 +170,4 @@ export class VehiculoService {
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);
   }
-  
 }

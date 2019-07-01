@@ -8,11 +8,11 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class CompaniaSeguroPolizaService {
   //Define la ruta al servicio web
-  private ruta:string = "/companiaseguropoliza";
+  private ruta: string = "/companiaseguropoliza";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la subcripcion
@@ -20,7 +20,7 @@ export class CompaniaSeguroPolizaService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -31,7 +31,7 @@ export class CompaniaSeguroPolizaService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -69,25 +69,20 @@ export class CompaniaSeguroPolizaService {
     })
   }
   //Agrega un registro
-  // public agregar(elemento) {
-  //   return this.http.post(this.url, elemento, this.options);
-  // }
-  //Agrega un registro
   public agregar(formulario) {
     let obj = Object.assign({}, formulario);
     let pdf = obj.pdf;
-    const formData = new FormData(); 
-    console.log(pdf)
-    if(pdf==null) {
-      let blob = new Blob([null], {type : 'application/pdf'});
+    const formData = new FormData();
+    if (pdf == null) {
+      let blob = new Blob([null], { type: 'application/pdf' });
       formData.append('archivo', blob, '');
     } else {
-    let blob = new Blob([pdf.datos], {type : 'application/pdf'});
+      let blob = new Blob([pdf.datos], { type: 'application/pdf' });
       formData.append('archivo', blob, pdf.nombre);
     }
     obj.pdf = null;
     formData.append('formulario', JSON.stringify(obj));
-		return fetch(this.url, {
+    return fetch(this.url, {
       method: "POST",
       headers: {
         'Authorization': localStorage.getItem('token')

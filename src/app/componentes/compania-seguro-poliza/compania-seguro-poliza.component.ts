@@ -258,17 +258,17 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.hide();
-    this.servicio.actualizar(this.formulario.value).subscribe(
+    this.servicio.actualizar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
-        if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idCompaniaSeguro').focus();
-          }, 20);
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
-        }
+        // if (respuesta.status == 200) {
+        //   this.reestablecerFormulario(undefined);
+        //   setTimeout(function () {
+        //     document.getElementById('idCompaniaSeguro').focus();
+        //   }, 20);
+        //   this.toastr.success(respuesta.mensaje);
+        //   this.loaderService.hide();
+        // }
       },
       err => {
         var respuesta = err.json();

@@ -288,14 +288,11 @@ export class PersonalComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.fotoService.obtenerPorId(1).subscribe(
-      res=>{
-        let respuesta= res.json();
-        console.log(respuesta);
-        this.formulario.get('foto').setValue(respuesta);
-        this.formulario.value.foto.datos = atob(this.formulario.value.foto.datos);
-      }
-    );
+    this.fotoService.obtenerPorId(1).subscribe(res => {
+      let respuesta = res.json();
+      this.formulario.get('foto').setValue(respuesta);
+      this.formulario.value.foto.datos = atob(this.formulario.value.foto.datos);
+    });
     this.formulario.get('esAcompReparto').setValue(false);
     this.formulario.get('recibeAdelanto').setValue(false);
     this.formulario.get('recibePrestamo').setValue(false);
@@ -309,43 +306,42 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('vtoCursoCargaPeligrosa').disable();
     this.formulario.get('vtoLINTI').disable();
     this.formulario.get('vtoLibretaSanidad').disable();
-    console.log(this.formulario.value);
   }
   //Al cambiar elemento de select esChofer
   public cambioEsChofer(): void {
     let esChofer = this.formulario.get('esChofer').value;
     let esChoferLargaDistancia = this.formulario.get('esChoferLargaDistancia').value;
-    if(esChofer && esChoferLargaDistancia) {
+    if (esChofer && esChoferLargaDistancia) {
       this.formulario.get('vtoLicenciaConducir').enable();
       this.formulario.get('vtoCurso').enable();
       this.formulario.get('vtoCursoCargaPeligrosa').enable();
       this.formulario.get('vtoLINTI').enable();
       this.formulario.get('vtoLibretaSanidad').enable();
-      this.formulario.get('vtoPsicoFisico').enable(); 
+      this.formulario.get('vtoPsicoFisico').enable();
       this.btnPdfLibSanidad = true;
       this.btnPdfLicConducir = true;
-      this.btnPdflinti = true;     
-    }else if(esChofer && !esChoferLargaDistancia){
+      this.btnPdflinti = true;
+    } else if (esChofer && !esChoferLargaDistancia) {
       this.formulario.get('vtoLicenciaConducir').enable();
       this.formulario.get('vtoCurso').disable();
       this.formulario.get('vtoCursoCargaPeligrosa').disable();
       this.formulario.get('vtoLINTI').disable();
       this.formulario.get('vtoLibretaSanidad').disable();
-      this.formulario.get('vtoPsicoFisico').disable();  
+      this.formulario.get('vtoPsicoFisico').disable();
       this.btnPdfLibSanidad = false;
       this.btnPdfLicConducir = true;
-      this.btnPdflinti = false;     
-    } 
+      this.btnPdflinti = false;
+    }
     else {
       this.formulario.get('vtoLicenciaConducir').disable();
       this.formulario.get('vtoCurso').disable();
       this.formulario.get('vtoCursoCargaPeligrosa').disable();
       this.formulario.get('vtoLINTI').disable();
       this.formulario.get('vtoLibretaSanidad').disable();
-      this.formulario.get('vtoPsicoFisico').disable();     
+      this.formulario.get('vtoPsicoFisico').disable();
       this.btnPdfLibSanidad = false;
       this.btnPdfLicConducir = false;
-      this.btnPdflinti = false;  
+      this.btnPdflinti = false;
     }
   }
   //Obtiene el listado de sexos
@@ -458,9 +454,9 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('afipLocalidad').enable();
       this.formulario.get('obraSocial').enable();
 
-      if(opcionPestania==3){
+      if (opcionPestania == 3) {
         this.formulario.get('fechaFin').enable();
-      }else{
+      } else {
         this.formulario.get('fechaFin').disable();
       }
     } else {
@@ -681,11 +677,11 @@ export class PersonalComponent implements OnInit {
             }, 20);
             this.toastr.success(data.mensaje);
           },
-          err=>{
-            console.log(err.json());
-          })
-        }else{
-          respuesta.then(err=>{
+            err => {
+              console.log(err.json());
+            })
+        } else {
+          respuesta.then(err => {
             this.toastr.error(err.mensaje);
           })
         }
@@ -730,7 +726,7 @@ export class PersonalComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -771,7 +767,7 @@ export class PersonalComponent implements OnInit {
         document.getElementById("idTelefonoMovilEmpresa").classList.add('is-invalid');
         document.getElementById("idTelefonoMovilEmpresa").focus();
       }
-    } catch(e) {}
+    } catch (e) { }
     this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels
@@ -864,10 +860,10 @@ export class PersonalComponent implements OnInit {
     }
   }
   //Elimina la foto del personal
-  public eliminarFoto(){
-    if(!this.formulario.get('foto').value){
+  public eliminarFoto() {
+    if (!this.formulario.get('foto').value) {
       this.toastr.error("Sin foto adjunta");
-    }else{
+    } else {
       this.formulario.get('foto').setValue(null);
     }
   }
@@ -876,7 +872,7 @@ export class PersonalComponent implements OnInit {
     console.log(event);
     let file = event.target.files[0];
     let extension = file.name.split('.');
-    extension = extension[extension.length-1];
+    extension = extension[extension.length - 1];
     if (event.target.files && event.target.files[0] && extension == 'pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
@@ -892,21 +888,21 @@ export class PersonalComponent implements OnInit {
         console.log(foto);
       }
       reader.readAsDataURL(file);
-    }else{
+    } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
   }
   //Elimina un pdf ya cargado, se pasa el campo como parametro
-  public eliminarPdf(campo){
-    if(!this.formulario.get(campo).value){
+  public eliminarPdf(campo) {
+    if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
-    }else{
+    } else {
       this.formulario.get(campo).setValue(null);
     }
   }
   //Obtiene el pdf para mostrarlo
   public obtenerPDF(campo) {
-    if(this.mostrarAutocompletado) {
+    if (this.mostrarAutocompletado) {
       console.log(this.formulario.get(campo).value.id);
       this.pdfServicio.obtenerPorId(this.formulario.get(campo).value.id).subscribe(res => {
         let resultados = res.json();

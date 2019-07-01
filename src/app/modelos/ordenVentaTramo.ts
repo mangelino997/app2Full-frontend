@@ -9,7 +9,7 @@ export class OrdenVentaTramo {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            ordenVenta: new FormControl(),
+            ordenVentaTarifa: new FormControl(),
             tramo: new FormControl(),
             kmTramo: new FormControl(),
             kmPactado: new FormControl(),
@@ -17,7 +17,9 @@ export class OrdenVentaTramo {
             importeFijoRef: new FormControl(),
             precioUnitarioSeco: new FormControl(),
             precioUnitarioRef: new FormControl(),
-            preciosDesde: new FormControl()
+            preciosDesde: new FormControl(),
+
+            
         })
     }
 }

@@ -9,7 +9,7 @@ export class OrdenVentaEscala {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            ordenVenta: new FormControl(),
+            ordenVentaTarifa: new FormControl(),
             escalaTarifa: new FormControl('', Validators.required),
             importeFijo: new FormControl('', Validators.required),
             precioUnitario: new FormControl('', Validators.required),
