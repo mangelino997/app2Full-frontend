@@ -80,6 +80,8 @@ export class VehiculoComponent implements OnInit {
   public companiaSeguro: FormControl = new FormControl();
   //Define si el tipo de vehiculo seleccionado es remolque
   public esVehiculoRemolque: boolean = false;
+  //Define si el tipo vehiculo es vtoSanidadAlimenticia
+  public esVtoSanidadAlimenticia: boolean = false;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -373,6 +375,7 @@ export class VehiculoComponent implements OnInit {
     let tipoVehiculo = this.tipoVehiculo.value;
     let marcaVehiculo = this.marcaVehiculo.value;
     this.esVehiculoRemolque = tipoVehiculo.esRemolque ? true : false;
+    this.esVtoSanidadAlimenticia = tipoVehiculo.vtoSanidadAlimenticia ? true : false;
     if (tipoVehiculo != null && marcaVehiculo != null) {
       this.configuracionVehiculoServicio.listarPorTipoVehiculoMarcaVehiculo(tipoVehiculo.id, marcaVehiculo.id)
         .subscribe(
@@ -391,7 +394,6 @@ export class VehiculoComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
@@ -403,18 +405,17 @@ export class VehiculoComponent implements OnInit {
             }, 20);
             this.toastr.success(data.mensaje);
           },
-          err=>{
-            console.log(err.json());
-          })
-        }else{
-          respuesta.then(err=>{
+            err => {
+              console.log(err.json());
+            })
+        } else {
+          respuesta.then(err => {
             this.toastr.error(err.mensaje);
           })
         }
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         var respuesta = err.json();
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
@@ -520,10 +521,9 @@ export class VehiculoComponent implements OnInit {
   }
   //Carga la imagen del paciente
   public readURL(event, campo): void {
-    console.log(event);
     let file = event.target.files[0];
     let extension = file.name.split('.');
-    extension = extension[extension.length-1];
+    extension = extension[extension.length - 1];
     if (event.target.files && event.target.files[0] && extension == 'pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
@@ -533,21 +533,18 @@ export class VehiculoComponent implements OnInit {
           nombre: file.name,
           datos: reader.result
         }
-        console.log(foto, campo);
-
         this.formulario.get(campo).setValue(foto);
-        console.log(foto);
       }
       reader.readAsDataURL(file);
-    }else{
+    } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
   }
   //Elimina un pdf ya cargado, se pasa el campo como parametro
-  public eliminarPdf(campo){
-    if(!this.formulario.get(campo).value){
+  public eliminarPdf(campo) {
+    if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
-    }else{
+    } else {
       this.formulario.get(campo).setValue(null);
     }
   }
@@ -624,11 +621,10 @@ export class VehiculoComponent implements OnInit {
     return this.appService.mascararEnteros(limit);
   }
   //Controla que el chasis y el motor (campos alfanumericos) no pasen los 25 caracteres
-  public validarMotorChasis(opcion){
+  public validarMotorChasis(opcion) {
     let elemento;
     let limit = 25;
-    console.log(opcion);
-    switch(opcion){
+    switch (opcion) {
       case 'numeroDeMotor':
         elemento = this.formulario.get('numeroMotor').value;
         break;
@@ -637,23 +633,23 @@ export class VehiculoComponent implements OnInit {
         break;
     }
     let respuesta = this.appService.validarMotorChasis(elemento, limit);
-    if(!respuesta && opcion== 'numeroDeMotor') {
-      let err = {codigo: 11010, mensaje: 'El máximo de carácteres es 25!'};
+    if (!respuesta && opcion == 'numeroDeMotor') {
+      let err = { codigo: 11010, mensaje: 'El máximo de carácteres es 25!' };
       document.getElementById('idNumeroMotor').focus();
       document.getElementById("idNumeroMotor").classList.add('label-error');
       document.getElementById("idNumeroMotor").classList.add('is-invalid');
       this.toastr.error(err.mensaje);
-    }else{
+    } else {
       this.cambioCampo('idNumeroMotor', 'idNumeroMotor');
     }
 
-    if(!respuesta && opcion== 'numeroDeChasis') {
-      let err = {codigo: 11010, mensaje: 'El máximo de carácteres es 25!'};
+    if (!respuesta && opcion == 'numeroDeChasis') {
+      let err = { codigo: 11010, mensaje: 'El máximo de carácteres es 25!' };
       document.getElementById('idNumeroChasis').focus();
       document.getElementById("idNumeroChasis").classList.add('label-error');
       document.getElementById("idNumeroChasis").classList.add('is-invalid');
       this.toastr.error(err.mensaje);
-    }else{
+    } else {
       this.cambioCampo('idNumeroChasis', 'idNumeroChasis');
     }
   }

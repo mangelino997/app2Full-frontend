@@ -31,22 +31,22 @@
                   <h5>{{pestaniaActual}} Personal</h5>
                 </div>
                 <div class="contenedor-top-titulo">
-                    <div class="row">
-                        <div class="col-md-6">
-                          <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                            <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
-                            <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text"
-                              matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-                              (blur)="verificarSeleccion(autocompletado)">
-                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
-                              (optionSelected)="cambioAutocompletado()">
-                              <mat-option *ngFor="let item of resultados" [value]="item">
-                                {{item.alias}}
-                              </mat-option>
-                            </mat-autocomplete>
-                          </div>
-                        </div>
+                  <div class="row">
+                    <div class="col-md-6">
+                      <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+                        <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
+                        <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text"
+                          matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+                          (blur)="verificarSeleccion(autocompletado)">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
+                          (optionSelected)="cambioAutocompletado()">
+                          <mat-option *ngFor="let item of resultados" [value]="item">
+                            {{item.alias}}
+                          </mat-option>
+                        </mat-autocomplete>
                       </div>
+                    </div>
+                  </div>
                   <div class="row">
                     <div class="col-md-1">
                       <button mat-mini-fab color="primary" (click)="sidenav.toggle()">
@@ -121,8 +121,8 @@
                         <div class="col-md-4">
                           <div class="form-group has-float-label">
                             <label for="idFechaNacimiento" class="tamanio-label">Fecha de Nacimiento *</label>
-                            <input id="idFechaNacimiento" type="date" formControlName="fechaNacimiento" autocomplete="off"
-                              class="form-control form-control-sm" [readonly]="soloLectura">
+                            <input id="idFechaNacimiento" type="date" formControlName="fechaNacimiento"
+                              autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                           </div>
                         </div>
                         <div class="col-md-4">
@@ -146,8 +146,9 @@
                         <div class="col-md-4">
                           <div class="form-group has-float-label">
                             <label for="idNacionalidad" class="tamanio-label">Nacionalidad</label>
-                            <input id="idNacionalidad" type="text" autocomplete="off" [formControl]="nacionalidadNacimiento"
-                              class="form-control form-control-sm" [readonly]="true">
+                            <input id="idNacionalidad" type="text" autocomplete="off"
+                              [formControl]="nacionalidadNacimiento" class="form-control form-control-sm"
+                              [readonly]="true">
                           </div>
                         </div>
                       </div>
@@ -189,16 +190,18 @@
                         </div>
                         <div class="col-md-4">
                           <div class="form-group has-float-label">
-                            <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento *</label>
-                            <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
-                              class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                              (blur)="validarDocumento()"
+                            <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de
+                              Documento *</label>
+                            <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento"
+                              autocomplete="off" class="form-control form-control-sm number-right"
+                              [readonly]="soloLectura" (blur)="validarDocumento()"
                               (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
                           </div>
                         </div>
                         <div class="col-md-4">
                           <div class="form-group has-float-label">
-                            <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
+                            <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono
+                              Fijo</label>
                             <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
                               class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
                           </div>
@@ -207,7 +210,8 @@
                       <div class="row">
                         <div class="col-md-4">
                           <div class="form-group has-float-label">
-                            <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil Propio</label>
+                            <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil
+                              Propio</label>
                             <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
                               class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
                           </div>
@@ -217,14 +221,15 @@
                     <div class="col-md-3 text-center">
                       <div class="row">
                         <div class="col-md-12">
-                          <img [src]="formulario.get('foto').value ? formulario.get('foto').value.datos : ''" width="100%" height="90%" />
+                          <img [src]="formulario.get('foto').value ? formulario.get('foto').value.datos : ''"
+                            width="100%" height="90%" />
                         </div>
                       </div>
                       <div class="row">
                         <div class="col-md-8">
                           <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
-                          <button id="idBoton"  mat-raised-button color="primary" (click)="fileInput.click()"
-                          [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                          <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()"
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
                             <span *ngIf="!formulario.value.foto">Subir Foto </span>
                             <span *ngIf="formulario.value.foto">Foto Adjunta</span>
                             <i class="material-icons" *ngIf="formulario.value.foto">check_circle</i>
@@ -232,13 +237,13 @@
                           </button>
                         </div>
                         <div class="col-md-2">
-                          <button id="idBoton" mat-raised-button color="warn" (click)="eliminarFoto()" 
-                          [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                            <i class="material-icons" >close</i>
+                          <button id="idBoton" mat-raised-button color="warn" (click)="eliminarFoto()"
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                            <i class="material-icons">close</i>
                           </button>
                         </div>
                       </div>
-                      
+
                     </div>
                   </div>
                 </div>
@@ -301,11 +306,11 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCategoria" class="tamanio-label">Categoría *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('categoria')" id="idAutocompletado"
-                             [compareWith]="compareFn" >
-                            <mat-option *ngFor="let itemCategoria of resultadosCategorias" [value]="itemCategoria">
-                              {{itemCategoria.nombre}}
-                            </mat-option>
+                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('categoria')"
+                          id="idAutocompletado" [compareWith]="compareFn">
+                          <mat-option *ngFor="let itemCategoria of resultadosCategorias" [value]="itemCategoria">
+                            {{itemCategoria.nombre}}
+                          </mat-option>
                         </mat-select>
                       </div>
                     </div>
@@ -348,11 +353,13 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idSeguridadSocial" class="tamanio-label">Organismo Previsional *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('seguridadSocial')" id="idAutocompletado"
-                             [compareWith]="compareFn" >
-                            <mat-option *ngFor="let itemSeguridadSocial of resultadosSeguridadesSociales" [value]="itemSeguridadSocial">
-                              {{itemSeguridadSocial.nombre}}
-                            </mat-option>
+                        <mat-select class="form-control form-control-sm"
+                          [formControl]="formulario.get('seguridadSocial')" id="idAutocompletado"
+                          [compareWith]="compareFn">
+                          <mat-option *ngFor="let itemSeguridadSocial of resultadosSeguridadesSociales"
+                            [value]="itemSeguridadSocial">
+                            {{itemSeguridadSocial.nombre}}
+                          </mat-option>
                         </mat-select>
                       </div>
                     </div>
@@ -382,33 +389,36 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAfipSituacion" class="tamanio-label">Situación *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipSituacion')" id="idAutocompletado"
-                             [compareWith]="compareFn" >
-                            <mat-option *ngFor="let itemAfipSituacion of resultadosAfipSituaciones" [value]="itemAfipSituacion">
-                              {{itemAfipSituacion.codigoAfip}} - {{itemAfipSituacion.nombre}}
-                            </mat-option>
+                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipSituacion')"
+                          id="idAutocompletado" [compareWith]="compareFn">
+                          <mat-option *ngFor="let itemAfipSituacion of resultadosAfipSituaciones"
+                            [value]="itemAfipSituacion">
+                            {{itemAfipSituacion.codigoAfip}} - {{itemAfipSituacion.nombre}}
+                          </mat-option>
                         </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAfipCondicion" class="tamanio-label">Condición *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipCondicion')" id="idAutocompletado"
-                             [compareWith]="compareFn" >
-                            <mat-option *ngFor="let itemAfipCondicion of resultadosAfipCondiciones" [value]="itemAfipCondicion">
-                              {{itemAfipCondicion.codigoAfip}} - {{itemAfipCondicion.nombre}}
-                            </mat-option>
+                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipCondicion')"
+                          id="idAutocompletado" [compareWith]="compareFn">
+                          <mat-option *ngFor="let itemAfipCondicion of resultadosAfipCondiciones"
+                            [value]="itemAfipCondicion">
+                            {{itemAfipCondicion.codigoAfip}} - {{itemAfipCondicion.nombre}}
+                          </mat-option>
                         </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAfipActividad" class="tamanio-label">Actividad *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipActividad')" id="idAutocompletado"
-                             [compareWith]="compareFn" >
-                            <mat-option *ngFor="let itemafipActividad of resultadosAfipActividades" [value]="itemafipActividad">
-                              {{itemafipActividad.codigoAfip}} - {{itemafipActividad.nombre}}
-                            </mat-option>
+                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipActividad')"
+                          id="idAutocompletado" [compareWith]="compareFn">
+                          <mat-option *ngFor="let itemafipActividad of resultadosAfipActividades"
+                            [value]="itemafipActividad">
+                            {{itemafipActividad.codigoAfip}} - {{itemafipActividad.nombre}}
+                          </mat-option>
                         </mat-select>
                       </div>
                     </div>
@@ -417,33 +427,38 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAfipModContratacion" class="tamanio-label">Mod. de Contratación *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipModContratacion')" id="idAutocompletado"
-                             [compareWith]="compareFn" >
-                            <mat-option *ngFor="let itemafipModContratacion of resultadosAfipModContrataciones" [value]="itemafipModContratacion">
-                              {{itemafipModContratacion.codigoAfip}} - {{itemafipModContratacion.nombre}}
-                            </mat-option>
+                        <mat-select class="form-control form-control-sm"
+                          [formControl]="formulario.get('afipModContratacion')" id="idAutocompletado"
+                          [compareWith]="compareFn">
+                          <mat-option *ngFor="let itemafipModContratacion of resultadosAfipModContrataciones"
+                            [value]="itemafipModContratacion">
+                            {{itemafipModContratacion.codigoAfip}} - {{itemafipModContratacion.nombre}}
+                          </mat-option>
                         </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAfipSiniestrado" class="tamanio-label">Código de Siniestrado *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipSiniestrado')" id="idAutocompletado"
-                             [compareWith]="compareFn" >
-                            <mat-option *ngFor="let itemafipSiniestrado of resultadosAfipSiniestrados" [value]="itemafipSiniestrado">
-                              {{itemafipSiniestrado.codigoAfip}} - {{itemafipSiniestrado.nombre}}
-                            </mat-option>
+                        <mat-select class="form-control form-control-sm"
+                          [formControl]="formulario.get('afipSiniestrado')" id="idAutocompletado"
+                          [compareWith]="compareFn">
+                          <mat-option *ngFor="let itemafipSiniestrado of resultadosAfipSiniestrados"
+                            [value]="itemafipSiniestrado">
+                            {{itemafipSiniestrado.codigoAfip}} - {{itemafipSiniestrado.nombre}}
+                          </mat-option>
                         </mat-select>
                       </div>
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idAfipLocalidad" class="tamanio-label">Localidad *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipLocalidad')" id="idAutocompletado"
-                             [compareWith]="compareFn" >
-                            <mat-option *ngFor="let itemafipLocalidad of resultadosAfipLocalidades" [value]="itemafipLocalidad">
-                              {{itemafipLocalidad.codigoAfip}} - {{itemafipLocalidad.nombre}}
-                            </mat-option>
+                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('afipLocalidad')"
+                          id="idAutocompletado" [compareWith]="compareFn">
+                          <mat-option *ngFor="let itemafipLocalidad of resultadosAfipLocalidades"
+                            [value]="itemafipLocalidad">
+                            {{itemafipLocalidad.codigoAfip}} - {{itemafipLocalidad.nombre}}
+                          </mat-option>
                         </mat-select>
                       </div>
                     </div>
@@ -483,11 +498,11 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idObraSocial" class="tamanio-label">Obra Social *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('obraSocial')" id="idAutocompletado"
-                             [compareWith]="compareFn" >
-                            <mat-option *ngFor="let itemobraSocial of resultadosObrasSociales" [value]="itemobraSocial">
-                              {{itemobraSocial.codigoAfip}} - {{itemobraSocial.nombre}}
-                            </mat-option>
+                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('obraSocial')"
+                          id="idAutocompletado" [compareWith]="compareFn">
+                          <mat-option *ngFor="let itemobraSocial of resultadosObrasSociales" [value]="itemobraSocial">
+                            {{itemobraSocial.codigoAfip}} - {{itemobraSocial.nombre}}
+                          </mat-option>
                         </mat-select>
                       </div>
                     </div>
@@ -610,32 +625,29 @@
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="row">
-                          <div class="col-md-8">
-                            <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')" #fileInputLicConducir />
-                            <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLicConducir.click()"
-                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir">
-                              <span *ngIf="!formulario.value.pdfLicConducir">Adjuntar </span>
-                              <span *ngIf="formulario.value.pdfLicConducir">Archivo Adjunto</span>
-                              <i class="material-icons" *ngIf="formulario.value.pdfLicConducir">check_circle</i>
-                              <i class="material-icons" *ngIf="!formulario.value.pdfLicConducir">warning</i>
-                            </button>
-                          </div>
-                          <div class="col-md-2">
-                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLicConducir')" 
-                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir">
-                              <i class="material-icons" >close</i>
-                            </button>
-                          </div>
-                          <div class="col-md-2" *ngIf="indiceSeleccionado != 1 && indiceSeleccionado != 4 ">
-                            <button mat-raised-button color="primary" (click)="obtenerPDF('licConducir')"
-                            [disabled]="!formulario.get('licConducir').value">
-                              <i class="material-icons" >visibility</i>
-                            </button>
-                        </div>
-                        </div>
-                      </div>
+                    <div class="col-md-3">
+                      <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')"
+                        #fileInputLicConducir />
+                      <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLicConducir.click()"
+                        [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir">
+                        <span *ngIf="!formulario.value.pdfLicConducir">Adjuntar </span>
+                        <span *ngIf="formulario.value.pdfLicConducir">Archivo Adjunto</span>
+                        <i class="material-icons" *ngIf="formulario.value.pdfLicConducir">check_circle</i>
+                        <i class="material-icons" *ngIf="!formulario.value.pdfLicConducir">warning</i>
+                      </button>
+                    </div>
+                    <div class="col-md-1">
+                      <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLicConducir')"
+                        [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir">
+                        <i class="material-icons">close</i>
+                      </button>
+                    </div>
+                    <div class="col-md-1" *ngIf="indiceSeleccionado != 1 && indiceSeleccionado != 4 ">
+                      <button mat-raised-button color="primary" (click)="obtenerPDF('licConducir')"
+                        [disabled]="!formulario.get('licConducir').value">
+                        <i class="material-icons">visibility</i>
+                      </button>
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col-md-3">
@@ -645,32 +657,29 @@
                           class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="row">
-                          <div class="col-md-8">
-                            <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLinti')" #fileInputLINTI />
-                            <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLINTI.click()"
-                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti">
-                              <span *ngIf="!formulario.value.pdfLinti">Adjuntar </span>
-                              <span *ngIf="formulario.value.pdfLinti">Archivo Adjunto</span>
-                              <i class="material-icons" *ngIf="formulario.value.pdfLinti">check_circle</i>
-                              <i class="material-icons" *ngIf="!formulario.value.pdfLinti">warning</i>
-                            </button>
-                          </div>
-                          <div class="col-md-2">
-                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti')" 
-                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti">
-                              <i class="material-icons" >close</i>
-                            </button>
-                          </div>
-                          <div class="col-md-2" *ngIf="indiceSeleccionado != 1 && indiceSeleccionado != 4 ">
-                            <button mat-raised-button color="primary" (click)="obtenerPDF('linti')"
-                            [disabled]="!formulario.get('linti').value">
-                              <i class="material-icons" >visibility</i>
-                            </button>
-                        </div>
-                        </div>
-                      </div>
+                    <div class="col-md-3">
+                      <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLinti')"
+                        #fileInputLINTI />
+                      <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLINTI.click()"
+                        [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti">
+                        <span *ngIf="!formulario.value.pdfLinti">Adjuntar </span>
+                        <span *ngIf="formulario.value.pdfLinti">Archivo Adjunto</span>
+                        <i class="material-icons" *ngIf="formulario.value.pdfLinti">check_circle</i>
+                        <i class="material-icons" *ngIf="!formulario.value.pdfLinti">warning</i>
+                      </button>
+                    </div>
+                    <div class="col-md-1">
+                      <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti')"
+                        [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti">
+                        <i class="material-icons">close</i>
+                      </button>
+                    </div>
+                    <div class="col-md-1" *ngIf="indiceSeleccionado != 1 && indiceSeleccionado != 4 ">
+                      <button mat-raised-button color="primary" (click)="obtenerPDF('linti')"
+                        [disabled]="!formulario.get('linti').value">
+                        <i class="material-icons">visibility</i>
+                      </button>
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col-md-3">
@@ -680,32 +689,29 @@
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
-                    <div class="col-md-6">
-                      <div class="row">
-                          <div class="col-md-8">
-                            <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')" #fileInputLibSanidad />
-                            <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLibSanidad.click()"
-                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad">
-                              <span *ngIf="!formulario.value.pdfLibSanidad">Adjuntar </span>
-                              <span *ngIf="formulario.value.pdfLibSanidad">Archivo Adjunto</span>
-                              <i class="material-icons" *ngIf="formulario.value.pdfLibSanidad">check_circle</i>
-                              <i class="material-icons" *ngIf="!formulario.value.pdfLibSanidad">warning</i>
-                            </button>
-                          </div>
-                          <div class="col-md-2">
-                            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad')" 
-                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad">
-                              <i class="material-icons" >close</i>
-                            </button>
-                          </div>
-                          <div class="col-md-2" *ngIf="indiceSeleccionado != 1 && indiceSeleccionado != 4 ">
-                            <button mat-raised-button color="primary" (click)="obtenerPDF('libSanidad')"
-                            [disabled]="!formulario.get('libSanidad').value">
-                              <i class="material-icons" >visibility</i>
-                            </button>
-                        </div>
-                        </div>
-                      </div>
+                    <div class="col-md-3">
+                      <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')"
+                        #fileInputLibSanidad />
+                      <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLibSanidad.click()"
+                        [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad">
+                        <span *ngIf="!formulario.value.pdfLibSanidad">Adjuntar </span>
+                        <span *ngIf="formulario.value.pdfLibSanidad">Archivo Adjunto</span>
+                        <i class="material-icons" *ngIf="formulario.value.pdfLibSanidad">check_circle</i>
+                        <i class="material-icons" *ngIf="!formulario.value.pdfLibSanidad">warning</i>
+                      </button>
+                    </div>
+                    <div class="col-md-1">
+                      <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad')"
+                        [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad">
+                        <i class="material-icons">close</i>
+                      </button>
+                    </div>
+                    <div class="col-md-1" *ngIf="indiceSeleccionado != 1 && indiceSeleccionado != 4 ">
+                      <button mat-raised-button color="primary" (click)="obtenerPDF('libSanidad')"
+                        [disabled]="!formulario.get('libSanidad').value">
+                        <i class="material-icons">visibility</i>
+                      </button>
+                    </div>
                   </div>
                 </div>
                 <div class="contenedor-top" *ngIf="opcionSeleccionada == 20">

@@ -95,7 +95,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idNumeroMotor" class="tamanio-label">Número de Motor<span
-                  *ngIf="!esVehiculoRemolque">*</span></label>
+                  *ngIf="!esVehiculoRemolque"> *</span></label>
               <input id="idNumeroMotor" type="text" formControlName="numeroMotor" autocomplete="off"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura"
                 [required]="!esVehiculoRemolque" (blur)="validarMotorChasis('numeroDeMotor')">
@@ -128,7 +128,7 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
                 <button id="idBoton" mat-raised-button color="primary" (click)="fileInputTitulo.click()" 
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.value.pdfTitulo">Adj. Título </span>
+                  <span *ngIf="!formulario.value.pdfTitulo">Adj. Título</span>
                   <span *ngIf="formulario.value.pdfTitulo">Archivo Adjunto</span>
                   <i class="material-icons" *ngIf="formulario.value.pdfTitulo">check_circle</i>
                   <i class="material-icons" *ngIf="!formulario.value.pdfTitulo">warning</i>
@@ -311,7 +311,8 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group has-float-label">
-                  <label for="idVtoSenasa" class="tamanio-label">Vto. Senasa</label>
+                  <label for="idVtoSenasa" class="tamanio-label">Vto. Senasa
+                    <span *ngIf="!esVtoSanidadAlimenticia"> *</span></label>
                   <input id="idVtoSenasa" type="date" formControlName="vtoSenasa" autocomplete="off"
                     class="form-control form-control-sm" [readonly]="soloLectura">
                 </div>
@@ -340,7 +341,8 @@
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group has-float-label">
-                  <label for="idVtoHabBromatologica" class="tamanio-label">Vto. Hab. Bromatológica</label>
+                  <label for="idVtoHabBromatologica" class="tamanio-label">Vto. Hab. Bromatológica
+                    <span *ngIf="!esVtoSanidadAlimenticia"> *</span></label>
                   <input id="idVtoHabBromatologica" type="date" formControlName="vtoHabBromatologica" autocomplete="off"
                     class="form-control form-control-sm" [readonly]="soloLectura">
                 </div>
