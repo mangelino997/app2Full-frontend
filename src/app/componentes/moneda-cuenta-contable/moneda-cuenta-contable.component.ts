@@ -75,18 +75,16 @@ export class MonedaCuentaContableComponent implements OnInit {
   public listaMonedas: Array<any> = [];
   //Define la lista de Empresas
   public listaEmpresas: Array<any> = [];
-  //Define el autocompletado
-  public autocompletado: FormControl = new FormControl();
   //Define empresa para las busquedas
   public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda companias seguros
   public resultadosCompaniasSeguros: Array<any> = [];
-  //Defien la lista de empresas
-  public empresas: Array<any> = [];
+  //Defien la  empresa del Login
+  public empresa: FormControl = new FormControl();
   //Define las columnas de la tabla
-  public columnas: string[] = ['moneda', 'empresa', 'cuentaContable'];
+  public columnas: string[] = ['moneda', 'empresa', 'cuentaContable', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -109,14 +107,6 @@ export class MonedaCuentaContableComponent implements OnInit {
           console.log(err);
         }
       );
-    //Controla el autocompletado
-    this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.monedaCuentaContableServicio.listarPorNombreMoneda(data).subscribe(res => {
-          this.resultados = res.json();
-        })
-      }
-    });
   }
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -132,8 +122,8 @@ export class MonedaCuentaContableComponent implements OnInit {
     // this.listar();
     //Carga select con la lista de Monedas
     this.listarMonedas();
-    //Carga select con la lista de Empresas
-    this.listarEmpresas();
+    //Obtiene la empresa del Login
+    this.obtenerEmpresa();
   }
   //Obtiene el listado de registros
   private listar() {
@@ -159,16 +149,27 @@ export class MonedaCuentaContableComponent implements OnInit {
         console.log(err);
       }
     );
-  }//Obtiene el listado de registros
-  private listarEmpresas() {
-    this.empresaServicio.listar().subscribe(
-      res => {
-        this.listaEmpresas = res.json();
-      },
-      err => {
-        console.log(err);
-      }
-    );
+  }
+  //Controla el cambio en Moneda Cuenta Contable
+  public cambioMonedaCuentaContable(){
+    console.log(this.formulario.value.moneda.id, this.formulario.value.empresa.id);
+    if(this.indiceSeleccionado > 1){
+      this.monedaCuentaContableServicio.obtenerPorMonedaYEmpresa(this.formulario.value.moneda.id, this.formulario.value.empresa.id).subscribe(
+        res=>{
+          console.log(res.json());
+          this.formulario.get('planCuenta').setValue(res.json());
+        },
+        err=>{
+
+        }
+      )
+    }
+  }
+  //Obtiene el listado de registros
+  private obtenerEmpresa() {
+    let empresa = this.appService.getEmpresa();
+    this.empresa.setValue(empresa.razonSocial);
+    this.formulario.get('empresa').setValue(empresa);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -183,6 +184,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.formulario.reset();
+    this.obtenerEmpresa();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     /*
@@ -190,7 +192,6 @@ export class MonedaCuentaContableComponent implements OnInit {
     * cuando se hace click en ver o mod de la pestania lista
     */
     if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
     switch (id) {
@@ -201,15 +202,15 @@ export class MonedaCuentaContableComponent implements OnInit {
         break;
       case 2:
         this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idMoneda');
         break;
       case 3:
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idMoneda');
         break;
       case 4:
         this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idMoneda');
         break;
       case 5:
         this.listar();
@@ -297,7 +298,6 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Reestablece los campos formularios
   private reestablecerFormulario() {
     this.formulario.reset();
-    this.autocompletado.reset();
     this.resultados = [];
   }
   //Manejo de colores de campos y labels
@@ -305,24 +305,17 @@ export class MonedaCuentaContableComponent implements OnInit {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   };
-  //Establece el formulario al seleccionar elemento del autocompletado
-  public cambioAutocompletado() {
-    var elemento = this.autocompletado.value;
-    this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
-  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.empresa.setValue(this.formulario.get('empresa').value.razonSocial);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-
+    this.empresa.setValue(this.formulario.get('empresa').value.razonSocial);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -352,8 +345,9 @@ export class MonedaCuentaContableComponent implements OnInit {
   }
   //Formatea el valor del autocompletado
   public displayFa(elemento) {
+    console.log(elemento);
     if (elemento != undefined) {
-      return elemento.nombre ? elemento.id + ' - ' + elemento.nombre : elemento;
+      return elemento.planCuenta ? elemento.planCuenta.nombre + elemento.planCuenta.grupoCuentaContable? ' - ' + elemento.planCuenta.grupoCuentaContable: '' : elemento ;
     } else {
       return elemento;
     }
