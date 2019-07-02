@@ -257,6 +257,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       err => {
         var respuesta = err.json();
         this.toastr.error(respuesta.mensaje);
+        document.getElementById("idCompaniaSeguro").focus();
         this.loaderService.hide();
       }
     );
@@ -297,7 +298,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Establece los datos de la poliza seleccionada
   public establecerPoliza(): void {
     let poliza = this.poliza.value;
-    this.formulario.setValue(poliza);
+    console.log(poliza);
+    this.formulario.patchValue(poliza);
     this.obtenerPDF();
   }
   //Reestablece los campos formularios
@@ -388,7 +390,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         nombre: resultado.nombre,
         datos: atob(resultado.datos)
       }
-      this.formulario.get('pdf').setValue(pdf);
+      this.formulario.get('pdf').patchValue(pdf);
     })
   }
   //Elimina un pdf ya cargado, se pasa el campo como parametro
@@ -396,7 +398,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
     } else {
-      this.formulario.get(campo).setValue(null);
+      this.formulario.get(campo).value.nombre="";
     }
   }
   //Muestra el pdf en una pestana nueva
@@ -415,7 +417,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
           nombre: file.name,
           datos: reader.result
         }
-        this.formulario.get('pdf').setValue(pdf);
+        this.formulario.get('pdf').patchValue(pdf);
       }
       reader.readAsDataURL(file);
     }

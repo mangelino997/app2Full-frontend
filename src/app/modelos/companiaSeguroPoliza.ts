@@ -13,7 +13,14 @@ export class CompaniaSeguroPoliza {
             empresa: new FormControl('', Validators.required),
             numeroPoliza: new FormControl('', [Validators.required, Validators.maxLength(15)]),
             vtoPoliza: new FormControl('', Validators.required),
-            pdf: new FormControl()
+            pdf: new FormGroup({
+                id: new FormControl(),
+                version: new FormControl(),
+                nombre: new FormControl(),
+                tipo: new FormControl(),
+                tamanio: new FormControl(),
+                datos: new FormControl()
+            })
         })
     }
 }

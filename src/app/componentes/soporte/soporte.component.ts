@@ -152,12 +152,14 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     )
   }
   //Maneja el cambio en el autocompletado
-  public cambioAutocompletado(elemento){
+  public cambioAutocompletado(){
+    let elemento = this.autocompletado.value; 
     this.establecerElemento(elemento);
+    this.obtenerBugImagen();
   }
   //Establece los datos del elemento al formulario
   private establecerElemento(elemento){
-    this.autocompletado.setValue(elemento.alias);
+    console.log(elemento);
     this.formulario.patchValue(elemento);
     this.formulario.get('subopcion').setValue(elemento.subopcion);
     this.modulo.setValue(elemento.subopcion.submodulo.modulo);
@@ -173,12 +175,12 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
-        let foto = {
-          id: this.formulario.value.id,
+        let bugImagen = {
+          id: this.formulario.get('bugImagen').value ? this.formulario.get('bugImagen').value.id : null,
           nombre: file.name,
           datos: reader.result
         }
-        this.formulario.get('bugImagen').setValue(foto);
+        this.formulario.get('bugImagen').setValue(bugImagen);
       }
       reader.readAsDataURL(file);
     }
@@ -358,7 +360,7 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
     if (elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
+      return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
     }
@@ -405,23 +407,31 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
       valor.setValue(null);
     }
   } 
-    //Obtiene el pdf para mostrarlo
+    //Obtiene el bugImagen para mostrarlo
     public obtenerBugImagen() {
       if(this.mostrarAutocompletado) {
         this.bugServicio.obtenerPorId(this.formulario.get('bugImagen').value.id).subscribe(res => {
-          let resultados = res.json();
-          const fileURL = URL.createObjectURL(new Blob([resultados], { type: 'application/bugImagen' }));
-          window.open(fileURL, '_blank');
+          let resultado = res.json();
+          let bugImagen = {
+            id: resultado.id,
+            nombre: resultado.nombre,
+            datos: atob(resultado.datos)
+          }
+          this.formulario.get('bugImagen').setValue(bugImagen);
         })
       }
     }
-     //Elimina un pdf ya cargado, se pasa el campo como parametro
+     //Elimina una imagen ya cargada
    public eliminarBug(){
     if(!this.formulario.get('bugImagen').value){
       this.toastr.success("Sin archivo adjunto");
     }else{
-      console.log(this.formulario.get('bugImagen').value.nombre);
-      this.formulario.get('bugImagen').value.nombre = "";
+      this.formulario.get('bugImagen').setValue = null;
     }
+  }
+  //Muestra la imagen en una pestana nueva
+  public verBugImagen() {
+    let datos = this.formulario.get('bugImagen').value.datos;
+    window.open(datos, '_blank');
   }
 }
