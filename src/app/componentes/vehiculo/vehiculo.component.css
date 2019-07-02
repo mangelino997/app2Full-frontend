@@ -1,4 +1,13 @@
-#idBoton {
+
+#btn-adjuntar {
     display: inline-block;
-    width: 100%;
+    width: 140px;
+}
+#btn-close {
+    display: inline-block;
+    width: 80px;
+}
+#btn-visibility {
+    display: inline-block;
+    width: 80px;
 }
