@@ -65,29 +65,27 @@
           </div>
         </div>
         <div class="row justify-content-start">
-          <div class="col-md-4">
           <div class="form-group has-float-label">
             <label for="idVtoPoliza" class="tamanio-label">Vencimiento de Póliza</label>
             <input id="idVtoPoliza" type="date" formControlName="vtoPoliza" autocomplete="off"
-              class="form-control form-control-sm" [readonly]="soloLectura">
-          </div>
+              class="form-control form-control-sm" [readonly]="soloLectura" style="width: 200px;">
           </div>
           <div class="margin-left-10">
             <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
             <button class="btn-height" mat-raised-button color="primary" (click)="fileInput.click()"
               [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-              <span *ngIf="!formulario.get('pdf.nombre')">Adjuntar</span>
-              <span *ngIf="formulario.get('pdf.nombre')">Adjuntado</span>
-              <i class="material-icons" *ngIf="formulario.get('pdf.nombre')">check_circle</i>
-              <i class="material-icons" *ngIf="!formulario.get('pdf.nombre')">warning</i>
+              <span *ngIf="!formulario.get('pdf.nombre').value">Adjuntar</span>
+              <span *ngIf="formulario.get('pdf.nombre').value">Adjuntado</span>
+              <i class="material-icons" *ngIf="formulario.get('pdf.nombre').value">check_circle</i>
+              <i class="material-icons" *ngIf="!formulario.get('pdf.nombre').value">warning</i>
             </button>
           </div>
-          <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdf')"
-            [disabled]="!formulario.get('pdf.nombre')">
+          <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdf.nombre')"
+            [disabled]="!formulario.get('pdf.nombre').value" style="width: 60px;">
             <i class="material-icons">close</i>
           </button>
           <button class="btn-height" mat-raised-button color="primary" (click)="verPDF()" 
-            [disabled]="!formulario.get('pdf.nombre')">
+            [disabled]="!formulario.get('pdf.nombre').value" style="width: 60px;">
             <i class="material-icons">visibility</i>
           </button>
         </div>

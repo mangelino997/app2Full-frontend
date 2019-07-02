@@ -3,8 +3,7 @@ import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-pol
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { EmpresaService } from '../../servicios/empresa.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CompaniaSeguroPoliza } from 'src/app/modelos/companiaSeguroPoliza';
 import { MatSort, MatTableDataSource } from '@angular/material';
@@ -38,8 +37,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
-  //Define un formulario para validaciones de campos
-  public formularioPdf: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
@@ -67,7 +64,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Constructor
   constructor(private servicio: CompaniaSeguroPolizaService,
     private subopcionPestaniaService: SubopcionPestaniaService,
-    private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService,
+    private toastr: ToastrService, private appService: AppService,
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaModelo: CompaniaSeguroPoliza, private loaderService: LoaderService,
     private pdfServicio: PdfService) {
@@ -98,16 +95,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       );
     //Define el formulario y validaciones
     this.formulario = this.companiaSeguroPolizaModelo.formulario;
-    //Define el formulario pdf y validaciones
-    this.formularioPdf = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(30)]),
-      tipo: new FormControl('', [Validators.required, Validators.maxLength(20)]),
-      tamanio: new FormControl('', Validators.required),
-      datos: new FormControl('', Validators.required),
-      tabla: new FormControl('', [Validators.required, Validators.maxLength(60)])
-    })
     //Autocompletado Compania Seguro - Buscar por nombre
     this.formulario.get('companiaSeguro').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -298,7 +285,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Establece los datos de la poliza seleccionada
   public establecerPoliza(): void {
     let poliza = this.poliza.value;
-    console.log(poliza);
+    if(!poliza.pdf) {
+      poliza.pdf = this.companiaSeguroPolizaModelo.formulario.get('pdf');
+    }
     this.formulario.patchValue(poliza);
     this.obtenerPDF();
   }
@@ -383,27 +372,29 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene el pdf para mostrarlo
   public obtenerPDF() {
-    this.pdfServicio.obtenerPorId(this.formulario.get('pdf').value.id).subscribe(res => {
-      let resultado = res.json();
-      let pdf = {
-        id: resultado.id,
-        nombre: resultado.nombre,
-        datos: atob(resultado.datos)
-      }
-      this.formulario.get('pdf').patchValue(pdf);
-    })
+    if(this.formulario.get('pdf.id').value) {
+      this.pdfServicio.obtenerPorId(this.formulario.get('pdf.id').value).subscribe(res => {
+        let resultado = res.json();
+        let pdf = {
+          id: resultado.id,
+          nombre: resultado.nombre,
+          datos: atob(resultado.datos)
+        }
+        this.formulario.get('pdf').patchValue(pdf);
+      })
+    }
   }
   //Elimina un pdf ya cargado, se pasa el campo como parametro
   public eliminarPdf(campo) {
     if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
     } else {
-      this.formulario.get(campo).value.nombre="";
+      this.formulario.get(campo).setValue('');
     }
   }
   //Muestra el pdf en una pestana nueva
   public verPDF() {
-    let datos = this.formulario.get('pdf').value.datos;
+    let datos = this.formulario.get('pdf.datos').value;
     window.open(datos, '_blank');
   }
   //Carga el pdf
@@ -413,7 +404,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let pdf = {
-          id: this.formulario.get('pdf').value ? this.formulario.get('pdf').value.id : null,
+          id: this.formulario.get('pdf.id').value ? this.formulario.get('pdf.id').value : null,
           nombre: file.name,
           datos: reader.result
         }

@@ -4,3 +4,6 @@
 .margin-left-10 {
     margin-left: 10px;
 }
+.mat-raised-button {
+    min-width: 60px !important;
+}

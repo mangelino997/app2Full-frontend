@@ -73,7 +73,7 @@ export class CompaniaSeguroPolizaService {
     let obj = Object.assign({}, formulario);
     let pdf = obj.pdf;
     const formData = new FormData();
-    if (pdf == null) {
+    if (pdf.nombre == null) {
       let blob = new Blob([null], { type: 'application/pdf' });
       formData.append('archivo', blob, '');
     } else {
@@ -96,8 +96,7 @@ export class CompaniaSeguroPolizaService {
     let obj = Object.assign({}, elemento);
     let pdf = obj.pdf;
     const formData = new FormData();
-    console.log(obj);
-    if (pdf == null) {
+    if (pdf.nombre == null) {
       let blob = new Blob([null], { type: 'application/pdf' });
       formData.append('archivo', blob, '');
     } else {
