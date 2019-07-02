@@ -7,6 +7,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { TipoCuentaContableService } from 'src/app/servicios/tipo-cuenta-contable.service';
 
 export class Arbol {
   id: number;
@@ -19,6 +20,7 @@ export class Arbol {
   usuarioAlta: {};
   usuarioMod: {};
   tipoCuentaContable: {};
+  grupoCuentaContable: {};
   nivel: number;
   hijos: Arbol[];
 }
@@ -34,6 +36,7 @@ export class Nodo {
   usuarioAlta: {};
   usuarioMod: {};
   tipoCuentaContable: {};
+  grupoCuentaContable: {};
   nivel: number;
   hijos: Arbol[];
   level: number;
@@ -62,9 +65,13 @@ export class PlanCuentaComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Define la lista de tipos de cuentas contables
+  public tiposCuentasContables:Array<any> = [];
+  //Define si mostrar tipos de cuentas contables
+  public mostrarTipoCuentasContables:boolean = false;
   //Constructor
   constructor(private planCuentaServicio: PlanCuentaService, private appService: AppService,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private tipoCuentaContableServicio: TipoCuentaContableService) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
@@ -95,6 +102,8 @@ export class PlanCuentaComponent implements OnInit {
       nivel: new FormControl(),
       hijos: new FormControl()
     });
+    //Obtiene la lista de tipos de cuentas contables
+    this.listarTiposCuentasContables();
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto(): void {
@@ -127,6 +136,7 @@ export class PlanCuentaComponent implements OnInit {
     flatNode.usuarioAlta = node.usuarioAlta;
     flatNode.usuarioMod = node.usuarioMod;
     flatNode.tipoCuentaContable = node.tipoCuentaContable;
+    flatNode.grupoCuentaContable = node.grupoCuentaContable;
     flatNode.nivel = node.nivel;
     flatNode.hijos = node.hijos;
     flatNode.level = level;
@@ -158,6 +168,7 @@ export class PlanCuentaComponent implements OnInit {
       document.getElementById('idNombre').focus();
     }, 20);
     this.establecerValoresPorDefecto();
+    this.mostrarTipoCuentasContables = nodo.nivel == 1 ? true : false;
     const nodoPadre = this.flatNodeMap.get(nodo);
     this.planCuentaServicio.agregarElemento(nodoPadre!, '');
     this.treeControl.expand(nodo);
@@ -206,6 +217,7 @@ export class PlanCuentaComponent implements OnInit {
     elemento.empresa = this.appService.getEmpresa();
     elemento.usuarioAlta = this.appService.getUsuario();
     elemento.tipoCuentaContable = elementoPadre.tipoCuentaContable;
+    elemento.grupoCuentaContable = elementoPadre.grupoCuentaContable;
     this.planCuentaServicio.agregar(elemento);
     this.loaderService.hide();
   }
@@ -264,5 +276,18 @@ export class PlanCuentaComponent implements OnInit {
   //Obtiene el estado del boton agregar
   public obtenerEstadoBoton(nombre, imputable, activo) {
     return nombre.value != null && imputable.value != null && activo.value != null ? true : false;
+  }
+  //Obtiene la lista de tipos de cuentas contables
+  public listarTiposCuentasContables(): void {
+    this.tipoCuentaContableServicio.listar().subscribe(res => {
+      this.tiposCuentasContables = res.json();
+    });
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
   }
 }
