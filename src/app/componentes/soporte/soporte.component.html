@@ -20,9 +20,8 @@
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
                 (blur)="verificarSeleccion(autocompletado)">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="cambioAutocompletado(item)">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="cambioAutocompletado()">
+                <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.alias}}
                 </mat-option>
               </mat-autocomplete>
@@ -109,8 +108,8 @@
             </button>
           </div>
           <div class="col-md-2">
-            <button mat-raised-button color="primary" (click)="obtenerBugImagen()"
-              [disabled]="!formulario.get('bugImagen').value ||indiceSeleccionado == 1">
+            <button mat-raised-button color="primary" (click)="verBugImagen()"
+              [disabled]="!formulario.get('bugImagen').value">
               <i class="material-icons">visibility</i>
             </button><br>
           </div>

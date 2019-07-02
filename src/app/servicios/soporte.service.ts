@@ -96,22 +96,16 @@ export class SoporteService {
   //Actualiza un registro
   public actualizar(soporte) {
     let obj = Object.assign({}, soporte);
-    let foto = obj.bugImagen;
-    console.log(soporte);
-    let idFoto;
-    if(soporte.bugImagen.id!=0){
-      idFoto = soporte.bugImagen.id;
-    }
+    let imagen = obj.bugImagen;
     const formData = new FormData(); 
-    if(foto==null) {
+    if(imagen==null) {
       let blob = new Blob([null], {type : 'image/jpeg'});
       formData.append('archivo', blob, '');
     } else {
-    let blob = new Blob([foto.datos], {type :'image/jpeg'});
-      formData.append('archivo', blob, foto.nombre);
+    let blob = new Blob([imagen.datos], {type :'image/jpeg'});
+      formData.append('archivo', blob, imagen.nombre);
     }
-    obj.bugImagen = {};
-    obj.bugImagen.id = idFoto;
+    obj.bugImagen.datos = null;
     formData.append('soporte', JSON.stringify(obj));
 		return fetch(this.url, {
       method: "PUT",
