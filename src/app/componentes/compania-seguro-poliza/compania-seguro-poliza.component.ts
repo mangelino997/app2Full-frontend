@@ -399,7 +399,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Carga el pdf
   public readURL(event): void {
-    if (event.target.files && event.target.files[0]) {
+    if (event.target.files && event.target.files[0] && event.target.files[0].type== 'application/pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
@@ -411,6 +411,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         this.formulario.get('pdf').patchValue(pdf);
       }
       reader.readAsDataURL(file);
+    }else {
+      this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
   }
 }
