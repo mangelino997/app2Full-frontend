@@ -98,7 +98,7 @@ export class SoporteService {
     let obj = Object.assign({}, soporte);
     let imagen = obj.bugImagen;
     const formData = new FormData(); 
-    if(imagen==null) {
+    if(imagen.nombre==null) {
       let blob = new Blob([null], {type : 'image/jpeg'});
       formData.append('archivo', blob, '');
     } else {

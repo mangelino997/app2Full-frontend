@@ -20,7 +20,7 @@
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
                 (blur)="verificarSeleccion(autocompletado)">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="cambioAutocompletado()">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="establecerElemento()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.alias}}
                 </mat-option>
@@ -95,21 +95,21 @@
             <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
             <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()"
               [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 ">
-              <span *ngIf="!formulario.get('bugImagen').value">Adjuntar </span>
-              <span *ngIf="formulario.get('bugImagen').value">Archivo Adjunto</span>
-              <i class="material-icons" *ngIf="formulario.get('bugImagen').value">check_circle</i>
-              <i class="material-icons" *ngIf="!formulario.get('bugImagen').value">warning</i>
+              <span *ngIf="!formulario.get('bugImagen.nombre').value">Adjuntar </span>
+              <span *ngIf="formulario.get('bugImagen.nombre').value">Archivo Adjunto</span>
+              <i class="material-icons" *ngIf="formulario.get('bugImagen.nombre').value">check_circle</i>
+              <i class="material-icons" *ngIf="!formulario.get('bugImagen.nombre').value">warning</i>
             </button>
           </div>
           <div class="col-md-2">
-            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarBug()"
+            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarBug('bugImagen.nombre')"
               [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 ">
               <i class="material-icons">close</i>
             </button>
           </div>
           <div class="col-md-2">
             <button mat-raised-button color="primary" (click)="verBugImagen()"
-              [disabled]="!formulario.get('bugImagen').value">
+              [disabled]="!formulario.get('bugImagen.nombre').value">
               <i class="material-icons">visibility</i>
             </button><br>
           </div>
