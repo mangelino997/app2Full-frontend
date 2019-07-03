@@ -287,9 +287,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     let poliza = this.poliza.value;
     if(!poliza.pdf) {
       poliza.pdf = this.companiaSeguroPolizaModelo.formulario.get('pdf');
+    this.obtenerPDF();
     }
     this.formulario.patchValue(poliza);
-    this.obtenerPDF();
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {

@@ -75,6 +75,8 @@ public listaTalRecLote: Array<any>= [];
 public show = false;
 //Define la subscripcion a loader.service
 private subscription: Subscription;
+//Define la lista de tipos de imagenes
+private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
 //Define las columnas de la tabla
 public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 'subopcion', 'mensaje', 'estado', 'ver', 'mod'];
 //Define la matSort
@@ -152,37 +154,43 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     )
   }
   //Maneja el cambio en el autocompletado
-  public cambioAutocompletado(){
-    let elemento = this.autocompletado.value; 
-    this.establecerElemento(elemento);
-    this.obtenerBugImagen();
-  }
+  // public cambioAutocompletado(){
+  
+  // }
   //Establece los datos del elemento al formulario
-  private establecerElemento(elemento){
+  private establecerElemento(){
+    let elemento = this.autocompletado.value; 
     console.log(elemento);
-    this.formulario.patchValue(elemento);
     this.formulario.get('subopcion').setValue(elemento.subopcion);
     this.modulo.setValue(elemento.subopcion.submodulo.modulo);
     this.submodulo.setValue(elemento.subopcion.submodulo);
     this.cambioModulo();
     this.cambioSubmodulo();
     this.formulario.get('empresa').setValue(elemento.empresa);
-    this.formulario.get('bugImagen').setValue({ id: elemento.bugImagen.id, nombre: elemento.bugImagen.nombre });
+    // this.establecerElemento(elemento);
+    if(!elemento.bugImagen) {
+      elemento.bugImagen = this.modelo.formulario.get('bugImagen');
+    this.obtenerBugImagen();
+    }
+    this.formulario.patchValue(elemento);
   }
   //Carga la imagen del paciente
   public readURL(event): void {
-    if (event.target.files && event.target.files[0]) {
+    console.log(event);
+    if (event.target.files && event.target.files[0]&& this.tiposImagenes.includes(event.target.files[0].type)) {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
         let bugImagen = {
-          id: this.formulario.get('bugImagen').value ? this.formulario.get('bugImagen').value.id : null,
+          id: this.formulario.get('bugImagen.id').value ? this.formulario.get('bugImagen.id').value : null,
           nombre: file.name,
           datos: reader.result
         }
-        this.formulario.get('bugImagen').setValue(bugImagen);
+        this.formulario.get('bugImagen').patchValue(bugImagen);
       }
       reader.readAsDataURL(file);
+    } else {
+      this.toastr.error("Debe adjuntar un archivo con extensión .jpeg .png o .jpg");
     }
   }
   //Establece el habilitado o deshabilitado de los campos
@@ -381,14 +389,14 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
-  public activarConsultar(elemento) {
+  public activarConsultar() {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.establecerElemento(elemento);
+    this.establecerElemento();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
-  public activarActualizar(elemento) {
+  public activarActualizar() {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.establecerElemento(elemento);
+    this.establecerElemento();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -409,29 +417,29 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
   } 
     //Obtiene el bugImagen para mostrarlo
     public obtenerBugImagen() {
-      if(this.mostrarAutocompletado) {
-        this.bugServicio.obtenerPorId(this.formulario.get('bugImagen').value.id).subscribe(res => {
+      if(this.formulario.get('bugImagen.id').value) {
+        this.bugServicio.obtenerPorId(this.formulario.get('bugImagen.id').value).subscribe(res => {
           let resultado = res.json();
           let bugImagen = {
             id: resultado.id,
             nombre: resultado.nombre,
             datos: atob(resultado.datos)
           }
-          this.formulario.get('bugImagen').setValue(bugImagen);
+          this.formulario.get('bugImagen').patchValue(bugImagen);
         })
       }
     }
      //Elimina una imagen ya cargada
-   public eliminarBug(){
+   public eliminarBug(campo){
     if(!this.formulario.get('bugImagen').value){
       this.toastr.success("Sin archivo adjunto");
     }else{
-      this.formulario.get('bugImagen').setValue = null;
+      this.formulario.get(campo).patchValue('');
     }
   }
   //Muestra la imagen en una pestana nueva
   public verBugImagen() {
-    let datos = this.formulario.get('bugImagen').value.datos;
+    let datos = this.formulario.get('bugImagen.datos').value;
     window.open(datos, '_blank');
   }
 }
