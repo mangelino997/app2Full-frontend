@@ -18,8 +18,6 @@ export class OrdenVenta {
             observaciones: new FormControl(),
             esContado: new FormControl(),
             tipoOrdenVenta: new FormControl(),
-
-            
         })
     }
 }

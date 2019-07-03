@@ -202,6 +202,8 @@ import { CuentaBancaria } from './modelos/cuentaBancaria';
 import { InsumoProducto } from './modelos/insumoProducto';
 import { Cobrador } from './modelos/cobrador';
 import { configuracionVehiculo } from './modelos/configuracionVehiculo';
+import { Foto } from './modelos/foto';
+import { Pdf } from './modelos/pdf';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -600,8 +602,7 @@ const stompConfig: StompConfig = {
     DepositoInsumoProductoComponent,
     TalonarioReciboCobradorComponent,
     TalonarioReciboLoteComponent,
-    VerTarifaDialogo,
-    
+    VerTarifaDialogo
   ],
   imports: [
     BrowserModule,
@@ -850,6 +851,8 @@ const stompConfig: StompConfig = {
     FotoService,
     OrdenVentaTarifa,
     OrdenVentaTarifaService,
+    Foto,
+    Pdf,
     {
       provide: StompConfig,
       useValue: stompConfig

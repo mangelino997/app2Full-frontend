@@ -1,10 +1,14 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Foto } from './foto';
+import { Pdf } from './pdf';
+import { Injectable } from '@angular/core';
 //Define la entidad de la base de datos.
+@Injectable()
 export class Personal {
     //define un formulario FormGroup
     public formulario: FormGroup;
     //constructor
-    constructor() {
+    constructor(private foto: Foto, private pdf: Pdf) {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
             id: new FormControl(),
@@ -98,12 +102,10 @@ export class Personal {
             esAcompReparto: new FormControl('', Validators.required),
             observaciones: new FormControl('', Validators.maxLength(200)),
             alias: new FormControl('', Validators.maxLength(100)),
-            foto: new FormControl(),
-            pdfLicConducir: new FormControl(),
-            pdfLibSanidad: new FormControl(),
-            pdfLinti: new FormControl()
-
-
+            foto: this.foto.formulario,
+            pdfLicConducir: this.pdf.crearFormulario(),
+            pdfLibSanidad: this.pdf.crearFormulario(),
+            pdfLinti: this.pdf.crearFormulario()
         })
     }
 }

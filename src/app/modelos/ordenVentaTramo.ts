@@ -18,8 +18,6 @@ export class OrdenVentaTramo {
             precioUnitarioSeco: new FormControl(),
             precioUnitarioRef: new FormControl(),
             preciosDesde: new FormControl(),
-
-            
         })
     }
 }

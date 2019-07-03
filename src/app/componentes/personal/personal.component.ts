@@ -34,7 +34,6 @@ import { PdfService } from 'src/app/servicios/pdf.service';
   selector: 'app-personal',
   templateUrl: './personal.component.html',
   styleUrls: ['./personal.component.css']
-
 })
 export class PersonalComponent implements OnInit {
   //Define la pestania activa
@@ -253,8 +252,19 @@ export class PersonalComponent implements OnInit {
     this.listarAreas();
     //Obtiene la lista de sindicatos
     this.listarSindicatos();
+    //Obtiene la foto por defecto
+    this.obtenerFotoPorDefecto();
     //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
+    // this.establecerValoresPorDefecto();
+  }
+  //Obtiene la foto por defecto
+  private obtenerFotoPorDefecto(): void {
+    this.fotoService.obtenerPorId(1).subscribe(res => {
+      let respuesta = res.json();
+      this.formulario.get('foto').setValue(respuesta);
+      this.formulario.get('foto.nombre').setValue(null);
+      this.formulario.get('foto.datos').setValue(atob(this.formulario.get('foto.datos').value));
+    });
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
@@ -288,11 +298,6 @@ export class PersonalComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.fotoService.obtenerPorId(1).subscribe(res => {
-      let respuesta = res.json();
-      this.formulario.get('foto').setValue(respuesta);
-      this.formulario.value.foto.datos = atob(this.formulario.value.foto.datos);
-    });
     this.formulario.get('esAcompReparto').setValue(false);
     this.formulario.get('recibeAdelanto').setValue(false);
     this.formulario.get('recibePrestamo').setValue(false);
@@ -331,8 +336,7 @@ export class PersonalComponent implements OnInit {
       this.btnPdfLibSanidad = false;
       this.btnPdfLicConducir = true;
       this.btnPdflinti = false;
-    }
-    else {
+    } else {
       this.formulario.get('vtoLicenciaConducir').disable();
       this.formulario.get('vtoCurso').disable();
       this.formulario.get('vtoCursoCargaPeligrosa').disable();
@@ -444,7 +448,6 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('esChoferLargaDistancia').enable();
       this.formulario.get('turnoRotativo').enable();
       this.formulario.get('turnoFueraConvenio').enable();
-
       this.formulario.get('seguridadSocial').enable();
       this.formulario.get('afipSituacion').enable();
       this.formulario.get('afipCondicion').enable();
@@ -453,7 +456,6 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('afipSiniestrado').enable();
       this.formulario.get('afipLocalidad').enable();
       this.formulario.get('obraSocial').enable();
-
       if (opcionPestania == 3) {
         this.formulario.get('fechaFin').enable();
       } else {
@@ -475,7 +477,6 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('esChoferLargaDistancia').disable();
       this.formulario.get('turnoRotativo').disable();
       this.formulario.get('turnoFueraConvenio').disable();
-
       this.formulario.get('seguridadSocial').disable();
       this.formulario.get('afipSituacion').disable();
       this.formulario.get('afipCondicion').disable();
@@ -849,27 +850,25 @@ export class PersonalComponent implements OnInit {
       const reader = new FileReader();
       reader.onload = e => {
         let foto = {
-          id: this.formulario.value.id,
+          id: this.formulario.get('foto.id').value ? this.formulario.get('foto.id').value : null,
           nombre: file.name,
           datos: reader.result
         }
-        this.formulario.get('foto').setValue(foto);
-        console.log(foto);
+        this.formulario.get('foto').patchValue(foto);
       }
       reader.readAsDataURL(file);
     }
   }
   //Elimina la foto del personal
-  public eliminarFoto() {
-    if (!this.formulario.get('foto').value) {
+  public eliminarFoto(campo) {
+    if (!this.formulario.get(campo).value) {
       this.toastr.error("Sin foto adjunta");
     } else {
-      this.formulario.get('foto').setValue(null);
+      this.formulario.get(campo).setValue('');
     }
   }
   //Carga el archivo PDF 
   public readPdfURL(event, campo): void {
-    console.log(event);
     let file = event.target.files[0];
     let extension = file.name.split('.');
     extension = extension[extension.length - 1];
@@ -877,15 +876,12 @@ export class PersonalComponent implements OnInit {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
-        let foto = {
-          id: this.formulario.value.id,
+        let pdf = {
+          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : null,
           nombre: file.name,
           datos: reader.result
         }
-        console.log(foto, campo);
-
-        this.formulario.get(campo).setValue(foto);
-        console.log(foto);
+        this.formulario.get(campo).patchValue(pdf);
       }
       reader.readAsDataURL(file);
     } else {
@@ -897,20 +893,27 @@ export class PersonalComponent implements OnInit {
     if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
     } else {
-      this.formulario.get(campo).setValue(null);
+      this.formulario.get(campo).setValue('');
     }
   }
   //Obtiene el pdf para mostrarlo
-  public obtenerPDF(campo) {
-    if (this.mostrarAutocompletado) {
-      console.log(this.formulario.get(campo).value.id);
-      this.pdfServicio.obtenerPorId(this.formulario.get(campo).value.id).subscribe(res => {
-        let resultados = res.json();
-        console.log(resultados.datos);
-        const fileURL = URL.createObjectURL(new Blob([resultados], { type: 'application/pdf' }));
-        window.open(fileURL, '_blank');
+  public obtenerPDF(id ,nombre) {
+    if (this.formulario.get(id).value) {
+      this.pdfServicio.obtenerPorId(this.formulario.get(id).value).subscribe(res => {
+        let resultado = res.json();
+        let pdf = {
+          id: resultado.id,
+          nombre: resultado.nombre,
+          datos: atob(resultado.datos)
+        }
+        this.formulario.get(nombre).patchValue(pdf);
       })
     }
+  }
+  //Muestra el pdf en una pestana nueva
+  public verPDF(pdf) {
+    let datos = this.formulario.get(pdf).value;
+    window.open(datos, '_blank');
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
