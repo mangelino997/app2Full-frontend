@@ -14,7 +14,14 @@ export class Soporte {
             mensaje: new FormControl('', Validators.required),
             usuario: new FormControl(),
             fecha: new FormControl(),
-            bugImagen: new FormControl(),
+            bugImagen: new FormGroup({
+                id: new FormControl(),
+                version: new FormControl(),
+                nombre: new FormControl(),
+                tipo: new FormControl(),
+                tamanio: new FormControl(),
+                datos: new FormControl()
+            }),
             soporteEstado: new FormControl(),
         });
     }

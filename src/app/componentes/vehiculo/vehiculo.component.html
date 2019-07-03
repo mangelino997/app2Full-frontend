@@ -127,17 +127,17 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()" 
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.value.pdfTitulo">Adj. Título</span>
-                  <span *ngIf="formulario.value.pdfTitulo">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.value.pdfTitulo">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.value.pdfTitulo">warning</i>
+                  <span *ngIf="!formulario.get('pdfTitulo.nombre').value">Adj. Título</span>
+                  <span *ngIf="formulario.get('pdfTitulo.nombre').value">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value">warning</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo')" 
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
                   <i class="material-icons" >close</i>
                 </button>
                 <button id="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfTitulo')" 
-                  [disabled]="!formulario.get('pdfTitulo').value">
+                  [disabled]="!formulario.get('pdfTitulo.nombre').value">
                   <i class="material-icons">visibility</i>
                 </button>
               </div>
@@ -149,17 +149,17 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')" #fileInputCedulaIdent />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputCedulaIdent.click()"
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.value.pdfCedulaIdent">Adj. Ced. Id. </span>
-                  <span *ngIf="formulario.value.pdfCedulaIdent">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.value.pdfCedulaIdent">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.value.pdfCedulaIdent">warning</i>
+                  <span *ngIf="!formulario.get('pdfCedulaIdent.nombre').value">Adj. Ced. Id. </span>
+                  <span *ngIf="formulario.get('pdfCedulaIdent.nombre').value">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.get('pdfCedulaIdent.nombre').value">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfCedulaIdent.nombre').value">warning</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfCedulaIdent')" 
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
                   <i class="material-icons" >close</i>
                 </button>
                 <button id="btn-visibility" class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfCedulaIdent')" 
-                  [disabled]="!formulario.get('pdfCedulaIdent').value">
+                  [disabled]="!formulario.get('pdfCedulaIdent.nombre').value">
                   <i class="material-icons">visibility</i>
                 </button>
               </div>
@@ -267,17 +267,17 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoRuta')" #fileInputVtoRuta />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoRuta.click()" 
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.value.pdfVtoRuta">Adj. Vto. Ruta </span>
-                  <span *ngIf="formulario.value.pdfVtoRuta">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.value.pdfVtoRuta">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.value.pdfVtoRuta">warning</i>
+                  <span *ngIf="!formulario.get('pdfVtoRuta.nombre').value">Adj. Vto. Ruta </span>
+                  <span *ngIf="formulario.get('pdfVtoRuta.nombre').value">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.get('pdfVtoRuta.nombre').value">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfVtoRuta.nombre').value">warning</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoRuta')" 
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
                   <i class="material-icons" >close</i>
                 </button>
                 <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoRuta')" 
-                  [disabled]="!formulario.get('pdfVtoRuta').value">
+                  [disabled]="!formulario.get('pdfVtoRuta.nombre').value">
                   <i class="material-icons">visibility</i>
                 </button>
               </div>
@@ -298,17 +298,17 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoInspTecnica')" #fileInputVtoInspTecnica />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoInspTecnica.click()" 
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.value.pdfVtoInspTecnica">Adj. Vto. Insp. </span>
-                  <span *ngIf="formulario.value.pdfVtoInspTecnica">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.value.pdfVtoInspTecnica">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.value.pdfVtoInspTecnica">warning</i>
+                  <span *ngIf="!formulario.get('pdfVtoInspTecnica.nombre').value">Adj. Vto. Insp. </span>
+                  <span *ngIf="formulario.get('pdfVtoInspTecnica.nombre').value">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.get('pdfVtoInspTecnica.nombre').value">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfVtoInspTecnica.nombre').value">warning</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoInspTecnica')"
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
                   <i class="material-icons" >close</i>
                 </button>
                 <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoInspTecnica')" 
-                  [disabled]="!formulario.get('pdfVtoInspTecnica').value">
+                  [disabled]="!formulario.get('pdfVtoInspTecnica.nombre').value">
                   <i class="material-icons">visibility</i>
                 </button>
               </div>
@@ -330,17 +330,17 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoSenasa')" #fileInputVtoSenasa />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoSenasa.click()" 
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.value.pdfVtoSenasa">Adj. Vto. Sen. </span>
-                  <span *ngIf="formulario.value.pdfVtoSenasa">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.value.pdfVtoSenasa">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.value.pdfVtoSenasa">warning</i>
+                  <span *ngIf="!formulario.get('pdfVtoSenasa.nombre').value">Adj. Vto. Sen. </span>
+                  <span *ngIf="formulario.get('pdfVtoSenasa.nombre').value">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.get('pdfVtoSenasa.nombre').value">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfVtoSenasa.nombre').value">warning</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoSenasa')"
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
                   <i class="material-icons" >close</i>
                 </button>
                 <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoSenasa')" 
-                  [disabled]="!formulario.get('pdfVtoSenasa').value">
+                  [disabled]="!formulario.get('pdfVtoSenasa.nombre').value">
                   <i class="material-icons">visibility</i>
                 </button>
               </div>
@@ -362,17 +362,17 @@
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfHabBromat')" #fileInputHabBromat />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputHabBromat.click()" 
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.value.pdfHabBromat">Adj. Vto. Brom. </span>
-                  <span *ngIf="formulario.value.pdfHabBromat">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.value.pdfHabBromat">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.value.pdfHabBromat">warning</i>
+                  <span *ngIf="!formulario.get('pdfHabBromat.nombre').value">Adj. Vto. Brom. </span>
+                  <span *ngIf="formulario.get('pdfHabBromat.nombre').value">Archivo Adjunto</span>
+                  <i class="material-icons" *ngIf="formulario.get('pdfHabBromat.nombre').value">check_circle</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfHabBromat.nombre').value">warning</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfHabBromat')"
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
                   <i class="material-icons" >close</i>
                 </button>
                 <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfHabBromat')" 
-                  [disabled]="!formulario.get('pdfHabBromat').value">
+                  [disabled]="!formulario.get('pdfHabBromat.nombre').value">
                   <i class="material-icons">visibility</i>
                 </button>
               </div>

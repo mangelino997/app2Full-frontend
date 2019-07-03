@@ -223,17 +223,40 @@ export class VehiculoComponent implements OnInit {
   //Establece el formulario al seleccionar elemento de autocompletado
   public establecerFormulario() {
     let elemento = this.autocompletado.value;
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
     this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
     this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
     this.establecerConfiguracion(elemento);
     this.listarCompaniasSeguroPorEmpresa();
     let companiaSeguroPoliza = elemento.companiaSeguroPoliza;
-    this.companiaSeguro.setValue(companiaSeguroPoliza.companiaSeguro);
+    this.companiaSeguro.patchValue(companiaSeguroPoliza.companiaSeguro);
     this.listarPolizas();
-    this.formulario.get('companiaSeguroPoliza').setValue(elemento.companiaSeguroPoliza);
-    this.obtenerPDFs(elemento);
-
+    if(!elemento.pdfTitulo) {
+      elemento.pdfTitulo = this.vehiculoModelo.formulario.get('pdfTitulo');
+      this.obtenerPDF(elemento.pdfTitulo.id,'pdfTitulo');
+    }
+    if(!elemento.pdfCedulaIdent) {
+      elemento.pdfCedulaIdent = this.vehiculoModelo.formulario.get('pdfCedulaIdent');
+      this.obtenerPDF(elemento.pdfCedulaIdent.id,'pdfCedulaIdent');
+    }
+    if(!elemento.pdfVtoRuta) {
+      elemento.pdfVtoRuta = this.vehiculoModelo.formulario.get('pdfVtoRuta');
+      this.obtenerPDF(elemento.pdfVtoRuta.id,'pdfVtoRuta'); 
+    }
+    if(!elemento.pdfVtoInspTecnica) {
+      elemento.pdfVtoInspTecnica = this.vehiculoModelo.formulario.get('pdfVtoInspTecnica');
+      this.obtenerPDF(elemento.pdfVtoInspTecnica.id,'pdfVtoInspTecnica'); 
+    }
+    if(!elemento.pdfVtoSenasa) {
+      elemento.pdfVtoSenasa = this.vehiculoModelo.formulario.get('pdfVtoSenasa');
+      this.obtenerPDF(elemento.pdfVtoSenasa.id,'pdfVtoSenasa');
+    }
+    if(!elemento.pdfHabBromat) {
+      elemento.pdfHabBromat = this.vehiculoModelo.formulario.get('pdfHabBromat');
+      this.obtenerPDF(elemento.pdfHabBromat.id,'pdfHabBromat');
+    }
+    this.formulario.get('companiaSeguroPoliza').patchValue(elemento.companiaSeguroPoliza);
+    this.formulario.patchValue(elemento);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarLista() {
@@ -439,12 +462,9 @@ export class VehiculoComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    // this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).then(
       res => {
-        console.log(res);
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
           setTimeout(function () {
@@ -526,7 +546,13 @@ export class VehiculoComponent implements OnInit {
     // this.estableberValoresFormulario(elemento);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario();
-    this.obtenerPDFs(elemento);
+    if(elemento.pdfTitulo.id){ this.obtenerPDF(elemento.pdfTitulo.id,'pdfTitulo'); }
+    if(elemento.pdfCedulaIdent.id){ this.obtenerPDF(elemento.pdfCedulaIdent.id,'pdfCedulaIdent'); }
+    if(elemento.pdfHabBromat.id){ this.obtenerPDF(elemento.pdfHabBromat.id,'pdfHabBromat'); }
+    if(elemento.pdfVtoInspTecnica.id){ this.obtenerPDF(elemento.pdfVtoInspTecnica.id,'pdfVtoInspTecnica'); }
+    if(elemento.pdfVtoRuta.id){ this.obtenerPDF(elemento.pdfVtoRuta.id,'pdfVtoRuta'); }
+    if(elemento.pdfVtoSenasa.id){ this.obtenerPDF(elemento.pdfVtoSenasa.id,'pdfVtoSenasa'); }
+    
   }
   //Establece los valores al "ver" o "modificar" desde la pestaña "lista"
   private estableberValoresFormulario(elemento) {
@@ -537,89 +563,31 @@ export class VehiculoComponent implements OnInit {
     this.establecerConfiguracion(elemento);
   }
   //Obtiene el pdf para mostrarlo
-  public obtenerPDFs(elemento) {
-    if(elemento.pdfCedulaIdent){
-      this.pdfServicio.obtenerPorId(elemento.pdfCedulaIdent.id).subscribe(res => {
+  public obtenerPDF(id,nombre) {
+    if(this.formulario.get(id).value) {
+      this.pdfServicio.obtenerPorId(this.formulario.get(id).value).subscribe(res => {
         let resultado = res.json();
         let pdf = {
-          id: elemento.pdfCedulaIdent.id,
-          nombre: elemento.pdfCedulaIdent.nombre,
+          id: resultado.id,
+          nombre: resultado.nombre,
           datos: atob(resultado.datos)
         }
-        this.formulario.get('pdfCedulaIdent').setValue(pdf);
-      })
-    }
-    if(elemento.pdfHabBromat){
-      this.pdfServicio.obtenerPorId(elemento.pdfHabBromat.id).subscribe(res => {
-        let resultado = res.json();
-        let pdf = {
-          id: elemento.pdfHabBromat.id,
-          nombre: elemento.pdfHabBromat.nombre,
-          datos: atob(resultado.datos)
-        }
-        this.formulario.get('pdfHabBromat').setValue(pdf);
-      })
-    }
-    if(elemento.pdfTitulo){
-      this.pdfServicio.obtenerPorId(elemento.pdfTitulo.id).subscribe(res => {
-        let resultado = res.json();
-        let pdf = {
-          id: elemento.pdfTitulo.id,
-          nombre: elemento.pdfTitulo.nombre,
-          datos: atob(resultado.datos)
-        }
-        this.formulario.get('pdfTitulo').setValue(pdf);
-      })
-    }
-    if(elemento.pdfVtoInspTecnica){
-      this.pdfServicio.obtenerPorId(elemento.pdfVtoInspTecnica.id).subscribe(res => {
-        let resultado = res.json();
-        let pdf = {
-          id: elemento.pdfVtoInspTecnica.id,
-          nombre: elemento.pdfVtoInspTecnica.nombre,
-          datos: atob(resultado.datos)
-        }
-        this.formulario.get('pdfVtoInspTecnica').setValue(pdf);
-      })
-    }
-    if(elemento.pdfVtoRuta){
-      this.pdfServicio.obtenerPorId(elemento.pdfVtoRuta.id).subscribe(res => {
-        let resultado = res.json();
-        let pdf = {
-          id: elemento.pdfVtoRuta.id,
-          nombre: elemento.pdfVtoRuta.nombre,
-          datos: atob(resultado.datos)
-        }
-        this.formulario.get('pdfVtoRuta').setValue(pdf);
-      })
-    }
-    if(elemento.pdfVtoSenasa){
-      this.pdfServicio.obtenerPorId(elemento.pdfVtoSenasa.id).subscribe(res => {
-        let resultado = res.json();
-        let pdf = {
-          id: elemento.pdfVtoSenasa.id,
-          nombre: elemento.pdfVtoSenasa.nombre,
-          datos: atob(resultado.datos)
-        }
-        this.formulario.get('pdfVtoSenasa').setValue(pdf);
+        this.formulario.get(nombre).patchValue(pdf);
       })
     }
   }
   //Carga la imagen del paciente
   public readURL(event, campo): void {
-    let file = event.target.files[0];
-    let extension = file.name.split('.');
-    extension = extension[extension.length - 1];
-    if (event.target.files && event.target.files[0] && extension == 'pdf') {
+    if (event.target.files && event.target.files[0] && event.target.files[0].type == 'application/pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
         let foto = {
-          id: this.formulario.value.id,
+          id: this.formulario.get(campo+'.id').value ? this.formulario.get(campo+'.id').value : null,
           nombre: file.name,
           datos: reader.result
         }
-        this.formulario.get(campo).setValue(foto);
+        this.formulario.get(campo).patchValue(foto);
       }
       reader.readAsDataURL(file);
     } else {
@@ -631,12 +599,12 @@ export class VehiculoComponent implements OnInit {
     if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
     } else {
-      this.formulario.get(campo).setValue(null);
+      this.formulario.get(campo +'.nombre').setValue('');
     }
   }
   //Muestra el pdf en una pestana nueva
   public verPDF(campo) {
-    let datos = this.formulario.get(campo).value.datos;
+    let datos = this.formulario.get(campo + '.datos').value;
     window.open(datos, '_blank');
   }
   //Define el mostrado de datos y comparacion en campo select

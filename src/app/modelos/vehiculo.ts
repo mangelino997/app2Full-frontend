@@ -32,14 +32,54 @@ export class Vehiculo {
             usuarioMod: new FormControl(),
             fechaUltimaMod: new FormControl(),
             alias: new FormControl('', Validators.maxLength(100)),
-            pdfTitulo: new FormControl(),
-            pdfCedulaIdent: new FormControl(),
-            pdfVtoRuta: new FormControl(),
-            pdfVtoInspTecnica: new FormControl(),
-            pdfVtoSenasa: new FormControl(),
-            pdfHabBromat: new FormControl(),
-
-
+            pdfTitulo: new FormGroup({
+                id: new FormControl(),
+                version: new FormControl(),
+                nombre: new FormControl(),
+                tipo: new FormControl(),
+                tamanio: new FormControl(),
+                datos: new FormControl()
+            }),
+            pdfCedulaIdent: new FormGroup({
+                id: new FormControl(),
+                version: new FormControl(),
+                nombre: new FormControl(),
+                tipo: new FormControl(),
+                tamanio: new FormControl(),
+                datos: new FormControl()
+            }),
+            pdfVtoRuta: new FormGroup({
+                id: new FormControl(),
+                version: new FormControl(),
+                nombre: new FormControl(),
+                tipo: new FormControl(),
+                tamanio: new FormControl(),
+                datos: new FormControl()
+            }),
+            pdfVtoInspTecnica: new FormGroup({
+                id: new FormControl(),
+                version: new FormControl(),
+                nombre: new FormControl(),
+                tipo: new FormControl(),
+                tamanio: new FormControl(),
+                datos: new FormControl()
+            }),
+            pdfVtoSenasa: new FormGroup({
+                id: new FormControl(),
+                version: new FormControl(),
+                nombre: new FormControl(),
+                tipo: new FormControl(),
+                tamanio: new FormControl(),
+                datos: new FormControl()
+            }),
+            pdfHabBromat: new FormGroup({
+                id: new FormControl(),
+                version: new FormControl(),
+                nombre: new FormControl(),
+                tipo: new FormControl(),
+                tamanio: new FormControl(),
+                datos: new FormControl()
+            })
         })
     }
 }

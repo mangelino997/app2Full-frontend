@@ -157,40 +157,6 @@ export class VehiculoService {
     let vtoInspTecnicaFile = obj.pdfVtoInspTecnica;
     let vtoSenasaFile = obj.pdfVtoSenasa;
     let habBromatFile = obj.pdfHabBromat;
-
-    // let idTituloFile;
-    // let idCedulaIdentFile;
-    // let idVtoRutaFile;
-    // let idVtoInspTecnicaFile;
-    // let idVtoSenasaFile;
-    // let idHabBromatFile;
-
-
-    // if(tituloFile)
-    //   idTituloFile = obj.pdfTitulo.id;
-    //   else
-    //     idTituloFile = null
-    // if(cedulaIdentFile)
-    //   idCedulaIdentFile = obj.pdfCedulaIdent.id;
-    //   else
-    //   idCedulaIdentFile = null
-    // if(vtoRutaFile)
-    //   idVtoRutaFile = obj.pdfVtoRuta.id;
-    //   else
-    //   idVtoRutaFile = null
-    // if(vtoInspTecnicaFile)
-    //   idVtoInspTecnicaFile = obj.pdfVtoInspTecnica.id;
-    //   else
-    //   idVtoInspTecnicaFile = null
-    // if(vtoSenasaFile)
-    //   idVtoSenasaFile = obj.pdfVtoSenasa.id;
-    //   else
-    //   idVtoSenasaFile = null
-    // if(habBromatFile)
-    //   idHabBromatFile = obj.pdfHabBromat.id;
-    //   else
-    //   idHabBromatFile = null
-
     let blob = new Blob([], { type: 'application/pdf' });
     const formData = new FormData();
 
@@ -236,7 +202,7 @@ export class VehiculoService {
       blob = new Blob([null], { type: 'application/pdf' });
       formData.append('habBromat', blob, '');
     }
-
+    obj.pdfTitulo = null;
     obj.pdfCedulaIdent = null;
     obj.pdfVtoRuta = null;
     obj.pdfVtoInspTecnica = null;
