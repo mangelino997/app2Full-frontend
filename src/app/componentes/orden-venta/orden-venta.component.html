@@ -17,7 +17,7 @@
               <div class="form-group has-float-label">
                 <label for="idTipoOrdenVenta" class="tamanio-label">Tipo *</label>
                 <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta" class="form-control form-control-sm"
-                  (selectionChange)="establecerTipo()" required>
+                  (selectionChange)="establecerTipo()" [compareWith]="compareT" required>
                   <mat-option [value]="false">Por Empresa</mat-option>
                   <mat-option [value]="true">Por Cliente</mat-option>
                 </mat-select>
@@ -47,7 +47,7 @@
               <div class="form-group has-float-label">
                 <label for="idOrdenVenta" class="orden-venta-label">Orden Venta *</label>
                 <mat-select id="idOrdenVenta" class="form-control form-control-sm" [formControl]="ordenventa"
-                  [compareWith]="compareFn" (selectionChange)="cargarDatosOrden()">
+                  [compareWith]="compareFn" (selectionChange)="cargarDatosOrden()" >
                   <mat-option *ngFor="let orden of ordenesVentas" [value]="orden">
                     {{orden.nombre}} - {{orden.cliente ? orden.cliente.razonSocial : orden.empresa.razonSocial}} -
                     {{orden.vendedor.nombre}} - {{orden.activaDesde}}
@@ -121,7 +121,7 @@
               (click)="actualizar()">Actualizar Orden Venta
               </button>
             </div>
-            <div class="col-md-2" *ngIf="indiceSeleccionado != 1 && indiceSeleccionado < 5">
+            <div class="col-md-2" *ngIf="indiceSeleccionado > 2 && indiceSeleccionado < 5">
               <button id="idBoton" [disabled]="!formulario.valid && !show" mat-raised-button color="primary" formnovalidate
               (click)="accion()">{{pestaniaActual}} 
               </button>
@@ -205,97 +205,27 @@
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Desde</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.preciosDesde}}</td>
                 </ng-container>
-                <ng-container matColumnDef="ver" sticky *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="verOrdenVentaTarifa(elemento, i)"><span
-                      class="cursor-color">ver</span></td>
+                <ng-container matColumnDef="ver" sticky>
+                  <th mat-header-cell *matHeaderCellDef >-</th>
+                  <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="verOrdenVentaTarifa(elemento, i)">
+                    <span class="cursor-color" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">ver</span>
+                  </td>
                 </ng-container>
-                <ng-container matColumnDef="mod" sticky *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
+                <ng-container matColumnDef="mod" sticky>
                   <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="modificarOrdenVentaTarifa(elemento, i)"><span
-                      class="cursor-color">mod</span></td>
+                  <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="modificarOrdenVentaTarifa(elemento, i)">
+                    <span class="cursor-color" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">mod</span>
+                  </td>
                 </ng-container>
-                <ng-container matColumnDef="eliminar" sticky *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
+                <ng-container matColumnDef="eliminar" sticky>
                   <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento; let i = index;" (click)="eliminarOrdenVentaTarifa(elemento)"><span
-                      class="cursor-color">x</span></td>
+                  <td mat-cell *matCellDef="let elemento; let i = index;" (click)="eliminarOrdenVentaTarifa(elemento)">
+                    <span class="cursor-color" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">x</span>
+                  </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
               </table>
-            <!-- <table class="table table-bordered table-sm">
-              <thead>
-                <tr>
-                  <th class="text-center" style="width:5%" scope="col">#</th>
-                  <th class="text-center" style="width:40%" scope="col">Lista de Precio</th>
-                  <th class="text-center" style="width:40%" scope="col">Precio Desde</th>
-                  <th class="text-center" style="width:5%" scope="col" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">-</th>
-                  <th class="text-center" style="width:5%" scope="col" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">-</th>
-                  <th class="text-center" style="width:5%" scope="col" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">-</th>
-                </tr>
-              </thead>
-              
-              <tbody>
-                <tr *ngFor="let item of listaTarifasDeOrdVta; let i = index">
-                  <td align="center">
-                    <span>{{i+1}}</span>
-                  </td>
-                  <td align="center">
-                    <span>
-                      {{item.tipoTarifa.nombre}} - 
-                      P/Porcentaje: {{item.tipoTarifa.porPorcentaje ? 'Sí': 'No'}}) -
-                      P/Escala: {{item.tipoTarifa.porEscala ? 'Sí': 'No'}}
-                    </span>
-                  </td>
-                  <td align="center">
-                    <span>{{item.preciosDesde}}</span>
-                  </td>
-                  <td *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" align="center">
-                    <span class="cursor-color" (click)="verOrdenVentaTarifa(item, i)">Ver</span>
-                  </td>
-                  <td *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" align="center">
-                    <span class="cursor-color" (click)="modificarOrdenVentaTarifa(item, i)">Mod</span>
-                  </td>
-                  <td *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" align="center">
-                    <span class="cursor-color" (click)="eliminarOrdenVentaTarifa(item, i)">X</span>
-                  </td>
-                </tr>
-              </tbody> -->
-              <!--Tabla correspondiente para Tipo Tarifa == porEscala-->
-              <!-- <tbody *ngIf="listaDeEscalas.length>0">
-                <tr *ngFor="let l of listaDeEscalas; let i = index">
-                  <td align="center">
-                    <span>{{i+1}}</span>
-                  </td>
-                  <td align="center">
-                    <span>{{l.escalaTarifa.valor}}</span>
-                  </td>
-                  <td *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" align="center">
-                    <span class="cursor-color" (click)="modificarEscalaLista(l, i)">Mod</span>
-                  </td>
-                  <td *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" align="center">
-                    <span class="cursor-color" (click)="eliminarEscalaLista(i, l)">X</span>
-                  </td>
-                </tr>
-              </tbody> -->
-              <!--Tabla correspondiente para Tipo Tarifa == porTramo-->
-              <!-- <tbody *ngIf="listaDeTramos.length>0">
-                <tr *ngFor="let l of listaDeTramos; let i = index">
-                  <td align="center">
-                    <span>{{i+1}}</span>
-                  </td>
-                  <td align="center">
-                    <span>{{l.tramo}}</span>
-                  </td>
-                  <td *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" align="center">
-                    <span class="cursor-color" (click)="modificarEscalaLista(l, i)">Mod</span>
-                  </td>
-                  <td *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" align="center">
-                    <span class="cursor-color" (click)="eliminarEscalaLista(i, l)">X</span>
-                  </td>
-                </tr>
-              </tbody> 
-            </table>-->
           </div>
         </div>
       </form>
@@ -371,7 +301,7 @@
                   </ng-container>
                   <ng-container matColumnDef="eliminar" sticky >
                     <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarEliminar(elemento, i)"><span
+                    <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarEliminar(elemento)"><span
                         class="cursor-color">x</span></td>
                   </ng-container>
                   <tr mat-header-row *matHeaderRowDef="columnasListar"></tr>

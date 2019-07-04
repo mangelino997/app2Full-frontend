@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 import { OrdenVentaTarifa } from 'src/app/modelos/ordenVentaTarifa';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
+import { EliminarModalComponent } from '../eliminar-modal/eliminar-modal.component';
 
 @Component({
   selector: 'app-orden-venta',
@@ -236,34 +237,13 @@ export class OrdenVentaComponent implements OnInit {
         }
       )
     }
-    // if (tipoTarifa) {
-    //   if (!tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
-    //     this.formularioEscala.get('porcentaje').setValue(null);
-    //     this.formularioEscala.get('porcentaje').disable();
-    //     this.tipoTarifaEstado = false;
-    //   } else if (tipoTarifa.porPorcentaje && tipoTarifa.porEscala) {
-    //     this.formularioEscala.get('importeFijo').setValue(null);
-    //     this.formularioEscala.get('precioUnitario').setValue(null);
-    //     this.formularioEscala.get('importeFijo').disable();
-    //     this.formularioEscala.get('precioUnitario').disable();
-    //     this.formularioEscala.get('porcentaje').enable();
-    //     this.tipoTarifaEstado = true;
-    //   } else if(!tipoTarifa.porPorcentaje && !tipoTarifa.porEscala) {
-    //     this.importeSecoPor.setValue(false);
-    //     this.importeRefPor.setValue(false);
-    //     this.cambioImportesSecoPor();
-    //     this.cambioImportesRefPor();
-    //   }
-    // }
   }
   //Establece el tipo (empresa o cliente)
   public establecerTipo(): void {
-    // this.reestablecerCampos(null);
     let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
     console.log(tipoOrdenVenta);
     if (!tipoOrdenVenta) {
       this.listarOrdenesVentas('empresa');
-      // this.formulario.get('cliente').setValidators([]);
     } 
   }
   //
@@ -284,7 +264,6 @@ export class OrdenVentaComponent implements OnInit {
     this.loaderService.show();
     switch (tipo) {
       case 'empresa':
-        // this.establecerCamposSoloLectura(this.indiceSeleccionado);
         this.establecerEmpresa();
         this.formulario.get('cliente').setValue(null);
         this.ordenVentaServicio.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
@@ -295,9 +274,6 @@ export class OrdenVentaComponent implements OnInit {
         );
         break;
       case 'cliente':
-        // this.reestablecerCampos(this.formulario.get('cliente').value);
-        // this.establecerCamposSoloLectura(this.indiceSeleccionado);
-        // this.formulario.get('cliente').setValue(this.formulario.get('cliente').value);
         this.formulario.get('empresa').setValue({id: null});
         this.ordenVentaServicio.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
           res => {
@@ -349,12 +325,12 @@ export class OrdenVentaComponent implements OnInit {
     this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
     this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
     this.formulario.get('esContado').setValue(false);
-    // this.cambioImportesPor();
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
     this.resultados = new MatTableDataSource([]);
     this.listaOrdenVenta = new MatTableDataSource([]);
+    this.listaTarifasDeOrdVta = new MatTableDataSource([]);
     this.resultadosClientes = [];
     this.resultadosVendedores = [];
     this.resultadosTramos = [];
@@ -430,7 +406,6 @@ export class OrdenVentaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
-          // this.listarEscalaTarifa();
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
@@ -481,20 +456,16 @@ export class OrdenVentaComponent implements OnInit {
       case 1:
         this.formulario.get('vendedor').enable();
         this.formulario.get('esContado').enable();
-        // this.formularioEscala.get('importeFijo').enable();
-        // this.importePor.enable();
         this.formularioEscala.enable();
         this.formularioTramo.enable();
-        // this.cambioTipoTarifa();
-        // this.cambioImportesPor();
         break;
       case 2:
         this.formulario.get('vendedor').disable();
         this.formulario.get('esContado').disable();
-        // this.formularioEscala.get('importeFijo').disable();
-        // this.importePor.disable();
         this.formularioEscala.disable();
         this.formularioTramo.disable();
+        this.formularioTarifa.disable();
+        this.tipoTarifa.disable();
         break;
       case 3:
         this.formulario.get('vendedor').enable();
@@ -503,8 +474,6 @@ export class OrdenVentaComponent implements OnInit {
         this.importePor.enable();
         this.formularioEscala.enable();
         this.formularioTramo.enable();
-        // this.cambioTipoTarifa();
-        // this.cambioImportesPor();
         break;
       case 4:
         this.formulario.get('vendedor').disable();
@@ -655,19 +624,62 @@ export class OrdenVentaComponent implements OnInit {
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    // this.autocompletado.setValue(elemento);
+    this.ordenventa.setValue(elemento.ordenVenta);
     this.formulario.patchValue(elemento);
+
     if(elemento.empresa){
       this.formulario.get('tipoOrdenVenta').setValue(false);
       this.empresa.setValue(elemento.empresa.razonSocial);
+      this.establecerTipo();
     }
-    if(elemento.cliente)
+    if(elemento.cliente){
       this.formulario.get('tipoOrdenVenta').setValue(true);
+    }
     this.formularioTarifa.enable();
     this.tipoTarifa.enable();
     this.listarOrdenVentaTarifas();
     this.btnActualizarOrdVta = true;
     console.log(elemento);
+  }
+  //Elimina una Orden Venta (Pestaña Listar, accion 'eliminar')
+  public activarEliminar(elemento){
+    const dialogRef = this.dialog.open(EliminarModalComponent, {
+      width: '1100px',
+      data: {},
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      let respuesta = result;
+      if(respuesta){
+        this.ordenVentaServicio.eliminar(elemento.id).subscribe(
+          res=>{
+            var respuesta = res.json();
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+            this.buscarLista();
+          },
+          err=>{
+            let error= err.json();
+            this.toastr.error(error.mensaje);
+            this.loaderService.hide();
+          }
+        )
+      }
+    });
+  }
+  //Carga los datos de la orden de venta seleccionada en los input
+  public cargarDatosOrden() {
+    console.log(this.ordenventa.value);
+    this.formulario.patchValue(this.ordenventa.value);
+    // this.establecerPorcentaje(this.formulario.get('seguro'), 2);
+    // this.establecerPorcentaje(this.formulario.get('comisionCR'), 2);
+    if(this.formulario.value.empresa){
+      this.formulario.get('tipoOrdenVenta').setValue(false);
+      this.listarOrdenVentaTarifas();
+    }
+    if(this.formulario.value.cliente){
+      this.formulario.get('tipoOrdenVenta').setValue(true);
+      this.listarOrdenVentaTarifas();
+    }
   }
   //Obtiene la mascara de importe
   public mascaraImporte(intLimite, decimalLimite) {
@@ -707,6 +719,13 @@ export class OrdenVentaComponent implements OnInit {
   private compararFn(a, b) {
     if (a != null && b != null) {
       return a.id === b.id;
+    }
+  }
+  //Funcion para comparar y mostrar elemento del campo 'Tipo' 
+  public compareT = this.compararT.bind(this);
+  private compararT(a, b) {
+    if (a != null && b != null) {
+      return a === b;
     }
   }
   //Muestra el valor en los autocompletados
@@ -769,14 +788,15 @@ export class VerTarifaDialogo {
   //Define un formulario para Orden Venta Escala o Tramo
   public formularioTramo: FormGroup;
   public formularioEscala: FormGroup;
+  //Define el nombre del Tipo Tarifa
   //Define tipo tarifa
-  public tipoTarifa = new FormControl();
+  public tipoTarifa: string = null;
   //Define la Orden Venta como un FormControl
   public ordenVenta = new FormControl();
   //Define la Orden Venta Tarifa
   public ordenVentaTarifa: any=null;
-  //Define el campo importe por
-  public importePor: any = null;
+  //Define importes por
+  public importePor:FormControl = new FormControl();
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de Escalas Tarifas
@@ -815,19 +835,17 @@ export class VerTarifaDialogo {
   //Al inicializarse el componente
   ngOnInit() {
     //Inicializa valores
-    this.tipoTarifa.setValue(this.data.tarifa); 
     this.ordenVentaTarifa = this.data.ordenVentaTarifa;
     this.ordenVenta.setValue(this.ordenVentaTarifa.ordenVenta);
-    console.log(this.tipoTarifa.value, this.ordenVenta.value, this.ordenVentaTarifa);
     //Inicializa el Formulario 
     this.formularioEscala = this.ordenVentaEscala.formulario;
     this.formularioTramo = this.ordenVentaTramo.formulario;
     this.reestablecerFormularios();
+    console.log(this.tipoTarifa, this.ordenVenta.value, this.ordenVentaTarifa);
     //Obtiene la lista de Escalas 
     this.listarEscalasTarifas();
     //Obtiene la lista de registros segun el tipoTarifa
     this.listar();
-    console.log(this.tipoTarifa.value, this.formularioTramo.value, this.formularioEscala.value, );
     //Autocompletado Tramo - Buscar por nombre
     this.formularioTramo.get('tramo').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -867,7 +885,7 @@ export class VerTarifaDialogo {
   public agregar(){
     this.idMod = null;
     this.loaderService.show();
-    if(this.tipoTarifa.value == 'porEscala'){
+    if(this.tipoTarifa == 'porEscala'){
       this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
       console.log(this.formularioEscala.value);
       this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
@@ -891,7 +909,7 @@ export class VerTarifaDialogo {
         }
       )
     } 
-    if(this.tipoTarifa.value == 'porTramo'){
+    if(this.tipoTarifa == 'porTramo'){
       this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
       this.controlarCamposVaciosTramo(this.formularioTramo);
       console.log(this.formularioTramo.value);
@@ -919,7 +937,7 @@ export class VerTarifaDialogo {
   //Obtiene la lista de registros segun el tipoTarifa
   public listar(){
     this.loaderService.show();
-    if(this.tipoTarifa.value == 'porEscala'){
+    if(this.tipoTarifa == 'porEscala'){
       this.ordenVentaEscalaService.listarPorOrdenVenta(this.ordenVenta.value.id).subscribe(
         res=>{
           console.log(res.json());
@@ -934,7 +952,7 @@ export class VerTarifaDialogo {
         }
       )
     }
-    if(this.tipoTarifa.value == 'porTramo'){
+    if(this.tipoTarifa == 'porTramo'){
       this.ordenVentaTramoService.listarPorOrdenVenta(this.ordenVenta.value.id).subscribe(
         res=>{
           console.log(res.json());
@@ -954,7 +972,7 @@ export class VerTarifaDialogo {
   public eliminar(elemento){
     console.log(elemento.id);
     this.loaderService.show();
-    if(this.tipoTarifa.value == 'porEscala'){
+    if(this.tipoTarifa == 'porEscala'){
       this.ordenVentaEscalaService.eliminar(elemento.id).subscribe(
         res=>{
           var respuesta = res.json();
@@ -970,7 +988,7 @@ export class VerTarifaDialogo {
         }
       )
     } 
-    if(this.tipoTarifa.value == 'porTramo'){
+    if(this.tipoTarifa == 'porTramo'){
       this.ordenVentaTramoService.eliminar(elemento.id).subscribe(
         res=>{
           var respuesta = res.json();
@@ -990,7 +1008,7 @@ export class VerTarifaDialogo {
   //Modifica los datos del registro seleccionado segun el tipoTarifa
   public modificar(){
     this.loaderService.show();
-    if(this.tipoTarifa.value == 'porEscala'){
+    if(this.tipoTarifa == 'porEscala'){
       // this.formularioEscala.patchValue(elemento);
       // this.controlModEscala(elemento);
       console.log(this.formularioEscala.value);
@@ -1014,7 +1032,7 @@ export class VerTarifaDialogo {
         }
       )
     } 
-    if(this.tipoTarifa.value == 'porTramo'){
+    if(this.tipoTarifa == 'porTramo'){
       // this.formularioTramo.patchValue(elemento);
       this.controlarCamposVaciosTramo(this.formularioTramo);
       // this.controlModTramo(elemento);
@@ -1042,6 +1060,11 @@ export class VerTarifaDialogo {
   }
   //Reestablece valores y formularios
   private reestablecerFormularios(){
+    this.listaCompleta = new MatTableDataSource([]);
+    if(this.ordenVentaTarifa.tipoTarifa.porEscala)
+      this.tipoTarifa = "porEscala";
+      else
+      this.tipoTarifa = "porTramo";
     this.formularioEscala.reset();
     this.formularioTramo.reset();
     this.resultadosTramos = [];
@@ -1050,7 +1073,7 @@ export class VerTarifaDialogo {
     this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
   }
   //Controla el modificar en Escala
-  private controlModEscala(elemento){
+  public controlModEscala(elemento){
     this.formularioEscala.patchValue(elemento);
     elemento.ordenVentaTarifa = this.ordenVentaTarifa;
     if (elemento.importeFijo) {
@@ -1065,8 +1088,8 @@ export class VerTarifaDialogo {
       this.importePor.setValue(true);
       this.cambioImportesPor();
     }
-    let tipoTarifa = this.formularioEscala.get('tipoTarifa').value;
-    if(tipoTarifa.porPorcentaje) {
+    let tipoTarifa = this.formularioEscala.get('ordenVentaTarifa').value;
+    if(tipoTarifa.tipoTarifa.porPorcentaje) {
       this.formularioEscala.get('porcentaje').enable();
     } else {
       this.formularioEscala.get('porcentaje').disable();
@@ -1078,7 +1101,7 @@ export class VerTarifaDialogo {
     }, 20);
   }
   //Controla el modificar en Tramo
-  private controlModTramo(elemento){
+  public controlModTramo(elemento){
     this.formularioTramo.patchValue(elemento);
     this.idMod = elemento.id;
     elemento.ordenVentaTarifa = this.ordenVentaTarifa;
