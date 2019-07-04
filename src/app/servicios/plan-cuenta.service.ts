@@ -137,7 +137,6 @@ export class PlanCuentaService {
   }
   //Agrega un registro
   public agregar(elemento) {
-    console.log(elemento);
     this.http.post(this.url, elemento, this.options).subscribe(
       res => {
         if(res.status == 201) {

@@ -16,6 +16,15 @@
                   formControlName="nombre" style="width: 250px;">
               </div>
               <div class="form-group has-float-label" *ngIf="mostrarTipoCuentasContables">
+                <label for="idGrupoCuentaContable" class="tamanio-label">Grupo Cuenta Contable *</label>
+                <mat-select id="idGrupoCuentaContable" class="form-control form-control-sm" style="width: 200px;"
+                  formControlName="grupoCuentaContable" [disabled]="!formulario.valid" [compareWith]="compareFn">
+                  <mat-option *ngFor="let itemGrupoCuentaContable of gruposCuentasContables" [value]="itemGrupoCuentaContable">
+                    {{itemGrupoCuentaContable.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
+              <div class="form-group has-float-label" *ngIf="mostrarTipoCuentasContables">
                 <label for="idTipoCuentaContable" class="tamanio-label">Tipo Cuenta Contable *</label>
                 <mat-select id="idTipoCuentaContable" class="form-control form-control-sm" style="width: 200px;"
                   formControlName="tipoCuentaContable" [disabled]="!formulario.valid" [compareWith]="compareFn">
@@ -27,7 +36,7 @@
               <div class="form-group has-float-label">
                 <label for="idImputable" class="tamanio-label">Es Imputable *</label>
                 <mat-select id="idImputable" class="form-control form-control-sm" style="width: 120px;"
-                  formControlName="esImputable" (selectionChange)="cambioImputable()" [disabled]="!formulario.valid">
+                  formControlName="esImputable" (selectionChange)="cambioImputable()" [disabled]="estadoEsImputable()">
                   <mat-option [value]="false">No</mat-option>
                   <mat-option [value]="true">Si</mat-option>
                 </mat-select>

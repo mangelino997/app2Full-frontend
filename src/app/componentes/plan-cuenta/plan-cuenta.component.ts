@@ -8,6 +8,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { TipoCuentaContableService } from 'src/app/servicios/tipo-cuenta-contable.service';
+import { GrupoCuentaContableService } from 'src/app/servicios/grupo-cuenta-contable.service';
 
 export class Arbol {
   id: number;
@@ -67,11 +68,14 @@ export class PlanCuentaComponent implements OnInit {
   private subscription: Subscription;
   //Define la lista de tipos de cuentas contables
   public tiposCuentasContables:Array<any> = [];
+  //Define la lista de grupos de cuentas contables
+  public gruposCuentasContables:Array<any> = [];
   //Define si mostrar tipos de cuentas contables
   public mostrarTipoCuentasContables:boolean = false;
   //Constructor
   constructor(private planCuentaServicio: PlanCuentaService, private appService: AppService,
-    private loaderService: LoaderService, private tipoCuentaContableServicio: TipoCuentaContableService) {
+    private loaderService: LoaderService, private tipoCuentaContableServicio: TipoCuentaContableService,
+    private grupoCuentaContableServicio: GrupoCuentaContableService) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
@@ -99,11 +103,14 @@ export class PlanCuentaComponent implements OnInit {
       usuarioAlta: new FormControl(),
       usuarioMod: new FormControl(),
       tipoCuentaContable: new FormControl(),
+      grupoCuentaContable: new FormControl(),
       nivel: new FormControl(),
       hijos: new FormControl()
     });
     //Obtiene la lista de tipos de cuentas contables
     this.listarTiposCuentasContables();
+    //Obtiene la lista de grupos de cuentas contables
+    this.listarGruposCuentasContables();
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto(): void {
@@ -169,6 +176,7 @@ export class PlanCuentaComponent implements OnInit {
     }, 20);
     this.establecerValoresPorDefecto();
     this.mostrarTipoCuentasContables = nodo.nivel == 1 ? true : false;
+    this.formulario.get('esImputable').setValue(nodo.nivel == 1 ? false : true);
     const nodoPadre = this.flatNodeMap.get(nodo);
     this.planCuentaServicio.agregarElemento(nodoPadre!, '');
     this.treeControl.expand(nodo);
@@ -216,8 +224,13 @@ export class PlanCuentaComponent implements OnInit {
     elemento.hijos = [];
     elemento.empresa = this.appService.getEmpresa();
     elemento.usuarioAlta = this.appService.getUsuario();
-    elemento.tipoCuentaContable = elementoPadre.tipoCuentaContable;
-    elemento.grupoCuentaContable = elementoPadre.grupoCuentaContable;
+    if(elementoPadre.nivel > 1) {
+      elemento.tipoCuentaContable = elementoPadre.tipoCuentaContable;
+      elemento.grupoCuentaContable = elementoPadre.grupoCuentaContable;
+    } else {
+      elemento.tipoCuentaContable = this.formulario.get('tipoCuentaContable').value;
+      elemento.grupoCuentaContable = this.formulario.get('grupoCuentaContable').value;
+    }
     this.planCuentaServicio.agregar(elemento);
     this.loaderService.hide();
   }
@@ -231,7 +244,12 @@ export class PlanCuentaComponent implements OnInit {
       id: nodoPadre.id,
       version: nodoPadre.version
     }
+    if(nodoPadre.nivel > 1) {
+      this.formulario.get('tipoCuentaContable').setValue(nodoPadre.tipoCuentaContable);
+      this.formulario.get('grupoCuentaContable').setValue(nodoPadre.grupoCuentaContable);
+    }
     this.formulario.get('padre').setValue(padre);
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.planCuentaServicio.actualizar(this.formulario.value, aNodo);
     nodo.editable = false;
     this.loaderService.hide();
@@ -242,6 +260,7 @@ export class PlanCuentaComponent implements OnInit {
     let aNodo = this.flatNodeMap.get(nodo);
     let pNodo = this.obtenerNodoPadre(nodo);
     this.planCuentaServicio.eliminar(aNodo.id, pNodo);
+    this.formulario.reset();
     this.loaderService.hide();
   }
   //Cancela la actualizacion de un nodo
@@ -282,6 +301,21 @@ export class PlanCuentaComponent implements OnInit {
     this.tipoCuentaContableServicio.listar().subscribe(res => {
       this.tiposCuentasContables = res.json();
     });
+  }
+  //Obtiene la lista de grupos de cuentas contables
+  public listarGruposCuentasContables(): void {
+    this.grupoCuentaContableServicio.listar().subscribe(res => {
+      this.gruposCuentasContables = res.json();
+    });
+  }
+  //Establece estado (readonly) de campo "Es Imputable"
+  public estadoEsImputable(): boolean {
+    let estadoFormulario = this.formulario.valid;
+    if(this.mostrarTipoCuentasContables) {
+      return true;
+    } else {
+      return !estadoFormulario;
+    }
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
