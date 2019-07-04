@@ -67,7 +67,7 @@ export class Personal {
             vtoCursoCargaPeligrosa: new FormControl(),
             vtoLINTI: new FormControl(),
             vtoLibretaSanidad: new FormControl(),
-            vtoPsicoFisico: new FormControl('', Validators.required),
+            vtoPsicoFisico: new FormControl(),
             usuarioModLC: new FormControl(),
             usuarioModCurso: new FormControl(),
             usuarioModCursoCP: new FormControl(),

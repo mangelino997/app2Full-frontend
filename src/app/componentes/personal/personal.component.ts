@@ -304,6 +304,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('cuotasPrestamo').setValue(1);
     this.formulario.get('esChofer').setValue(false);
     this.formulario.get('esChoferLargaDistancia').setValue(false);
+    this.formulario.get('esChoferLargaDistancia').disable();
     this.formulario.get('enConvenioColectivo').setValue(true);
     this.formulario.get('conCoberturaSCVO').setValue(true);
     this.formulario.get('vtoLicenciaConducir').disable();
@@ -311,6 +312,8 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('vtoCursoCargaPeligrosa').disable();
     this.formulario.get('vtoLINTI').disable();
     this.formulario.get('vtoLibretaSanidad').disable();
+    this.formulario.get('vtoPsicoFisico').disable();
+    this.cambioEsChofer();
   }
   //Al cambiar elemento de select esChofer
   public cambioEsChofer(): void {
@@ -328,11 +331,12 @@ export class PersonalComponent implements OnInit {
       this.btnPdflinti = true;
     } else if (esChofer && !esChoferLargaDistancia) {
       this.formulario.get('vtoLicenciaConducir').enable();
-      this.formulario.get('vtoCurso').disable();
-      this.formulario.get('vtoCursoCargaPeligrosa').disable();
+      this.formulario.get('vtoCurso').enable();
+      this.formulario.get('vtoCursoCargaPeligrosa').enable();
       this.formulario.get('vtoLINTI').disable();
       this.formulario.get('vtoLibretaSanidad').disable();
-      this.formulario.get('vtoPsicoFisico').disable();
+      this.formulario.get('vtoPsicoFisico').enable();
+      this.formulario.get('esChoferLargaDistancia').enable();
       this.btnPdfLibSanidad = false;
       this.btnPdfLicConducir = true;
       this.btnPdflinti = false;
@@ -343,6 +347,8 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('vtoLINTI').disable();
       this.formulario.get('vtoLibretaSanidad').disable();
       this.formulario.get('vtoPsicoFisico').disable();
+      this.formulario.get('esChoferLargaDistancia').disable();
+      this.formulario.get('esChoferLargaDistancia').setValue(false);
       this.btnPdfLibSanidad = false;
       this.btnPdfLicConducir = false;
       this.btnPdflinti = false;
@@ -897,7 +903,7 @@ export class PersonalComponent implements OnInit {
     }
   }
   //Obtiene el pdf para mostrarlo
-  public obtenerPDF(id ,nombre) {
+  public obtenerPDF(id, nombre) {
     if (this.formulario.get(id).value) {
       this.pdfServicio.obtenerPorId(this.formulario.get(id).value).subscribe(res => {
         let resultado = res.json();
