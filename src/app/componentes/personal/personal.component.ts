@@ -897,7 +897,7 @@ export class PersonalComponent implements OnInit {
     }
   }
   //Obtiene el pdf para mostrarlo
-  public obtenerPDF(id ,nombre) {
+  public obtenerPDF(id, nombre) {
     if (this.formulario.get(id).value) {
       this.pdfServicio.obtenerPorId(this.formulario.get(id).value).subscribe(res => {
         let resultado = res.json();
