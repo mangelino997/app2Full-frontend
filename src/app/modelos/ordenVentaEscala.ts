@@ -11,9 +11,9 @@ export class OrdenVentaEscala {
             version: new FormControl(),
             ordenVentaTarifa: new FormControl(),
             escalaTarifa: new FormControl('', Validators.required),
-            importeFijo: new FormControl('', Validators.required),
-            precioUnitario: new FormControl('', Validators.required),
-            porcentaje: new FormControl('', Validators.required),
+            importeFijo: new FormControl(),
+            precioUnitario: new FormControl(),
+            porcentaje: new FormControl(),
             minimo: new FormControl(),
             preciosDesde: new FormControl()
         })

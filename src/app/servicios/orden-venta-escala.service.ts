@@ -95,7 +95,7 @@ export class OrdenVentaEscalaService {
     return this.http.put(this.url, elemento, this.options);
   }
   //Elimina un registro
-  public eliminar(elemento) {
-    return this.http.put(this.url + '/eliminar', elemento, this.options);
+  public eliminar(id) {
+    return this.http.put(this.url + '/' + id, this.options);
   }
 }
