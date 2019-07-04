@@ -377,7 +377,7 @@ const appRoutes: Routes = [
   { path: 'ejerciciosadministrar', component: EjercicioComponent, canActivate: [GuardiaService] },  
   { path: 'logisticatiposdevehiculos', component: TipoVehiculoComponent, canActivate: [GuardiaService] },
   { path: 'origenesdestinostramos', component: TramoComponent, canActivate: [GuardiaService] },
-  { path: 'unidadmedida', component: UnidadMedidaComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontiposdemedida', component: UnidadMedidaComponent, canActivate: [GuardiaService] },
   { path: 'usuariosadministrar', component: UsuarioComponent, canActivate: [GuardiaService] },
   { path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService] },
   { path: 'generaleszonas', component: ZonaComponent, canActivate: [GuardiaService] },

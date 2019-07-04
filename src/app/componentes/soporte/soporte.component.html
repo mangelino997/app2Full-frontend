@@ -96,7 +96,7 @@
             <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()"
               [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 ">
               <span *ngIf="!formulario.get('bugImagen.nombre').value">Adjuntar </span>
-              <span *ngIf="formulario.get('bugImagen.nombre').value">Archivo Adjunto</span>
+              <span *ngIf="formulario.get('bugImagen.nombre').value">Adjuntado</span>
               <i class="material-icons" *ngIf="formulario.get('bugImagen.nombre').value">check_circle</i>
               <i class="material-icons" *ngIf="!formulario.get('bugImagen.nombre').value">warning</i>
             </button>

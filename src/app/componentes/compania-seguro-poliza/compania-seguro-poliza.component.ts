@@ -318,6 +318,14 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
+  //Muestra en la pestania buscar,actualizar,eliminar y listar el elemento seleccionado de listar
+  public activarVer(elemento) {
+    if(elemento.pdf) {
+      elemento.pdf = this.companiaSeguroPolizaModelo.formulario.get('pdf');
+      this.obtenerPDF();
+      this.verPDF();
+    }
+  }
   //Obtiene la mascara de enteros CON decimales
   public obtenerMascaraEnteroSinDecimales(intLimite) {
     return this.appService.mascararEnterosSinDecimales(intLimite);
@@ -384,6 +392,20 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       })
     }
   }
+  //Obtiene el pdf para mostrarlo en la tabla
+  public obtenerPDFTabla(elemento) {
+    if(elemento.pdf) {
+      this.pdfServicio.obtenerPorId(elemento.pdf.id).subscribe(res => {
+        let resultado = res.json();
+        let pdf = {
+          id: resultado.id,
+          nombre: resultado.nombre,
+          datos: atob(resultado.datos)
+        }
+       window.open(pdf.datos, '_blank');
+      })
+    }
+  }
   //Elimina un pdf ya cargado, se pasa el campo como parametro
   public eliminarPdf(campo) {
     if (!this.formulario.get(campo).value) {
@@ -396,6 +418,12 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public verPDF() {
     let datos = this.formulario.get('pdf.datos').value;
     window.open(datos, '_blank');
+  }
+  //Muestra el pdf en una pestana nueva
+  public verPDFTabla(elemento) {
+    if (elemento.pdf) {
+      this.toastr.success("Sin archivo adjunto");
+    }
   }
   //Carga el pdf
   public readURL(event): void {

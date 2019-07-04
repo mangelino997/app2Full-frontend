@@ -13,15 +13,16 @@
             <h5 class="text-center">{{pestaniaActual}} Familiar Personal</h5>
             <form [formGroup]="formulario" class="contenedor">
                 <div class="contenedor-top-titulo">
-                    
+
                     <div class="row">
                         <div class="col-md-9">
                             <div class="form-group has-float-label">
                                 <label for="idPersonal" class="tamanio-label">Personal *</label>
-                                <input id="idPersonal" class="form-control form-control-sm color-busqueda"
-                                    type="text" matInput [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal"
+                                <input id="idPersonal" class="form-control form-control-sm color-busqueda" type="text"
+                                    matInput [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal"
                                     autocomplete="off" (blur)="verificarSeleccion(formulario.get('personal'))">
-                                <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)" > <!--(optionSelected)="listarPorPersonal()"-->
+                                <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
+                                    <!--(optionSelected)="listarPorPersonal()"-->
                                     <mat-option *ngFor="let item of resultadosPersonal" [value]="item">
                                         {{item.alias}}
                                     </mat-option>
@@ -38,9 +39,10 @@
                         <div class="col-md-9">
                             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
                                 <label for="idAutocompletado" class="tamanio-label">Familiar Personal</label>
-                                <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="familiar"
-                                    [compareWith]="compareFn" >
-                                    <mat-option *ngFor="let item of personasFamiliares" [value]="item" (onSelectionChange)="formulario.patchValue(item)">
+                                <mat-select id="idAutocompletado" class="form-control form-control-sm"
+                                    [formControl]="familiar" [compareWith]="compareFn">
+                                    <mat-option *ngFor="let item of personasFamiliares" [value]="item"
+                                        (onSelectionChange)="formulario.patchValue(item)">
                                         {{item.nombre}}
                                     </mat-option>
                                 </mat-select>
@@ -51,8 +53,8 @@
                         <div class="col-md-3">
                             <div class="form-group has-float-label">
                                 <label for="idTipoFamiliar" class="tamanio-label">Familiar *</label>
-                                <mat-select id="idTipoFamiliar" class="form-control form-control-sm" formControlName="tipoFamiliar"
-                                    [compareWith]="compareFn">
+                                <mat-select id="idTipoFamiliar" class="form-control form-control-sm"
+                                    formControlName="tipoFamiliar" [compareWith]="compareFn">
                                     <mat-option *ngFor="let itemTipoFamiliar of familiares" [value]="itemTipoFamiliar">
                                         {{itemTipoFamiliar.nombre}}
                                     </mat-option>
@@ -79,7 +81,7 @@
                             <div class="form-group has-float-label">
                                 <label for="idFechaNacimiento" class="tamanio-label">Fecha Nacimiento *</label>
                                 <input id="idFechaNacimiento" type="date" formControlName="fechaNacimiento"
-                                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+                                    autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -138,7 +140,8 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group has-float-label">
-                                <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° Documento *</label>
+                                <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N°
+                                    Documento *</label>
                                 <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento"
                                     autocomplete="off" class="form-control form-control-sm number-right"
                                     [readonly]="soloLectura" (blur)="validarDocumento()"
@@ -163,8 +166,8 @@
                         <div class="col-md-3">
                             <div class="form-group has-float-label">
                                 <label for="idAnio" class="tamanio-label">Año</label>
-                                <mat-select id="idAnio" class="form-control form-control-sm" formControlName="anioAltaImpGan"
-                                    [compareWith]="compareFn">
+                                <mat-select id="idAnio" class="form-control form-control-sm"
+                                    formControlName="anioAltaImpGan" [compareWith]="compareFn">
                                     <mat-option *ngFor="let itemAnio of anios" [value]="itemAnio">
                                         {{itemAnio}}
                                     </mat-option>
@@ -174,8 +177,8 @@
                         <div class="col-md-3">
                             <div class="form-group has-float-label">
                                 <label for="idMes" class="tamanio-label">Mes</label>
-                                <mat-select id="idMes" class="form-control form-control-sm" formControlName="mesAltaImpGan"
-                                    [compareWith]="compareFn">
+                                <mat-select id="idMes" class="form-control form-control-sm"
+                                    formControlName="mesAltaImpGan" [compareWith]="compareFn">
                                     <mat-option *ngFor="let itemMes of meses" [value]="itemMes">
                                         {{itemMes.nombre}}
                                     </mat-option>
@@ -192,8 +195,8 @@
                         <div class="col-md-3">
                             <div class="form-group has-float-label">
                                 <label for="idAnioBaja" class="tamanio-label">Año</label>
-                                <mat-select id="idAnioBaja" class="form-control form-control-sm" formControlName="anioBajaImpGan"
-                                    [compareWith]="compareFn">
+                                <mat-select id="idAnioBaja" class="form-control form-control-sm"
+                                    formControlName="anioBajaImpGan" [compareWith]="compareFn">
                                     <mat-option *ngFor="let itemAnio of anios" [value]="itemAnio">
                                         {{itemAnio}}
                                     </mat-option>
@@ -203,8 +206,8 @@
                         <div class="col-md-3">
                             <div class="form-group has-float-label">
                                 <label for="idMesBaja" class="tamanio-label">Mes</label>
-                                <mat-select id="idMesBaja" class="form-control form-control-sm" formControlName="mesBajaImpGan"
-                                    [compareWith]="compareFn">
+                                <mat-select id="idMesBaja" class="form-control form-control-sm"
+                                    formControlName="mesBajaImpGan" [compareWith]="compareFn">
                                     <mat-option *ngFor="let itemMes of meses" [value]="itemMes">
                                         {{itemMes.nombre}}
                                     </mat-option>
@@ -232,83 +235,83 @@
         </div>
     </div>
     <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-    <div class="col-md-12">
-      <div class="row" *ngIf="show">
-        <div class="col text-center">
-          <app-progreso></app-progreso>
-        </div>
-      </div>
-      <div class="row" *ngIf="!show">
-            <div class="col-md-4">
-                <div class="form-group has-float-label">
-                    <label for="idPersonal" class="tamanio-label">Personal </label>
-                    <input id="idPersonal" class="form-control form-control-sm color-busqueda"
-                        type="text" matInput [formControl]="autocompletadoListar" [matAutocomplete]="autoPersonalListar"
-                        autocomplete="off" >
-                    <mat-autocomplete #autoPersonalListar="matAutocomplete" [displayWith]="displayF.bind(this)" >
-                        <mat-option *ngFor="let item of resultadosPersonal" [value]="item">
-                            {{item.alias}}
-                    </mat-option>
-                </mat-autocomplete>
+        <div class="col-md-12">
+            <div class="row" *ngIf="show">
+                <div class="col text-center">
+                    <app-progreso></app-progreso>
+                </div>
             </div>
-        </div>
-        <div class="col-md-1">
-            <button id="idBoton" *ngIf="!show" mat-raised-button color="primary"
-            formnovalidate (click)="listarPorPersonal()" >
-                Buscar
-            </button>
+            <div class="row" *ngIf="!show">
+                <div class="col-md-4">
+                    <div class="form-group has-float-label">
+                        <label for="idPersonal" class="tamanio-label">Personal </label>
+                        <input id="idPersonal" class="form-control form-control-sm color-busqueda" type="text" matInput
+                            [formControl]="autocompletadoListar" [matAutocomplete]="autoPersonalListar"
+                            autocomplete="off">
+                        <mat-autocomplete #autoPersonalListar="matAutocomplete" [displayWith]="displayF.bind(this)">
+                            <mat-option *ngFor="let item of resultadosPersonal" [value]="item">
+                                {{item.alias}}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button id="idBoton" *ngIf="!show" mat-raised-button color="primary" formnovalidate
+                        (click)="listarPorPersonal()">
+                        Buscar
+                    </button>
+                </div>
+            </div>
+            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="legajo" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Legajo-Personal</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                </ng-container>
+                <ng-container matColumnDef="familiar" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Familiar</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.tipoFamiliar.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="apellido" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Apellido</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.apellido}}</td>
+                </ng-container>
+                <ng-container matColumnDef="nombre" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="fechaNacimiento" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Nacimiento</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaNacimiento | date: 'dd/MM/yyyy'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="cuil" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuil</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.cuil}}</td>
+                </ng-container>
+                <ng-container matColumnDef="lugarNacimiento" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Lugar de Nacimiento</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.localidadNacimiento.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="nacionalidad" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Nacionalidad</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.localidadNacimiento.provincia.pais.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="sexo" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Sexo</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.sexo.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="ver" sticky>
+                    <th mat-header-cell *matHeaderCellDef>-</th>
+                    <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+                            class="cursor-color">ver</span></td>
+                </ng-container>
+                <ng-container matColumnDef="mod" sticky>
+                    <th mat-header-cell *matHeaderCellDef>-</th>
+                    <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+                            class="cursor-color">editar</span></td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+            </table>
         </div>
     </div>
-      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="legajo" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Legajo-Personal</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-        </ng-container>
-        <ng-container matColumnDef="familiar" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Familiar</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.tipoFamiliar.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="apellido" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Apellido</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.apellido}}</td>
-        </ng-container>
-        <ng-container matColumnDef="nombre" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="fechaNacimiento" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Nacimiento</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.fechaNacimiento | date: 'dd/MM/yyyy'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="cuil" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuil</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.cuil}}</td>
-        </ng-container>
-        <ng-container matColumnDef="lugarNacimiento" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Lugar de Nacimiento</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.localidadNacimiento.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="nacionalidad" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nacionalidad</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.localidadNacimiento.provincia.pais.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="sexo" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sexo</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.sexo.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="ver" sticky>
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-              class="cursor-color">ver</span></td>
-        </ng-container>
-        <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-              class="cursor-color">editar</span></td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-      </table>
-    </div>
-  </div>
 </div>
