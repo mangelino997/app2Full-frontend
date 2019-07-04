@@ -299,13 +299,14 @@ export class CuentaBancariaComponent implements OnInit {
     let usuario = this.appComponent.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
     this.formulario.get('empresa').setValue(this.empresa.value);
+    console.log(this.formulario);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           setTimeout(function () {
-            document.getElementById('idEmpresa').focus();
+            document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -327,7 +328,7 @@ export class CuentaBancariaComponent implements OnInit {
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
           setTimeout(function () {
-            document.getElementById('idCuentasBancarias').focus();
+            document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -335,7 +336,7 @@ export class CuentaBancariaComponent implements OnInit {
       },
       err => {
         let error= err;
-        document.getElementById("idCuentasBancarias").focus();
+        document.getElementById("idAutocompletado").focus();
         this.toastr.error(error.mensaje);
       }
     );
@@ -356,8 +357,7 @@ export class CuentaBancariaComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
-    document.getElementById("idEmpresa").classList.add('is-invalid');
-    document.getElementById("idEmpresa").focus();
+    document.getElementById("idAutocompletado").focus();
     this.toastr.error(respuesta.mensaje);
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar

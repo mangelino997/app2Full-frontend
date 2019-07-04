@@ -312,7 +312,7 @@ public validarLongitud(elemento, intLimite) {
 }
 //Valida que el campo Hasta sea mayor al campo Desde
 private validarMayor(){
-  if(this.formulario.value.desde < this.formulario.value.hasta && this.formulario.value.hasta!=null){
+  if(this.formulario.value.desde <= this.formulario.value.hasta && this.formulario.value.hasta!=null){
     return this.appService.validarLongitud(8, this.formulario.value.hasta);
   }else{
     this.formulario.get('desde').setValue(null);

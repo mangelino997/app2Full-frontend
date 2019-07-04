@@ -339,6 +339,7 @@ import { TalonarioReciboLote } from './modelos/talonarioReciboLote';
 import { FotoService } from './servicios/foto.service';
 import { OrdenVentaTarifa } from './modelos/ordenVentaTarifa';
 import { OrdenVentaTarifaService } from './servicios/orden-venta-tarifa.service';
+import { EliminarModalComponent } from './componentes/eliminar-modal/eliminar-modal.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -377,7 +378,7 @@ const appRoutes: Routes = [
   { path: 'ejerciciosadministrar', component: EjercicioComponent, canActivate: [GuardiaService] },  
   { path: 'logisticatiposdevehiculos', component: TipoVehiculoComponent, canActivate: [GuardiaService] },
   { path: 'origenesdestinostramos', component: TramoComponent, canActivate: [GuardiaService] },
-  { path: 'unidadmedida', component: UnidadMedidaComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontiposdemedida', component: UnidadMedidaComponent, canActivate: [GuardiaService] },
   { path: 'usuariosadministrar', component: UsuarioComponent, canActivate: [GuardiaService] },
   { path: 'vendedor', component: VendedorComponent, canActivate: [GuardiaService] },
   { path: 'generaleszonas', component: ZonaComponent, canActivate: [GuardiaService] },
@@ -602,7 +603,8 @@ const stompConfig: StompConfig = {
     DepositoInsumoProductoComponent,
     TalonarioReciboCobradorComponent,
     TalonarioReciboLoteComponent,
-    VerTarifaDialogo
+    VerTarifaDialogo,
+    EliminarModalComponent
   ],
   imports: [
     BrowserModule,
@@ -887,6 +889,7 @@ const stompConfig: StompConfig = {
     PersonalFamiliarComponent,
     PlanCuentaDialogo,
     VerTarifaDialogo,
+    EliminarModalComponent
   ]
 })
 export class AppModule { }
