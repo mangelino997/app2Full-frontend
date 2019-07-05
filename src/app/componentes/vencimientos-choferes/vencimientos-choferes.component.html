@@ -16,7 +16,7 @@
           <div class="row">
             <div class="col-md-9">
               <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
+                <label for="idAutocompletado" class="tamanio-label">Choferes</label>
                 <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                   [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
@@ -32,7 +32,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idLegajo" class="tamanio-label">N° Legajo *</label>
-              <input id="idLegajo" type="text" formControlName="legajo" autocomplete="off"
+              <input id="idLegajo" type="text" [formControl]="formulario.id" autocomplete="off"
                 class="form-control form-control-sm" readonly>
             </div>
           </div>
@@ -50,65 +50,176 @@
                 class="form-control form-control-sm" readonly>
             </div>
           </div>
-        </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label id="labelCuil" for="idCuil" class="tamanio-label">CUIL *</label>
+              <input id="idCuil" type="text" formControlName="cuil" autocomplete="off"
+                [textMask]="mascararEnteros(11)" class="form-control form-control-sm number-right"
+                [readonly]="soloLectura" (blur)="validarCUIL()"
+                (ngModelChange)="cambioCampo('idCuil', 'labelCuil')">
+            </div>
+          </div>
+        </div> 
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idEsChofer" class="tamanio-label">Es Chofer *</label>
-              <select id="idEsChofer" class="form-control form-control-sm" formControlName="esChofer">
-                <option [value]="false">No</option>
-                <option [value]="true">Si</option>
-              </select>
+              <mat-select id="idEsChofer" class="form-control form-control-sm" formControlName="esChofer"
+                (selectionChange)="cambioEsChofer()">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idEsChoferLargaDistancia" class="tamanio-label">Es Chofer Larga Distancia *</label>
-              <select id="idEsChoferLargaDistancia" class="form-control form-control-sm"
-                formControlName="esChoferLargaDistancia">
-                <option [value]="false">No</option>
-                <option [value]="true">Si</option>
-              </select>
+              <mat-select id="idEsChoferLargaDistancia" class="form-control form-control-sm"
+                formControlName="esChoferLargaDistancia" (selectionChange)="cambioEsChofer()">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idTipoDocumento" class="tamanio-label">Tipo Documento *</label>
+              <mat-select id="idTipoDocumento" class="form-control form-control-sm"
+                formControlName="tipoDocumento" [compareWith]="compareFn">
+                <mat-option *ngFor="let itemTipoDocumento of tiposDocumentos" [value]="itemTipoDocumento">
+                  {{itemTipoDocumento.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de
+                Documento *</label>
+              <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento"
+                autocomplete="off" class="form-control form-control-sm number-right"
+                [readonly]="soloLectura" (blur)="validarDocumento()"
+                (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')">
             </div>
           </div>
         </div>
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idVetoLic" class="tamanio-label">Vto. Lic. de Conducir *</label>
-              <input id="idVetoLic" type="date" formControlName="vtoLicenciaConducir" autocomplete="off"
-                class="form-control form-control-sm" readonly>
+              <label for="idVtoPsicoFísico" class="tamanio-label">Vto. PsicoFísico *</label>
+              <input id="idVtoPsicoFísico" type="date" formControlName="vtoPsicoFisico" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura" required>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idVtoCurso" class="tamanio-label">Vto. Curso *</label>
               <input id="idVtoCurso" type="date" formControlName="vtoCurso" autocomplete="off"
-                class="form-control form-control-sm" readonly>
+                class="form-control form-control-sm" [readonly]="soloLectura" required>
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idVtoCursoCargaPeligrosa" class="tamanio-label">Vto. Curso Carga Peligrosa </label>
-              <input id="idVtoCursoCargaPeligrosa" type="date" formControlName="vtoCursoCargaPeligrosa"
-                autocomplete="off" class="form-control form-control-sm" readonly>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="form-group has-float-label">
-              <label for="idVtoLINTI" class="tamanio-label">Vto. LINTI </label>
-              <input id="idVtoLINTI" type="date" formControlName="vtoLINTI" autocomplete="off"
-                class="form-control form-control-sm" readonly>
+              <label for="idVtoCursoCP" class="tamanio-label">Vto. Curso Carga Peligrosa</label>
+              <input id="idVtoCursoCP" type="date" formControlName="vtoCursoCargaPeligrosa" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idVtoLibSanidad" class="tamanio-label">Vto. Lib. Sanidad </label>
-              <input id="idVtoLibSanidad" type="date" formControlName="vtoLibretaSanidad" autocomplete="off"
-                class="form-control form-control-sm" readonly>
+              <label for="idVtoLicenciaConducir" class="tamanio-label">Vto. Licencia de Conducir *</label>
+              <input id="idVtoLicenciaConducir" type="date" formControlName="vtoLicenciaConducir"
+                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" required>
             </div>
+          </div>
+          <div class="col-md-3">
+            <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')"
+              #fileInputLicConducir />
+            <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLicConducir.click()"
+              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir">
+              <span *ngIf="!formulario.get('pdfLicConducir.nombre').value">Adjuntar</span>
+              <span *ngIf="formulario.get('pdfLicConducir.nombre').value">Adjuntado</span>
+              <i class="material-icons" *ngIf="formulario.get('pdfLicConducir.nombre').value">check_circle</i>
+              <i class="material-icons" *ngIf="!formulario.get('pdfLicConducir.nombre').value">warning</i>
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLicConducir.nombre')"
+              [disabled]="!formulario.get('pdfLicConducir.nombre').value">
+              <i class="material-icons">close</i>
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button mat-raised-button color="primary" (click)="verPDF('pdfLicConducir.datos')"
+              [disabled]="!formulario.get('pdfLicConducir.nombre').value">
+              <i class="material-icons">visibility</i>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoLINTI" class="tamanio-label">Vto. LINTI *</label>
+              <input id="idVtoLINTI" type="date" formControlName="vtoLINTI" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura" required>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLinti')"
+              #fileInputLINTI />
+            <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLINTI.click()"
+              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti">
+              <span *ngIf="!formulario.get('pdfLinti.nombre').value">Adjuntar</span>
+              <span *ngIf="formulario.get('pdfLinti.nombre').value">Adjuntado</span>
+              <i class="material-icons" *ngIf="formulario.get('pdfLinti.nombre').value">check_circle</i>
+              <i class="material-icons" *ngIf="!formulario.get('pdfLinti.nombre').value">warning</i>
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti.nombre')"
+              [disabled]="!formulario.get('pdfLinti.nombre').value">
+              <i class="material-icons">close</i>
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button mat-raised-button color="primary" (click)="verPDF('pdfLinti.datos')"
+              [disabled]="!formulario.get('pdfLinti.nombre').value">
+              <i class="material-icons">visibility</i>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idVtoLibretaSanidad" class="tamanio-label">Vto. Lib. Sanidad</label>
+              <input id="idVtoLibretaSanidad" type="date" formControlName="vtoLibretaSanidad"
+                autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-3">
+            <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')"
+              #fileInputLibSanidad />
+            <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLibSanidad.click()"
+              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad">
+              <span *ngIf="!formulario.get('pdfLibSanidad.nombre').value">Adjuntar</span>
+              <span *ngIf="formulario.get('pdfLibSanidad.nombre').value">Adjuntado</span>
+              <i class="material-icons" *ngIf="formulario.get('pdfLibSanidad.nombre').value">check_circle</i>
+              <i class="material-icons" *ngIf="!formulario.get('pdfLibSanidad.nombre').value">warning</i>
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad.nombre')"
+              [disabled]="!formulario.get('pdfLibSanidad.nombre').value">
+              <i class="material-icons">close</i>
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button mat-raised-button color="primary" (click)="verPDF('pdfLibSanidad.datos')"
+              [disabled]="!formulario.get('pdfLibSanidad.nombre').value">
+              <i class="material-icons">visibility</i>
+            </button>
           </div>
         </div>
         <div class="row">
@@ -138,35 +249,35 @@
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="legajo" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Legajo</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.legajo}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
         <ng-container matColumnDef="nombre" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.nombreCompleto}}</td>
         </ng-container>
         <ng-container matColumnDef="esChofer" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Chofer</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.esChofer? 'Sí' : 'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="choferLargaDistancia" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Chofer Larga Distancia</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.esChoferLargaDistancia? 'Sí' : 'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="vtoLicencia" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Lic. Conducir</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.vtoLicenciaConducir? elemento.vtoLicenciaConducir : '--'}}</td>
         </ng-container>
         <ng-container matColumnDef="vtoCurso" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Curso</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.vtoCurso? elemento.vtoCurso : '--'}}</td>
         </ng-container>
         <ng-container matColumnDef="vtoCursoCargaPeligrosa" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Curso Carga Peligrosa</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.vtoCursoCargaPeligrosa? elemento.vtoCursoCargaPeligrosa : '--'}}</td>
         </ng-container>
-        <ng-container matColumnDef="vtoLINTI" sticky>
+        <ng-container matColumnDef="vtoCursoLINTI" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Lib. Sanidad</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.vtoLibretaSanidad? elemento.vtoLibretaSanidad : '--'}}</td>
         </ng-container>
         <ng-container matColumnDef="ver" sticky>
           <th mat-header-cell *matHeaderCellDef>-</th>

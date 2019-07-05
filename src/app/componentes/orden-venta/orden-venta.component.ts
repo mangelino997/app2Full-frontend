@@ -384,6 +384,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
+    console.log(indice);
     switch (indice) {
       case 1:
         this.agregar();
@@ -563,15 +564,22 @@ export class OrdenVentaComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       setTimeout(function () {
-        document.getElementById('idActualizacion').focus();
+        document.getElementById('idTipoTarifa').focus();
       }, 20);
     });
   }
   //Abre el modal de ver Orden Venta Tarifa
   public modificarOrdenVentaTarifa(elemento){
+    console.log(elemento);
     this.formularioTarifa.patchValue(elemento);
-    console.log(this.formulario.value);
-    
+    if(elemento.tipoTarifa.porEscala){
+      this.tipoTarifa.setValue('porEscala');
+      this.cambioTipoTarifa();
+    }else{
+      this.tipoTarifa.setValue('porTramo');
+      this.cambioTipoTarifa();
+    }
+    // this.obtenerPreciosDesde();    
   }
   //Abre el modal de ver Orden Venta Tarifa
   public eliminarOrdenVentaTarifa(elemento){
@@ -680,6 +688,8 @@ export class OrdenVentaComponent implements OnInit {
       this.formulario.get('tipoOrdenVenta').setValue(true);
       this.listarOrdenVentaTarifas();
     }
+    // this.obtenerPreciosDesde();
+
   }
   //Obtiene la mascara de importe
   public mascaraImporte(intLimite, decimalLimite) {
@@ -721,9 +731,12 @@ export class OrdenVentaComponent implements OnInit {
       return a.id === b.id;
     }
   }
+
+
   //Funcion para comparar y mostrar elemento del campo 'Tipo' 
   public compareT = this.compararT.bind(this);
   private compararT(a, b) {
+    console.log(a,b);
     if (a != null && b != null) {
       return a === b;
     }
@@ -1104,6 +1117,7 @@ export class VerTarifaDialogo {
   public controlModTramo(elemento){
     this.formularioTramo.patchValue(elemento);
     this.idMod = elemento.id;
+    console.log(this.idMod);
     elemento.ordenVentaTarifa = this.ordenVentaTarifa;
     if(elemento.importeFijoSeco) {
       this.formularioTramo.get('importeFijoSeco').setValue(parseFloat(elemento.importeFijoSeco).toFixed(2));
