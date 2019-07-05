@@ -52,6 +52,10 @@ export class CuentaBancariaService {
   public listarPorEmpresa(empresa) {
     return this.http.get(this.url + '/listarPorEmpresa/' + empresa, this.options);
   }
+  //Obtiene la lista por Empresa
+  public listarConChequerasPorEmpresa(empresa) {
+    return this.http.get(this.url + '/listarCuentasConChequeraPorEmpresa/' + empresa, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

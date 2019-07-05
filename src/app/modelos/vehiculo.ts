@@ -1,10 +1,16 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Pdf } from './pdf';
+import { Injectable } from '@angular/core';
 //Define la entidad de la base de datos.
+@Injectable()
 export class Vehiculo {
     //define un formulario FormGroup
     public formulario: FormGroup;
+    //define el formulario de la clase PDf
+    public pdfFormulario: FormGroup;
+    
     //constructor
-    constructor() {
+    constructor(private pdf: Pdf) {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
             id: new FormControl(),
@@ -32,54 +38,12 @@ export class Vehiculo {
             usuarioMod: new FormControl(),
             fechaUltimaMod: new FormControl(),
             alias: new FormControl('', Validators.maxLength(100)),
-            pdfTitulo: new FormGroup({
-                id: new FormControl(),
-                version: new FormControl(),
-                nombre: new FormControl(),
-                tipo: new FormControl(),
-                tamanio: new FormControl(),
-                datos: new FormControl()
-            }),
-            pdfCedulaIdent: new FormGroup({
-                id: new FormControl(),
-                version: new FormControl(),
-                nombre: new FormControl(),
-                tipo: new FormControl(),
-                tamanio: new FormControl(),
-                datos: new FormControl()
-            }),
-            pdfVtoRuta: new FormGroup({
-                id: new FormControl(),
-                version: new FormControl(),
-                nombre: new FormControl(),
-                tipo: new FormControl(),
-                tamanio: new FormControl(),
-                datos: new FormControl()
-            }),
-            pdfVtoInspTecnica: new FormGroup({
-                id: new FormControl(),
-                version: new FormControl(),
-                nombre: new FormControl(),
-                tipo: new FormControl(),
-                tamanio: new FormControl(),
-                datos: new FormControl()
-            }),
-            pdfVtoSenasa: new FormGroup({
-                id: new FormControl(),
-                version: new FormControl(),
-                nombre: new FormControl(),
-                tipo: new FormControl(),
-                tamanio: new FormControl(),
-                datos: new FormControl()
-            }),
-            pdfHabBromat: new FormGroup({
-                id: new FormControl(),
-                version: new FormControl(),
-                nombre: new FormControl(),
-                tipo: new FormControl(),
-                tamanio: new FormControl(),
-                datos: new FormControl()
-            })
+            pdfTitulo: this.pdf.crearFormulario(),
+            pdfCedulaIdent: this.pdf.crearFormulario(),
+            pdfVtoRuta: this.pdf.crearFormulario(),
+            pdfVtoInspTecnica: this.pdf.crearFormulario(),
+            pdfVtoSenasa: this.pdf.crearFormulario(),
+            pdfHabBromat: this.pdf.crearFormulario()
         })
     }
 }
