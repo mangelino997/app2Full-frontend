@@ -18,8 +18,17 @@
           <label for="idAutocompletado" class="tamanio-label">Cuenta Bancaria *</label>
           <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="cuentaSeleccionada"
             [compareWith]="compareFn" (selectionChange)="cambioCuentaBancaria()">
-            <mat-option *ngFor="let item of listaCuentasBancariasEmpresa" [value]="item">
-              {{item.cuentaBancaria.sucursalBanco.banco.nombre}} - {{item.cuentaBancaria.sucursalBanco.nombre}} - {{item.cuentaBancaria.numeroCuenta}}
+            <mat-option *ngFor="let item of listaCuentasConChequeraEmpresa" [value]="item">
+              {{item.sucursalBanco.banco.nombre}} - {{item.sucursalBanco.nombre}} - {{item.numeroCuenta}}
+            </mat-option>
+          </mat-select>
+        </div>
+        <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+          <label for="idChequerasAutocompletado" class="tamanio-label">Chequeras *</label>
+          <mat-select id="idChequerasAutocompletado" class="form-control form-control-sm" [formControl]="chequeraSeleccionada"
+            [compareWith]="compareFn" (selectionChange)="cambioChequera()">
+            <mat-option *ngFor="let item of listaChequerasCuentaBancaria" [value]="item">
+              {{item.tipoChequera.nombre}} - Desde: {{item.desde}} - Hasta: {{item.hasta}}
             </mat-option>
           </mat-select>
         </div>
@@ -53,12 +62,12 @@
         <div class="form-group has-float-label">
           <label id="labelDesde" for="idDesde" class="tamanio-label">Desde *</label>
           <input id="idDesde" type="text" formControlName="desde" autocomplete="off" (blur)="establecerCerosIzq(formulario.get('desde'), '0000000', -8)"
-            class="form-control form-control-sm" [readonly]="soloLectura">
+            class="form-control form-control-sm number-right" [readonly]="soloLectura">
         </div>
         <div class="form-group has-float-label">
           <label id="labelHasta" for="idHasta" class="tamanio-label">Hasta *</label>
           <input id="idHasta" type="text" formControlName="hasta" autocomplete="off" (blur)="validarMayor()"
-            class="form-control form-control-sm" [readonly]="soloLectura">
+            class="form-control form-control-sm number-right" [readonly]="soloLectura">
         </div>
         <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">

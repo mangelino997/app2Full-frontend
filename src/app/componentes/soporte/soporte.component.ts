@@ -158,8 +158,7 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
   
   // }
   //Establece los datos del elemento al formulario
-  private establecerElemento(){
-    let elemento = this.autocompletado.value; 
+  private establecerElemento(elemento){
     console.log(elemento);
     this.formulario.get('subopcion').setValue(elemento.subopcion);
     this.modulo.setValue(elemento.subopcion.submodulo.modulo);
@@ -389,14 +388,14 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     }
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
-  public activarConsultar() {
+  public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.establecerElemento();
+    this.establecerElemento(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
-  public activarActualizar() {
+  public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.establecerElemento();
+    this.establecerElemento(elemento);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
