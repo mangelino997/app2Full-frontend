@@ -250,6 +250,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Agrega un registro
   private agregar(): void {
     this.loaderService.show();
+    console.log(this.formulario.value);
     this.monedaCuentaContableServicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -476,6 +477,8 @@ export class PlanCuentaDialogo {
     flatNode.editable = false;
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
+    console.log(flatNode);
+
     return flatNode;
   }
   //Obtiene la cuenta seleccionada
