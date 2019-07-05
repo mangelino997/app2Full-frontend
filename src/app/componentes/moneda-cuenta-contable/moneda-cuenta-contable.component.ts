@@ -93,8 +93,8 @@ export class MonedaCuentaContableComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private monedaCuentaContableServicio: MonedaCuentaContableService, private monedaCuentaContable: MonedaCuentaContable,
-    private planCuentaServicio: PlanCuentaService, private subopcionPestaniaService: SubopcionPestaniaService, private monedaServicio: MonedaService,
-    private empresaServicio: EmpresaService, private loaderService: LoaderService, private appService: AppService,
+    private subopcionPestaniaService: SubopcionPestaniaService, private monedaServicio: MonedaService,
+    private loaderService: LoaderService, private appService: AppService,
     public dialog: MatDialog, private toastr: ToastrService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -152,7 +152,6 @@ export class MonedaCuentaContableComponent implements OnInit {
   }
   //Controla el cambio en Moneda Cuenta Contable
   public cambioMonedaCuentaContable(){
-    console.log(this.formulario.value.moneda.id, this.formulario.value.empresa.id);
     if(this.indiceSeleccionado > 1){
       this.monedaCuentaContableServicio.obtenerPorMonedaYEmpresa(this.formulario.value.moneda.id, this.formulario.value.empresa.id).subscribe(
         res=>{
@@ -345,7 +344,6 @@ export class MonedaCuentaContableComponent implements OnInit {
   }
   //Formatea el valor del autocompletado
   public displayFa(elemento) {
-    console.log(elemento);
     if (elemento != undefined) {
       return elemento.planCuenta ? elemento.planCuenta.nombre + elemento.planCuenta.grupoCuentaContable? ' - ' + elemento.planCuenta.grupoCuentaContable: '' : elemento ;
     } else {

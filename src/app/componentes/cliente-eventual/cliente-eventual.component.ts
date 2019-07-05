@@ -16,7 +16,6 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
-import { Cobrador } from 'src/app/modelos/cobrador';
 
 @Component({
   selector: 'app-cliente-eventual',

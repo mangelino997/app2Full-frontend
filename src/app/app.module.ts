@@ -12,6 +12,7 @@ import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
 import { TextMaskModule } from 'angular2-text-mask';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 //BUILD PRODUCCION
 //node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod --build-optimizer
@@ -340,6 +341,7 @@ import { FotoService } from './servicios/foto.service';
 import { OrdenVentaTarifa } from './modelos/ordenVentaTarifa';
 import { OrdenVentaTarifaService } from './servicios/orden-venta-tarifa.service';
 import { EliminarModalComponent } from './componentes/eliminar-modal/eliminar-modal.component';
+import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -604,7 +606,8 @@ const stompConfig: StompConfig = {
     TalonarioReciboCobradorComponent,
     TalonarioReciboLoteComponent,
     VerTarifaDialogo,
-    EliminarModalComponent
+    EliminarModalComponent,
+    PdfDialogoComponent
   ],
   imports: [
     BrowserModule,
@@ -632,6 +635,7 @@ const stompConfig: StompConfig = {
     MatSortModule,
     MatProgressSpinnerModule,
     TextMaskModule,
+    PdfViewerModule,
     ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
     ToastrModule.forRoot({
       timeOut: 4000,
@@ -889,7 +893,8 @@ const stompConfig: StompConfig = {
     PersonalFamiliarComponent,
     PlanCuentaDialogo,
     VerTarifaDialogo,
-    EliminarModalComponent
+    EliminarModalComponent,
+    PdfDialogoComponent
   ]
 })
 export class AppModule { }

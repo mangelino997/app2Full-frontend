@@ -1,0 +1,10 @@
+.fixed {
+    margin-top: 25px !important;
+    position: fixed !important;
+    top: 0 !important;
+    width: 70% !important;
+    z-index: 1 !important;
+}
+.mat-dialog-container {
+    padding: 0px !important;
+}

@@ -7,3 +7,6 @@
 .mat-raised-button {
     min-width: 60px !important;
 }
+.mat-dialog-container {
+    padding: 0px !important;
+}

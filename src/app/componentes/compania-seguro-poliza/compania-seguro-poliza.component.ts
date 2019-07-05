@@ -6,12 +6,13 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CompaniaSeguroPoliza } from 'src/app/modelos/companiaSeguroPoliza';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { PdfService } from 'src/app/servicios/pdf.service';
+import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -67,7 +68,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     private toastr: ToastrService, private appService: AppService,
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaModelo: CompaniaSeguroPoliza, private loaderService: LoaderService,
-    private pdfServicio: PdfService) {
+    private pdfServicio: PdfService, public dialog: MatDialog) {
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
@@ -416,8 +417,15 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Muestra el pdf en una pestana nueva
   public verPDF() {
-    let datos = this.formulario.get('pdf.datos').value;
-    window.open(datos, '_blank');
+    const dialogRef = this.dialog.open(PdfDialogoComponent, {
+      width: '95%',
+      height: '95%',
+      data: {
+        nombre: this.formulario.get('pdf.nombre').value,
+        datos: this.formulario.get('pdf.datos').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {});
   }
   //Muestra el pdf en una pestana nueva
   public verPDFTabla(elemento) {
