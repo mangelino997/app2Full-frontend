@@ -123,7 +123,7 @@
             </div>
             <div class="col-md-2" *ngIf="indiceSeleccionado > 2 && indiceSeleccionado < 5">
               <button id="idBoton" [disabled]="!formulario.valid && !show" mat-raised-button color="primary" formnovalidate
-              (click)="accion()">{{pestaniaActual}} 
+              (click)="accion(indiceSeleccionado)">{{pestaniaActual}} 
               </button>
             </div>
             <div class="row" *ngIf="show">
@@ -142,7 +142,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoTarifa" class="tamanio-label">Tipo Tarifa *</label>
               <mat-select id="idTipoTarifa" class="form-control form-control-sm" [formControl]="tipoTarifa" 
-              [compareWith]="compareFn" (selectionChange)="cambioTipoTarifa()">
+              [compareWith]="compareT" (selectionChange)="cambioTipoTarifa()">
                 <mat-option value="porEscala">Por Escala</mat-option>
                 <mat-option value="porTramo">Por Tramo</mat-option>
               </mat-select>
@@ -161,14 +161,14 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-3" *ngIf="indiceSeleccionado == 1 || lengthTable < 1">
+          <div class="col-md-3" > <!--Antes : *ngIf="indiceSeleccionado == 1 || lengthTable < 1"-->
             <div class="form-group has-float-label" >
               <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
               <input id="idPreciosDesde" type="date" formControlName="preciosDesde" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-3" *ngIf="indiceSeleccionado != 1 && lengthTable > 0">
+          <!-- <div class="col-md-3" *ngIf="indiceSeleccionado != 1 && lengthTable > 0">
             <div class="form-group has-float-label">
               <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
               <mat-select id="idPreciosDesde" class="form-control form-control-sm" formControlName="preciosDesde"
@@ -179,7 +179,7 @@
                 </mat-option>
               </mat-select>
             </div>
-          </div>
+          </div> -->
           <div class="col-md-1">
             <button id="idBoton" [disabled]="!btnActualizarOrdVta" mat-raised-button color="primary" (click)="agregarTarifa()">
               Añadir

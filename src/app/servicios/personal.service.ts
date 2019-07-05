@@ -53,12 +53,15 @@ export class PersonalService {
     return this.http.get(this.url + '/listarChoferesCortaDistanciaPorAlias/' + nombre, this.options);
   }
   //Obtiene la lista de choferes por empresa
-  public listarChoferesPorEmpresa(empresa) {
-    return this.http.get(this.url + '/listarChoferesPorEmpresa/' + empresa, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    });
+  // public listarChoferesPorEmpresa(empresa) {
+  //   return this.http.get(this.url + '/listarChoferesPorEmpresa/' + empresa, this.options).map(res => {
+  //     return res.json().map(data => {
+  //       return data;
+  //     })
+  //   });
+  // }
+  public listarChoferesPorEmpresa(idEmpresa) {
+    return this.http.get(this.url + '/listarChoferesPorEmpresa/' + idEmpresa, this.options);
   }
   //Obtiene la lista de choferes de larga distancia por alias
   public listarChoferesLargaDistanciaPorAlias(nombre) {
