@@ -250,6 +250,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Agrega un registro
   private agregar(): void {
     this.loaderService.show();
+    console.log(this.formulario.value);
     this.monedaCuentaContableServicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -352,6 +353,15 @@ export class MonedaCuentaContableComponent implements OnInit {
       return elemento;
     }
   }
+  //Formatea el valor del autocompletado
+  public displayFp(elemento) {
+    console.log(elemento);
+    if (elemento != undefined) {
+      return elemento ? elemento.nombre + elemento.tipoCuentaContable? elemento.nombre+' - ' + elemento.tipoCuentaContable.nombre: '' : elemento ;
+    } else {
+      return elemento;
+    }
+  }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {
@@ -361,8 +371,8 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Abre el dialogo Plan de Cuenta
   public abrirPlanCuentaDialogo() {
     const dialogRef = this.dialog.open(PlanCuentaDialogo, {
-      width: '90%',
-      height: '90%',
+      width: '70%',
+      height: '70%',
       data: {
         empresa: this.formulario.get('empresa').value
       },
@@ -467,6 +477,8 @@ export class PlanCuentaDialogo {
     flatNode.editable = false;
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
+    console.log(flatNode);
+
     return flatNode;
   }
   //Obtiene la cuenta seleccionada
