@@ -202,12 +202,12 @@ export class VehiculoService {
       blob = new Blob([null], { type: 'application/pdf' });
       formData.append('habBromat', blob, '');
     }
-    obj.pdfTitulo = null;
-    obj.pdfCedulaIdent = null;
-    obj.pdfVtoRuta = null;
-    obj.pdfVtoInspTecnica = null;
-    obj.pdfVtoSenasa = null;
-    obj.pdfHabBromat = null;
+    obj.pdfTitulo.datos = null;
+    obj.pdfCedulaIdent.datos = null;
+    obj.pdfVtoRuta.datos = null;
+    obj.pdfVtoInspTecnica.datos = null;
+    obj.pdfVtoSenasa.datos = null;
+    obj.pdfHabBromat.datos = null;
 
     // if(tituloFile)
     //   obj.pdfTitulo = {};

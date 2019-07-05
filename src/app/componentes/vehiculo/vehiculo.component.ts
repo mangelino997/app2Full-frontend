@@ -267,6 +267,7 @@ export class VehiculoComponent implements OnInit {
     this.resultadosPersonales = [];
     this.companiasSeguros = [];
     this.companiasSegurosPolizas = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Establece selects solo lectura
   private establecerCamposSoloLectura(opcion): void {
@@ -564,9 +565,11 @@ export class VehiculoComponent implements OnInit {
   }
   //Obtiene el pdf para mostrarlo
   public obtenerPDF(id,nombre) {
-    if(this.formulario.get(id).value) {
-      this.pdfServicio.obtenerPorId(this.formulario.get(id).value).subscribe(res => {
+    if(id) {
+      this.pdfServicio.obtenerPorId(id).subscribe(res => {
         let resultado = res.json();
+        console.log(resultado);
+
         let pdf = {
           id: resultado.id,
           nombre: resultado.nombre,
