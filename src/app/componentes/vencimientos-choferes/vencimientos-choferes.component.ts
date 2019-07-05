@@ -107,8 +107,10 @@ export class VencimientosChoferesComponent implements OnInit {
   }
 
   ngOnInit() {
+    //Define el modelo
+    this.formulario = this.personal.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Consultar', 0);
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -150,7 +152,16 @@ export class VencimientosChoferesComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if (estado) {
+      this.formulario.get('apellido').enable();
+      this.formulario.get('nombre').enable();
+      this.formulario.get('esChofer').enable();
+      this.formulario.get('esChoferLargaDistancia').enable();
+      this.formulario.get('VtoLicCondcir').enable();
+      this.formulario.get('VtoCurso').enable();
+      this.formulario.get('VtoCursoCargaPeligrosa').enable();
+      this.formulario.get('VtoLinti').enable();
     } else {
+      this.formulario.get('tipoVehiculo').disable();
     }
   }
   //Cambio en elemento autocompletado
