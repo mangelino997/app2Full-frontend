@@ -20,10 +20,15 @@ export class PdfDialogoComponent implements OnInit {
     //Establece los datos del pdf
     this.datos = this.data.datos;
   }
+  //Descarga el pdf
   public descargar(): void {
     const linkDescarga = document.createElement("a");
     linkDescarga.href = this.datos;
     linkDescarga.download = this.nombre;
     linkDescarga.click();
+  }
+  //Cierra el dialogo
+  public cerrar(): void {
+    this.dialogRef.close();
   }
 }

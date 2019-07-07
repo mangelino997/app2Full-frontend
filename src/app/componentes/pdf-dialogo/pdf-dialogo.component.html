@@ -1,12 +1,14 @@
-<div class="fixed" flex="none">
-  <mat-toolbar color="primary">
-    <mat-toolbar-row>
-      <span>PDF: {{nombre}}</span>
-      <span class="spacer"></span>
-      <button mat-fab (click)="descargar()">
-        <mat-icon>cloud_download</mat-icon>
-      </button>
-    </mat-toolbar-row>
-  </mat-toolbar>
+<div class="container-toolbar">
+  <div class="row">
+    <span class="title-pdf">PDF: {{nombre}}</span>
+    <span class="spacer"></span>
+    <button mat-mini-fab matTooltip="Descargar" (click)="descargar()">
+      <mat-icon>cloud_download</mat-icon>
+    </button>
+    <button style="margin-left: 10px;" mat-mini-fab matTooltip="Cerrar" (click)="cerrar()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 </div>
-<pdf-viewer [src]="datos" [render-text]="true" style="display: block;"></pdf-viewer>
+<br><br>
+<pdf-viewer [src]="datos" [render-text]="false" style="display: block;"></pdf-viewer>

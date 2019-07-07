@@ -6,7 +6,8 @@ import {
   MatButtonModule, MatCheckboxModule, MatMenuModule, MatToolbarModule, MatDividerModule,
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
   MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
-  MatProgressBarModule, MatStepperModule, MatTreeModule, MatSortModule, MatProgressSpinnerModule} from '@angular/material';
+  MatProgressBarModule, MatStepperModule, MatTreeModule, MatSortModule, MatProgressSpinnerModule,
+  MatTooltipModule } from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
@@ -634,6 +635,7 @@ const stompConfig: StompConfig = {
     MatTreeModule,
     MatSortModule,
     MatProgressSpinnerModule,
+    MatTooltipModule,
     TextMaskModule,
     PdfViewerModule,
     ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),

@@ -156,11 +156,11 @@ export class VencimientosChoferesComponent implements OnInit {
     }
     switch (id) {
       case 2:
-        this.establecerEstadoCampos(false);
+        this.establecerEstadoCampos(false, id);
         this.establecerValoresPestania(nombre, true, true, false, 'idPersonal');
         break;
       case 3:
-        this.establecerEstadoCampos(true);
+        this.establecerEstadoCampos(true, id);
         this.establecerValoresPestania(nombre, true, true, true, 'idPersonal');
         break;
       case 5:
