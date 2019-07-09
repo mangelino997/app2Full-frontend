@@ -49,7 +49,8 @@ export class Cliente {
             usuarioMod: new FormControl(),
             fechaUltimaMod: new FormControl(),
             alias: new FormControl(),
-            fechaAlta: new FormControl()
+            fechaAlta: new FormControl(),
+            clienteOrdenesVentas: new FormControl(),
         })
     }
 }

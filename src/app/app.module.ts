@@ -251,7 +251,7 @@ import { TramoComponent } from './componentes/tramo/tramo.component'; //Probado
 import { UnidadMedidaComponent } from './componentes/unidad-medida/unidad-medida.component';
 import { VendedorComponent } from './componentes/vendedor/vendedor.component';
 import { ZonaComponent } from './componentes/zona/zona.component'; //Probado
-import { ClienteComponent } from './componentes/cliente/cliente.component'; //Probado
+import { ClienteComponent, ListasDePreciosDialog } from './componentes/cliente/cliente.component'; //Probado
 import { ResumenClienteComponent } from './componentes/resumen-cliente/resumen-cliente.component';
 import { OrdenVentaComponent, VerTarifaDialogo } from './componentes/orden-venta/orden-venta.component';
 import { ProveedorComponent } from './componentes/proveedor/proveedor.component'; //Probado
@@ -454,7 +454,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket', // ws://192.168.0.62:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://192.168.0.62:8080/jitws/socket', // ws://192.168.0.62:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -608,7 +608,8 @@ const stompConfig: StompConfig = {
     TalonarioReciboLoteComponent,
     VerTarifaDialogo,
     EliminarModalComponent,
-    PdfDialogoComponent
+    PdfDialogoComponent,
+    ListasDePreciosDialog
   ],
   imports: [
     BrowserModule,
@@ -895,6 +896,7 @@ const stompConfig: StompConfig = {
     PersonalFamiliarComponent,
     PlanCuentaDialogo,
     VerTarifaDialogo,
+    ListasDePreciosDialog,
     EliminarModalComponent,
     PdfDialogoComponent
   ]

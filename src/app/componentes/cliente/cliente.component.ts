@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { ClienteService } from '../../servicios/cliente.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
@@ -21,7 +21,7 @@ import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Cliente } from 'src/app/modelos/cliente';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
@@ -109,7 +109,7 @@ export class ClienteComponent implements OnInit {
     private rubroServicio: RubroService, private afipCondicionIvaServicio: AfipCondicionIvaService,
     private tipoDocumentoServicio: TipoDocumentoService, private resumenClienteServicio: ResumenClienteService,
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
-    private companiaSeguroServicio: CompaniaSeguroService, private ordenVentaServicio: OrdenVentaService,
+    private companiaSeguroServicio: CompaniaSeguroService, public dialog: MatDialog,
     private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente,
     private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -174,14 +174,6 @@ export class ClienteComponent implements OnInit {
       if(typeof data == 'string'&& data.length>2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
-        })
-      }
-    })
-    //Autocompletado Orden Venta - Buscar por nombre
-    this.formulario.get('ordenVenta').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.ordenVentaServicio.listarPorNombre(data).subscribe(response => {
-          this.resultadosOrdenesVentas = response;
         })
       }
     })
@@ -569,6 +561,7 @@ export class ClienteComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
+    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -684,6 +677,7 @@ export class ClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
@@ -722,6 +716,20 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('vencimientoPolizaSeguro').disable();
       this.formulario.get('vencimientoPolizaSeguro').clearValidators();
     }
+  }
+  //Abre el Modal para Listas de Precios
+  public abrirListasPrecios(){
+    const dialogRef = this.dialog.open(ListasDePreciosDialog, {
+      width: '1200px',
+      data: {
+        soloLectura: this.soloLectura,
+        listaPrecios: this.formulario.get('clienteOrdenesVentas').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      console.log(resultado);
+      this.formulario.get('clienteOrdenesVentas').setValue(resultado);
+    });
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(limite) {
@@ -821,4 +829,198 @@ export class ClienteComponent implements OnInit {
       }
     }
   }
+}
+//
+//Componente 
+@Component({
+  selector: 'lista-precios-dialogo',
+  templateUrl: './lista-precios-dialog.html'
+})
+export class ListasDePreciosDialog {
+  //Define si los campos son soloLectura
+  public soloLectura: boolean = null;
+  //Define el formulario
+  public formulario: FormGroup;
+  //Define la observacion
+  public observaciones: string;
+  //Define si muestra el boton Modificar
+  public btnMod:boolean = false;
+  //Define el indice a modificar
+  public indice:number = null;
+  //Define el form control para el combo ordenes de venta
+  public ordenventa: FormControl = new FormControl();
+  //Define la lista de ordenes de ventas
+  public ordenesVentas: Array<any> = [];
+  //Define la lista de Precios
+  public listaPrecios: Array<any> = [];
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define la lista de resultados de busqueda cliente
+  public resultadosClientes = [];
+  //Define el form control para Empresa
+  public empresa:FormControl = new FormControl();
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Define las columnas de las tablas
+  public columnasEscala: string[] = ['descripcion', 'tarifaDefecto', 'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones', 'mod', 'eliminar'];
+  //Constructor
+  constructor( private appService: AppService, public dialogRef: MatDialogRef<ListasDePreciosDialog>, @Inject(MAT_DIALOG_DATA) public data,
+    private loaderService: LoaderService, private ordenVentaService: OrdenVentaService, private clienteServicio: ClienteService,) {
+
+   }
+  ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+    });
+    //Establece el formulario
+    this.formulario = new FormGroup({
+      id: new FormControl(),
+      tipoOrdenVenta: new FormControl(),
+      empresa: new FormControl(),
+      cliente: new FormControl(),
+      ordenVenta: new FormControl('', Validators.required),
+      tarifaDefecto: new FormControl('', Validators.required),
+      estaActiva: new FormControl('', Validators.required)
+    });
+    //Establece si es soloLectura
+    this.soloLectura = this.data.soloLectura;
+    if(this.soloLectura)
+      this.formulario.disable();
+    //Establece la lista si la hay
+    if(this.data.listaPrecios!= null){
+      this.listaPrecios= this.data.listaPrecios;
+      this.listar();
+    }
+    //Establecer empresa
+    this.establecerEmpresa();
+    //Autocompletado - Buscar por nombre cliente
+    this.formulario.get('cliente').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosClientes = response;
+        })
+      }
+    });
+  }
+  //Establece la empresa
+  private establecerEmpresa(){
+    let empresa = this.appService.getEmpresa();
+    this.formulario.get('empresa').setValue(empresa);
+    this.empresa.setValue(empresa.razonSocial);
+  }
+  //Establece el tipo (empresa o cliente)
+  public establecerTipo(): void {
+    let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
+    this.limpiarCampos(tipoOrdenVenta);
+    if (!tipoOrdenVenta) {
+      this.listarOrdenesVentas('empresa');
+    } 
+  }
+  //Listar ordenes de ventas por Empresa/Cliente
+  public listarOrdenesVentas(tipo) {
+    this.loaderService.show();
+    switch (tipo) {
+      case 'empresa':
+        this.establecerEmpresa();
+        this.formulario.get('cliente').setValue(null);
+        this.ordenVentaService.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
+          res => {
+            this.ordenesVentas = res.json();
+            this.loaderService.hide();
+          }
+        );
+      break;
+      case 'cliente':
+        this.formulario.get('empresa').setValue({id: null});
+        this.ordenVentaService.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
+          res => {
+            this.ordenesVentas = res.json();
+            this.loaderService.hide();
+          }
+        );
+      break;
+    }
+  }
+  //Limpia los campos seteados (si los hay) cuando se cambia el 'Tipo'
+  private limpiarCampos(tipoOrdenVenta){
+    this.formulario.reset();
+    this.resultadosClientes = [];
+    this.btnMod = false;
+    this.indice = null;
+    if(tipoOrdenVenta!=null)
+      this.formulario.get('tipoOrdenVenta').setValue(tipoOrdenVenta);
+  }
+  //Controla el cambio en el campo 'Orden Vta'
+  public cambioOrdenVenta(){
+    this.formulario.get('estaActiva').setValue(this.formulario.value.ordenVenta.estaActiva);
+  }
+  //Carga a la Lista de Precios un nuevo elemento
+  public agregarListaPrecio(){
+    this.listaPrecios.push(this.formulario.value);
+    this.limpiarCampos(null);
+    this.listar();
+
+  }
+  //Modifica un registro de la tabla
+  public modificatListaPrecio(indice){
+    this.formulario.value.ordenVenta.estaActiva = this.formulario.get('estaActiva').value;
+    this.listaPrecios[indice] = this.formulario.value;
+    this.limpiarCampos(null);
+    this.listar();
+
+  }
+  //Controla el boton 'mod' de la tabla
+  public activarModPrecio(elemento, indice){
+    this.formulario.patchValue(elemento);
+    this.indice = indice;
+    this.btnMod = true;
+  }
+  //Controla el boton 'eliminar' de la tabla
+  public activarEliminarPrecio(indice){
+    this.listaPrecios.splice(indice, 1);
+    this.limpiarCampos(null);
+    this.listar();
+  }
+  //Obtiene la Lista de Precios
+  private listar(){
+    this.listaCompleta = new MatTableDataSource(this.listaPrecios);
+    this.listaCompleta.sort = this.sort;
+  }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }  
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Funcion para comparar y mostrar elemento del campo 'Tipo' 
+  public compareT = this.compararT.bind(this);
+  private compararT(a, b) {
+    if (a != null && b != null) {
+      return a === b;
+    }
+  }
+  //Muestra el valor en los autocompletados
+  public displayFn(elemento) {
+    if (elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  // onNoClick(): void {
+  //     this.dialogRef.close();
+  // }
 }

@@ -239,20 +239,6 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idOrdenVenta" class="tamanio-label">Orden de Venta</label>
-                        <input id="idOrdenVenta" class="form-control form-control-sm" type="text" matInput
-                          [formControl]="formulario.get('ordenVenta')" [matAutocomplete]="autoOrdenVenta"
-                          autocomplete="off" [readonly]="soloLectura"
-                          (blur)="verificarSeleccion(formulario.get('ordenVenta'))">
-                        <mat-autocomplete #autoOrdenVenta="matAutocomplete" [displayWith]="displayFa.bind(this)">
-                          <mat-option *ngFor="let itemOrdenVenta of resultadosOrdenesVentas" [value]="itemOrdenVenta">
-                            {{itemOrdenVenta.nombre}}
-                          </mat-option>
-                        </mat-autocomplete>
-                      </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
                         <label for="idCuentaGrupo" class="tamanio-label">Cuenta del Grupo</label>
                         <input id="idCuentaGrupo" class="form-control form-control-sm" type="text" matInput
                           [formControl]="formulario.get('cuentaGrupo')" [matAutocomplete]="autoCuentaGrupo"
@@ -309,6 +295,13 @@
                           </mat-option>
                         </mat-select>
                       </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-md-3">
+                      <button id="idBoton" mat-raised-button color="primary" (click)="abrirListasPrecios()">
+                        Listas de Precios
+                      </button>
                     </div>
                   </div>
                 </div>
