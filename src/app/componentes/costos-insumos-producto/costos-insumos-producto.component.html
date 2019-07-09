@@ -114,11 +114,11 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idCoeficienteITC" class="tamanio-label">Coeficiente ITC</label>
-              <input id="idCoeficienteITC" type="text" formControlName="coeficienteITC" autocomplete="off"
+              <label for="idCoeficienteITC" class="tamanio-label">ITC por Litro</label>
+              <input id="idCoeficienteITC" type="text" formControlName="ITCPorLitro" autocomplete="off"
                 placeholder="00.0000" [textMask]="mascararCoeficiente(2)" class="form-control form-control-sm number-right"
                 [readonly]="soloLectura" maxlength="45"
-                (blur)="establecerDecimales(formulario.get('coeficienteITC'), 4)">
+                (blur)="establecerDecimales(formulario.get('ITCPorLitro'), 4)">
             </div>
           </div>
         </div>
@@ -179,9 +179,13 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Venta</th>
           <td mat-cell *matCellDef="let elemento">$ {{elemento.precioUnitarioVenta | number: '1.2-2'}}</td>
         </ng-container>
-        <ng-container matColumnDef="coeficienteITC">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Coeficiente ITC</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.coeficienteITC | number: '1.4-5'}}</td>
+        <ng-container matColumnDef="ITCPorLitro">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>ITC por Litro</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.ITCPorLitro | number: '1.4-5'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="ITCNeto">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>ITC Neto</th>
+          <td mat-cell *matCellDef="let elemento">% {{elemento.ITCNeto | number: '1.2-2'}}</td>
         </ng-container>
         <ng-container matColumnDef="ver">
           <th mat-header-cell *matHeaderCellDef>-</th>

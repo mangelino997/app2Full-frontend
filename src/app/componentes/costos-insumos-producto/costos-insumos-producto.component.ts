@@ -54,7 +54,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['codigo', 'nombre', 'rubro', 'marca', 'unidadMedida', 'modelo', 'precioUnitarioViaje', 'precioUnitarioVenta', 'coeficienteITC', 'ver', 'mod'];
+  public columnas: string[] = ['codigo', 'nombre', 'rubro', 'marca', 'unidadMedida', 'modelo', 'precioUnitarioViaje', 'precioUnitarioVenta', 'ITCPorLitro', 'ITCNeto', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la lista de personales
@@ -223,7 +223,7 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.formulario.setValue(elemAutocompletado);
     this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioViaje, 2));
     this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioVenta, 2));
-    this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemAutocompletado.coeficienteITC, 4));
+    this.formulario.get('ITCPorLitro').setValue(this.appService.establecerDecimales(elemAutocompletado.ITCPorLitro, 4));
   }
   //Obtiene la mascara de importe
   public mascararImporte(intLimite, decimalLimite) {
