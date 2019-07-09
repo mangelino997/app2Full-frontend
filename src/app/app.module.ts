@@ -454,7 +454,9 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket', // ws://192.168.0.62:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //RIGAR
+  // url: 'ws://jitws-ute.appspot.com:8080/jitws/socket', //UTE
+  url: 'ws://localhost:8080/jitws/socket', //LOCALHOST
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
