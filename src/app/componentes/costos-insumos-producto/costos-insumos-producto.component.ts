@@ -100,7 +100,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Al inicializarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = this.insumoProducto.formulario;
+    this.formulario = this.insumoProducto.formulario;    
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(2, 'Consultar', 0);
     //Obtiene la lista de rubros de productos
@@ -192,6 +192,8 @@ export class CostosInsumosProductoComponent implements OnInit {
   private actualizar() {
     this.loaderService.show();
     this.formulario.enable();
+    this.controlaValores(this.formulario.value); //Controla que no haya valores en null/Nan
+    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -223,7 +225,9 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.formulario.setValue(elemAutocompletado);
     this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioViaje, 2));
     this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioVenta, 2));
-    this.formulario.get('ITCPorLitro').setValue(this.appService.establecerDecimales(elemAutocompletado.ITCPorLitro, 4));
+    this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(elemAutocompletado.itcPorLitro, 4));
+    this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(elemAutocompletado.itcNeto, 2));
+
   }
   //Obtiene la mascara de importe
   public mascararImporte(intLimite, decimalLimite) {
@@ -232,6 +236,14 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Obtiene la mascara de importe
   public mascararCoeficiente(intLimite) {
     return this.appService.mascararEnterosCon4Decimales(intLimite);
+  }
+  //Mascara un porcentaje
+  public mascararPorcentaje() {
+    return this.appService.mascararPorcentaje();
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(formulario, cantidad): void {
+    formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
   }
   //Formatea el numero a x decimales
   public establecerDecimales(formulario, cantidad) {
@@ -242,15 +254,27 @@ export class CostosInsumosProductoComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[0].nombre, 1);
-    this.autocompletado.setValue(elemento);
+    this.autocompletado.patchValue(elemento);
     this.cambioAutocompletado();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[1].nombre, 1);
-    this.autocompletado.setValue(elemento);
+    this.autocompletado.patchValue(elemento);
     this.cambioAutocompletado();
+  }
+  ////Controla que no haya valores en null/Nan
+  private controlaValores(elemento){
+    if(elemento.itcNeto == null || elemento.itcNeto == NaN)
+      this.formulario.get('itcNeto').setValue(0);
+    if(elemento.itcPorLitro == null || elemento.itcPorLitro == NaN)
+      this.formulario.get('itcPorLitro').setValue(0);
+    if(elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == "NaN")
+      this.formulario.get('precioUnitarioVenta').setValue(0);
+    if(elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == "NaN")
+      this.formulario.get('precioUnitarioViaje').setValue(0);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

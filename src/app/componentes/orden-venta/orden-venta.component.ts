@@ -384,7 +384,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
-    console.log(indice);
     switch (indice) {
       case 1:
         this.agregar();
@@ -400,52 +399,54 @@ export class OrdenVentaComponent implements OnInit {
     }
   }
   //Agrega una Orden de Venta
-  private agregar() {
+  public agregar() {
     this.loaderService.show();
     console.log(this.formulario.value);
     this.ordenVentaServicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
-        if (respuesta.codigo == 201) {
+        var elemento = res.json();
+        if (res.status == 201) {
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro agregado con éxito");
           this.habilitarFormTarifa(true);
-          this.btnActualizarOrdVta = true;
+          this.formulario.reset();
           this.loaderService.hide();
+          this.recargarFormulario(elemento);
         }
       },
       err => {
-        var respuesta = err.json();
-        this.toastr.error(respuesta.mensaje);
+        var error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro
-  private actualizar() {
+  public actualizar() {
     this.loaderService.show();
     console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
-        if (respuesta.codigo == 200) {
+        var elemento = res.json();
+        if (res.status == 200) {
           this.establecerValoresPorDefecto();
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro actualizado con éxito");
           this.habilitarFormTarifa(true);
           this.loaderService.hide();
+          this.recargarFormulario(elemento);
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 5001) {
-          this.toastr.warning(respuesta.mensaje, 'Registro actualizado con éxito');
+        var error = err.json();
+        if (error.codigo == 5001) {
+          this.toastr.warning(error.mensaje, 'Registro actualizado con éxito');
         } else {
-          this.toastr.error(respuesta.mensaje);
+          this.toastr.error(error.mensaje);
         }
         this.loaderService.hide();
       }
@@ -485,6 +486,25 @@ export class OrdenVentaComponent implements OnInit {
         this.formularioTramo.disable();
         break;
     }
+  }
+  //Realiza una recarga del formulario para no tener problemas al Agregar una Orden Venta
+  private recargarFormulario(elemento){
+    this.ordenventa.setValue(elemento.ordenVenta);
+    this.formulario.patchValue(elemento);
+    this.controlaPorcentajes(elemento);
+
+    if(elemento.empresa){
+      this.formulario.get('tipoOrdenVenta').setValue(false);
+      this.empresa.setValue(elemento.empresa.razonSocial);
+      this.establecerTipo();
+    }
+    if(elemento.cliente){
+      this.formulario.get('tipoOrdenVenta').setValue(true);
+    }
+    this.formularioTarifa.enable();
+    this.tipoTarifa.enable();
+    this.listarOrdenVentaTarifas();
+    this.btnActualizarOrdVta = true;
   }
   //Obtiene la lista de precios desde (cuando indiceSeleccionado!=1)
   // private obtenerPreciosDesde() {
@@ -542,7 +562,6 @@ export class OrdenVentaComponent implements OnInit {
     console.log(this.formularioTarifa.value);
     this.ordenVentaTarifaService.agregar(this.formularioTarifa.value).subscribe(
       res=>{
-        console.log(res.json());
         this.listarOrdenVentaTarifas();
       },
       err=>{
@@ -579,11 +598,9 @@ export class OrdenVentaComponent implements OnInit {
       this.tipoTarifa.setValue('porTramo');
       this.cambioTipoTarifa();
     }
-    // this.obtenerPreciosDesde();    
   }
   //Abre el modal de ver Orden Venta Tarifa
   public eliminarOrdenVentaTarifa(elemento){
-    console.log(elemento);
     this.loaderService.show();
     this.ordenVentaTarifaService.eliminar(elemento.id).subscribe(
       res=>{
@@ -634,6 +651,7 @@ export class OrdenVentaComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.ordenventa.setValue(elemento.ordenVenta);
     this.formulario.patchValue(elemento);
+    this.controlaPorcentajes(elemento);
 
     if(elemento.empresa){
       this.formulario.get('tipoOrdenVenta').setValue(false);
@@ -647,7 +665,6 @@ export class OrdenVentaComponent implements OnInit {
     this.tipoTarifa.enable();
     this.listarOrdenVentaTarifas();
     this.btnActualizarOrdVta = true;
-    console.log(elemento);
   }
   //Elimina una Orden Venta (Pestaña Listar, accion 'eliminar')
   public activarEliminar(elemento){
@@ -677,9 +694,10 @@ export class OrdenVentaComponent implements OnInit {
   //Carga los datos de la orden de venta seleccionada en los input
   public cargarDatosOrden() {
     console.log(this.ordenventa.value);
-    this.formulario.patchValue(this.ordenventa.value);
-    // this.establecerPorcentaje(this.formulario.get('seguro'), 2);
-    // this.establecerPorcentaje(this.formulario.get('comisionCR'), 2);
+    let elemento = this.ordenventa.value;
+    this.formulario.patchValue(elemento);
+    this.controlaPorcentajes(elemento);
+   
     if(this.formulario.value.empresa){
       this.formulario.get('tipoOrdenVenta').setValue(false);
       this.listarOrdenVentaTarifas();
@@ -688,8 +706,15 @@ export class OrdenVentaComponent implements OnInit {
       this.formulario.get('tipoOrdenVenta').setValue(true);
       this.listarOrdenVentaTarifas();
     }
-    // this.obtenerPreciosDesde();
-
+    if(this.indiceSeleccionado == 3)
+      this.formularioTarifa.enable();
+  }
+  //Controla que los porcentajes queden bien establecidos
+  private controlaPorcentajes(elemento){
+    if(elemento.seguro)
+      this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje(elemento.seguro.toString(), 2));
+    if(elemento.comisionCR)
+      this.formulario.get('comisionCR').setValue(this.appService.desenmascararPorcentaje(elemento.comisionCR.toString(), 2));
   }
   //Obtiene la mascara de importe
   public mascaraImporte(intLimite, decimalLimite) {

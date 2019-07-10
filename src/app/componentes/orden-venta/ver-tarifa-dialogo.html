@@ -11,7 +11,7 @@
                     <label for="idEscala" class="tamanio-label">Escala *</label>
                     <mat-select id="idVendedor" class="form-control form-control-sm" formControlName="escalaTarifa"
                       [compareWith]="compareFn">
-                      <mat-option *ngFor="let item of listaEscalasTarifas" [value]="item">
+                      <mat-option *ngFor="let item of listaEscalasTarifas" [value]="item" >
                         {{item.valor}}
                       </mat-option>
                     </mat-select>
