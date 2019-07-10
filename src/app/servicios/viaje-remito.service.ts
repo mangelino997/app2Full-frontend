@@ -92,6 +92,10 @@ export class ViajeRemitoService {
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
   }
+  //Agrega un registro
+  public listarPorFiltros(elemento) {
+    return this.http.post(this.url + '/listarPorFiltros', elemento, this.options);
+  }
   //Actualiza un registro
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);

@@ -35,12 +35,18 @@ export class ViajeRemitoComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
-  //Define un formulario para validaciones de campos
+  //Define el formulario 
   public formulario: FormGroup;
+  //Define el formulario para el listar
+  public formularioListar: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
+  //Define el form control para las busquedas del Destinatario en pestaña Listar
+  public autocompletadoDestinatario: FormControl = new FormControl();
+  //Define el form control para las busquedas del Remitente en pestaña Listar
+  public autocompletadoRemitente: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda cliente remitente
@@ -62,8 +68,7 @@ export class ViajeRemitoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['numeroCamion', 'sucursal', 'fecha', 'tipoComprobante', 'puntoVenta', 'letra', 
-    'numero', 'remitente', 'destinatario', 'bultos', 'observaciones', 'ver', 'mod'];
+  public columnas: string[] = ['sucursal', 'fecha', 'puntoVenta', 'numero', 'bultos', 'observaciones', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -83,10 +88,6 @@ export class ViajeRemitoComponent implements OnInit {
           console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -94,7 +95,23 @@ export class ViajeRemitoComponent implements OnInit {
           this.resultados = response;
         })
       }
-    })
+    });
+    //Autocompletado ClienteRemitente - Buscar por nombre
+    this.autocompletadoRemitente.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosClienteRemitente = response;
+        })
+      }
+    });
+    //Autocompletado ClienteDestinatario - Buscar por nombre
+    this.autocompletadoDestinatario.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+          this.resultadosClienteDestinatario = response;
+        })
+      }
+    });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -136,8 +153,30 @@ export class ViajeRemitoComponent implements OnInit {
       estaEnReparto: new FormControl(),
       alias: new FormControl()
     });
+    //Define el formulario para el Listar
+    this.formularioListar = new FormGroup({
+      fechaDesde: new FormControl(),
+      fechaHasta: new FormControl(),
+      idSucursalIngreso: new FormControl(),
+      idSucursalDestino: new FormControl(),
+      idClienteRemitente: new FormControl(),
+      idClienteDestinatario: new FormControl(),
+      numeroCamion: new FormControl()
+    });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+    //Obtiene la fecha actual
+    this.fechaServicio.obtenerFecha().subscribe(res => {
+      this.fechaActual = res.json();
+      //Establece valores por defecto
+      this.establecerValoresPorDefecto(null, null);
+    });
+    //Obtiene la lista de condiciones de iva
+    this.listarSucursales();
+    //Obtiene la lista de tipos de comprobantes
+    this.listarTiposComprobantes();
+    //Crea la lista de letras
+    this.letras = ['A', 'B', 'C'];
     //Autocompletado ClienteRemitente - Buscar por nombre
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -154,20 +193,7 @@ export class ViajeRemitoComponent implements OnInit {
         })
       }
     });
-    //Obtiene la fecha actual
-    this.fechaServicio.obtenerFecha().subscribe(res => {
-      this.fechaActual = res.json();
-      //Establece valores por defecto
-      this.establecerValoresPorDefecto(null, null);
-    });
-    //Obtiene la lista completa de registros
-    // this.listar();
-    //Obtiene la lista de condiciones de iva
-    this.listarSucursales();
-    //Obtiene la lista de tipos de comprobantes
-    this.listarTiposComprobantes();
-    //Crea la lista de letras
-    this.letras = ['A', 'B', 'C'];
+    
   }
   //Establece los enteros
   public establecerEnteros(formulario): void {
@@ -240,6 +266,8 @@ export class ViajeRemitoComponent implements OnInit {
       },
       err => {
         console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
       }
     );
   }
@@ -300,7 +328,6 @@ export class ViajeRemitoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
         break;
       default:
         break;
@@ -330,13 +357,20 @@ export class ViajeRemitoComponent implements OnInit {
       },
       err => {
         console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
       }
     );
   }
   //Obtiene el listado de registros
-  private listar() {
+  public listar() {
     this.loaderService.show();
-    this.servicio.listar().subscribe(
+    if(this.autocompletadoRemitente.value)
+      this.formularioListar.get('idClienteRemitente').setValue(this.autocompletadoRemitente.value.id);
+    if(this.autocompletadoDestinatario.value)
+      this.formularioListar.get('idClienteDestinatario').setValue(this.autocompletadoDestinatario.value.id);
+    console.log(this.formularioListar.value);
+    this.servicio.listarPorFiltros(this.formularioListar.value).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -344,6 +378,7 @@ export class ViajeRemitoComponent implements OnInit {
       },
       err => {
         console.log(err);
+        this.toastr.error("Error al obtener la lista de Remitos");
         this.loaderService.hide();
       }
     );
@@ -359,7 +394,6 @@ export class ViajeRemitoComponent implements OnInit {
     this.formulario.get('sucursalIngreso').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -418,6 +452,7 @@ export class ViajeRemitoComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.formularioListar.reset();
     this.formulario.get('fecha').setValue(undefined);
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
@@ -501,6 +536,7 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
+    console.log(elemento);
     if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
