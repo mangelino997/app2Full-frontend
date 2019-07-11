@@ -1,6 +1,6 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 //Define la entidad de la base de datos.
-export class ViajePropio {
+export class Viaje {
     //define un formulario FormGroup
     public formulario: FormGroup;
     //constructor
@@ -12,12 +12,14 @@ export class ViajePropio {
             empresaEmision: new FormControl(),
             sucursal: new FormControl('', Validators.required),
             usuario: new FormControl(),
-            fecha: new FormControl('', Validators.required),
-            vehiculo: new FormControl('', Validators.required),
-            personal: new FormControl('', Validators.required),
-            esRemolquePropio: new FormControl('', Validators.required),
+            fecha: new FormControl(),
+            vehiculo: new FormControl(),
+            esViajePropio: new FormControl('', Validators.required),
+            personal: new FormControl(),
+            choferProveedor: new FormControl(),
+            esRemolquePropio: new FormControl(),
             vehiculoRemolque: new FormControl(),
-            vehiculoProveedorRemolque: new FormControl(),
+            vehiculoProveedor: new FormControl(),
             empresa: new FormControl(),
             empresaRemolque: new FormControl(),
             afipCondicionIva: new FormControl(),
@@ -30,17 +32,12 @@ export class ViajePropio {
             usuarioVehiculoAutorizado: new FormControl(),
             usuarioVehiculoRemAutorizado: new FormControl(),
             usuarioChoferAutorizado: new FormControl(),
-            observacionVehiculo: new FormControl('', Validators.maxLength(100)),
-            observacionVehiculoRemolque: new FormControl('', Validators.maxLength(100)),
-            observacionChofer: new FormControl('', Validators.maxLength(100)),
-            observaciones: new FormControl('', Validators.maxLength(100)),
+            observacionVehiculo: new FormControl(),
+            observacionVehiculoRemolque: new FormControl(),
+            observacionChofer: new FormControl(),
+            observaciones: new FormControl(),
             alias: new FormControl(),
-            viajePropioTramos: new FormControl('', Validators.required),
-            viajePropioCombustibles: new FormControl(),
-            viajePropioEfectivos: new FormControl(),
-            viajePropioInsumos: new FormControl(),
-            viajePropioGastos: new FormControl(),
-            viajePropioPeajes: new FormControl()
+            usuarioAlta: new FormControl(),
         })
     }
 }

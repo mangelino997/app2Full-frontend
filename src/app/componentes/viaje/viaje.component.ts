@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ViajePropioService } from '../../servicios/viaje-propio.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
 import { FechaService } from '../../servicios/fecha.service';
@@ -8,7 +7,6 @@ import { VehiculoService } from '../../servicios/vehiculo.service';
 import { PersonalService } from '../../servicios/personal.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { ViajePropio } from 'src/app/modelos/viajePropio';
 import { ViajeTramoComponent } from './viaje-tramo/viaje-tramo.component';
 import { ViajeCombustibleComponent } from './viaje-combustible/viaje-combustible.component';
 import { ViajeEfectivoComponent } from './viaje-efectivo/viaje-efectivo.component';
@@ -21,6 +19,8 @@ import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.servi
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { Viaje } from 'src/app/modelos/viaje';
+import { ViajeService } from 'src/app/servicios/viaje.service';
 
 @Component({
   selector: 'app-viaje',
@@ -52,26 +52,28 @@ export class ViajeComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
+  //Define el id del Viaje que se quiere modificar
+  public idMod: number = null;
   //Define la lista de opciones
   // public opciones: Array<any> = [];
   //Define un formulario viaje propio para validaciones de campos
-  public formularioViajePropio: FormGroup;
-  //Define un formulario viaje propio tramo para validaciones de campos
-  public formularioViajePropioTramo: FormGroup = new FormGroup({});
-  //Define un formulario viaje propio combustible para validaciones de campos
-  public formularioViajePropioCombustible: FormGroup = new FormGroup({});
-  //Define un formulario viaje propio efectivo para validaciones de campos
-  public formularioViajePropioEfectivo: FormGroup = new FormGroup({});
-  //Define un formulario viaje propio insumo para validaciones de campos
-  public formularioViajePropioInsumo: FormGroup = new FormGroup({});
+  public formularioViaje: FormGroup;
+  //Define un formulario viaje  tramo para validaciones de campos
+  public formularioViajeTramo: FormGroup = new FormGroup({});
+  //Define un formulario viaje  combustible para validaciones de campos
+  public formularioViajeCombustible: FormGroup = new FormGroup({});
+  //Define un formulario viaje  efectivo para validaciones de campos
+  public formularioViajeEfectivo: FormGroup = new FormGroup({});
+  //Define un formulario viaje  insumo para validaciones de campos
+  public formularioViajeInsumo: FormGroup = new FormGroup({});
   //Define un formulario viaje remitos dadores de carga para validaciones de campos
   public formularioViajeRemitoDC: FormGroup = new FormGroup({});
   //Define un formulario viaje remito para validaciones de campos
   public formularioViajeRemito: FormGroup = new FormGroup({});
-  //Define un formulario viaje propio gasto para validaciones de campos
-  public formularioViajePropioGasto: FormGroup = new FormGroup({});
-  //Define un formulario viaje propio peaje para validaciones de campos
-  public formularioViajePropioPeaje: FormGroup = new FormGroup({});
+  //Define un formulario viaje  gasto para validaciones de campos
+  public formularioViajeGasto: FormGroup = new FormGroup({});
+  //Define un formulario viaje  peaje para validaciones de campos
+  public formularioViajePeaje: FormGroup = new FormGroup({});
   //Define la lista completa de registros
   public listaCompleta: Array<any> = [];
   //Define la opcion seleccionada
@@ -105,11 +107,11 @@ export class ViajeComponent implements OnInit {
   //Define el render de los componentes
   public render:boolean = false;
   //Constructor
-  constructor(private servicio: ViajePropioService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private servicio: ViajeService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService,
     private rolOpcionServicio: RolOpcionService, private fechaServicio: FechaService,
     private sucursalServicio: SucursalService, private vehiculoServicio: VehiculoService,
-    private personalServicio: PersonalService, private viajePropioModelo: ViajePropio,
+    private personalServicio: PersonalService, private viajePropioModelo: Viaje,
     private choferProveedorServicio: ChoferProveedorService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -151,7 +153,7 @@ export class ViajeComponent implements OnInit {
         this.show = state.show;
       });
     //Establece el formulario viaje propio
-    this.formularioViajePropio = this.viajePropioModelo.formulario;
+    this.formularioViaje = this.viajePropioModelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la primera opcion seleccionada
@@ -163,7 +165,7 @@ export class ViajeComponent implements OnInit {
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
     //Autocompletado Vehiculo - Buscar por alias
-    this.formularioViajePropio.get('vehiculo').valueChanges.subscribe(data => {
+    this.formularioViaje.get('vehiculo').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.vehiculoServicio.listarPorAliasYRemolqueFalse(data).subscribe(response => {
           this.resultadosVehiculos = response;
@@ -171,7 +173,7 @@ export class ViajeComponent implements OnInit {
       }
     })
     //Autocompletado Vehiculo Remolque - Buscar por alias
-    this.formularioViajePropio.get('vehiculoRemolque').valueChanges.subscribe(data => {
+    this.formularioViaje.get('vehiculoRemolque').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.vehiculoServicio.listarPorAliasYRemolqueTrue(data).subscribe(response => {
           this.resultadosVehiculosRemolques = response;
@@ -179,7 +181,7 @@ export class ViajeComponent implements OnInit {
       }
     })
     //Autocompletado Personal - Buscar por alias
-    this.formularioViajePropio.get('personal').valueChanges.subscribe(data => {
+    this.formularioViaje.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.personalServicio.listarChoferesLargaDistanciaPorAlias(data).subscribe(res => {
           this.resultadosChoferes = res.json();
@@ -187,9 +189,9 @@ export class ViajeComponent implements OnInit {
       }
     })
     //Autocompletado Proveedor Chofer - Buscar por alias
-    // this.formularioViajePropio.get('choferProveedor').valueChanges.subscribe(data => {
+    // this.formularioViaje.get('choferProveedor').valueChanges.subscribe(data => {
     //   if (typeof data == 'string' && data.length > 2) {
-    //     let vehiculoProveedor = this.formularioViajePropio.get('vehiculoProveedor').value;
+    //     let vehiculoProveedor = this.formularioViaje.get('vehiculoProveedor').value;
     //     if(vehiculoProveedor) {
     //       this.choferProveedorServicio.listarPorAliasYProveedor(data, vehiculoProveedor.proveedor.id).subscribe(res => {
     //         this.resultadosChoferes = res.json();
@@ -203,7 +205,7 @@ export class ViajeComponent implements OnInit {
     let viaje = this.autocompletado.value;
     this.servicio.obtenerPorId(viaje.id).subscribe(res => {
       let viajePropio = res.json();
-      this.formularioViajePropio.setValue(viajePropio);
+      this.formularioViaje.setValue(viajePropio);
       this.viajeTramoComponente.establecerLista(viajePropio.viajePropioTramos, viaje);
       this.viajeCombustibleComponente.establecerLista(viajePropio.viajePropioCombustibles, viaje);
       this.viajeEfectivoComponente.establecerLista(viajePropio.viajePropioEfectivos, viaje);
@@ -215,15 +217,15 @@ export class ViajeComponent implements OnInit {
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
     let usuario = this.appService.getUsuario();
-    this.formularioViajePropio.get('usuario').setValue(usuario);
+    this.formularioViaje.get('usuario').setValue(usuario);
     this.usuarioNombre.setValue(usuario.nombre);
     this.tipoViaje.setValue(true);
-    this.formularioViajePropio.get('esRemolquePropio').setValue(true);
+    this.formularioViaje.get('esRemolquePropio').setValue(true);
     let sucursal = this.appService.getUsuario().sucursal;
-    this.formularioViajePropio.get('sucursal').setValue(sucursal);
+    this.formularioViaje.get('sucursal').setValue(sucursal);
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
-      this.formularioViajePropio.get('fecha').setValue(res.json());
+      this.formularioViaje.get('fecha').setValue(res.json());
     })
   }
   //Vacia la lista de resultados de autocompletados
@@ -244,7 +246,7 @@ export class ViajeComponent implements OnInit {
   }
   //Establece el tipo de viaje
   public establecerTipoViaje(): void {
-    this.viajeTramoComponente.establecerTipoViaje(this.tipoViaje.value);
+    // this.viajeTramoComponente.establecerTipoViaje(this.tipoViaje.value);
   }
   //Obtiene el listado de sucursales
   private listarSucursales() {
@@ -262,12 +264,12 @@ export class ViajeComponent implements OnInit {
   private establecerCamposSoloLectura(opcion): void {
     if (opcion) {
       this.tipoViaje.disable();
-      this.formularioViajePropio.get('esRemolquePropio').disable();
-      this.formularioViajePropio.get('sucursal').disable();
+      this.formularioViaje.get('esRemolquePropio').disable();
+      this.formularioViaje.get('sucursal').disable();
     } else {
       this.tipoViaje.enable();
-      this.formularioViajePropio.get('esRemolquePropio').enable();
-      this.formularioViajePropio.get('sucursal').enable();
+      this.formularioViaje.get('esRemolquePropio').enable();
+      this.formularioViaje.get('sucursal').enable();
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -371,7 +373,7 @@ export class ViajeComponent implements OnInit {
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.formularioViajePropio.get('id').setValue(res.json());
+        this.formularioViaje.get('id').setValue(res.json());
       },
       err => {
         console.log(err);
@@ -400,31 +402,31 @@ export class ViajeComponent implements OnInit {
       }
     }
     if(!this.estadoFormulario) {
-      this.formularioViajePropio.get('viajePropioTramos').reset();
+      this.formularioViaje.get('viajePropioTramos').reset();
     } else {
-      this.formularioViajePropio.get('viajePropioTramos').setValue($event);
+      this.formularioViaje.get('viajePropioTramos').setValue($event);
     }
     this.viajeRemitoGSComponente.establecerListaTramos($event);
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {
-    this.formularioViajePropio.get('viajePropioCombustibles').setValue($event);
+    this.formularioViaje.get('viajePropioCombustibles').setValue($event);
   }
   //Recibe la lista de adelantos de efectivo de Viaje Efectivo
   public recibirEfectivos($event) {
-    this.formularioViajePropio.get('viajePropioEfectivos').setValue($event);
+    this.formularioViaje.get('viajePropioEfectivos').setValue($event);
   }
   //Recibe la lista de ordenes de insumo de Viaje Insumo
   public recibirInsumos($event) {
-    this.formularioViajePropio.get('viajePropioInsumos').setValue($event);
+    this.formularioViaje.get('viajePropioInsumos').setValue($event);
   }
   //Recibe la lista de gastos de Viaje Gasto
   public recibirGastos($event) {
-    this.formularioViajePropio.get('viajePropioGastos').setValue($event);
+    this.formularioViaje.get('viajePropioGastos').setValue($event);
   }
   //Recibe la lista de peajes de Viaje Peaje
   public recibirPeajes($event) {
-    this.formularioViajePropio.get('viajePropioPeajes').setValue($event);
+    this.formularioViaje.get('viajePropioPeajes').setValue($event);
   }
   //Recibe la lista de remitos de Viaje Remito
   public recibirRemitos($event) {
@@ -434,37 +436,90 @@ export class ViajeComponent implements OnInit {
   public accion(): void {
     switch (this.indiceSeleccionado) {
       case 1:
-        this.agregar();
+        // this.agregar();
         break;
       case 2:
         break;
       case 3:
-        this.actualizar();
+        // this.actualizar();
         break;
       case 4:
         break;
     }
   }
-  //Agregar el viaje propio
-  private agregar(): void {
+  //Agrega el viaje (CABECERA)
+  public agregarViaje(){
     this.loaderService.show();
+    this.idMod = null;
     this.tipoViaje.enable();
-    let vehiculo = this.formularioViajePropio.get('vehiculo').value;
-    this.formularioViajePropio.get('empresa').setValue(vehiculo.empresa);
-    this.formularioViajePropio.get('empresaEmision').setValue(this.appService.getEmpresa());
-    let empresa = this.formularioViajePropio.get('empresa').value;
-    this.formularioViajePropio.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
-    this.servicio.agregar(this.formularioViajePropio.value).subscribe(
+    let vehiculo = this.formularioViaje.get('vehiculo').value;
+    this.formularioViaje.get('empresa').setValue(vehiculo.empresa);
+    this.formularioViaje.get('empresaEmision').setValue(this.appService.getEmpresa());
+    let empresa = this.formularioViaje.get('empresa').value;
+    this.formularioViaje.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
+    let usuario = this.appService.getUsuario();
+    this.formularioViaje.get('usuarioAlta').setValue(usuario);
+    console.log(this.formularioViaje.value);
+    this.servicio.agregar(this.formularioViaje.value).subscribe(
       res => {
         let resultado = res.json();
         if (resultado.codigo == 201) {
-          this.reestablecerFormulario(resultado.id);
-          this.vaciarListasHijos();
-          this.establecerValoresPorDefecto();
-          document.getElementById('idFecha').focus();
-          this.toastr.success(resultado.mensaje);
+          this.formularioViaje.patchValue(resultado);
+          this.idMod = resultado.id;
+          this.toastr.success("Registro agregado con éxito");
+          this.loaderService.hide();
         }
+      },
+      err => {
+        let resultado = err.json();
+        this.toastr.error(resultado.mensaje);
         this.loaderService.hide();
+      }
+    );
+  }
+  //Agregar el viaje 
+  // private agregar(): void {
+  //   this.loaderService.show();
+  //   this.tipoViaje.enable();
+  //   let vehiculo = this.formularioViaje.get('vehiculo').value;
+  //   this.formularioViaje.get('empresa').setValue(vehiculo.empresa);
+  //   this.formularioViaje.get('empresaEmision').setValue(this.appService.getEmpresa());
+  //   let empresa = this.formularioViaje.get('empresa').value;
+  //   this.formularioViaje.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
+  //   this.servicio.agregar(this.formularioViaje.value).subscribe(
+  //     res => {
+  //       let resultado = res.json();
+  //       if (resultado.codigo == 201) {
+  //         this.reestablecerFormulario(resultado.id);
+  //         this.vaciarListasHijos();
+  //         this.establecerValoresPorDefecto();
+  //         document.getElementById('idFecha').focus();
+  //         this.toastr.success(resultado.mensaje);
+  //       }
+  //       this.loaderService.hide();
+  //     },
+  //     err => {
+  //       let resultado = err.json();
+  //       this.toastr.error(resultado.mensaje);
+  //       this.loaderService.hide();
+  //     }
+  //   );
+  // }
+  // this.idMod = resultado.id;
+  //Actualiza el viaje (CABECERA)
+  public actualizarViaje(){
+    this.loaderService.show();
+    this.tipoViaje.enable();
+    this.establecerCamposSoloLectura(false);
+    this.servicio.actualizar(this.formularioViaje.value).subscribe(
+      res => {
+        let resultado = res.json();
+        if (resultado.codigo == 200) {
+          this.formularioViaje.patchValue(resultado);
+          this.idMod = resultado.id;
+          this.toastr.success("Registro actualizado con éxito");
+          this.loaderService.hide();
+        }
       },
       err => {
         let resultado = err.json();
@@ -474,30 +529,30 @@ export class ViajeComponent implements OnInit {
     );
   }
   //Actualiza el viaje propio
-  private actualizar(): void {
-    this.loaderService.show();
-    this.tipoViaje.enable();
-    this.establecerCamposSoloLectura(false);
-    this.servicio.actualizar(this.formularioViajePropio.value).subscribe(
-      res => {
-        let resultado = res.json();
-        if (resultado.codigo == 200) {
-          this.establecerCamposSoloLectura(true);
-          this.reestablecerFormulario(resultado.id);
-          this.vaciarListasHijos();
-          this.establecerValoresPorDefecto();
-          document.getElementById('idAutocompletado').focus();
-          this.toastr.success(resultado.mensaje);
-        }
-        this.loaderService.hide();
-      },
-      err => {
-        let resultado = err.json();
-        this.toastr.error(resultado.mensaje);
-        this.loaderService.hide();
-      }
-    );
-  }
+  // private actualizar(): void {
+  //   this.loaderService.show();
+  //   this.tipoViaje.enable();
+  //   this.establecerCamposSoloLectura(false);
+  //   this.servicio.actualizar(this.formularioViaje.value).subscribe(
+  //     res => {
+  //       let resultado = res.json();
+  //       if (resultado.codigo == 200) {
+  //         this.establecerCamposSoloLectura(true);
+  //         this.reestablecerFormulario(resultado.id);
+  //         this.vaciarListasHijos();
+  //         this.establecerValoresPorDefecto();
+  //         document.getElementById('idAutocompletado').focus();
+  //         this.toastr.success(resultado.mensaje);
+  //       }
+  //       this.loaderService.hide();
+  //     },
+  //     err => {
+  //       let resultado = err.json();
+  //       this.toastr.error(resultado.mensaje);
+  //       this.loaderService.hide();
+  //     }
+  //   );
+  // }
   //Verifica el estado del formulario
   public obtenerEstadoFormulario(formulario, estado) {
     return formulario && estado ? false : true;
@@ -531,9 +586,10 @@ export class ViajeComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formularioViajePropio.reset();
-    this.formularioViajePropio.get('id').setValue(id);
+    this.formularioViaje.reset();
+    this.formularioViaje.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
+    this.idMod = null;
     this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
@@ -565,7 +621,7 @@ export class ViajeComponent implements OnInit {
   }
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
-    let valor = this.formularioViajePropio.get(campo).value;
+    let valor = this.formularioViaje.get(campo).value;
     if (valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
@@ -581,13 +637,13 @@ export class ViajeComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formularioViajePropio.patchValue(elemento);
+    this.formularioViaje.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formularioViajePropio.patchValue(elemento);
+    this.formularioViaje.patchValue(elemento);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

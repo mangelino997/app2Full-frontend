@@ -88,7 +88,6 @@ import { ContactoCompaniaSeguroService } from './servicios/contacto-compania-seg
 import { ContactoProveedorService } from './servicios/contacto-proveedor.service';
 import { PuntoVentaService } from './servicios/punto-venta.service';
 import { OrdenVentaEscalaService } from './servicios/orden-venta-escala.service';
-import { ViajePropioService } from './servicios/viaje-propio.service';
 import { FechaService } from './servicios/fecha.service';
 import { VehiculoService } from './servicios/vehiculo.service';
 import { VehiculoProveedorService } from './servicios/vehiculo-proveedor.service';
@@ -147,7 +146,7 @@ import { TipoChequeraService } from './servicios/tipo-chequera.service';
 import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
 
 //Modelos
-import { ViajePropio } from './modelos/viajePropio';
+import { Viaje } from './modelos/viaje';
 import { ViajePropioTramo } from './modelos/viajePropioTramo';
 import { ViajePropioTramoCliente } from './modelos/viajePropioTramoCliente';
 import { ViajePropioCombustible } from './modelos/viajePropioCombustible';
@@ -343,6 +342,8 @@ import { OrdenVentaTarifa } from './modelos/ordenVentaTarifa';
 import { OrdenVentaTarifaService } from './servicios/orden-venta-tarifa.service';
 import { EliminarModalComponent } from './componentes/eliminar-modal/eliminar-modal.component';
 import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
+import { ClienteOrdenVentaService } from './servicios/cliente-orden-venta.service';
+import { ViajeService } from './servicios/viaje.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -454,7 +455,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket', // ws://192.168.0.62:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://192.168.0.62:8080/jitws/socket', // ws://192.168.0.62:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -738,7 +739,7 @@ const stompConfig: StompConfig = {
     PuntoVentaService,
     OrdenVentaEscalaService,
     OrdenVentaTramoService,
-    ViajePropioService,
+    ViajeService,
     FechaService,
     VehiculoService,
     Vehiculo,
@@ -758,7 +759,7 @@ const stompConfig: StompConfig = {
     ViajeTramoService,
     ViajeUnidadNegocioService,
     MonedaCotizacionService,
-    ViajePropio,
+    Viaje,
     ViajePropioTramo,
     ViajePropioTramoCliente,
     ViajePropioCombustible,
@@ -814,7 +815,7 @@ const stompConfig: StompConfig = {
     VentaComprobanteService,
     VentaComprobanteItemNCService,
     VentaComprobanteItemNDService,
-    RepartoPropioService,
+    ViajeService,
     RepartoTerceroService,
     RetiroDepositoService,
     BasicoCategoriaService,
@@ -862,6 +863,7 @@ const stompConfig: StompConfig = {
     OrdenVentaTarifaService,
     Foto,
     Pdf,
+    ClienteOrdenVentaService,
     {
       provide: StompConfig,
       useValue: stompConfig
