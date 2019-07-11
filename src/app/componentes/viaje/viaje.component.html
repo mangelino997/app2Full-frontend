@@ -15,7 +15,7 @@
         <mat-card style="background-color: #F8F9FA">
             <div class="row">
                 <div class="col">
-                    <form [formGroup]="formularioViajePropio">
+                    <form [formGroup]="formularioViaje">
                         <div class="row" *ngIf="mostrarAutocompletado">
                             <div class="col-md-4">
                                 <div class="form-group has-float-label">
@@ -93,10 +93,10 @@
                                 <div class="form-group has-float-label">
                                     <label for="idVehiculo" class="tamanio-label-titulo">Vehículo *</label>
                                     <input id="idVehiculo" class="form-control form-control-sm" type="text" matInput
-                                        [formControl]="tipoViaje.value ? formularioViajePropio.get('vehiculo') : formularioViajePropio.get('vehiculoProveedor')"
+                                        [formControl]="tipoViaje.value ? formularioViaje.get('vehiculo') : formularioViaje.get('vehiculoProveedor')"
                                         [matAutocomplete]="autoVehiculo" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
-                                        placeholder="Buscar por Dominio o Tipo/Marca Vehículo">
+                                        placeholder="Buscar por Dominio o Tipo/Marca Vehículo" required>
                                     <mat-autocomplete #autoVehiculo="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemVehiculo of resultadosVehiculos"
@@ -118,10 +118,10 @@
                                         *</label>
                                     <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text"
                                         matInput
-                                        [formControl]="formularioViajePropio.get('esRemolquePropio').value ? formularioViajePropio.get('vehiculoRemolque') : formularioViajePropio.get('vehiculoProveedorRemolque')"
+                                        [formControl]="formularioViaje.get('esRemolquePropio').value ? formularioViaje.get('vehiculoRemolque') : formularioViaje.get('vehiculoProveedor')"
                                         [matAutocomplete]="autoVehiculoRemolque" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
-                                        placeholder="Buscar por Dominio o Tipo/Marca Vehículo">
+                                        placeholder="Buscar por Dominio o Tipo/Marca Vehículo" required>
                                     <mat-autocomplete #autoVehiculoRemolque="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
@@ -141,10 +141,10 @@
                                 <div class="form-group has-float-label">
                                     <label for="idPersonal" class="tamanio-label-titulo">Chofer *</label>
                                     <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
-                                        [formControl]="tipoViaje.value ? formularioViajePropio.get('personal') : formularioViajePropio.get('choferProveedor')"
+                                        [formControl]="tipoViaje.value ? formularioViaje.get('personal') : formularioViaje.get('choferProveedor')"
                                         [matAutocomplete]="autoChofer" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
-                                        placeholder="Buscar por N° Legajo, Nombre o Num. Doc.">
+                                        placeholder="Buscar por N° Legajo, Nombre o Num. Doc." required>
                                     <mat-autocomplete #autoChofer="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemChofer of resultadosChoferes" [value]="itemChofer">
@@ -155,7 +155,9 @@
                             </div>
                             <div class="col-md-1">
                                 <div class="row">
-                                    <button mat-raised-button>Vtos</button>
+                                    <button mat-raised-button class="btn-width">Vtos</button>
+                                    <button mat-raised-button class="btn-width" (click)="agregarViaje()" *ngIf="idMod == null">Abrir Viaje</button>
+                                    <button mat-raised-button class="btn-width" (click)="actualizarViaje()" *ngIf="idMod != null">Mod. Viaje</button>
                                 </div>
                             </div>
                         </div>
@@ -168,27 +170,27 @@
             <ng-template matStepperIcon="edit" let-index="index">
                 {{index+1}}
             </ng-template>
-            <mat-step [stepControl]="formularioViajePropio">
+            <mat-step [stepControl]="formularioViaje">
                 <ng-template matStepLabel>Tramos</ng-template><br>
-                <form [formGroup]="formularioViajePropioTramo">
+                <form [formGroup]="formularioViajeTramo">
                     <app-viaje-tramo (dataEvent)="recibirTramos($event)"></app-viaje-tramo>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajePropioCombustible">
+            <mat-step [stepControl]="formularioViajeCombustible">
                 <ng-template matStepLabel>Ordenes Combustibles</ng-template><br>
-                <form [formGroup]="formularioViajePropioCombustible">
+                <form [formGroup]="formularioViajeCombustible">
                     <app-viaje-combustible (dataEvent)="recibirCombustibles($event)"></app-viaje-combustible>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajePropioEfectivo">
+            <mat-step [stepControl]="formularioViajeEfectivo">
                 <ng-template matStepLabel>Adelantos Efectivo</ng-template><br>
-                <form [formGroup]="formularioViajePropioEfectivo">
+                <form [formGroup]="formularioViajeEfectivo">
                     <app-viaje-efectivo (dataEvent)="recibirEfectivos($event)"></app-viaje-efectivo>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajePropioInsumo">
+            <mat-step [stepControl]="formularioViajeInsumo">
                 <ng-template matStepLabel>Ordenes Insumo</ng-template><br>
-                <form [formGroup]="formularioViajePropioInsumo">
+                <form [formGroup]="formularioViajeInsumo">
                     <app-viaje-insumo (dataEvent)="recibirInsumos($event)"></app-viaje-insumo>
                 </form>
             </mat-step>
@@ -204,15 +206,15 @@
                     <app-viaje-remito-gs (dataEvent)="recibirRemitos($event)"></app-viaje-remito-gs>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajePropioGasto">
+            <mat-step [stepControl]="formularioViajeGasto">
                 <ng-template matStepLabel>Gastos</ng-template><br>
-                <form [formGroup]="formularioViajePropioGasto">
+                <form [formGroup]="formularioViajeGasto">
                     <app-viaje-gasto (dataEvent)="recibirGastos($event)"></app-viaje-gasto>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajePropioPeaje">
+            <mat-step [stepControl]="formularioViajePeaje">
                 <ng-template matStepLabel>Peaje</ng-template><br>
-                <form [formGroup]="formularioViajePropioPeaje">
+                <form [formGroup]="formularioViajePeaje">
                     <app-viaje-peaje (dataEvent)="recibirPeajes($event)"></app-viaje-peaje>
                 </form>
             </mat-step>
@@ -220,7 +222,7 @@
         <div class="row" *ngIf="mostrarBoton && !show">
             <div class="centrar">
                 <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="accion()"
-                    [disabled]="obtenerEstadoFormulario(formularioViajePropio.valid, estadoFormulario)">
+                    [disabled]="obtenerEstadoFormulario(formularioViaje.valid, estadoFormulario)">
                     {{pestaniaActual}} Viaje
                 </button>
             </div>

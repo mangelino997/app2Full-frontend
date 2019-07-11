@@ -6,17 +6,17 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class ViajePropioService {
+export class ClienteOrdenVentaService {
   //Define la ruta al servicio web
-  private ruta:string = "/viajepropio";
+  private ruta:string = "/clienteordenventa";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por nombre
-  private listaPorNombre = null;
+  //Define la lista obtenida por alias
+  private listaPorAlias = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
@@ -46,21 +46,21 @@ export class ViajePropioService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
-  //Obtiene por id
-  public obtenerPorId(id) {
-    return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
-  }
-  //Obtiene una lista de registros por alias
-  public listarPorAlias(alias) {
-    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
-  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
+  }
+  //Obtiene la lista de registros
+  public listarPorCliente(idCliente) {
+    return this.http.get(this.url + '/listarPorCliente/' + idCliente, this.options);
+  }
+  //Obtiene la lista de registros
+  public listarPorOrdenVenta(idOrdenVenta) {
+    return this.http.get(this.url + '/listarPorOrdenVenta/' + idOrdenVenta, this.options);
+  }
+  //Obtiene la lista de registros
+  public listarPorClienteYOrdenVenta(idCliente, idOrdenVenta) {
+    return this.http.get(this.url + '/listarPorClienteYOrdenVenta/' + idCliente + '/' + idOrdenVenta, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

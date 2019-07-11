@@ -25,6 +25,7 @@ import { MatSort, MatTableDataSource, MatDialog, MatDialogRef, MAT_DIALOG_DATA }
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
 
 @Component({
   selector: 'app-cliente',
@@ -298,6 +299,9 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('numeroPolizaSeguro').disable();
     this.formulario.get('vencimientoPolizaSeguro').disable();
     this.formulario.get('resumenCliente').disable();
+    this.formulario.get('creditoLimite').setValue(0);
+    this.formulario.get('descuentoFlete').setValue(0);
+    this.formulario.get('descuentoSubtotal').setValue(0);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -535,6 +539,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -719,11 +724,20 @@ export class ClienteComponent implements OnInit {
   }
   //Abre el Modal para Listas de Precios
   public abrirListasPrecios(){
+    let cliente;
+    if(this.indiceSeleccionado==3){
+      cliente= this.formulario.value.id;
+    }
+    if(this.indiceSeleccionado != 3){
+      cliente = null;
+    }
     const dialogRef = this.dialog.open(ListasDePreciosDialog, {
       width: '1200px',
       data: {
         soloLectura: this.soloLectura,
-        listaPrecios: this.formulario.get('clienteOrdenesVentas').value
+        listaPrecios: this.formulario.get('clienteOrdenesVentas').value,
+        indiceSeleccionado: this.indiceSeleccionado,
+        cliente: cliente
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
@@ -837,6 +851,10 @@ export class ClienteComponent implements OnInit {
   templateUrl: './lista-precios-dialog.html'
 })
 export class ListasDePreciosDialog {
+  //Define la pestaña en la que se encuentra el usuario
+  public indiceSeleccionado: number = null;
+  //Define el id Cliente cuando la pestaña es Actualizar
+  public idCliente: number = null;
   //Define si los campos son soloLectura
   public soloLectura: boolean = null;
   //Define el formulario
@@ -869,7 +887,8 @@ export class ListasDePreciosDialog {
   public columnasEscala: string[] = ['descripcion', 'tarifaDefecto', 'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones', 'mod', 'eliminar'];
   //Constructor
   constructor( private appService: AppService, public dialogRef: MatDialogRef<ListasDePreciosDialog>, @Inject(MAT_DIALOG_DATA) public data,
-    private loaderService: LoaderService, private ordenVentaService: OrdenVentaService, private clienteServicio: ClienteService,) {
+    private loaderService: LoaderService, private ordenVentaService: OrdenVentaService, private clienteServicio: ClienteService,
+    private clienteOrdenVtaService: ClienteOrdenVentaService, private toastr: ToastrService) {
 
    }
   ngOnInit() {
@@ -884,9 +903,14 @@ export class ListasDePreciosDialog {
       tipoOrdenVenta: new FormControl(),
       empresa: new FormControl(),
       cliente: new FormControl(),
+      usuarioMod: new FormControl(),
+      usuarioAlta: new FormControl(),
       ordenVenta: new FormControl('', Validators.required),
-      tarifaDefecto: new FormControl('', Validators.required),
-      estaActiva: new FormControl('', Validators.required)
+      tipoTarifaPorDefecto: new FormControl('', Validators.required),
+      estaActiva: new FormControl('', Validators.required),
+      fechaAlta: new FormControl(),
+      fechaUltimaMod: new FormControl(),
+
     });
     //Establece si es soloLectura
     this.soloLectura = this.data.soloLectura;
@@ -897,6 +921,11 @@ export class ListasDePreciosDialog {
       this.listaPrecios= this.data.listaPrecios;
       this.listar();
     }
+    //Establece la pestaña
+    this.indiceSeleccionado = this.data.indiceSeleccionado;
+    //Establece el idCliente
+    this.idCliente = this.data.cliente;
+    console.log(this.indiceSeleccionado, this.idCliente);
     //Establecer empresa
     this.establecerEmpresa();
     //Autocompletado - Buscar por nombre cliente
@@ -931,6 +960,7 @@ export class ListasDePreciosDialog {
         this.formulario.get('cliente').setValue(null);
         this.ordenVentaService.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
           res => {
+            console.log(res.json());
             this.ordenesVentas = res.json();
             this.loaderService.hide();
           }
@@ -962,30 +992,127 @@ export class ListasDePreciosDialog {
   }
   //Carga a la Lista de Precios un nuevo elemento
   public agregarListaPrecio(){
-    this.listaPrecios.push(this.formulario.value);
-    this.limpiarCampos(null);
-    this.listar();
-
+    this.loaderService.show();
+    let usuario = this.appService.getUsuario();
+    if(this.indiceSeleccionado == 3){
+      this.formulario.get('usuarioAlta').setValue(usuario);
+      this.formulario.get('cliente').setValue({id: this.idCliente});
+      this.formulario.get('tipoTarifaPorDefecto').setValue({id: null});
+      console.log(this.formulario.value);
+      this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
+        res=>{
+          if(res.status == 201){
+            this.formulario.reset();
+            this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+              res=>{
+                console.log(res.json());
+                this.listaPrecios = res.json();
+                this.listar();
+              },
+              err=>{
+                this.toastr.error("Error al obtener la Lista de Precios");
+              }
+            );
+            this.loaderService.hide();
+          }
+        },
+        err=>{
+          let error = err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      );
+    } 
+    if(this.indiceSeleccionado != 3){
+      this.formulario.value.tipoTarifaPorDefecto = {id: null};
+      this.listaPrecios.push(this.formulario.value);
+      this.limpiarCampos(null);
+      this.listar();
+      this.loaderService.hide();
+    }
   }
   //Modifica un registro de la tabla
   public modificatListaPrecio(indice){
-    this.formulario.value.ordenVenta.estaActiva = this.formulario.get('estaActiva').value;
-    this.listaPrecios[indice] = this.formulario.value;
-    this.limpiarCampos(null);
-    this.listar();
-
+    this.loaderService.show();
+    let usuario = this.appService.getUsuario();
+    if(this.indiceSeleccionado == 3){
+      this.formulario.get('usuarioMod').setValue(usuario);
+      this.formulario.get('cliente').setValue({id: this.idCliente});
+      this.formulario.get('tipoTarifaPorDefecto').setValue({id: null});
+      console.log(this.formulario.value);
+      this.clienteOrdenVtaService.actualizar(this.formulario.value).subscribe(
+        res=>{
+          if(res.status == 201){
+            this.formulario.reset();
+            this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+              res=>{
+                console.log(res.json());
+                this.listaPrecios = res.json();
+                this.listar();
+              },
+              err=>{
+                this.toastr.error("Error al obtener la Lista de Precios");
+              }
+            );
+            this.loaderService.hide();
+          }
+        },
+        err=>{
+          let error = err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      );
+    }
+    if(this.indiceSeleccionado != 3){
+      this.formulario.value.ordenVenta.estaActiva = this.formulario.get('estaActiva').value;
+      this.formulario.value.ordenVenta.usuarioMod = usuario;
+      this.listaPrecios[indice] = this.formulario.value;
+      this.limpiarCampos(null);
+      this.listar();
+      this.loaderService.hide();
+    }
   }
   //Controla el boton 'mod' de la tabla
   public activarModPrecio(elemento, indice){
-    this.formulario.patchValue(elemento);
-    this.indice = indice;
-    this.btnMod = true;
+    console.log(elemento);
+      this.formulario.patchValue(elemento);
+      this.indice = indice;
+      this.btnMod = true;
+      this.loaderService.hide();
   }
   //Controla el boton 'eliminar' de la tabla
   public activarEliminarPrecio(indice){
-    this.listaPrecios.splice(indice, 1);
-    this.limpiarCampos(null);
-    this.listar();
+    this.loaderService.show();
+    if(this.indiceSeleccionado == 3){
+      console.log(this.listaPrecios[indice].id);
+      this.clienteOrdenVtaService.eliminar(this.listaPrecios[indice].id).subscribe(
+        res=>{
+            this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+              res=>{
+                console.log(res.json());
+                this.listaPrecios = res.json();
+                this.listar();
+              },
+              err=>{
+                this.toastr.error("Error al obtener la Lista de Precios");
+              }
+            );
+          this.loaderService.hide();
+        },
+        err=>{
+          let error = err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      );
+    }
+    if(this.indiceSeleccionado != 3){
+      this.listaPrecios.splice(indice, 1);
+      this.limpiarCampos(null);
+      this.listar();
+      this.loaderService.hide();
+    }
   }
   //Obtiene la Lista de Precios
   private listar(){
