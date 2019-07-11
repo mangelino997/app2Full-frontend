@@ -111,7 +111,7 @@ export class ChequeraComponent implements OnInit {
   }
   //Obtiene la lista de Cuentas Bancarias
   private listarCuentasBancarias(){
-    this.cuentaBancariaService.listar().subscribe(
+    this.cuentaBancariaService.listarPorEmpresa(this.empresa.id).subscribe(
       res=>{
         console.log(res.json());
         this.cuentasBancarias = res.json();
@@ -240,7 +240,7 @@ export class ChequeraComponent implements OnInit {
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
-    this.servicio.listar().subscribe(
+    this.servicio.listarPorEmpresa(this.empresa.id).subscribe(
       res => {
         console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());

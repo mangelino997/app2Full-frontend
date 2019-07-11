@@ -75,10 +75,9 @@ export class CuentaBancariaComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private loaderService: LoaderService, 
-    private cuentaBancaria: CuentaBancaria, private servicio: CuentaBancariaService, private empresaService: EmpresaService,
+    private cuentaBancaria: CuentaBancaria, private servicio: CuentaBancariaService, 
     private appComponent: AppComponent, private bancoService: BancoService, private sucursalService:SucursalBancoService, 
-    private tipoCuentaBancariaService: TipoCuentaBancariaService,private monedaService:MonedaService, private cuentaBancariaService: CuentaBancariaService,
-    private toastr: ToastrService) {
+    private tipoCuentaBancariaService: TipoCuentaBancariaService,private monedaService:MonedaService, private toastr: ToastrService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {

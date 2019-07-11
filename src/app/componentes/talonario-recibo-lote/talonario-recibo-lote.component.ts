@@ -289,8 +289,10 @@ export class TalonarioReciboLoteComponent implements OnInit {
   public validarLongitud(elemento, intLimite) {
     switch(elemento){
       case 'desde':
+        this.establecerCerosIzq(this.formulario.get('desde'), '0000000', -8);  
         if(this.formulario.value.desde!=null)
           return this.appService.validarLongitud(intLimite, this.formulario.value.desde);
+
       case 'hasta':
         if(!this.formulario.value.desde){
           setTimeout(function () {
@@ -307,6 +309,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
   //Valida que el campo Hasta sea mayor al campo Desde
   private validarMayor(){
     if(this.formulario.value.desde <= this.formulario.value.hasta && this.formulario.value.hasta!=null){
+    this.establecerCerosIzq(this.formulario.get('hasta'), '0000000', -8);
       return this.appService.validarLongitud(8, this.formulario.value.hasta);
     }else{
       this.formulario.get('desde').setValue(null);

@@ -62,6 +62,10 @@ export class VencimientosChoferesComponent implements OnInit {
   public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Define si es o no chofer 
+  public chofer :string ='';
+  //Define si es o no chofer larga distancia
+  public choferLargaDistancia:string = '';
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define el form control para las busquedas
@@ -70,41 +74,33 @@ export class VencimientosChoferesComponent implements OnInit {
   public btnPdfLicConducir: boolean = null;
   public btnPdfLibSanidad: boolean = null;
   public btnPdflinti: boolean = null;
+  public listaChoferes: Array<any> = [];
   //Constructor
   constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private personal: Personal, private toastr: ToastrService,  private pdfService: PdfService,
+    private appService: AppService, private personal: Personal, private toastr: ToastrService, private pdfService: PdfService,
     private loaderService: LoaderService, private appComponent: AppComponent, private tipoDocumentoServicio: TipoDocumentoService) {
-      //Establece la subscripcion a loader
-      this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
-      this.loaderService.show();
-      //Obtiene la lista de pestania por rol y subopcion
-      this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-        .subscribe(
-          res => {
-            this.pestanias = res.json();
-            this.activeLink = this.pestanias[0].nombre;
-            this.loaderService.hide();
-          },
-          err => {
-            console.log(err);
-          }
-        );
-      let empresa = this.appComponent.getEmpresa();
-      //Autocompletado - Buscar por alias
-      this.autocompletado.valueChanges.subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.personalServicio.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
-            console.log(response);
-            this.resultadosPersonal = response;
-          })
-        }
-      })
+
   }
 
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    this.loaderService.show();
+    //Obtiene la lista de pestania por rol y subopcion
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+          this.loaderService.hide();
+        },
+        err => {
+          console.log(err);
+        }
+      );
     //Define el Formulario
     this.formulario = this.personal.formulario;
     //Establece los valores de la primera pestania activa
@@ -113,6 +109,21 @@ export class VencimientosChoferesComponent implements OnInit {
     this.listarTiposDocumentos();
     //Obtiene la lista de Choferes
     this.listar();
+    
+  }
+
+  //Setea si es chofer y si es chofer larga distancia
+  private obtenerSiEsChoferYChoferLargaDistancia() {
+    if(this.formulario.get('esChoferLargaDistancia').value) {
+      this.choferLargaDistancia = 'Si';
+    }else {
+      this.choferLargaDistancia = 'No';
+    }
+    if(this.formulario.get('esChofer').value) {
+      this.chofer = 'Si';
+    }else {
+      this.chofer = 'No';
+    }
   }
   //Obtiene el listado de tipos de documentos
   private listarTiposDocumentos() {
@@ -127,17 +138,21 @@ export class VencimientosChoferesComponent implements OnInit {
     );
   }
   //Obtiene la lista de Choferes por Empresa logueada
-  private listar(){
+  private listar() {
     this.loaderService.show();
     let empresa = this.appService.getEmpresa();
     this.personalServicio.listarChoferesPorEmpresa(empresa.id).subscribe(
-      res=>{
+      res => {
         console.log(res.json());
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
+        if (this.indiceSeleccionado == 5) {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+        } else {
+          this.listaChoferes = res.json();
+        }
         this.loaderService.hide();
       },
-      err=>{
+      err => {
         let error = err.json();
         this.toastr.error(error.mensaje);
         this.loaderService.hide();
@@ -156,11 +171,9 @@ export class VencimientosChoferesComponent implements OnInit {
     }
     switch (id) {
       case 2:
-        this.establecerEstadoCampos(false, id);
         this.establecerValoresPestania(nombre, true, true, false, 'idPersonal');
         break;
       case 3:
-        this.establecerEstadoCampos(true, id);
         this.establecerValoresPestania(nombre, true, true, true, 'idPersonal');
         break;
       case 5:
@@ -180,46 +193,7 @@ export class VencimientosChoferesComponent implements OnInit {
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.autocompletadoListar.setValue(undefined);
-    this.nacionalidadNacimiento.setValue(undefined);
     this.vaciarListas();
-  }
-  //Habilita o deshabilita los campos select dependiendo de la pestania actual
-  private establecerEstadoCampos(estado, opcionPestania) {
-    if (estado) {
-      this.formulario.get('tipoDocumento').enable();
-      this.formulario.get('esChofer').enable();
-      this.formulario.get('esChoferLargaDistancia').enable();
-      this.formulario.get('obraSocial').enable();
-      if (opcionPestania == 3) {
-        this.formulario.get('fechaFin').enable();
-      } else {
-        this.formulario.get('fechaFin').disable();
-      }
-    } else {
-      this.formulario.get('sexo').disable();
-      this.formulario.get('estadoCivil').disable();
-      this.formulario.get('tipoDocumento').disable();
-      this.formulario.get('sucursal').disable();
-      this.formulario.get('area').disable();
-      this.formulario.get('sindicato').disable();
-      this.formulario.get('esAcompReparto').disable();
-      this.formulario.get('enConvenioColectivo').disable();
-      this.formulario.get('conCoberturaSCVO').disable();
-      this.formulario.get('recibeAdelanto').disable();
-      this.formulario.get('recibePrestamo').disable();
-      this.formulario.get('esChofer').disable();
-      this.formulario.get('esChoferLargaDistancia').disable();
-      this.formulario.get('turnoRotativo').disable();
-      this.formulario.get('turnoFueraConvenio').disable();
-      this.formulario.get('seguridadSocial').disable();
-      this.formulario.get('afipSituacion').disable();
-      this.formulario.get('afipCondicion').disable();
-      this.formulario.get('afipActividad').disable();
-      this.formulario.get('afipModContratacion').disable();
-      this.formulario.get('afipSiniestrado').disable();
-      this.formulario.get('afipLocalidad').disable();
-      this.formulario.get('obraSocial').disable();
-    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -293,22 +267,7 @@ export class VencimientosChoferesComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-    
-  }
-  //Valida el CUIL
-  public validarCUIL(): void {
-    let cuil = this.formulario.get('cuil').value;
-    if (cuil) {
-      let respuesta = this.appService.validarCUIT(cuil + '');
-      if (!respuesta) {
-        let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
-        this.lanzarError(err);
-      }
-    }
-  }
-  //Obtiene la mascara de enteros
-  public mascararEnteros(intLimite) {
-    return this.appService.mascararEnteros(intLimite);
+
   }
   //Al cambiar elemento de select esChofer
   public cambioEsChofer(): void {
@@ -349,84 +308,11 @@ export class VencimientosChoferesComponent implements OnInit {
       this.btnPdflinti = false;
     }
   }
-  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
-  private lanzarError(err) {
-    var respuesta = err;
-    try {
-      if (respuesta.codigo == 11010) {
-        document.getElementById("labelNumeroDocumento").classList.add('label-error');
-        document.getElementById("idNumeroDocumento").classList.add('is-invalid');
-        document.getElementById("idNumeroDocumento").focus();
-      } else if (respuesta.codigo == 11012) {
-        document.getElementById("labelCuil").classList.add('label-error');
-        document.getElementById("idCuil").classList.add('is-invalid');
-        document.getElementById("idCuil").focus();
-      } else if (respuesta.codigo == 11013) {
-        document.getElementById("labelTelefonoFijo").classList.add('label-error');
-        document.getElementById("idTelefonoFijo").classList.add('is-invalid');
-        document.getElementById("idTelefonoFijo").focus();
-      } else if (respuesta.codigo == 11014) {
-        document.getElementById("labelTelefonoMovil").classList.add('label-error');
-        document.getElementById("idTelefonoMovil").classList.add('is-invalid');
-        document.getElementById("idTelefonoMovil").focus();
-      } else if (respuesta.codigo == 11003) {
-        document.getElementById("labelCorreoelectronico").classList.add('label-error');
-        document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-        document.getElementById("idCorreoelectronico").focus();
-      } else if (respuesta.codigo == 11015) {
-        document.getElementById("labelTelefonoMovilEmpresa").classList.add('label-error');
-        document.getElementById("idTelefonoMovilEmpresa").classList.add('is-invalid');
-        document.getElementById("idTelefonoMovilEmpresa").focus();
-      }
-    } catch (e) { }
-    this.toastr.error(respuesta.mensaje);
-  }
-  //Validad el numero de documento
-  public validarDocumento(): void {
-    let documento = this.formulario.get('numeroDocumento').value;
-    let tipoDocumento = this.formulario.get('tipoDocumento').value;
-    if (documento) {
-      switch (tipoDocumento.id) {
-        case 1:
-          let respuesta = this.appService.validarCUIT(documento.toString());
-          if (!respuesta) {
-            let err = { codigo: 11007, mensaje: 'CUIT Incorrecto!' };
-            this.lanzarError(err);
-          }
-          break;
-        case 2:
-          let respuesta2 = this.appService.validarCUIT(documento.toString());
-          if (!respuesta2) {
-            let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
-            this.lanzarError(err);
-          }
-          break;
-        case 8:
-          let respuesta8 = this.appService.validarDNI(documento.toString());
-          if (!respuesta8) {
-            let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
-            this.lanzarError(err);
-          }
-          break;
-      }
-    }
-  }
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
     let elemAutocompletado = this.autocompletado.value;
-    this.formulario.setValue(elemAutocompletado);
-    this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
-    this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
-    this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
-    this.formulario.get('aporteAdicObraSocial').setValue(this.appService.establecerDecimales(elemAutocompletado.aporteAdicObraSocial, 2));
-    this.formulario.get('contribAdicObraSocial').setValue(this.appService.establecerDecimales(elemAutocompletado.contribAdicObraSocial, 2));
-    this.formulario.get('aporteAdicSegSoc').setValue(this.appService.establecerDecimales(elemAutocompletado.aporteAdicSegSoc, 2));
-    this.formulario.get('aporteDifSegSoc').setValue(this.appService.establecerDecimales(elemAutocompletado.aporteDifSegSoc, 2));
-    this.formulario.get('contribTareaDifSegSoc').setValue(this.appService.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
-    this.formulario.get('contribTareaDifSegSoc').setValue(this.appService.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
-    if (elemAutocompletado.fechaFin != null) {
-      this.formulario.get('fechaFin').setValue(elemAutocompletado.fechaFin.substring(0, 10));
-    }
+    this.obtenerSiEsChoferYChoferLargaDistancia();
+    console.log(elemAutocompletado);
     if (elemAutocompletado.vtoLicenciaConducir != null) {
       this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
     }
@@ -441,12 +327,6 @@ export class VencimientosChoferesComponent implements OnInit {
     }
     if (elemAutocompletado.vtoLibretaSanidad != null) {
       this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
-    }
-    if (elemAutocompletado.telefonoMovilFechaEntrega != null) {
-      this.formulario.get('telefonoMovilFechaEntrega').setValue(elemAutocompletado.telefonoMovilFechaEntrega.substring(0, 10));
-    }
-    if (elemAutocompletado.telefonoMovilFechaDevolucion != null) {
-      this.formulario.get('telefonoMovilFechaDevolucion').setValue(elemAutocompletado.telefonoMovilFechaDevolucion.substring(0, 10));
     }
   }
   //Define el mostrado de datos y comparacion en campo select
