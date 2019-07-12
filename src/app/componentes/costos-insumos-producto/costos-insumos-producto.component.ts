@@ -133,6 +133,7 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
+        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
@@ -226,7 +227,7 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioViaje, 2));
     this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioVenta, 2));
     this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(elemAutocompletado.itcPorLitro, 4));
-    this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(elemAutocompletado.itcNeto, 2));
+    this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(elemAutocompletado.itcNeto.toString(), 2));
 
   }
   //Obtiene la mascara de importe
@@ -244,6 +245,8 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Establece los decimales de porcentaje
   public establecerPorcentaje(formulario, cantidad): void {
     formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
+    if(formulario.value>'100.00')
+      formulario.setValue('100.00');
   }
   //Formatea el numero a x decimales
   public establecerDecimales(formulario, cantidad) {

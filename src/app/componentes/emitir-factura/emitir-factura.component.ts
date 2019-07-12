@@ -13,7 +13,6 @@ import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.servi
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { VentaTipoItemService } from 'src/app/servicios/venta-tipo-item.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
-import { ViajePropioTramoService } from 'src/app/servicios/viaje-propio-tramo.service';
 import { ViajeTerceroTramoService } from 'src/app/servicios/viaje-tercero-tramo.service';
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
 import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
@@ -26,6 +25,7 @@ import { Router } from '@angular/router';
 import { ErrorPuntoVentaComponent } from '../error-punto-venta/error-punto-venta.component';
 import { DecimalPipe } from '@angular/common';
 import { isNumber } from 'util';
+import { ViajeTramoService } from 'src/app/servicios/viaje-tramo.service';
 
 @Component({
   selector: 'app-emitir-factura',
@@ -1084,7 +1084,7 @@ export class ViajeDialogo {
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   constructor(public dialogRef: MatDialogRef<ViajeDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private viajePropioTramoService: ViajePropioTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService,
+    private viajeTramoService: ViajeTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService,
     public dialog: MatDialog) { }
   ngOnInit() {
     this.formulario = new FormGroup({
@@ -1097,7 +1097,7 @@ export class ViajeDialogo {
   public listarTramos() {
     let item = this.data.tipoItem;
     if (item == 1) {
-      this.viajePropioTramoService.listarTramos(this.formulario.get('viaje').value).subscribe(
+      this.viajeTramoService.listarTramos(this.formulario.get('viaje').value).subscribe(
         res => {
           let respuesta = res.json();
           this.resultadosTramos = respuesta[0].viajeRemitos;

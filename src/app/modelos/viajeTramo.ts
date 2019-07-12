@@ -1,6 +1,6 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 //Define la entidad de la base de datos.
-export class ViajePropioTramo {
+export class ViajeTramo {
     //Define un formulario FormGroup
     public formulario: FormGroup;
     //Constructor
@@ -9,14 +9,14 @@ export class ViajePropioTramo {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            viajePropio: new FormControl(),
+            viaje: new FormControl(),
             tramo: new FormControl('', Validators.required),
             numeroOrden: new FormControl(),
             fechaTramo: new FormControl('', Validators.required),
             fechaAlta: new FormControl(),
             empresa: new FormControl('', Validators.required),
             km: new FormControl('', Validators.required),
-            usuario: new FormControl(),
+            usuarioAlta: new FormControl(),
             observaciones: new FormControl('', Validators.maxLength(100)),
             viajeTipo: new FormControl('', Validators.required),
             viajeTipoCarga: new FormControl('', Validators.required),
@@ -25,7 +25,7 @@ export class ViajePropioTramo {
             cantidad: new FormControl('', Validators.required),
             precioUnitario: new FormControl('', Validators.required),
             importe: new FormControl('', Validators.required),
-            viajePropioTramoClientes: new FormControl('', Validators.required),
+            viajeTramoClientes: new FormControl('', Validators.required),
             activo: new FormControl()
         })
     }

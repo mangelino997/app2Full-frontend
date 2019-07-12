@@ -283,7 +283,7 @@ export class AppService {
         prefix: '% ',
         suffix: '',
         thousandsSeparatorSymbol: ',',
-        integerLimit: 2,
+        integerLimit: 3,
         requireDecimal: true,
         allowDecimal: true,
         decimalLimit: 2,
