@@ -120,7 +120,7 @@ export class OrdenVentaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'listaPrecio', 'precioDesde', 'ver', 'mod', 'eliminar'];
   //Define las columnas de la tabla para la pestaña LISTAR
-  public columnasListar: string[] = ['descripcion', 'tarifa', 'seguro', 'cr', 'esContado', 'mod', 'eliminar'];
+  public columnasListar: string[] = ['descripcion', 'tarifa', 'seguro', 'cr', 'esContado', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor

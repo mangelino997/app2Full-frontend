@@ -50,6 +50,10 @@ export class ViajeTramoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene los tramos por id de tipoItem (1=propio/2=tercero)
+  public listarTramos(id) {
+    return this.http.get(this.url + '/listarTramos/' + id, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

@@ -102,7 +102,6 @@ import { ViajeTarifaService } from './servicios/viaje-tarifa.service';
 import { ViajeTipoCargaService } from './servicios/viaje-tipo-carga.service';
 import { ViajeTipoService } from './servicios/viaje-tipo.service';
 import { ViajeTramoClienteService } from './servicios/viaje-tramo-cliente.service';
-import { ViajeTramoService } from './servicios/viaje-tramo.service';
 import { ViajeUnidadNegocioService } from './servicios/viaje-unidad-negocio.service';
 import { OpcionService } from './servicios/opcion.service';
 import { MonedaService } from './servicios/moneda.service';
@@ -129,7 +128,6 @@ import { VentaComprobanteService } from './servicios/venta-comprobante.service';
 import { VentaComprobanteItemNCService } from './servicios/venta-comprobante-item-nc.service';
 import { VentaComprobanteItemNDService } from './servicios/venta-comprobante-item-nd.service';
 import { VentaConfigService } from './servicios/venta-config.service';
-import { ViajePropioTramoService } from './servicios/viaje-propio-tramo.service';
 import { ViajeTerceroTramoService } from './servicios/viaje-tercero-tramo.service';
 import { VentaItemConceptoService } from './servicios/venta-item-concepto.service';
 import { BasicoCategoriaService } from './servicios/basico-categoria.service';
@@ -147,8 +145,6 @@ import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
 
 //Modelos
 import { Viaje } from './modelos/viaje';
-import { ViajePropioTramo } from './modelos/viajePropioTramo';
-import { ViajePropioTramoCliente } from './modelos/viajePropioTramoCliente';
 import { ViajePropioCombustible } from './modelos/viajePropioCombustible';
 import { ViajePropioEfectivo } from './modelos/viajePropioEfectivo';
 import { ViajePropioInsumo } from './modelos/viajePropioInsumo';
@@ -344,6 +340,9 @@ import { EliminarModalComponent } from './componentes/eliminar-modal/eliminar-mo
 import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
 import { ClienteOrdenVentaService } from './servicios/cliente-orden-venta.service';
 import { ViajeService } from './servicios/viaje.service';
+import { ViajeTramo } from './modelos/viajeTramo';
+import { ViajeTramoService } from './servicios/viaje-tramo.service';
+import { ViajeTramoCliente } from './modelos/viajeTramoCliente';
 
 //Rutas
 const appRoutes: Routes = [
@@ -455,7 +454,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.62:8080/jitws/socket', // ws://192.168.0.62:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://localhost:8080/jitws/socket', // ws://192.168.0.62:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -756,12 +755,12 @@ const stompConfig: StompConfig = {
     ViajeTipoCargaService,
     ViajeTipoService,
     ViajeTramoClienteService,
-    ViajeTramoService,
+    ,
     ViajeUnidadNegocioService,
     MonedaCotizacionService,
     Viaje,
-    ViajePropioTramo,
-    ViajePropioTramoCliente,
+    ViajeTramo,
+    ViajeTramoCliente,
     ViajePropioCombustible,
     ViajePropioEfectivo,
     ViajePropioInsumo,
@@ -807,7 +806,7 @@ const stompConfig: StompConfig = {
     OrdenRecoleccionService,
     ClienteEventual,
     EmitirFactura,
-    ViajePropioTramoService,
+    ViajeTramoService,
     ViajeTerceroTramoService,
     VentaItemConceptoService,
     VentaConfigService,
