@@ -105,7 +105,9 @@ export class Personal {
             foto: this.foto.formulario,
             pdfLicConducir: this.pdf.crearFormulario(),
             pdfLibSanidad: this.pdf.crearFormulario(),
-            pdfLinti: this.pdf.crearFormulario()
+            pdfLinti: this.pdf.crearFormulario(),
+            pdfDni: this.pdf.crearFormulario(),
+            pdfAltaTemprana: this.pdf.crearFormulario()
         })
     }
 }

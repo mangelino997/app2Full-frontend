@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PersonalService } from 'src/app/servicios/personal.service';
@@ -12,6 +12,7 @@ import { AppComponent } from 'src/app/app.component';
 import { LoaderState } from 'src/app/modelos/loader';
 import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
 import { PdfService } from 'src/app/servicios/pdf.service';
+import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 
 @Component({
   selector: 'app-vencimientos-choferes',
@@ -76,7 +77,7 @@ export class VencimientosChoferesComponent implements OnInit {
   public btnPdflinti: boolean = null;
   public listaChoferes: Array<any> = [];
   //Constructor
-  constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
+  constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, public dialog: MatDialog,
     private appService: AppService, private personal: Personal, private toastr: ToastrService, private pdfService: PdfService,
     private loaderService: LoaderService, private appComponent: AppComponent, private tipoDocumentoServicio: TipoDocumentoService) {
 
@@ -104,7 +105,7 @@ export class VencimientosChoferesComponent implements OnInit {
     //Define el Formulario
     this.formulario = this.personal.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Actualizar', 0);
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
     //Obtiene la lista de Choferes
@@ -171,15 +172,32 @@ export class VencimientosChoferesComponent implements OnInit {
     }
     switch (id) {
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idPersonal');
+        this.establecerValoresPestania(nombre, true, true, false);
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, true, true, 'idPersonal');
+        this.establecerValoresPestania(nombre, true, false, true);
         break;
       case 5:
         break;
       default:
         break;
+    }
+  }
+  private establecerEstadoCampos(estado, opcionPestania) {
+    if (estado) {
+      this.formulario.get('vtoPsicoFisico').enable();
+      this.formulario.get('vtoCurso').enable();
+      this.formulario.get('vtoCursoCargaPeligrosa').enable();
+      this.formulario.get('vtoLicenciaConducir').enable();
+      this.formulario.get('vtoLINTI').enable();
+      this.formulario.get('vtoLibretaSanidad').enable();
+    } else {
+      this.formulario.get('vtoPsicoFisico').disable();
+      this.formulario.get('vtoCurso').disable();
+      this.formulario.get('vtoCursoCargaPeligrosa').disable();
+      this.formulario.get('vtoLicenciaConducir').disable();
+      this.formulario.get('vtoLINTI').disable();
+      this.formulario.get('vtoLibretaSanidad').disable();
     }
   }
   //Vacia la lista de resultados de autocompletados
@@ -196,39 +214,40 @@ export class VencimientosChoferesComponent implements OnInit {
     this.vaciarListas();
   }
   //Funcion para establecer los valores de las pestañas
-  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
+  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.vaciarListas();
     setTimeout(function () {
-      document.getElementById(componente).focus();
+      document.getElementById('idAutocompletado').focus();
     }, 20);
   }
-  //Carga el archivo PDF 
-  public readPdfURL(event, campo): void {
-    let file = event.target.files[0];
-    let extension = file.name.split('.');
-    extension = extension[extension.length - 1];
-    if (event.target.files && event.target.files[0] && extension == 'pdf') {
+  //Carga el pdf
+  public readURL(event, nombrePdf): void {
+    console.log(event.target);
+    if (event.target.files && event.target.files[0] && event.target.files[0].type== 'application/pdf'
+    || event.target.files[0].type== 'image/jpeg') {
+console.log(event.target.files[0]);
+console.log(event.target.files[0].type);
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
         let pdf = {
-          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : null,
           nombre: file.name,
+          id: this.formulario.get(nombrePdf + '.id').value  ? this.formulario.get(nombrePdf+ '.id').value : null,
           datos: reader.result
         }
-        this.formulario.get(campo).patchValue(pdf);
+        this.formulario.get(nombrePdf).patchValue(pdf);
       }
       reader.readAsDataURL(file);
-    } else {
+    }else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
   }
-  //Elimina un pdf ya cargado, se pasa el campo como parametro
-  public eliminarPdf(campo) {
+   //Elimina un pdf ya cargado, se pasa el campo como parametro
+   public eliminarPdf(campo) {
     if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
     } else {
@@ -249,10 +268,17 @@ export class VencimientosChoferesComponent implements OnInit {
       })
     }
   }
-  //Muestra el pdf en una pestana nueva
-  public verPDF(pdf) {
-    let datos = this.formulario.get(pdf).value;
-    window.open(datos, '_blank');
+   //Muestra el pdf en una pestana nueva
+   public verPDF() {
+    const dialogRef = this.dialog.open(PdfDialogoComponent, {
+      width: '95%',
+      height: '95%',
+      data: {
+        nombre: this.formulario.get('pdf.nombre').value,
+        datos: this.formulario.get('pdf.datos').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {});
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
@@ -269,50 +295,27 @@ export class VencimientosChoferesComponent implements OnInit {
     this.formulario.patchValue(elemento);
 
   }
-  //Al cambiar elemento de select esChofer
-  public cambioEsChofer(): void {
-    let esChofer = this.formulario.get('esChofer').value;
-    let esChoferLargaDistancia = this.formulario.get('esChoferLargaDistancia').value;
-    if (esChofer && esChoferLargaDistancia) {
-      this.formulario.get('vtoLicenciaConducir').enable();
-      this.formulario.get('vtoCurso').enable();
-      this.formulario.get('vtoCursoCargaPeligrosa').enable();
-      this.formulario.get('vtoLINTI').enable();
-      this.formulario.get('vtoLibretaSanidad').enable();
-      this.formulario.get('vtoPsicoFisico').enable();
-      this.btnPdfLibSanidad = true;
-      this.btnPdfLicConducir = true;
-      this.btnPdflinti = true;
-    } else if (esChofer && !esChoferLargaDistancia) {
-      this.formulario.get('vtoLicenciaConducir').enable();
-      this.formulario.get('vtoCurso').enable();
-      this.formulario.get('vtoCursoCargaPeligrosa').enable();
-      this.formulario.get('vtoLINTI').disable();
-      this.formulario.get('vtoLibretaSanidad').disable();
-      this.formulario.get('vtoPsicoFisico').enable();
-      this.formulario.get('esChoferLargaDistancia').enable();
-      this.btnPdfLibSanidad = false;
-      this.btnPdfLicConducir = true;
-      this.btnPdflinti = false;
-    } else {
-      this.formulario.get('vtoLicenciaConducir').disable();
-      this.formulario.get('vtoCurso').disable();
-      this.formulario.get('vtoCursoCargaPeligrosa').disable();
-      this.formulario.get('vtoLINTI').disable();
-      this.formulario.get('vtoLibretaSanidad').disable();
-      this.formulario.get('vtoPsicoFisico').disable();
-      this.formulario.get('esChoferLargaDistancia').disable();
-      this.formulario.get('esChoferLargaDistancia').setValue(false);
-      this.btnPdfLibSanidad = false;
-      this.btnPdfLicConducir = false;
-      this.btnPdflinti = false;
-    }
-  }
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
     let elemAutocompletado = this.autocompletado.value;
     this.obtenerSiEsChoferYChoferLargaDistancia();
     console.log(elemAutocompletado);
+    this.formulario.get('nombre').setValue(elemAutocompletado.nombre);
+    this.formulario.get('apellido').setValue(elemAutocompletado.apellido);
+    this.formulario.get('id').setValue(elemAutocompletado.id);
+    this.formulario.get('cuil').setValue(elemAutocompletado.cuil);
+    this.formulario.get('numeroDocumento').setValue(elemAutocompletado.numeroDocumento);
+    this.formulario.get('tipoDocumento').setValue(elemAutocompletado.tipoDocumento.nombre);
+    if(this.formulario.get('esChofer').value){
+      this.formulario.get('esChofer').setValue('Si');
+    }else {
+      this.formulario.get('esChofer').setValue('No');
+    }
+    if(this.formulario.get('esChoferLargaDistancia').value){
+      this.formulario.get('esChoferLargaDistancia').setValue('Si');
+    }else {
+      this.formulario.get('esChoferLargaDistancia').setValue('No');
+    }
     if (elemAutocompletado.vtoLicenciaConducir != null) {
       this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
     }
