@@ -344,7 +344,7 @@ export class ViajeTramoComponent implements OnInit {
   public modificarTramo(): void {
     this.loaderService.show();
     console.log(this.formularioViajeTramo.value);
-    // this.establecerTipoViaje();
+    // this.establecerTipoViaje();  REVISAAR
     this.servicio.actualizar(this.formularioViajeTramo.value).subscribe(
       res=>{
         let resultado = res.json();

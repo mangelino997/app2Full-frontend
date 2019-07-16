@@ -1,4 +1,4 @@
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 //Define la entidad de la base de datos.
 export class OrdenVentaTramo {
     //define un formulario FormGroup
@@ -9,14 +9,14 @@ export class OrdenVentaTramo {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            ordenVentaTarifa: new FormControl(),
-            tramo: new FormControl(),
+            ordenVentaTarifa: new FormControl('', Validators.required),
+            tramo: new FormControl('', Validators.required),
             kmTramo: new FormControl(),
             kmPactado: new FormControl(),
-            importeFijoSeco: new FormControl(),
-            importeFijoRef: new FormControl(),
-            precioUnitarioSeco: new FormControl(),
-            precioUnitarioRef: new FormControl(),
+            importeFijoSeco: new FormControl('00'),
+            importeFijoRef: new FormControl('00'),
+            precioUnitarioSeco: new FormControl('00'),
+            precioUnitarioRef: new FormControl('00'),
             preciosDesde: new FormControl(),
         })
     }
