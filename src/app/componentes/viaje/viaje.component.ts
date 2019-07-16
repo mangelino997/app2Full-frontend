@@ -227,22 +227,23 @@ export class ViajeComponent implements OnInit {
   public cambioAutocompletado(): void {
     let viaje = this.autocompletado.value;
     this.servicio.obtenerPorId(viaje.id).subscribe(res => {
-      let viajePropio = res.json();
-      console.log(viajePropio.viajePropioTramos, viaje);
-      this.formularioViaje.setValue(viajePropio);
-      this.viajeTramoComponente.establecerLista(viajePropio.viajePropioTramos, viaje);
-      this.viajeCombustibleComponente.establecerLista(viajePropio.viajePropioCombustibles, viaje);
-      this.viajeEfectivoComponente.establecerLista(viajePropio.viajePropioEfectivos, viaje);
-      this.viajeInsumoComponente.establecerLista(viajePropio.viajePropioInsumos, viaje);
-      this.viajeGastoComponente.establecerLista(viajePropio.viajePropioGastos, viaje);
-      this.viajePeajeComponente.establecerLista(viajePropio.viajePropioPeajes, viaje);
+      let viajeRes = res.json();
+      console.log(viajeRes.viajeTramos, viaje);
+      console.log(viajeRes, viaje.id);
+      this.formularioViaje.patchValue(viaje);
+      this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje);
+      // this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje);
+      // this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje);
+      // this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje);
+      // this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje);
+      // this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje);
     });
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
     let usuario = this.appService.getUsuario();
-    this.formularioViaje.get('usuario').setValue(usuario);
-    this.usuarioNombre.setValue(usuario.nombre);
+    // this.formularioViaje.get('usuario').setValue(usuario);
+    // this.usuarioNombre.setValue(usuario.nombre);
     this.tipoViaje.setValue(true);
     this.formularioViaje.get('esRemolquePropio').setValue(true);
     let sucursal = this.appService.getUsuario().sucursal;
@@ -432,11 +433,11 @@ export class ViajeComponent implements OnInit {
         this.tipoViaje.disable();
       }
     }
-    if(!this.estadoFormulario) {
-      this.formularioViaje.get('viajeTramos').reset();
-    } else {
-      this.formularioViaje.get('viajeTramos').setValue($event);
-    }
+    // if(!this.estadoFormulario) {
+    //   this.formularioViaje.get('viajeTramos').reset();
+    // } else {
+    //   this.formularioViaje.get('viajeTramos').setValue($event);
+    // }
     this.viajeRemitoGSComponente.establecerListaTramos($event);
   }
   //Recibe la lista de combustibles de Viaje Combustible
@@ -483,10 +484,10 @@ export class ViajeComponent implements OnInit {
     this.loaderService.show();
     this.idMod = null;
     this.tipoViaje.enable();
-    let vehiculo = this.formularioViaje.get('vehiculo').value;
-    this.formularioViaje.get('empresa').setValue(vehiculo.empresa);
-    this.formularioViaje.get('empresaEmision').setValue(this.appService.getEmpresa());
-    let empresa = this.formularioViaje.get('empresa').value;
+    let empresa = this.appService.getEmpresa();
+    // let vehiculo = this.formularioViaje.get('vehiculo').value;
+    // this.formularioViaje.get('empresa').setValue(vehiculo.empresa);
+    this.formularioViaje.get('empresaEmision').setValue(empresa);
     this.formularioViaje.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
     let usuario = this.appService.getUsuario();
     this.formularioViaje.get('usuarioAlta').setValue(usuario);

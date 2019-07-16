@@ -151,7 +151,7 @@ export class ViajeTramoComponent implements OnInit {
     // this.formularioViajeTramo.get('cantidad').setValue(valor);
     // this.formularioViajeTramo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
     this.formularioViajeTramo.get('importe').setValue(this.appServicio.establecerDecimales(valor, 2));
-    this.formularioViajeTramo.get('importe').disable();
+    // this.formularioViajeTramo.get('importe').disable();
     this.obtenerSiguienteId();
   }
   //Obtiene el siguiente id
@@ -360,7 +360,7 @@ export class ViajeTramoComponent implements OnInit {
     this.servicio.actualizar(this.formularioViajeTramo.value).subscribe(
       res=>{
         let resultado = res.json();
-        if (res.status == 200) {
+        if (resultado.codigo == 200) {
           console.log(resultado);
           let idViaje = this.formularioViajeTramo.value.viaje.id;
           this.reestablecerFormulario();
@@ -371,7 +371,7 @@ export class ViajeTramoComponent implements OnInit {
           this.enviarDatos();
           
           document.getElementById('idTramoFecha').focus();
-          this.toastr.success("Registro agregado con éxito");
+          this.toastr.success(resultado.mensaje);
           this.loaderService.hide();
         }
       },  
@@ -396,6 +396,8 @@ export class ViajeTramoComponent implements OnInit {
     this.indiceTramo = indice;
     this.btnTramo = false;
     this.formularioViajeTramo.patchValue(this.listaTramos[indice]);
+    console.log(this.listaTramos[indice]);
+    // this.
   }
   //Elimina un tramo de la tabla por indice
   public eliminarTramo(indice, elemento): void {
@@ -438,13 +440,14 @@ export class ViajeTramoComponent implements OnInit {
   //Establece la lista de tramos
   public establecerLista(lista, viaje): void {
     console.log(viaje);
-    this.establecerValoresPorDefecto();
+    // this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
     this.listaTramos = lista;
     this.recargarListaCompleta(this.listaTramos);
     this.viaje = viaje;
     this.enviarDatos();
     this.establecerViaje(viaje.id);
+    this.listar();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -453,7 +456,7 @@ export class ViajeTramoComponent implements OnInit {
     switch (indice) {
       case 1:
         this.soloLectura = false;
-        this.establecerValoresPorDefecto();
+        // this.establecerValoresPorDefecto();
         this.listarViajesTarifas();
         this.establecerCamposSelectSoloLectura(false);
         break;
@@ -542,6 +545,7 @@ export class ViajeTramoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(viajeTramoClientes => {
+      console.log(viajeTramoClientes);
       this.formularioViajeTramo.get('viajeTramoClientes').setValue(viajeTramoClientes);
     });
   }
