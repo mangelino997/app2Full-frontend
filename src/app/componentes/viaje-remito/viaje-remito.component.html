@@ -254,14 +254,14 @@
             <div class="form-group has-float-label">
               <label for="idFecha" class="tamanio-label">Fecha Desde *</label>
               <input id="idFecha" type="date" formControlName="fechaDesde" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" required>
+                class="form-control form-control-sm" required>
             </div>
           </div>
           <div class="col">
             <div class="form-group has-float-label">
               <label for="idFecha" class="tamanio-label">Fecha Hasta *</label>
               <input id="idFecha" type="date" formControlName="fechaHasta" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" required>
+                class="form-control form-control-sm" required>
             </div>
           </div>
           <div class="col">
@@ -287,7 +287,7 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Remitente</label>
-              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
+              <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off"
                 type="text" matInput [formControl]="autocompletadoRemitente" [matAutocomplete]="autoRem"
                 (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #autoRem="matAutocomplete" [displayWith]="displayFn.bind(this)">
@@ -300,7 +300,7 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Destinatario</label>
-              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
+              <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off"
                 type="text" matInput [formControl]="autocompletadoDestinatario" [matAutocomplete]="autoDest"
                 (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #autoDest="matAutocomplete" [displayWith]="displayFn.bind(this)">
@@ -312,13 +312,13 @@
           </div>
           <div class="col">
             <div class="form-group has-float-label">
-              <label for="idNumeroCamion" class="tamanio-label">Número de Camión *</label>
+              <label for="idNumeroCamion" class="tamanio-label">N° de Camión</label>
               <input id="idNumeroCamion" [textMask]="mascararEnteros(3)" type="text" formControlName="numeroCamion"
-                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura">
+                autocomplete="off" class="form-control form-control-sm number-right" >
             </div>
           </div>
           <div class="col">
-            <button mat-raised-button color="primary" (click)="listar()">Buscar</button>
+            <button mat-raised-button color="primary" (click)="listar()" [disabled]="!formularioListar.valid">Buscar</button>
           </div>
         </div>
       </form>
