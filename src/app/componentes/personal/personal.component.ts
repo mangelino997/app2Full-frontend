@@ -29,6 +29,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { FotoService } from 'src/app/servicios/foto.service';
 import { PdfService } from 'src/app/servicios/pdf.service';
+import { Pdf } from 'src/app/modelos/pdf';
 
 @Component({
   selector: 'app-personal',
@@ -124,7 +125,7 @@ export class PersonalComponent implements OnInit {
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService,
-    private fotoService: FotoService, private pdfServicio: PdfService) {
+    private fotoService: FotoService, private pdfServicio: PdfService, private pdf: Pdf) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -496,6 +497,31 @@ export class PersonalComponent implements OnInit {
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
     let elemAutocompletado = this.autocompletado.value;
+    let pdf= {
+      id: new FormControl(),
+      version: new FormControl(),
+      nombre: new FormControl(),
+      tipo: new FormControl(),
+      tamanio: new FormControl(),
+      datos: new FormControl(),
+      tabla: new FormControl()
+  }
+    console.log(elemAutocompletado);
+    if (elemAutocompletado.pdfAltaTemprana == null) {
+      this.formulario.get('pdfAltaTemprana').setValue(pdf);
+    }
+    if (elemAutocompletado.pdfDni == null) {
+      this.formulario.get('pdfDni').setValue(pdf);
+    }
+    if (elemAutocompletado.pdfLibSanidad == null) {
+      this.formulario.get('pdfLibSanidad').setValue(pdf);
+    }
+    if (elemAutocompletado.pdfLicConducir == null) {
+      this.formulario.get('pdfLicConducir').setValue(pdf);
+    }
+    if (elemAutocompletado.pdfLinti == null) {
+      this.formulario.get('pdfLinti').setValue(pdf);
+    }
     this.formulario.setValue(elemAutocompletado);
     this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
     this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
