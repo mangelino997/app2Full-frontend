@@ -17,6 +17,7 @@ export class OrdenVenta {
             comisionCR: new FormControl(),
             observaciones: new FormControl(),
             esContado: new FormControl(),
+            estaActiva: new FormControl(),
             tipoOrdenVenta: new FormControl(),
             fechaAlta: new FormControl(),
 

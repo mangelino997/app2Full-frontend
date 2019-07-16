@@ -598,6 +598,8 @@ export class OrdenVentaComponent implements OnInit {
       this.tipoTarifa.setValue('porTramo');
       this.cambioTipoTarifa();
     }
+    this.formularioTarifa.get('tipoTarifa').disable();
+    this.tipoTarifa.disable();
   }
   //Abre el modal de ver Orden Venta Tarifa
   public eliminarOrdenVentaTarifa(elemento){
