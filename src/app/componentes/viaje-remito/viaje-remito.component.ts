@@ -245,6 +245,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.resultados = [];
     this.resultadosClienteRemitente = [];
     this.resultadosClienteDestinatario = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Obtiene el listado de sucursales
   private listarSucursales() {

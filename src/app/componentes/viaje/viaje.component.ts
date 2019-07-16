@@ -228,6 +228,7 @@ export class ViajeComponent implements OnInit {
     let viaje = this.autocompletado.value;
     this.servicio.obtenerPorId(viaje.id).subscribe(res => {
       let viajePropio = res.json();
+      console.log(viajePropio.viajePropioTramos, viaje);
       this.formularioViaje.setValue(viajePropio);
       this.viajeTramoComponente.establecerLista(viajePropio.viajePropioTramos, viaje);
       this.viajeCombustibleComponente.establecerLista(viajePropio.viajePropioCombustibles, viaje);
@@ -675,14 +676,14 @@ export class ViajeComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
+    console.log(elemento);
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formularioViaje.patchValue(elemento);
     console.log(this.formularioViaje.value);
     this.tipoViaje.setValue(this.formularioViaje.value.esRemolquePropio);
     // this.formularioViaje.enable();
     this.idMod = elemento.id;
-    console.log(3, this.pestanias[2].nombre, 0);
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 0);
     this.establecerValoresPorDefecto();
   }
   //Funcion para comparar y mostrar elemento de campo select

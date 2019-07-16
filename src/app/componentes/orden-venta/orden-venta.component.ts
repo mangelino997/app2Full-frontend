@@ -598,6 +598,8 @@ export class OrdenVentaComponent implements OnInit {
       this.tipoTarifa.setValue('porTramo');
       this.cambioTipoTarifa();
     }
+    this.formularioTarifa.get('tipoTarifa').disable();
+    this.tipoTarifa.disable();
   }
   //Abre el modal de ver Orden Venta Tarifa
   public eliminarOrdenVentaTarifa(elemento){
@@ -1108,7 +1110,17 @@ export class VerTarifaDialogo {
     this.resultadosTramos = [];
     this.idMod = null;
     this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
+    this.formularioEscala.get('importeFijo').setValue(this.appService.establecerDecimales('00', 2));
+    this.formularioEscala.get('precioUnitario').setValue(this.appService.establecerDecimales('00', 2));
+    this.formularioEscala.get('porcentaje').setValue(this.appService.establecerDecimales('00', 2));
+    this.formularioEscala.get('minimo').setValue(this.appService.establecerDecimales('00', 2));
+
+
     this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
+    this.formularioTramo.get('importeFijoSeco').setValue('00');
+    this.formularioTramo.get('importeFijoRef').setValue('00');
+    this.formularioTramo.get('precioUnitarioSeco').setValue('00');
+    this.formularioTramo.get('precioUnitarioRef').setValue('00');
   }
   //Controla el modificar en Escala
   public controlModEscala(elemento){
@@ -1325,13 +1337,23 @@ export class VerTarifaDialogo {
   }
   //Formatea el numero a x decimales
   public establecerDecimales(valor, cantidad) {
-    if (valor != '') {
-      return this.appService.setDecimales(valor, cantidad);
+    if (valor) {
+      return this.appService.establecerDecimales(valor, cantidad);
+    }else{
+      return '00';
     }
   }
   //Establece los decimales de porcentaje
-  public establecerPorcentaje(formulario, cantidad): void {
+  public setPorcentaje(formulario, cantidad): void {
     formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
+  }
+  //Establece los decimales de porcentaje
+  public establecerPorcentaje(valor, cantidad) {
+    if (valor) {
+      return this.appService.desenmascararPorcentaje(valor, cantidad);
+    }else{
+      return '00';
+    }
   }
   //Desenmascara km
   public establecerKm(formulario, cantidad): void {
