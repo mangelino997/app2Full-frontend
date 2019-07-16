@@ -497,32 +497,34 @@ export class PersonalComponent implements OnInit {
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
     let elemAutocompletado = this.autocompletado.value;
-    let pdf= {
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl(),
-      tipo: new FormControl(),
-      tamanio: new FormControl(),
-      datos: new FormControl(),
-      tabla: new FormControl()
-  }
-    console.log(elemAutocompletado);
+    let pdf = {
+      id: null,
+      version: null,
+      nombre: null,
+      tipo: null,
+      tamanio: null,
+      datos: null,
+      tabla: null
+    }
     if (elemAutocompletado.pdfAltaTemprana == null) {
-      this.formulario.get('pdfAltaTemprana').setValue(pdf);
+      elemAutocompletado.pdfAltaTemprana = pdf;
     }
     if (elemAutocompletado.pdfDni == null) {
-      this.formulario.get('pdfDni').setValue(pdf);
+      elemAutocompletado.pdfDni = pdf;
     }
     if (elemAutocompletado.pdfLibSanidad == null) {
-      this.formulario.get('pdfLibSanidad').setValue(pdf);
+      elemAutocompletado.pdfLibSanidad = pdf;
     }
     if (elemAutocompletado.pdfLicConducir == null) {
-      this.formulario.get('pdfLicConducir').setValue(pdf);
+      elemAutocompletado.pdfLicConducir = pdf;
     }
     if (elemAutocompletado.pdfLinti == null) {
-      this.formulario.get('pdfLinti').setValue(pdf);
+      elemAutocompletado.pdfLinti = pdf;
     }
-    this.formulario.setValue(elemAutocompletado);
+    if (elemAutocompletado.foto == null) {
+      elemAutocompletado.foto = pdf;
+    }
+    this.formulario.patchValue(elemAutocompletado);
     this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
     this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
     this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
