@@ -52,7 +52,7 @@ export class VencimientosChoferesComponent implements OnInit {
   //Define la lista de resultados de busqueda para el campo Personal
   public resultadosPersonal: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['legajo', 'nombre', 'esChofer', 'choferLargaDistancia', 'vtoLicencia', 'vtoCurso', 'vtoCursoCargaPeligrosa', 'vtoCursoLINTI', 'ver', 'mod'];
+  public columnas: string[] = ['legajo', 'nombre', 'choferLargaDistancia', 'vtoLicencia', 'vtoCurso', 'vtoCursoCargaPeligrosa', 'vtoCursoLINTI', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el form control para las busquedas
@@ -114,18 +114,18 @@ export class VencimientosChoferesComponent implements OnInit {
   }
 
   //Setea si es chofer y si es chofer larga distancia
-  private obtenerSiEsChoferYChoferLargaDistancia() {
-    if(this.formulario.get('esChoferLargaDistancia').value) {
-      this.choferLargaDistancia = 'Si';
-    }else {
-      this.choferLargaDistancia = 'No';
-    }
-    if(this.formulario.get('esChofer').value) {
-      this.chofer = 'Si';
-    }else {
-      this.chofer = 'No';
-    }
-  }
+  // private obtenerSiEsChoferYChoferLargaDistancia() {
+  //   if(this.formulario.get('esChoferLargaDistancia').value) {
+  //     this.choferLargaDistancia = 'Si';
+  //   }else {
+  //     this.choferLargaDistancia = 'No';
+  //   }
+  //   if(this.formulario.get('esChofer').value) {
+  //     this.chofer = 'Si';
+  //   }else {
+  //     this.chofer = 'No';
+  //   }
+  // }
   //Obtiene el listado de tipos de documentos
   private listarTiposDocumentos() {
     this.tipoDocumentoServicio.listar().subscribe(
@@ -142,6 +142,7 @@ export class VencimientosChoferesComponent implements OnInit {
   private listar() {
     this.loaderService.show();
     let empresa = this.appService.getEmpresa();
+    console.log(empresa.id);
     this.personalServicio.listarChoferesPorEmpresa(empresa.id).subscribe(
       res => {
         console.log(res.json());
@@ -159,10 +160,46 @@ export class VencimientosChoferesComponent implements OnInit {
         this.loaderService.hide();
       }
     );
-
+  }
+   //Funcion para determina que accion se requiere (Actualizar)
+   public accion(indice) {
+    switch (indice) {
+      case 3:
+        this.actualizar();
+        break;
+      default:
+        break;
+    }
+  }
+  //Al cambiar elemento de select esChofer
+  public cambioEsChofer(): void {
+    let esChoferLargaDistancia = this.formulario.get('esChoferLargaDistancia').value;
+    if (esChoferLargaDistancia) {
+      this.formulario.get('vtoLicenciaConducir').enable();
+      this.formulario.get('vtoCurso').enable();
+      this.formulario.get('vtoCursoCargaPeligrosa').enable();
+      this.formulario.get('vtoLINTI').enable();
+      this.formulario.get('vtoLibretaSanidad').enable();
+      this.formulario.get('vtoPsicoFisico').enable();
+      this.btnPdfLibSanidad = true;
+      this.btnPdfLicConducir = true;
+      this.btnPdflinti = true;
+    } else {
+      this.formulario.get('vtoLicenciaConducir').enable();
+      this.formulario.get('vtoCurso').enable();
+      this.formulario.get('vtoCursoCargaPeligrosa').enable();
+      this.formulario.get('vtoLINTI').disable();
+      this.formulario.get('vtoLibretaSanidad').disable();
+      this.formulario.get('vtoPsicoFisico').enable();
+      this.formulario.get('esChoferLargaDistancia').enable();
+      this.btnPdfLibSanidad = false;
+      this.btnPdfLicConducir = true;
+      this.btnPdflinti = false;
+    }
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
+    this.listar();
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
@@ -220,6 +257,10 @@ export class VencimientosChoferesComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.vaciarListas();
+    if(soloLectura){
+      this.formulario.get('esChofer').disable();
+      this.formulario.get('esChoferLargaDistancia').disable();
+    }
     setTimeout(function () {
       document.getElementById('idAutocompletado').focus();
     }, 20);
@@ -284,60 +325,94 @@ console.log(event.target.files[0].type);
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
-
+    this.formulario.setValue(elemento);
+    this.cambioEsChofer();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.patchValue(elemento);
-
+    this.formulario.setValue(elemento);
+    this.cambioEsChofer();
+    console.log(this.formulario);
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
     let elemAutocompletado = this.autocompletado.value;
-    this.obtenerSiEsChoferYChoferLargaDistancia();
-    console.log(elemAutocompletado);
-    this.formulario.get('nombre').setValue(elemAutocompletado.nombre);
-    this.formulario.get('apellido').setValue(elemAutocompletado.apellido);
-    this.formulario.get('id').setValue(elemAutocompletado.id);
-    this.formulario.get('cuil').setValue(elemAutocompletado.cuil);
-    this.formulario.get('numeroDocumento').setValue(elemAutocompletado.numeroDocumento);
-    this.formulario.get('tipoDocumento').setValue(elemAutocompletado.tipoDocumento.nombre);
-    if(this.formulario.get('esChofer').value){
-      this.formulario.get('esChofer').setValue('Si');
-    }else {
-      this.formulario.get('esChofer').setValue('No');
-    }
-    if(this.formulario.get('esChoferLargaDistancia').value){
-      this.formulario.get('esChoferLargaDistancia').setValue('Si');
-    }else {
-      this.formulario.get('esChoferLargaDistancia').setValue('No');
-    }
-    if (elemAutocompletado.vtoLicenciaConducir != null) {
-      this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
-    }
-    if (elemAutocompletado.vtoCurso != null) {
-      this.formulario.get('vtoCurso').setValue(elemAutocompletado.vtoCurso.substring(0, 10));
-    }
-    if (elemAutocompletado.vtoCursoCargaPeligrosa != null) {
-      this.formulario.get('vtoCursoCargaPeligrosa').setValue(elemAutocompletado.vtoCursoCargaPeligrosa.substring(0, 10));
-    }
-    if (elemAutocompletado.vtoLINTI != null) {
-      this.formulario.get('vtoLINTI').setValue(elemAutocompletado.vtoLINTI.substring(0, 10));
-    }
-    if (elemAutocompletado.vtoLibretaSanidad != null) {
-      this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
-    }
+    // this.obtenerSiEsChoferYChoferLargaDistancia();
+    this.formulario.patchValue(elemAutocompletado);
+    // this.formulario.get('nombre').setValue(elemAutocompletado.nombre);
+    // this.formulario.get('apellido').setValue(elemAutocompletado.apellido);
+    // this.formulario.get('id').setValue(elemAutocompletado.id);
+    // this.formulario.get('cuil').setValue(elemAutocompletado.cuil);
+    // this.formulario.get('numeroDocumento').setValue(elemAutocompletado.numeroDocumento);
+    // this.formulario.get('tipoDocumento').setValue(elemAutocompletado.tipoDocumento.nombre);
+    // if(this.formulario.get('esChofer').value){
+    //   this.formulario.get('esChofer').setValue('Si');
+    // }else {
+    //   this.formulario.get('esChofer').setValue('No');
+    // }
+    // if(this.formulario.get('esChoferLargaDistancia').value){
+    //   this.formulario.get('esChoferLargaDistancia').setValue('Si');
+    // }else {
+    //   this.formulario.get('esChoferLargaDistancia').setValue('No');
+    // }
+    // if (elemAutocompletado.vtoLicenciaConducir != null) {
+    //   this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
+    // }
+    // if (elemAutocompletado.vtoCurso != null) {
+    //   this.formulario.get('vtoCurso').setValue(elemAutocompletado.vtoCurso.substring(0, 10));
+    // }
+    // if (elemAutocompletado.vtoCursoCargaPeligrosa != null) {
+    //   this.formulario.get('vtoCursoCargaPeligrosa').setValue(elemAutocompletado.vtoCursoCargaPeligrosa.substring(0, 10));
+    // }
+    // if (elemAutocompletado.vtoLINTI != null) {
+    //   this.formulario.get('vtoLINTI').setValue(elemAutocompletado.vtoLINTI.substring(0, 10));
+    // }
+    // if (elemAutocompletado.vtoLibretaSanidad != null) {
+    //   this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
+    // }
+    // this.cambioEsChofer();
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
+    console.log(a, b);
     if (a != null && b != null) {
       return a.id === b.id;
     }
+  }
+   //Define el mostrado de datos y comparacion en campo select
+   public compareF = this.compararF.bind(this);
+   private compararF(a, b) {
+     console.log(a, b);
+     if (a != null && b != null) {
+       return a === b;
+     }
+   }
+  //Actualiza un registro
+  private actualizar() {
+    this.loaderService.show();
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
+    this.personalServicio.actualizar(this.formulario.value).then(
+      res => {
+        if (res.status == 200) {
+          this.reestablecerFormulario(undefined);
+          setTimeout(function () {
+            document.getElementById('idVtoCurso').focus();
+          }, 20);
+          this.toastr.success('Registro actualizado con éxito');
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        var respuesta = err.json();
+        this.toastr.error(respuesta.mensaje);
+        document.getElementById("idVtoCurso").focus();
+        this.loaderService.hide();
+      }
+    );
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
