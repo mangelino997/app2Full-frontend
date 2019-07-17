@@ -245,7 +245,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Establece los decimales de porcentaje
   public establecerPorcentaje(formulario, cantidad): void {
     formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
-    if(formulario.value>'100.00')
+    if(formulario.value>100.00)
       formulario.setValue('100.00');
   }
   //Formatea el numero a x decimales
