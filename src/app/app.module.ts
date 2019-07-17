@@ -134,7 +134,6 @@ import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 import { LoaderService } from './servicios/loader.service';
 import { TipoFamiliarService } from './servicios/tipo-familiar.service';
 import { PersonalFamiliarService } from './servicios/personal-familiar.service';
-import { ViajePropioCombustibleService } from './servicios/viaje-propio-combustible';
 import { ViajePropioEfectivoService } from './servicios/viaje-propio-efectivo';
 import { ViajePropioInsumoService } from './servicios/viaje-propio-insumo';
 import { ViajePropioGastoService } from './servicios/viaje-propio-gasto';
@@ -145,7 +144,6 @@ import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
 
 //Modelos
 import { Viaje } from './modelos/viaje';
-import { ViajePropioCombustible } from './modelos/viajePropioCombustible';
 import { ViajePropioEfectivo } from './modelos/viajePropioEfectivo';
 import { ViajePropioInsumo } from './modelos/viajePropioInsumo';
 import { ViajeRemito } from './modelos/viajeRemito';
@@ -289,7 +287,7 @@ import { RepartoEntranteComponent } from './componentes/reparto-entrante/reparto
 import { VentaConceptoComponent } from './componentes/venta-concepto/venta-concepto.component';
 import { ViajeUnidadNegocioComponent } from './componentes/viaje-unidad-negocio/viaje-unidad-negocio.component';
 import { OpcionComponent } from './componentes/opcion/opcion.component';
-import { ViajeTramoComponent, DadorDestinatarioDialogo, DadorDestTablaDialogo } from './componentes/viaje/viaje-tramo/viaje-tramo.component';
+import { ViajeTramoComponent, DadorDestinatarioDialogo } from './componentes/viaje/viaje-tramo/viaje-tramo.component';
 import { ViajeCombustibleComponent } from './componentes/viaje/viaje-combustible/viaje-combustible.component';
 import { ViajeEfectivoComponent } from './componentes/viaje/viaje-efectivo/viaje-efectivo.component';
 import { ViajeInsumoComponent } from './componentes/viaje/viaje-insumo/viaje-insumo.component';
@@ -343,6 +341,8 @@ import { ViajeService } from './servicios/viaje.service';
 import { ViajeTramo } from './modelos/viajeTramo';
 import { ViajeTramoService } from './servicios/viaje-tramo.service';
 import { ViajeTramoCliente } from './modelos/viajeTramoCliente';
+import { ViajeCombustibleService } from './servicios/viaje-combustible';
+import { ViajeCombustible } from './modelos/viajeCombustible';
 import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
 
 //Rutas
@@ -456,7 +456,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket', // ws://192.168.0.62:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
+  url: 'ws://192.168.0.123:8080/jitws/socket', // ws://192.168.0.62:8080/jitws/socket - ws://gestionws.appspot.com:8080/jitws/socket
   headers: {},
   heartbeat_in: 0,
   heartbeat_out: 20000,
@@ -563,7 +563,6 @@ const stompConfig: StompConfig = {
     ViajeUnidadNegocioComponent,
     OpcionComponent,
     DadorDestinatarioDialogo,
-    DadorDestTablaDialogo,
     ObservacionesDialogo,
     ViajeTramoComponent,
     ViajeCombustibleComponent,
@@ -763,7 +762,7 @@ const stompConfig: StompConfig = {
     Viaje,
     ViajeTramo,
     ViajeTramoCliente,
-    ViajePropioCombustible,
+    ViajeCombustible,
     ViajePropioEfectivo,
     ViajePropioInsumo,
     ViajeRemito,
@@ -834,7 +833,7 @@ const stompConfig: StompConfig = {
     BasicoCategoria,
     AfipCondicionIva,
     MesService,
-    ViajePropioCombustibleService,
+    ViajeCombustibleService,
     ViajePropioEfectivoService,
     ViajePropioInsumoService,
     ViajePropioGastoService,
@@ -880,7 +879,6 @@ const stompConfig: StompConfig = {
     VistaPreviaDialogo,
     PestaniaDialogo,
     DadorDestinatarioDialogo,
-    DadorDestTablaDialogo,
     ObservacionesDialogo,
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,

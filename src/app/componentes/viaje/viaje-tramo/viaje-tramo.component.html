@@ -120,15 +120,11 @@
         </div>
         <div class="col-md-4">
             <div class="inline">
-                <button mat-raised-button (click)="verDadorDestinatarioDialogo()"
-                    [disabled]="soloLectura">Dador-Destinatario 
-                    <span *ngIf="formularioViajeTramo.get('viajeTipo').value ? formularioViajeTramo.get('viajeTipo').value.id != 3 : false">*</span>
-                </button>
                 <button mat-raised-button (click)="abrirObservacionesDialogo()">Observaciones</button>
                 <button mat-raised-button color="primary" (click)="agregarTramo()"
-                    [disabled]="!formularioViajeTramo.valid" *ngIf="btnTramo">Agregar Tramo</button>
+                    [disabled]="!formularioViajeTramo.valid" *ngIf="btnTramo && !soloLectura">Agregar Tramo</button>
                 <button mat-raised-button color="primary" (click)="modificarTramo()"
-                    [disabled]="!formularioViajeTramo.valid" *ngIf="!btnTramo">Actualizar Tramo</button>
+                    [disabled]="!formularioViajeTramo.valid" *ngIf="!btnTramo && !soloLectura">Actualizar Tramo</button>
             </div>
         </div>
     </div>
@@ -170,7 +166,7 @@
                 <ng-container matColumnDef="destinatario" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Dador - Destinatario</th>
                   <td mat-cell *matCellDef="let elemento">
-                    <span class="cursor-color" (click)="verDadorDestTablaDialogo(elemento)">ver</span>
+                    <span class="cursor-color" (click)="verDadorDestinatarioDialogo(elemento)">ver</span>
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="unidadNegocio" sticky>
@@ -197,8 +193,6 @@
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
           </table>
-
-
         </div>
     </div>
 </form>

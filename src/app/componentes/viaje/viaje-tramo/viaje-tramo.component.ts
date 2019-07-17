@@ -18,6 +18,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ViajeTramoService } from 'src/app/servicios/viaje-tramo.service';
 import { ViajeTramoCliente } from 'src/app/modelos/viajeTramoCliente';
+import { ViajeTramoClienteService } from 'src/app/servicios/viaje-tramo-cliente.service';
 
 @Component({
   selector: 'app-viaje-tramo',
@@ -120,6 +121,7 @@ export class ViajeTramoComponent implements OnInit {
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar(){
     this.loaderService.show();
+    console.log(this.formularioViajeTramo.value.viaje.id);
     if(this.formularioViajeTramo.value.viaje.id){
       this.servicio.listarTramos(this.formularioViajeTramo.value.viaje.id).subscribe(
         res=>{
@@ -148,10 +150,7 @@ export class ViajeTramoComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajeTramo.get('fechaTramo').setValue(res.json());
     })
-    // this.formularioViajeTramo.get('cantidad').setValue(valor);
-    // this.formularioViajeTramo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
     this.formularioViajeTramo.get('importe').setValue(this.appServicio.establecerDecimales(valor, 2));
-    // this.formularioViajeTramo.get('importe').disable();
     this.obtenerSiguienteId();
   }
   //Obtiene el siguiente id
@@ -355,23 +354,21 @@ export class ViajeTramoComponent implements OnInit {
   //Modifica los datos del tramo
   public modificarTramo(): void {
     this.loaderService.show();
-    console.log(this.formularioViajeTramo.value);
     // this.establecerTipoViaje();  REVISAAR
     this.servicio.actualizar(this.formularioViajeTramo.value).subscribe(
       res=>{
-        let resultado = res.json();
-        if (resultado.codigo == 200) {
-          console.log(resultado);
-          let idViaje = this.formularioViajeTramo.value.viaje.id;
+        let idViaje = this.formularioViajeTramo.value.viaje.id;
+        console.log(idViaje);
+        if (res.status == 200) {
           this.reestablecerFormulario();
           this.establecerViaje(idViaje);
-          this.listar();
           this.establecerValoresPorDefecto();
           this.establecerViajeTarifaPorDefecto();
-          this.enviarDatos();
-          
+          this.listar();
+          this.btnTramo = true;
+          // this.enviarDatos(); REVISAR SI LO PUEDO ELIMINAR
           document.getElementById('idTramoFecha').focus();
-          this.toastr.success(resultado.mensaje);
+          this.toastr.success("Registro actualizado con éxito");
           this.loaderService.hide();
         }
       },  
@@ -381,15 +378,6 @@ export class ViajeTramoComponent implements OnInit {
         this.loaderService.hide();
       }
     );
-    this.listaTramos[this.indiceTramo] = this.formularioViajeTramo.value;
-    this.recargarListaCompleta(this.listaTramos);
-    this.btnTramo = true;
-    this.formularioViajeTramo.reset();
-    this.establecerValoresPorDefecto();
-    this.establecerViajeTarifaPorDefecto();
-    this.resultadosTramos = [];
-    document.getElementById('idTramoFecha').focus();
-    this.enviarDatos();
   }
   //Modifica un tramo de la tabla por indice
   public modTramo(indice): void {
@@ -418,10 +406,13 @@ export class ViajeTramoComponent implements OnInit {
           this.establecerViajeTarifaPorDefecto();
           this.enviarDatos();
           this.toastr.success(respuesta.mensaje);
+          this.listar();
           this.loaderService.hide();
         },
         err => {
+          let error = err.json();
           this.loaderService.hide();
+          this.toastr.error(error.mensaje);
         });
     }
     this.establecerValoresPorDefecto();
@@ -438,8 +429,8 @@ export class ViajeTramoComponent implements OnInit {
     elemento.setValue(this.appServicio.establecerDecimales(elemento.value, decimales));
   }
   //Establece la lista de tramos
-  public establecerLista(lista, viaje): void {
-    console.log(viaje);
+  public establecerLista(lista, viaje, pestaniaViaje): void {
+    console.log(pestaniaViaje);
     // this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
     this.listaTramos = lista;
@@ -447,6 +438,7 @@ export class ViajeTramoComponent implements OnInit {
     this.viaje = viaje;
     this.enviarDatos();
     this.establecerViaje(viaje.id);
+    this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
   }
   //Establece los campos solo lectura
@@ -508,7 +500,7 @@ export class ViajeTramoComponent implements OnInit {
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Reestablece formulario y lista al cambiar de pestaña
-  public reestablecerFormulario(): void {
+  public reestablecerFormulario() {
     this.vaciarListas();
     this.formularioViajeTramo.reset();
     this.indiceTramo = null;
@@ -537,29 +529,29 @@ export class ViajeTramoComponent implements OnInit {
     }
   }
   //Abre un dialogo para agregar dadores y destinatarios
-  public verDadorDestinatarioDialogo(): void {
+  public verDadorDestinatarioDialogo(elemento): void {
     const dialogRef = this.dialog.open(DadorDestinatarioDialogo, {
-      width: '1200px',
-      data: {
-        tema: this.appServicio.getTema()
-      }
-    });
-    dialogRef.afterClosed().subscribe(viajeTramoClientes => {
-      console.log(viajeTramoClientes);
-      this.formularioViajeTramo.get('viajeTramoClientes').setValue(viajeTramoClientes);
-    });
-  }
-  //Abre un dialogo para ver la lista de dadores y destinatarios
-  public verDadorDestTablaDialogo(elemento): void {
-    const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
       width: '1200px',
       data: {
         tema: this.appServicio.getTema(),
         elemento: elemento
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => { });
+    dialogRef.afterClosed().subscribe(viajeTramoClientes => {
+      
+    });
   }
+  //Abre un dialogo para ver la lista de dadores y destinatarios
+  // public verDadorDestTablaDialogo(elemento): void {
+  //   const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
+  //     width: '1200px',
+  //     data: {
+  //       tema: this.appServicio.getTema(),
+  //       elemento: elemento
+  //     }
+  //   });
+  //   dialogRef.afterClosed().subscribe(resultado => { });
+  // }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
@@ -608,8 +600,8 @@ export class DadorDestinatarioDialogo {
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private viajeTramoClienteModelo: ViajeTramoCliente, private clienteServicio: ClienteService) { }
+  constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
+    private viajeTramoClienteModelo: ViajeTramoCliente, private viajeTramoClienteService: ViajeTramoClienteService ,private clienteServicio: ClienteService) { }
   ngOnInit() {
     //Establece el tema
     this.tema = this.data.tema;
@@ -631,9 +623,25 @@ export class DadorDestinatarioDialogo {
         })
       }
     })
+    
+    //Establece la lista de dadores-destinatarios
+    this.listarDadoresDestinatarios();
   }
   onNoClick(): void {
     this.dialogRef.close();
+  }
+  //Obtiene la lista completa de dadores-destinatarios por el id del viaje
+  private listarDadoresDestinatarios(){
+    this.viajeTramoClienteService.listarPorViajeTramo(this.data.elemento.id).subscribe(
+      res=>{
+        this.listaDadorDestinatario = res.json();
+        this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+        this.listaCompleta.sort = this.sort; 
+      },
+      err=>{
+        this.toastr.error("Error al obtener la lista de dadores-destinatarios");
+      }
+    )
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -643,20 +651,41 @@ export class DadorDestinatarioDialogo {
   }
   //Agrega el dador y el destinatario a la tabla
   public agregarDadorDestinatario(): void {
-    this.listaDadorDestinatario.push(this.formulario.value);
-    this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
-    this.listaCompleta.sort = this.sort; 
-    this.formulario.reset();
-    this.resultadosClientes = [];
-    document.getElementById('idTramoDadorCarga').focus();
+    this.formulario.get('viajeTramo').setValue({id: this.data.elemento.id});
+    console.log(this.formulario.value);
+
+    this.viajeTramoClienteService.agregar(this.formulario.value).subscribe(
+      res=>{
+        console.log(res);
+        if(res.status == 201){
+          this.listarDadoresDestinatarios();
+          this.formulario.reset();
+          this.resultadosClientes = [];
+          document.getElementById('idTramoDadorCarga').focus();
+          this.toastr.success("Registro agregado con éxito");
+        }
+      },
+      err=>{
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+      }
+    );
+    
   }
   //Elimina un dador-destinatario de la tabla
-  public eliminarDadorDestinatario(indice): void {
-    this.listaDadorDestinatario.splice(indice, 1);
-    this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
-    this.listaCompleta.sort = this.sort; 
-    this.resultadosClientes = [];
-    document.getElementById('idTramoDadorCarga').focus();
+  public eliminarDadorDestinatario(id): void {
+    console.log(id);
+    this.viajeTramoClienteService.eliminar(id).subscribe(
+      res=>{
+        this.listarDadoresDestinatarios();
+        this.resultadosClientes = [];
+        document.getElementById('idTramoDadorCarga').focus();
+        this.toastr.success("Registro eliminado con éxito");
+      },
+      err=>{
+        this.toastr.error("Error al eliminar el registro");
+      }
+    )
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
@@ -668,24 +697,28 @@ export class DadorDestinatarioDialogo {
   }
 }
 //Componente DadorDestTablaDialogo
-@Component({
-  selector: 'dador-dest-tabla-dialogo',
-  templateUrl: 'dador-dest-tabla-dialogo.component.html'
-})
-export class DadorDestTablaDialogo {
-  //Define el tema
-  public tema: string;
-  //Define la observacion
-  public listaDadorDestinatario: Array<any> = [];
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<DadorDestTablaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    //Establece la lista de dadores-destinatarios
-    this.listaDadorDestinatario = this.data.elemento.viajeTramoClientes;
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
-  }
-}
+// @Component({
+//   selector: 'dador-dest-tabla-dialogo',
+//   templateUrl: 'dador-dest-tabla-dialogo.component.html'
+// })
+// export class DadorDestTablaDialogo {
+//   //Define el tema
+//   public tema: string;
+//   //Define la observacion
+//   public listaDadorDestinatario: Array<any> = [];
+//   //Define las columnas de la tabla
+//   public columnas: string[] = ['dador', 'destinatario', 'eliminar'];
+//   //Define la matSort
+//   @ViewChild(MatSort) sort: MatSort;
+//   //Constructor
+//   constructor(public dialogRef: MatDialogRef<DadorDestTablaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+//   ngOnInit() {
+//     //Establece el tema
+//     this.tema = this.data.tema;
+//     //Establece la lista de dadores-destinatarios
+//     this.listaDadorDestinatario = this.data.elemento.viajeTramoClientes;
+//   }
+//   onNoClick(): void {
+//     this.dialogRef.close();
+//   }
+// }
