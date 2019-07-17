@@ -1,12 +1,12 @@
-<form [formGroup]="formularioViajePropioCombustible">
+<form [formGroup]="formularioViajeCombustible">
   <div class="row">
     <div class="col-md-6">
       <div class="form-group has-float-label">
         <label for="idProveedorOC" class="tamanio-label">Proveedor Combustible *</label>
         <input id="idProveedorOC" class="form-control form-control-sm" type="text" matInput
-          [formControl]="formularioViajePropioCombustible.get('proveedor')" [matAutocomplete]="autoProveedorOC"
+          [formControl]="formularioViajeCombustible.get('proveedor')" [matAutocomplete]="autoProveedorOC"
           autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento"
-          (blur)="verificarSeleccion(formularioViajePropioCombustible.get('proveedor'))">
+          (blur)="verificarSeleccion(formularioViajeCombustible.get('proveedor'))">
         <mat-autocomplete #autoProveedorOC="matAutocomplete" [displayWith]="displayFn.bind(this)">
           <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
             {{itemProveedor.alias}}
@@ -30,9 +30,9 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idInsumoOC" class="tamanio-label">Insumo Combustible *</label>
-        <mat-select id="idInsumoOC" class="form-control form-control-sm" formControlName="insumo"
+        <mat-select id="idInsumoOC" class="form-control form-control-sm" formControlName="insumoProducto"
           [compareWith]="compareFn"
-          (selectionChange)="establecerPrecioUnitario(formularioViajePropioCombustible, 'insumo')">
+          (selectionChange)="establecerPrecioUnitario(formularioViajeCombustible, 'insumoProducto')">
           <mat-option *ngFor="let itemInsumos of insumos" [value]="itemInsumos">
             {{itemInsumos.nombre}}
           </mat-option>
@@ -44,14 +44,14 @@
         <label for="idCantidadOC" class="tamanio-label">Cantidad *</label>
         <input id="idCantidadOC" [textMask]="mascararDecimales(6)" type="text" formControlName="cantidad" autocomplete="off"
           class="form-control form-control-sm number-right" [readonly]="soloLectura"
-          (blur)="calcularImporte(formularioViajePropioCombustible)" placeholder="0.00">
+          (blur)="calcularImporte(formularioViajeCombustible)" placeholder="0.00">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
         <input id="idPrecioUnitarioOC" type="text" formControlName="precioUnitario" autocomplete="off"
-          (blur)="calcularImporte(formularioViajePropioCombustible)" class="form-control form-control-sm number-right"
+          (blur)="calcularImporte(formularioViajeCombustible)" class="form-control form-control-sm number-right"
           placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)" [readonly]="soloLectura">
       </div>
     </div>
@@ -73,76 +73,71 @@
     </div>
     <div class="col-md-1">
       <button mat-raised-button color="primary" (click)="agregarCombustible()"
-        *ngIf="btnCombustible" [disabled]="!formularioViajePropioCombustible.valid">Agregar Orden</button>
+        *ngIf="btnCombustible" [disabled]="!formularioViajeCombustible.valid">Agregar Orden</button>
       <button mat-raised-button color="primary" (click)="modificarCombustible()" 
-        [disabled]="!formularioViajePropioCombustible.valid" *ngIf="!btnCombustible">Actualizar Orden</button>
+        [disabled]="!formularioViajeCombustible.valid" *ngIf="!btnCombustible">Actualizar Orden</button>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
-      <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:10%" scope="col">Sucursal</th>
-            <th class="text-center" style="width:5%" scope="col">Orden</th>
-            <th class="text-center" style="width:5%" scope="col">Fecha</th>
-            <th class="text-center" style="width:10%" scope="col">Usuario</th>
-            <th class="text-center" style="width:10%" scope="col">Proveedor</th>
-            <th class="text-center" style="width:10%" scope="col">Insumo</th>
-            <th class="text-center" style="width:10%" scope="col">Cantidad</th>
-            <th class="text-center" style="width:10%" scope="col">Precio Unitario</th>
-            <th class="text-center" style="width:10%" scope="col">Observaciones</th>
-            <th class="text-center" style="width:5%" scope="col">Anulado</th>
-            <th class="text-center" style="width:10%" scope="col">Obs. Anulado</th>
-            <th class="text-center" style="width:3%" scope="col" *ngIf="!soloLectura">-</th>
-            <th class="text-center" style="width:2%" scope="col" *ngIf="!soloLectura">-</th>
-          </tr>
-        </thead>
-        <tbody>
-          <ng-container *ngFor="let l of listaCombustibles; let i = index">
-            <tr *ngIf="l.id > 0 || l.id == null">
-              <td align="center">
-                <span>{{l.sucursal.nombre}}</span>
-              </td>
-              <td align="center">
-                <span>{{i+1}}</span>
-              </td>
-              <td align="center">
-                <span>{{l.fecha | date: 'dd/MM/yyyy'}}</span>
-              </td>
-              <td align="center">
-                <span>{{l.usuario.nombre}}</span>
-              </td>
-              <td align="center">
-                <span>{{l.proveedor.razonSocial}}</span>
-              </td>
-              <td align="center">
-                <span>{{l.insumo.nombre}}</span>
-              </td>
-              <td align="center">
-                <span>{{l.cantidad}} lt.</span>
-              </td>
-              <td align="center">
-                <span>$ {{establecerCerosTabla(l.precioUnitario)}}</span>
-              </td>
-              <td align="center">
-                <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
-              </td>
-              <td align="center">
-                <span>{{l.anulado}}</span>
-              </td>
-              <td align="center">
-                <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
-              </td>
-              <td align="center" *ngIf="!soloLectura">
-                <span class="cursor-color" (click)="modCombustible(i)">editar</span>
-              </td>
-              <td align="center">
-                <span class="cursor-color-rojo" (click)="eliminarCombustible(i, l)" *ngIf="!soloLectura">X</span>
-              </td>
-            </tr>
-          </ng-container>
-        </tbody>
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="sucursal" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="orden" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
+          <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+        </ng-container>
+        <ng-container matColumnDef="fecha" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="proveedor" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.proveedor.razonSocial}}</td>
+        </ng-container>
+        <ng-container matColumnDef="insumoProducto" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo Producto</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.insumoProducto.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="cantidad" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.cantidad}} Lt.</td>
+        </ng-container>
+        <ng-container matColumnDef="precioUnitario" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Un.</th>
+            <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.precioUnitario)}}</td>
+        </ng-container>
+        <ng-container matColumnDef="observaciones" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
+          <td mat-cell *matCellDef="let elemento">
+            <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="anulado" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.anulado}}</td>
+        </ng-container>
+        <ng-container matColumnDef="obsAnulado" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. An.</th>
+          <td mat-cell *matCellDef="let elemento">
+            <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="mod" sticky >
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="modCombustible(i)"><span
+              class="cursor-color" *ngIf="!soloLectura">mod</span></td>
+        </ng-container>
+        <ng-container matColumnDef="eliminar" sticky >
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="eliminarCombustible(i, elemento)"><span
+                class="cursor-color-rojo" *ngIf="!soloLectura">X</span>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
       </table>
     </div>
   </div>

@@ -232,8 +232,7 @@ export class ViajeComponent implements OnInit {
       this.formularioViaje.patchValue(viaje);
        // Le paso el IndiceSeleccionado
       this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje, this.indiceSeleccionado);
-
-      // this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje);
+      this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje, this.indiceSeleccionado);
       // this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje);
       // this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje);
       // this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje);
@@ -306,7 +305,7 @@ export class ViajeComponent implements OnInit {
     this.mostrarBoton = boton;
     this.vaciarListas();
     this.establecerValoresPorDefecto();
-    //Ejecuta los siguientes medtodos solo cuando el componente esta incializado
+    //Ejecuta los siguientes metodos solo cuando el componente esta incializado
     if(this.viajeTramoComponente){
       this.viajeTramoComponente.reestablecerFormulario();
       this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);

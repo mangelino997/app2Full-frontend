@@ -150,10 +150,7 @@ export class ViajeTramoComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajeTramo.get('fechaTramo').setValue(res.json());
     })
-    // this.formularioViajeTramo.get('cantidad').setValue(valor);
-    // this.formularioViajeTramo.get('precioUnitario').setValue(this.appComponent.establecerCeros(valor));
     this.formularioViajeTramo.get('importe').setValue(this.appServicio.establecerDecimales(valor, 2));
-    // this.formularioViajeTramo.get('importe').disable();
     this.obtenerSiguienteId();
   }
   //Obtiene el siguiente id
