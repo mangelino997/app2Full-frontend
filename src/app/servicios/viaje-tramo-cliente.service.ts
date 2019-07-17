@@ -50,6 +50,10 @@ export class ViajeTramoClienteService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros por viaje tramo
+  public listarPorViajeTramo(idViajeTramo) {
+    return this.http.get(this.url + '/listarPorViajeTramo/' + idViajeTramo, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
