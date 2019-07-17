@@ -1,0 +1,18 @@
+<div class="container-toolbar">
+  <div class="row">
+    <span class="title-bug">Imagen: {{nombre}}</span>
+    <span class="spacer"></span>
+    <button mat-mini-fab matTooltip="Descargar" (click)="descargar()">
+      <mat-icon>cloud_download</mat-icon>
+    </button>
+    <button style="margin-left: 10px;" mat-mini-fab matTooltip="Cerrar" (click)="cerrar()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+<br><br>
+<div class="container-toolbar">
+  <div class="row">
+    <img [src]="datos" height= "100%" width= "100%"> 
+  </div>
+</div>

@@ -1,0 +1,12 @@
+.container-toolbar {
+    width: 76%;
+    margin: 0 auto;
+    background-color: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    z-index: 1;
+    padding: 5px;
+}
+.title-bug {
+    color: white;
+    font-weight: bold;
+}

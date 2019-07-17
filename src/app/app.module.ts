@@ -343,6 +343,7 @@ import { ViajeService } from './servicios/viaje.service';
 import { ViajeTramo } from './modelos/viajeTramo';
 import { ViajeTramoService } from './servicios/viaje-tramo.service';
 import { ViajeTramoCliente } from './modelos/viajeTramoCliente';
+import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -450,7 +451,8 @@ const appRoutes: Routes = [
   { path: 'sindicatostipochequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
   { path: 'cuentasbancariaschequeras', component: ChequeraComponent, canActivate: [GuardiaService] },
   { path: 'gestiondecobrostalonariosreciboscobradores', component: TalonarioReciboCobradorComponent, canActivate: [GuardiaService] },
-  { path: 'gestiondecobrostalonariosreciboslote', component: TalonarioReciboLoteComponent, canActivate: [GuardiaService] }
+  { path: 'gestiondecobrostalonariosreciboslote', component: TalonarioReciboLoteComponent, canActivate: [GuardiaService] },
+  { path: 'bugimagen', component: BugImagenDialogoComponent, canActivate: [GuardiaService] }
 ]
 
 const stompConfig: StompConfig = {
@@ -609,7 +611,8 @@ const stompConfig: StompConfig = {
     VerTarifaDialogo,
     EliminarModalComponent,
     PdfDialogoComponent,
-    ListasDePreciosDialog
+    ListasDePreciosDialog,
+    BugImagenDialogoComponent
   ],
   imports: [
     BrowserModule,
@@ -755,7 +758,6 @@ const stompConfig: StompConfig = {
     ViajeTipoCargaService,
     ViajeTipoService,
     ViajeTramoClienteService,
-    ,
     ViajeUnidadNegocioService,
     MonedaCotizacionService,
     Viaje,
@@ -899,7 +901,8 @@ const stompConfig: StompConfig = {
     VerTarifaDialogo,
     ListasDePreciosDialog,
     EliminarModalComponent,
-    PdfDialogoComponent
+    PdfDialogoComponent,
+    BugImagenDialogoComponent
   ]
 })
 export class AppModule { }

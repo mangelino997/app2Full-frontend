@@ -91,27 +91,24 @@
           </div>
         </div>
         <div class="row justify-content-center" style="margin-bottom: 5%">
-          <div class="col-md-3">
-            <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
-            <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()"
-              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 ">
-              <span *ngIf="!formulario.get('bugImagen.nombre').value">Adjuntar </span>
-              <span *ngIf="formulario.get('bugImagen.nombre').value">Adjuntado</span>
-              <i class="material-icons" *ngIf="formulario.get('bugImagen.nombre').value">check_circle</i>
-              <i class="material-icons" *ngIf="!formulario.get('bugImagen.nombre').value">warning</i>
-            </button>
-          </div>
-          <div class="col-md-2">
-            <button id="idBoton" mat-raised-button color="warn" (click)="eliminarBug('bugImagen.nombre')"
-              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 ">
-              <i class="material-icons">close</i>
-            </button>
-          </div>
-          <div class="col-md-2">
-            <button mat-raised-button color="primary" (click)="verBugImagen()"
-              [disabled]="!formulario.get('bugImagen.nombre').value">
-              <i class="material-icons">visibility</i>
-            </button><br>
+          <div class="col-md-5">
+            <div class="row justify-content-end">
+              <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
+              <button class="btn-height" mat-raised-button color="primary" (click)="fileInput.click()"
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Imagen">
+                <i class="material-icons" *ngIf="!formulario.get('bugImagen.nombre').value">cloud_upload</i>
+                <i class="material-icons" *ngIf="formulario.get('bugImagen.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
+              </button>
+              <button class="btn-height" mat-raised-button color="warn" (click)="eliminarBug('bugImagen.nombre')"
+                [disabled]="!formulario.get('bugImagen.nombre').value" style="width: 40px;" matTooltip="Quitar">
+                <i class="material-icons">close</i>
+              </button>
+              <button class="btn-height" mat-raised-button color="primary" (click)="verBugImagen()"
+                [disabled]="!formulario.get('bugImagen.nombre').value" style="width: 40px;" matTooltip="Ver">
+                <i class="material-icons">visibility</i>
+              </button>
+            </div>
           </div>
         </div>
         <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate

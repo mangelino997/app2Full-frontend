@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 import { SoporteService } from 'src/app/servicios/soporte.service';
 import { Soporte } from 'src/app/modelos/soporte';
@@ -16,6 +16,7 @@ import { SubmoduloService } from 'src/app/servicios/submodulo.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Usuario } from 'src/app/modelos/usuario';
 import { BugImagenService } from 'src/app/servicios/bug-imagen.service';
+import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 
 @Component({
   selector: 'app-soporte',
@@ -24,85 +25,85 @@ import { BugImagenService } from 'src/app/servicios/bug-imagen.service';
 })
 export class SoporteComponent implements OnInit {
   //Define los datos de la Empresa
-public empresa: FormControl = new FormControl();
-//Define el modulo como un formControl
-public modulo: FormControl = new FormControl();
-//Define el submodulo como un formControl
-public submodulo: FormControl = new FormControl();
-//Define la pestania activa
-public activeLink: any = null;
-//Define el indice seleccionado de pestania
-public indiceSeleccionado: number = null;
-//Define la pestania actual seleccionada
-public pestaniaActual: string = null;
-//Define si mostrar el autocompletado
-public mostrarAutocompletado: boolean = null;
-//Define si el campo es de solo lectura
-public soloLectura: boolean = false;
-//Define si mostrar el boton
-public mostrarBoton: boolean = null;
-//Define la lista de pestanias
-public pestanias: Array<any> = [
-  {nombre:'Agregar' , id: 1},
-  {nombre:'Consultar' , id: 2},
-  {nombre:'Actualizar' , id: 3},
-  {nombre:'Eliminar' , id: 4},
-  {nombre:'Listar' , id: 5},
-]
-//Define la lista de Empresas
-public listaEmpresas: Array<any> = [];
-//Define la lista de modulos
-public listaModulos: Array<any> = [];
-//Define la lista de submodulos
-public listaSubmodulos: Array<any> = [];
-//Define la lista de subopciones
-public listaSubopciones: Array<any> = [];
-//Define un formulario para validaciones de campos
-public formulario: FormGroup;
-//Define la lista completa de registros
-public listaCompleta = new MatTableDataSource([]);
-//Define el autocompletado
-public autocompletado: FormControl = new FormControl();
-//Define los resultados del autocompletado
-public resultados: Array<any> = [];
-//Define los resultados de autocompletado localidad
-public resultadosLocalidades: Array<any> = [];
-//Define la lista de Cobradores
-public listaCobradores: Array<any>= [];
-//Define la lista para Talonarios Recibos Lote
-public listaTalRecLote: Array<any>= [];
-//Define el mostrar del circulo de progreso
-public show = false;
-//Define la subscripcion a loader.service
-private subscription: Subscription;
-//Define la lista de tipos de imagenes
-private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
-//Define las columnas de la tabla
-public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 'subopcion', 'mensaje', 'estado', 'ver', 'mod'];
-//Define la matSort
-@ViewChild(MatSort) sort: MatSort;
-//Constructor
+  public empresa: FormControl = new FormControl();
+  //Define el modulo como un formControl
+  public modulo: FormControl = new FormControl();
+  //Define el submodulo como un formControl
+  public submodulo: FormControl = new FormControl();
+  //Define la pestania activa
+  public activeLink: any = null;
+  //Define el indice seleccionado de pestania
+  public indiceSeleccionado: number = null;
+  //Define la pestania actual seleccionada
+  public pestaniaActual: string = null;
+  //Define si mostrar el autocompletado
+  public mostrarAutocompletado: boolean = null;
+  //Define si el campo es de solo lectura
+  public soloLectura: boolean = false;
+  //Define si mostrar el boton
+  public mostrarBoton: boolean = null;
+  //Define la lista de pestanias
+  public pestanias: Array<any> = [
+    { nombre: 'Agregar', id: 1 },
+    { nombre: 'Consultar', id: 2 },
+    { nombre: 'Actualizar', id: 3 },
+    { nombre: 'Eliminar', id: 4 },
+    { nombre: 'Listar', id: 5 },
+  ]
+  //Define la lista de Empresas
+  public listaEmpresas: Array<any> = [];
+  //Define la lista de modulos
+  public listaModulos: Array<any> = [];
+  //Define la lista de submodulos
+  public listaSubmodulos: Array<any> = [];
+  //Define la lista de subopciones
+  public listaSubopciones: Array<any> = [];
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define el autocompletado
+  public autocompletado: FormControl = new FormControl();
+  //Define los resultados del autocompletado
+  public resultados: Array<any> = [];
+  //Define los resultados de autocompletado localidad
+  public resultadosLocalidades: Array<any> = [];
+  //Define la lista de Cobradores
+  public listaCobradores: Array<any> = [];
+  //Define la lista para Talonarios Recibos Lote
+  public listaTalRecLote: Array<any> = [];
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Define la lista de tipos de imagenes
+  private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 'subopcion', 'mensaje', 'estado', 'ver', 'mod'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Constructor
   constructor(private servicio: SoporteService, private modelo: Soporte, private loaderService: LoaderService, private toastr: ToastrService,
     private appComponent: AppComponent, private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService,
     private empresaService: EmpresaService, private moduloService: ModuloService, private subopcionService: SubopcionService,
-    private submoduloService: SubmoduloService, private bugServicio: BugImagenService) { 
-      //Defiene autocompletado
-      let usuario = this.appService.getUsuario();
-      this.autocompletado.valueChanges.subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.servicio.listarPorAliasYUsuario(data, usuario.id).subscribe(res => {
-            this.resultados = res;
-          })
-        }
-      })
-    }
+    private submoduloService: SubmoduloService, private bugServicio: BugImagenService, public dialog: MatDialog) {
+    //Defiene autocompletado
+    let usuario = this.appService.getUsuario();
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorAliasYUsuario(data, usuario.id).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    })
+  }
   //Al inicializarse el componente
   ngOnInit() {
-     //Establece la subscripcion a loader
+    //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
-    .subscribe((state: LoaderState) => {
-      this.show = state.show;
-    });
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el Formulario
     this.formulario = this.modelo.formulario;
     //Establece la primer pestaña
@@ -115,91 +116,74 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     this.listarEmpresas();
     //Obtiene la lista de Modulo
     this.listarModulo();
-  
+
   }
   //Obtiene la lista de Empresas
-  private listarEmpresas(){
+  private listarEmpresas() {
     this.empresaService.listar().subscribe(
-      res=>{
+      res => {
         this.listaEmpresas = res.json();
       },
-      err=>{
+      err => {
       }
     )
   }
   //Obtiene la lista de Modulo
-  private listarModulo(){
+  private listarModulo() {
     this.moduloService.listar().subscribe(
-      res=>{
+      res => {
         this.listaModulos = res.json();
       },
-      err=>{
+      err => {
       }
     )
   }
   //Maneja el cambio de Módulos
-  public cambioModulo(){
+  public cambioModulo() {
     this.submoduloService.listarPorModulo(this.modulo.value.id).subscribe(
-      res=>{
+      res => {
         this.listaSubmodulos = res.json();
       }
     )
   }
   //Maneja el cambio de SubMódulos
-  public cambioSubmodulo(){
+  public cambioSubmodulo() {
     this.subopcionService.listarPorSubmodulo(this.submodulo.value.id).subscribe(
-      res=>{
+      res => {
         this.listaSubopciones = res.json();
       }
     )
   }
   //Maneja el cambio en el autocompletado
   // public cambioAutocompletado(){
-  
+
   // }
   //Establece los datos del elemento al formulario
-  private establecerElemento(elemento){
+  private establecerElemento(elemento) {
     console.log(elemento);
+    this.formulario.get('id').setValue(elemento.id);
     this.formulario.get('subopcion').setValue(elemento.subopcion);
     this.modulo.setValue(elemento.subopcion.submodulo.modulo);
     this.submodulo.setValue(elemento.subopcion.submodulo);
     this.cambioModulo();
     this.cambioSubmodulo();
     this.formulario.get('empresa').setValue(elemento.empresa);
-    // this.establecerElemento(elemento);
-    if(!elemento.bugImagen) {
+    if(elemento.bugImagen){
+    if (!elemento.bugImagen.nombre) {
       elemento.bugImagen = this.modelo.formulario.get('bugImagen');
-    this.obtenerBugImagen();
+      this.obtenerBugImagen();
     }
+  }
     this.formulario.patchValue(elemento);
   }
-  //Carga la imagen del paciente
-  public readURL(event): void {
-    console.log(event);
-    if (event.target.files && event.target.files[0]&& this.tiposImagenes.includes(event.target.files[0].type)) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = e => {
-        let bugImagen = {
-          id: this.formulario.get('bugImagen.id').value ? this.formulario.get('bugImagen.id').value : null,
-          nombre: file.name,
-          datos: reader.result
-        }
-        this.formulario.get('bugImagen').patchValue(bugImagen);
-      }
-      reader.readAsDataURL(file);
-    } else {
-      this.toastr.error("Debe adjuntar un archivo con extensión .jpeg .png o .jpg");
-    }
-  }
   //Establece el habilitado o deshabilitado de los campos
-  private establecerCampos(estado){
-    if(estado){
+  private establecerCampos(estado) {
+    if (estado) {
       this.modulo.enable();
       this.submodulo.enable();
       this.formulario.get('subopcion').enable();
       this.formulario.get('empresa').enable();
-    }else{
+    } else {
       this.modulo.disable();
       this.submodulo.disable();
       this.formulario.get('subopcion').disable();
@@ -284,6 +268,7 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     let usuario = this.appService.getUsuario();
     this.servicio.listarPorUsuario(usuario.id).subscribe(
       res => {
+        console.log(res);
         this.listaCompleta = new MatTableDataSource(res);
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
@@ -298,9 +283,10 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    let usuario= this.appComponent.getUsuario();
+    let usuario = this.appComponent.getUsuario();
     this.formulario.get('usuario').setValue(usuario);
-    this.formulario.get('soporteEstado').setValue({id: 1});
+    this.formulario.get('soporteEstado').setValue({ id: 1 });
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
@@ -358,7 +344,7 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     console.log();
   }
   //Reestablece el formulario
-  private reestablecerFormulario(estado){
+  private reestablecerFormulario(estado) {
     this.formulario.reset();
     this.autocompletado.reset();
     this.modulo.setValue(null);
@@ -394,6 +380,7 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.establecerElemento(elemento);
   }
@@ -413,32 +400,79 @@ public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 's
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  } 
-    //Obtiene el bugImagen para mostrarlo
-    public obtenerBugImagen() {
-      if(this.formulario.get('bugImagen.id').value) {
-        this.bugServicio.obtenerPorId(this.formulario.get('bugImagen.id').value).subscribe(res => {
-          let resultado = res.json();
-          let bugImagen = {
-            id: resultado.id,
-            nombre: resultado.nombre,
-            datos: atob(resultado.datos)
-          }
-          this.formulario.get('bugImagen').patchValue(bugImagen);
-        })
-      }
+  }
+  //Obtiene el pdf para mostrarlo en la tabla
+  public obtenerBugTabla(elemento) {
+    if (elemento.bugImagen) {
+      this.bugServicio.obtenerPorId(elemento.bugImagen.id).subscribe(res => {
+        let resultado = res.json();
+        let bug = {
+          id: resultado.id,
+          nombre: resultado.nombre,
+          datos: atob(resultado.datos)
+        }
+        window.open(bug.datos, '_blank');
+      })
     }
-     //Elimina una imagen ya cargada
-   public eliminarBug(campo){
-    if(!this.formulario.get('bugImagen').value){
+  }
+  //Muestra el bugImagen en una pestana nueva
+  public verBugTabla(elemento) {
+    if (elemento.bugImagen) {
       this.toastr.success("Sin archivo adjunto");
-    }else{
+    }
+  }
+
+  //Carga la imagen del paciente
+  public readURL(event): void {
+    console.log(event);
+    if (event.target.files && event.target.files[0] && this.tiposImagenes.includes(event.target.files[0].type)) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        let bugImagen = {
+          id: this.formulario.get('bugImagen.id').value ? this.formulario.get('bugImagen.id').value : null,
+          nombre: file.name,
+          datos: reader.result
+        }
+        this.formulario.get('bugImagen').patchValue(bugImagen);
+      }
+      reader.readAsDataURL(file);
+    } else {
+      this.toastr.error("Debe adjuntar un archivo con extensión .jpeg .png o .jpg");
+    }
+  }
+  //Obtiene el bugImagen para mostrarlo
+  public obtenerBugImagen() {
+    if (this.formulario.get('bugImagen.id').value) {
+      this.bugServicio.obtenerPorId(this.formulario.get('bugImagen.id').value).subscribe(res => {
+        let resultado = res.json();
+        let bugImagen = {
+          id: resultado.id,
+          nombre: resultado.nombre,
+          datos: atob(resultado.datos)
+        }
+        this.formulario.get('bugImagen').patchValue(bugImagen);
+      })
+    }
+  }
+  //Elimina una imagen ya cargada
+  public eliminarBug(campo) {
+    if (!this.formulario.get(campo).value) {
+      this.toastr.success("Sin archivo adjunto");
+    } else {
       this.formulario.get(campo).patchValue('');
     }
   }
   //Muestra la imagen en una pestana nueva
   public verBugImagen() {
-    let datos = this.formulario.get('bugImagen.datos').value;
-    window.open(datos, '_blank');
+    const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
+      width: '95%',
+      height: '95%',
+      data: {
+        nombre: this.formulario.get('bugImagen.nombre').value,
+        datos: this.formulario.get('bugImagen.datos').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
 }
