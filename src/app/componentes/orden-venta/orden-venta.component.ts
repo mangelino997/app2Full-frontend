@@ -190,7 +190,6 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioListar.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          console.log(response);
           this.resultadosClientes = response;
         })
       }
@@ -217,7 +216,6 @@ export class OrdenVentaComponent implements OnInit {
   //Cambio tipo tarifa
   public cambioTipoTarifa(): void {
     this.listaTarifas = [];
-    console.log(this.tipoTarifa.value);
     if(this.tipoTarifa.value=='porEscala'){
       this.tipoTarifaServicio.listarPorEscala().subscribe(
         res=>{
@@ -241,14 +239,23 @@ export class OrdenVentaComponent implements OnInit {
   //Establece el tipo (empresa o cliente)
   public establecerTipo(): void {
     let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
-    console.log(tipoOrdenVenta);
     if (!tipoOrdenVenta) {
+      this.formulario.get('cliente').setValue(null);
+      this.formulario.get('cliente').setValidators([]);
+      this.formulario.get('empresa').setValidators(Validators.required);
+      this.formulario.get('cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario
       this.listarOrdenesVentas('empresa');
+        
+    } 
+    if (tipoOrdenVenta) {
+      this.formulario.get('empresa').setValue(null);
+        this.formulario.get('empresa').setValidators([]);
+        this.formulario.get('cliente').setValidators(Validators.required);
+        this.formulario.get('empresa').updateValueAndValidity(); //Actualiza las validaciones en el Formulario
     } 
   }
   //
   public establecerTipoEnListar(){
-    console.log(this.formularioListar.value);
     let tipo = this.formularioListar.get('tipo').value;
     if(tipo == 'empresa'){
       this.formularioListar.get('cliente').setValue(null);
@@ -256,7 +263,6 @@ export class OrdenVentaComponent implements OnInit {
     }
     if(tipo == 'cliente'){
       this.formularioListar.get('empresa').setValue(null);
-
     }
   }
   //Listar ordenes de ventas por Empresa/Cliente
@@ -265,7 +271,6 @@ export class OrdenVentaComponent implements OnInit {
     switch (tipo) {
       case 'empresa':
         this.establecerEmpresa();
-        this.formulario.get('cliente').setValue(null);
         this.ordenVentaServicio.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
@@ -274,7 +279,6 @@ export class OrdenVentaComponent implements OnInit {
         );
         break;
       case 'cliente':
-        this.formulario.get('empresa').setValue({id: null});
         this.ordenVentaServicio.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
@@ -288,7 +292,6 @@ export class OrdenVentaComponent implements OnInit {
   private establecerEmpresa(){
     let empresa = this.appService.getEmpresa();
     this.empresa.setValue(empresa.razonSocial);
-    console.log(this.indiceSeleccionado);
     if(this.indiceSeleccionado == 5)
       this.formularioListar.get('empresa').setValue(empresa);
     else 
@@ -321,7 +324,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    // this.formulario.get('tipoOrdenVenta').setValue(tipoOrdenVenta);
     this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
     this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
     this.formulario.get('esContado').setValue(false);
@@ -401,7 +403,6 @@ export class OrdenVentaComponent implements OnInit {
   //Agrega una Orden de Venta
   public agregar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
     this.ordenVentaServicio.agregar(this.formulario.value).subscribe(
       res => {
         var elemento = res.json();
@@ -411,7 +412,6 @@ export class OrdenVentaComponent implements OnInit {
           }, 20);
           this.toastr.success("Registro agregado con éxito");
           this.habilitarFormTarifa(true);
-          this.formulario.reset();
           this.loaderService.hide();
           this.recargarFormulario(elemento);
         }
@@ -426,7 +426,6 @@ export class OrdenVentaComponent implements OnInit {
   //Actualiza un registro
   public actualizar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var elemento = res.json();
@@ -547,8 +546,6 @@ export class OrdenVentaComponent implements OnInit {
         this.lengthTable = cantidad.length;
         this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
         this.listaTarifasDeOrdVta.sort = this.sort;
-        console.log(res.json(), cantidad.length, this.listaTarifasDeOrdVta);
-
       },
       err=>{
         let error= err.json();
@@ -559,7 +556,6 @@ export class OrdenVentaComponent implements OnInit {
   //Agrega un registro a Orden Venta Tarifa
   public agregarTarifa(){
     this.formularioTarifa.get('ordenVenta').setValue({id: this.formulario.value.id});
-    console.log(this.formularioTarifa.value);
     this.ordenVentaTarifaService.agregar(this.formularioTarifa.value).subscribe(
       res=>{
         this.listarOrdenVentaTarifas();
@@ -573,7 +569,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public verOrdenVentaTarifa(tarifa){
-    console.log(tarifa);
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '1100px',
       data: {
@@ -589,7 +584,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public modificarOrdenVentaTarifa(elemento){
-    console.log(elemento);
     this.formularioTarifa.patchValue(elemento);
     if(elemento.tipoTarifa.porEscala){
       this.tipoTarifa.setValue('porEscala');
@@ -624,7 +618,6 @@ export class OrdenVentaComponent implements OnInit {
     if(this.formularioListar.value.tipo == 'empresa'){
       this.ordenVentaServicio.listarPorEmpresa(this.formularioListar.value.empresa.id).subscribe(
         res=>{
-          console.log(res.json());
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
         },
@@ -637,7 +630,6 @@ export class OrdenVentaComponent implements OnInit {
     if(this.formularioListar.value.tipo == 'cliente'){
       this.ordenVentaServicio.listarPorCliente(this.formularioListar.value.cliente.id).subscribe(
         res=>{
-          console.log(res.json());
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
         },
@@ -695,7 +687,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Carga los datos de la orden de venta seleccionada en los input
   public cargarDatosOrden() {
-    console.log(this.ordenventa.value);
     let elemento = this.ordenventa.value;
     this.formulario.patchValue(elemento);
     this.controlaPorcentajes(elemento);
@@ -763,7 +754,6 @@ export class OrdenVentaComponent implements OnInit {
   //Funcion para comparar y mostrar elemento del campo 'Tipo' 
   public compareT = this.compararT.bind(this);
   private compararT(a, b) {
-    console.log(a,b);
     if (a != null && b != null) {
       return a === b;
     }
@@ -881,7 +871,6 @@ export class VerTarifaDialogo {
     this.formularioEscala = this.ordenVentaEscala.formulario;
     this.formularioTramo = this.ordenVentaTramo.formulario;
     this.reestablecerFormularios();
-    console.log(this.tipoTarifa, this.ordenVenta.value, this.ordenVentaTarifa);
     //Obtiene la lista de Escalas 
     this.listarEscalasTarifas();
     //Obtiene la lista de registros segun el tipoTarifa
@@ -927,7 +916,6 @@ export class VerTarifaDialogo {
     this.loaderService.show();
     if(this.tipoTarifa == 'porEscala'){
       this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
-      console.log(this.formularioEscala.value);
       this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
         res=>{
           var respuesta = res.json();
@@ -952,7 +940,6 @@ export class VerTarifaDialogo {
     if(this.tipoTarifa == 'porTramo'){
       this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
       this.controlarCamposVaciosTramo(this.formularioTramo);
-      console.log(this.formularioTramo.value);
       this.ordenVentaTramoService.agregar(this.formularioTramo.value).subscribe(
         res=>{
           var respuesta = res.json();
@@ -980,7 +967,6 @@ export class VerTarifaDialogo {
     if(this.tipoTarifa == 'porEscala'){
       this.ordenVentaEscalaService.listarPorOrdenVenta(this.ordenVenta.value.id).subscribe(
         res=>{
-          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.loaderService.hide();
@@ -995,7 +981,6 @@ export class VerTarifaDialogo {
     if(this.tipoTarifa == 'porTramo'){
       this.ordenVentaTramoService.listarPorOrdenVenta(this.ordenVenta.value.id).subscribe(
         res=>{
-          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.loaderService.hide();
@@ -1010,7 +995,6 @@ export class VerTarifaDialogo {
   }
   //Elimina un registro segun el tipoTarifa
   public eliminar(elemento){
-    console.log(elemento.id);
     this.loaderService.show();
     if(this.tipoTarifa == 'porEscala'){
       this.ordenVentaEscalaService.eliminar(elemento.id).subscribe(
@@ -1049,9 +1033,6 @@ export class VerTarifaDialogo {
   public modificar(){
     this.loaderService.show();
     if(this.tipoTarifa == 'porEscala'){
-      // this.formularioEscala.patchValue(elemento);
-      // this.controlModEscala(elemento);
-      console.log(this.formularioEscala.value);
       this.ordenVentaEscalaService.actualizar(this.formularioEscala.value).subscribe(
         res=>{
           let respuesta = res.json();
@@ -1073,10 +1054,7 @@ export class VerTarifaDialogo {
       )
     } 
     if(this.tipoTarifa == 'porTramo'){
-      // this.formularioTramo.patchValue(elemento);
       this.controlarCamposVaciosTramo(this.formularioTramo);
-      // this.controlModTramo(elemento);
-      console.log(this.formularioTramo.value);
       this.ordenVentaTramoService.actualizar(this.formularioTramo.value).subscribe(
         res=>{
           var respuesta = res.json();
@@ -1154,7 +1132,6 @@ export class VerTarifaDialogo {
   public controlModTramo(elemento){
     this.formularioTramo.patchValue(elemento);
     this.idMod = elemento.id;
-    console.log(this.idMod);
     elemento.ordenVentaTarifa = this.ordenVentaTarifa;
     if(elemento.importeFijoSeco) {
       this.formularioTramo.get('importeFijoSeco').setValue(parseFloat(elemento.importeFijoSeco).toFixed(2));
@@ -1184,7 +1161,6 @@ export class VerTarifaDialogo {
   public controlEliminarTramo(elemento) {
     this.idMod = null;
     this.loaderService.show();
-      console.log(elemento.id);
       this.ordenVentaTramoService.eliminar(elemento.id).subscribe(
         res=>{
           var respuesta = res.json();
