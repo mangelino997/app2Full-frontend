@@ -385,7 +385,6 @@ export class ViajeTramoComponent implements OnInit {
     this.btnTramo = false;
     this.formularioViajeTramo.patchValue(this.listaTramos[indice]);
     console.log(this.listaTramos[indice]);
-    // this.
   }
   //Elimina un tramo de la tabla por indice
   public eliminarTramo(indice, elemento): void {

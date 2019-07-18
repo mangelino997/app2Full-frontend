@@ -233,6 +233,8 @@ export class ViajeComponent implements OnInit {
        // Le paso el IndiceSeleccionado
       this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje, this.indiceSeleccionado);
       this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje, this.indiceSeleccionado);
+      this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje, this.indiceSeleccionado);
+
       // this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje);
       // this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje);
       // this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje);
@@ -314,7 +316,10 @@ export class ViajeComponent implements OnInit {
       this.viajeCombustibleComponente.reestablecerFormulario();
       this.viajeCombustibleComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
-
+    if(this.viajeEfectivoComponente){
+      this.viajeEfectivoComponente.reestablecerFormulario();
+      this.viajeEfectivoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    }
     // if (this.banderaSoloLectura) {
     //   console.log(this.indiceSeleccionado);
     //   this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);

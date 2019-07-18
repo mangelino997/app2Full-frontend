@@ -255,13 +255,16 @@ export class ViajeCombustibleComponent implements OnInit {
   private calcularTotalCombustibleYUrea(): void {
     let totalCombustible = 0;
     let totalUrea = 0;
-    this.listaCombustibles.forEach(item => {
-      if (item.insumo.id == 1) {
-        totalCombustible += Number(item.cantidad);
-      } else if (item.insumo.id == 3) {
-        totalUrea += Number(item.cantidad);
-      }
-    })
+    console.log(this.listaCombustibles);
+    if(this.listaCombustibles.length>0){
+      this.listaCombustibles.forEach(item => {
+        if (item.insumoProducto.id == 1) {
+          totalCombustible += Number(item.cantidad);
+        } else if (item.insumoProducto.id == 3) {
+          totalUrea += Number(item.cantidad);
+        }
+      })
+    }
     this.formularioViajeCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
     this.formularioViajeCombustible.get('totalUrea').setValue(totalUrea.toFixed(2));
   }
@@ -332,7 +335,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Reestablece formulario y lista al cambiar de pestaña
-  public reestablecerFormularioYLista(): void {
+  public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeCombustible.reset();
   }

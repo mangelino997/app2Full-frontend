@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class ViajePropioEfectivoService {
+export class ViajeEfectivoService {
   //Define la ruta al servicio web
-  private ruta:string = "/viajepropioefectivo";
+  private ruta:string = "/viajeefectivo";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -50,9 +50,9 @@ export class ViajePropioEfectivoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene la lista de efectivos por viaje propio
-  public listarEfectivos(idViajePropio) {
-    return this.http.get(this.url + '/listarEfectivos/' + idViajePropio, this.options);
+  //Obtiene la lista de efectivos por viaje 
+  public listarEfectivos(idViaje) {
+    return this.http.get(this.url + '/listarEfectivos/' + idViaje, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
