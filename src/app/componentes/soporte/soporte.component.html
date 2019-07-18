@@ -2,7 +2,7 @@
   <div class="row">
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
-        <a mat-tab-link disabled>USUARIO</a>
+        <a mat-tab-link disabled>SOPORTE</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
           (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
       </nav>
@@ -92,7 +92,7 @@
         </div>
         <div class="row justify-content-center" style="margin-bottom: 5%">
           <div class="col-md-5">
-            <div class="row justify-content-end">
+            <div class="row justify-content-center">
               <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInput.click()"
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar Imagen">
@@ -101,8 +101,8 @@
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarBug('bugImagen.nombre')"
-                [disabled]="!formulario.get('bugImagen.nombre').value" style="width: 40px;" matTooltip="Quitar">
-                <i class="material-icons">close</i>
+                [disabled]="!formulario.get('bugImagen.nombre').value || indiceSeleccionado == 2 || indiceSeleccionado == 4" 
+                style="width: 40px;" matTooltip="Quitar"><i class="material-icons">close</i>
               </button>
               <button class="btn-height" mat-raised-button color="primary" (click)="verBugImagen()"
                 [disabled]="!formulario.get('bugImagen.nombre').value" style="width: 40px;" matTooltip="Ver">

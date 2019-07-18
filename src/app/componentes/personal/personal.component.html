@@ -199,6 +199,28 @@
                           </div>
                         </div>
                         <div class="col-md-4">
+                            <div class="row justify-content-start">
+                              <input style="display: none;" type="file" (change)="readURL($event, 'pdfDni')" #dniInput />
+                              <button class="btn-height" mat-raised-button color="primary" (click)="dniInput.click()"
+                                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar DNI">
+                                <i class="material-icons" *ngIf="!formulario.get('pdfDni.nombre').value">cloud_upload</i>
+                                <i class="material-icons" *ngIf="formulario.get('pdfDni.nombre').value"
+                                  style="color: lightgreen">cloud_done</i>
+                              </button>
+                              <button class="btn-height" mat-raised-button color="warn"
+                                (click)="eliminarPdf('pdfDni.nombre')" [disabled]="!formulario.get('pdfDni.nombre').value"
+                                style="width: 40px;" matTooltip="Quitar">
+                                <i class="material-icons">close</i>
+                              </button>
+                              <button class="btn-height" mat-raised-button color="primary" (click)="verDni()"
+                                [disabled]="!formulario.get('pdfDni.nombre').value" style="width: 40px;" matTooltip="Ver">
+                                <i class="material-icons">visibility</i>
+                              </button>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-md-4">
                           <div class="form-group has-float-label">
                             <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono
                               Fijo</label>
@@ -206,8 +228,6 @@
                               class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
                           </div>
                         </div>
-                      </div>
-                      <div class="row">
                         <div class="col-md-4">
                           <div class="form-group has-float-label">
                             <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil
@@ -226,21 +246,25 @@
                         </div>
                       </div>
                       <div class="row">
-                        <div class="col-md-8">
-                          <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
-                          <button id="idBoton" mat-raised-button color="primary" (click)="fileInput.click()"
-                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                            <span *ngIf="!formulario.get('foto.nombre').value">Subir Foto</span>
-                            <span *ngIf="formulario.get('foto.nombre').value">Foto Adjunta</span>
-                            <i class="material-icons" *ngIf="formulario.get('foto.nombre').value">check_circle</i>
-                            <i class="material-icons" *ngIf="!formulario.get('foto.nombre').value">warning</i>
-                          </button>
-                        </div>
-                        <div class="col-md-2">
-                          <button id="idBoton" mat-raised-button color="warn" (click)="eliminarFoto()"
-                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                            <i class="material-icons">close</i>
-                          </button>
+                        <div class="col-md-12">
+                          <div class="row justify-content-start">
+                            <input style="display: none;" type="file" (change)="readURL($event, 'foto')" #fotoInput />
+                            <button class="btn-height" mat-raised-button color="primary" (click)="fotoInput.click()"
+                              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Subir FOTO">
+                              <i class="material-icons" *ngIf="!formulario.get('foto.nombre').value">cloud_upload</i>
+                              <i class="material-icons" *ngIf="formulario.get('foto.nombre').value"
+                                style="color: lightgreen">cloud_done</i>
+                            </button>
+                            <button class="btn-height" mat-raised-button color="warn"
+                              (click)="eliminarPdf('foto.nombre')" [disabled]="!formulario.get('foto.nombre').value"
+                              style="width: 40px;" matTooltip="Quitar">
+                              <i class="material-icons">close</i>
+                            </button>
+                            <button class="btn-height" mat-raised-button color="primary" (click)="verFoto('foto')"
+                              [disabled]="!formulario.get('foto.nombre').value" style="width: 40px;" matTooltip="Ver">
+                              <i class="material-icons">visibility</i>
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -533,6 +557,36 @@
                       </div>
                     </div>
                   </div>
+                  <div class="row">
+                      <label for="labelAltaTemprana"  class="tamanio-label">Alta Temprana</label>
+                      </div>
+                      <div class="row">
+                    <div class="col-md-5">
+                        <div class="row justify-content-start">
+                          <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfAltaTemprana')" #AltaTempranaInput />
+                          <button class="btn-height" mat-raised-button color="primary" (click)="AltaTempranaInput.click()"
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 "
+                            matTooltip="Adjuntar Alta Temprana"><i class="material-icons"
+                              *ngIf="!formulario.get('pdfAltaTemprana.nombre').value">
+                              cloud_upload</i><i class="material-icons"
+                              *ngIf="formulario.get('pdfAltaTemprana.nombre').value"
+                              style="color: lightgreen">cloud_done</i>
+                          </button>
+                          <button class="btn-height" mat-raised-button color="warn"
+                            (click)="eliminarPdf('pdfAltaTemprana')"
+                            [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 40px;"
+                            matTooltip="Quitar">
+                            <i class="material-icons">close</i>
+                          </button>
+                          <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfAltaTemprana')"
+                            [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 40px;"
+                            matTooltip="Ver">
+                            <i class="material-icons">visibility</i>
+                          </button>
+                        </div>
+                      </div>
+                      <br>
+                    </div>
                 </div>
                 <div class="contenedor-top" *ngIf="opcionSeleccionada == 18">
                   <div class="row">
@@ -624,28 +678,29 @@
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura" required>
                       </div>
                     </div>
-                    <div class="col-md-3">
-                      <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')"
-                        #fileInputLicConducir />
-                      <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLicConducir.click()"
-                        [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir">
-                        <span *ngIf="!formulario.get('pdfLicConducir.nombre').value">Adjuntar</span>
-                        <span *ngIf="formulario.get('pdfLicConducir.nombre').value">Adjuntado</span>
-                        <i class="material-icons" *ngIf="formulario.get('pdfLicConducir.nombre').value">check_circle</i>
-                        <i class="material-icons" *ngIf="!formulario.get('pdfLicConducir.nombre').value">warning</i>
-                      </button>
-                    </div>
-                    <div class="col-md-1">
-                      <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLicConducir.nombre')"
-                        [disabled]="!formulario.get('pdfLicConducir.nombre').value">
-                        <i class="material-icons">close</i>
-                      </button>
-                    </div>
-                    <div class="col-md-1">
-                      <button mat-raised-button color="primary" (click)="verPDF('pdfLicConducir.datos')"
-                        [disabled]="!formulario.get('pdfLicConducir.nombre').value">
-                        <i class="material-icons">visibility</i>
-                      </button>
+                    <div class="col-md-5">
+                      <div class="row justify-content-start">
+                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')" #licConducirInput />
+                        <button class="btn-height" mat-raised-button color="primary" (click)="licConducirInput.click()"
+                          [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir"
+                          matTooltip="Adjuntar Licencia de Conducir"><i class="material-icons"
+                            *ngIf="!formulario.get('pdfLicConducir.nombre').value">
+                            cloud_upload</i><i class="material-icons"
+                            *ngIf="formulario.get('pdfLicConducir.nombre').value"
+                            style="color: lightgreen">cloud_done</i>
+                        </button>
+                        <button class="btn-height" mat-raised-button color="warn"
+                          (click)="eliminarPdf('pdfLicConducir')"
+                          [disabled]="!formulario.get('pdfLicConducir.nombre').value" style="width: 40px;"
+                          matTooltip="Quitar">
+                          <i class="material-icons">close</i>
+                        </button>
+                        <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLicConducir')"
+                          [disabled]="!formulario.get('pdfLicConducir.nombre').value" style="width: 40px;"
+                          matTooltip="Ver">
+                          <i class="material-icons">visibility</i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div class="row">
@@ -656,28 +711,26 @@
                           class="form-control form-control-sm" [readonly]="soloLectura" required>
                       </div>
                     </div>
-                    <div class="col-md-3">
-                      <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLinti')"
-                        #fileInputLINTI />
-                      <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLINTI.click()"
-                        [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti">
-                        <span *ngIf="!formulario.get('pdfLinti.nombre').value">Adjuntar</span>
-                        <span *ngIf="formulario.get('pdfLinti.nombre').value">Adjuntado</span>
-                        <i class="material-icons" *ngIf="formulario.get('pdfLinti.nombre').value">check_circle</i>
-                        <i class="material-icons" *ngIf="!formulario.get('pdfLinti.nombre').value">warning</i>
-                      </button>
-                    </div>
-                    <div class="col-md-1">
-                      <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti.nombre')"
-                        [disabled]="!formulario.get('pdfLinti.nombre').value">
-                        <i class="material-icons">close</i>
-                      </button>
-                    </div>
-                    <div class="col-md-1">
-                      <button mat-raised-button color="primary" (click)="verPDF('pdfLinti.datos')"
-                        [disabled]="!formulario.get('pdfLinti.nombre').value">
-                        <i class="material-icons">visibility</i>
-                      </button>
+                    <div class="col-md-5">
+                      <div class="row justify-content-start">
+                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLinti')" #lintiInput />
+                        <button class="btn-height" mat-raised-button color="primary" (click)="lintiInput.click()"
+                          [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti"
+                          matTooltip="Adjuntar LINTI">
+                          <i class="material-icons" *ngIf="!formulario.get('pdfLinti.nombre').value">cloud_upload</i>
+                          <i class="material-icons" *ngIf="formulario.get('pdfLinti.nombre').value"
+                            style="color: lightgreen">cloud_done</i>
+                        </button>
+                        <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti')"
+                          [disabled]="!formulario.get('pdfLinti.nombre').value" style="width: 40px;"
+                          matTooltip="Quitar">
+                          <i class="material-icons">close</i>
+                        </button>
+                        <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLinti')"
+                          [disabled]="!formulario.get('pdfLinti.nombre').value" style="width: 40px;" matTooltip="Ver">
+                          <i class="material-icons">visibility</i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div class="row">
@@ -688,28 +741,28 @@
                           autocomplete="off" class="form-control form-control-sm" [readonly]="soloLectura">
                       </div>
                     </div>
-                    <div class="col-md-3">
-                      <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')"
-                        #fileInputLibSanidad />
-                      <button id="idBoton" mat-raised-button color="primary" (click)="fileInputLibSanidad.click()"
-                        [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad">
-                        <span *ngIf="!formulario.get('pdfLibSanidad.nombre').value">Adjuntar</span>
-                        <span *ngIf="formulario.get('pdfLibSanidad.nombre').value">Adjuntado</span>
-                        <i class="material-icons" *ngIf="formulario.get('pdfLibSanidad.nombre').value">check_circle</i>
-                        <i class="material-icons" *ngIf="!formulario.get('pdfLibSanidad.nombre').value">warning</i>
-                      </button>
-                    </div>
-                    <div class="col-md-1">
-                      <button id="idBoton" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad.nombre')"
-                        [disabled]="!formulario.get('pdfLibSanidad.nombre').value">
-                        <i class="material-icons">close</i>
-                      </button>
-                    </div>
-                    <div class="col-md-1">
-                      <button mat-raised-button color="primary" (click)="verPDF('pdfLibSanidad.datos')"
-                        [disabled]="!formulario.get('pdfLibSanidad.nombre').value">
-                        <i class="material-icons">visibility</i>
-                      </button>
+                    <div class="col-md-5">
+                      <div class="row justify-content-start">
+                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')" #libSanidadInput />
+                        <button class="btn-height" mat-raised-button color="primary" (click)="libSanidadInput.click()"
+                          [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad"
+                          matTooltip="Adjuntar Lib. de Sanidad"><i class="material-icons"
+                            *ngIf="!formulario.get('pdfLibSanidad.nombre').value">
+                            cloud_upload</i><i class="material-icons"
+                            *ngIf="formulario.get('pdfLibSanidad.nombre').value"
+                            style="color: lightgreen">cloud_done</i>
+                        </button>
+                        <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad')"
+                          [disabled]="!formulario.get('pdfLibSanidad.nombre').value" style="width: 40px;"
+                          matTooltip="Quitar">
+                          <i class="material-icons">close</i>
+                        </button>
+                        <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLibSanidad')"
+                          [disabled]="!formulario.get('pdfLibSanidad.nombre').value" style="width: 40px;"
+                          matTooltip="Ver">
+                          <i class="material-icons">visibility</i>
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

@@ -377,12 +377,14 @@ export class SoporteComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.establecerElemento(elemento);
+    this.obtenerBugImagen();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.establecerElemento(elemento);
+    this.obtenerBugImagen();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
