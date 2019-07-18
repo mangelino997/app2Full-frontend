@@ -68,7 +68,7 @@ export class ViajeRemitoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['sucursal', 'fecha', 'puntoVenta', 'numero', 'bultos', 'observaciones', 'ver', 'mod'];
+  public columnas: string[] = ['sucursal', 'fecha', 'puntoVenta', 'numero', 'remitente', 'destinatario', 'bultos', 'kgEfectivo', 'valorDeclarado', 'observaciones', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -366,6 +366,13 @@ export class ViajeRemitoComponent implements OnInit {
   //Obtiene el listado de registros
   public listar() {
     this.loaderService.show();
+    let sucursalIngreso = this.formularioListar.value.idSucursalIngreso;
+    let sucursalDestino = this.formularioListar.value.idSucursalDestino; 
+    console.log(sucursalIngreso,sucursalDestino );
+    if(sucursalIngreso == 0)
+      this.formularioListar.get('idSucursalIngreso').setValue(null);
+    if(sucursalDestino == 0)
+      this.formularioListar.get('idSucursalDestino').setValue(null);
     if(this.autocompletadoRemitente.value)
       this.formularioListar.get('idClienteRemitente').setValue(this.autocompletadoRemitente.value.id);
     if(this.autocompletadoDestinatario.value)
@@ -373,6 +380,7 @@ export class ViajeRemitoComponent implements OnInit {
     console.log(this.formularioListar.value);
     this.servicio.listarPorFiltros(this.formularioListar.value).subscribe(
       res => {
+        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
@@ -480,6 +488,11 @@ export class ViajeRemitoComponent implements OnInit {
       this.formulario.get('letra').setValue(this.letras[0]);
     }
   }
+  //Maneja el cambio en Sucursal Ingreso
+  // public cambioSucursalIngreso(){
+    
+
+  // }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
