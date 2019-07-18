@@ -134,7 +134,6 @@ import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 import { LoaderService } from './servicios/loader.service';
 import { TipoFamiliarService } from './servicios/tipo-familiar.service';
 import { PersonalFamiliarService } from './servicios/personal-familiar.service';
-import { ViajePropioEfectivoService } from './servicios/viaje-propio-efectivo';
 import { ViajePropioInsumoService } from './servicios/viaje-propio-insumo';
 import { ViajePropioGastoService } from './servicios/viaje-propio-gasto';
 import { ViajePropioPeajeService } from './servicios/viaje-propio-peaje';
@@ -144,7 +143,6 @@ import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
 
 //Modelos
 import { Viaje } from './modelos/viaje';
-import { ViajePropioEfectivo } from './modelos/viajePropioEfectivo';
 import { ViajePropioInsumo } from './modelos/viajePropioInsumo';
 import { ViajeRemito } from './modelos/viajeRemito';
 import { ViajePropioGasto } from './modelos/viajePropioGasto';
@@ -344,6 +342,8 @@ import { ViajeTramoCliente } from './modelos/viajeTramoCliente';
 import { ViajeCombustibleService } from './servicios/viaje-combustible';
 import { ViajeCombustible } from './modelos/viajeCombustible';
 import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
+import { ViajeEfectivo } from './modelos/viajeEfectivo';
+import { ViajeEfectivoService } from './servicios/viaje-efectivo';
 
 //Rutas
 const appRoutes: Routes = [
@@ -763,7 +763,7 @@ const stompConfig: StompConfig = {
     ViajeTramo,
     ViajeTramoCliente,
     ViajeCombustible,
-    ViajePropioEfectivo,
+    ViajeEfectivo,
     ViajePropioInsumo,
     ViajeRemito,
     NotaCredito,
@@ -834,7 +834,7 @@ const stompConfig: StompConfig = {
     AfipCondicionIva,
     MesService,
     ViajeCombustibleService,
-    ViajePropioEfectivoService,
+    ViajeEfectivoService,
     ViajePropioInsumoService,
     ViajePropioGastoService,
     ViajePropioPeajeService,

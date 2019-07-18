@@ -1,4 +1,4 @@
-<form [formGroup]="formularioViajePropioEfectivo">
+<form [formGroup]="formularioViajeEfectivo">
   <div class="row">
     <div class="col-md-3">
       <div class="form-group has-float-label">
@@ -23,7 +23,7 @@
         <label for="idImporteAE" class="tamanio-label">Importe *</label>
         <input id="idImporteAE" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe" autocomplete="off"
             class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
-            (blur)="establecerDecimales(formularioViajePropioEfectivo.get('importe'), 2)">
+            (blur)="establecerDecimales(formularioViajeEfectivo.get('importe'), 2)">
       </div>
     </div>
   </div>
@@ -37,14 +37,14 @@
     </div>
     <div class="col-md-2">
       <button mat-raised-button color="primary" (click)="agregarEfectivo()"
-        [disabled]="!formularioViajePropioEfectivo.valid" *ngIf="btnEfectivo">Agregar Adelanto</button>
+        [disabled]="!formularioViajeEfectivo.valid" *ngIf="btnEfectivo">Agregar Adelanto</button>
       <button mat-raised-button color="primary" (click)="modificarEfectivo()"
-        [disabled]="!formularioViajePropioEfectivo.valid" *ngIf="!btnEfectivo">Actualizar Adelanto</button>
+        [disabled]="!formularioViajeEfectivo.valid" *ngIf="!btnEfectivo">Actualizar Adelanto</button>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
-      <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
+      <!-- <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
         <thead>
           <tr>
             <th class="text-center" style="width:10%" scope="col">Sucursal</th>
@@ -99,6 +99,57 @@
             </tr>
           </ng-container>
         </tbody>
+      </table> -->
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="sucursal" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+          <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.sucursal.nombre}}</td>
+        </ng-container>
+        <ng-container matColumnDef="adelanto" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Adelanto</th>
+          <td mat-cell *matCellDef="let elemento; let i=index">{{i+1}}</td>
+        </ng-container>
+        <ng-container matColumnDef="fecha" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.fechaCaja | date: 'dd/MM/yyyy'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="empresa" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
+        </ng-container>
+        <ng-container matColumnDef="importe" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+          <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importe)}}</td>
+        </ng-container>
+        <ng-container matColumnDef="observaciones" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
+            <td mat-cell *matCellDef="let elemento">
+              <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="anulado" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.anulado? 'Sí' : 'No'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="obsAnulado" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
+          <td mat-cell *matCellDef="let elemento">
+            <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="mod" sticky >
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="modEfectivo(i)"><span
+              class="cursor-color" *ngIf="!soloLectura">mod</span></td>
+        </ng-container>
+        <ng-container matColumnDef="eliminar" sticky >
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="eliminarEfectivo(i, elemento)"><span
+                class="cursor-color-rojo" *ngIf="!soloLectura">X</span>
+            </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
       </table>
     </div>
   </div>

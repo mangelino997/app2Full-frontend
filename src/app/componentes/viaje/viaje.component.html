@@ -219,14 +219,14 @@
                 </form>
             </mat-step>
         </mat-horizontal-stepper>
-        <div class="row" *ngIf="mostrarBoton && !show">
+        <!-- <div class="row" *ngIf="mostrarBoton && !show">
             <div class="centrar">
                 <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="accion()"
                     [disabled]="obtenerEstadoFormulario(formularioViaje.valid, estadoFormulario)">
                     {{pestaniaActual}} Viaje
                 </button>
             </div>
-        </div>
+        </div> -->
         <div class="row" *ngIf="show">
             <div class="col text-center">
                 <app-progreso></app-progreso>
