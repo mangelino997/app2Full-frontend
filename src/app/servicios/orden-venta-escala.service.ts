@@ -74,6 +74,10 @@ export class OrdenVentaEscalaService {
   public listarPorOrdenVenta(id) {
     return this.http.get(this.url + '/listarPorOrdenVenta/' + id, this.options);
   }
+  //Obtiene una lista por id de Orden Venta Tarifa
+  public listarPorOrdenVentaTarifa(id) {
+    return this.http.get(this.url + '/listarPorOrdenVentaTarifa/' + id, this.options);
+  }
   //Obtiene una lista de las distintas fechas por id de Orden Venta
   public listarFechasPorOrdenVenta(id) {
     return this.http.get(this.url + '/listarFechasPorOrdenVenta/' + id, this.options);

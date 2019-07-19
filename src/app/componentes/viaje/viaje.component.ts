@@ -234,9 +234,7 @@ export class ViajeComponent implements OnInit {
       this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje, this.indiceSeleccionado);
       this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje, this.indiceSeleccionado);
       this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje, this.indiceSeleccionado);
-
-      // this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje);
-      // this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje);
+      this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje, this.indiceSeleccionado);
       // this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje);
       // this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje);
     });
@@ -319,6 +317,10 @@ export class ViajeComponent implements OnInit {
     if(this.viajeEfectivoComponente){
       this.viajeEfectivoComponente.reestablecerFormulario();
       this.viajeEfectivoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    }
+    if(this.viajeInsumoComponente){
+      this.viajeInsumoComponente.reestablecerFormulario();
+      this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
     // if (this.banderaSoloLectura) {
     //   console.log(this.indiceSeleccionado);
@@ -454,23 +456,23 @@ export class ViajeComponent implements OnInit {
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {
-    this.formularioViaje.get('viajeCombustibles').setValue($event);
+    // this.formularioViaje.get('viajeCombustibles').setValue($event);
   }
   //Recibe la lista de adelantos de efectivo de Viaje Efectivo
   public recibirEfectivos($event) {
-    this.formularioViaje.get('viajeEfectivos').setValue($event);
+    // this.formularioViaje.get('viajeEfectivos').setValue($event);
   }
   //Recibe la lista de ordenes de insumo de Viaje Insumo
   public recibirInsumos($event) {
-    this.formularioViaje.get('viajeInsumos').setValue($event);
+    // this.formularioViaje.get('viajeInsumos').setValue($event);
   }
   //Recibe la lista de gastos de Viaje Gasto
   public recibirGastos($event) {
-    this.formularioViaje.get('viajeGastos').setValue($event);
+    // this.formularioViaje.get('viajeGastos').setValue($event);
   }
   //Recibe la lista de peajes de Viaje Peaje
   public recibirPeajes($event) {
-    this.formularioViaje.get('viajePeajes').setValue($event);
+    // this.formularioViaje.get('viajePeajes').setValue($event);
   }
   //Recibe la lista de remitos de Viaje Remito
   public recibirRemitos($event) {

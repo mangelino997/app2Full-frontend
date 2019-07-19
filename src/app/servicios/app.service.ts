@@ -9,10 +9,10 @@ import createNumberMask from 'text-mask-addons/dist/createNumberMask';
 export class AppService {
   //Deifne la URL origen
   // private URL_ORIGEN = 'https://jit-gestion.appspot.com';
-  private URL_ORIGEN = 'http://192.168.0.123:4200'; //192.168.0.62
+  private URL_ORIGEN = 'http://localhost:4200'; //192.168.0.62
   //Define la IP
   // private IP = 'https://gestionws.appspot.com';
-  private IP = 'http://192.168.0.123:8080'; //192.168.0.62:8080
+  private IP = 'http://localhost:8080'; //192.168.0.62:8080
   //Define la url base
   private URL_BASE = this.IP + '/jitws/auth';
   //Define la url de subcripcion a socket
@@ -295,10 +295,38 @@ export class AppService {
     };
     return mascara;
   }
+  //Obtiene la mascara de porcentaje (por mil)
+  public mascararPorcentajePorMil() {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '‰ ',
+        suffix: '',
+        thousandsSeparatorSymbol: ',',
+        integerLimit: 3,
+        requireDecimal: true,
+        allowDecimal: true,
+        decimalLimit: 2,
+        decimalSymbol: '.',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
   //Desenmascara el porcentaje
   public desenmascararPorcentaje(valor, cantidad) {
     if(valor) {
       valor = valor.replace('% ', '');
+      valor = valor.replace(/\,/g, '');
+      valor = parseFloat(valor).toFixed(cantidad);
+    }
+    return valor;
+  }
+  //Desenmascara el porcentaje (por mil) ‰
+  public desenmascararPorcentajePorMil(valor, cantidad) {
+    if(valor) {
+      valor = valor.replace('‰ ', '');
       valor = valor.replace(/\,/g, '');
       valor = parseFloat(valor).toFixed(cantidad);
     }

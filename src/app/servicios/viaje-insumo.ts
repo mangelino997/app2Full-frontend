@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class ViajePropioInsumoService {
+export class ViajeInsumoService {
   //Define la ruta al servicio web
-  private ruta:string = "/viajepropioinsumo";
+  private ruta:string = "/viajeinsumo";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket

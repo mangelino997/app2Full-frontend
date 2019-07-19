@@ -324,7 +324,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje('8', 2));
+    this.formulario.get('seguro').setValue(this.appService.establecerDecimales('7', 2));
     this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
     this.formulario.get('esContado').setValue(false);
   }
@@ -569,6 +569,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public verOrdenVentaTarifa(tarifa){
+    console.log(tarifa);
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '1100px',
       data: {
@@ -577,6 +578,10 @@ export class OrdenVentaComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
+      if(this.formulario.get('empresa').value)
+        this.listarOrdenesVentas('empresa');
+      if(this.formulario.get('cliente').value)
+        this.listarOrdenesVentas('cliente');
       setTimeout(function () {
         document.getElementById('idTipoTarifa').focus();
       }, 20);
@@ -705,7 +710,7 @@ export class OrdenVentaComponent implements OnInit {
   //Controla que los porcentajes queden bien establecidos
   private controlaPorcentajes(elemento){
     if(elemento.seguro)
-      this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentaje(elemento.seguro.toString(), 2));
+      this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentajePorMil(elemento.seguro.toString(), 2));
     if(elemento.comisionCR)
       this.formulario.get('comisionCR').setValue(this.appService.desenmascararPorcentaje(elemento.comisionCR.toString(), 2));
   }
@@ -716,6 +721,10 @@ export class OrdenVentaComponent implements OnInit {
   //Obtiene la mascara de porcentaje
   public mascararPorcentaje() {
     return this.appService.mascararPorcentaje();
+  }
+  //Obtiene la mascara de porcentaje
+  public mascararPorcentajePorMil() {
+    return this.appService.mascararPorcentajePorMil();
   }
   //Obtiene la mascara de km
   public obtenerMascaraKm(intLimite) {
@@ -737,6 +746,10 @@ export class OrdenVentaComponent implements OnInit {
   //Establece los decimales de porcentaje
   public establecerPorcentaje(formulario, cantidad): void {
     formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
+  }
+  //Establece los decimales de porcentaje (por mil)
+  public establecerPorcentajePorMil(formulario, cantidad): void {
+    formulario.setValue(this.appService.desenmascararPorcentajePorMil(formulario.value, cantidad));
   }
   //Desenmascara km
   public establecerKm(formulario, cantidad): void {
@@ -846,8 +859,8 @@ export class VerTarifaDialogo {
   //Define el id del Tramo o Escala que se quiere modificar
   public idMod: number = null;
   //Define las columnas de las tablas
-  public columnasEscala: string[] = ['id', 'escala', 'precioFijo', 'precioUnitario', 'porcentaje', 'minimo', 'mod', 'eliminar'];
-  public columnasTramo: string[] = ['id', 'tramoOrigen', 'tramoDestino', 'km', 'kmPactado', 'precioFijoSeco', 'precioUnitSeco',
+  public columnasEscala: string[] = ['escala', 'precioFijo', 'precioUnitario', 'porcentaje', 'minimo', 'mod', 'eliminar'];
+  public columnasTramo: string[] = ['tramoOrigen', 'tramoDestino', 'km', 'kmPactado', 'precioFijoSeco', 'precioUnitSeco',
                                     'precioFijoRefrig', 'precioUnitRefrig', 'mod', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
@@ -916,6 +929,7 @@ export class VerTarifaDialogo {
     this.loaderService.show();
     if(this.tipoTarifa == 'porEscala'){
       this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
+      console.log(this.formularioEscala.value);
       this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
         res=>{
           var respuesta = res.json();
@@ -926,8 +940,8 @@ export class VerTarifaDialogo {
           this.toastr.success(respuesta.mensaje);
           this.formularioEscala.reset();
           this.reestablecerFormularios();
-          this.loaderService.hide();
           this.listar();
+          this.loaderService.hide();
           }        
         },
         err=>{
@@ -965,8 +979,10 @@ export class VerTarifaDialogo {
   public listar(){
     this.loaderService.show();
     if(this.tipoTarifa == 'porEscala'){
-      this.ordenVentaEscalaService.listarPorOrdenVenta(this.ordenVenta.value.id).subscribe(
+      console.log(this.ordenVentaTarifa.id);
+      this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
         res=>{
+          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.loaderService.hide();
@@ -979,7 +995,7 @@ export class VerTarifaDialogo {
       )
     }
     if(this.tipoTarifa == 'porTramo'){
-      this.ordenVentaTramoService.listarPorOrdenVenta(this.ordenVenta.value.id).subscribe(
+      this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
         res=>{
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
@@ -1326,9 +1342,9 @@ export class VerTarifaDialogo {
   //Establece los decimales de porcentaje
   public establecerPorcentaje(valor, cantidad) {
     if (valor) {
-      return this.appService.desenmascararPorcentaje(valor, cantidad);
+      return this.appService.desenmascararPorcentaje(valor.toString(), cantidad);
     }else{
-      return '00';
+      return '0.00';
     }
   }
   //Desenmascara km
