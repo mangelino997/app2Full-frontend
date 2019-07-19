@@ -208,7 +208,7 @@
                                   style="color: lightgreen">cloud_done</i>
                               </button>
                               <button class="btn-height" mat-raised-button color="warn"
-                                (click)="eliminarPdf('pdfDni.nombre')" [disabled]="!formulario.get('pdfDni.nombre').value"
+                                (click)="eliminarPdf('pdfDni')" [disabled]="!formulario.get('pdfDni.nombre').value"
                                 style="width: 40px;" matTooltip="Quitar">
                                 <i class="material-icons">close</i>
                               </button>
@@ -240,7 +240,7 @@
                     </div>
                     <div class="col-md-3 text-center">
                       <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-12" *ngIf="formulario.get('foto').value">
                           <img [src]="formulario.get('foto.datos').value ? formulario.get('foto.datos').value : ''"
                             width="100%" height="90%" />
                         </div>
@@ -256,7 +256,7 @@
                                 style="color: lightgreen">cloud_done</i>
                             </button>
                             <button class="btn-height" mat-raised-button color="warn"
-                              (click)="eliminarPdf('foto.nombre')" [disabled]="!formulario.get('foto.nombre').value"
+                              (click)="eliminarPdf('foto')" [disabled]="!formulario.get('foto.nombre').value"
                               style="width: 40px;" matTooltip="Quitar">
                               <i class="material-icons">close</i>
                             </button>

@@ -48,6 +48,10 @@ export class PersonalService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene un registro por id
+  public obtenerPorId(id) {
+    return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
+  }
   //Obtiene la lista de choferes de corta distancia por alias
   public listarChoferesCortaDistanciaPorAlias(nombre) {
     return this.http.get(this.url + '/listarChoferesCortaDistanciaPorAlias/' + nombre, this.options);
@@ -109,7 +113,7 @@ export class PersonalService {
     let linti = obj.pdfLinti;
     let dni = obj.pdfDni;
     let altaTemprana = obj.pdfAltaTemprana;
-    let noBlobPdf = new Blob([null], {type : 'image/jpeg'});
+    let noBlobPdf = new Blob([null], {type : 'application/pdf'});
     const formData = new FormData(); 
     if(foto.nombre!=null){
       let blob = new Blob([foto.datos], {type : 'image/jpeg'});
@@ -119,31 +123,31 @@ export class PersonalService {
       formData.append('foto', blob, '');
     }
     if(licConducir.nombre!=null){
-      let blobPdf = new Blob([licConducir.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([licConducir.datos], {type :'application/pdf'});
       formData.append('licConducir', blobPdf, licConducir.nombre);
     }else{
       formData.append('licConducir', noBlobPdf, '');
     }
     if(libSanidad.nombre!=null){
-      let blobPdf = new Blob([libSanidad.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([libSanidad.datos], {type : 'application/pdf'});
       formData.append('libSanidad', blobPdf, libSanidad.nombre);
     }else{
       formData.append('libSanidad', noBlobPdf, '');
     }
     if(linti.nombre!=null){
-      let blobPdf = new Blob([linti.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([linti.datos], {type : 'application/pdf'});
       formData.append('linti', blobPdf, linti.nombre);
     }else{
       formData.append('linti', noBlobPdf, '');
     }
     if(dni.nombre!=null){
-      let blobPdf = new Blob([dni.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([dni.datos], {type : dni.tipo});
       formData.append('dni', blobPdf, dni.nombre);
     }else{
       formData.append('dni', noBlobPdf, '');
     }
     if(altaTemprana.nombre!=null){
-      let blobPdf = new Blob([altaTemprana.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([altaTemprana.datos], {type : 'application/pdf'});
       formData.append('altaTemprana', blobPdf, altaTemprana.nombre);
     }else{
       formData.append('altaTemprana', noBlobPdf, '');
@@ -152,8 +156,8 @@ export class PersonalService {
     obj.pdfLicConducir = null;
     obj.pdfLibSanidad = null;
     obj.pdfLinti = null;
-    obj.dni = null;
-    obj.altaTemprana = null;
+    obj.pdfDni = null;
+    obj.pdfAltaTemprana = null;
     formData.append('personal', JSON.stringify(obj));
     console.log(obj);
 		return fetch(this.url, {
@@ -173,7 +177,7 @@ export class PersonalService {
     let linti = obj.pdfLinti;
     let dni = obj.pdfDni;
     let altaTemprana = obj.pdfAltaTemprana;
-    let noBlobPdf = new Blob([null], {type : 'image/jpeg'});
+    let noBlobPdf = new Blob([null], {type : 'application/pdf'});
     const formData = new FormData(); 
     if(foto.nombre!=null){
       let blob = new Blob([foto.datos], {type : 'image/jpeg'});
@@ -183,41 +187,41 @@ export class PersonalService {
       formData.append('foto', blob, '');
     }
     if(licConducir.nombre!=null){
-      let blobPdf = new Blob([licConducir.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([licConducir.datos], {type :'application/pdf'});
       formData.append('licConducir', blobPdf, licConducir.nombre);
     }else{
       formData.append('licConducir', noBlobPdf, '');
     }
     if(libSanidad.nombre!=null){
-      let blobPdf = new Blob([libSanidad.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([libSanidad.datos], {type : 'application/pdf'});
       formData.append('libSanidad', blobPdf, libSanidad.nombre);
     }else{
       formData.append('libSanidad', noBlobPdf, '');
     }
     if(linti.nombre!=null){
-      let blobPdf = new Blob([linti.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([linti.datos], {type : 'application/pdf'});
       formData.append('linti', blobPdf, linti.nombre);
     }else{
       formData.append('linti', noBlobPdf, '');
     }
     if(dni.nombre!=null){
-      let blobPdf = new Blob([dni.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([dni.datos], {type : dni.tipo});
       formData.append('dni', blobPdf, dni.nombre);
     }else{
       formData.append('dni', noBlobPdf, '');
     }
     if(altaTemprana.nombre!=null){
-      let blobPdf = new Blob([altaTemprana.datos], {type : 'image/jpeg'});
+      let blobPdf = new Blob([altaTemprana.datos], {type : 'application/pdf'});
       formData.append('altaTemprana', blobPdf, altaTemprana.nombre);
     }else{
       formData.append('altaTemprana', noBlobPdf, '');
     }
-    obj.foto.datos = null;
-    obj.licConducir.datos = null;
-    obj.libSanidad.datos = null;
-    obj.linti.datos = null;
-    obj.dni.datos = null;
-    obj.altaTemprana.datos = null;
+    obj.foto = null;
+    obj.pdfLicConducir = null;
+    obj.pdfLibSanidad = null;
+    obj.pdfLinti = null;
+    obj.pdfDni = null;
+    obj.pdfAltaTemprana = null;
     formData.append('personal', JSON.stringify(obj));
 		return fetch(this.url, {
       method: "PUT",

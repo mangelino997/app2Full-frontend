@@ -129,7 +129,7 @@ export class PersonalComponent implements OnInit {
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService,
-    private fotoService: FotoService, private pdfServicio: PdfService, private pdf: Pdf,  public dialog: MatDialog) {
+    private fotoService: FotoService, private pdfServicio: PdfService, private pdf: Pdf, public dialog: MatDialog) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -376,7 +376,11 @@ export class PersonalComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de estados civiles
+  //Obtiene un registro por id
+  private obtenerPorId(id){
+    this.servicio.ob
+  }
+   //Obtiene el listado de estados civiles
   private listarEstadosCiviles() {
     this.estadoCivilServicio.listar().subscribe(
       res => {
@@ -750,6 +754,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
+    console.log(this.formulario);
     this.servicio.actualizar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
@@ -765,6 +770,7 @@ export class PersonalComponent implements OnInit {
         }
       },
       err => {
+        console.log(err);
         this.lanzarError(err.json());
         this.loaderService.hide();
       }
@@ -894,22 +900,22 @@ export class PersonalComponent implements OnInit {
   }
   //Carga la imagen del personal
   public readURL(event, campo): void {
-    if (event.target.files && event.target.files[0]&& this.tiposImagenes.includes(event.target.files[0].type)) {
+    if (event.target.files && event.target.files[0] && this.tiposImagenes.includes(event.target.files[0].type)) {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
         let foto = {
-          id: this.formulario.get(campo +'.id').value ? this.formulario.get(campo  +'.id').value : null,
+          id: this.formulario.get(campo + '.id').value ? this.formulario.get(campo + '.id').value : null,
           nombre: file.name,
           datos: reader.result
         }
         this.formulario.get(campo).patchValue(foto);
       }
       reader.readAsDataURL(file);
-    }else {
+    } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .jpeg .png .jpg");
+    }
   }
-}
   //Carga el archivo PDF 
   public readPdfURL(event, campo): void {
     let extension = event.target.files[0].name.split('.');
@@ -939,38 +945,67 @@ export class PersonalComponent implements OnInit {
     }
   }
   //Obtiene el pdf para mostrarlo
-  public obtenerPDF(nombre) {
-    if (this.formulario.get(nombre +'.id').value) {
-      this.pdfServicio.obtenerPorId(this.formulario.get(nombre +'.id').value).subscribe(res => {
+  public obtenerPDF(elemento) {
+    let resultadoPdf = {
+      id: null,
+      version: null,
+      nombre: null,
+      tipo: null,
+      tamanio: null,
+      datos: null,
+      tabla: null
+    };
+    if (elemento.id) {
+      this.pdfServicio.obtenerPorId(elemento.id).subscribe(res => {
         let resultado = res.json();
         let pdf = {
           id: resultado.id,
+          version: resultado.version,
           nombre: resultado.nombre,
+          tamanio: resultado.tamanio,
+          tipo: resultado.tipo,
+          tabla: resultado.tabla,
           datos: atob(resultado.datos)
         }
-        this.formulario.get(nombre).patchValue(pdf);
+        resultadoPdf = pdf;
       })
     }
+    console.log(resultadoPdf);
+    return resultadoPdf;
   }
   //Obtiene el pdf para mostrarlo
-  public obtenerFoto() {
-    if (this.formulario.get('foto.id').value) {
-      this.fotoService.obtenerPorId(this.formulario.get('foto.id').value).subscribe(res => {
+  public obtenerFoto(elemento) {
+    let resultadoFoto = {
+      id: null,
+      version: null,
+      nombre: null,
+      tipo: null,
+      tamanio: null,
+      datos: null,
+      tabla: null
+    };
+    if (elemento.id) {
+      this.fotoService.obtenerPorId(elemento.id).subscribe(res => {
         let resultado = res.json();
         let foto = {
           id: resultado.id,
+          version: resultado.version,
           nombre: resultado.nombre,
+          tamanio: resultado.tamanio,
+          tipo: resultado.tipo,
+          tabla: resultado.tabla,
           datos: atob(resultado.datos)
         }
-        this.formulario.get('foto').patchValue(foto);
+        resultadoFoto = foto;
       })
     }
+    return resultadoFoto;
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    if(this.formulario.get('pdfDni.tipo').value=='application/pdf') {
+    if (this.formulario.get('pdfDni.tipo').value == 'application/pdf') {
       this.verPDF('pdfDni');
-    }else {
+    } else {
       this.verFoto('pdfDni');
     }
   }
@@ -980,11 +1015,11 @@ export class PersonalComponent implements OnInit {
       width: '95%',
       height: '95%',
       data: {
-        nombre: this.formulario.get( campo +'.nombre').value,
-        datos: this.formulario.get(campo +'.datos').value
+        nombre: this.formulario.get(campo + '.nombre').value,
+        datos: this.formulario.get(campo + '.datos').value
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => {});
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Muestra el pdf en una pestana nueva
   public verPDF(pdf) {
@@ -993,48 +1028,66 @@ export class PersonalComponent implements OnInit {
       height: '95%',
       data: {
         nombre: this.formulario.get(pdf + '.nombre').value,
-        datos: this.formulario.get(pdf +'.datos').value
+        datos: this.formulario.get(pdf + '.datos').value
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => {});
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
     this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
-    if( this.formulario.get('foto.nombre').value){
-      this.obtenerFoto();
+    if (elemento.foto.id) {
+      elemento.foto = this.obtenerFoto(elemento.foto.id);
     }
-    if( this.formulario.get('licConducir.nombre').value){
-      this.verPDF('licConducir');
+    if (elemento.pdfLicConducir.id) {
+      elemento.pdfLicConducir = this.obtenerPDF(elemento.pdfLicConducir.id);
     }
-    if( this.formulario.get('linti.nombre').value){
-      this.verPDF('linti');
+    if (elemento.pdfLinti.id) {
+      elemento.pdfLinti = this.obtenerPDF(elemento.pdfLinti.id);
     }
-    if( this.formulario.get('libSanidad.nombre').value){
-      this.verPDF('libSanidad');
+    if (elemento.pdfLibSanidad.id) {
+      elemento.pdfLibSanidad = this.obtenerPDF(elemento.pdfLibSanidad.id);
     }
+    if (elemento.pdfDni.id) {
+      elemento.pdfDni = this.obtenerPDF(elemento.pdfDni.id);
+    }
+    if (elemento.pdfAltaTemprana.id) {
+      elemento.pdfAltaTemprana = this.obtenerPDF(elemento.pdfAltaTemprana.id);
+    }
+    this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
-    this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
-    if( this.formulario.get('foto.nombre').value){
-      this.obtenerFoto();
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    // this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
+    if (elemento.foto != null) {
+      elemento.foto = this.obtenerFoto(elemento.foto);
     }
-    if( this.formulario.get('licConducir.nombre').value){
-      this.verPDF('licConducir');
-    }
-    if( this.formulario.get('linti.nombre').value){
-      this.verPDF('linti');
-    }
-    if( this.formulario.get('libSanidad.nombre').value){
-      this.verPDF('libSanidad');
-    }
+    // if (elemento.pdfLicConducir) {
+    //   elemento.pdfLicConducir = this.obtenerPDF(elemento.pdfLicConducir);
+    // }
+    // if (elemento.pdfLinti) {
+    //   elemento.pdfLinti = this.obtenerPDF(elemento.pdfLinti);
+    // }
+    // if (elemento.pdfLibSanidad) {
+    //   elemento.pdfLibSanidad = this.obtenerPDF(elemento.pdfLibSanidad);
+    // }
+    // if (elemento.pdfDni) {
+    //   elemento.pdfDni = this.obtenerPDF(elemento.pdfDni);
+    // }
+    // if (elemento.pdfAltaTemprana) {
+    //   elemento.pdfAltaTemprana = this.obtenerPDF(elemento.pdfAltaTemprana);
+    // }
+    // this.establecerFormulario(elemento);
+    this.cambioAutocompletado();
+  }
+  public establecerFormulario(elemento) {
+    console.log(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {
