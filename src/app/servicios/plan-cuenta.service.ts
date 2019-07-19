@@ -118,9 +118,13 @@ export class PlanCuentaService {
   public obtenerPlanCuenta(idEmpresa) {
     return this.http.get(this.url + '/obtenerPlanCuentaPorEmpresa/' + idEmpresa, this.options);
   }
-  //Obtiene por empresa y grupo cuenta contable
+  //Lista por empresa y grupo cuenta contable
   public listarPorEmpresaYGrupoCuentaContable(idEmpresa, idGrupoCuentaContable) {
     return this.http.get(this.url + '/listarPorEmpresaYGrupoCuentaContable/' + idEmpresa + '/' + idGrupoCuentaContable, this.options);
+  }
+  //Obtiene por empresa y grupo cuenta contable
+  public obtenerPorEmpresaYGrupoCuentaContable(idEmpresa, idGrupoCuentaContable) {
+    return this.http.get(this.url + '/obtenerPorEmpresaYGrupoCuentaContable/' + idEmpresa + '/' + idGrupoCuentaContable, this.options);
   }
   public agregarElemento(padre: Arbol, nombre: string) {
     if (padre.hijos) {

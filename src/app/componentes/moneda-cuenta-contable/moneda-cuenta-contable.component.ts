@@ -28,6 +28,7 @@ export class Arbol {
   nivel: number;
   hijos: Arbol[];
 }
+
 export class Nodo {
   id: number;
   version: number;
@@ -151,15 +152,14 @@ export class MonedaCuentaContableComponent implements OnInit {
     );
   }
   //Controla el cambio en Moneda Cuenta Contable
-  public cambioMonedaCuentaContable(){
-    if(this.indiceSeleccionado > 1){
+  public cambioMonedaCuentaContable() {
+    if (this.indiceSeleccionado > 1) {
       this.monedaCuentaContableServicio.obtenerPorMonedaYEmpresa(this.formulario.value.moneda.id, this.formulario.value.empresa.id).subscribe(
-        res=>{
-          console.log(res.json());
+        res => {
           this.formulario.get('planCuenta').setValue(res.json());
         },
-        err=>{
-
+        err => {
+          console.log(err);
         }
       )
     }
@@ -249,13 +249,12 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Agrega un registro
   private agregar(): void {
     this.loaderService.show();
-    console.log(this.formulario.value);
     this.monedaCuentaContableServicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idMoneda').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -275,9 +274,9 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.monedaCuentaContableServicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -292,9 +291,7 @@ export class MonedaCuentaContableComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(): void {
-    
-  }
+  private eliminar(): void {}
   //Reestablece los campos formularios
   private reestablecerFormulario() {
     this.formulario.reset();
@@ -346,16 +343,15 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Formatea el valor del autocompletado
   public displayFa(elemento) {
     if (elemento != undefined) {
-      return elemento.planCuenta ? elemento.planCuenta.nombre + elemento.planCuenta.grupoCuentaContable? ' - ' + elemento.planCuenta.grupoCuentaContable: '' : elemento ;
+      return elemento.planCuenta ? elemento.planCuenta.nombre + elemento.planCuenta.grupoCuentaContable ? ' - ' + elemento.planCuenta.grupoCuentaContable : '' : elemento;
     } else {
       return elemento;
     }
   }
   //Formatea el valor del autocompletado
   public displayFp(elemento) {
-    console.log(elemento);
     if (elemento != undefined) {
-      return elemento ? elemento.nombre + elemento.tipoCuentaContable? elemento.nombre+' - ' + elemento.tipoCuentaContable.nombre: '' : elemento ;
+      return elemento ? elemento.nombre + elemento.tipoCuentaContable ? elemento.nombre + ' - ' + elemento.tipoCuentaContable.nombre : '' : elemento;
     } else {
       return elemento;
     }
@@ -376,7 +372,7 @@ export class MonedaCuentaContableComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      if(resultado) {
+      if (resultado) {
         this.formulario.get('planCuenta').setValue(resultado);
       }
     });
@@ -404,19 +400,21 @@ export class PlanCuentaDialogo {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define el nodo seleccionado
-  public nodoSeleccionado:any;
+  public nodoSeleccionado: any;
   //Define el id del ultimo nodo seleccionado
-  public ultimoNodoSeleccionado:number = 0;
+  public ultimoNodoSeleccionado: number = 0;
   //Constructor
   constructor(private planCuentaServicio: PlanCuentaService, private appService: AppService,
-    private loaderService: LoaderService, public dialogRef: MatDialogRef<PlanCuentaDialogo>, 
+    private loaderService: LoaderService, public dialogRef: MatDialogRef<PlanCuentaDialogo>,
     @Inject(MAT_DIALOG_DATA) public data) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
     this.datos = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-    this.planCuentaServicio.listarPorEmpresaYGrupoCuentaContable(this.data.empresa.id, 1).subscribe(res => {
-      this.datos.data = res.json();
+    this.planCuentaServicio.obtenerPorEmpresaYGrupoCuentaContable(this.data.empresa.id, 1).subscribe(res => {
+      let data = [];
+      data.push(res.json());
+      this.datos.data = data;
     });
   }
   //Al inicializarse el componente
@@ -475,8 +473,6 @@ export class PlanCuentaDialogo {
     flatNode.editable = false;
     this.flatNodeMap.set(flatNode, node);
     this.nestedNodeMap.set(node, flatNode);
-    console.log(flatNode);
-
     return flatNode;
   }
   //Obtiene la cuenta seleccionada
@@ -491,7 +487,7 @@ export class PlanCuentaDialogo {
     try {
       document.getElementById(ultimaFilaSeleccionada).classList.remove('pintar-fila');
       document.getElementById(ultimBtnSeleccionado).removeAttribute("disabled");
-    } catch(e) {}
+    } catch (e) { }
     setTimeout(() => {
       this.ultimoNodoSeleccionado = nodo.id;
     }, 20);
