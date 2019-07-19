@@ -2,3 +2,6 @@
     display: inline-block !important;
     width: 100% !important;
 }
+.btn-height {
+    height: 30px;
+}

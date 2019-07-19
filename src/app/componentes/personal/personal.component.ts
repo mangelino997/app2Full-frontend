@@ -23,13 +23,15 @@ import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Personal } from 'src/app/modelos/personal';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { FotoService } from 'src/app/servicios/foto.service';
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { Pdf } from 'src/app/modelos/pdf';
+import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
+import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 
 @Component({
   selector: 'app-personal',
@@ -103,6 +105,8 @@ export class PersonalComponent implements OnInit {
   public resultadosAfipSituaciones: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'nombre', 'tipoDocumento', 'documento', 'telefonoMovil', 'domicilio', 'localidad', 'ver', 'mod'];
+  //Define la lista de tipos de imagenes
+  private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -125,7 +129,7 @@ export class PersonalComponent implements OnInit {
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService,
-    private fotoService: FotoService, private pdfServicio: PdfService, private pdf: Pdf) {
+    private fotoService: FotoService, private pdfServicio: PdfService, private pdf: Pdf,  public dialog: MatDialog) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -327,6 +331,11 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('vtoLINTI').enable();
       this.formulario.get('vtoLibretaSanidad').enable();
       this.formulario.get('vtoPsicoFisico').enable();
+      this.formulario.get('vtoPsicoFisico').enable();
+      this.formulario.get('vtoPsicoFisico').enable();
+      this.formulario.get('pdfLicConducir').enable();
+      this.formulario.get('pdfLibSanidad').enable();
+      this.formulario.get('pdfLinti').enable();
       this.btnPdfLibSanidad = true;
       this.btnPdfLicConducir = true;
       this.btnPdflinti = true;
@@ -338,6 +347,7 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('vtoLibretaSanidad').disable();
       this.formulario.get('vtoPsicoFisico').enable();
       this.formulario.get('esChoferLargaDistancia').enable();
+      this.formulario.get('pdfLicConducir').enable();
       this.btnPdfLibSanidad = false;
       this.btnPdfLicConducir = true;
       this.btnPdflinti = false;
@@ -452,7 +462,6 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('recibeAdelanto').enable();
       this.formulario.get('recibePrestamo').enable();
       this.formulario.get('esChofer').enable();
-      this.formulario.get('esChoferLargaDistancia').enable();
       this.formulario.get('turnoRotativo').enable();
       this.formulario.get('turnoFueraConvenio').enable();
       this.formulario.get('seguridadSocial').enable();
@@ -523,6 +532,12 @@ export class PersonalComponent implements OnInit {
     }
     if (elemAutocompletado.foto == null) {
       elemAutocompletado.foto = pdf;
+    }
+    if (elemAutocompletado.pdfDni == null) {
+      elemAutocompletado.pdfDni = pdf;
+    }
+    if (elemAutocompletado.pdfAltaTemprana == null) {
+      elemAutocompletado.pdfAltaTemprana = pdf;
     }
     this.formulario.patchValue(elemAutocompletado);
     this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
@@ -878,33 +893,26 @@ export class PersonalComponent implements OnInit {
     }
   }
   //Carga la imagen del personal
-  public readURL(event): void {
-    if (event.target.files && event.target.files[0]) {
+  public readURL(event, campo): void {
+    if (event.target.files && event.target.files[0]&& this.tiposImagenes.includes(event.target.files[0].type)) {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
         let foto = {
-          id: this.formulario.get('foto.id').value ? this.formulario.get('foto.id').value : null,
+          id: this.formulario.get(campo +'.id').value ? this.formulario.get(campo  +'.id').value : null,
           nombre: file.name,
           datos: reader.result
         }
-        this.formulario.get('foto').patchValue(foto);
+        this.formulario.get(campo).patchValue(foto);
       }
       reader.readAsDataURL(file);
-    }
+    }else {
+      this.toastr.error("Debe adjuntar un archivo con extensión .jpeg .png .jpg");
   }
-  //Elimina la foto del personal
-  public eliminarFoto(campo) {
-    if (!this.formulario.get(campo).value) {
-      this.toastr.error("Sin foto adjunta");
-    } else {
-      this.formulario.get(campo).setValue('');
-    }
-  }
+}
   //Carga el archivo PDF 
   public readPdfURL(event, campo): void {
-    let file = event.target.files[0];
-    let extension = file.name.split('.');
+    let extension = event.target.files[0].name.split('.');
     extension = extension[extension.length - 1];
     if (event.target.files && event.target.files[0] && extension == 'pdf') {
       const file = event.target.files[0];
@@ -927,13 +935,13 @@ export class PersonalComponent implements OnInit {
     if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
     } else {
-      this.formulario.get(campo).setValue('');
+      this.formulario.get(campo + '.nombre').setValue('');
     }
   }
   //Obtiene el pdf para mostrarlo
-  public obtenerPDF(id, nombre) {
-    if (this.formulario.get(id).value) {
-      this.pdfServicio.obtenerPorId(this.formulario.get(id).value).subscribe(res => {
+  public obtenerPDF(nombre) {
+    if (this.formulario.get(nombre +'.id').value) {
+      this.pdfServicio.obtenerPorId(this.formulario.get(nombre +'.id').value).subscribe(res => {
         let resultado = res.json();
         let pdf = {
           id: resultado.id,
@@ -944,10 +952,51 @@ export class PersonalComponent implements OnInit {
       })
     }
   }
+  //Obtiene el pdf para mostrarlo
+  public obtenerFoto() {
+    if (this.formulario.get('foto.id').value) {
+      this.fotoService.obtenerPorId(this.formulario.get('foto.id').value).subscribe(res => {
+        let resultado = res.json();
+        let foto = {
+          id: resultado.id,
+          nombre: resultado.nombre,
+          datos: atob(resultado.datos)
+        }
+        this.formulario.get('foto').patchValue(foto);
+      })
+    }
+  }
+  //Obtiene el dni para mostrarlo
+  public verDni() {
+    if(this.formulario.get('pdfDni.tipo').value=='application/pdf') {
+      this.verPDF('pdfDni');
+    }else {
+      this.verFoto('pdfDni');
+    }
+  }
+  //Obtiene la foto para mostrarlo
+  public verFoto(campo) {
+    const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
+      width: '95%',
+      height: '95%',
+      data: {
+        nombre: this.formulario.get( campo +'.nombre').value,
+        datos: this.formulario.get(campo +'.datos').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {});
+  }
   //Muestra el pdf en una pestana nueva
   public verPDF(pdf) {
-    let datos = this.formulario.get(pdf).value;
-    window.open(datos, '_blank');
+    const dialogRef = this.dialog.open(PdfDialogoComponent, {
+      width: '95%',
+      height: '95%',
+      data: {
+        nombre: this.formulario.get(pdf + '.nombre').value,
+        datos: this.formulario.get(pdf +'.datos').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {});
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
@@ -955,6 +1004,18 @@ export class PersonalComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
     this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
+    if( this.formulario.get('foto.nombre').value){
+      this.obtenerFoto();
+    }
+    if( this.formulario.get('licConducir.nombre').value){
+      this.verPDF('licConducir');
+    }
+    if( this.formulario.get('linti.nombre').value){
+      this.verPDF('linti');
+    }
+    if( this.formulario.get('libSanidad.nombre').value){
+      this.verPDF('libSanidad');
+    }
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
@@ -962,6 +1023,18 @@ export class PersonalComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
     this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
+    if( this.formulario.get('foto.nombre').value){
+      this.obtenerFoto();
+    }
+    if( this.formulario.get('licConducir.nombre').value){
+      this.verPDF('licConducir');
+    }
+    if( this.formulario.get('linti.nombre').value){
+      this.verPDF('linti');
+    }
+    if( this.formulario.get('libSanidad.nombre').value){
+      this.verPDF('libSanidad');
+    }
   }
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {
