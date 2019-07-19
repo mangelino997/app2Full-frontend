@@ -295,10 +295,38 @@ export class AppService {
     };
     return mascara;
   }
+  //Obtiene la mascara de porcentaje (por mil)
+  public mascararPorcentajePorMil() {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '‰ ',
+        suffix: '',
+        thousandsSeparatorSymbol: ',',
+        integerLimit: 3,
+        requireDecimal: true,
+        allowDecimal: true,
+        decimalLimit: 2,
+        decimalSymbol: '.',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
   //Desenmascara el porcentaje
   public desenmascararPorcentaje(valor, cantidad) {
     if(valor) {
       valor = valor.replace('% ', '');
+      valor = valor.replace(/\,/g, '');
+      valor = parseFloat(valor).toFixed(cantidad);
+    }
+    return valor;
+  }
+  //Desenmascara el porcentaje (por mil) ‰
+  public desenmascararPorcentajePorMil(valor, cantidad) {
+    if(valor) {
+      valor = valor.replace('‰ ', '');
       valor = valor.replace(/\,/g, '');
       valor = parseFloat(valor).toFixed(cantidad);
     }

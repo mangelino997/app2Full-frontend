@@ -145,12 +145,13 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Establece los valores por defecto del formulario viaje tramo
   public establecerValoresPorDefecto(): void {
-    let valor = 0;
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajeTramo.get('fechaTramo').setValue(res.json());
     })
-    this.formularioViajeTramo.get('importe').setValue(this.appServicio.establecerDecimales(valor, 2));
+    this.formularioViajeTramo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
+    this.formularioViajeTramo.get('cantidad').setValue('0');
+    this.formularioViajeTramo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
     this.obtenerSiguienteId();
   }
   //Obtiene el siguiente id
@@ -384,7 +385,6 @@ export class ViajeTramoComponent implements OnInit {
     this.indiceTramo = indice;
     this.btnTramo = false;
     this.formularioViajeTramo.patchValue(this.listaTramos[indice]);
-    console.log(this.listaTramos[indice]);
   }
   //Elimina un tramo de la tabla por indice
   public eliminarTramo(indice, elemento): void {
@@ -430,15 +430,15 @@ export class ViajeTramoComponent implements OnInit {
   //Establece la lista de tramos
   public establecerLista(lista, viaje, pestaniaViaje): void {
     console.log(pestaniaViaje);
-    // this.establecerValoresPorDefecto();
+    this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
     this.listaTramos = lista;
     this.recargarListaCompleta(this.listaTramos);
     this.viaje = viaje;
-    this.enviarDatos();
     this.establecerViaje(viaje.id);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
+    this.enviarDatos();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {

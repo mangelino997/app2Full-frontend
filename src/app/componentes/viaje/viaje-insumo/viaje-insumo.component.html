@@ -1,13 +1,13 @@
-<form [formGroup]="formularioViajePropioInsumo">
+<form [formGroup]="formularioViajeInsumo">
   <div class="row">
     <div class="col-md-6">
       <div class="form-group has-float-label">
-        <label for="idProveedorI" class="tamanio-label">Proveedor *</label>
-        <input id="idProveedorI" class="form-control form-control-sm" type="text" matInput
-          [formControl]="formularioViajePropioInsumo.get('proveedor')" [matAutocomplete]="autoProveedor"
+        <label for="idProveedor" class="tamanio-label">Proveedor *</label>
+        <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
+          [formControl]="formularioViajeInsumo.get('proveedor')" [matAutocomplete]="autoProveedor"
           autocomplete="off" [readonly]="soloLectura"
           placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento"
-          (blur)="verificarSeleccion(formularioViajePropioInsumo.get('proveedor'))">
+          (blur)="verificarSeleccion(formularioViajeInsumo.get('proveedor'))">
         <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayFn.bind(this)">
           <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
             {{itemProveedor.alias}}
@@ -33,7 +33,7 @@
         <label for="idInsumoProducto" class="tamanio-label">Insumo *</label>
         <mat-select id="idInsumoProducto" class="form-control form-control-sm" formControlName="insumoProducto"
           [compareWith]="compareFn"
-          (selectionChange)="establecerPrecioUnitario(formularioViajePropioInsumo, 'insumoProducto')">
+          (selectionChange)="establecerPrecioUnitario(formularioViajeInsumo, 'insumoProducto')">
           <mat-option *ngFor="let itemInsumo of insumos" [value]="itemInsumo">
             {{itemInsumo.nombre}}
           </mat-option>
@@ -45,14 +45,14 @@
         <label for="idCantidadAV" class="tamanio-label">Cantidad *</label>
         <input id="idCantidadAV" [textMask]="mascararEnteros(8)" type="text" formControlName="cantidad"
           autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-          (blur)="calcularImporte(formularioViajePropioInsumo)" placeholder="0">
+          (blur)="calcularImporte(formularioViajeInsumo)" placeholder="0">
       </div>
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idPrecioUnitarioAV" class="tamanio-label">Precio Unitario *</label>
         <input id="idPrecioUnitarioAV" [textMask]="mascararImporte(8, 2)" type="text" formControlName="precioUnitario"
-          autocomplete="off" (blur)="calcularImporte(formularioViajePropioInsumo)" [readonly]="soloLectura"
+          autocomplete="off" (blur)="calcularImporte(formularioViajeInsumo)" [readonly]="soloLectura"
           class="form-control form-control-sm number-right" placeholder="$ 0.00">
       </div>
     </div>
@@ -74,79 +74,78 @@
     </div>
     <div class="col-md-1">
       <button mat-raised-button color="primary" (click)="agregarInsumo()"
-        [disabled]="!formularioViajePropioInsumo.valid" *ngIf="btnInsumo">Agregar Orden</button>
+        [disabled]="!formularioViajeInsumo.valid" *ngIf="btnInsumo">Agregar Orden</button>
       <button mat-raised-button color="primary" (click)="modificarInsumo()"
-        [disabled]="!formularioViajePropioInsumo.valid" *ngIf="!btnInsumo">Actualizar Orden</button>
+        [disabled]="!formularioViajeInsumo.valid" *ngIf="!btnInsumo">Actualizar Orden</button>
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
-      <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:10%" scope="col">Sucursal</th>
-            <th class="text-center" style="width:5%" scope="col">Orden</th>
-            <th class="text-center" style="width:5%" scope="col">Fecha</th>
-            <th class="text-center" style="width:10%" scope="col">Usuario</th>
-            <th class="text-center" style="width:8%" scope="col">Proveedor</th>
-            <th class="text-center" style="width:8%" scope="col">Insumo</th>
-            <th class="text-center" style="width:5%" scope="col">Cantidad</th>
-            <th class="text-center" style="width:10%" scope="col">Precio Unitario</th>
-            <th class="text-center" style="width:9%" scope="col">Importe</th>
-            <th class="text-center" style="width:10%" scope="col">Observaciones</th>
-            <th class="text-center" style="width:5%" scope="col">Anulado</th>
-            <th class="text-center" style="width:7%" scope="col">Obs. Anulado</th>
-            <th class="text-center" style="width:4%" scope="col" *ngIf="!soloLectura">-</th>
-            <th class="text-center" style="width:4%" scope="col" *ngIf="!soloLectura">-</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let l of listaInsumos; let i = index">
-            <td align="center">
-              <span>{{l.sucursal.nombre}}</span>
+    <div class="tabla">
+      <div class="tabla-ancho">
+        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+          <ng-container matColumnDef="sucursal" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="orden" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
+            <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+          </ng-container>
+          <ng-container matColumnDef="fecha" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="proveedor" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.proveedor.razonSocial}}</td>
+          </ng-container>
+          <ng-container matColumnDef="insumo" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.insumoProducto.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="cantidad" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.cantidad}}</td>
+          </ng-container>
+          <ng-container matColumnDef="precioUnitario" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
+            <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.precioUnitario)}}</td>
+          </ng-container>
+          <ng-container matColumnDef="importe" >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+              <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importe)}}</td>
+          </ng-container>
+          <ng-container matColumnDef="observaciones" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
+            <td mat-cell *matCellDef="let elemento">
+              <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
             </td>
-            <td align="center">
-              <span>{{i + 1}}</span>
+          </ng-container>
+          <ng-container matColumnDef="anulado" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.anulado? 'Sí': 'No'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="obsAnulado" >
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
+            <td mat-cell *matCellDef="let elemento">
+              <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
             </td>
-            <td align="center">
-              <span>{{l.fecha | date: 'dd/MM/yyyy'}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.usuario.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.proveedor.razonSocial}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.insumoProducto.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.cantidad}}</span>
-            </td>
-            <td align="center">
-              <span>$ {{establecerCerosTabla(l.precioUnitario)}}</span>
-            </td>
-            <td align="center">
-              <span>$ {{establecerCerosTabla(l.importe)}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
-            </td>
-            <td align="center">
-              <span>{{l.anulado}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="modInsumo(i)" *ngIf="!soloLectura">editar</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color-rojo" (click)="eliminarInsumo(i, l)" *ngIf="!soloLectura">X</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+          </ng-container>
+          <ng-container matColumnDef="mod" sticky >
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="modInsumo(i)"><span
+                class="cursor-color" *ngIf="!soloLectura">mod</span></td>
+          </ng-container>
+          <ng-container matColumnDef="eliminar" sticky >
+              <th mat-header-cell *matHeaderCellDef>-</th>
+              <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="eliminarInsumo(i, elemento)"><span
+                  class="cursor-color-rojo" *ngIf="!soloLectura">X</span>
+              </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+        </table>
+      </div>
     </div>
   </div>
   <br>

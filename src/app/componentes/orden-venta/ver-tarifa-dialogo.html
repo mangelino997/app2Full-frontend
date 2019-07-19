@@ -1,5 +1,5 @@
   <div class="row justify-content-center contenedor">
-    <h5>Lista de Precios -  Tarifa: {{tipoTarifa}} </h5>
+    <h5>Lista de Precios - {{tipoTarifa}} - Tarifa: {{ordenVentaTarifa.tipoTarifa.nombre}}</h5>
     <div class="col-md-12 text-center">
         <!--Formulario para Orden Venta Tarifa por Escala-->
           <div class="row" *ngIf="tipoTarifa == 'porEscala'"> 
@@ -50,7 +50,7 @@
                         *ngIf="tipoTarifaEstado">*</span></label>
                     <input id="idSegunTarifa" [textMask]="mascararPorcentaje()" formControlName="porcentaje" type="text"
                       autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00"
-                      (blur)="establecerPorcentaje(formularioEscala.get('porcentaje'), 2)" required>
+                      (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" required>
                   </div>
                 </div>
                 <div class="col" >
@@ -179,10 +179,6 @@
           <div class="row" *ngIf="tipoTarifa == 'porEscala'">
             <div class="col-md-12 text-center">
               <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="id" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-                </ng-container>
                 <ng-container matColumnDef="escala" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.escalaTarifa? elemento.escalaTarifa.valor: '--'}}</td>
@@ -221,10 +217,6 @@
           <div class="row" *ngIf="tipoTarifa == 'porTramo'">
               <div class="col-md-12 text-center">
                 <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                  <ng-container matColumnDef="id" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.id : '--'}}</td>
-                  </ng-container>
                   <ng-container matColumnDef="tramoOrigen" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Origen</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.origen.nombre: '--'}}</td>

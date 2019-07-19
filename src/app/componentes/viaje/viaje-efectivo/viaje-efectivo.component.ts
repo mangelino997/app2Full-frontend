@@ -99,15 +99,15 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Establece los valores por defecto del formulario viaje adelanto efectivo
   public establecerValoresPorDefecto(opcion): void {
-    let valor = 0;
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.fechaActual = res.json();
       this.formularioViajeEfectivo.get('fechaCaja').setValue(res.json());
     })
     if(opcion == 1) {
-      this.formularioViajeEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(valor, 2));
+      this.formularioViajeEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales('0.00', 2));
     }
+    this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
   }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
@@ -125,7 +125,6 @@ export class ViajeEfectivoComponent implements OnInit {
           this.establecerViaje(idViaje);
           this.listar();
           this.establecerValoresPorDefecto(0);
-          this.calcularImporteTotal();
           this.enviarDatos();
           document.getElementById('idFechaCajaAE').focus();
           this.toastr.success("Registro agregado con éxito");
@@ -150,7 +149,7 @@ export class ViajeEfectivoComponent implements OnInit {
           this.establecerViaje(idViaje);
           this.listar();
           this.establecerValoresPorDefecto(0);
-          this.calcularImporteTotal();
+          // this.calcularImporteTotal();
           this.enviarDatos();
           this.btnEfectivo = true;
           // this.enviarDatos(); REVISAR SI LO PUEDO ELIMINAR
@@ -181,7 +180,7 @@ export class ViajeEfectivoComponent implements OnInit {
       this.listaEfectivos.splice(indice, 1);
       this.recargarListaCompleta(this.listaEfectivos);
       this.establecerValoresPorDefecto(0);
-      this.calcularImporteTotal();
+      // this.calcularImporteTotal();
       this.enviarDatos();
     } else {
       this.loaderService.show();
@@ -191,7 +190,7 @@ export class ViajeEfectivoComponent implements OnInit {
           this.listaEfectivos.splice(indice, 1);
           this.recargarListaCompleta(this.listaEfectivos);
           this.establecerValoresPorDefecto(0);
-          this.calcularImporteTotal();
+          // this.calcularImporteTotal();
           this.enviarDatos();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -239,7 +238,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.establecerViaje(viaje.id);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
-    this.calcularImporteTotal();
+    // this.calcularImporteTotal();
     this.enviarDatos();
 
   }
@@ -270,6 +269,7 @@ export class ViajeEfectivoComponent implements OnInit {
   private recargarListaCompleta(listaEfectivos){
     this.listaCompleta = new MatTableDataSource(listaEfectivos);
     this.listaCompleta.sort = this.sort; 
+    this.calcularImporteTotal();
   }
   //Establece los campos select en solo lectura o no
   private establecerCamposSelectSoloLectura(opcion): void {
