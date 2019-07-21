@@ -378,7 +378,7 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene un registro por id
   private obtenerPorId(id){
-    this.servicio.ob
+    // this.servicio.ob
   }
    //Obtiene el listado de estados civiles
   private listarEstadosCiviles() {
