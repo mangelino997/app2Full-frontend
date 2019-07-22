@@ -379,11 +379,12 @@ export class PersonalComponent implements OnInit {
     );
   }
   //Obtiene un registro por id
-  private obtenerPorId(id){
+  private obtenerPorId(id) {
     this.servicio.obtenerPorId(id).subscribe(
-      res=> {
-        console.log(res.json());
-        this.formulario.setValue(res.json());
+      res => {
+        let elemento = res.json();
+        this.formulario.setValue(elemento);
+        this.establecerFotoYPdfs(elemento);
       },
       err => {
         console.log(err);
@@ -391,7 +392,7 @@ export class PersonalComponent implements OnInit {
     );
     // this.servicio.ob
   }
-   //Obtiene el listado de estados civiles
+  //Obtiene el listado de estados civiles
   private listarEstadosCiviles() {
     this.estadoCivilServicio.listar().subscribe(
       res => {
@@ -1065,36 +1066,31 @@ export class PersonalComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.autocompletado.setValue(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.obtenerPorId(elemento.id);
-    console.log(elemento.id);
-    console.log(this.formulario.value);
-    if (this.formulario.get('foto').value.datos) {
-      elemento.foto.datos = atob(this.formulario.get('foto').value.datos);
-    }
-    if (this.formulario.get('licConducir').value.datos) {
-      elemento.pdfLicConducir.datos = atob(this.formulario.get('foto').value.datos);
-    }
-    if (this.formulario.get('pdfLinti').value.datos) {
-      elemento.pdfLinti.datos = atob(this.formulario.get('pdfLinti').value.datos);
-    }
-    if (this.formulario.get('pdfLibSanidad').value.datos) {
-      elemento.pdfLibSanidad.datos = atob(this.formulario.get('pdfLibSanidad').value.datos);
-    }
-    if (this.formulario.get('pdfDni').value.datos) {
-      elemento.pdfDni.datos = atob(this.formulario.get('pdfDni').value.datos);
-    }
-    if (this.formulario.get('pdfAltaTemprana').value.datos) {
-      elemento.pdfAltaTemprana.datos = atob(this.formulario.get('pdfAltaTemprana').value.datos);
-    }
-    // this.establecerFormulario(elemento);
-    //this.cambioAutocompletado();
   }
-  // public establecerFormulario(elemento) {
-  //   console.log(elemento);
-  //   this.formulario.patchValue(elemento);
-  // }
+  //Establece la foto y pdf (activar consultar/actualizar)
+  private establecerFotoYPdfs(elemento): void {
+    this.autocompletado.setValue(elemento);
+    if (elemento.foto) {
+      this.formulario.get('foto.datos').setValue(atob(elemento.foto.datos));
+    }
+    if (elemento.licConducir) {
+      this.formulario.get('pdfLicConducir.datos').setValue(atob(elemento.licConducir.datos));
+    }
+    if (elemento.pdfLinti) {
+      this.formulario.get('pdfLinti.datos').setValue(atob(elemento.pdfLinti.datos));
+    }
+    if (elemento.pdfLibSanidad) {
+      this.formulario.get('pdfLibSanidad.datos').setValue(atob(elemento.pdfLibSanidad.datos));
+    }
+    if (elemento.pdfDni) {
+      this.formulario.get('pdfDni.datos').setValue(atob(elemento.pdfDni.datos));
+    }
+    if (elemento.pdfAltaTemprana) {
+      this.formulario.get('pdfAltaTemprana.datos').setValue(atob(elemento.pdfAltaTemprana.datos));
+    }
+  }
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {
     this.nacionalidadNacimiento.setValue(localidad.provincia.pais.nombre);
