@@ -117,7 +117,6 @@ import { AfipConceptoService } from './servicios/afip-concepto.service';
 import { OrdenVentaTramoService } from './servicios/orden-venta-tramo.service';
 import { VentaTipoItemService } from './servicios/venta-tipo-item.service';
 import { OrdenRecoleccionService } from './servicios/orden-recoleccion.service';
-import { RepartoPropioService } from './servicios/reparto-propio.service';
 import { RepartoTerceroService } from './servicios/reparto-tercero.service';
 import { RetiroDepositoService } from './servicios/retiro-deposito.service';
 import { RepartoPropioComprobanteService } from './servicios/reparto-propio-comprobante.service';
@@ -134,15 +133,28 @@ import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 import { LoaderService } from './servicios/loader.service';
 import { TipoFamiliarService } from './servicios/tipo-familiar.service';
 import { PersonalFamiliarService } from './servicios/personal-familiar.service';
-import { ViajePropioPeajeService } from './servicios/viaje-propio-peaje';
 import { ChequeraService } from './servicios/chequera.service';
 import { TipoChequeraService } from './servicios/tipo-chequera.service';
 import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
+import { ViajePeajeService } from './servicios/viaje-peaje';
+import { ViajeGastoService } from './servicios/viaje-gasto';
+import { ViajeInsumoService } from './servicios/viaje-insumo';
+import { ViajeEfectivoService } from './servicios/viaje-efectivo';
+import { ViajeTramoService } from './servicios/viaje-tramo.service';
+import { ClienteOrdenVentaService } from './servicios/cliente-orden-venta.service';
+import { ViajeService } from './servicios/viaje.service';
+import { OrdenVentaTarifaService } from './servicios/orden-venta-tarifa.service';
+import { TalonarioReciboService } from './servicios/talonario-recibo.service';
+import { DepositoInsumoProductoService } from './servicios/deposito-insumo-producto.service';
+import { SoporteService } from './servicios/soporte.service';
+import { ViajeCombustibleService } from './servicios/viaje-combustible';
+import { TalonarioReciboLoteService } from './servicios/talonario-recibo-lote.service';
+import { FotoService } from './servicios/foto.service';
+
 
 //Modelos
 import { Viaje } from './modelos/viaje';
 import { ViajeRemito } from './modelos/viajeRemito';
-import { ViajePropioPeaje } from './modelos/viajePropioPeaje';
 import { NotaCredito } from './modelos/notaCredito';
 import { NotaDebito } from './modelos/notaDebito';
 import { Reparto } from './modelos/reparto';
@@ -193,7 +205,17 @@ import { Cobrador } from './modelos/cobrador';
 import { configuracionVehiculo } from './modelos/configuracionVehiculo';
 import { Foto } from './modelos/foto';
 import { Pdf } from './modelos/pdf';
-
+import { ViajeEfectivo } from './modelos/viajeEfectivo';
+import { ViajeInsumo } from './modelos/viajeInsumo';
+import { ViajeGasto } from './modelos/viajeGasto';
+import { ViajePeaje } from './modelos/viajePeaje';
+import { ViajeTramo } from './modelos/viajeTramo';
+import { ViajeTramoCliente } from './modelos/viajeTramoCliente';
+import { ViajeCombustible } from './modelos/viajeCombustible';
+import { TalonarioReciboLote } from './modelos/talonarioReciboLote';
+import { OrdenVentaTarifa } from './modelos/ordenVentaTarifa';
+import { TalonarioReciboCobrador } from './modelos/talonarioReciboCobrador';
+import { Soporte } from './modelos/soporte';
 //Componentes
 import { AppComponent } from './app.component';
 import { LoginComponent } from './componentes/login/login.component';
@@ -316,34 +338,12 @@ import { TipoChequeraComponent } from './componentes/tipo-chequera/tipo-chequera
 import { ChequeraComponent } from './componentes/chequera/chequera.component';
 import { DepositoInsumoProductoComponent } from './componentes/deposito-insumo-producto/deposito-insumo-producto.component';
 import { DepositoInsumoProducto } from './modelos/depositoInsumoProducto';
-import { DepositoInsumoProductoService } from './servicios/deposito-insumo-producto.service';
 import { TalonarioReciboCobradorComponent } from './componentes/talonario-recibo-cobrador/talonario-recibo-cobrador.component';
-import { TalonarioReciboCobrador } from './modelos/talonarioReciboCobrador';
-import { TalonarioReciboService } from './servicios/talonario-recibo.service';
-import { TalonarioReciboLoteService } from './servicios/talonario-recibo-lote.service';
-import { SoporteService } from './servicios/soporte.service';
-import { Soporte } from './modelos/soporte';
 import { TalonarioReciboLoteComponent } from './componentes/talonario-recibo-lote/talonario-recibo-lote.component';
-import { TalonarioReciboLote } from './modelos/talonarioReciboLote';
-import { FotoService } from './servicios/foto.service';
-import { OrdenVentaTarifa } from './modelos/ordenVentaTarifa';
-import { OrdenVentaTarifaService } from './servicios/orden-venta-tarifa.service';
 import { EliminarModalComponent } from './componentes/eliminar-modal/eliminar-modal.component';
 import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
-import { ClienteOrdenVentaService } from './servicios/cliente-orden-venta.service';
-import { ViajeService } from './servicios/viaje.service';
-import { ViajeTramo } from './modelos/viajeTramo';
-import { ViajeTramoService } from './servicios/viaje-tramo.service';
-import { ViajeTramoCliente } from './modelos/viajeTramoCliente';
-import { ViajeCombustibleService } from './servicios/viaje-combustible';
-import { ViajeCombustible } from './modelos/viajeCombustible';
 import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
-import { ViajeEfectivo } from './modelos/viajeEfectivo';
-import { ViajeEfectivoService } from './servicios/viaje-efectivo';
-import { ViajeInsumo } from './modelos/viajeInsumo';
-import { ViajeInsumoService } from './servicios/viaje-insumo';
-import { ViajeGasto } from './modelos/viajeGasto';
-import { ViajeGastoService } from './servicios/viaje-gasto';
+
 
 //Rutas
 const appRoutes: Routes = [
@@ -769,7 +769,7 @@ const stompConfig: StompConfig = {
     NotaCredito,
     NotaDebito,
     ViajeGasto,
-    ViajePropioPeaje,
+    ViajePeaje,
     Reparto,
     RepartoEntrante,
     UsuarioEmpresa,
@@ -837,7 +837,7 @@ const stompConfig: StompConfig = {
     ViajeEfectivoService,
     ViajeInsumoService,
     ViajeGastoService,
-    ViajePropioPeajeService,
+    ViajePeajeService,
     LoaderService,
     PersonalFamiliarService,
     PersonalFamiliar,

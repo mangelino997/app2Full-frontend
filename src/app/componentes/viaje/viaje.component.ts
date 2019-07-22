@@ -330,6 +330,10 @@ export class ViajeComponent implements OnInit {
       this.viajeGastoComponente.reestablecerFormulario();
       this.viajeGastoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
+    if(this.viajePeajeComponente){
+      this.viajePeajeComponente.reestablecerFormulario();
+      this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    }
     // if (this.banderaSoloLectura) {
     //   console.log(this.indiceSeleccionado);
     //   this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
