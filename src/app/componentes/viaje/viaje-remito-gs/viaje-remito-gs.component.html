@@ -36,10 +36,13 @@
     <div class="col-md-1">
       <button mat-raised-button color="primary" (click)="listarRemitosPorFiltro()">Buscar</button>
     </div>
+    <div class="col-md-1">
+      <button mat-raised-button color="primary" *ngIf="indiceSeleccionado == 3">Remitos Asignados</button>
+    </div>
   </div>
   <div formArrayName="remitos" class="row">
     <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
-      <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
+      <!-- <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
         <thead>
           <tr>
             <th class="text-center" style="width:5%" scope="col">-</th>
@@ -76,10 +79,65 @@
             </td>
           </tr>
         </tbody>
+      </table> -->
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="check" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+        </ng-container>
+        <ng-container matColumnDef="id" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+          <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+        </ng-container>
+        <ng-container matColumnDef="fecha" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="tipoComprobante" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Comprobante</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante? elemento.tipoComprobante.nombre : '--'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="puntoVenta" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto Venta</th>
+          <td mat-cell *matCellDef="let elemento">{{mostrarCeros(elemento.value.puntoVenta, '000', -4)}}</td>
+        </ng-container>
+        <ng-container matColumnDef="numeroComprobante" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Comprobante</th>
+          <td mat-cell *matCellDef="let elemento">{{mostrarCeros(elemento.numero, '0000000', -8)}}</td>
+        </ng-container>
+        <ng-container matColumnDef="remitente" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Remitente</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.clienteRemitente? elemento.clienteRemitente.razonSocial : '--'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="destinatario" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Destinatario</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.clienteDestinatario? elemento.clienteDestinatario.razonSocial : '--'}}</td>
+        </ng-container>
+        <!-- <ng-container matColumnDef="ver" sticky >
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarConsultar(elemento)"><span
+              class="cursor-color">ver</span></td> -->
+        <!-- </ng-container>
+        <ng-container matColumnDef="mod" sticky >
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarActualizar(elemento)"><span
+              class="cursor-color">mod</span></td>
+        </ng-container> -->
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
       </table>
     </div>
   </div>
-  <div class="row justify-content-end">
-    <button mat-raised-button color="primary" (click)="asignarRemitos()">Agregar</button>
+  <div class="row ">
+    <div class="col-md-1">
+      <button mat-raised-button color="primary" (click)="asignarRemitos()">Agregar</button>
+    </div>
+    <div class="col"></div>
+    <div class="col-md-1">
+      <button mat-raised-button color="primary" (click)="asignarRemitos()">Pendientes</button>
+    </div>
+    <div class="col-md-1">
+      <button mat-raised-button color="primary" (click)="asignarRemitos()">Asignados</button>
+    </div>
   </div>
 </form>

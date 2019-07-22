@@ -1,14 +1,15 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ViajePropioPeaje } from 'src/app/modelos/viajePropioPeaje';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { ViajePropioPeajeService } from 'src/app/servicios/viaje-propio-peaje';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { MatSort, MatTableDataSource } from '@angular/material';
+import { ViajePeaje } from 'src/app/modelos/viajePeaje';
+import { ViajePeajeService } from 'src/app/servicios/viaje-peaje';
 
 @Component({
   selector: 'app-viaje-peaje',
@@ -18,10 +19,11 @@ import { Subscription } from 'rxjs';
 export class ViajePeajeComponent implements OnInit {
   //Evento que envia los datos del formulario a Viaje
   @Output() dataEvent = new EventEmitter<any>();
-  //Define un formulario viaje propio peaje para validaciones de campos
-  public formularioViajePropioPeaje: FormGroup;
+  //Define un formulario viaje  peaje para validaciones de campos
+  public formularioViajePeaje: FormGroup;
   //Define la lista de ordenes de peajes (tabla)
   public listaPeajes: Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define la lista de proveedores
   public resultadosProveedores: Array<any> = [];
   //Define si los campos son de solo lectura
@@ -38,9 +40,13 @@ export class ViajePeajeComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['fecha', 'proveedor', 'puntoVenta', 'ticket', 'importe', 'importe', 'mod', 'eliminar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(private viajePropioPeajeModelo: ViajePropioPeaje, private proveedorServicio: ProveedorService,
-    private fechaServicio: FechaService, private servicio: ViajePropioPeajeService, private toastr: ToastrService,
+  constructor(private viajePeajeModelo: ViajePeaje, private proveedorServicio: ProveedorService,
+    private fechaServicio: FechaService, private servicio: ViajePeajeService, private toastr: ToastrService,
     private appService: AppService, private loaderService: LoaderService) { }
   //Al inicializarse el componente
   ngOnInit() {
@@ -49,10 +55,10 @@ export class ViajePeajeComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-    //Establece el formulario viaje propio peaje
-    this.formularioViajePropioPeaje = this.viajePropioPeajeModelo.formulario;
+    //Establece el formulario viaje  peaje
+    this.formularioViajePeaje = this.viajePeajeModelo.formulario;
     //Autocompletado Proveedor (Peaje) - Buscar por alias
-    this.formularioViajePropioPeaje.get('proveedor').valueChanges.subscribe(data => {
+    this.formularioViajePeaje.get('proveedor').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.proveedorServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosProveedores = response;
@@ -62,49 +68,111 @@ export class ViajePeajeComponent implements OnInit {
     //Establece los valores por defecto del formulario viaje peaje
     this.establecerValoresPorDefecto(1);
   }
+  //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
+  private listar(){
+    this.loaderService.show();
+    console.log(this.formularioViajePeaje.value.viaje.id);
+    if(this.formularioViajePeaje.value.viaje.id){
+      this.servicio.listarPeajes(this.formularioViajePeaje.value.viaje.id).subscribe(
+        res=>{
+          console.log("Peajes: " + res.json());
+          this.listaPeajes = res.json();
+          this.recargarListaCompleta(this.listaPeajes);
+          this.loaderService.hide();
+        },
+        err=>{
+          let error = err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      );
+    }
+  }
+  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
+  private recargarListaCompleta(listaTramos){
+    this.listaCompleta = new MatTableDataSource(listaTramos);
+    this.listaCompleta.sort = this.sort; 
+    this.calcularImporteTotal();
+  }
+  //Establece el viaje de guia de servicio (CABECERA)
+  public establecerViaje(idViaje){
+    console.log(idViaje);
+    this.formularioViajePeaje.get('viaje').setValue({id: idViaje});
+  }
   //Establece los valores por defecto del formulario viaje gasto
   public establecerValoresPorDefecto(opcion): void {
-    let valor = 0;
+    this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
-      this.formularioViajePropioPeaje.get('fecha').setValue(res.json());
+      this.formularioViajePeaje.get('fecha').setValue(res.json());
     })
     if (opcion == 1) {
-      this.formularioViajePropioPeaje.get('importeTotal').setValue(this.appService.establecerDecimales(valor, 2));
     }
   }
   //Agrega datos a la tabla de peajes
   public agregarPeaje(): void {
-    this.formularioViajePropioPeaje.get('tipoComprobante').setValue({ id: 17 });
-    this.formularioViajePropioPeaje.get('usuario').setValue(this.appService.getUsuario());
-    this.listaPeajes.push(this.formularioViajePropioPeaje.value);
-    this.formularioViajePropioPeaje.reset();
-    this.calcularImporteTotal();
-    this.establecerValoresPorDefecto(0);
-    document.getElementById('idProveedorP').focus();
-    this.enviarDatos();
+    this.formularioViajePeaje.get('tipoComprobante').setValue({ id: 17 });
+    this.formularioViajePeaje.get('usuarioAlta').setValue(this.appService.getUsuario());
+    console.log(this.formularioViajePeaje.value);
+    this.servicio.agregar(this.formularioViajePeaje.value).subscribe(
+      res=>{
+        let resultado = res.json();
+        if (res.status == 201) {
+          console.log(resultado);
+          let idViaje = this.formularioViajePeaje.value.viaje.id;
+          this.reestablecerFormulario();
+          this.establecerViaje(idViaje);
+          this.listar();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+          document.getElementById('idProveedorP').focus();
+          this.toastr.success("Registro agregado con éxito");
+          this.loaderService.hide();
+        }
+      },
+      err=>{
+        let resultado = err.json();
+        this.toastr.error(resultado.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Modifica los datos del Peaje
   public modificarPeaje(): void {
-    this.listaPeajes[this.indicePeaje] = this.formularioViajePropioPeaje.value;
-    this.btnPeaje = true;
-    this.formularioViajePropioPeaje.reset();
-    this.calcularImporteTotal();
-    this.establecerValoresPorDefecto(0);
-    document.getElementById('idProveedorP').focus();
-    this.enviarDatos();
+    this.servicio.actualizar(this.formularioViajePeaje.value).subscribe(
+      res=>{
+        let idViaje = this.formularioViajePeaje.value.viaje.id;
+        console.log(idViaje);
+        if (res.status == 200) {
+          this.reestablecerFormulario();
+          this.establecerViaje(idViaje);
+          this.establecerValoresPorDefecto(0);
+          this.btnPeaje = true;
+          this.enviarDatos();
+          document.getElementById('idProveedor').focus();
+          this.toastr.success("Registro actualizado con éxito");
+          this.loaderService.hide();
+        }
+        this.listar();
+      },  
+      err=>{
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Modifica un Peaje de la tabla por indice
   public modPeaje(indice): void {
     this.indicePeaje = indice;
     this.btnPeaje = false;
-    this.formularioViajePropioPeaje.patchValue(this.listaPeajes[indice]);
+    this.formularioViajePeaje.patchValue(this.listaPeajes[indice]);
   }
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(indice, elemento): void {
     if(this.indiceSeleccionado == 1 || elemento.id == null) {
       this.listaPeajes.splice(indice, 1);
-      this.calcularImporteTotal();
+      this.recargarListaCompleta(this.listaPeajes);
       this.establecerValoresPorDefecto(0);
       this.enviarDatos();
     } else {
@@ -113,7 +181,7 @@ export class ViajePeajeComponent implements OnInit {
         res => {
           let respuesta = res.json();
           this.listaPeajes.splice(indice, 1);
-          this.calcularImporteTotal();
+          this.recargarListaCompleta(this.listaPeajes);
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
           this.toastr.success(respuesta.mensaje);
@@ -132,7 +200,7 @@ export class ViajePeajeComponent implements OnInit {
     this.listaPeajes.forEach(item => {
       importeTotal += Number(item.importe);
     })
-    this.formularioViajePropioPeaje.get('importeTotal').setValue(importeTotal.toFixed(2));
+    this.formularioViajePeaje.get('importeTotal').setValue(importeTotal.toFixed(2));
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
@@ -181,9 +249,9 @@ export class ViajePeajeComponent implements OnInit {
   //Establece selects solo lectura
   private establecerSelectsSoloLectura(opcion): void {
     if (opcion) {
-      this.formularioViajePropioPeaje.get('letra').disable();
+      this.formularioViajePeaje.get('letra').disable();
     } else {
-      this.formularioViajePropioPeaje.get('letra').enable();
+      this.formularioViajePeaje.get('letra').enable();
     }
   }
   //Establece los ceros en los numeros flotantes
@@ -205,9 +273,9 @@ export class ViajePeajeComponent implements OnInit {
     this.listaPeajes = [];
   }
   //Reestablece formulario y lista al cambiar de pestaña
-  public reestablecerFormularioYLista(): void {
+  public reestablecerFormulario(): void {
     this.vaciarListas();
-    this.formularioViajePropioPeaje.reset();
+    this.formularioViajePeaje.reset();
   }
   //Mascara un importe decimal
   public mascararImporte(limit, decimalLimite) {

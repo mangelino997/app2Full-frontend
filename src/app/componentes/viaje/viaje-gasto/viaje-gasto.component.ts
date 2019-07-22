@@ -1,17 +1,17 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { ViajePropioGasto } from 'src/app/modelos/viajePropioGasto';
 import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
-import { ViajePropioGastoService } from 'src/app/servicios/viaje-propio-gasto';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ViajeGasto } from 'src/app/modelos/viajeGasto';
+import { ViajeGastoService } from 'src/app/servicios/viaje-gasto';
 
 @Component({
   selector: 'app-viaje-gasto',
@@ -21,10 +21,11 @@ import { Subscription } from 'rxjs';
 export class ViajeGastoComponent implements OnInit {
   //Evento que envia los datos del formulario a Viaje
   @Output() dataEvent = new EventEmitter<any>();
-  //Define un formulario viaje propio gasto para validaciones de campos
-  public formularioViajePropioGasto: FormGroup;
+  //Define un formulario viaje  gasto para validaciones de campos
+  public formularioViajeGasto: FormGroup;
   //Define la lista de ordenes de gastos (tabla)
   public listaGastos: Array<any> = [];
+  public listaCompleta= new MatTableDataSource([]);
   //Define la lista de resultados rubro producto de busqueda
   public resultadosRubrosProductos: Array<any> = [];
   //Define si los campos son de solo lectura
@@ -41,10 +42,14 @@ export class ViajeGastoComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['fecha', 'rubro', 'cantidad', 'precioUnitario', 'importe', 'obs', 'anulado', 'obsAnulado', 'mod', 'eliminar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(private viajePropioGastoModelo: ViajePropioGasto, private rubroProductoServicio: RubroProductoService,
+  constructor(private viajeGastoModelo: ViajeGasto, private rubroProductoServicio: RubroProductoService,
     private fechaServicio: FechaService, private appComponent: AppComponent, public dialog: MatDialog, public appService: AppService,
-    private servicio: ViajePropioGastoService, private toastr: ToastrService, private loaderService: LoaderService) { }
+    private servicio: ViajeGastoService, private toastr: ToastrService, private loaderService: LoaderService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -52,23 +57,42 @@ export class ViajeGastoComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-    //Establece el formulario viaje propio gasto
-    this.formularioViajePropioGasto = this.viajePropioGastoModelo.formulario;
+    //Establece el formulario viaje  gasto
+    this.formularioViajeGasto = this.viajeGastoModelo.formulario;
     //Obtiene la lista de rubros de productos
     this.listarRubrosProductos();
     //Establece los valores por defecto del formulario viaje gasto
     this.establecerValoresPorDefecto(1);
   }
+  //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
+  private listar(){
+    this.loaderService.show();
+    console.log(this.formularioViajeGasto.value.viaje.id);
+    if(this.formularioViajeGasto.value.viaje.id){
+      this.servicio.listarGastos(this.formularioViajeGasto.value.viaje.id).subscribe(
+        res=>{
+          console.log("Gastos: " + res.json());
+          this.listaGastos = res.json();
+          this.recargarListaCompleta(this.listaGastos);
+          this.loaderService.hide();
+        },
+        err=>{
+          let error = err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      );
+    }
+  }
   //Establece los valores por defecto del formulario viaje gasto
   public establecerValoresPorDefecto(opcion): void {
-    let valor = 0;
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
-      this.formularioViajePropioGasto.get('fecha').setValue(res.json());
+      this.formularioViajeGasto.get('fecha').setValue(res.json());
     })
-    this.formularioViajePropioGasto.get('importe').setValue(this.appComponent.establecerCeros(valor));
+    this.formularioViajeGasto.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
     if (opcion == 1) {
-      this.formularioViajePropioGasto.get('importeTotal').setValue(this.appComponent.establecerCeros(valor));
+      this.formularioViajeGasto.get('importeTotal').setValue(this.appService.establecerDecimales('0.00', 2));
     }
   }
   //Obtiene la lista de rubros de productos
@@ -79,38 +103,78 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Agrega datos a la tabla de gastos
   public agregarGasto(): void {
-    this.formularioViajePropioGasto.get('tipoComprobante').setValue({ id: 19 });
+    this.formularioViajeGasto.get('tipoComprobante').setValue({ id: 19 });
     let usuario = this.appComponent.getUsuario();
-    this.formularioViajePropioGasto.get('sucursal').setValue(usuario.sucursal);
-    this.formularioViajePropioGasto.get('usuario').setValue(usuario);
-    this.listaGastos.push(this.formularioViajePropioGasto.value);
-    this.formularioViajePropioGasto.reset();
-    this.calcularImporteTotal();
-    this.establecerValoresPorDefecto(0);
-    document.getElementById('idFechaG').focus();
-    this.enviarDatos();
+    this.formularioViajeGasto.get('sucursal').setValue(usuario.sucursal);
+    this.formularioViajeGasto.get('usuarioAlta').setValue(usuario);
+    console.log(this.formularioViajeGasto.value);
+    this.servicio.agregar(this.formularioViajeGasto.value).subscribe(
+      res=>{
+        let resultado = res.json();
+        if (res.status == 201) {
+          console.log(resultado);
+          let idViaje = this.formularioViajeGasto.value.viaje.id;
+          this.reestablecerFormulario();
+          this.establecerViaje(idViaje);
+          this.listar();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+          document.getElementById('idFechaG').focus();
+          this.toastr.success("Registro agregado con éxito");
+          this.loaderService.hide();
+        }
+      },
+      err=>{
+        let resultado = err.json();
+        this.toastr.error(resultado.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Modifica los datos del Gasto
   public modificarGasto(): void {
-    this.listaGastos[this.indiceGasto] = this.formularioViajePropioGasto.value;
+    this.listaGastos[this.indiceGasto] = this.formularioViajeGasto.value;
     this.btnGasto = true;
-    this.formularioViajePropioGasto.reset();
     this.calcularImporteTotal();
-    this.establecerValoresPorDefecto(0);
-    document.getElementById('idFechaG').focus();
     this.enviarDatos();
+
+    this.servicio.actualizar(this.formularioViajeGasto.value).subscribe(
+      res=>{
+        let idViaje = this.formularioViajeGasto.value.viaje.id;
+        console.log(idViaje);
+        if (res.status == 200) {
+          this.reestablecerFormulario();
+          this.establecerViaje(idViaje);
+          this.establecerValoresPorDefecto(0);
+          this.btnGasto = true;
+          this.enviarDatos();
+          document.getElementById('idFechaG').focus();
+          this.toastr.success("Registro actualizado con éxito");
+          this.loaderService.hide();
+        }
+        this.listar();
+      },  
+      err=>{
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Modifica un Gasto de la tabla por indice
   public modGasto(indice): void {
     this.indiceGasto = indice;
     this.btnGasto = false;
-    this.formularioViajePropioGasto.patchValue(this.listaGastos[indice]);
+    this.formularioViajeGasto.patchValue(this.listaGastos[indice]);
+    this.formularioViajeGasto.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajeGasto.value.importe ,2));
+    this.formularioViajeGasto.get('precioUnitario').setValue(this.appService.establecerDecimales(this.formularioViajeGasto.value.precioUnitario ,2));
+
   }
   //Elimina un gasto de la tabla por indice
   public eliminarGasto(indice, elemento): void {
     if (this.indiceSeleccionado == 1 || elemento.id == null) {
       this.listaGastos.splice(indice, 1);
-      this.calcularImporteTotal();
+      this.recargarListaCompleta(this.listaGastos);
       this.establecerValoresPorDefecto(0);
       this.enviarDatos();
     } else {
@@ -118,7 +182,7 @@ export class ViajeGastoComponent implements OnInit {
       this.servicio.eliminar(elemento.id).subscribe(res => {
           let respuesta = res.json();
           this.listaGastos.splice(indice, 1);
-          this.calcularImporteTotal();
+          this.recargarListaCompleta(this.listaGastos);
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
           this.toastr.success(respuesta.mensaje);
@@ -148,18 +212,27 @@ export class ViajeGastoComponent implements OnInit {
     this.listaGastos.forEach(item => {
       importeTotal += Number(item.importe);
     });
-    this.formularioViajePropioGasto.get('importeTotal').setValue(importeTotal.toFixed(2));
+    this.formularioViajeGasto.get('importeTotal').setValue(importeTotal.toFixed(2));
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
     this.dataEvent.emit(this.listaGastos);
   }
+  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
+  private recargarListaCompleta(listaTramos){
+    this.listaCompleta = new MatTableDataSource(listaTramos);
+    this.listaCompleta.sort = this.sort; 
+    this.calcularImporteTotal();
+  }
   //Establece la lista de efectivos
-  public establecerLista(lista, viaje): void {
+  public establecerLista(lista, viaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
     this.listaGastos = lista;
     this.viaje = viaje;
-    this.calcularImporteTotal();
+    this.establecerViaje(viaje.id);
+    this.establecerCamposSoloLectura(pestaniaViaje);
+    this.listar();
+    this.enviarDatos();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -184,12 +257,17 @@ export class ViajeGastoComponent implements OnInit {
         break;
     }
   }
+  //Establece el viaje de guia de servicio (CABECERA)
+  public establecerViaje(idViaje){
+    console.log(idViaje);
+    this.formularioViajeGasto.get('viaje').setValue({id: idViaje});
+  }
   //Establece selects solo lectura
   private establecerSelectsSoloLectura(opcion): void {
     if (opcion) {
-      this.formularioViajePropioGasto.get('rubroProducto').disable();
+      this.formularioViajeGasto.get('rubroProducto').disable();
     } else {
-      this.formularioViajePropioGasto.get('rubroProducto').enable();
+      this.formularioViajeGasto.get('rubroProducto').enable();
     }
   }
   //Establece los ceros en los numeros flotantes
@@ -211,9 +289,9 @@ export class ViajeGastoComponent implements OnInit {
     this.listaGastos = [];
   }
   //Reestablece formulario y lista al cambiar de pestaña
-  public reestablecerFormularioYLista(): void {
+  public reestablecerFormulario(): void {
     this.vaciarListas();
-    this.formularioViajePropioGasto.reset();
+    this.formularioViajeGasto.reset();
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

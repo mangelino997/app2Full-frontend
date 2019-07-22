@@ -172,7 +172,6 @@ export class ViajeInsumoComponent implements OnInit {
           this.reestablecerFormulario();
           this.establecerViaje(idViaje);
           this.listar();
-          // this.calcularImporteTotal();
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
           document.getElementById('idProveedor').focus();
@@ -197,7 +196,6 @@ export class ViajeInsumoComponent implements OnInit {
           this.reestablecerFormulario();
           this.establecerViaje(idViaje);
           this.establecerValoresPorDefecto(0);
-          // this.calcularImporteTotal();
           this.btnInsumo = true;
           this.enviarDatos();
           document.getElementById('idProveedor').focus();
@@ -228,7 +226,6 @@ export class ViajeInsumoComponent implements OnInit {
     if (this.indiceSeleccionado == 1) {
       this.listaInsumos.splice(indice, 1);
       this.recargarListaCompleta(this.listaInsumos);
-      // this.calcularImporteTotal();
       this.establecerValoresPorDefecto(0);
       this.enviarDatos();
     } else {
@@ -237,7 +234,6 @@ export class ViajeInsumoComponent implements OnInit {
           let respuesta = res.json();
           this.listaInsumos.splice(indice, 1);
           this.recargarListaCompleta(this.listaInsumos);
-          // this.calcularImporteTotal();
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
           this.toastr.success(respuesta.mensaje);
@@ -274,7 +270,6 @@ export class ViajeInsumoComponent implements OnInit {
     this.viaje = viaje;
     this.establecerViaje(viaje.id);
     this.establecerCamposSoloLectura(pestaniaViaje);
-    // this.calcularImporteTotal();
     this.listar();
     this.enviarDatos();
   }
