@@ -211,7 +211,7 @@ export class ViajeGastoComponent implements OnInit {
     this.listaGastos = [];
   }
   //Reestablece formulario y lista al cambiar de pestaña
-  public reestablecerFormularioYLista(): void {
+  public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajePropioGasto.reset();
   }

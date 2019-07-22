@@ -117,10 +117,12 @@ export class OrdenVentaComponent implements OnInit {
   public lengthTable: number = 0;
   //Bandera boolean para determinar si ya se creo una orden venta (cambia el boton "crear orden venta" a "actualizar orden venta")
   public btnActualizarOrdVta: boolean= false;
+  //Bandera boolean para determinar si modifica o agrega un atarifa
+  public btnActualizarTarifa: boolean= false;
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'listaPrecio', 'precioDesde', 'ver', 'mod', 'eliminar'];
   //Define las columnas de la tabla para la pestaña LISTAR
-  public columnasListar: string[] = ['descripcion', 'tarifa', 'seguro', 'cr', 'esContado', 'mod'];
+  public columnasListar: string[] = ['id', 'descripcion', 'vendedor', 'seguro', 'cr', 'esContado', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -567,6 +569,26 @@ export class OrdenVentaComponent implements OnInit {
     );
     this.formularioTarifa.reset();
   }
+  //Actualizar un registro a Orden Venta Tarifa
+  public actulizarTarifa(){
+    this.formularioTarifa.get('ordenVenta').setValue({id: this.formulario.value.id});
+    console.log(this.formularioTarifa.value, this.btnActualizarTarifa);
+    this.ordenVentaTarifaService.actualizar(this.formularioTarifa.value).subscribe(
+      res=>{
+        console.log(res.status);
+        if(res.status==200){
+          this.btnActualizarTarifa = false;
+          this.habilitarFormTarifa(true);
+          this.listarOrdenVentaTarifas();
+        }
+      },
+      err=>{
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+      }
+    );
+    this.formularioTarifa.reset();
+  }
   //Abre el modal de ver Orden Venta Tarifa
   public verOrdenVentaTarifa(tarifa){
     console.log(tarifa);
@@ -589,7 +611,12 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public modificarOrdenVentaTarifa(elemento){
+    this.btnActualizarTarifa = true;
     this.formularioTarifa.patchValue(elemento);
+    // this.formularioTarifa.get('preciosDesde').setValue(elemento.precioDesde);
+    // this.formularioTarifa.get('ordenVenta').setValue(elemento.ordenVenta);
+    // this.formularioTarifa.patchValue({tipoTarifa: elemento.tipoTarifa, disabled: true});
+    console.log(elemento, this.formularioTarifa.value);
     if(elemento.tipoTarifa.porEscala){
       this.tipoTarifa.setValue('porEscala');
       this.cambioTipoTarifa();
@@ -597,7 +624,6 @@ export class OrdenVentaComponent implements OnInit {
       this.tipoTarifa.setValue('porTramo');
       this.cambioTipoTarifa();
     }
-    this.formularioTarifa.get('tipoTarifa').disable();
     this.tipoTarifa.disable();
   }
   //Abre el modal de ver Orden Venta Tarifa
@@ -623,6 +649,8 @@ export class OrdenVentaComponent implements OnInit {
     if(this.formularioListar.value.tipo == 'empresa'){
       this.ordenVentaServicio.listarPorEmpresa(this.formularioListar.value.empresa.id).subscribe(
         res=>{
+          console.log(res.json());
+
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
         },
@@ -664,6 +692,7 @@ export class OrdenVentaComponent implements OnInit {
     this.tipoTarifa.enable();
     this.listarOrdenVentaTarifas();
     this.btnActualizarOrdVta = true;
+    console.log(this.btnActualizarTarifa);
   }
   //Elimina una Orden Venta (Pestaña Listar, accion 'eliminar')
   public activarEliminar(elemento){
@@ -1104,17 +1133,17 @@ export class VerTarifaDialogo {
     this.resultadosTramos = [];
     this.idMod = null;
     this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
-    this.formularioEscala.get('importeFijo').setValue(this.appService.establecerDecimales('00', 2));
-    this.formularioEscala.get('precioUnitario').setValue(this.appService.establecerDecimales('00', 2));
-    this.formularioEscala.get('porcentaje').setValue(this.appService.establecerDecimales('00', 2));
-    this.formularioEscala.get('minimo').setValue(this.appService.establecerDecimales('00', 2));
+    this.formularioEscala.get('importeFijo').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formularioEscala.get('precioUnitario').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formularioEscala.get('porcentaje').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formularioEscala.get('minimo').setValue(this.appService.establecerDecimales('0.00', 2));
 
 
     this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
-    this.formularioTramo.get('importeFijoSeco').setValue('00');
-    this.formularioTramo.get('importeFijoRef').setValue('00');
-    this.formularioTramo.get('precioUnitarioSeco').setValue('00');
-    this.formularioTramo.get('precioUnitarioRef').setValue('00');
+    this.formularioTramo.get('importeFijoSeco').setValue('0.00');
+    this.formularioTramo.get('importeFijoRef').setValue('0.00');
+    this.formularioTramo.get('precioUnitarioSeco').setValue('0.00');
+    this.formularioTramo.get('precioUnitarioRef').setValue('0.00');
   }
   //Controla el modificar en Escala
   public controlModEscala(elemento){
@@ -1332,7 +1361,7 @@ export class VerTarifaDialogo {
     if (valor) {
       return this.appService.establecerDecimales(valor, cantidad);
     }else{
-      return '00';
+      return '0.00';
     }
   }
   //Establece los decimales de porcentaje

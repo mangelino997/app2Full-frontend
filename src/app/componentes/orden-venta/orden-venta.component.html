@@ -142,7 +142,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoTarifa" class="tamanio-label">Tipo Tarifa *</label>
               <mat-select id="idTipoTarifa" class="form-control form-control-sm" [formControl]="tipoTarifa" 
-              [compareWith]="compareT" (selectionChange)="cambioTipoTarifa()">
+              [compareWith]="compareT" (selectionChange)="cambioTipoTarifa()" >
                 <mat-option value="porEscala">Por Escala</mat-option>
                 <mat-option value="porTramo">Por Tramo</mat-option>
               </mat-select>
@@ -152,7 +152,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoTarifa" class="tamanio-label">Tarifa *</label>
               <mat-select id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
-                [compareWith]="compareFn" >
+                [compareWith]="compareFn" [disabled]="btnActualizarTarifa">
                 <mat-option *ngFor="let itemTipoTarifa of listaTarifas" [value]="itemTipoTarifa">
                   <span>{{itemTipoTarifa.nombre}} - </span>
                   <span>(P/Porcentaje: {{itemTipoTarifa.porPorcentaje ? 'Sí': 'No'}}) - </span>
@@ -181,8 +181,13 @@
             </div>
           </div> -->
           <div class="col-md-1">
-            <button id="idBoton" [disabled]="!btnActualizarOrdVta" mat-raised-button color="primary" (click)="agregarTarifa()">
+            <button id="idBoton" [disabled]="!btnActualizarOrdVta" mat-raised-button color="primary" (click)="agregarTarifa()"
+            *ngIf="!btnActualizarTarifa">
               Añadir
+            </button>
+            <button id="idBoton" [disabled]="!btnActualizarOrdVta" mat-raised-button color="primary" (click)="actulizarTarifa()"
+            *ngIf="btnActualizarTarifa" >
+              Modificar
             </button>
           </div>
         </div>
@@ -274,21 +279,25 @@
         <div class="row justify-content-center text-center">
           <div class="col-md-12">
             <table mat-table [dataSource]="listaOrdenVenta" matSort class="mat-elevation-z1">
+                  <ng-container matColumnDef="id" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                  </ng-container>
                   <ng-container matColumnDef="descripcion" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
                   </ng-container>
-                  <ng-container matColumnDef="tarifa" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                  <ng-container matColumnDef="vendedor" sticky>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Vendedor</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.vendedor.nombre}}</td>
                   </ng-container>
                   <ng-container matColumnDef="seguro" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Seguro</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.seguro}} ‰</td>
+                    <td mat-cell *matCellDef="let elemento">{{establecerDecimales(elemento.seguro, 2)}} ‰</td>
                   </ng-container>
                   <ng-container matColumnDef="cr" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>comision C.R</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.comisionCR}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{establecerDecimales(elemento.comisionCR, 2)}}</td>
                   </ng-container>
                   <ng-container matColumnDef="esContado" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Contado</th>

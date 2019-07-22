@@ -322,6 +322,14 @@ export class ViajeComponent implements OnInit {
       this.viajeInsumoComponente.reestablecerFormulario();
       this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
+    if(this.viajeRemitoGSComponente){
+      this.viajeRemitoGSComponente.reestablecerFormulario();
+      // this.viajeRemitoGSComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    }
+    if(this.viajeGastoComponente){
+      this.viajeGastoComponente.reestablecerFormulario();
+      this.viajeGastoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    }
     // if (this.banderaSoloLectura) {
     //   console.log(this.indiceSeleccionado);
     //   this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
@@ -452,7 +460,7 @@ export class ViajeComponent implements OnInit {
     // } else {
     //   this.formularioViaje.get('viajeTramos').setValue($event);
     // }
-    this.viajeRemitoGSComponente.establecerListaTramos($event);
+    // this.viajeRemitoGSComponente.establecerListaTramos($event);
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {
