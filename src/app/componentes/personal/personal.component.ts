@@ -57,6 +57,8 @@ export class PersonalComponent implements OnInit {
   public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para validaciones de campos
+  public personalActualizar: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
@@ -378,6 +380,15 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene un registro por id
   private obtenerPorId(id){
+    this.servicio.obtenerPorId(id).subscribe(
+      res=> {
+        console.log(res.json());
+        this.formulario.setValue(res.json());
+      },
+      err => {
+        console.log(err);
+      }
+    );
     // this.servicio.ob
   }
    //Obtiene el listado de estados civiles
@@ -519,29 +530,23 @@ export class PersonalComponent implements OnInit {
       datos: null,
       tabla: null
     }
-    if (elemAutocompletado.pdfAltaTemprana == null) {
+    if (elemAutocompletado.pdfAltaTemprana.id == null) {
       elemAutocompletado.pdfAltaTemprana = pdf;
     }
-    if (elemAutocompletado.pdfDni == null) {
+    if (elemAutocompletado.pdfDni.id == null) {
       elemAutocompletado.pdfDni = pdf;
     }
-    if (elemAutocompletado.pdfLibSanidad == null) {
+    if (elemAutocompletado.pdfLibSanidad.id == null) {
       elemAutocompletado.pdfLibSanidad = pdf;
     }
-    if (elemAutocompletado.pdfLicConducir == null) {
+    if (elemAutocompletado.pdfLicConducir.id == null) {
       elemAutocompletado.pdfLicConducir = pdf;
     }
-    if (elemAutocompletado.pdfLinti == null) {
+    if (elemAutocompletado.pdfLinti.id == null) {
       elemAutocompletado.pdfLinti = pdf;
     }
-    if (elemAutocompletado.foto == null) {
+    if (elemAutocompletado.foto.id == null) {
       elemAutocompletado.foto = pdf;
-    }
-    if (elemAutocompletado.pdfDni == null) {
-      elemAutocompletado.pdfDni = pdf;
-    }
-    if (elemAutocompletado.pdfAltaTemprana == null) {
-      elemAutocompletado.pdfAltaTemprana = pdf;
     }
     this.formulario.patchValue(elemAutocompletado);
     this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
@@ -1060,35 +1065,36 @@ export class PersonalComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    // this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
-    if (elemento.foto != null) {
-      elemento.foto = this.obtenerFoto(elemento.foto);
+    this.obtenerPorId(elemento.id);
+    console.log(elemento.id);
+    console.log(this.formulario.value);
+    if (this.formulario.get('foto').value.datos) {
+      elemento.foto.datos = atob(this.formulario.get('foto').value.datos);
     }
-    // if (elemento.pdfLicConducir) {
-    //   elemento.pdfLicConducir = this.obtenerPDF(elemento.pdfLicConducir);
-    // }
-    // if (elemento.pdfLinti) {
-    //   elemento.pdfLinti = this.obtenerPDF(elemento.pdfLinti);
-    // }
-    // if (elemento.pdfLibSanidad) {
-    //   elemento.pdfLibSanidad = this.obtenerPDF(elemento.pdfLibSanidad);
-    // }
-    // if (elemento.pdfDni) {
-    //   elemento.pdfDni = this.obtenerPDF(elemento.pdfDni);
-    // }
-    // if (elemento.pdfAltaTemprana) {
-    //   elemento.pdfAltaTemprana = this.obtenerPDF(elemento.pdfAltaTemprana);
-    // }
+    if (this.formulario.get('licConducir').value.datos) {
+      elemento.pdfLicConducir.datos = atob(this.formulario.get('foto').value.datos);
+    }
+    if (this.formulario.get('pdfLinti').value.datos) {
+      elemento.pdfLinti.datos = atob(this.formulario.get('pdfLinti').value.datos);
+    }
+    if (this.formulario.get('pdfLibSanidad').value.datos) {
+      elemento.pdfLibSanidad.datos = atob(this.formulario.get('pdfLibSanidad').value.datos);
+    }
+    if (this.formulario.get('pdfDni').value.datos) {
+      elemento.pdfDni.datos = atob(this.formulario.get('pdfDni').value.datos);
+    }
+    if (this.formulario.get('pdfAltaTemprana').value.datos) {
+      elemento.pdfAltaTemprana.datos = atob(this.formulario.get('pdfAltaTemprana').value.datos);
+    }
     // this.establecerFormulario(elemento);
-    this.cambioAutocompletado();
+    //this.cambioAutocompletado();
   }
-  public establecerFormulario(elemento) {
-    console.log(elemento);
-    this.formulario.patchValue(elemento);
-  }
+  // public establecerFormulario(elemento) {
+  //   console.log(elemento);
+  //   this.formulario.patchValue(elemento);
+  // }
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {
     this.nacionalidadNacimiento.setValue(localidad.provincia.pais.nombre);
