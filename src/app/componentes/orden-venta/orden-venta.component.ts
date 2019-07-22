@@ -307,6 +307,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioEscala.reset();
     this.formularioTramo.reset();
     this.formularioListar.reset();
+    this.vaciarLista();
     this.ordenventa.reset();
     this.empresa.reset();
     this.listaDeEscalas = [];
@@ -1122,7 +1123,7 @@ export class VerTarifaDialogo {
     };
   }
   //Reestablece valores y formularios
-  private reestablecerFormularios(){
+  public reestablecerFormularios(){
     this.listaCompleta = new MatTableDataSource([]);
     if(this.ordenVentaTarifa.tipoTarifa.porEscala)
       this.tipoTarifa = "porEscala";

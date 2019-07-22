@@ -235,7 +235,7 @@ export class ViajeComponent implements OnInit {
       this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje, this.indiceSeleccionado);
       this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje, this.indiceSeleccionado);
       this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje, this.indiceSeleccionado);
-      // this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje);
+      this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje, this.indiceSeleccionado);
       // this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje);
     });
   }
@@ -322,10 +322,10 @@ export class ViajeComponent implements OnInit {
       this.viajeInsumoComponente.reestablecerFormulario();
       this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
-    if(this.viajeRemitoGSComponente){
-      this.viajeRemitoGSComponente.reestablecerFormulario();
-      // this.viajeRemitoGSComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    }
+    // if(this.viajeRemitoGSComponente){
+    //   this.viajeRemitoGSComponente.reestablecerFormulario();
+    //   // this.viajeRemitoGSComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
+    // }
     if(this.viajeGastoComponente){
       this.viajeGastoComponente.reestablecerFormulario();
       this.viajeGastoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);

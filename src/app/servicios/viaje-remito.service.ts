@@ -81,8 +81,8 @@ export class ViajeRemitoService {
       + '/' + idSucursalDestino + '/' + numeroCamion + '/' + idViajePropioTramo, this.options);
   }
   //Asigna remitos
-  public asignar(elemento) {
-    return this.http.put(this.url + '/asignar', elemento, this.options);
+  public asignar(elemento, idViajeTramo) {
+    return this.http.put(this.url + '/asignar', {elemento, idViajeTramo}, this.options);
   }
   //Quita remitos
   public quitar(elemento) {

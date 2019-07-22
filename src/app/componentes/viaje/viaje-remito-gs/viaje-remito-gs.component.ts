@@ -109,7 +109,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   }
   //Asigna o Quita remitos de tramo
   public asignarRemitos(): void {
-    this.viajeRemitoServicio.asignar(this.formularioViajeRemito.value.remitos).subscribe(
+    this.viajeRemitoServicio.asignar(this.formularioViajeRemito.value.remitos, 1).subscribe(
       res => {
         let respuesta = res.json();
         this.reestablecerFormulario();

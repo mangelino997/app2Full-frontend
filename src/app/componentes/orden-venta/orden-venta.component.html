@@ -192,7 +192,7 @@
           </div>
         </div>
         <div class="row justify-content-center contenedor">
-          <div class="col-md-8">
+          <div class="col-md-8" style="height: 300px; overflow-y: scroll;">
             <table mat-table [dataSource]="listaTarifasDeOrdVta" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="id" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
@@ -232,6 +232,14 @@
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
               </table>
           </div>
+        </div>
+        <div class="row">
+          <div class="col-md-1">
+            <button id="idBotonFinalizar" mat-raised-button color="primary" (click)="reestablecerCampos()">
+              Finalizar
+            </button>
+          </div>
+          <div class="col"></div>
         </div>
       </form>
     </div>

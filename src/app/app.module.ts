@@ -134,7 +134,6 @@ import { BasicoCategoriaService } from './servicios/basico-categoria.service';
 import { LoaderService } from './servicios/loader.service';
 import { TipoFamiliarService } from './servicios/tipo-familiar.service';
 import { PersonalFamiliarService } from './servicios/personal-familiar.service';
-import { ViajePropioGastoService } from './servicios/viaje-propio-gasto';
 import { ViajePropioPeajeService } from './servicios/viaje-propio-peaje';
 import { ChequeraService } from './servicios/chequera.service';
 import { TipoChequeraService } from './servicios/tipo-chequera.service';
@@ -143,7 +142,6 @@ import { CuentaBancariaService } from './servicios/cuenta-bancaria.service';
 //Modelos
 import { Viaje } from './modelos/viaje';
 import { ViajeRemito } from './modelos/viajeRemito';
-import { ViajePropioGasto } from './modelos/viajePropioGasto';
 import { ViajePropioPeaje } from './modelos/viajePropioPeaje';
 import { NotaCredito } from './modelos/notaCredito';
 import { NotaDebito } from './modelos/notaDebito';
@@ -344,6 +342,8 @@ import { ViajeEfectivo } from './modelos/viajeEfectivo';
 import { ViajeEfectivoService } from './servicios/viaje-efectivo';
 import { ViajeInsumo } from './modelos/viajeInsumo';
 import { ViajeInsumoService } from './servicios/viaje-insumo';
+import { ViajeGasto } from './modelos/viajeGasto';
+import { ViajeGastoService } from './servicios/viaje-gasto';
 
 //Rutas
 const appRoutes: Routes = [
@@ -768,7 +768,7 @@ const stompConfig: StompConfig = {
     ViajeRemito,
     NotaCredito,
     NotaDebito,
-    ViajePropioGasto,
+    ViajeGasto,
     ViajePropioPeaje,
     Reparto,
     RepartoEntrante,
@@ -836,7 +836,7 @@ const stompConfig: StompConfig = {
     ViajeCombustibleService,
     ViajeEfectivoService,
     ViajeInsumoService,
-    ViajePropioGastoService,
+    ViajeGastoService,
     ViajePropioPeajeService,
     LoaderService,
     PersonalFamiliarService,
