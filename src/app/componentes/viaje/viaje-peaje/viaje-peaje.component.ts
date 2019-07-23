@@ -41,7 +41,7 @@ export class ViajePeajeComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['fecha', 'proveedor', 'puntoVenta', 'ticket', 'importe', 'importe', 'mod', 'eliminar'];
+  public columnas: string[] = ['fecha', 'proveedor', 'puntoVenta', 'ticket', 'importe', 'mod', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -102,6 +102,10 @@ export class ViajePeajeComponent implements OnInit {
   //Establece los valores por defecto del formulario viaje gasto
   public establecerValoresPorDefecto(opcion): void {
     this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe,2));
+    this.formularioViajePeaje.get('puntoVenta').setValue(this.establecerCerosIzq(this.formularioViajePeaje.get('puntoVenta'), '0000', -5));
+    this.formularioViajePeaje.get('numeroComprobante').setValue(this.establecerCerosIzq(this.formularioViajePeaje.get('numeroComprobante'), '0000000', -8));
+
     //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajePeaje.get('fecha').setValue(res.json());
@@ -167,6 +171,10 @@ export class ViajePeajeComponent implements OnInit {
     this.indicePeaje = indice;
     this.btnPeaje = false;
     this.formularioViajePeaje.patchValue(this.listaPeajes[indice]);
+    this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe,2));
+    // this.formularioViajePeaje.get('puntoVenta').setValue(this.establecerCerosIzqTabla(this.formularioViajePeaje.get('puntoVenta'), '0000', -5));
+    // this.formularioViajePeaje.get('numeroComprobante').setValue(this.establecerCerosIzqTabla(this.formularioViajePeaje.get('numeroComprobante'), '0000000', -8));
+    console.log(this.formularioViajePeaje.value);
   }
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(indice, elemento): void {
@@ -208,6 +216,11 @@ export class ViajePeajeComponent implements OnInit {
       elemento.setValue((string + elemento.value).slice(cantidad));
     }
   }
+  //Establece la cantidad de ceros correspondientes a la izquierda del numero cuando el elemento es un numerico
+  public establecerCerosIzqTabla(elemento, string, cantidad) {
+    console.log(elemento.value.toString);
+      elemento.setValue((string + elemento.value.toString()).slice(cantidad));
+  }
   //Define como se muestran los ceros a la izquierda en tablas
   public mostrarCeros(elemento, string, cantidad) {
     return elemento ? (string + elemento).slice(cantidad) : elemento;
@@ -217,11 +230,14 @@ export class ViajePeajeComponent implements OnInit {
     this.dataEvent.emit(this.listaPeajes);
   }
   //Establece la lista de efectivos
-  public establecerLista(lista, viaje): void {
+  public establecerLista(lista, viaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
     this.listaPeajes = lista;
     this.viaje = viaje;
-    this.calcularImporteTotal();
+    this.establecerViaje(viaje.id);
+    this.establecerCamposSoloLectura(pestaniaViaje);
+    this.listar();
+    this.enviarDatos();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -271,11 +287,14 @@ export class ViajePeajeComponent implements OnInit {
   //Vacia la lista
   public vaciarListas(): void {
     this.listaPeajes = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajePeaje.reset();
+    this.indicePeaje = null;
+    this.btnPeaje = true;
   }
   //Mascara un importe decimal
   public mascararImporte(limit, decimalLimite) {
