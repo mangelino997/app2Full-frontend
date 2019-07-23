@@ -46,7 +46,7 @@
     </div>
     <div class="col-md-3">
       <div class="form-group has-float-label">
-        <label for="idNumeroComprobanteG" class="tamanio-label">Número de Tique *</label>
+        <label for="idNumeroComprobanteG" class="tamanio-label">Número de Tiquet *</label>
         <input id="idNumeroComprobanteG" [textMask]="mascararEnteros(8)" type="text" formControlName="numeroComprobante"
           autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
           (blur)="establecerCerosIzq(formularioViajePeaje.get('numeroComprobante'), '0000000', -8)">
@@ -61,8 +61,10 @@
       </div>
     </div>
     <div class="col-md-2">
-      <button mat-raised-button color="primary" (click)="agregarPeaje()"
+      <button mat-raised-button color="primary" (click)="agregarPeaje()" *ngIf="btnPeaje"
         [disabled]="!formularioViajePeaje.valid">Agregar Peaje</button>
+      <button mat-raised-button color="primary" (click)="modificarPeaje()" *ngIf="!btnPeaje"
+        [disabled]="!formularioViajePeaje.valid">Actualizar Peaje</button>
     </div>
   </div>
   <div class="row">

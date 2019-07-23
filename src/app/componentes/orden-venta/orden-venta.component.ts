@@ -558,6 +558,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Agrega un registro a Orden Venta Tarifa
   public agregarTarifa(){
+    console.log(this.formularioTarifa);
     this.formularioTarifa.get('ordenVenta').setValue({id: this.formulario.value.id});
     this.ordenVentaTarifaService.agregar(this.formularioTarifa.value).subscribe(
       res=>{
@@ -598,6 +599,7 @@ export class OrdenVentaComponent implements OnInit {
       data: {
         tarifa: this.tipoTarifa.value,
         ordenVentaTarifa: tarifa,
+        indiceSeleccionado: this.indiceSeleccionado
       },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -741,8 +743,12 @@ export class OrdenVentaComponent implements OnInit {
   private controlaPorcentajes(elemento){
     if(elemento.seguro)
       this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentajePorMil(elemento.seguro.toString(), 2));
-    if(elemento.comisionCR)
+    // if(elemento.comisionCR)
+    if(elemento.comisionCR == 0)
+      this.formulario.get('comisionCR').setValue(this.appService.desenmascararPorcentaje('0.00', 2));
+      else
       this.formulario.get('comisionCR').setValue(this.appService.desenmascararPorcentaje(elemento.comisionCR.toString(), 2));
+
   }
   //Obtiene la mascara de importe
   public mascaraImporte(intLimite, decimalLimite) {
@@ -861,6 +867,8 @@ export class VerTarifaDialogo {
   //Define un formulario para Orden Venta Escala o Tramo
   public formularioTramo: FormGroup;
   public formularioEscala: FormGroup;
+  //Define el indice seleccionado 
+  public indiceSeleccionado:number = null;
   //Define el nombre del Tipo Tarifa
   //Define tipo tarifa
   public tipoTarifa: string = null;
@@ -886,6 +894,8 @@ export class VerTarifaDialogo {
   public importeRefPor:FormControl = new FormControl();
   //Define la escala actual
   public escalaActual:any;
+  //Define si el campo es de solo lectura
+  public soloLectura: boolean = false;
   //Define el id del Tramo o Escala que se quiere modificar
   public idMod: number = null;
   //Define las columnas de las tablas
@@ -913,6 +923,9 @@ export class VerTarifaDialogo {
     //Inicializa el Formulario 
     this.formularioEscala = this.ordenVentaEscala.formulario;
     this.formularioTramo = this.ordenVentaTramo.formulario;
+    //Inicializa el indiceSeleccionado
+    this.indiceSeleccionado = this.data.indiceSeleccionado;
+    console.log(this.indiceSeleccionado);
     this.reestablecerFormularios();
     //Obtiene la lista de Escalas 
     this.listarEscalasTarifas();
@@ -1145,6 +1158,19 @@ export class VerTarifaDialogo {
     this.formularioTramo.get('importeFijoRef').setValue('0.00');
     this.formularioTramo.get('precioUnitarioSeco').setValue('0.00');
     this.formularioTramo.get('precioUnitarioRef').setValue('0.00');
+
+    this.importePor.setValue(false);
+    this.cambioImportesPor();
+
+    if(this.indiceSeleccionado==2 || this.indiceSeleccionado == 4){
+      this.soloLectura = true;
+      this.importePor.disable();
+    }
+      else{
+        this.soloLectura = false;
+        this.importePor.enable();
+      }
+
   }
   //Controla el modificar en Escala
   public controlModEscala(elemento){

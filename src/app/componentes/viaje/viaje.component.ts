@@ -236,7 +236,7 @@ export class ViajeComponent implements OnInit {
       this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje, this.indiceSeleccionado);
       this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje, this.indiceSeleccionado);
       this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje, this.indiceSeleccionado);
-      // this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje);
+      this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje, this.indiceSeleccionado);
     });
   }
   //Establece los valores por defecto

@@ -164,28 +164,16 @@
           <div class="col-md-3" > <!--Antes : *ngIf="indiceSeleccionado == 1 || lengthTable < 1"-->
             <div class="form-group has-float-label" >
               <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
-              <input id="idPreciosDesde" type="date" formControlName="preciosDesde" autocomplete="off"
+              <input id="idPreciosDesde" type="date" formControlName="preciosDesde" autocomplete="off" required
                 class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
-          <!-- <div class="col-md-3" *ngIf="indiceSeleccionado != 1 && lengthTable > 0">
-            <div class="form-group has-float-label">
-              <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
-              <mat-select id="idPreciosDesde" class="form-control form-control-sm" formControlName="preciosDesde"
-                [compareWith]="compareFn" (selectionChange)="cambioPreciosDesde()">
-                <mat-option *ngFor="let itemPreciosDesde of preciosDesdeLista"
-                  [value]="itemPreciosDesde.preciosDesde">
-                  <span>{{itemPreciosDesde.preciosDesde | date: 'dd-MM-yyyy'}}</span>
-                </mat-option>
-              </mat-select>
-            </div>
-          </div> -->
           <div class="col-md-1">
-            <button id="idBoton" [disabled]="!btnActualizarOrdVta" mat-raised-button color="primary" (click)="agregarTarifa()"
+            <button id="idBoton" [disabled]="!btnActualizarOrdVta || !formularioTarifa.valid" mat-raised-button color="primary" (click)="agregarTarifa()"
             *ngIf="!btnActualizarTarifa">
               Añadir
             </button>
-            <button id="idBoton" [disabled]="!btnActualizarOrdVta" mat-raised-button color="primary" (click)="actulizarTarifa()"
+            <button id="idBoton" [disabled]="!btnActualizarOrdVta || !formularioTarifa.valid" mat-raised-button color="primary" (click)="actulizarTarifa()"
             *ngIf="btnActualizarTarifa" >
               Modificar
             </button>
@@ -212,20 +200,22 @@
                 </ng-container>
                 <ng-container matColumnDef="ver" sticky>
                   <th mat-header-cell *matHeaderCellDef >-</th>
-                  <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="verOrdenVentaTarifa(elemento)">
-                    <span class="cursor-color" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">ver</span>
+                  <td mat-cell *matCellDef="let elemento;  let i = index;" >
+                    <span class="cursor-color" (click)="verOrdenVentaTarifa(elemento)" >ver</span>
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="mod" sticky>
                   <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="modificarOrdenVentaTarifa(elemento)">
-                    <span class="cursor-color" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">mod</span>
+                  <td mat-cell *matCellDef="let elemento;  let i = index;" >
+                    <span class="cursor-color" (click)="modificarOrdenVentaTarifa(elemento)" 
+                    *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">mod</span>
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="eliminar" sticky>
                   <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento; let i = index;" (click)="eliminarOrdenVentaTarifa(elemento)">
-                    <span class="cursor-color" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">x</span>
+                  <td mat-cell *matCellDef="let elemento; let i = index;" >
+                    <span class="cursor-color" (click)="eliminarOrdenVentaTarifa(elemento)"
+                     *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">x</span>
                   </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
@@ -301,11 +291,17 @@
                   </ng-container>
                   <ng-container matColumnDef="seguro" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Seguro</th>
-                    <td mat-cell *matCellDef="let elemento">{{establecerDecimales(elemento.seguro, 2)}} ‰</td>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.seguro == 0"></span>
+                      <span *ngIf="elemento.seguro > 0">{{establecerDecimales(elemento.seguro, 2)}} %</span>
+                    </td>
                   </ng-container>
                   <ng-container matColumnDef="cr" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>comision C.R</th>
-                    <td mat-cell *matCellDef="let elemento">{{establecerDecimales(elemento.comisionCR, 2)}}</td>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.comisionCR == 0"></span>
+                      <span *ngIf="elemento.comisionCR > 0">{{establecerDecimales(elemento.comisionCR, 2)}} %</span>
+                    </td>
                   </ng-container>
                   <ng-container matColumnDef="esContado" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Contado</th>
