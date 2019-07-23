@@ -30,7 +30,7 @@
                 <div class="col-md-2" >
                   <div class="form-group has-float-label">
                     <label for="idImporteFijo" class="tamanio-label">Precio Fijo <span *ngIf="importePor">*</span></label>
-                    <input id="idImporteFijo" [textMask]="mascaraImporte(10, 2)"
+                    <input id="idImporteFijo" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
                       class="form-control form-control-sm number-right" formControlName="importeFijo" placeholder="$ 0.00"
                       type="text" autocomplete="off" (blur)="setDecimales(formularioEscala.get('importeFijo'), 2)" required>
                   </div>
@@ -40,7 +40,7 @@
                     <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario <span
                         *ngIf="!importePor">*</span></label>
                     <input id="idPrecioUnitario" [textMask]="mascaraImporte(10, 2)" formControlName="precioUnitario"
-                      type="text" autocomplete="off" class="form-control form-control-sm number-right"
+                      type="text" autocomplete="off" class="form-control form-control-sm number-right" [readOnly]="soloLectura"
                       (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)" placeholder="$ 0.00" required>
                   </div>
                 </div>
@@ -49,7 +49,7 @@
                     <label for="idSegunTarifa" class="tamanio-label">% Según Tarifa<span
                         *ngIf="tipoTarifaEstado">*</span></label>
                     <input id="idSegunTarifa" [textMask]="mascararPorcentaje()" formControlName="porcentaje" type="text"
-                      autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00"
+                      autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00" [readOnly]="soloLectura"
                       (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" required>
                   </div>
                 </div>
@@ -57,12 +57,12 @@
                   <div class="form-group has-float-label">
                     <label for="idMinimo" class="tamanio-label">Mínimo *</label>
                     <input id="idMinimo" [textMask]="mascaraImporte(10, 2)" formControlName="minimo" type="text"
-                      autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)"
+                      autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)" [readOnly]="soloLectura"
                       class="form-control form-control-sm number-right" placeholder="$ 0.00" required>
                   </div>
                 </div>
                 <div class="col">
-                  <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid"
+                  <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid || indiceSeleccionado==2 "
                     (click)="agregar()" *ngIf="idMod == null">Agregar</button>
                   <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid"
                     (click)="modificar()" *ngIf="idMod != null">Actualizar</button>
@@ -104,7 +104,7 @@
                   <div class="col-md-2">
                     <div class="form-group has-float-label">
                       <label for="idKmPactado" class="tamanio-label">Km Pactado</label>
-                      <input id="idKmPactado" class="form-control form-control-sm margin-left-5 number-right"
+                      <input id="idKmPactado" class="form-control form-control-sm margin-left-5 number-right" [readOnly]="soloLectura"
                         formControlName="kmPactado" type="text" autocomplete="off" [textMask]="obtenerMascaraKm(5)"
                         placeholder="0 km"  (blur)="establecerKm(formularioTramo.get('kmPactado'), 0)">
                     </div>
@@ -133,7 +133,7 @@
                     <div class="form-group has-float-label" *ngIf="!importeSecoPor.value">
                       <label for="idImporteFijoSeco" class="tamanio-label">Imp. Fijo Seco <span
                           *ngIf="importeSecoPor">*</span></label>
-                      <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10, 2)"
+                      <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
                         class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoSeco"
                         (blur)="controlPreciosTramo(1)" type="text" autocomplete="off" placeholder="$ 0.00"
                         style="width: 130px;">
@@ -141,7 +141,7 @@
                     <div class="form-group has-float-label" *ngIf="importeSecoPor.value">
                       <label for="idPrecioUnitarioSeco" class="tamanio-label">Precio Un. Seco <span
                           *ngIf="!importeSecoPor">*</span></label>
-                      <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10, 2)"
+                      <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
                         class="form-control form-control-sm margin-left-5 number-right" type="text" autocomplete="off"
                         formControlName="precioUnitarioSeco" (blur)="controlPreciosTramo(2)" placeholder="$ 0.00"
                         style="width: 142px;">
@@ -167,7 +167,7 @@
                   </div>
                   <div class="col-md-1">
                     <button mat-raised-button color="primary" (click)="agregar()" *ngIf="idMod == null"
-                      [disabled]="!formularioTramo.valid">Agregar</button>
+                      [disabled]="!formularioTramo.valid || indiceSeleccionado==2 ">Agregar</button>
                     <button mat-raised-button color="primary" (click)="modificar()"
                       *ngIf="idMod != null">Actualizar</button>
                   </div>
@@ -177,7 +177,7 @@
           </div>
 
           <div class="row" *ngIf="tipoTarifa == 'porEscala'">
-            <div class="col-md-12 text-center">
+            <div class="col-md-12 text-center" style="height: 500px; overflow-y: scroll;">
               <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="escala" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
@@ -185,29 +185,45 @@
                 </ng-container>
                 <ng-container matColumnDef="precioFijo" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{establecerDecimales(elemento.importeFijo, 2)}}</td>
+                  <td mat-cell *matCellDef="let elemento">
+                    <span *ngIf="elemento.importeFijo == 0"></span>
+                    <span *ngIf="elemento.importeFijo > 0">$ {{establecerDecimales(elemento.importeFijo, 2)}}</span>
+                  </td>
                 </ng-container>
                 <ng-container matColumnDef="precioUnitario" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{establecerDecimales(elemento.precioUnitario, 2)}}</td>
+                  <td mat-cell *matCellDef="let elemento">
+                    <span *ngIf="elemento.precioUnitario == 0"></span>
+                    <span *ngIf="elemento.precioUnitario > 0">$ {{establecerDecimales(elemento.precioUnitario, 2)}}</span>
+                  </td>
                 </ng-container>
                 <ng-container matColumnDef="porcentaje" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>% Según Tarifa</th>
-                  <td mat-cell *matCellDef="let elemento">% {{establecerPorcentaje(elemento.porcentaje, 2)}}</td>
+                  <td mat-cell *matCellDef="let elemento">
+                    <span *ngIf="elemento.porcentaje == 0"></span>
+                    <span *ngIf="elemento.porcentaje > 0">% {{establecerDecimales(elemento.porcentaje, 2)}}</span>
+                  </td>
                 </ng-container>
                 <ng-container matColumnDef="minimo" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Mínimo</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{establecerDecimales(elemento.minimo, 2)}}</td>
+                  <td mat-cell *matCellDef="let elemento">
+                    <span *ngIf="elemento.minimo == 0"></span>
+                    <span *ngIf="elemento.minimo > 0">$ {{establecerDecimales(elemento.minimo, 2)}}</span>
+                  </td>
                 </ng-container>
                 <ng-container matColumnDef="mod" sticky>
                   <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento" (click)="controlModEscala(elemento)"><span
+                  <td mat-cell *matCellDef="let elemento" >
+                    <span (click)="controlModEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
                       class="cursor-color">mod</span></td>
                 </ng-container>
                 <ng-container matColumnDef="eliminar" sticky>
                   <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento; let i = index;" (click)="controlEliminarEscala(elemento)"><span
-                      class="cursor-color">X</span></td>
+                  <td mat-cell *matCellDef="let elemento; let i = index;" >
+                    <span class="cursor-color" (click)="controlEliminarEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3">
+                      X
+                    </span>
+                </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="columnasEscala"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnasEscala;"></tr>
@@ -215,7 +231,7 @@
             </div>
           </div>
           <div class="row" *ngIf="tipoTarifa == 'porTramo'">
-              <div class="col-md-12 text-center">
+              <div class="col-md-12 text-center" style="height: 500px; overflow-y: scroll;">
                 <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                   <ng-container matColumnDef="tramoOrigen" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Origen</th>
@@ -235,28 +251,42 @@
                   </ng-container>
                   <ng-container matColumnDef="precioFijoSeco" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Seco</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{establecerDecimales(elemento.importeFijoSeco, 2)}}</td>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.importeFijoSeco == 0"></span>
+                      <span *ngIf="elemento.importeFijoSeco > 0">$ {{establecerDecimales(elemento.importeFijoSeco, 2)}}</span>
+                    </td>
                   </ng-container>
                   <ng-container matColumnDef="precioUnitSeco" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Seco</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{establecerDecimales(elemento.precioUnitarioSeco, 2)}}</td>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.precioUnitarioSeco == 0"></span>
+                      <span *ngIf="elemento.precioUnitarioSeco > 0">$ {{establecerDecimales(elemento.precioUnitarioSeco, 2)}}</span>
+                    </td>
                   </ng-container>
                   <ng-container matColumnDef="precioFijoRefrig" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Regrigerado</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{establecerDecimales(elemento.importeFijoRef, 2)}}</td>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.importeFijoRef == 0"></span>
+                      <span *ngIf="elemento.importeFijoRef > 0">$ {{establecerDecimales(elemento.importeFijoRef, 2)}}</span>
+                    </td>
                   </ng-container>
                   <ng-container matColumnDef="precioUnitRefrig" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Refrigerado</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{establecerDecimales(elemento.precioUnitarioRef, 2)}}</td>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.precioUnitarioRef == 0"></span>
+                      <span *ngIf="elemento.precioUnitarioRef > 0">$ {{establecerDecimales(elemento.precioUnitarioRef, 2)}}</span>
+                    </td>
                   </ng-container>
                   <ng-container matColumnDef="mod" sticky>
                     <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento" (click)="controlModTramo(elemento)"><span
+                    <td mat-cell *matCellDef="let elemento">
+                      <span  (click)="controlModTramo(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
                         class="cursor-color">mod</span></td>
                   </ng-container>
                   <ng-container matColumnDef="eliminar" sticky>
                     <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento; let i = index;" (click)="controlEliminarTramo(elemento)"><span
+                    <td mat-cell *matCellDef="let elemento; let i = index;" >
+                      <span (click)="controlEliminarTramo(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
                         class="cursor-color">X</span></td>
                   </ng-container>
                   <tr mat-header-row *matHeaderRowDef="columnasTramo"></tr>

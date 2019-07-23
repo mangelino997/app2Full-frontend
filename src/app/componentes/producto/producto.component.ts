@@ -121,6 +121,7 @@ export class ProductoComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
+        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
