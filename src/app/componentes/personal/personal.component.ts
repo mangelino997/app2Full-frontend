@@ -144,6 +144,7 @@ export class PersonalComponent implements OnInit {
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
+          console.log(this.pestanias);
         },
         err => {
           console.log(err);
@@ -205,10 +206,6 @@ export class PersonalComponent implements OnInit {
         })
       }
     })
-    //Autocompletado Categoria - Buscar por nombre
-    this.categoriaServicio.listar().subscribe(response => {
-      this.resultadosCategorias = response.json();
-    })
     //Autocompletado Seguridad Social - Buscar por nombre
     this.seguridadSocialServicio.listar().subscribe(response => {
       this.resultadosSeguridadesSociales = response.json();
@@ -259,6 +256,8 @@ export class PersonalComponent implements OnInit {
     this.listarAreas();
     //Obtiene la lista de sindicatos
     this.listarSindicatos();
+    //Obtiene la lista de cateogrias
+    this.listarCategorias();
     //Obtiene la foto por defecto
     this.obtenerFotoPorDefecto();
     //Establece los valores por defecto
@@ -390,7 +389,6 @@ export class PersonalComponent implements OnInit {
         console.log(err);
       }
     );
-    // this.servicio.ob
   }
   //Obtiene el listado de estados civiles
   private listarEstadosCiviles() {
@@ -448,6 +446,18 @@ export class PersonalComponent implements OnInit {
       }
     );
   }
+  //Obtiene el listado de categorias
+  private listarCategorias() {
+    this.categoriaServicio.listar().subscribe(
+      res => {
+        console.log(res.json());
+        this.resultadosCategorias = res.json();
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
     this.resultados = [];
@@ -472,6 +482,7 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('sucursal').enable();
       this.formulario.get('area').enable();
       this.formulario.get('sindicato').enable();
+      this.formulario.get('categoria').enable();
       this.formulario.get('esAcompReparto').enable();
       this.formulario.get('enConvenioColectivo').enable();
       this.formulario.get('conCoberturaSCVO').enable();
@@ -500,6 +511,7 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('sucursal').disable();
       this.formulario.get('area').disable();
       this.formulario.get('sindicato').disable();
+      this.formulario.get('categoria').disable();
       this.formulario.get('esAcompReparto').disable();
       this.formulario.get('enConvenioColectivo').disable();
       this.formulario.get('conCoberturaSCVO').disable();
@@ -531,6 +543,7 @@ export class PersonalComponent implements OnInit {
       datos: null,
       tabla: null
     }
+    console.log(elemAutocompletado);
     if (elemAutocompletado.pdfAltaTemprana.id == null) {
       elemAutocompletado.pdfAltaTemprana = pdf;
     }
@@ -590,7 +603,7 @@ export class PersonalComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarListas();
+    //this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -798,7 +811,7 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.nacionalidadNacimiento.setValue(undefined);
-    this.vaciarListas();
+    //this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -1041,33 +1054,16 @@ export class PersonalComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
+    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.autocompletado.setValue(elemento);
+    this.obtenerPorId(elemento.id);
     this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
-    if (elemento.foto.id) {
-      elemento.foto = this.obtenerFoto(elemento.foto.id);
-    }
-    if (elemento.pdfLicConducir.id) {
-      elemento.pdfLicConducir = this.obtenerPDF(elemento.pdfLicConducir.id);
-    }
-    if (elemento.pdfLinti.id) {
-      elemento.pdfLinti = this.obtenerPDF(elemento.pdfLinti.id);
-    }
-    if (elemento.pdfLibSanidad.id) {
-      elemento.pdfLibSanidad = this.obtenerPDF(elemento.pdfLibSanidad.id);
-    }
-    if (elemento.pdfDni.id) {
-      elemento.pdfDni = this.obtenerPDF(elemento.pdfDni.id);
-    }
-    if (elemento.pdfAltaTemprana.id) {
-      elemento.pdfAltaTemprana = this.obtenerPDF(elemento.pdfAltaTemprana.id);
-    }
-    this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.obtenerPorId(elemento.id);
+    this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
   }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
@@ -1090,6 +1086,7 @@ export class PersonalComponent implements OnInit {
     if (elemento.pdfAltaTemprana) {
       this.formulario.get('pdfAltaTemprana.datos').setValue(atob(elemento.pdfAltaTemprana.datos));
     }
+    this.cambioEsChofer();
   }
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {

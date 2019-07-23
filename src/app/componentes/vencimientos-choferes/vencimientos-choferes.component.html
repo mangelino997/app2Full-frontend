@@ -61,7 +61,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="idTipoDocumento" class="tamanio-label">Tipo Documento *</label>
-              <input id="idTipo" type="text" formControlName="tipoDocumento" autocomplete="off"
+              <input id="idTipo" type="text" [formControl]="tipoDocumento" autocomplete="off"
                 class="form-control form-control-sm" readonly>
             </div>
           </div>
@@ -83,10 +83,10 @@
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfDni.nombre')"
-                [disabled]="!formulario.get('pdfDni.nombre').value" style="width: 40px;" matTooltip="Quitar">
+                [disabled]="!formulario.get('pdfDni.nombre').value || indiceSeleccionado == 2" style="width: 40px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF()"
+              <button class="btn-height" mat-raised-button color="primary" (click)="verDni()"
                 [disabled]="!formulario.get('pdfDni.nombre').value" style="width: 40px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
@@ -103,10 +103,10 @@
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfAltaTemprana.nombre')"
-                [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 60px;" matTooltip="Quitar">
+                [disabled]="!formulario.get('pdfAltaTemprana.nombre').value ||indiceSeleccionado == 2" style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF()"
+              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF(pdfAltaTemprana)"
                 [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 60px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
@@ -178,10 +178,10 @@
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLicConducir.nombre')"
-                [disabled]="!formulario.get('pdfLicConducir.nombre').value" style="width: 60px;" matTooltip="Quitar">
+                [disabled]="!formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 2" style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF()"
+              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF(pdfLicConducir)"
                 [disabled]="!formulario.get('pdfLicConducir.nombre').value" style="width: 60px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
@@ -206,10 +206,10 @@
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti.nombre')"
-                [disabled]="!formulario.get('pdfLinti.nombre').value" style="width: 60px;" matTooltip="Quitar">
+                [disabled]="!formulario.get('pdfLinti.nombre').value || indiceSeleccionado == 2" style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF()"
+              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF(pdfLinti)"
                 [disabled]="!formulario.get('pdfLinti.nombre').value" style="width: 60px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
@@ -229,17 +229,17 @@
               <input style="display: none;" type="file" (change)="readURL($event, 'pdfLibSanidad')"
                 #fileInputLibSanidad />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInputLibSanidad.click()"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"
+                [disabled]="indiceSeleccionado == 2"
                 matTooltip="Adjuntar Libreta de Sanidad">
                 <i class="material-icons" *ngIf="!formulario.get('pdfLibSanidad.nombre').value">cloud_upload</i>
                 <i class="material-icons" *ngIf="formulario.get('pdfLibSanidad.nombre').value"
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad.nombre')"
-                [disabled]="!formulario.get('pdfLibSanidad.nombre').value" style="width: 60px;" matTooltip="Quitar">
+                [disabled]="!formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 2" style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF()"
+              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF(pdfLibSanidad)"
                 [disabled]="!formulario.get('pdfLibSanidad.nombre').value" style="width: 60px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>

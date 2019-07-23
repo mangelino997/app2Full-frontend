@@ -208,8 +208,8 @@
                                   style="color: lightgreen">cloud_done</i>
                               </button>
                               <button class="btn-height" mat-raised-button color="warn"
-                                (click)="eliminarPdf('pdfDni')" [disabled]="!formulario.get('pdfDni.nombre').value"
-                                style="width: 40px;" matTooltip="Quitar">
+                                (click)="eliminarPdf('pdfDni')" [disabled]="!formulario.get('pdfDni.nombre').value ||
+                                indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
                                 <i class="material-icons">close</i>
                               </button>
                               <button class="btn-height" mat-raised-button color="primary" (click)="verDni()"
@@ -256,8 +256,8 @@
                                 style="color: lightgreen">cloud_done</i>
                             </button>
                             <button class="btn-height" mat-raised-button color="warn"
-                              (click)="eliminarPdf('foto')" [disabled]="!formulario.get('foto.nombre').value"
-                              style="width: 40px;" matTooltip="Quitar">
+                              (click)="eliminarPdf('foto')" [disabled]="!formulario.get('foto.nombre').value ||
+                              indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
                               <i class="material-icons">close</i>
                             </button>
                             <button class="btn-height" mat-raised-button color="primary" (click)="verFoto('foto')"
@@ -329,8 +329,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCategoria" class="tamanio-label">Categoría *</label>
-                        <mat-select class="form-control form-control-sm" [formControl]="formulario.get('categoria')"
-                          id="idAutocompletado" [compareWith]="compareFn">
+                        <mat-select class="form-control form-control-sm" formControlName="categoria"
+                          id="idCategoria" [compareWith]="compareFn">
                           <mat-option *ngFor="let itemCategoria of resultadosCategorias" [value]="itemCategoria">
                             {{itemCategoria.nombre}}
                           </mat-option>
@@ -574,8 +574,8 @@
                           </button>
                           <button class="btn-height" mat-raised-button color="warn"
                             (click)="eliminarPdf('pdfAltaTemprana')"
-                            [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 40px;"
-                            matTooltip="Quitar">
+                            [disabled]="!formulario.get('pdfAltaTemprana.nombre').value || indiceSeleccionado == 2 
+                            || indiceSeleccionado == 4 " style="width: 40px;" matTooltip="Quitar">
                             <i class="material-icons">close</i>
                           </button>
                           <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfAltaTemprana')"
@@ -691,8 +691,8 @@
                         </button>
                         <button class="btn-height" mat-raised-button color="warn"
                           (click)="eliminarPdf('pdfLicConducir')"
-                          [disabled]="!formulario.get('pdfLicConducir.nombre').value" style="width: 40px;"
-                          matTooltip="Quitar">
+                          [disabled]="!formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 2 
+                          || indiceSeleccionado == 4 || !btnPdfLicConducir" style="width: 40px;" matTooltip="Quitar">
                           <i class="material-icons">close</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLicConducir')"
@@ -722,8 +722,8 @@
                             style="color: lightgreen">cloud_done</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti')"
-                          [disabled]="!formulario.get('pdfLinti.nombre').value" style="width: 40px;"
-                          matTooltip="Quitar">
+                          [disabled]="!formulario.get('pdfLinti.nombre').value || indiceSeleccionado == 2 ||
+                           indiceSeleccionado == 4 || !btnPdflinti" style="width: 40px;" matTooltip="Quitar">
                           <i class="material-icons">close</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLinti')"
@@ -753,8 +753,8 @@
                             style="color: lightgreen">cloud_done</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad')"
-                          [disabled]="!formulario.get('pdfLibSanidad.nombre').value" style="width: 40px;"
-                          matTooltip="Quitar">
+                          [disabled]="!formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 2 ||
+                           indiceSeleccionado == 4 || !btnPdfLibSanidad" style="width: 40px;" matTooltip="Quitar">
                           <i class="material-icons">close</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLibSanidad')"

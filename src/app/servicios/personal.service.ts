@@ -223,6 +223,7 @@ export class PersonalService {
     obj.pdfDni = null;
     obj.pdfAltaTemprana = null;
     formData.append('personal', JSON.stringify(obj));
+    console.log(obj);
 		return fetch(this.url, {
       method: "PUT",
       headers: {
