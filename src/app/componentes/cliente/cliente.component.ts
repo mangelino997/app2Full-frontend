@@ -286,7 +286,7 @@ export class ClienteComponent implements OnInit {
   //Establece el formulario
   public establecerFormulario(): void {
     let elemento = this.autocompletado.value;
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
     this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
     this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.establecerDecimales(elemento.descuentoFlete, 2) : null);
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
