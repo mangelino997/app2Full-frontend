@@ -126,20 +126,34 @@
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.get('pdfTitulo.nombre').value">Adj. Título</span>
-                  <span *ngIf="formulario.get('pdfTitulo.nombre').value">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value">warning</i>
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo')" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
                   <i class="material-icons" >close</i>
                 </button>
                 <button id="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfTitulo')" 
-                  [disabled]="!formulario.get('pdfTitulo.nombre').value">
+                  [disabled]="!formulario.get('pdfTitulo.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
+                <!-- <input style="display: none;" type="file" (change)="readURL($event)" #fileInput />
+                <button class="btn-height" mat-raised-button color="primary" (click)="fileInput.click()"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
+                  <i class="material-icons" *ngIf="!formulario.get('pdf.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="formulario.get('pdf.nombre').value"
+                    style="color: lightgreen">cloud_done</i>
+                </button>
+                <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdf.nombre')"
+                  [disabled]="!formulario.get('pdf.nombre').value" style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons">close</i>
+                </button>
+                <button class="btn-height" mat-raised-button color="primary" (click)="verPDF()"
+                  [disabled]="!formulario.get('pdf.nombre').value" style="width: 40px;" matTooltip="Ver">
+                  <i class="material-icons">visibility</i>
+                </button> -->
               </div>
             </div>
           </div>
@@ -148,20 +162,35 @@
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')" #fileInputCedulaIdent />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputCedulaIdent.click()"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.get('pdfCedulaIdent.nombre').value">Adj. Ced. Id. </span>
-                  <span *ngIf="formulario.get('pdfCedulaIdent.nombre').value">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.get('pdfCedulaIdent.nombre').value">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.get('pdfCedulaIdent.nombre').value">warning</i>
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"  matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfCedulaIdent.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfCedulaIdent.nombre').value" style="color: lightgreen">cloud_done</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfCedulaIdent')" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
                   <i class="material-icons" >close</i>
                 </button>
                 <button id="btn-visibility" class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfCedulaIdent')" 
-                  [disabled]="!formulario.get('pdfCedulaIdent.nombre').value">
+                  [disabled]="!formulario.get('pdfCedulaIdent.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
+                <!-- 
+                  <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
+                </button>
+                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo')" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons" >close</i>
+                </button>
+                <button id="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfTitulo')" 
+                  [disabled]="!formulario.get('pdfTitulo.nombre').value" style="width: 40px;" matTooltip="Ver">
+                  <i class="material-icons">visibility</i>
+                </button>
+                 -->
               </div>
             </div>
           </div>
@@ -266,20 +295,37 @@
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoRuta')" #fileInputVtoRuta />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoRuta.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.get('pdfVtoRuta.nombre').value">Adj. Vto. Ruta </span>
-                  <span *ngIf="formulario.get('pdfVtoRuta.nombre').value">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.get('pdfVtoRuta.nombre').value">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.get('pdfVtoRuta.nombre').value">warning</i>
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"  matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfVtoRuta.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfVtoRuta.nombre').value" style="color: lightgreen">
+                    cloud_done
+                  </i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoRuta')" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"  style="width: 40px;" matTooltip="Quitar">
                   <i class="material-icons" >close</i>
                 </button>
                 <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoRuta')" 
-                  [disabled]="!formulario.get('pdfVtoRuta.nombre').value">
+                  [disabled]="!formulario.get('pdfVtoRuta.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
+                 <!-- 
+                  <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
+                </button>
+                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo')" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons" >close</i>
+                </button>
+                <button id="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfTitulo')" 
+                  [disabled]="!formulario.get('pdfTitulo.nombre').value" style="width: 40px;" matTooltip="Ver">
+                  <i class="material-icons">visibility</i>
+                </button>
+                 -->
               </div>
             </div>
           </div>
@@ -297,20 +343,36 @@
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoInspTecnica')" #fileInputVtoInspTecnica />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoInspTecnica.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.get('pdfVtoInspTecnica.nombre').value">Adj. Vto. Insp. </span>
-                  <span *ngIf="formulario.get('pdfVtoInspTecnica.nombre').value">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.get('pdfVtoInspTecnica.nombre').value">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.get('pdfVtoInspTecnica.nombre').value">warning</i>
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfVtoInspTecnica.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfVtoInspTecnica.nombre').value" 
+                  style="color: lightgreen">cloud_done</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoInspTecnica')"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
                   <i class="material-icons" >close</i>
                 </button>
                 <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoInspTecnica')" 
-                  [disabled]="!formulario.get('pdfVtoInspTecnica.nombre').value">
+                  [disabled]="!formulario.get('pdfVtoInspTecnica.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
+                <!-- 
+                  <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
+                </button>
+                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo')" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons" >close</i>
+                </button>
+                <button id="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfTitulo')" 
+                  [disabled]="!formulario.get('pdfTitulo.nombre').value" style="width: 40px;" matTooltip="Ver">
+                  <i class="material-icons">visibility</i>
+                </button>
+                 -->
               </div>
             </div>
           </div>
@@ -329,20 +391,36 @@
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoSenasa')" #fileInputVtoSenasa />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoSenasa.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.get('pdfVtoSenasa.nombre').value">Adj. Vto. Sen. </span>
-                  <span *ngIf="formulario.get('pdfVtoSenasa.nombre').value">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.get('pdfVtoSenasa.nombre').value">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.get('pdfVtoSenasa.nombre').value">warning</i>
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"  matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfVtoSenasa.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfVtoSenasa.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoSenasa')"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
                   <i class="material-icons" >close</i>
                 </button>
                 <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoSenasa')" 
-                  [disabled]="!formulario.get('pdfVtoSenasa.nombre').value">
+                  [disabled]="!formulario.get('pdfVtoSenasa.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
+                <!-- 
+                  <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
+                </button>
+                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo')" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons" >close</i>
+                </button>
+                <button id="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfTitulo')" 
+                  [disabled]="!formulario.get('pdfTitulo.nombre').value" style="width: 40px;" matTooltip="Ver">
+                  <i class="material-icons">visibility</i>
+                </button>
+                 -->
               </div>
             </div>
           </div>
@@ -361,20 +439,36 @@
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfHabBromat')" #fileInputHabBromat />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputHabBromat.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                  <span *ngIf="!formulario.get('pdfHabBromat.nombre').value">Adj. Vto. Brom. </span>
-                  <span *ngIf="formulario.get('pdfHabBromat.nombre').value">Archivo Adjunto</span>
-                  <i class="material-icons" *ngIf="formulario.get('pdfHabBromat.nombre').value">check_circle</i>
-                  <i class="material-icons" *ngIf="!formulario.get('pdfHabBromat.nombre').value">warning</i>
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"  matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfHabBromat.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfHabBromat.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfHabBromat')"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" >
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
                   <i class="material-icons" >close</i>
                 </button>
                 <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfHabBromat')" 
-                  [disabled]="!formulario.get('pdfHabBromat.nombre').value">
+                  [disabled]="!formulario.get('pdfHabBromat.nombre').value"  style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
+                <!-- 
+                  <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                  <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value">cloud_upload</i>
+                  <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value"
+                  style="color: lightgreen">cloud_done</i>
+                </button>
+                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo')" 
+                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons" >close</i>
+                </button>
+                <button id="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfTitulo')" 
+                  [disabled]="!formulario.get('pdfTitulo.nombre').value" style="width: 40px;" matTooltip="Ver">
+                  <i class="material-icons">visibility</i>
+                </button>
+                 -->
               </div>
             </div>
           </div>

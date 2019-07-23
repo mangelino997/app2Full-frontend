@@ -1,5 +1,5 @@
 
-#btn-adjuntar {
+/* #btn-adjuntar {
     display: inline-block;
     width: 140px;
 }
@@ -10,4 +10,16 @@
 #btn-visibility {
     display: inline-block;
     width: 80px;
+} */
+.btn-height {
+    height: 30px;
+}
+.margin-left-10 {
+    margin-left: 10px;
+}
+.mat-raised-button {
+    min-width: 60px !important;
+}
+.mat-dialog-container {
+    padding: 0px !important;
 }

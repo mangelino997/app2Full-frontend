@@ -15,9 +15,10 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service';
 import { PdfService } from 'src/app/servicios/pdf.service';
+import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 
 @Component({
   selector: 'app-vehiculo',
@@ -97,7 +98,7 @@ export class VehiculoComponent implements OnInit {
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private localidadServicio: LocalidadService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService, private companiaSeguroService: CompaniaSeguroService,
-    private configuracionVehiculoServicio: ConfiguracionVehiculoService, private pdfServicio: PdfService,
+    private configuracionVehiculoServicio: ConfiguracionVehiculoService, private pdfServicio: PdfService,  public dialog: MatDialog,
     private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -223,7 +224,6 @@ export class VehiculoComponent implements OnInit {
   //Establece el formulario al seleccionar elemento de autocompletado
   public establecerFormulario() {
     let elemento = this.autocompletado.value;
-    this.formulario.patchValue(elemento);
     this.tipoVehiculo.setValue(elemento.configuracionVehiculo.tipoVehiculo);
     this.marcaVehiculo.setValue(elemento.configuracionVehiculo.marcaVehiculo);
     this.establecerConfiguracion(elemento);
@@ -607,8 +607,15 @@ export class VehiculoComponent implements OnInit {
   }
   //Muestra el pdf en una pestana nueva
   public verPDF(campo) {
-    let datos = this.formulario.get(campo + '.datos').value;
-    window.open(datos, '_blank');
+    const dialogRef = this.dialog.open(PdfDialogoComponent, {
+      width: '95%',
+      height: '95%',
+      data: {
+        nombre: this.formulario.get(campo + '.nombre').value,
+        datos: this.formulario.get(campo + '.datos').value
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {});
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
