@@ -160,54 +160,54 @@ export class VehiculoService {
     let blob = new Blob([], { type: 'application/pdf' });
     const formData = new FormData();
 
-    if (tituloFile != null) {
+    if (tituloFile.nombre != null) {
       blob = new Blob([tituloFile.datos], { type: 'application/pdf' });
       formData.append('titulo', blob, tituloFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
       formData.append('titulo', blob, '');
     }
-    if (cedulaIdentFile != null) {
+    if (cedulaIdentFile.nombre != null) {
       blob = new Blob([cedulaIdentFile.datos], { type: 'application/pdf' });
       formData.append('cedulaIdent', blob, cedulaIdentFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
       formData.append('cedulaIdent', blob, '');
     }
-    if (vtoRutaFile != null) {
+    if (vtoRutaFile.nombre != null) {
       blob = new Blob([vtoRutaFile.datos], { type: 'application/pdf' });
       formData.append('vtoRuta', blob, vtoRutaFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
       formData.append('vtoRuta', blob, '');
     }
-    if (vtoInspTecnicaFile != null) {
+    if (vtoInspTecnicaFile.nombre != null) {
       blob = new Blob([vtoInspTecnicaFile.datos], { type: 'application/pdf' });
       formData.append('vtoInspTecnica', blob, vtoInspTecnicaFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
       formData.append('vtoInspTecnica', blob, '');
     }
-    if (vtoSenasaFile != null) {
+    if (vtoSenasaFile.nombre != null) {
       blob = new Blob([vtoSenasaFile.datos], { type: 'application/pdf' });
       formData.append('vtoSenasa', blob, vtoSenasaFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
       formData.append('vtoSenasa', blob, '');
     }
-    if (habBromatFile != null) {
+    if (habBromatFile.nombre != null) {
       blob = new Blob([habBromatFile.datos], { type: 'application/pdf' });
       formData.append('habBromat', blob, habBromatFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
       formData.append('habBromat', blob, '');
     }
-    obj.pdfTitulo.datos = null;
-    obj.pdfCedulaIdent.datos = null;
-    obj.pdfVtoRuta.datos = null;
-    obj.pdfVtoInspTecnica.datos = null;
-    obj.pdfVtoSenasa.datos = null;
-    obj.pdfHabBromat.datos = null;
+    obj.pdfTitulo = null;
+    obj.pdfCedulaIdent = null;
+    obj.pdfVtoRuta = null;
+    obj.pdfVtoInspTecnica = null;
+    obj.pdfVtoSenasa = null;
+    obj.pdfHabBromat = null;
 
     // if(tituloFile)
     //   obj.pdfTitulo = {};
