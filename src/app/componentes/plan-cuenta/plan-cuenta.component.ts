@@ -72,6 +72,8 @@ export class PlanCuentaComponent implements OnInit {
   public gruposCuentasContables:Array<any> = [];
   //Define si mostrar tipos de cuentas contables
   public mostrarTipoCuentasContables:boolean = false;
+  //Define si se puede modificar esImputable y estaActivo
+  public permitirActualizar:boolean = true;
   //Constructor
   constructor(private planCuentaServicio: PlanCuentaService, private appService: AppService,
     private loaderService: LoaderService, private tipoCuentaContableServicio: TipoCuentaContableService,
@@ -183,6 +185,7 @@ export class PlanCuentaComponent implements OnInit {
   }
   //Actualiza un nodo
   public editarNodo(nodo: Nodo) {
+    this.permitirActualizar = nodo.esImputable ? true : false;
     nodo.editable = true;
     setTimeout(function () {
       document.getElementById('idNombre').focus();
