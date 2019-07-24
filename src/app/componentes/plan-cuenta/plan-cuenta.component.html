@@ -48,7 +48,7 @@
                 </mat-select>
               </div>
               <div class="form-group has-float-label">
-                <label for="idActivo" class="tamanio-label">Esta Activo *</label>
+                <label for="idActivo" class="tamanio-label">Esta Activa *</label>
                 <mat-select id="idActivo" class="form-control form-control-sm" style="width: 108px;"
                   formControlName="estaActivo" [disabled]="!formulario.valid">
                   <mat-option [value]="false">No</mat-option>
@@ -71,7 +71,7 @@
               </mat-icon>
             </button>
             <span style="padding-top: 9px;"><b style="font-size: 16px; margin-right: 5px;">{{node.nombre}}
-              </b> ({{node.esImputable ? 'Imputable' : 'No Imputable'}} - {{node.estaActivo ? 'Activo' : 'No Activo'}})
+              </b> ({{node.esImputable ? 'Imputable' : 'No Imputable'}} - {{node.estaActivo ? 'Activa' : 'No Activa'}})
             </span>
             <div *ngIf="node.mostrarBotones">
               <button *ngIf="!node.esImputable" class="boton-agregar" mat-icon-button (click)="nuevoNodo(node)">
@@ -102,7 +102,7 @@
                 </mat-select>
               </div>
               <div class="form-group has-float-label" *ngIf="permitirActualizar">
-                <label for="idActivo" class="tamanio-label">Esta Activo *</label>
+                <label for="idActivo" class="tamanio-label">Esta Activa *</label>
                 <mat-select id="idActivo" class="form-control form-control-sm" style="width: 108px;"
                   formControlName="estaActivo">
                   <mat-option [value]="false">No</mat-option>
