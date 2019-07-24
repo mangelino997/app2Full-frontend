@@ -48,6 +48,10 @@ export class CompaniaSeguroPolizaService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la poliza por id
+  public obtenerPorId(id) {
+    return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
+  }
   //Obtiene un listado por empresa
   public listarPorEmpresa(id) {
     return this.http.get(this.url + '/listarPorEmpresa/' + id, this.options);

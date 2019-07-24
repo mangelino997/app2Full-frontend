@@ -305,20 +305,36 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
-  };
+  }
+  //Obtiene un registro por id
+  private obtenerPorId(id) {
+    this.servicio.obtenerPorId(id).subscribe(
+      res => {
+        let elemento = res.json();
+        this.formulario.setValue(elemento);
+        this.establecerPdf(elemento);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.empresaBusqueda.setValue(elemento.empresa);
-    this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.obtenerPorId(elemento.id);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.empresaBusqueda.setValue(elemento.empresa);
+    this.obtenerPorId(elemento.id);
+  }
+  //Establece la foto y pdf (activar consultar/actualizar)
+  private establecerPdf(elemento): void {
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    if (elemento.pdf) {
+      this.formulario.get('pdf.datos').setValue(atob(elemento.pdf.datos));
+    }
   }
   //Muestra en la pestania buscar,actualizar,eliminar y listar el elemento seleccionado de listar
   public activarVer(elemento) {
