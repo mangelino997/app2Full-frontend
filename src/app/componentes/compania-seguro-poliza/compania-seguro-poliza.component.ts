@@ -13,6 +13,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
+import { element } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -429,8 +430,19 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Muestra el pdf en una pestana nueva
   public verPDFTabla(elemento) {
-    if (elemento.pdf) {
+    console.log(elemento);
+    if (!elemento.pdf) {
       this.toastr.success("Sin archivo adjunto");
+    } else {
+      const dialogRef = this.dialog.open(PdfDialogoComponent, {
+        width: '95%',
+        height: '95%',
+        data: {
+          nombre: elemento.pdf.nombre,
+          datos: elemento.pdf.datos
+        }
+      });
+      dialogRef.afterClosed().subscribe(resultado => {});
     }
   }
   //Carga el pdf

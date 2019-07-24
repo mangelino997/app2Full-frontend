@@ -48,7 +48,7 @@ export class CondicionCompraComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'esContado','cuotas', 'ver', 'mod'];
+  public columnas:string[] = ['id', 'nombre', 'esContado','cuotas','dias', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -306,10 +306,12 @@ export class CondicionCompraComponent implements OnInit {
     console.log(esContado);
     if(!this.formulario.get('esContado').value) {
       this.soloLecturaCuota=false;
+      
     }
     if(this.formulario.get('esContado').value){
       this.soloLecturaCuota=true;
       this.formulario.get('cuotas').setValue(0);
+      this.formulario.get('dias').setValue(0);
     }
     console.log(this.soloLecturaCuota);
   }
