@@ -550,7 +550,6 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
-    console.log(elemento);
     if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
