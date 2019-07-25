@@ -14,12 +14,28 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="row justify-content-center">
           <div class="col-md-12">
+            <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+            <label for="idAutocompletado" class="tamanio-label">Buscar </label>
+              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+                autocomplete="off" type="text" matInput [formControl]="autocompletado"
+                [matAutocomplete]="auto" placeholder="">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                    (optionSelected)="establecerFormulario()">
+                <mat-option *ngFor="let item of resultados" [value]="item">
+                  {{item.moneda.nombre}} - {{item.moneda.simbolo}} - {{item.empresa.razonSocial}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idMoneda" class="labelMoneda">Moneda</label>
               <mat-select class="form-control form-control-sm" id="idMoneda" formControlName="moneda"
                 [compareWith]="compareFn" (selectionChange)="cambioMonedaCuentaContable()">
                 <mat-option *ngFor="let moneda of listaMonedas" [value]="moneda">
-                  {{moneda.nombre}}
+                  {{moneda.nombre}} 
                 </mat-option>
               </mat-select>
             </div>

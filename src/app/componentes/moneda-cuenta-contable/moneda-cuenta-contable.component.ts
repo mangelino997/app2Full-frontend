@@ -60,6 +60,8 @@ export class MonedaCuentaContableComponent implements OnInit {
   public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
   public pestaniaActual: string = null;
+  //Define el form control para las busquedas
+  public autocompletado:FormControl = new FormControl();
   //Define si mostrar el autocompletado
   public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
@@ -108,6 +110,16 @@ export class MonedaCuentaContableComponent implements OnInit {
           console.log(err);
         }
       );
+      //Autocompletado - Buscar por nombre cliente
+      let empresa = this.appService.getEmpresa();
+      this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.monedaCuentaContableServicio.listarPorNombreMoneda(data, empresa.id).subscribe(response => {
+          console.log(response.json());
+          this.resultados = response.json();
+        })
+      }
+    });
   }
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -125,11 +137,13 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.listarMonedas();
     //Obtiene la empresa del Login
     this.obtenerEmpresa();
+    
   }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
-    this.monedaCuentaContableServicio.listar().subscribe(
+    let empresa = this.appService.getEmpresa();
+    this.monedaCuentaContableServicio.listarPorEmpresa(empresa.id).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -154,6 +168,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Controla el cambio en Moneda Cuenta Contable
   public cambioMonedaCuentaContable() {
     if (this.indiceSeleccionado > 1) {
+      console.log(this.formulario.value.moneda.id, this.formulario.value.empresa.id);
       this.monedaCuentaContableServicio.obtenerPorMonedaYEmpresa(this.formulario.value.moneda.id, this.formulario.value.empresa.id).subscribe(
         res => {
           this.formulario.get('planCuenta').setValue(res.json());
@@ -183,6 +198,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.formulario.reset();
+    this.autocompletado.reset();
     this.obtenerEmpresa();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
@@ -222,12 +238,10 @@ export class MonedaCuentaContableComponent implements OnInit {
   private establecerEstadoCampos(estado) {
     if (estado) {
       this.formulario.get('moneda').enable();
-      this.formulario.get('empresa').enable();
-      this.formulario.get('planCuenta').enable();
+      // this.formulario.get('planCuenta').enable();
     } else {
       this.formulario.get('moneda').disable();
-      this.formulario.get('empresa').disable();
-      this.formulario.get('planCuenta').enable();
+      // this.formulario.get('planCuenta').enable();
     }
   }
   //Funcion para determinar que accion se requiere (Agregar, Actualizar, Eliminar)
@@ -297,6 +311,13 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.formulario.reset();
     this.resultados = [];
   }
+  //Establece el formulario
+  public establecerFormulario(): void {
+    let elemento = this.autocompletado.value;
+    this.formulario.patchValue(elemento);
+    this.formulario.value.moneda = elemento.moneda;
+    console.log(this.formulario.value);
+  }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -306,12 +327,14 @@ export class MonedaCuentaContableComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.formulario.patchValue(elemento);
+    this.autocompletado.setValue(elemento);
     this.empresa.setValue(this.formulario.get('empresa').value.razonSocial);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.formulario.patchValue(elemento);
+    this.autocompletado.setValue(elemento);
     this.empresa.setValue(this.formulario.get('empresa').value.razonSocial);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
