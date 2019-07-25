@@ -686,12 +686,16 @@ export class ClienteComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
+    this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.establecerDecimales(elemento.descuentoFlete, 2) : null);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
+    this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.establecerDecimales(elemento.descuentoFlete, 2) : null);
   }
   //Cambio de elemento seleccionado en condicion venta
   public cambioCondicionVenta() {
