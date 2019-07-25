@@ -50,7 +50,7 @@
                         *ngIf="tipoTarifaEstado">*</span></label>
                     <input id="idSegunTarifa" [textMask]="mascararPorcentaje()" formControlName="porcentaje" type="text"
                       autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00"
-                       [readOnly]="soloLectura" [attr.disabled]="!ordenVentaTarifa.tipoTarifa.porPorcentaje"
+                       [readOnly]="soloLectura || !ordenVentaTarifa.tipoTarifa.porPorcentaje"
                       (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" required>
                   </div>
                 </div>
