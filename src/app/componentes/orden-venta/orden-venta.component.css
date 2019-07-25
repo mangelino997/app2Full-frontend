@@ -2,7 +2,17 @@
     width: 100%;
     height: 500px !important;
     overflow: auto !important;
+    overflow-y: scroll;
 }
 .tabla-ancho {
-    width: 1890px !important;
+    width: 1100px !important;
+}
+td.tarifa {
+    width: 50%;
+}
+td.escala{
+    width: 25%;
+}
+td.porcentaje{
+    width: 25%;
 }

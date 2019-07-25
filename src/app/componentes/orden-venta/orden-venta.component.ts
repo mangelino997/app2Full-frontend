@@ -120,7 +120,7 @@ export class OrdenVentaComponent implements OnInit {
   //Bandera boolean para determinar si modifica o agrega un atarifa
   public btnActualizarTarifa: boolean= false;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'listaPrecio', 'precioDesde', 'ver', 'mod', 'eliminar'];
+  public columnas: string[] = ['id', 'tarifa', 'escala', 'porPorcentaje', 'precioDesde', 'ver', 'mod', 'eliminar'];
   //Define las columnas de la tabla para la pestaña LISTAR
   public columnasListar: string[] = ['id', 'descripcion', 'vendedor', 'seguro', 'cr', 'esContado', 'mod'];
   //Define la matSort
@@ -217,16 +217,19 @@ export class OrdenVentaComponent implements OnInit {
   //Cambio tipo tarifa
   public cambioTipoTarifa(): void {
     this.listaTarifas = [];
+    console.log(this.tipoTarifa.value);
     if(this.tipoTarifa.value=='porEscala'){
       this.tipoTarifaServicio.listarPorEscala().subscribe(
         res=>{
+          console.log(res.json());
           this.listaTarifas = res.json();
         },
         err=>{
           this.toastr.error("Error al obtener la lista de Tarifas por Escala");
         }
       )
-    }else {
+    }
+    if(this.tipoTarifa.value=='porTramo') {
       this.tipoTarifaServicio.listarPorTramo().subscribe(
         res=>{
           this.listaTarifas = res.json();
@@ -544,6 +547,7 @@ export class OrdenVentaComponent implements OnInit {
   private listarOrdenVentaTarifas(){
     this.ordenVentaTarifaService.listarPorOrdenVenta(this.formulario.value.id).subscribe(
       res=>{
+        console.log(res.json());
         let cantidad = res.json();
         this.lengthTable = cantidad.length;
         this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
@@ -669,8 +673,12 @@ export class OrdenVentaComponent implements OnInit {
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.ordenventa.setValue(elemento.ordenVenta);
+    this.tipoTarifa.enable();
+    this.tipoTarifa.setValue('porEscala');
+    this.cambioTipoTarifa();
     this.formulario.patchValue(elemento);
     this.controlaPorcentajes(elemento);
+    console.log(elemento);
 
     if(elemento.empresa){
       this.formulario.get('tipoOrdenVenta').setValue(false);
@@ -681,7 +689,6 @@ export class OrdenVentaComponent implements OnInit {
       this.formulario.get('tipoOrdenVenta').setValue(true);
     }
     this.formularioTarifa.enable();
-    this.tipoTarifa.enable();
     this.listarOrdenVentaTarifas();
     this.btnActualizarOrdVta = true;
   }
@@ -712,10 +719,15 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Carga los datos de la orden de venta seleccionada en los input
   public cargarDatosOrden() {
+    this.listaTarifas = [];
+    this.tipoTarifa.enable();
+    this.tipoTarifa.setValue('porEscala');
     let elemento = this.ordenventa.value;
+    this.cambioTipoTarifa();
+    console.log(elemento);
     this.formulario.patchValue(elemento);
     this.controlaPorcentajes(elemento);
-   
+    this.btnActualizarOrdVta = true;
     if(this.formulario.value.empresa){
       this.formulario.get('tipoOrdenVenta').setValue(false);
       this.listarOrdenVentaTarifas();
@@ -850,6 +862,8 @@ export class OrdenVentaComponent implements OnInit {
 @Component({
   selector: 'ver-tarifa-dialogo',
   templateUrl: 'ver-tarifa-dialogo.html',
+  styleUrls: ['./orden-venta.component.css']
+
 })
 export class VerTarifaDialogo {
   //Define un formulario para Orden Venta Escala o Tramo
@@ -1136,15 +1150,11 @@ export class VerTarifaDialogo {
     this.formularioEscala.get('porcentaje').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formularioEscala.get('minimo').setValue(this.appService.establecerDecimales('0.00', 2));
 
-
     this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
     this.formularioTramo.get('importeFijoSeco').setValue('0.00');
     this.formularioTramo.get('importeFijoRef').setValue('0.00');
     this.formularioTramo.get('precioUnitarioSeco').setValue('0.00');
     this.formularioTramo.get('precioUnitarioRef').setValue('0.00');
-
-    this.importePor.setValue(false);
-    this.cambioImportesPor();
 
     if(this.indiceSeleccionado==2 || this.indiceSeleccionado == 4){
       this.soloLectura = true;

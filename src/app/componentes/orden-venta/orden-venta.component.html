@@ -138,7 +138,7 @@
     <div class="col-md-10">
       <form [formGroup]="formularioTarifa">
         <div class="row">
-          <div class="col-md-4">
+          <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idTipoTarifa" class="tamanio-label">Tipo Tarifa *</label>
               <mat-select id="idTipoTarifa" class="form-control form-control-sm" [formControl]="tipoTarifa" 
@@ -148,16 +148,29 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idTipoTarifa" class="tamanio-label">Tarifa *</label>
               <mat-select id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
                 [compareWith]="compareFn" [disabled]="btnActualizarTarifa">
-                <mat-option *ngFor="let itemTipoTarifa of listaTarifas" [value]="itemTipoTarifa">
-                  <span>{{itemTipoTarifa.nombre}} - </span>
-                  <span>(P/Porcentaje: {{itemTipoTarifa.porPorcentaje ? 'Sí': 'No'}}) - </span>
-                  <span>(P/Escala: {{itemTipoTarifa.porEscala ? 'Sí': 'No'}})</span>
-                </mat-option>
+                  <mat-option disabled>
+                    <table>
+                      <tr>
+                        <td class="tarifa">Tarifa</td>
+                        <td class="escala">Por Escala</td>
+                        <td class="porcentaje">Por Porcentaje</td>
+                      </tr>
+                    </table>
+                  </mat-option>
+                  <mat-option *ngFor="let itemTipoTarifa of listaTarifas" [value]="itemTipoTarifa">
+                    <table>
+                      <tr>
+                        <td class="tarifa"><span>{{itemTipoTarifa.nombre}}</span></td>
+                        <td class="escala"><span>{{itemTipoTarifa.porPorcentaje ? 'Sí': 'No'}}</span></td>
+                        <td class="porcentaje"><span>{{itemTipoTarifa.porEscala ? 'Sí': 'No'}}</span></td>
+                      </tr>
+                    </table>
+                  </mat-option>
               </mat-select>
             </div>
           </div>
@@ -180,20 +193,25 @@
           </div>
         </div>
         <div class="row justify-content-center contenedor">
-          <div class="col-md-8" style="height: 300px; overflow-y: scroll;">
+          <div class="col-md-10" style="height: 300px; overflow-y: scroll;">
             <table mat-table [dataSource]="listaTarifasDeOrdVta" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="id" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
                   <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
                 </ng-container>
-                <ng-container matColumnDef="listaPrecio" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Lista de Precio</th>
-                  <td mat-cell *matCellDef="let elemento">
-                      {{elemento.tipoTarifa.nombre}} - 
-                      P/Porcentaje: {{elemento.tipoTarifa.porPorcentaje ? 'Sí': 'No'}}) -
-                      P/Escala: {{elemento.tipoTarifa.porEscala ? 'Sí': 'No'}}
-                  </td>
+                <ng-container matColumnDef="tarifa" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.nombre}} </td>
                 </ng-container>
+                <ng-container matColumnDef="escala" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porEscala ? 'Sí': 'No'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="porPorcentaje" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Porcentaje</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porPorcentaje ? 'Sí': 'No'}}</td>
+                </ng-container>
+
                 <ng-container matColumnDef="precioDesde" sticky>
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Precios Desde</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.preciosDesde | date: 'dd/MM/yyyy'}}</td>
@@ -293,11 +311,11 @@
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Seguro</th>
                     <td mat-cell *matCellDef="let elemento">
                       <span *ngIf="elemento.seguro == 0"></span>
-                      <span *ngIf="elemento.seguro > 0">{{establecerDecimales(elemento.seguro, 2)}} %</span>
+                      <span *ngIf="elemento.seguro > 0">{{establecerDecimales(elemento.seguro, 2)}} ‰ </span>
                     </td>
                   </ng-container>
                   <ng-container matColumnDef="cr" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>comision C.R</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>comision Contra Reembolso</th>
                     <td mat-cell *matCellDef="let elemento">
                       <span *ngIf="elemento.comisionCR == 0"></span>
                       <span *ngIf="elemento.comisionCR > 0">{{establecerDecimales(elemento.comisionCR, 2)}} %</span>
