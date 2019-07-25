@@ -299,9 +299,9 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('numeroPolizaSeguro').disable();
     this.formulario.get('vencimientoPolizaSeguro').disable();
     this.formulario.get('resumenCliente').disable();
-    this.formulario.get('creditoLimite').setValue(0);
-    this.formulario.get('descuentoFlete').setValue(0);
-    this.formulario.get('descuentoSubtotal').setValue(0);
+    this.formulario.get('creditoLimite').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('descuentoFlete').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('descuentoSubtotal').setValue(this.appService.establecerDecimales('0.00', 2));
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -848,7 +848,9 @@ export class ClienteComponent implements OnInit {
 //Componente 
 @Component({
   selector: 'lista-precios-dialogo',
-  templateUrl: './lista-precios-dialog.html'
+  templateUrl: './lista-precios-dialog.html',
+  styleUrls: ['./cliente.component.css']
+
 })
 export class ListasDePreciosDialog {
   //Define la pestaña en la que se encuentra el usuario
@@ -949,7 +951,7 @@ export class ListasDePreciosDialog {
     this.limpiarCampos(tipoOrdenVenta);
     if (!tipoOrdenVenta) {
       this.listarOrdenesVentas('empresa');
-    } 
+      }
   }
   //Listar ordenes de ventas por Empresa/Cliente
   public listarOrdenesVentas(tipo) {
@@ -962,6 +964,14 @@ export class ListasDePreciosDialog {
           res => {
             console.log(res.json());
             this.ordenesVentas = res.json();
+            if(this.ordenesVentas.length == 0){
+              this.toastr.warning("Órdenes de venta inexistente");
+            }
+            this.loaderService.hide();
+          },
+          err=>{
+            let error = err.mensaje;
+            this.toastr.error(error);
             this.loaderService.hide();
           }
         );
@@ -970,7 +980,16 @@ export class ListasDePreciosDialog {
         this.formulario.get('empresa').setValue({id: null});
         this.ordenVentaService.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
           res => {
+            console.log(res.json());
             this.ordenesVentas = res.json();
+            if(this.ordenesVentas.length == 0){
+              this.toastr.warning("Órdenes de venta inexistente");
+            }
+            this.loaderService.hide();
+          },
+          err=>{
+            let error = err.mensaje;
+            this.toastr.error(error);
             this.loaderService.hide();
           }
         );

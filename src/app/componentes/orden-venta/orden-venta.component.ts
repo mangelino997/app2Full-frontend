@@ -142,7 +142,6 @@ export class OrdenVentaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
       //Autocompletado - Buscar por nombre
@@ -558,7 +557,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Agrega un registro a Orden Venta Tarifa
   public agregarTarifa(){
-    console.log(this.formularioTarifa);
     this.formularioTarifa.get('ordenVenta').setValue({id: this.formulario.value.id});
     this.ordenVentaTarifaService.agregar(this.formularioTarifa.value).subscribe(
       res=>{
@@ -574,10 +572,8 @@ export class OrdenVentaComponent implements OnInit {
   //Actualizar un registro a Orden Venta Tarifa
   public actulizarTarifa(){
     this.formularioTarifa.get('ordenVenta').setValue({id: this.formulario.value.id});
-    console.log(this.formularioTarifa.value, this.btnActualizarTarifa);
     this.ordenVentaTarifaService.actualizar(this.formularioTarifa.value).subscribe(
       res=>{
-        console.log(res.status);
         if(res.status==200){
           this.btnActualizarTarifa = false;
           this.habilitarFormTarifa(true);
@@ -593,7 +589,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Abre el modal de ver Orden Venta Tarifa
   public verOrdenVentaTarifa(tarifa){
-    console.log(tarifa);
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
       width: '1100px',
       data: {
@@ -616,10 +611,6 @@ export class OrdenVentaComponent implements OnInit {
   public modificarOrdenVentaTarifa(elemento){
     this.btnActualizarTarifa = true;
     this.formularioTarifa.patchValue(elemento);
-    // this.formularioTarifa.get('preciosDesde').setValue(elemento.precioDesde);
-    // this.formularioTarifa.get('ordenVenta').setValue(elemento.ordenVenta);
-    // this.formularioTarifa.patchValue({tipoTarifa: elemento.tipoTarifa, disabled: true});
-    console.log(elemento, this.formularioTarifa.value);
     if(elemento.tipoTarifa.porEscala){
       this.tipoTarifa.setValue('porEscala');
       this.cambioTipoTarifa();
@@ -652,8 +643,6 @@ export class OrdenVentaComponent implements OnInit {
     if(this.formularioListar.value.tipo == 'empresa'){
       this.ordenVentaServicio.listarPorEmpresa(this.formularioListar.value.empresa.id).subscribe(
         res=>{
-          console.log(res.json());
-
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
         },
@@ -695,7 +684,6 @@ export class OrdenVentaComponent implements OnInit {
     this.tipoTarifa.enable();
     this.listarOrdenVentaTarifas();
     this.btnActualizarOrdVta = true;
-    console.log(this.btnActualizarTarifa);
   }
   //Elimina una Orden Venta (Pestaña Listar, accion 'eliminar')
   public activarEliminar(elemento){
@@ -919,14 +907,12 @@ export class VerTarifaDialogo {
   ngOnInit() {
     //Inicializa valores
     this.ordenVentaTarifa = this.data.ordenVentaTarifa;
-    console.log(this.ordenVentaTarifa);
     this.ordenVenta.setValue(this.ordenVentaTarifa.ordenVenta);
     //Inicializa el Formulario 
     this.formularioEscala = this.ordenVentaEscala.formulario;
     this.formularioTramo = this.ordenVentaTramo.formulario;
     //Inicializa el indiceSeleccionado
     this.indiceSeleccionado = this.data.indiceSeleccionado;
-    console.log(this.indiceSeleccionado);
     this.reestablecerFormularios();
     //Obtiene la lista de Escalas 
     this.listarEscalasTarifas();
@@ -973,7 +959,6 @@ export class VerTarifaDialogo {
     this.loaderService.show();
     if(this.tipoTarifa == 'porEscala'){
       this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
-      console.log(this.formularioEscala.value);
       this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
         res=>{
           var respuesta = res.json();
@@ -1023,10 +1008,8 @@ export class VerTarifaDialogo {
   public listar(){
     this.loaderService.show();
     if(this.tipoTarifa == 'porEscala'){
-      console.log(this.ordenVentaTarifa.id);
       this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
         res=>{
-          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.loaderService.hide();
