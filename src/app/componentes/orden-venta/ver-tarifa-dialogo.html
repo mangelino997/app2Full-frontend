@@ -1,5 +1,5 @@
   <div class="row justify-content-center contenedor">
-    <h5>Lista de Precios - {{tipoTarifa}} - Tarifa: {{ordenVentaTarifa.tipoTarifa.nombre}}</h5>
+    <h5>Lista de Precios - {{tipoTarifa=='porEscala'? 'Por Escala': 'Por Tramo'}} - Tarifa: {{ordenVentaTarifa.tipoTarifa.nombre}}</h5>
     <div class="col-md-12 text-center">
         <!--Formulario para Orden Venta Tarifa por Escala-->
           <div class="row" *ngIf="tipoTarifa == 'porEscala'"> 
@@ -49,7 +49,8 @@
                     <label for="idSegunTarifa" class="tamanio-label">% Según Tarifa<span
                         *ngIf="tipoTarifaEstado">*</span></label>
                     <input id="idSegunTarifa" [textMask]="mascararPorcentaje()" formControlName="porcentaje" type="text"
-                      autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00" [readOnly]="soloLectura"
+                      autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00"
+                       [readOnly]="soloLectura" [attr.disabled]="!ordenVentaTarifa.tipoTarifa.porPorcentaje"
                       (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" required>
                   </div>
                 </div>
@@ -62,7 +63,8 @@
                   </div>
                 </div>
                 <div class="col">
-                  <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid || indiceSeleccionado==2 "
+                  <button mat-raised-button color="primary" 
+                  [disabled]="!formularioEscala.valid || formularioEscala.get('importeFijo').value == '0.00' || formularioEscala.get('precioUnitario').value == '0.00' || indiceSeleccionado==2 "
                     (click)="agregar()" *ngIf="idMod == null">Agregar</button>
                   <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid"
                     (click)="modificar()" *ngIf="idMod != null">Actualizar</button>
@@ -176,114 +178,114 @@
             </div>
           </div>
 
-          <div class="row" *ngIf="tipoTarifa == 'porEscala'">
-            <div class="col-md-12 text-center" style="height: 500px; overflow-y: scroll;">
-              <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="escala" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.escalaTarifa? elemento.escalaTarifa.valor: '--'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="precioFijo" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo</th>
-                  <td mat-cell *matCellDef="let elemento">
-                    <span *ngIf="elemento.importeFijo == 0"></span>
-                    <span *ngIf="elemento.importeFijo > 0">$ {{establecerDecimales(elemento.importeFijo, 2)}}</span>
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="precioUnitario" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
-                  <td mat-cell *matCellDef="let elemento">
-                    <span *ngIf="elemento.precioUnitario == 0"></span>
-                    <span *ngIf="elemento.precioUnitario > 0">$ {{establecerDecimales(elemento.precioUnitario, 2)}}</span>
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="porcentaje" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>% Según Tarifa</th>
-                  <td mat-cell *matCellDef="let elemento">
-                    <span *ngIf="elemento.porcentaje == 0"></span>
-                    <span *ngIf="elemento.porcentaje > 0">% {{establecerDecimales(elemento.porcentaje, 2)}}</span>
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="minimo" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Mínimo</th>
-                  <td mat-cell *matCellDef="let elemento">
-                    <span *ngIf="elemento.minimo == 0"></span>
-                    <span *ngIf="elemento.minimo > 0">$ {{establecerDecimales(elemento.minimo, 2)}}</span>
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="mod" sticky>
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento" >
-                    <span (click)="controlModEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
-                      class="cursor-color">mod</span></td>
-                </ng-container>
-                <ng-container matColumnDef="eliminar" sticky>
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento; let i = index;" >
-                    <span class="cursor-color" (click)="controlEliminarEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3">
-                      X
-                    </span>
-                </td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="columnasEscala"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnasEscala;"></tr>
-              </table>
-            </div>
-          </div>
-          <div class="row" *ngIf="tipoTarifa == 'porTramo'">
-              <div class="col-md-12 text-center" style="height: 500px; overflow-y: scroll;">
+          <div class="tabla" *ngIf="tipoTarifa == 'porEscala'">
+              <div class="tabla-ancho">
                 <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                  <ng-container matColumnDef="tramoOrigen" sticky>
+                  <ng-container matColumnDef="escala" >
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.escalaTarifa? elemento.escalaTarifa.valor: '--'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="precioFijo" >
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo</th>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.importeFijo == 0"></span>
+                      <span *ngIf="elemento.importeFijo > 0">$ {{establecerDecimales(elemento.importeFijo, 2)}}</span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="precioUnitario" >
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.precioUnitario == 0"></span>
+                      <span *ngIf="elemento.precioUnitario > 0">$ {{establecerDecimales(elemento.precioUnitario, 2)}}</span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="porcentaje" >
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>% Según Tarifa</th>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.porcentaje == 0"></span>
+                      <span *ngIf="elemento.porcentaje > 0">% {{establecerDecimales(elemento.porcentaje, 2)}}</span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="minimo" >
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Mínimo</th>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.minimo == 0"></span>
+                      <span *ngIf="elemento.minimo > 0">$ {{establecerDecimales(elemento.minimo, 2)}}</span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="mod" >
+                    <th mat-header-cell *matHeaderCellDef>-</th>
+                    <td mat-cell *matCellDef="let elemento" >
+                      <span (click)="controlModEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
+                        class="cursor-color">mod</span></td>
+                  </ng-container>
+                  <ng-container matColumnDef="eliminar" >
+                    <th mat-header-cell *matHeaderCellDef>-</th>
+                    <td mat-cell *matCellDef="let elemento; let i = index;" >
+                      <span class="cursor-color" (click)="controlEliminarEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3">
+                        X
+                      </span>
+                  </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="columnasEscala"></tr>
+                  <tr mat-row *matRowDef="let row; columns: columnasEscala;"></tr>
+                </table>
+              </div>
+          </div>
+          <div class="tabla" *ngIf="tipoTarifa == 'porTramo'">
+              <div class="tabla-ancho">
+                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                  <ng-container matColumnDef="tramoOrigen" >
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Origen</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.origen.nombre: '--'}}</td>
                   </ng-container>
-                  <ng-container matColumnDef="tramoDestino" sticky>
+                  <ng-container matColumnDef="tramoDestino" >
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Destino</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.destino.nombre: '--'}}</td>
                   </ng-container>
-                  <ng-container matColumnDef="km" sticky>
+                  <ng-container matColumnDef="km" >
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.km : '--'}}</td>
                   </ng-container>
-                  <ng-container matColumnDef="kmPactado" sticky>
+                  <ng-container matColumnDef="kmPactado" >
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Km Pactado</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.kmPactado: '--'}}</td>
                   </ng-container>
-                  <ng-container matColumnDef="precioFijoSeco" sticky>
+                  <ng-container matColumnDef="precioFijoSeco" >
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Seco</th>
                     <td mat-cell *matCellDef="let elemento">
                       <span *ngIf="elemento.importeFijoSeco == 0"></span>
                       <span *ngIf="elemento.importeFijoSeco > 0">$ {{establecerDecimales(elemento.importeFijoSeco, 2)}}</span>
                     </td>
                   </ng-container>
-                  <ng-container matColumnDef="precioUnitSeco" sticky>
+                  <ng-container matColumnDef="precioUnitSeco" >
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Seco</th>
                     <td mat-cell *matCellDef="let elemento">
                       <span *ngIf="elemento.precioUnitarioSeco == 0"></span>
                       <span *ngIf="elemento.precioUnitarioSeco > 0">$ {{establecerDecimales(elemento.precioUnitarioSeco, 2)}}</span>
                     </td>
                   </ng-container>
-                  <ng-container matColumnDef="precioFijoRefrig" sticky>
+                  <ng-container matColumnDef="precioFijoRefrig" >
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Regrigerado</th>
                     <td mat-cell *matCellDef="let elemento">
                       <span *ngIf="elemento.importeFijoRef == 0"></span>
                       <span *ngIf="elemento.importeFijoRef > 0">$ {{establecerDecimales(elemento.importeFijoRef, 2)}}</span>
                     </td>
                   </ng-container>
-                  <ng-container matColumnDef="precioUnitRefrig" sticky>
+                  <ng-container matColumnDef="precioUnitRefrig" >
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Refrigerado</th>
                     <td mat-cell *matCellDef="let elemento">
                       <span *ngIf="elemento.precioUnitarioRef == 0"></span>
                       <span *ngIf="elemento.precioUnitarioRef > 0">$ {{establecerDecimales(elemento.precioUnitarioRef, 2)}}</span>
                     </td>
                   </ng-container>
-                  <ng-container matColumnDef="mod" sticky>
+                  <ng-container matColumnDef="mod" >
                     <th mat-header-cell *matHeaderCellDef>-</th>
                     <td mat-cell *matCellDef="let elemento">
                       <span  (click)="controlModTramo(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
                         class="cursor-color">mod</span></td>
                   </ng-container>
-                  <ng-container matColumnDef="eliminar" sticky>
+                  <ng-container matColumnDef="eliminar" >
                     <th mat-header-cell *matHeaderCellDef>-</th>
                     <td mat-cell *matCellDef="let elemento; let i = index;" >
                       <span (click)="controlEliminarTramo(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
@@ -293,7 +295,7 @@
                   <tr mat-row *matRowDef="let row; columns: columnasTramo;"></tr>
                 </table>
               </div>
-            </div>
+          </div>
           <br>
           <div class="row">
             <div class="col text-center">

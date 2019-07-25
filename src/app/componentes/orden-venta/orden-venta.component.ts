@@ -919,6 +919,7 @@ export class VerTarifaDialogo {
   ngOnInit() {
     //Inicializa valores
     this.ordenVentaTarifa = this.data.ordenVentaTarifa;
+    console.log(this.ordenVentaTarifa);
     this.ordenVenta.setValue(this.ordenVentaTarifa.ordenVenta);
     //Inicializa el Formulario 
     this.formularioEscala = this.ordenVentaEscala.formulario;
