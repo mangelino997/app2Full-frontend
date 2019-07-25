@@ -166,8 +166,8 @@
                     <table>
                       <tr>
                         <td class="tarifa"><span>{{itemTipoTarifa.nombre}}</span></td>
-                        <td class="escala"><span>{{itemTipoTarifa.porPorcentaje ? 'Sí': 'No'}}</span></td>
-                        <td class="porcentaje"><span>{{itemTipoTarifa.porEscala ? 'Sí': 'No'}}</span></td>
+                        <td class="escala"><span>   -{{itemTipoTarifa.porEscala? 'Sí': 'No'}}-</span></td>
+                        <td class="porcentaje"><span>   -{{itemTipoTarifa.porPorcentaje? 'Sí': 'No'}}-</span></td>
                       </tr>
                     </table>
                   </mat-option>
