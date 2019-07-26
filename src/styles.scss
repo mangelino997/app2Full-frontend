@@ -429,6 +429,9 @@ button.toast-close-button {
 .sidenav {
   width: 200px;
 }
+mat-sidenav {
+  top: 249px !important;
+}
 /* Cambia el color del boton de la subopcion al seleccionarlo */
 .activar-boton-subopcion {
   background-color: blue !important;

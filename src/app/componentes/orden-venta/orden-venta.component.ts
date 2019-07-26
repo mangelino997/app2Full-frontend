@@ -899,7 +899,7 @@ export class VerTarifaDialogo {
   //Define si el campo es de solo lectura
   public soloLectura: boolean = false;
   //Define si el boton Agregar se habilita o deshabilita
-  public btnAgregar: boolean = false;
+  public btnAgregar: boolean = null;
   //Define el id del Tramo o Escala que se quiere modificar
   public idMod: number = null;
   //Define las columnas de las tablas
@@ -978,28 +978,42 @@ export class VerTarifaDialogo {
   public agregar(){
     this.idMod = null;
     this.loaderService.show();
+    let realizarAgregar= true;
+    console.log(this.importePor.value);
     if(this.tipoTarifa == 'porEscala'){
-      this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
-      this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
-        res=>{
-          var respuesta = res.json();
-          if (respuesta.codigo == 201) {
-            setTimeout(function () {
-              document.getElementById('idEscala').focus();
-            }, 20);
-          this.toastr.success(respuesta.mensaje);
-          this.formularioEscala.reset();
-          this.reestablecerFormularios();
-          this.listar();
-          this.loaderService.hide();
-          }        
-        },
-        err=>{
-          let error= err.json();
-          this.toastr.error(error.mensaje);
-          this.loaderService.hide();
-        }
-      )
+      console.log(this.formularioEscala.value.importeFijo, this.formularioEscala.value.precioUnitario, );
+      if(this.importePor.value == false && (this.formularioEscala.value.importeFijo == 0 || this.formularioEscala.value.importeFijo == '0.00')){
+        realizarAgregar = false;
+        this.toastr.error("El Precio Fijo no puede ser '0.00'");
+      }
+      if(this.importePor.value == true && (this.formularioEscala.value.precioUnitario == 0 || this.formularioEscala.value.precioUnitario == '0.00')){
+        realizarAgregar = false;
+        this.toastr.error("El Precio Unitario no puede ser '0.00'");
+      }
+
+      if(realizarAgregar==true){
+        this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
+        this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
+          res=>{
+            var respuesta = res.json();
+            if (respuesta.codigo == 201) {
+              setTimeout(function () {
+                document.getElementById('idEscala').focus();
+              }, 20);
+            this.toastr.success(respuesta.mensaje);
+            this.formularioEscala.reset();
+            this.reestablecerFormularios();
+            this.listar();
+            this.loaderService.hide();
+            }        
+          },
+          err=>{
+            let error= err.json();
+            this.toastr.error(error.mensaje);
+            this.loaderService.hide();
+          }
+        )
+      }
     } 
     if(this.tipoTarifa == 'porTramo'){
       this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);

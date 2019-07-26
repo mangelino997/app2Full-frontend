@@ -6,7 +6,7 @@
             <div class="col-md-12">
               <form [formGroup]="formularioEscala">
               <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-1">
                   <div class="form-group has-float-label">
                     <label for="idEscala" class="tamanio-label">Escala *</label>
                     <mat-select id="idVendedor" class="form-control form-control-sm" formControlName="escalaTarifa"
@@ -51,20 +51,20 @@
                     <input id="idSegunTarifa" [textMask]="mascararPorcentaje()" formControlName="porcentaje" type="text"
                       autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00"
                        [readOnly]="soloLectura || !ordenVentaTarifa.tipoTarifa.porPorcentaje"
-                      (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" required>
+                      (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" >
                   </div>
                 </div>
                 <div class="col" >
                   <div class="form-group has-float-label">
-                    <label for="idMinimo" class="tamanio-label">Mínimo *</label>
+                    <label for="idMinimo" class="tamanio-label">Mínimo </label>
                     <input id="idMinimo" [textMask]="mascaraImporte(10, 2)" formControlName="minimo" type="text"
                       autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)" [readOnly]="soloLectura"
-                      class="form-control form-control-sm number-right" placeholder="$ 0.00" required>
+                      class="form-control form-control-sm number-right" placeholder="$ 0.00" >
                   </div>
                 </div>
                 <div class="col">
                   <button mat-raised-button color="primary" 
-                  [disabled]="!formularioEscala.valid || formularioEscala.get('importeFijo').value == '0.00' || formularioEscala.get('precioUnitario').value == '0.00' || indiceSeleccionado==2 "
+                  [disabled]="!formularioEscala.valid || indiceSeleccionado==2 "
                     (click)="agregar()" *ngIf="idMod == null">Agregar</button>
                   <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid"
                     (click)="modificar()" *ngIf="idMod != null">Actualizar</button>

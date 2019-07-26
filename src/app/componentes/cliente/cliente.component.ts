@@ -26,6 +26,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
+import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 
 @Component({
   selector: 'app-cliente',
@@ -877,6 +878,8 @@ export class ListasDePreciosDialog {
   public ordenesVentas: Array<any> = [];
   //Define la lista de Precios
   public listaPrecios: Array<any> = [];
+  //Define la lista para las tarifas 
+  public tarifas: Array<any> = [];
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de resultados de busqueda cliente
@@ -890,11 +893,11 @@ export class ListasDePreciosDialog {
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define las columnas de las tablas
-  public columnasEscala: string[] = ['descripcion', 'tarifaDefecto', 'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones', 'mod', 'eliminar'];
+  public columnasEscala: string[] = ['descripcion', 'esOrdenVentaPorDefecto', 'tarifaDefecto', 'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones', 'mod', 'eliminar'];
   //Constructor
   constructor( private appService: AppService, public dialogRef: MatDialogRef<ListasDePreciosDialog>, @Inject(MAT_DIALOG_DATA) public data,
     private loaderService: LoaderService, private ordenVentaService: OrdenVentaService, private clienteServicio: ClienteService,
-    private clienteOrdenVtaService: ClienteOrdenVentaService, private toastr: ToastrService) {
+    private clienteOrdenVtaService: ClienteOrdenVentaService, private toastr: ToastrService, private ovTarifaService: OrdenVentaTarifaService) {
 
    }
   ngOnInit() {
@@ -912,6 +915,7 @@ export class ListasDePreciosDialog {
       usuarioMod: new FormControl(),
       usuarioAlta: new FormControl(),
       ordenVenta: new FormControl('', Validators.required),
+      esOrdenVentaPorDefecto: new FormControl('', Validators.required),      
       tipoTarifaPorDefecto: new FormControl('', Validators.required),
       estaActiva: new FormControl('', Validators.required),
       fechaAlta: new FormControl(),
@@ -1012,6 +1016,20 @@ export class ListasDePreciosDialog {
   //Controla el cambio en el campo 'Orden Vta'
   public cambioOrdenVenta(){
     this.formulario.get('estaActiva').setValue(this.formulario.value.ordenVenta.estaActiva);
+    this.listarTarifasPorOV();
+  }
+  //Obtiene una lista de Tarifas por Orden Venta
+  private listarTarifasPorOV(){
+    console.log(this.formulario.value.ordenVenta.id);
+    this.ovTarifaService.listarPorOrdenVenta(this.formulario.value.ordenVenta.id).subscribe(
+      res=>{
+        console.log(res.json());
+        this.tarifas = res.json();
+      },
+      err=>{
+        this.toastr.error("Error al obtener la lista de Tarifas para la Orden de Venta seleccionada");
+      }
+    )
   }
   //Carga a la Lista de Precios un nuevo elemento
   public agregarListaPrecio(){
