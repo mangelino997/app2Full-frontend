@@ -50,6 +50,10 @@ export class SoporteService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene un registro por id
+  public obtenerPorId(id) {
+    return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
+  }
   //Obtiene un listado por usuario
   public listarPorUsuario(idUsuario) {
     return this.http.get(this.url + '/listarPorUsuario/' + idUsuario, this.options).map(res => {

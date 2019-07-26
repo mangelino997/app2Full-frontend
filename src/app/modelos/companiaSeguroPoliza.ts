@@ -19,7 +19,8 @@ export class CompaniaSeguroPoliza {
                 nombre: new FormControl(),
                 tipo: new FormControl(),
                 tamanio: new FormControl(),
-                datos: new FormControl()
+                datos: new FormControl(),
+                tabla: new FormControl()
             })
         })
     }

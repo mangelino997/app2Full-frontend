@@ -154,6 +154,19 @@ export class SoporteComponent implements OnInit {
       }
     )
   }
+  //Obtiene un registro por id
+  private obtenerPorId(id) {
+    this.servicio.obtenerPorId(id).subscribe(
+      res => {
+        let elemento = res.json();
+        this.formulario.setValue(elemento);
+        this.establecerPdf(elemento);
+      },
+      err => {
+        console.log(err);
+      }
+    );
+  }
   //Maneja el cambio en el autocompletado
   // public cambioAutocompletado(){
 
@@ -161,20 +174,11 @@ export class SoporteComponent implements OnInit {
   //Establece los datos del elemento al formulario
   private establecerElemento(elemento) {
     console.log(elemento);
-    this.formulario.get('id').setValue(elemento.id);
-    this.formulario.get('subopcion').setValue(elemento.subopcion);
     this.modulo.setValue(elemento.subopcion.submodulo.modulo);
     this.submodulo.setValue(elemento.subopcion.submodulo);
     this.cambioModulo();
     this.cambioSubmodulo();
-    this.formulario.get('empresa').setValue(elemento.empresa);
-    if(elemento.bugImagen){
-    if (!elemento.bugImagen.nombre) {
-      elemento.bugImagen = this.modelo.formulario.get('bugImagen');
-      this.obtenerBugImagen();
-    }
-  }
-    this.formulario.patchValue(elemento);
+    
   }
   //Establece el habilitado o deshabilitado de los campos
   private establecerCampos(estado) {
@@ -376,15 +380,22 @@ export class SoporteComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.establecerElemento(elemento);
-    this.obtenerBugImagen();
+    console.log(elemento);
+      this.obtenerPorId(elemento.id);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+      this.obtenerPorId(elemento.id);
+  }
+  //Establece la foto y pdf (activar consultar/actualizar)
+  private establecerPdf(elemento): void {
+    this.autocompletado.setValue(elemento);
+    if (elemento.pdf) {
+      this.formulario.get('pdf.datos').setValue(atob(elemento.pdf.datos));
+    }
     this.establecerElemento(elemento);
-    this.obtenerBugImagen();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -426,7 +437,6 @@ export class SoporteComponent implements OnInit {
 
   //Carga la imagen del paciente
   public readURL(event): void {
-    console.log(event);
     if (event.target.files && event.target.files[0] && this.tiposImagenes.includes(event.target.files[0].type)) {
       const file = event.target.files[0];
       const reader = new FileReader();
@@ -444,18 +454,36 @@ export class SoporteComponent implements OnInit {
     }
   }
   //Obtiene el bugImagen para mostrarlo
-  public obtenerBugImagen() {
-    if (this.formulario.get('bugImagen.id').value) {
-      this.bugServicio.obtenerPorId(this.formulario.get('bugImagen.id').value).subscribe(res => {
+  public obtenerBugImagen(elemento) {
+    let bug= {
+      id:null,
+      version:null,
+      nombre:null,
+      tipo:null,
+      tamanio:null,
+      datos:null
+    }
+    if (elemento.bugImagen) {
+      if(elemento.bugImagen.id){
+      this.bugServicio.obtenerPorId(elemento.bugImagen.id).subscribe(res => {
         let resultado = res.json();
         let bugImagen = {
           id: resultado.id,
           nombre: resultado.nombre,
+          tipo:resultado.tipo,
+          tamanio:resultado.tamanio,
           datos: atob(resultado.datos)
         }
-        this.formulario.get('bugImagen').patchValue(bugImagen);
+        elemento.bugImagen =bugImagen;
       })
+    }else {
+      elemento.bugImagen=bug;
     }
+  } else {
+    elemento.bugImagen=bug;
+  }
+    this.formulario.setValue(elemento);
+    console.log(this.formulario.value);
   }
   //Elimina una imagen ya cargada
   public eliminarBug(campo) {
@@ -467,12 +495,13 @@ export class SoporteComponent implements OnInit {
   }
   //Muestra la imagen en una pestana nueva
   public verBugImagen() {
+    console.log(this.formulario.value);
     const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
       width: '95%',
       height: '95%',
       data: {
         nombre: this.formulario.get('bugImagen.nombre').value,
-        datos: this.formulario.get('bugImagen.datos').value
+        datos: atob(this.formulario.get('bugImagen.datos').value)
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });

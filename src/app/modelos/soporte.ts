@@ -23,6 +23,7 @@ export class Soporte {
                 datos: new FormControl()
             }),
             soporteEstado: new FormControl(),
+            alias: new FormControl(),
         });
     }
 }
