@@ -594,7 +594,7 @@ export class OrdenVentaComponent implements OnInit {
   //Abre el modal de ver Orden Venta Tarifa
   public verOrdenVentaTarifa(tarifa){
     const dialogRef = this.dialog.open(VerTarifaDialogo, {
-      width: '1100px',
+      maxWidth: '100vw',
       data: {
         tarifa: this.tipoTarifa.value,
         ordenVentaTarifa: tarifa,
