@@ -48,7 +48,7 @@ export class ViajeRemitoGSComponent implements OnInit {
     //Obtiene la lista de sucursales
     this.listarSucursales();
     //Obtiene la lista de Tramos
-    this.listarTramos();
+    // this.listarTramos();
   }
   //Obtiene el listado de sucursales
   private listarSucursales() {
@@ -57,7 +57,8 @@ export class ViajeRemitoGSComponent implements OnInit {
     });
   }
   //Obtiene una lista de los tramos por el idGuiaServicio
-  private listarTramos(){
+  public listarTramos(viaje){
+    this.formularioViajeTramo.value.viaje = viaje;
     console.log(this.formularioViajeTramo.value.viaje.id);
     if(this.formularioViajeTramo.value.viaje.id){
       this.viajeTramoService.listarTramos(this.formularioViajeTramo.value.viaje.id).subscribe(

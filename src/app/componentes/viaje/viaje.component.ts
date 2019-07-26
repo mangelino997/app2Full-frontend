@@ -160,6 +160,9 @@ export class ViajeComponent implements OnInit {
       });
     //Establece el formulario viaje propio
     this.formularioViaje = this.viajePropioModelo.formulario;
+    //
+    let usuario = this.appService.getUsuario();
+    this.usuarioNombre.setValue(usuario.nombre);
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la primera opcion seleccionada
@@ -430,6 +433,8 @@ export class ViajeComponent implements OnInit {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
         this.formularioViaje.get('id').setValue(res.json());
+        // this.viajeRemitoGSComponente.listarTramos(res.json());
+
       },
       err => {
         console.log(err);
@@ -440,9 +445,10 @@ export class ViajeComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
+        console.log(res.text());
+        // this.listaCompleta = res.json();
+        // this.listaCompleta = new MatTableDataSource(res.json());
+        // this.listaCompleta.sort = this.sort;
       },
       err => {
         console.log(err);

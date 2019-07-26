@@ -1038,7 +1038,7 @@ export class ListasDePreciosDialog {
     if(this.indiceSeleccionado == 3){
       this.formulario.get('usuarioAlta').setValue(usuario);
       this.formulario.get('cliente').setValue({id: this.idCliente});
-      this.formulario.get('tipoTarifaPorDefecto').setValue({id: null});
+      // this.formulario.get('ordenVentaTarifaPorDefecto').setValue();
       console.log(this.formulario.value);
       this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
         res=>{
