@@ -65,10 +65,10 @@
                         <mat-option [value]="false">No</mat-option>
                         <mat-option [value]="true">Si</mat-option>
                       </mat-select> -->
-                      <mat-select id="idOrdenVenta" class="form-control form-control-sm" formControlName="tipoTarifaPorDefecto"
+                      <mat-select id="idOrdenVenta" class="form-control form-control-sm" formControlName="ordenVentaTarifaPorDefecto"
                         [compareWith]="compareFn" >
                         <mat-option *ngFor="let item of tarifas" [value]="item">
-                          {{item.nombre}} 
+                          {{item.tipoTarifa.nombre}} 
                            <!-- {{orden.cliente ? orden.cliente.razonSocial : orden.empresa.razonSocial}} -
                           {{orden.vendedor.nombre}} - {{orden.activaDesde}} -->
                         </mat-option>

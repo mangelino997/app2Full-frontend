@@ -916,7 +916,7 @@ export class ListasDePreciosDialog {
       usuarioAlta: new FormControl(),
       ordenVenta: new FormControl('', Validators.required),
       esOrdenVentaPorDefecto: new FormControl('', Validators.required),      
-      tipoTarifaPorDefecto: new FormControl('', Validators.required),
+      ordenVentaTarifaPorDefecto: new FormControl('', Validators.required),
       estaActiva: new FormControl('', Validators.required),
       fechaAlta: new FormControl(),
       fechaUltimaMod: new FormControl(),
