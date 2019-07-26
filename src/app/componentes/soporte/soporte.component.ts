@@ -160,7 +160,7 @@ export class SoporteComponent implements OnInit {
       res => {
         let elemento = res.json();
         this.formulario.setValue(elemento);
-        this.establecerPdf(elemento);
+        this.establecerBug(elemento);
       },
       err => {
         console.log(err);
@@ -390,10 +390,11 @@ export class SoporteComponent implements OnInit {
       this.obtenerPorId(elemento.id);
   }
   //Establece la foto y pdf (activar consultar/actualizar)
-  private establecerPdf(elemento): void {
+  private establecerBug(elemento): void {
     this.autocompletado.setValue(elemento);
-    if (elemento.pdf) {
-      this.formulario.get('pdf.datos').setValue(atob(elemento.pdf.datos));
+    console.log(elemento);
+    if (elemento.bugImagen) {
+      this.formulario.get('bugImagen.datos').setValue(atob(elemento.bugImagen.datos));
     }
     this.establecerElemento(elemento);
   }
@@ -483,6 +484,7 @@ export class SoporteComponent implements OnInit {
     elemento.bugImagen=bug;
   }
     this.formulario.setValue(elemento);
+    this.formulario.get('bugImagen.datos').setValue(atob(elemento.bugImagen.datos));
     console.log(this.formulario.value);
   }
   //Elimina una imagen ya cargada
@@ -501,7 +503,7 @@ export class SoporteComponent implements OnInit {
       height: '95%',
       data: {
         nombre: this.formulario.get('bugImagen.nombre').value,
-        datos: atob(this.formulario.get('bugImagen.datos').value)
+        datos: this.formulario.get('bugImagen.datos').value
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });

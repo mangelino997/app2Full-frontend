@@ -376,6 +376,7 @@ this.autocompletado.valueChanges.subscribe(data => {
       datos: null,
       tabla: null
     };
+    if(elemento){
     if (elemento.id) {
       this.pdfService.obtenerPorId(elemento.id).subscribe(res => {
         let resultado = res.json();
@@ -388,11 +389,14 @@ this.autocompletado.valueChanges.subscribe(data => {
           tabla: resultado.tabla,
           datos: atob(resultado.datos)
         }
-        resultadoPdf = pdf;
+        elemento = pdf;
       })
+    }else{
+      elemento = resultadoPdf;
     }
-    console.log(resultadoPdf);
-    return resultadoPdf;
+    elemento = resultadoPdf;
+  }
+    return elemento;
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
@@ -408,6 +412,34 @@ this.autocompletado.valueChanges.subscribe(data => {
         }
       });
       dialogRef.afterClosed().subscribe(resultado => { });
+    }
+  }
+  //Muestra en la pestania buscar,actualizar,eliminar y listar el elemento seleccionado de listar
+  public activarVer(elemento) {
+    if(elemento.pdfAltaTemprana) {
+      elemento.pdfAltaTemprana = this.personal.formulario.get('pdfAltaTemprana');
+      this.obtenerPDF(elemento.pdfAltaTemprana);
+      this.verPDF('pdfAltaTemprana');
+    }
+    if(elemento.pdfLibSanidad) {
+      elemento.pdfLibSanidad = this.personal.formulario.get('pdfLibSanidad');
+      this.obtenerPDF(elemento.pdfLibSanidad);
+      this.verPDF('pdfLibSanidad');
+    }
+    if(elemento.pdfLicConducir) {
+      elemento.pdfLicConducir = this.personal.formulario.get('pdfLicConducir');
+      this.obtenerPDF(elemento.pdfLicConducir);
+      this.verPDF('pdfLicConducir');
+    }
+    if(elemento.pdfLinti) {
+      elemento.pdfLinti = this.personal.formulario.get('pdfLinti');
+      this.obtenerPDF(elemento.pdfLinti);
+      this.verPDF('pdfLinti');
+    }
+    if(elemento.pdfDni) {
+      elemento.pdfDni = this.personal.formulario.get('pdfDni');
+      this.obtenerPDF(elemento.pdfDni);
+      this.verPDF('pdfDni');
     }
   }
   //Muestra el pdf en una pestana nueva
