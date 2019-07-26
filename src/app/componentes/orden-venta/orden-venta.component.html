@@ -192,44 +192,44 @@
             </button>
           </div>
         </div>
-        <div class="row justify-content-center contenedor">
-          <div class="col-md-12" style="height: 300px; overflow-y: scroll;">
+        <div class="tabla">
+          <div class="tabla-ancho" style="height: 350px !important;">
             <table mat-table [dataSource]="listaTarifasDeOrdVta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="id" sticky>
+                <ng-container matColumnDef="id" >
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
                   <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
                 </ng-container>
-                <ng-container matColumnDef="tarifa" sticky>
+                <ng-container matColumnDef="tarifa" >
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.nombre}} </td>
                 </ng-container>
-                <ng-container matColumnDef="escala" sticky>
+                <ng-container matColumnDef="escala" >
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porEscala ? 'Sí': 'No'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="porPorcentaje" sticky>
+                <ng-container matColumnDef="porPorcentaje" >
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Porcentaje</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porPorcentaje ? 'Sí': 'No'}}</td>
                 </ng-container>
 
-                <ng-container matColumnDef="precioDesde" sticky>
+                <ng-container matColumnDef="precioDesde" >
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Precios Desde</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.preciosDesde | date: 'dd/MM/yyyy'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="ver" sticky>
+                <ng-container matColumnDef="ver" >
                   <th mat-header-cell *matHeaderCellDef >-</th>
                   <td mat-cell *matCellDef="let elemento;  let i = index;" >
                     <span class="cursor-color" (click)="verOrdenVentaTarifa(elemento)" >ver</span>
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="mod" sticky>
+                <ng-container matColumnDef="mod" >
                   <th mat-header-cell *matHeaderCellDef>-</th>
                   <td mat-cell *matCellDef="let elemento;  let i = index;" >
                     <span class="cursor-color" (click)="modificarOrdenVentaTarifa(elemento)" 
                     *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">mod</span>
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="eliminar" sticky>
+                <ng-container matColumnDef="eliminar" >
                   <th mat-header-cell *matHeaderCellDef>-</th>
                   <td mat-cell *matCellDef="let elemento; let i = index;" >
                     <span class="cursor-color" (click)="eliminarOrdenVentaTarifa(elemento)"
