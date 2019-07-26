@@ -898,6 +898,8 @@ export class VerTarifaDialogo {
   public escalaActual:any;
   //Define si el campo es de solo lectura
   public soloLectura: boolean = false;
+  //Define si el boton Agregar se habilita o deshabilita
+  public btnAgregar: boolean = false;
   //Define el id del Tramo o Escala que se quiere modificar
   public idMod: number = null;
   //Define las columnas de las tablas
@@ -928,6 +930,11 @@ export class VerTarifaDialogo {
     //Inicializa el indiceSeleccionado
     this.indiceSeleccionado = this.data.indiceSeleccionado;
     this.reestablecerFormularios();
+    //Inicializa por defecto el select de 'importePor' cuando es porEscala
+    if(this.tipoTarifa=='porEscala'){
+      this.importePor.setValue(false);
+      this.cambioImportesPor();
+    }
     //Obtiene la lista de Escalas 
     this.listarEscalasTarifas();
     //Obtiene la lista de registros segun el tipoTarifa
@@ -1145,10 +1152,14 @@ export class VerTarifaDialogo {
     this.resultadosTramos = [];
     this.idMod = null;
     this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
-    this.formularioEscala.get('importeFijo').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formularioEscala.get('precioUnitario').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formularioEscala.get('porcentaje').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formularioEscala.get('minimo').setValue(this.appService.establecerDecimales('0.00', 2));
+    // this.formularioEscala.get('importeFijo').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formularioEscala.get('importeFijo').setValue(null);
+    // this.formularioEscala.get('precioUnitario').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formularioEscala.get('precioUnitario').setValue(null);
+    // this.formularioEscala.get('porcentaje').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formularioEscala.get('porcentaje').setValue(null);
+    // this.formularioEscala.get('minimo').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formularioEscala.get('minimo').setValue(null);
 
     this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
     this.formularioTramo.get('importeFijoSeco').setValue('0.00');
