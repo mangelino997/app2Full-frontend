@@ -14,7 +14,6 @@ import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubopcionService } from 'src/app/servicios/subopcion.service';
 import { SubmoduloService } from 'src/app/servicios/submodulo.service';
 import { LoaderState } from 'src/app/modelos/loader';
-import { Usuario } from 'src/app/modelos/usuario';
 import { BugImagenService } from 'src/app/servicios/bug-imagen.service';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 
@@ -116,7 +115,6 @@ export class SoporteComponent implements OnInit {
     this.listarEmpresas();
     //Obtiene la lista de Modulo
     this.listarModulo();
-
   }
   //Obtiene la lista de Empresas
   private listarEmpresas() {
@@ -167,13 +165,8 @@ export class SoporteComponent implements OnInit {
       }
     );
   }
-  //Maneja el cambio en el autocompletado
-  // public cambioAutocompletado(){
-
-  // }
   //Establece los datos del elemento al formulario
   private establecerElemento(elemento) {
-    console.log(elemento);
     this.modulo.setValue(elemento.subopcion.submodulo.modulo);
     this.submodulo.setValue(elemento.subopcion.submodulo);
     this.cambioModulo();
@@ -272,13 +265,11 @@ export class SoporteComponent implements OnInit {
     let usuario = this.appService.getUsuario();
     this.servicio.listarPorUsuario(usuario.id).subscribe(
       res => {
-        console.log(res);
         this.listaCompleta = new MatTableDataSource(res);
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -290,7 +281,6 @@ export class SoporteComponent implements OnInit {
     let usuario = this.appComponent.getUsuario();
     this.formulario.get('usuario').setValue(usuario);
     this.formulario.get('soporteEstado').setValue({ id: 1 });
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
@@ -380,19 +370,16 @@ export class SoporteComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    console.log(elemento);
       this.obtenerPorId(elemento.id);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
       this.obtenerPorId(elemento.id);
   }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerBug(elemento): void {
     this.autocompletado.setValue(elemento);
-    console.log(elemento);
     if (elemento.bugImagen) {
       this.formulario.get('bugImagen.datos').setValue(atob(elemento.bugImagen.datos));
     }
@@ -435,7 +422,6 @@ export class SoporteComponent implements OnInit {
       this.toastr.success("Sin archivo adjunto");
     }
   }
-
   //Carga la imagen del paciente
   public readURL(event): void {
     if (event.target.files && event.target.files[0] && this.tiposImagenes.includes(event.target.files[0].type)) {
@@ -448,6 +434,7 @@ export class SoporteComponent implements OnInit {
           datos: reader.result
         }
         this.formulario.get('bugImagen').patchValue(bugImagen);
+        event.target.value = null;
       }
       reader.readAsDataURL(file);
     } else {
@@ -485,19 +472,17 @@ export class SoporteComponent implements OnInit {
   }
     this.formulario.setValue(elemento);
     this.formulario.get('bugImagen.datos').setValue(atob(elemento.bugImagen.datos));
-    console.log(this.formulario.value);
   }
   //Elimina una imagen ya cargada
-  public eliminarBug(campo) {
+  public eliminarBug(campo, event) {
     if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
     } else {
-      this.formulario.get(campo).patchValue('');
+      this.formulario.get(campo).reset();
     }
   }
   //Muestra la imagen en una pestana nueva
   public verBugImagen() {
-    console.log(this.formulario.value);
     const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
       width: '95%',
       height: '95%',

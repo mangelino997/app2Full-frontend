@@ -1,10 +1,13 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Injectable } from '@angular/core';
+import { Foto } from './foto';
 //Define la entidad de la base de datos.
+@Injectable()
 export class Soporte {
     //define un formulario FormGroup
     public formulario: FormGroup;
     //constructor
-    constructor() {
+    constructor(private foto: Foto) {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
             id: new FormControl(),
@@ -14,14 +17,7 @@ export class Soporte {
             mensaje: new FormControl('', Validators.required),
             usuario: new FormControl(),
             fecha: new FormControl(),
-            bugImagen: new FormGroup({
-                id: new FormControl(),
-                version: new FormControl(),
-                nombre: new FormControl(),
-                tipo: new FormControl(),
-                tamanio: new FormControl(),
-                datos: new FormControl()
-            }),
+            bugImagen: this.foto.formulario,
             soporteEstado: new FormControl(),
             alias: new FormControl(),
         });

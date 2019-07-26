@@ -100,7 +100,7 @@
                 <i class="material-icons" *ngIf="formulario.get('bugImagen.nombre').value"
                   style="color: lightgreen">cloud_done</i>
               </button>
-              <button class="btn-height" mat-raised-button color="warn" (click)="eliminarBug('bugImagen.nombre')"
+              <button class="btn-height" mat-raised-button color="warn" (click)="eliminarBug('bugImagen', $event)"
                 [disabled]="!formulario.get('bugImagen.nombre').value || indiceSeleccionado == 2 || indiceSeleccionado == 4" 
                 style="width: 40px;" matTooltip="Quitar"><i class="material-icons">close</i>
               </button>
