@@ -11,7 +11,7 @@
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
     <div class="col-md-6 text-center">
       <h5>{{pestaniaActual}} Soporte</h5>
-      <span>Email Contacto: nestor@codigo01.com.ar / blas@draimo.com</span>
+      <span>Contacto: nestor@codigo01.com.ar / blas@draimo.com</span>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-8">
@@ -20,7 +20,7 @@
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
                 (blur)="verificarSeleccion(autocompletado)">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="establecerElemento()">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="establecerElemento(item)">
                 <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.alias}}
                 </mat-option>
