@@ -12,7 +12,7 @@
   <div *ngIf="indiceSeleccionado < 5">
     <mat-sidenav-container>
       <mat-sidenav #sidenav mode="side" opened class="sidenav" [fixedInViewport]="true" [fixedTopGap]="165"
-        [fixedBottomGap]="0">
+        [fixedBottomGap]="0" [ngClass]="indiceSeleccionado > 1 ? 'top2' : 'top1'">
         <div class="container-fluid">
           <div class="row contenedor" *ngFor="let listaOp of opciones; let idx = index">
             <div class="col">

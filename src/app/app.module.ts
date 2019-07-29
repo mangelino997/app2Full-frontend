@@ -260,7 +260,7 @@ import { TramoComponent } from './componentes/tramo/tramo.component'; //Probado
 import { UnidadMedidaComponent } from './componentes/unidad-medida/unidad-medida.component';
 import { VendedorComponent } from './componentes/vendedor/vendedor.component';
 import { ZonaComponent } from './componentes/zona/zona.component'; //Probado
-import { ClienteComponent, ListasDePreciosDialog } from './componentes/cliente/cliente.component'; //Probado
+import { ClienteComponent, ListasDePreciosDialog, CambiarOVporDefectoDialogo } from './componentes/cliente/cliente.component'; //Probado
 import { ResumenClienteComponent } from './componentes/resumen-cliente/resumen-cliente.component';
 import { OrdenVentaComponent, VerTarifaDialogo } from './componentes/orden-venta/orden-venta.component';
 import { ProveedorComponent } from './componentes/proveedor/proveedor.component'; //Probado
@@ -455,7 +455,9 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
+  url: 'ws://192.168.0.123:8080/jitws/socket',
+  
+  // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
   headers: {},
@@ -612,7 +614,8 @@ const stompConfig: StompConfig = {
     EliminarModalComponent,
     PdfDialogoComponent,
     ListasDePreciosDialog,
-    BugImagenDialogoComponent
+    BugImagenDialogoComponent,
+    CambiarOVporDefectoDialogo
   ],
   imports: [
     BrowserModule,
@@ -884,6 +887,7 @@ const stompConfig: StompConfig = {
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,
     CambiarCobradorPrincipalDialogo,
+    CambiarOVporDefectoDialogo,
     ListaPreciosDialogo,
     ConfimarDialogo,
     ViajeDialogo,

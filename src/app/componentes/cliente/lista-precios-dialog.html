@@ -8,7 +8,7 @@
                     <div class="form-group has-float-label">
                       <label for="idTipoOrdenVenta" class="tamanio-label">Tipo *</label>
                       <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta" class="form-control form-control-sm"
-                        (selectionChange)="establecerTipo()" [compareWith]="compareT" required>
+                        (selectionChange)="establecerTipo()"  required> <!--[compareWith]="compareT"-->
                         <mat-option [value]="false">Por Empresa</mat-option>
                         <mat-option [value]="true">Por Cliente</mat-option>
                       </mat-select>
@@ -61,21 +61,15 @@
                   <div class="col-md-3">
                     <div class="form-group has-float-label">
                       <label for="idTarifaDefecto" class="tamanio-label">Tarifa por Defecto *</label>
-                      <!-- <mat-select id="idTarifaDefecto" class="form-control form-control-sm" formControlName="tipoTarifaPorDefecto" >
-                        <mat-option [value]="false">No</mat-option>
-                        <mat-option [value]="true">Si</mat-option>
-                      </mat-select> -->
                       <mat-select id="idOrdenVenta" class="form-control form-control-sm" formControlName="ordenVentaTarifaPorDefecto"
                         [compareWith]="compareFn" >
                         <mat-option *ngFor="let item of tarifas" [value]="item">
                           {{item.tipoTarifa.nombre}} 
-                           <!-- {{orden.cliente ? orden.cliente.razonSocial : orden.empresa.razonSocial}} -
-                          {{orden.vendedor.nombre}} - {{orden.activaDesde}} -->
                         </mat-option>
                       </mat-select>
                     </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-2">
                     <div class="form-group has-float-label">
                       <label for="idActivo" class="tamanio-label">Esta Activo *</label>
                       <mat-select id="idActivo" class="form-control form-control-sm" formControlName="estaActiva" 
@@ -90,8 +84,8 @@
                        *ngIf="!btnMod">
                         Agregar
                       </button>
-                      <button mat-raised-button color="primary" [disabled]="!formulario.valid" (click)="modificatListaPrecio()" *ngIf="btnMod">
-                        Modificar
+                      <button mat-raised-button color="primary" [disabled]="!formulario.valid" (click)="modificarListaPrecio()" *ngIf="btnMod">
+                        Actualizar
                       </button>
                   </div>
                 </div>
@@ -103,6 +97,16 @@
                 <div class="tabla">
                   <div class="tabla-ancho">
                     <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                      <ng-container matColumnDef="eliminar"  >
+                        <th mat-header-cell *matHeaderCellDef>-</th>
+                        <td mat-cell *matCellDef="let elemento; let i = index;" (click)="activarEliminarPrecio(i)"><span
+                            class="cursor-color" *ngIf="!soloLectura">X</span></td>
+                      </ng-container>
+                      <ng-container matColumnDef="mod"  >
+                        <th mat-header-cell *matHeaderCellDef>-</th>
+                        <td mat-cell *matCellDef="let elemento; let i=index" (click)="activarModPrecio(elemento, i)"><span
+                            class="cursor-color" *ngIf="!soloLectura">mod</span></td>
+                      </ng-container>
                       <ng-container matColumnDef="descripcion" >
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
                         <td mat-cell *matCellDef="let elemento">{{elemento.ordenVenta.nombre}}</td>
@@ -135,16 +139,6 @@
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
                         <td mat-cell *matCellDef="let elemento">{{elemento.ordenVenta.observaciones? elemento.ordenVenta.observaciones : '--'}}</td>
                       </ng-container>
-                      <ng-container matColumnDef="mod"  >
-                        <th mat-header-cell *matHeaderCellDef>-</th>
-                        <td mat-cell *matCellDef="let elemento" (click)="activarModPrecio(elemento, i)"><span
-                            class="cursor-color" *ngIf="!soloLectura">mod</span></td>
-                      </ng-container>
-                      <ng-container matColumnDef="eliminar"  >
-                        <th mat-header-cell *matHeaderCellDef>-</th>
-                        <td mat-cell *matCellDef="let elemento; let i = index;" (click)="activarEliminarPrecio(i)"><span
-                            class="cursor-color" *ngIf="!soloLectura">X</span></td>
-                      </ng-container>
                       <tr mat-header-row *matHeaderRowDef="columnasEscala" ></tr>
                       <tr mat-row *matRowDef="let row; columns: columnasEscala;"></tr>
                     </table>
@@ -153,7 +147,7 @@
                 <br>
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <button mat-raised-button  color="accent" [mat-dialog-close]="listaPrecios">Cerrar</button>
+                        <button mat-raised-button  color="accent" [mat-dialog-close]="listaPrecios" >Cerrar</button>
                     </div>
                 </div>
             </form>

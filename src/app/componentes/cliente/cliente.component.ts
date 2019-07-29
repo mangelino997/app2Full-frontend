@@ -747,8 +747,23 @@ export class ClienteComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => {
       console.log(resultado);
-      this.formulario.get('clienteOrdenesVentas').setValue(resultado);
+      if(resultado){
+        this.formulario.get('clienteOrdenesVentas').setValue(resultado);
+        this.controlListaPrecios(resultado);
+      }
     });
+  }
+  //Controla que al menos una lista de precio tenga una orden venta por defecto = true
+  private controlListaPrecios(listaPrecios){
+    let bandera= false; //cambia a true cuando un registro es porDefecto=true
+    listaPrecios.forEach(item => {
+      if(item.esOrdenVentaPorDefecto)
+        bandera = true;
+    });
+    if(!bandera){
+      this.abrirListasPrecios();
+      this.toastr.warning("Un registro debe tener a Orden de Venta por defecto igual a SI");
+    }
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(limite) {
@@ -893,12 +908,13 @@ export class ListasDePreciosDialog {
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define las columnas de las tablas
-  public columnasEscala: string[] = ['descripcion', 'esOrdenVentaPorDefecto', 'tarifaDefecto', 'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones', 'mod', 'eliminar'];
+  public columnasEscala: string[] = [ 'mod', 'eliminar', 'descripcion', 'esOrdenVentaPorDefecto', 'tarifaDefecto', 'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones'];
   //Constructor
   constructor( private appService: AppService, public dialogRef: MatDialogRef<ListasDePreciosDialog>, @Inject(MAT_DIALOG_DATA) public data,
     private loaderService: LoaderService, private ordenVentaService: OrdenVentaService, private clienteServicio: ClienteService,
-    private clienteOrdenVtaService: ClienteOrdenVentaService, private toastr: ToastrService, private ovTarifaService: OrdenVentaTarifaService) {
-
+    private clienteOrdenVtaService: ClienteOrdenVentaService, private toastr: ToastrService, private ovTarifaService: OrdenVentaTarifaService,
+    public dialog: MatDialog) {
+      dialogRef.disableClose = true;
    }
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -1031,6 +1047,97 @@ export class ListasDePreciosDialog {
       }
     )
   }
+  //Modifica la lista de precio (cambia porDefecto==true a porDefecto=false)
+  // private actualizarListaPrecioPorDefecto(item){
+  //     let usuario = this.appService.getUsuario();
+  //     item.usuarioMod = usuario;
+  //     item.cliente = {id: this.idCliente};
+  //     item.esOrdenVentaPorDefecto = false;
+  //     console.log(item);
+  //     this.clienteOrdenVtaService.actualizar(item).subscribe(
+  //       res=>{
+  //         console.log(res.status);
+            
+  //           this.formulario.reset();
+  //           this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+  //             res=>{
+  //               console.log(res.json());
+  //               this.listaPrecios = res.json();
+  //               this.listar();
+  //             },
+  //             err=>{
+  //               this.toastr.error("Error al obtener la Lista de Precios");
+  //             }
+  //           );
+  //           this.loaderService.hide();
+  //       },
+  //       err=>{
+  //         let error = err.json();
+  //         this.toastr.error(error.mensaje);
+  //         this.loaderService.hide();
+  //       }
+  //     );
+  // }
+  // //Agrega una nueva lista de precio que contiene una orden de venta porDefecto==true
+  // private agregarListaPrecioPorDefecto(formulario, item){
+  //   console.log(formulario.value);
+  // }
+  //Abre modal para cambiar Orden de Venta por defecto
+  private cambiarPorDefecto(item, formulario){
+    console.log(item);
+    const dialogRef = this.dialog.open(CambiarOVporDefectoDialogo, {
+      width: '750px',
+      data: {  },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      if(result == true && this.indiceSeleccionado == 1){
+        item.esOrdenVentaPorDefecto= false;
+        let indice = this.listaPrecios.indexOf(item);
+        console.log(this.listaPrecios);
+        // this.listaPrecios[indice] = item;
+        // this.listaPrecios.push(formulario.value);
+        // console.log(this.listaPrecios);
+        this.limpiarCampos(null);
+        this.listar();
+        this.loaderService.hide();
+      }
+      if(result == true && this.indiceSeleccionado == 3){
+        item.esOrdenVentaPorDefecto= false;
+        this.modificarListaPrecio();
+      }
+      if(result == false && this.indiceSeleccionado!=1){
+        this.listaPrecios.push(formulario.value);
+        this.limpiarCampos(null);
+        this.listar();
+        this.loaderService.hide();
+      }
+    });
+  }
+  //Controla si ya existe alguna Orden de venta por defecto asignada al mismo Cliente
+  private controlarOVPorDefecto(formulario){
+    console.log(this.listaPrecios, formulario.value);
+    if(this.listaPrecios.length>0){
+      this.listaPrecios.forEach(item => {
+        if(item.esOrdenVentaPorDefecto== true){
+          console.log(this.listaPrecios);
+          this.cambiarPorDefecto(item, formulario);
+        }
+          else{
+            this.listaPrecios.push(formulario.value);
+            this.limpiarCampos(null);
+            this.listar();
+            this.loaderService.hide();
+        }       
+      })
+    }else{
+      this.listaPrecios.push(formulario.value);
+      this.limpiarCampos(null);
+      this.listar();
+      this.loaderService.hide();
+    }
+    
+  }
   //Carga a la Lista de Precios un nuevo elemento
   public agregarListaPrecio(){
     this.loaderService.show();
@@ -1040,51 +1147,65 @@ export class ListasDePreciosDialog {
       this.formulario.get('cliente').setValue({id: this.idCliente});
       // this.formulario.get('ordenVentaTarifaPorDefecto').setValue();
       console.log(this.formulario.value);
-      this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
-        res=>{
-          if(res.status == 201){
-            this.formulario.reset();
-            this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
-              res=>{
-                console.log(res.json());
-                this.listaPrecios = res.json();
-                this.listar();
-              },
-              err=>{
-                this.toastr.error("Error al obtener la Lista de Precios");
+      if(this.formulario.value.esOrdenVentaPorDefecto == true){
+        this.controlarOVPorDefecto(this.formulario);
+      }
+        else{
+          this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
+            res=>{
+              if(res.status == 201){
+                this.formulario.reset();
+                this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+                  res=>{
+                    console.log(res.json());
+                    this.listaPrecios = res.json();
+                    this.listar();
+                  },
+                  err=>{
+                    this.toastr.error("Error al obtener la Lista de Precios");
+                  }
+                );
+                this.loaderService.hide();
               }
-            );
-            this.loaderService.hide();
-          }
-        },
-        err=>{
-          let error = err.json();
-          this.toastr.error(error.mensaje);
+            },
+            err=>{
+              let error = err.json();
+              this.toastr.error(error.mensaje);
+              this.loaderService.hide();
+            }
+          );
+        }
+    } 
+    if(this.indiceSeleccionado != 3){ //Controlo desde el front que SOLO UNA  lista de precio sea porDefecto=true (OV) 
+      // this.formulario.value.tipoTarifaPorDefecto = {id: null};
+      if(this.formulario.value.esOrdenVentaPorDefecto == true){
+        this.controlarOVPorDefecto(this.formulario);
+      }
+        else{
+          this.listaPrecios.push(this.formulario.value);
+          this.limpiarCampos(null);
+          this.listar();
           this.loaderService.hide();
         }
-      );
-    } 
-    if(this.indiceSeleccionado != 3){
-      this.formulario.value.tipoTarifaPorDefecto = {id: null};
-      this.listaPrecios.push(this.formulario.value);
-      this.limpiarCampos(null);
-      this.listar();
-      this.loaderService.hide();
     }
   }
   //Modifica un registro de la tabla
-  public modificatListaPrecio(indice){
+  public modificarListaPrecio(){
     this.loaderService.show();
     let usuario = this.appService.getUsuario();
     if(this.indiceSeleccionado == 3){
       this.formulario.get('usuarioMod').setValue(usuario);
       this.formulario.get('cliente').setValue({id: this.idCliente});
-      this.formulario.get('tipoTarifaPorDefecto').setValue({id: null});
+      console.log(this.formulario.value);
+      // this.formulario.get('ordenVentaTarifaPorDefecto').setValue({id: null});
       console.log(this.formulario.value);
       this.clienteOrdenVtaService.actualizar(this.formulario.value).subscribe(
         res=>{
-          if(res.status == 201){
+          console.log(res);
+          let respuesta = res.json();
+          if(respuesta.codigo == 200){
             this.formulario.reset();
+            this.toastr.success(respuesta.mensaje);
             this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
               res=>{
                 console.log(res.json());
@@ -1106,9 +1227,11 @@ export class ListasDePreciosDialog {
       );
     }
     if(this.indiceSeleccionado != 3){
+      console.log(this.listaPrecios);
       this.formulario.value.ordenVenta.estaActiva = this.formulario.get('estaActiva').value;
       this.formulario.value.ordenVenta.usuarioMod = usuario;
-      this.listaPrecios[indice] = this.formulario.value;
+      this.listaPrecios[this.indice] = this.formulario.value;
+      console.log(this.listaPrecios);
       this.limpiarCampos(null);
       this.listar();
       this.loaderService.hide();
@@ -1118,6 +1241,23 @@ export class ListasDePreciosDialog {
   public activarModPrecio(elemento, indice){
     console.log(elemento);
       this.formulario.patchValue(elemento);
+      if(this.indiceSeleccionado==3){
+        if(this.formulario.value.ordenVenta.cliente){
+          this.formulario.get('tipoOrdenVenta').setValue(true);
+          this.formulario.get('cliente').setValue(this.formulario.value.ordenVenta.cliente);
+          this.listarOrdenesVentas('cliente');
+          this.cambioOrdenVenta();
+        }
+          else{
+            this.formulario.get('tipoOrdenVenta').setValue(false);
+            this.formulario.get('empresa').setValue(this.formulario.value.ordenVenta.empresa);
+            this.listarOrdenesVentas('empresa');
+            this.cambioOrdenVenta();
+          }
+      }
+        else{
+
+        }
       this.indice = indice;
       this.btnMod = true;
       this.loaderService.hide();
@@ -1173,10 +1313,17 @@ export class ListasDePreciosDialog {
       return a.id === b.id;
     }
   }
+  //Compara las ordenes de venta
+  public compareFo = this.compararFo.bind(this);
+  private compararFo(a, b) {
+    if (a.id != null && b.id != null) {
+      return a.id === b.id;
+    }
+  }
   //Funcion para comparar y mostrar elemento del campo 'Tipo' 
   public compareT = this.compararT.bind(this);
   private compararT(a, b) {
-    if (a != null && b != null) {
+    if (a.ordenVenta.empresa != null && b != null) {
       return a === b;
     }
   }
@@ -1191,4 +1338,21 @@ export class ListasDePreciosDialog {
   // onNoClick(): void {
   //     this.dialogRef.close();
   // }
+}
+//Componente Cambiar Moneda Principal Dialogo
+@Component({
+  selector: 'cambiar-pordefecto-dialogo',
+  templateUrl: 'cambiar-pordefecto-dialogo.html',
+})
+export class CambiarOVporDefectoDialogo {
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<CambiarOVporDefectoDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  //Al inicializarse el componente
+  ngOnInit() {
+  }
+  //Cierra el dialogo
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+   
 }
