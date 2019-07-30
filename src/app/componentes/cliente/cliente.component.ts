@@ -756,13 +756,15 @@ export class ClienteComponent implements OnInit {
   //Controla que al menos una lista de precio tenga una orden venta por defecto = true
   private controlListaPrecios(listaPrecios){
     let bandera= false; //cambia a true cuando un registro es porDefecto=true
-    listaPrecios.forEach(item => {
-      if(item.esOrdenVentaPorDefecto)
-        bandera = true;
-    });
-    if(!bandera){
-      this.abrirListasPrecios();
-      this.toastr.warning("Un registro debe tener a Orden de Venta por defecto igual a SI");
+    if(listaPrecios.length > 0){
+      listaPrecios.forEach(item => {
+        if(item.esOrdenVentaPorDefecto)
+          bandera = true;
+      });
+      if(!bandera){
+        this.abrirListasPrecios();
+        this.toastr.warning("Un registro debe tener a Orden de Venta por defecto igual a SI");
+      }
     }
   }
   //Obtiene la mascara de enteros
@@ -957,7 +959,7 @@ export class ListasDePreciosDialog {
     //Autocompletado - Buscar por nombre cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+        this.clienteServicio.listarPorAliasListaPrecio(data).subscribe(response => {
           this.resultadosClientes = response;
         })
       }
@@ -995,7 +997,7 @@ export class ListasDePreciosDialog {
           },
           err=>{
             let error = err.mensaje;
-            this.toastr.error(error);
+            this.toastr.error("Error al obtener la lista por empresa");
             this.loaderService.hide();
           }
         );
@@ -1013,7 +1015,7 @@ export class ListasDePreciosDialog {
           },
           err=>{
             let error = err.mensaje;
-            this.toastr.error(error);
+            this.toastr.error("Error al obtener la lista por cliente");
             this.loaderService.hide();
           }
         );
@@ -1047,41 +1049,6 @@ export class ListasDePreciosDialog {
       }
     )
   }
-  //Modifica la lista de precio (cambia porDefecto==true a porDefecto=false)
-  // private actualizarListaPrecioPorDefecto(item){
-  //     let usuario = this.appService.getUsuario();
-  //     item.usuarioMod = usuario;
-  //     item.cliente = {id: this.idCliente};
-  //     item.esOrdenVentaPorDefecto = false;
-  //     console.log(item);
-  //     this.clienteOrdenVtaService.actualizar(item).subscribe(
-  //       res=>{
-  //         console.log(res.status);
-            
-  //           this.formulario.reset();
-  //           this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
-  //             res=>{
-  //               console.log(res.json());
-  //               this.listaPrecios = res.json();
-  //               this.listar();
-  //             },
-  //             err=>{
-  //               this.toastr.error("Error al obtener la Lista de Precios");
-  //             }
-  //           );
-  //           this.loaderService.hide();
-  //       },
-  //       err=>{
-  //         let error = err.json();
-  //         this.toastr.error(error.mensaje);
-  //         this.loaderService.hide();
-  //       }
-  //     );
-  // }
-  // //Agrega una nueva lista de precio que contiene una orden de venta porDefecto==true
-  // private agregarListaPrecioPorDefecto(formulario, item){
-  //   console.log(formulario.value);
-  // }
   //Abre modal para cambiar Orden de Venta por defecto
   private cambiarPorDefecto(item, formulario){
     console.log(item);
@@ -1095,16 +1062,13 @@ export class ListasDePreciosDialog {
         item.esOrdenVentaPorDefecto= false;
         let indice = this.listaPrecios.indexOf(item);
         console.log(this.listaPrecios);
-        // this.listaPrecios[indice] = item;
-        // this.listaPrecios.push(formulario.value);
-        // console.log(this.listaPrecios);
         this.limpiarCampos(null);
         this.listar();
         this.loaderService.hide();
       }
       if(result == true && this.indiceSeleccionado == 3){
         item.esOrdenVentaPorDefecto= false;
-        this.modificarListaPrecio();
+        this.modificarListaPrecio(); //Me borra el registro que anteriormente tenia esPorDefecto=true. Me lo deberia dejar y cambiar el campo a false
       }
       if(result == false && this.indiceSeleccionado!=1){
         this.listaPrecios.push(formulario.value);
@@ -1124,24 +1088,97 @@ export class ListasDePreciosDialog {
           this.cambiarPorDefecto(item, formulario);
         }
           else{
-            this.listaPrecios.push(formulario.value);
-            this.limpiarCampos(null);
-            this.listar();
-            this.loaderService.hide();
+            this.agregar(formulario);
+            // this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
+            //   res=>{
+            //     console.log(res);
+            //     if(res.status == 201){
+            //       this.toastr.success("Registro agregado con éxito");
+            //       this.formulario.reset();
+            //       this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+            //         res=>{
+            //           console.log(res.json());
+            //           this.listaPrecios = res.json();
+            //           this.listar();
+            //         },
+            //         err=>{
+            //           this.toastr.error("Error al obtener la Lista de Precios");
+            //         }
+            //       );
+            //       this.loaderService.hide();
+            //     }
+            //   },
+            //   err=>{
+            //     let error = err.json();
+            //     this.toastr.error(error.mensaje);
+            //     this.loaderService.hide();
+            //   }
+            // );
         }       
       })
     }else{
-      this.listaPrecios.push(formulario.value);
-      this.limpiarCampos(null);
-      this.listar();
-      this.loaderService.hide();
+      this.agregar(formulario);
+    //   this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
+    //     res=>{
+    //       console.log(res);
+    //       if(res.status == 201){
+    //         this.toastr.success("Registro agregado con éxito");
+    //         this.formulario.reset();
+    //         this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+    //           res=>{
+    //             console.log(res.json());
+    //             this.listaPrecios = res.json();
+    //             this.listar();
+    //           },
+    //           err=>{
+    //             this.toastr.error("Error al obtener la Lista de Precios");
+    //           }
+    //         );
+    //         this.loaderService.hide();
+    //       }
+    //     },
+    //     err=>{
+    //       let error = err.json();
+    //       this.toastr.error(error.mensaje);
+    //       this.loaderService.hide();
+    //     }
+    //   );
+    // }
     }
-    
+  }
+  //Agrega directamente una lista de precio
+  private agregar(formulario){
+    this.clienteOrdenVtaService.agregar(formulario.value).subscribe(
+      res=>{
+        console.log(res);
+        if(res.status == 201){
+          this.toastr.success("Registro agregado con éxito");
+          this.formulario.reset();
+          this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+            res=>{
+              console.log(res.json());
+              this.listaPrecios = res.json();
+              this.listar();
+            },
+            err=>{
+              this.toastr.error("Error al obtener la Lista de Precios");
+            }
+          );
+          this.loaderService.hide();
+        }
+      },
+      err=>{
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Carga a la Lista de Precios un nuevo elemento
   public agregarListaPrecio(){
     this.loaderService.show();
     let usuario = this.appService.getUsuario();
+    console.log(this.indiceSeleccionado);
     if(this.indiceSeleccionado == 3){
       this.formulario.get('usuarioAlta').setValue(usuario);
       this.formulario.get('cliente').setValue({id: this.idCliente});
@@ -1151,29 +1188,32 @@ export class ListasDePreciosDialog {
         this.controlarOVPorDefecto(this.formulario);
       }
         else{
-          this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
-            res=>{
-              if(res.status == 201){
-                this.formulario.reset();
-                this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
-                  res=>{
-                    console.log(res.json());
-                    this.listaPrecios = res.json();
-                    this.listar();
-                  },
-                  err=>{
-                    this.toastr.error("Error al obtener la Lista de Precios");
-                  }
-                );
-                this.loaderService.hide();
-              }
-            },
-            err=>{
-              let error = err.json();
-              this.toastr.error(error.mensaje);
-              this.loaderService.hide();
-            }
-          );
+          this.agregar(this.formulario);
+          // this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
+          //   res=>{
+          //     console.log(res);
+          //     if(res.status == 201){
+          //       this.toastr.success("Registro agregado con éxito");
+          //       this.formulario.reset();
+          //       this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+          //         res=>{
+          //           console.log(res.json());
+          //           this.listaPrecios = res.json();
+          //           this.listar();
+          //         },
+          //         err=>{
+          //           this.toastr.error("Error al obtener la Lista de Precios");
+          //         }
+          //       );
+          //       this.loaderService.hide();
+          //     }
+          //   },
+          //   err=>{
+          //     let error = err.json();
+          //     this.toastr.error(error.mensaje);
+          //     this.loaderService.hide();
+          //   }
+          // );
         }
     } 
     if(this.indiceSeleccionado != 3){ //Controlo desde el front que SOLO UNA  lista de precio sea porDefecto=true (OV) 
@@ -1202,10 +1242,8 @@ export class ListasDePreciosDialog {
       this.clienteOrdenVtaService.actualizar(this.formulario.value).subscribe(
         res=>{
           console.log(res);
-          let respuesta = res.json();
-          if(respuesta.codigo == 200){
             this.formulario.reset();
-            this.toastr.success(respuesta.mensaje);
+            this.toastr.success("Registro actualizado con éxito");
             this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
               res=>{
                 console.log(res.json());
@@ -1217,11 +1255,11 @@ export class ListasDePreciosDialog {
               }
             );
             this.loaderService.hide();
-          }
+      
         },
         err=>{
           let error = err.json();
-          this.toastr.error(error.mensaje);
+          this.toastr.error("Error al actualizar el registro");
           this.loaderService.hide();
         }
       );
@@ -1269,6 +1307,7 @@ export class ListasDePreciosDialog {
       console.log(this.listaPrecios[indice].id);
       this.clienteOrdenVtaService.eliminar(this.listaPrecios[indice].id).subscribe(
         res=>{
+          this.toastr.success("Registro eliminado con éxito");
             this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
               res=>{
                 console.log(res.json());
@@ -1283,7 +1322,7 @@ export class ListasDePreciosDialog {
         },
         err=>{
           let error = err.json();
-          this.toastr.error(error.mensaje);
+          this.toastr.success("Error al eliminar el registro");
           this.loaderService.hide();
         }
       );
@@ -1323,7 +1362,7 @@ export class ListasDePreciosDialog {
   //Funcion para comparar y mostrar elemento del campo 'Tipo' 
   public compareT = this.compararT.bind(this);
   private compararT(a, b) {
-    if (a.ordenVenta.empresa != null && b != null) {
+    if (a != null && b != null) {
       return a === b;
     }
   }

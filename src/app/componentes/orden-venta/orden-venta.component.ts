@@ -22,6 +22,7 @@ import { OrdenVentaTarifa } from 'src/app/modelos/ordenVentaTarifa';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 import { EliminarModalComponent } from '../eliminar-modal/eliminar-modal.component';
+import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
 
 @Component({
   selector: 'app-orden-venta',
@@ -127,12 +128,11 @@ export class OrdenVentaComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
+    private toastr: ToastrService, private clienteServicio: ClienteService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService, public dialog: MatDialog,
-    private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
-    private tramoServicio: TramoService, private ordenVenta: OrdenVenta, private ordenVentaServicio: OrdenVentaService,
+    private appService: AppService, private clienteOVService: ClienteOrdenVentaService,
+    private ordenVenta: OrdenVenta, private ordenVentaServicio: OrdenVentaService,
     private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo,
-    private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ordenVentaTramoServicio: OrdenVentaTramoService,
     private loaderService: LoaderService, private ordenVentaTarifa: OrdenVentaTarifa, private ordenVentaTarifaService: OrdenVentaTarifaService) {
       //Obtiene la lista de pestania por rol y subopcion
       this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -263,10 +263,16 @@ export class OrdenVentaComponent implements OnInit {
     let tipo = this.formularioListar.get('tipo').value;
     if(tipo == 'empresa'){
       this.formularioListar.get('cliente').setValue(null);
+      this.formularioListar.get('cliente').setValidators([]);
+      this.formularioListar.get('empresa').setValidators(Validators.required);
+      this.formularioListar.get('cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
       this.establecerEmpresa();
     }
     if(tipo == 'cliente'){
       this.formularioListar.get('empresa').setValue(null);
+      this.formularioListar.get('empresa').setValidators([]);
+      this.formularioListar.get('cliente').setValidators(Validators.required);
+      this.formularioListar.get('empresa').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
     }
   }
   //Listar ordenes de ventas por Empresa/Cliente
@@ -300,6 +306,8 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioListar.get('empresa').setValue(empresa);
     else 
       this.formulario.get('empresa').setValue(empresa);
+    
+    console.log(this.formularioListar);
   }
   
   //Reestablecer campos
@@ -533,12 +541,12 @@ export class OrdenVentaComponent implements OnInit {
   //Habilita o deshabilita el Formulario de Orden Venta Tarifa
   public habilitarFormTarifa(estado){
     if(estado){
-      this.formularioTarifa.get('tipoTarifa').enable();
+      // this.formularioTarifa.get('tipoTarifa').enable();
       this.formularioTarifa.get('preciosDesde').enable();
       this.tipoTarifa.enable();
       // this.listarOrdenVentaTarifas();
     }else{
-      this.formularioTarifa.get('tipoTarifa').disable();
+      // this.formularioTarifa.get('tipoTarifa').disable();
       this.formularioTarifa.get('preciosDesde').disable();
       this.tipoTarifa.disable();
     }
@@ -564,6 +572,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioTarifa.get('ordenVenta').setValue({id: this.formulario.value.id});
     this.ordenVentaTarifaService.agregar(this.formularioTarifa.value).subscribe(
       res=>{
+        this.toastr.success("Registro agregado con éxito");
         this.listarOrdenVentaTarifas();
       },
       err=>{
@@ -574,7 +583,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioTarifa.reset();
   }
   //Actualizar un registro a Orden Venta Tarifa
-  public actulizarTarifa(){
+  public actualizarTarifa(){
     this.formularioTarifa.get('ordenVenta').setValue({id: this.formulario.value.id});
     this.ordenVentaTarifaService.actualizar(this.formularioTarifa.value).subscribe(
       res=>{
@@ -582,6 +591,7 @@ export class OrdenVentaComponent implements OnInit {
           this.btnActualizarTarifa = false;
           this.habilitarFormTarifa(true);
           this.listarOrdenVentaTarifas();
+          this.toastr.success("Registro actualizado agregado con éxito");
         }
       },
       err=>{
@@ -952,6 +962,7 @@ export class VerTarifaDialogo {
   private listarEscalasTarifas(){
     this.escalaTarifaService.listar().subscribe(
       res=>{
+        console.log(res.json());
         this.listaEscalasTarifas = res.json();
       }
     )
@@ -993,14 +1004,16 @@ export class VerTarifaDialogo {
 
       if(realizarAgregar==true){
         this.formularioEscala.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
+        console.log(this.formularioEscala.value);
         this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
           res=>{
+            console.log(res.json());
             var respuesta = res.json();
-            if (respuesta.codigo == 201) {
+            if (res.status == 201) {
               setTimeout(function () {
                 document.getElementById('idEscala').focus();
               }, 20);
-            this.toastr.success(respuesta.mensaje);
+            this.toastr.success("Registro agregado con éxito");
             this.formularioEscala.reset();
             this.reestablecerFormularios();
             this.listar();
@@ -1021,11 +1034,11 @@ export class VerTarifaDialogo {
       this.ordenVentaTramoService.agregar(this.formularioTramo.value).subscribe(
         res=>{
           var respuesta = res.json();
-          if (respuesta.codigo == 201) {
+          if (res.status == 201) {
             setTimeout(function () {
               document.getElementById('idTramo').focus();
             }, 20);
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro agregado con éxito");
           this.reestablecerFormularios();
           this.loaderService.hide();
           this.listar();
@@ -1045,6 +1058,7 @@ export class VerTarifaDialogo {
     if(this.tipoTarifa == 'porEscala'){
       this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
         res=>{
+          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
           this.loaderService.hide();
@@ -1078,7 +1092,7 @@ export class VerTarifaDialogo {
       this.ordenVentaEscalaService.eliminar(elemento.id).subscribe(
         res=>{
           var respuesta = res.json();
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro eliminado con éxito");
           this.reestablecerFormularios();
           this.loaderService.hide();
           this.listar();
@@ -1094,7 +1108,7 @@ export class VerTarifaDialogo {
       this.ordenVentaTramoService.eliminar(elemento.id).subscribe(
         res=>{
           var respuesta = res.json();
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro eliminado con éxito");
           this.reestablecerFormularios();
           this.listar();
           this.loaderService.hide();          
@@ -1114,12 +1128,12 @@ export class VerTarifaDialogo {
       this.ordenVentaEscalaService.actualizar(this.formularioEscala.value).subscribe(
         res=>{
           let respuesta = res.json();
-          if (respuesta.codigo == 200) {
+          if (res.status == 200) {
             setTimeout(function () {
               document.getElementById('idTipoOrdenVenta').focus();
             }, 20);
           }
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro actualizado con éxito");
           this.reestablecerFormularios();
           this.listar();
           this.loaderService.hide();
@@ -1136,12 +1150,12 @@ export class VerTarifaDialogo {
       this.ordenVentaTramoService.actualizar(this.formularioTramo.value).subscribe(
         res=>{
           var respuesta = res.json();
-          if (respuesta.codigo == 200) {
+          if (res.status == 200) {
             setTimeout(function () {
               document.getElementById('idTipoOrdenVenta').focus();
             }, 20);
           }
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro actualizado con éxito");
           this.reestablecerFormularios();
           this.listar();
           this.loaderService.hide();
@@ -1195,6 +1209,7 @@ export class VerTarifaDialogo {
   public controlModEscala(elemento){
     this.formularioEscala.patchValue(elemento);
     elemento.ordenVentaTarifa = this.ordenVentaTarifa;
+    this.idMod = elemento.id;
     if (elemento.importeFijo) {
       this.formularioEscala.get('importeFijo').setValue(parseFloat(elemento.importeFijo).toFixed(2));
       this.formularioEscala.get('precioUnitario').setValue(null);
@@ -1255,7 +1270,7 @@ export class VerTarifaDialogo {
       this.ordenVentaTramoService.eliminar(elemento.id).subscribe(
         res=>{
           var respuesta = res.json();
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro eliminado con éxito");
           this.loaderService.hide();
           this.listar();    
         },
@@ -1272,7 +1287,7 @@ export class VerTarifaDialogo {
       this.ordenVentaEscalaService.eliminar(elemento.id).subscribe(
         res=>{
           var respuesta = res.json();
-          this.toastr.success(respuesta.mensaje);
+          this.toastr.success("Registro eliminado con éxito");
           this.loaderService.hide();
           this.listar();
         },

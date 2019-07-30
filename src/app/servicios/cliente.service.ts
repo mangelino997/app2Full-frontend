@@ -62,6 +62,14 @@ export class ClienteService {
       })
     })
   }
+  //Obtiene un listado por alias
+  public listarPorAliasListaPrecio(alias) {
+    return this.http.get(this.url + '/listarPorAliasListaPrecio/' + alias, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Agrega un cliente eventual
   public agregarClienteEventual(elemento) {
     return this.http.post(this.url + '/agregarClienteEventual', elemento, this.options);

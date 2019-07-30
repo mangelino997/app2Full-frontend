@@ -68,7 +68,7 @@ export class ViajeRemitoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['sucursal', 'fecha', 'puntoVenta', 'numero', 'remitente', 'destinatario', 'bultos', 'kgEfectivo', 'valorDeclarado', 'observaciones', 'ver', 'mod'];
+  public columnas: string[] = ['sucursalIngreso', 'sucursalDestino', 'fecha', 'puntoVenta', 'numero', 'remitente', 'destinatario', 'bultos', 'kgEfectivo', 'valorDeclarado', 'observaciones', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -413,7 +413,7 @@ export class ViajeRemitoComponent implements OnInit {
           this.cambioTipoComprobante();
           // this.establecerTipoComprobantePorDefecto();
           setTimeout(function () {
-            document.getElementById('idFecha').focus();
+            document.getElementById('idPuntoVenta').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -521,14 +521,16 @@ export class ViajeRemitoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
-        var cliente = res.json();
-        if (tipo == 1) {
-          this.formulario.get('clienteRemitente').setValue(cliente);
-        } else {
-          this.formulario.get('clienteDestinatario').setValue(cliente);
-        }
-      })
+      if(resultado){
+        this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
+          var cliente = res.json();
+          if (tipo == 1) {
+            this.formulario.get('clienteRemitente').setValue(cliente);
+          } else {
+            this.formulario.get('clienteDestinatario').setValue(cliente);
+          }
+        })
+      }
     });
   }
   //Abre un modal para agregar un aforo

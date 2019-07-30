@@ -111,7 +111,6 @@ export class ClienteEventualComponent implements OnInit {
       res => {
         this.cobrador.setValue(res.json().nombre);
         this.formulario.get('cobrador').setValue(res.json());
-        console.log(this.cobrador.value);
       },
       err => {
         console.log(err);
@@ -210,6 +209,10 @@ export class ClienteEventualComponent implements OnInit {
       }
     )
   }
+  //Cierra el modal
+  public cerrarDialog(){
+    this.closeDialog();
+  }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {
@@ -261,6 +264,12 @@ export class ClienteEventualComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
+  }
+  //Maneja el cambio en Condicion Iva
+  public cambioCondicionIva() {
+    if(this.formulario.value.afipCondicionIva.nombre == 'Consumidor Final'){
+      this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]); //la posicion 7 pertenece a DNI
+    }
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {

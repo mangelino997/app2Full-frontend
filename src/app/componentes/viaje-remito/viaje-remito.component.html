@@ -333,10 +333,15 @@
       <div class="tabla">
         <div class="tabla-ancho">
           <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-            <ng-container matColumnDef="sucursal">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+            <ng-container matColumnDef="sucursalIngreso">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal Ingreso</th>
               <td mat-cell *matCellDef="let elemento">
-                Sucursal Ingreso: {{elemento.sucursalIngreso.nombre}} - Sucursal Destino:{{elemento.sucursalDestino.nombre}}</td>
+                {{elemento.sucursalIngreso.nombre}}</td>
+            </ng-container>
+            <ng-container matColumnDef="sucursalDestino">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal Destino</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.sucursalDestino.nombre}}</td>
             </ng-container>
             <ng-container matColumnDef="fecha">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>

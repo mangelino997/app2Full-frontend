@@ -445,10 +445,10 @@ export class ViajeComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        console.log(res.text());
-        // this.listaCompleta = res.json();
-        // this.listaCompleta = new MatTableDataSource(res.json());
-        // this.listaCompleta.sort = this.sort;
+        console.log(res.json());
+        this.listaCompleta = res.json();
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
       },
       err => {
         console.log(err);
