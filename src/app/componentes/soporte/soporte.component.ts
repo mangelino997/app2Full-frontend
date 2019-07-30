@@ -310,8 +310,10 @@ export class SoporteComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).then(
       res => {
+        console.log(res);
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
           setTimeout(function () {
@@ -478,7 +480,7 @@ export class SoporteComponent implements OnInit {
     if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
     } else {
-      this.formulario.get(campo).reset();
+      this.formulario.get(campo).setValue('');
     }
   }
   //Muestra la imagen en una pestana nueva

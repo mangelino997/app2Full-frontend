@@ -343,6 +343,7 @@ import { TalonarioReciboLoteComponent } from './componentes/talonario-recibo-lot
 import { EliminarModalComponent } from './componentes/eliminar-modal/eliminar-modal.component';
 import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
+import { BugImagen } from './modelos/bugImagen';
 
 //Rutas
 const appRoutes: Routes = [
@@ -867,6 +868,7 @@ const stompConfig: StompConfig = {
     OrdenVentaTarifaService,
     Foto,
     Pdf,
+    BugImagen,
     ClienteOrdenVentaService,
     {
       provide: StompConfig,

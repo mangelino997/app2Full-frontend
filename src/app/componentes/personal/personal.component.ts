@@ -929,6 +929,7 @@ export class PersonalComponent implements OnInit {
           datos: reader.result
         }
         this.formulario.get(campo).patchValue(foto);
+        event.target.value = null;
       }
       reader.readAsDataURL(file);
     } else {
@@ -949,6 +950,7 @@ export class PersonalComponent implements OnInit {
           datos: reader.result
         }
         this.formulario.get(campo).patchValue(pdf);
+        event.target.value = null;
       }
       reader.readAsDataURL(file);
     } else {

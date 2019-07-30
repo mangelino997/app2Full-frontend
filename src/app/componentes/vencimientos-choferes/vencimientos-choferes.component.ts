@@ -184,8 +184,8 @@ this.autocompletado.valueChanges.subscribe(data => {
     }
   }
   //Al cambiar elemento de select esChofer
-  public cambioEsChofer(): void {
-    let esChoferLargaDistancia = this.formulario.get('esChoferLargaDistancia').value;
+  public cambioEsChofer(elemento): void {
+    let esChoferLargaDistancia = elemento.esChoferLargaDistancia;
     console.log(esChoferLargaDistancia);
     if (esChoferLargaDistancia) {
       this.formulario.get('vtoLicenciaConducir').enable();
@@ -336,7 +336,7 @@ this.autocompletado.valueChanges.subscribe(data => {
   }
   //Carga el pdf
   public readURL(event, nombrePdf): void {
-    console.log(event.target);
+    console.log(event.target.files[0]);
     if (event.target.files && event.target.files[0] && event.target.files[0].type == 'application/pdf'
       || event.target.files[0].type == 'image/jpeg') {
       console.log(event.target.files[0]);
@@ -350,6 +350,7 @@ this.autocompletado.valueChanges.subscribe(data => {
           datos: reader.result
         }
         this.formulario.get(nombrePdf).patchValue(pdf);
+        event.target.value = null;
       }
       reader.readAsDataURL(file);
     } else {
@@ -400,6 +401,7 @@ this.autocompletado.valueChanges.subscribe(data => {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
+    this.formulario.get('pdfDni').value;
     if (this.formulario.get('pdfDni.tipo').value == 'application/pdf') {
       this.verPDF('pdfDni');
     } else {
@@ -407,8 +409,8 @@ this.autocompletado.valueChanges.subscribe(data => {
         width: '95%',
         height: '95%',
         data: {
-          nombre: this.formulario.get(  'pdfDni.nombre').value,
-          datos: this.formulario.get(  'pdfDni.datos').value
+          nombre: this.formulario.get('pdfDni.nombre').value,
+          datos: this.formulario.get('pdfDni.datos').value
         }
       });
       dialogRef.afterClosed().subscribe(resultado => { });
@@ -499,7 +501,7 @@ this.autocompletado.valueChanges.subscribe(data => {
     if (elemento.pdfAltaTemprana) {
       this.formulario.get('pdfAltaTemprana.datos').setValue(atob(elemento.pdfAltaTemprana.datos));
     }
-    this.cambioEsChofer();
+    this.cambioEsChofer(elemento);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

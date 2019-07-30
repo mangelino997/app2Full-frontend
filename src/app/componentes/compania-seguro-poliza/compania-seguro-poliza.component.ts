@@ -473,6 +473,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
           datos: reader.result
         }
         this.formulario.get('pdf').patchValue(pdf);
+        event.target.value = null;
       }
       reader.readAsDataURL(file);
     }else {

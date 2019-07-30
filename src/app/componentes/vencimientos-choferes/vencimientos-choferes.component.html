@@ -106,7 +106,7 @@
                 [disabled]="!formulario.get('pdfAltaTemprana.nombre').value ||indiceSeleccionado == 2" style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF(pdfAltaTemprana)"
+              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfAltaTemprana')"
                 [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 60px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
@@ -181,7 +181,7 @@
                 [disabled]="!formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 2" style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF(pdfLicConducir)"
+              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLicConducir')"
                 [disabled]="!formulario.get('pdfLicConducir.nombre').value" style="width: 60px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
@@ -209,7 +209,7 @@
                 [disabled]="!formulario.get('pdfLinti.nombre').value || indiceSeleccionado == 2" style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF(pdfLinti)"
+              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLinti')"
                 [disabled]="!formulario.get('pdfLinti.nombre').value" style="width: 60px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
@@ -239,7 +239,7 @@
                 [disabled]="!formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 2" style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
-              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF(pdfLibSanidad)"
+              <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLibSanidad')"
                 [disabled]="!formulario.get('pdfLibSanidad.nombre').value" style="width: 60px;" matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>

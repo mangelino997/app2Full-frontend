@@ -205,7 +205,7 @@ export class PersonalService {
       formData.append('linti', noBlobPdf, '');
     }
     if(dni.nombre!=null){
-      let blobPdf = new Blob([dni.datos], {type : dni.tipo});
+      let blobPdf = new Blob([dni.datos], {type : obj.pdfDni.tipo});
       formData.append('dni', blobPdf, dni.nombre);
     }else{
       formData.append('dni', noBlobPdf, '');

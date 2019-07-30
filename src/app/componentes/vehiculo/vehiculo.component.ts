@@ -615,6 +615,7 @@ export class VehiculoComponent implements OnInit {
           datos: reader.result
         }
         this.formulario.get(campo).patchValue(foto);
+        event.target.value = null;
       }
       reader.readAsDataURL(file);
     } else {
