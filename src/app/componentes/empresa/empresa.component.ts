@@ -247,6 +247,7 @@ export class EmpresaComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -268,6 +269,7 @@ export class EmpresaComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

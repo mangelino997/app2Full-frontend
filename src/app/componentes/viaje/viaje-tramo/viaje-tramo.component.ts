@@ -384,6 +384,10 @@ export class ViajeTramoComponent implements OnInit {
   public modTramo(indice): void {
     this.indiceTramo = indice;
     this.btnTramo = false;
+    let elemento = this.listaTramos[indice];
+    console.log(elemento);
+    elemento.precioUnitario = this.appServicio.establecerDecimales(elemento.precioUnitario.toString(), 2);
+    elemento.importe = this.appServicio.establecerDecimales(elemento.importe.toString(), 2);
     this.formularioViajeTramo.patchValue(this.listaTramos[indice]);
   }
   //Elimina un tramo de la tabla por indice

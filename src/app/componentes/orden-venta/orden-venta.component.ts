@@ -22,6 +22,7 @@ import { OrdenVentaTarifa } from 'src/app/modelos/ordenVentaTarifa';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 import { EliminarModalComponent } from '../eliminar-modal/eliminar-modal.component';
+import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
 
 @Component({
   selector: 'app-orden-venta',
@@ -127,12 +128,11 @@ export class OrdenVentaComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private empresaSevicio: EmpresaService, private clienteServicio: ClienteService,
+    private toastr: ToastrService, private clienteServicio: ClienteService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService, public dialog: MatDialog,
-    private escalaTarifaServicio: EscalaTarifaService, private appService: AppService,
-    private tramoServicio: TramoService, private ordenVenta: OrdenVenta, private ordenVentaServicio: OrdenVentaService,
+    private appService: AppService, private clienteOVService: ClienteOrdenVentaService,
+    private ordenVenta: OrdenVenta, private ordenVentaServicio: OrdenVentaService,
     private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo,
-    private ordenVentaEscalaServicio: OrdenVentaEscalaService, private ordenVentaTramoServicio: OrdenVentaTramoService,
     private loaderService: LoaderService, private ordenVentaTarifa: OrdenVentaTarifa, private ordenVentaTarifaService: OrdenVentaTarifaService) {
       //Obtiene la lista de pestania por rol y subopcion
       this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -541,12 +541,12 @@ export class OrdenVentaComponent implements OnInit {
   //Habilita o deshabilita el Formulario de Orden Venta Tarifa
   public habilitarFormTarifa(estado){
     if(estado){
-      this.formularioTarifa.get('tipoTarifa').enable();
+      // this.formularioTarifa.get('tipoTarifa').enable();
       this.formularioTarifa.get('preciosDesde').enable();
       this.tipoTarifa.enable();
       // this.listarOrdenVentaTarifas();
     }else{
-      this.formularioTarifa.get('tipoTarifa').disable();
+      // this.formularioTarifa.get('tipoTarifa').disable();
       this.formularioTarifa.get('preciosDesde').disable();
       this.tipoTarifa.disable();
     }

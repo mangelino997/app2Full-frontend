@@ -756,13 +756,15 @@ export class ClienteComponent implements OnInit {
   //Controla que al menos una lista de precio tenga una orden venta por defecto = true
   private controlListaPrecios(listaPrecios){
     let bandera= false; //cambia a true cuando un registro es porDefecto=true
-    listaPrecios.forEach(item => {
-      if(item.esOrdenVentaPorDefecto)
-        bandera = true;
-    });
-    if(!bandera){
-      this.abrirListasPrecios();
-      this.toastr.warning("Un registro debe tener a Orden de Venta por defecto igual a SI");
+    if(listaPrecios.length > 0){
+      listaPrecios.forEach(item => {
+        if(item.esOrdenVentaPorDefecto)
+          bandera = true;
+      });
+      if(!bandera){
+        this.abrirListasPrecios();
+        this.toastr.warning("Un registro debe tener a Orden de Venta por defecto igual a SI");
+      }
     }
   }
   //Obtiene la mascara de enteros
@@ -957,7 +959,7 @@ export class ListasDePreciosDialog {
     //Autocompletado - Buscar por nombre cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
+        this.clienteServicio.listarPorAliasListaPrecio(data).subscribe(response => {
           this.resultadosClientes = response;
         })
       }
@@ -1066,7 +1068,7 @@ export class ListasDePreciosDialog {
       }
       if(result == true && this.indiceSeleccionado == 3){
         item.esOrdenVentaPorDefecto= false;
-        this.modificarListaPrecio();
+        this.modificarListaPrecio(); //Me borra el registro que anteriormente tenia esPorDefecto=true. Me lo deberia dejar y cambiar el campo a false
       }
       if(result == false && this.indiceSeleccionado!=1){
         this.listaPrecios.push(formulario.value);

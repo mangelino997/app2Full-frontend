@@ -152,7 +152,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoTarifa" class="tamanio-label">Tarifa *</label>
               <mat-select id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
-                [compareWith]="compareFn" [disabled]="btnActualizarTarifa">
+                [compareWith]="compareFn" [disabled]="!btnActualizarTarifa">
                   <mat-option disabled>
                     <table>
                       <tr>
