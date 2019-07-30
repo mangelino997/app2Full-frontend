@@ -16,7 +16,7 @@
                 <div class="col-md-3">
                     <div class="form-group has-float-label">
                         <label for="idCondicionIva" class="tamanio-label">Condición de Iva *</label>
-                        <mat-select id="idCondicionIva" class="form-control form-control-sm"
+                        <mat-select id="idCondicionIva" class="form-control form-control-sm" (selectionChange)="cambioCondicionIva()"
                             formControlName="afipCondicionIva" [compareWith]="compareFn">
                             <mat-option *ngFor="let itemCondicionIva of condicionesIva" [value]="itemCondicionIva">
                                 {{itemCondicionIva.nombre}}
@@ -148,6 +148,7 @@
                 <div class="col-md-12 text-center">
                     <button mat-raised-button color="primary" (click)="agregarClienteEventual()" >Agregar</button>
                     <!-- <button mat-raised-button color="accent" [mat-dialog-close]="data.formulario">Cerrar</button> -->
+                    <button mat-raised-button color="accent" (click)="cerrarDialog()">Cerrar</button>
                 </div>
             </div>
             <div class="row" *ngIf="show">
