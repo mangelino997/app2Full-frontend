@@ -371,6 +371,12 @@ export class EmpresaComponent implements OnInit {
       }
     }
   }
+  //Verifica si se selecciono un elemento del autocompletado
+  public verificarSeleccion(valor): void {
+    if (typeof valor.value != 'object') {
+      valor.setValue(null);
+    }
+  }  
   //Abre un Modal con la lista de Usuarios de la Empresa seleccionada
   public verActivos(empresa) {
     const dialogRef = this.dialog.open(ListaUsuariosDialogo, {
@@ -437,4 +443,5 @@ export class ListaUsuariosDialogo {
       valor.setValue(null);
     }
   }  
+
 }

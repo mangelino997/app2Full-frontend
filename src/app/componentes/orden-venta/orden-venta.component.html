@@ -186,7 +186,7 @@
             *ngIf="!btnActualizarTarifa">
               Añadir
             </button>
-            <button id="idBoton" [disabled]="!btnActualizarOrdVta || !formularioTarifa.valid" mat-raised-button color="primary" (click)="actulizarTarifa()"
+            <button id="idBoton" [disabled]="!btnActualizarOrdVta || !formularioTarifa.valid" mat-raised-button color="primary" (click)="actualizarTarifa()"
             *ngIf="btnActualizarTarifa" >
               Modificar
             </button>
@@ -270,14 +270,14 @@
           <div class="col-md-6" *ngIf="formularioListar.get('tipo').value == 'empresa'">
               <div class="form-group has-float-label">
                 <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-                <input id="idEmpresa" type="text" [formControl]="empresa" class="form-control form-control-sm" readonly required>
+                <input id="idEmpresa" type="text" [formControl]="empresa" class="form-control form-control-sm" readonly >
               </div>
           </div>
           <div class="col-md-6" *ngIf="formularioListar.get('tipo').value == 'cliente'">
               <div class="form-group has-float-label">
                 <label for="idCliente" class="tamanio-label">Cliente *</label>
                 <input id="idCliente" class="form-control form-control-sm" type="text" matInput [readOnly]="soloLectura"
-                  [formControl]="formularioListar.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off" required
+                  [formControl]="formularioListar.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off" 
                   (blur)="verificarSeleccion(formularioListar.get('cliente'))">
                 <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
                   <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
