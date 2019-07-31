@@ -11,7 +11,7 @@ export class CompaniaSeguroPoliza {
             version: new FormControl(),
             companiaSeguro: new FormControl('', Validators.required),
             empresa: new FormControl('', Validators.required),
-            numeroPoliza: new FormControl('', [Validators.required, Validators.maxLength(15)]),
+            numeroPoliza: new FormControl('', Validators.required),
             vtoPoliza: new FormControl('', Validators.required),
             pdf: new FormGroup({
                 id: new FormControl(),

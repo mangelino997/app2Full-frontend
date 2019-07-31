@@ -267,7 +267,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguro() {
     let companiaSeguro = this.formulario.get('companiaSeguro').value;
-    this.servicio.listarPorCompaniaSeguro(companiaSeguro.id).subscribe(res => {
+    let empresa = this.appService.getEmpresa();
+    this.servicio.listarPorCompaniaSeguroYEmpresa(companiaSeguro.id, empresa.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
     })
@@ -450,15 +451,28 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     if (!elemento.pdf) {
       this.toastr.success("Sin archivo adjunto");
     } else {
-      const dialogRef = this.dialog.open(PdfDialogoComponent, {
-        width: '95%',
-        height: '95%',
-        data: {
-          nombre: elemento.pdf.nombre,
-          datos: elemento.pdf.datos
+      this.pdfServicio.obtenerPorId(elemento.pdf.id).subscribe(
+        res=>{
+          console.log(res.json());
+          let respuesta = res.json();
+          elemento.pdf.datos = respuesta.datos;
+          console.log(elemento);
+          if(elemento.pdf.datos){
+            const dialogRef = this.dialog.open(PdfDialogoComponent, {
+              width: '95%',
+              height: '95%',
+              data: {
+                nombre: elemento.pdf.nombre,
+                datos: atob(elemento.pdf.datos)
+              }
+            });
+            dialogRef.afterClosed().subscribe(resultado => {});
+          }
+        },
+        err=>{
+          this.toastr.error("Error al obtener los datos del pdf '"+elemento.pdf.nombre+"'");
         }
-      });
-      dialogRef.afterClosed().subscribe(resultado => {});
+      );
     }
   }
   //Carga el pdf
@@ -476,6 +490,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         event.target.value = null;
       }
       reader.readAsDataURL(file);
+      console.log(this.formulario);
     }else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
