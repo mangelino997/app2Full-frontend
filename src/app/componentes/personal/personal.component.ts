@@ -917,8 +917,19 @@ export class PersonalComponent implements OnInit {
       }
     }
   }
+  //Controla si el adjunto es un PDF o JPEG y llama al readURL apropiado
+  public controlAdjunto(event){
+    let adjunto = event;
+    let extension =  adjunto.target.files[0].type.split("/");
+    console.log(extension[extension.length - 1]);
+    if(extension[extension.length - 1] == 'pdf'){
+      this.readPdfURL(event, 'pdfDni');
+    }else{
+      this.readImageURL(event, 'pdfDni');
+    }
+  }
   //Carga la imagen del personal
-  public readURL(event, campo): void {
+  public readImageURL(event, campo): void {
     if (event.target.files && event.target.files[0] && this.tiposImagenes.includes(event.target.files[0].type)) {
       const file = event.target.files[0];
       const reader = new FileReader();

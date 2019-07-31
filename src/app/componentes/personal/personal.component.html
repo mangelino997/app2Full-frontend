@@ -11,7 +11,7 @@
   <div *ngIf="indiceSeleccionado < 5">
     <mat-sidenav-container>
       <mat-sidenav #sidenav mode="side" opened class="sidenav" [fixedInViewport]="true" [fixedTopGap]="165"
-        [fixedBottomGap]="0">
+        [fixedBottomGap]="0" [ngClass]="indiceSeleccionado > 1 ? 'top2' : 'top1'">
         <div class="container-fluid">
           <div class="row contenedor" *ngFor="let listaOp of opciones; let idx = index">
             <div class="col">
@@ -200,7 +200,7 @@
                         </div>
                         <div class="col-md-4">
                             <div class="row justify-content-start">
-                              <input style="display: none;" type="file" (change)="readURL($event, 'pdfDni')" #dniInput />
+                              <input style="display: none;" type="file" (change)="controlAdjunto($event)" #dniInput />
                               <button class="btn-height" mat-raised-button color="primary" (click)="dniInput.click()"
                                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar DNI">
                                 <i class="material-icons" *ngIf="!formulario.get('pdfDni.nombre').value">cloud_upload</i>

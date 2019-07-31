@@ -5,3 +5,9 @@
 .btn-height {
     height: 30px;
 }
+mat-sidenav.top1 {
+    top: 249px !important;
+}
+mat-sidenav.top2 {
+    top: 293px !important;
+}
