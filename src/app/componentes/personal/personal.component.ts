@@ -1035,7 +1035,10 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    if (this.formulario.get('pdfDni.tipo').value == 'application/pdf') {
+    let extension =  this.formulario.get('pdfDni').value.nombre.split(".");
+    console.log(extension[extension.length - 1]);
+    console.log(this.formulario.get('pdfDni').value);
+    if (extension[extension.length - 1] == 'pdf') {
       this.verPDF('pdfDni');
     } else {
       this.verFoto('pdfDni');
@@ -1043,6 +1046,7 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene la foto para mostrarlo
   public verFoto(campo) {
+    console.log("enbtra al ver foto");
     const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
       width: '95%',
       height: '95%',
@@ -1055,6 +1059,7 @@ export class PersonalComponent implements OnInit {
   }
   //Muestra el pdf en una pestana nueva
   public verPDF(pdf) {
+    console.log("enbtra al ver pdf");
     const dialogRef = this.dialog.open(PdfDialogoComponent, {
       width: '95%',
       height: '95%',
