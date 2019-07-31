@@ -75,7 +75,7 @@
           </div>
           <div class="col-md-3">
             <div class="row justify-content-center">
-              <input style="display: none;" type="file" (change)="readURL($event,'pdfDni')" #fileInputDni />
+              <input style="display: none;" type="file" (change)="readURLDni($event)" #fileInputDni />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInputDni.click()"
                 [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar DNI">
                 <i class="material-icons" *ngIf="!formulario.get('pdfDni.nombre').value">cloud_upload</i>

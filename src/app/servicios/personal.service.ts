@@ -21,6 +21,8 @@ export class PersonalService {
   private mensaje: Observable<Message>;
   //Define la lista completa
   public listaCompleta:Subject<any> = new Subject<any>();
+  //Define la lista completa
+  public tipos: any[] = ['png', 'jpeg', 'jpg'];
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -141,8 +143,14 @@ export class PersonalService {
       formData.append('linti', noBlobPdf, '');
     }
     if(dni.nombre!=null){
-      let blobPdf = new Blob([dni.datos], {type : dni.tipo});
-      formData.append('dni', blobPdf, dni.nombre);
+      let tipo = dni.nombre.split(".", 2);
+      if(this.tipos.includes(tipo[1])){
+        let blobPdf = new Blob([dni.datos], {type : 'image/jpeg'});
+        formData.append('dni', blobPdf, dni.nombre);
+      } else if(tipo[1]=='pdf') {
+        let blobPdf = new Blob([dni.datos], {type : 'application/pdf'});
+        formData.append('dni', blobPdf, dni.nombre);
+      }
     }else{
       formData.append('dni', noBlobPdf, '');
     }
@@ -177,6 +185,7 @@ export class PersonalService {
     let linti = obj.pdfLinti;
     let dni = obj.pdfDni;
     let altaTemprana = obj.pdfAltaTemprana;
+    console.log(dni);
     let noBlobPdf = new Blob([null], {type : 'application/pdf'});
     const formData = new FormData(); 
     if(foto.nombre!=null){
@@ -205,8 +214,14 @@ export class PersonalService {
       formData.append('linti', noBlobPdf, '');
     }
     if(dni.nombre!=null){
-      let blobPdf = new Blob([dni.datos], {type : obj.pdfDni.tipo});
-      formData.append('dni', blobPdf, dni.nombre);
+      let tipo = dni.nombre.split(".", 2);
+      if(this.tipos.includes(tipo[1])){
+        let blobPdf = new Blob([dni.datos], {type : 'image/jpeg'});
+        formData.append('dni', blobPdf, dni.nombre);
+      } else if(tipo[1]=='pdf') {
+        let blobPdf = new Blob([dni.datos], {type : 'application/pdf'});
+        formData.append('dni', blobPdf, dni.nombre);
+      }
     }else{
       formData.append('dni', noBlobPdf, '');
     }

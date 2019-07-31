@@ -337,8 +337,8 @@ this.autocompletado.valueChanges.subscribe(data => {
   //Carga el pdf
   public readURL(event, nombrePdf): void {
     console.log(event.target.files[0]);
-    if (event.target.files && event.target.files[0] && event.target.files[0].type == 'application/pdf'
-      || event.target.files[0].type == 'image/jpeg') {
+    if (event.target.files && event.target.files[0] && (event.target.files[0].type == 'application/pdf'
+      || event.target.files[0].type == 'image/jpeg')) {
       console.log(event.target.files[0]);
       console.log(event.target.files[0].type);
       const file = event.target.files[0];
@@ -355,6 +355,28 @@ this.autocompletado.valueChanges.subscribe(data => {
       reader.readAsDataURL(file);
     } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
+    }
+  }
+  //Carga el pdf
+  public readURLDni(event): void {
+    console.log(event.target.files[0]);
+    if (event.target.files && event.target.files[0] && event.target.files[0].type == 'image/jpeg') {
+      console.log(event.target.files[0]);
+      console.log(event.target.files[0].type);
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        let pdf = {
+          nombre: file.name,
+          id: this.formulario.get( 'pdfDni.id').value ? this.formulario.get('pdfDni.id').value : null,
+          datos: reader.result
+        }
+        this.formulario.get('pdfDni').patchValue(pdf);
+        event.target.value = null;
+      }
+      reader.readAsDataURL(file);
+    } else {
+      this.toastr.error("Debe adjuntar un archivo con extensión .jpg .png .jpeg");
     }
   }
   //Elimina un pdf ya cargado, se pasa el campo como parametro
@@ -401,7 +423,7 @@ this.autocompletado.valueChanges.subscribe(data => {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    this.formulario.get('pdfDni').value;
+    console.log(this.formulario.get('pdfDni').value);
     if (this.formulario.get('pdfDni.tipo').value == 'application/pdf') {
       this.verPDF('pdfDni');
     } else {
