@@ -296,6 +296,14 @@ export class ViajeInsumoComponent implements OnInit {
         break;
     }
   }
+  //Limpia el formulario
+  public cancelar(){
+    this.reestablecerFormulario();
+    this.formularioViajeInsumo.get('viaje').setValue(this.viaje);
+    this.listar();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idProveedor').focus();
+  }
   //Establece los campos select en solo lectura o no
   private establecerCamposSelectSoloLectura(opcion): void {
     if (opcion) {

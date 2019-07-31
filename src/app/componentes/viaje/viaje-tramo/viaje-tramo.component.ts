@@ -423,6 +423,16 @@ export class ViajeTramoComponent implements OnInit {
     this.resultadosTramos = [];
     document.getElementById('idTramoFecha').focus();
   }
+  //Limpia el formulario
+  public cancelar(){
+    this.reestablecerFormulario();
+    // this.establecerViaje(this.viaje);
+    this.formularioViajeTramo.get('viaje').setValue(this.viaje);
+    this.listar();
+    this.establecerValoresPorDefecto();
+    this.establecerViajeTarifaPorDefecto();
+    document.getElementById('idTramoFecha').focus();
+  }
   //Envia la lista de tramos a Viaje
   private enviarDatos(): void {
     this.dataEvent.emit(this.listaTramos);

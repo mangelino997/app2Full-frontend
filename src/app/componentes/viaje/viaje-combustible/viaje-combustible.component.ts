@@ -210,13 +210,31 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Modifica los datos del combustible
   public modificarCombustible(): void {
-    this.listaCombustibles[this.indiceCombustible] = this.formularioViajeCombustible.value;
-    this.btnCombustible = true;
-    this.formularioViajeCombustible.reset();
-    this.calcularTotalCombustibleYUrea();
-    this.establecerValoresPorDefecto(0);
-    document.getElementById('idProveedorOC').focus();
-    this.enviarDatos();
+    // this.btnCombustible = true;
+
+    this.servicio.actualizar(this.formularioViajeCombustible.value).subscribe(
+      res=>{
+        let resultado = res.json();
+        if (res.status == 200) {
+          console.log(resultado);
+          let idViaje = this.formularioViajeCombustible.value.viaje.id;
+          this.btnCombustible = true;
+          this.formularioViajeCombustible.reset();
+          this.establecerViaje(idViaje);
+          this.listar();
+          this.establecerValoresPorDefecto(0);
+          this.enviarDatos();
+          document.getElementById('idProveedorOC').focus();
+          this.toastr.success("Registro actualizado con éxito");
+          this.loaderService.hide();
+        }
+      },
+      err=>{
+        let resultado = err.json();
+        this.toastr.error(resultado.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Modifica un combustible de la tabla por indice
   public modCombustible(indice): void {
@@ -267,6 +285,21 @@ export class ViajeCombustibleComponent implements OnInit {
     }
     this.formularioViajeCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
     this.formularioViajeCombustible.get('totalUrea').setValue(totalUrea.toFixed(2));
+  }
+  //Limpia el formulario
+  public cancelar(){
+    this.reestablecerFormulario();
+    this.formularioViajeCombustible.reset();
+    this.formularioViajeCombustible.get('viaje').setValue(this.viaje);
+    this.listar();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idProveedorOC').focus();
+    // this.establecerViaje(this.viaje);
+    // this.formularioViajeTramo.get('viaje').setValue(this.viaje);
+    // this.listar();
+    // this.establecerValoresPorDefecto();
+    // this.establecerViajeTarifaPorDefecto();
+    // document.getElementById('idTramoFecha').focus();
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
@@ -337,6 +370,7 @@ export class ViajeCombustibleComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeCombustible.reset();
+    this.btnCombustible = true;
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

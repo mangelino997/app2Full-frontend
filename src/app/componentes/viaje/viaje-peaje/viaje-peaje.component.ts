@@ -146,7 +146,6 @@ export class ViajePeajeComponent implements OnInit {
     this.servicio.actualizar(this.formularioViajePeaje.value).subscribe(
       res=>{
         let idViaje = this.formularioViajePeaje.value.viaje.id;
-        console.log(idViaje);
         if (res.status == 200) {
           this.reestablecerFormulario();
           this.establecerViaje(idViaje);
@@ -261,6 +260,14 @@ export class ViajePeajeComponent implements OnInit {
         this.establecerSelectsSoloLectura(true);
         break;
     }
+  }
+  //Limpia el formulario
+  public cancelar(){
+    this.reestablecerFormulario();
+    this.formularioViajePeaje.get('viaje').setValue(this.viaje);
+    this.listar();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idProveedorP').focus();
   }
   //Establece selects solo lectura
   private establecerSelectsSoloLectura(opcion): void {

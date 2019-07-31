@@ -361,6 +361,7 @@ export class ProveedorComponent implements OnInit {
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
+        console.log(res);
         this.formulario.get('id').setValue(res.json());
       },
       err => {
@@ -386,8 +387,9 @@ export class ProveedorComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
-    this.formulario.get('id').setValue(null);
+    // this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

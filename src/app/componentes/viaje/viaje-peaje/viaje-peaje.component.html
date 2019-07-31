@@ -44,7 +44,7 @@
         </mat-select>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idNumeroComprobanteG" class="tamanio-label">Número de Tiquet *</label>
         <input id="idNumeroComprobanteG" [textMask]="mascararEnteros(8)" type="text" formControlName="numeroComprobante"
@@ -60,15 +60,19 @@
           (blur)="establecerDecimales(formularioViajePeaje.get('importe'), 2)">
       </div>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
       <button mat-raised-button color="primary" (click)="agregarPeaje()" *ngIf="btnPeaje"
-        [disabled]="!formularioViajePeaje.valid">Agregar Peaje</button>
+        [disabled]="!formularioViajePeaje.valid">Agregar Peaje
+      </button>
       <button mat-raised-button color="primary" (click)="modificarPeaje()" *ngIf="!btnPeaje"
-        [disabled]="!formularioViajePeaje.valid">Actualizar Peaje</button>
+        [disabled]="!formularioViajePeaje.valid">Actualizar Peaje
+      </button>
+      <button mat-raised-button (click)="cancelar()">Cancelar</button>
     </div>
   </div>
   <div class="row">
-      <div class="col" style="height: 200px; overflow-y: scroll;">
+    <div class="tabla">
+      <div class="tabla-ancho">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
           <ng-container matColumnDef="fecha" >
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
@@ -104,43 +108,8 @@
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
         </table>
+      </div>
     </div>
-    <!-- <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
-      <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:10%" scope="col">Fecha</th>
-            <th class="text-center" style="width:15%" scope="col">Proveedor</th>
-            <th class="text-center" style="width:10%" scope="col">Punto de Venta</th>
-            <th class="text-center" style="width:15%" scope="col">Número de Tique</th>
-            <th class="text-center" style="width:10%" scope="col">Importe</th>
-            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let l of listaPeajes; let i = index">
-            <td align="center">
-              <span>{{l.fecha | date: 'dd/MM/yyyy'}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.proveedor.razonSocial}}</span>
-            </td>
-            <td align="center">
-              <span>{{mostrarCeros(l.puntoVenta, '0000', -5)}}</span>
-            </td>
-            <td align="center">
-              <span>{{mostrarCeros(l.numeroComprobante, '0000000', -8)}}</span>
-            </td>
-            <td align="center">
-              <span>$ {{establecerCerosTabla(l.importe)}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color-rojo" (click)="eliminarPeaje(i, l)" *ngIf="!soloLectura">X</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div> -->
   </div>
   <br>
   <div class="row justify-content-end">

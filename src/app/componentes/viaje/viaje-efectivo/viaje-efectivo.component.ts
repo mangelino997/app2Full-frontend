@@ -265,6 +265,14 @@ export class ViajeEfectivoComponent implements OnInit {
         break;
     }
   }
+  //Limpia el formulario
+  public cancelar(){
+    this.reestablecerFormulario();
+    this.formularioViajeEfectivo.get('viaje').setValue(this.viaje);
+    this.listar();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idFechaCajaAE').focus();
+  }
   //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaEfectivos'
   private recargarListaCompleta(listaEfectivos){
     this.listaCompleta = new MatTableDataSource(listaEfectivos);

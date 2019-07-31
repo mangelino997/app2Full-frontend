@@ -133,11 +133,6 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Modifica los datos del Gasto
   public modificarGasto(): void {
-    this.listaGastos[this.indiceGasto] = this.formularioViajeGasto.value;
-    this.btnGasto = true;
-    this.calcularImporteTotal();
-    this.enviarDatos();
-
     this.servicio.actualizar(this.formularioViajeGasto.value).subscribe(
       res=>{
         let idViaje = this.formularioViajeGasto.value.viaje.id;
@@ -257,6 +252,14 @@ export class ViajeGastoComponent implements OnInit {
         break;
     }
   }
+  //Limpia el formulario
+  public cancelar(){
+    this.reestablecerFormulario();
+    this.formularioViajeGasto.get('viaje').setValue(this.viaje);
+    this.listar();
+    this.establecerValoresPorDefecto(0);
+    document.getElementById('idFechaG').focus();
+  }
   //Establece el viaje de guia de servicio (CABECERA)
   public establecerViaje(idViaje){
     console.log(idViaje);
@@ -292,6 +295,7 @@ export class ViajeGastoComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeGasto.reset();
+    this.btnGasto = true;
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

@@ -72,11 +72,14 @@
           maxlength="60" [readonly]="soloLectura"></textarea>
       </div>
     </div>
-    <div class="col-md-1">
+    <div class="col-md-3">
       <button mat-raised-button color="primary" (click)="agregarInsumo()"
-        [disabled]="!formularioViajeInsumo.valid" *ngIf="btnInsumo">Agregar Orden</button>
+        [disabled]="!formularioViajeInsumo.valid" *ngIf="btnInsumo">Agregar Orden
+      </button>
       <button mat-raised-button color="primary" (click)="modificarInsumo()"
-        [disabled]="!formularioViajeInsumo.valid" *ngIf="!btnInsumo">Actualizar Orden</button>
+        [disabled]="!formularioViajeInsumo.valid" *ngIf="!btnInsumo">Actualizar Orden
+      </button>
+      <button mat-raised-button (click)="cancelar()">Cancelar</button>
     </div>
   </div>
   <div class="row">

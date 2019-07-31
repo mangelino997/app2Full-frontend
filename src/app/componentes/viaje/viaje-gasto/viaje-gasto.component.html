@@ -52,110 +52,71 @@
           [readonly]="soloLectura"></textarea>
       </div>
     </div>
-    <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="agregarGasto()"
-        [disabled]="!formularioViajeGasto.valid">Agregar Gasto</button>
+    <div class="col-md-3">
+      <button mat-raised-button color="primary" (click)="agregarGasto()" *ngIf="btnGasto"
+        [disabled]="!formularioViajeGasto.valid">Agregar Gasto
+      </button>
+      <button mat-raised-button color="primary" (click)="modificarGasto()" 
+        [disabled]="!formularioViajeGasto.valid" *ngIf="!btnGasto">Actualizar Gasto
+      </button>
+      <button mat-raised-button (click)="cancelar()">Cancelar</button>
     </div>
   </div>
   <div class="row">
-    <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
-      <!-- <table class="table table-bordered table-striped table-sm table-condensed tabla-viaje">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:10%" scope="col">Fecha</th>
-            <th class="text-center" style="width:15%" scope="col">Rubro</th>
-            <th class="text-center" style="width:10%" scope="col">Cantidad</th>
-            <th class="text-center" style="width:15%" scope="col">Precio Unitario</th>
-            <th class="text-center" style="width:10%" scope="col">Importe</th>
-            <th class="text-center" style="width:10%" scope="col">Observaciones</th>
-            <th class="text-center" style="width:10%" scope="col">Anulado</th>
-            <th class="text-center" style="width:15%" scope="col">Observaciones Anulado</th>
-            <th class="text-center" style="width:5%" scope="col" *ngIf="!soloLectura">-</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let l of listaGastos; let i = index">
-            <td align="center">
-              <span>{{l.fecha | date: 'dd/MM/yyyy'}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.rubroProducto.nombre}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.cantidad}}</span>
-            </td>
-            <td align="center">
-              <span>$ {{establecerCerosTabla(l.precioUnitario)}}</span>
-            </td>
-            <td align="center">
-              <span>$ {{establecerCerosTabla(l.importe)}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="verObservacionesDialogo(l.observaciones)">ver</span>
-            </td>
-            <td align="center">
-              <span>{{l.anulado}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="verObservacionesDialogo(l.observacionesAnulado)">ver</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color-rojo" (click)="eliminarGasto(i, l)" *ngIf="!soloLectura">X</span>
-            </td>
-          </tr>
-        </tbody>
-      </table> -->
-      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="fecha" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
-          </ng-container>
-          <ng-container matColumnDef="rubro" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Rubro</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.rubroProducto.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="cantidad" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.cantidad? elemento.cantidad : '--'}}</td>
-          </ng-container>
-          <ng-container matColumnDef="precioUnitario" sticky>
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
-              <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.precioUnitario)}}</td>
-          </ng-container>
-          <ng-container matColumnDef="importe" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-            <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importe)}}</td>
-          </ng-container>
-          <ng-container matColumnDef="obs" sticky>
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+    <div class="tabla">
+      <div class="tabla-ancho">
+        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+            <ng-container matColumnDef="fecha" >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="rubro" >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Rubro</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.rubroProducto.nombre}}</td>
+            </ng-container>
+            <ng-container matColumnDef="cantidad" >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.cantidad? elemento.cantidad : '--'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="precioUnitario" >
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
+                <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.precioUnitario)}}</td>
+            </ng-container>
+            <ng-container matColumnDef="importe" >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+              <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importe)}}</td>
+            </ng-container>
+            <ng-container matColumnDef="obs" >
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+                <td mat-cell *matCellDef="let elemento">
+                    <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+                </td>
+            </ng-container>
+            <ng-container matColumnDef="anulado" >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.anulado? 'Sí':'No'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="obsAnulado" >
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
               <td mat-cell *matCellDef="let elemento">
-                  <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+                <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
               </td>
-          </ng-container>
-          <ng-container matColumnDef="anulado" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.anulado? 'Sí':'No'}}</td>
-          </ng-container>
-          <ng-container matColumnDef="obsAnulado" >
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
-            <td mat-cell *matCellDef="let elemento">
-              <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="mod" sticky >
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="modGasto(i)"><span
-                class="cursor-color" *ngIf="!soloLectura">mod</span></td>
-          </ng-container>
-          <ng-container matColumnDef="eliminar" sticky >
+            </ng-container>
+            <ng-container matColumnDef="mod" sticky >
               <th mat-header-cell *matHeaderCellDef>-</th>
-              <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="eliminarGasto(i, elemento)">
-                <span class="cursor-color-rojo" *ngIf="!soloLectura">X</span>
-              </td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-      </table>
+              <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="modGasto(i)"><span
+                  class="cursor-color" *ngIf="!soloLectura">mod</span></td>
+            </ng-container>
+            <ng-container matColumnDef="eliminar"  sticky>
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="eliminarGasto(i, elemento)">
+                  <span class="cursor-color-rojo" *ngIf="!soloLectura">X</span>
+                </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+        </table>
+      </div>
     </div>
   </div>
   <br>
