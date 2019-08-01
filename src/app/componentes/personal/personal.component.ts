@@ -534,68 +534,41 @@ export class PersonalComponent implements OnInit {
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
     let elemAutocompletado = this.autocompletado.value;
-    let pdf = {
-      id: null,
-      version: null,
-      nombre: null,
-      tipo: null,
-      tamanio: null,
-      datos: null,
-      tabla: null
-    }
-    console.log(elemAutocompletado);
-    if (elemAutocompletado.pdfAltaTemprana.id == null) {
-      elemAutocompletado.pdfAltaTemprana = pdf;
-    }
-    if (elemAutocompletado.pdfDni.id == null) {
-      elemAutocompletado.pdfDni = pdf;
-    }
-    if (elemAutocompletado.pdfLibSanidad.id == null) {
-      elemAutocompletado.pdfLibSanidad = pdf;
-    }
-    if (elemAutocompletado.pdfLicConducir.id == null) {
-      elemAutocompletado.pdfLicConducir = pdf;
-    }
-    if (elemAutocompletado.pdfLinti.id == null) {
-      elemAutocompletado.pdfLinti = pdf;
-    }
-    if (elemAutocompletado.foto.id == null) {
-      elemAutocompletado.foto = pdf;
-    }
-    this.formulario.patchValue(elemAutocompletado);
     this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
-    this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
-    this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
-    this.formulario.get('aporteAdicObraSocial').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteAdicObraSocial, 2));
-    this.formulario.get('contribAdicObraSocial').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribAdicObraSocial, 2));
-    this.formulario.get('aporteAdicSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteAdicSegSoc, 2));
-    this.formulario.get('aporteDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteDifSegSoc, 2));
-    this.formulario.get('contribTareaDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
-    this.formulario.get('contribTareaDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
-    if (elemAutocompletado.fechaFin != null) {
-      this.formulario.get('fechaFin').setValue(elemAutocompletado.fechaFin.substring(0, 10));
-    }
-    if (elemAutocompletado.vtoLicenciaConducir != null) {
-      this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
-    }
-    if (elemAutocompletado.vtoCurso != null) {
-      this.formulario.get('vtoCurso').setValue(elemAutocompletado.vtoCurso.substring(0, 10));
-    }
-    if (elemAutocompletado.vtoCursoCargaPeligrosa != null) {
-      this.formulario.get('vtoCursoCargaPeligrosa').setValue(elemAutocompletado.vtoCursoCargaPeligrosa.substring(0, 10));
-    }
-    if (elemAutocompletado.vtoLINTI != null) {
-      this.formulario.get('vtoLINTI').setValue(elemAutocompletado.vtoLINTI.substring(0, 10));
-    }
-    if (elemAutocompletado.vtoLibretaSanidad != null) {
-      this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
-    }
-    if (elemAutocompletado.telefonoMovilFechaEntrega != null) {
-      this.formulario.get('telefonoMovilFechaEntrega').setValue(elemAutocompletado.telefonoMovilFechaEntrega.substring(0, 10));
-    }
-    if (elemAutocompletado.telefonoMovilFechaDevolucion != null) {
-      this.formulario.get('telefonoMovilFechaDevolucion').setValue(elemAutocompletado.telefonoMovilFechaDevolucion.substring(0, 10));
-    }
+    
+    // this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
+    // this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
+    // this.formulario.get('aporteAdicObraSocial').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteAdicObraSocial, 2));
+    // this.formulario.get('contribAdicObraSocial').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribAdicObraSocial, 2));
+    // this.formulario.get('aporteAdicSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteAdicSegSoc, 2));
+    // this.formulario.get('aporteDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteDifSegSoc, 2));
+    // this.formulario.get('contribTareaDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
+    // this.formulario.get('contribTareaDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
+    // if (elemAutocompletado.fechaFin != null) {
+    //   this.formulario.get('fechaFin').setValue(elemAutocompletado.fechaFin.substring(0, 10));
+    // }
+    // if (elemAutocompletado.vtoLicenciaConducir != null) {
+    //   this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
+    // }
+    // if (elemAutocompletado.vtoCurso != null) {
+    //   this.formulario.get('vtoCurso').setValue(elemAutocompletado.vtoCurso.substring(0, 10));
+    // }
+    // if (elemAutocompletado.vtoCursoCargaPeligrosa != null) {
+    //   this.formulario.get('vtoCursoCargaPeligrosa').setValue(elemAutocompletado.vtoCursoCargaPeligrosa.substring(0, 10));
+    // }
+    // if (elemAutocompletado.vtoLINTI != null) {
+    //   this.formulario.get('vtoLINTI').setValue(elemAutocompletado.vtoLINTI.substring(0, 10));
+    // }
+    // if (elemAutocompletado.vtoLibretaSanidad != null) {
+    //   this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
+    // }
+    // if (elemAutocompletado.telefonoMovilFechaEntrega != null) {
+    //   this.formulario.get('telefonoMovilFechaEntrega').setValue(elemAutocompletado.telefonoMovilFechaEntrega.substring(0, 10));
+    // }
+    // if (elemAutocompletado.telefonoMovilFechaDevolucion != null) {
+    //   this.formulario.get('telefonoMovilFechaDevolucion').setValue(elemAutocompletado.telefonoMovilFechaDevolucion.substring(0, 10));
+    // }
+    this.obtenerPorId(elemAutocompletado.id);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -921,7 +894,6 @@ export class PersonalComponent implements OnInit {
   public controlAdjunto(event){
     let adjunto = event;
     let extension =  adjunto.target.files[0].type.split("/");
-    console.log(extension[extension.length - 1]);
     if(extension[extension.length - 1] == 'pdf'){
       this.readPdfURL(event, 'pdfDni');
     }else{
@@ -1002,7 +974,6 @@ export class PersonalComponent implements OnInit {
         resultadoPdf = pdf;
       })
     }
-    console.log(resultadoPdf);
     return resultadoPdf;
   }
   //Obtiene el pdf para mostrarlo
@@ -1036,8 +1007,6 @@ export class PersonalComponent implements OnInit {
   //Obtiene el dni para mostrarlo
   public verDni() {
     let extension =  this.formulario.get('pdfDni').value.nombre.split(".");
-    console.log(extension[extension.length - 1]);
-    console.log(this.formulario.get('pdfDni').value);
     if (extension[extension.length - 1] == 'pdf') {
       this.verPDF('pdfDni');
     } else {
@@ -1046,7 +1015,6 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene la foto para mostrarlo
   public verFoto(campo) {
-    console.log("enbtra al ver foto");
     const dialogRef = this.dialog.open(BugImagenDialogoComponent, {
       width: '95%',
       height: '95%',
@@ -1059,7 +1027,6 @@ export class PersonalComponent implements OnInit {
   }
   //Muestra el pdf en una pestana nueva
   public verPDF(pdf) {
-    console.log("enbtra al ver pdf");
     const dialogRef = this.dialog.open(PdfDialogoComponent, {
       width: '95%',
       height: '95%',
@@ -1072,7 +1039,6 @@ export class PersonalComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.obtenerPorId(elemento.id);
     this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);

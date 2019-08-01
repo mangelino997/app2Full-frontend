@@ -247,7 +247,7 @@
                       </div>
                       <div class="row">
                         <div class="col-md-12">
-                          <div class="row justify-content-start">
+                          <div class="row justify-content-center">
                             <input style="display: none;" type="file" (change)="readURL($event, 'foto')" #fotoInput />
                             <button class="btn-height" mat-raised-button color="primary" (click)="fotoInput.click()"
                               [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Subir FOTO">
@@ -259,10 +259,6 @@
                               (click)="eliminarPdf('foto')" [disabled]="!formulario.get('foto.nombre').value ||
                               indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
                               <i class="material-icons">close</i>
-                            </button>
-                            <button class="btn-height" mat-raised-button color="primary" (click)="verFoto('foto')"
-                              [disabled]="!formulario.get('foto.nombre').value" style="width: 40px;" matTooltip="Ver">
-                              <i class="material-icons">visibility</i>
                             </button>
                           </div>
                         </div>
