@@ -867,6 +867,7 @@ const stompConfig: StompConfig = {
     OrdenVentaTarifa,
     OrdenVentaTarifaService,
     Foto,
+    Viaje,
     Pdf,
     BugImagen,
     ClienteOrdenVentaService,

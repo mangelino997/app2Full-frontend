@@ -1,15 +1,19 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Viaje } from './viaje';
+import { Injectable } from '@angular/core';
+@Injectable()
+
 //Define la entidad de la base de datos.
 export class ViajeTramo {
     //Define un formulario FormGroup
     public formulario: FormGroup;
     //Constructor
-    constructor() {
+    constructor(private viajeFormulario: Viaje) {
         //Crear el formulario
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            viaje: new FormControl(),
+            viaje: this.viajeFormulario.formulario,
             tramo: new FormControl('', Validators.required),
             numeroOrden: new FormControl(),
             fechaTramo: new FormControl('', Validators.required),
