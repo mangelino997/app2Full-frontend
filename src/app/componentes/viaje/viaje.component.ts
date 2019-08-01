@@ -244,11 +244,15 @@ export class ViajeComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
-    let usuario = this.appService.getUsuario();
     this.tipoViaje.setValue(true);
     this.formularioViaje.get('esRemolquePropio').setValue(true);
+    this.formularioViaje.get('esViajePropio').setValue(true);
+    let usuario = this.appService.getUsuario();
     let sucursal = this.appService.getUsuario().sucursal;
+    let empresa = this.appService.getEmpresa();
+    this.formularioViaje.get('usuarioAlta').setValue(usuario);
     this.formularioViaje.get('sucursal').setValue(sucursal);
+    this.formularioViaje.get('empresaEmision').setValue(empresa);
     this.fechaServicio.obtenerFecha().subscribe(res => {     //Establece la fecha actual
       this.formularioViaje.get('fecha').setValue(res.json());
     })

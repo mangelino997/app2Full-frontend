@@ -139,9 +139,10 @@ export class ViajeTramoComponent implements OnInit {
     }
   }
   //Establece el viaje de guia de servicio (CABECERA)
-  public establecerViaje(idViaje){
-    console.log(idViaje);
-    this.formularioViajeTramo.get('viaje').setValue({id: idViaje});
+  public establecerViaje(viaje){
+    console.log(viaje);
+    this.formularioViajeTramo.get('viaje').setValue(viaje);
+    console.log(this.formularioViajeTramo.value);
   }
   //Establece los valores por defecto del formulario viaje tramo
   public establecerValoresPorDefecto(): void {
@@ -319,6 +320,7 @@ export class ViajeTramoComponent implements OnInit {
   public agregarTramo(): void {
     this.loaderService.show();
     this.formularioViajeTramo.enable();
+    console.log(this.formularioViajeTramo.value);
     this.numeroOrden++;
     this.formularioViajeTramo.get('numeroOrden').setValue(this.numeroOrden);
     let fecha = this.formularioViajeTramo.get('fechaTramo').value;
@@ -327,22 +329,24 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajeTramo.get('km').setValue(km);
     let usuario = this.appServicio.getUsuario();
     this.formularioViajeTramo.get('usuarioAlta').setValue(usuario);
+    this.formularioViajeTramo.value.viaje.id = null;
     console.log(this.formularioViajeTramo.value);
     this.servicio.agregar(this.formularioViajeTramo.value).subscribe(
       res=>{
         let resultado = res.json();
         if (res.status == 201) {
           console.log(resultado);
-          let idViaje = this.formularioViajeTramo.value.viaje.id;
-          this.reestablecerFormulario();
-          this.establecerViaje(idViaje);
-          this.listar();
-          this.establecerValoresPorDefecto();
-          this.establecerViajeTarifaPorDefecto();
-          this.enviarDatos();
-          document.getElementById('idTramoFecha').focus();
-          this.toastr.success("Registro agregado con éxito");
-          this.loaderService.hide();
+          // let idViaje = this.formularioViajeTramo.value.viaje.id;
+          // this.reestablecerFormulario();
+          // this.establecerViaje(resultado.viaje);
+          // console.log(this.formularioViajeTramo.value);
+          // this.listar();
+          // this.establecerValoresPorDefecto();
+          // this.establecerViajeTarifaPorDefecto();
+          // this.enviarDatos();
+          // document.getElementById('idTramoFecha').focus();
+          // this.toastr.success("Registro agregado con éxito");
+          // this.loaderService.hide();
         }
       },
       err=>{
@@ -579,6 +583,7 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Abre un dialogo para ver las observaciones
   public abrirObservacionesDialogo(): void {
+    console.log(this.formularioViajeTramo);
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
       width: '1200px',
       data: {
