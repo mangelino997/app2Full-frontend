@@ -21,7 +21,7 @@
                   [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off">
                 <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
                   (optionSelected)="cambioAutocompletado()">
-                  <mat-option *ngFor="let item of resultados" [value]="item">{{item.nombre}}
+                  <mat-option *ngFor="let item of resultados" [value]="item">{{item.alias}}
                   </mat-option>
                 </mat-autocomplete>
               </div>
@@ -98,7 +98,7 @@
             <div class="form-group has-float-label">
               <label for="idPrecioUnViaje" class="tamanio-label">Precio Unitario Viaje</label>
               <input id="idPrecioUnViaje" type="text" formControlName="precioUnitarioViaje" autocomplete="off"
-                placeholder="$ 0.00" [textMask]="mascararImporte(10, 2)" class="form-control form-control-sm number-right"
+                placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)" class="form-control form-control-sm number-right"
                 [readonly]="soloLectura" maxlength="45"
                 (blur)="establecerDecimales(formulario.get('precioUnitarioViaje'), 2)">
             </div>
@@ -107,7 +107,7 @@
             <div class="form-group has-float-label">
               <label for="idPrecioUnVenta" class="tamanio-label">Precio Unitario de Venta</label>
               <input id="idPrecioUnVenta" type="text" formControlName="precioUnitarioVenta" autocomplete="off"
-                placeholder="$ 0.00" [textMask]="mascararImporte(10, 2)" class="form-control form-control-sm number-right"
+                placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)" class="form-control form-control-sm number-right"
                 [readonly]="soloLectura" maxlength="45"
                 (blur)="establecerDecimales(formulario.get('precioUnitarioVenta'), 2)">
             </div>
@@ -116,7 +116,7 @@
             <div class="form-group has-float-label">
               <label for="idCoeficienteITC" class="tamanio-label">ITC por Litro</label>
               <input id="idCoeficienteITC" type="text" formControlName="itcPorLitro" autocomplete="off"
-                placeholder="00.0000" [textMask]="mascararCoeficiente(2)" class="form-control form-control-sm number-right"
+                placeholder="00.0000" [textMask]="mascararCoeficiente(3)" class="form-control form-control-sm number-right"
                 [readonly]="soloLectura" maxlength="45"
                 (blur)="establecerDecimales(formulario.get('itcPorLitro'), 4)">
             </div>
