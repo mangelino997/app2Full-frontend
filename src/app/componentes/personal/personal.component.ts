@@ -940,12 +940,16 @@ export class PersonalComponent implements OnInit {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
   }
-  //Elimina un pdf ya cargado, se pasa el campo como parametro
-  public eliminarPdf(campo) {
+  //Elimina un pdf/imagen ya cargado, se pasa el campo como parametro
+  public eliminarAdjunto(campo) {
     if (!this.formulario.get(campo).value) {
       this.toastr.success("Sin archivo adjunto");
     } else {
       this.formulario.get(campo + '.nombre').setValue('');
+      this.formulario.get(campo + '.datos').setValue('');
+      if(campo == 'foto'){
+        this.obtenerFotoPorDefecto();
+      }
     }
   }
   //Obtiene el pdf para mostrarlo
@@ -1055,8 +1059,8 @@ export class PersonalComponent implements OnInit {
     if (elemento.foto) {
       this.formulario.get('foto.datos').setValue(atob(elemento.foto.datos));
     }
-    if (elemento.licConducir) {
-      this.formulario.get('pdfLicConducir.datos').setValue(atob(elemento.licConducir.datos));
+    if (elemento.pdfLicConducir) {
+      this.formulario.get('pdfLicConducir.datos').setValue(atob(elemento.pdfLicConducir.datos));
     }
     if (elemento.pdfLinti) {
       this.formulario.get('pdfLinti.datos').setValue(atob(elemento.pdfLinti.datos));
