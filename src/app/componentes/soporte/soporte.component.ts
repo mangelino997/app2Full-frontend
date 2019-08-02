@@ -166,12 +166,13 @@ export class SoporteComponent implements OnInit {
     );
   }
   //Establece los datos del elemento al formulario
-  private establecerElemento(elemento) {
+  private establecerElemento() {
+    let elemento = this.autocompletado.value;
+    this.obtenerPorId(elemento.id);
     this.modulo.setValue(elemento.subopcion.submodulo.modulo);
     this.submodulo.setValue(elemento.subopcion.submodulo);
     this.cambioModulo();
     this.cambioSubmodulo();
-    
   }
   //Establece el habilitado o deshabilitado de los campos
   private establecerCampos(estado) {
@@ -385,7 +386,6 @@ export class SoporteComponent implements OnInit {
     if (elemento.bugImagen) {
       this.formulario.get('bugImagen.datos').setValue(atob(elemento.bugImagen.datos));
     }
-    this.establecerElemento(elemento);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -442,38 +442,6 @@ export class SoporteComponent implements OnInit {
     } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .jpeg .png o .jpg");
     }
-  }
-  //Obtiene el bugImagen para mostrarlo
-  public obtenerBugImagen(elemento) {
-    let bug= {
-      id:null,
-      version:null,
-      nombre:null,
-      tipo:null,
-      tamanio:null,
-      datos:null
-    }
-    if (elemento.bugImagen) {
-      if(elemento.bugImagen.id){
-      this.bugServicio.obtenerPorId(elemento.bugImagen.id).subscribe(res => {
-        let resultado = res.json();
-        let bugImagen = {
-          id: resultado.id,
-          nombre: resultado.nombre,
-          tipo:resultado.tipo,
-          tamanio:resultado.tamanio,
-          datos: atob(resultado.datos)
-        }
-        elemento.bugImagen =bugImagen;
-      })
-    }else {
-      elemento.bugImagen=bug;
-    }
-  } else {
-    elemento.bugImagen=bug;
-  }
-    this.formulario.setValue(elemento);
-    this.formulario.get('bugImagen.datos').setValue(atob(elemento.bugImagen.datos));
   }
   //Elimina una imagen ya cargada
   public eliminarBug(campo, event) {

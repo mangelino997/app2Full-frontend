@@ -91,7 +91,7 @@ export class CostosInsumosProductoComponent implements OnInit {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(response => {
+        this.servicio.listarPorAlias(data).subscribe(response => {
           this.resultados = response;
         })
       }
@@ -289,7 +289,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
     if (elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
+      return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
     }

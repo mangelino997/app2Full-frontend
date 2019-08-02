@@ -23,6 +23,7 @@ export class InsumoProducto {
             esSerializable: new FormControl(),
             stockMinimo: new FormControl(),
             usuario: new FormControl(),
+            alias: new FormControl(),
         })
     }
 }

@@ -80,6 +80,8 @@ export class VencimientosChoferesComponent implements OnInit {
   public btnPdfLicConducir: boolean = null;
   public btnPdfLibSanidad: boolean = null;
   public btnPdflinti: boolean = null;
+  public btnPdfDni: boolean = null;
+  public btnPdfAltaTemprana: boolean = null;
   public listaChoferes: Array<any> = [];
   //Constructor
   constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, public dialog: MatDialog,
@@ -171,11 +173,11 @@ export class VencimientosChoferesComponent implements OnInit {
       this.resultados = [];
     }
     switch (id) {
-      case 2:
+      case 1:
         this.establecerEstadoCampos(false, 2);
         this.establecerValoresPestania(nombre, true, true, false);
         break;
-      case 3:
+      case 2:
         this.establecerEstadoCampos(true, 3);
         this.establecerValoresPestania(nombre, true, false, true);
         break;
@@ -279,6 +281,8 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Al cambiar elemento de select esChofer
   public cambioEsChofer(): void {
+    this.btnPdfDni = true;
+    this.btnPdfAltaTemprana = true;
     if (this.formulario.get('esChoferLargaDistancia').value) {
       this.formulario.get('vtoLicenciaConducir').enable();
       this.formulario.get('vtoCurso').enable();
@@ -424,12 +428,12 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[0].nombre, 1);
+    this.seleccionarPestania(1, this.pestanias[0].nombre, 1);
     this.obtenerPorId(elemento.id);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.obtenerPorId(elemento.id);
   }
 
