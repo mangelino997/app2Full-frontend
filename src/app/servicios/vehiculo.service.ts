@@ -50,6 +50,10 @@ export class VehiculoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene un registro por id
+  public obtenerPorId(id) {
+    return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
+  }
   //Obtiene un listado por alias
   public listarPorAlias(alias) {
     return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
@@ -208,34 +212,6 @@ export class VehiculoService {
     obj.pdfVtoInspTecnica = null;
     obj.pdfVtoSenasa = null;
     obj.pdfHabBromat = null;
-
-    // if(tituloFile)
-    //   obj.pdfTitulo = {};
-    //   else
-    //   obj.pdfTitulo = null;
-    // if(tituloFile)
-    //   obj.pdfTitulo = {};
-    //   else
-    //   obj.pdfTitulo = null;
-    // if(tituloFile)
-    //   obj.pdfTitulo = {};
-    //   else
-    //   obj.pdfTitulo = null;
-    // obj.pdfCedulaIdent = {};
-    // obj.pdfVtoRuta = {};
-    // obj.pdfVtoInspTecnica = {};
-    // obj.pdfVtoSenasa = {};
-    // obj.pdfHabBromat = {};
-
-    // obj.pdfTitulo.id = idTituloFile;
-    // obj.pdfCedulaIdent.id = idCedulaIdentFile;
-    // obj.pdfVtoRuta.id = idVtoRutaFile;
-    // obj.pdfVtoInspTecnica.id = idVtoInspTecnicaFile;
-    // obj.pdfVtoSenasa.id = idVtoSenasaFile;
-    // obj.pdfHabBromat.id = idHabBromatFile;
-
-    console.log(obj);
-
     formData.append('vehiculo', JSON.stringify(obj));
     return fetch(this.url, {
       method: "PUT",
