@@ -128,20 +128,6 @@ export class ViajeComponent implements OnInit {
         },
         err => {}
       );
-    //Obtiene la lista de opciones por rol y subopcion
-    // this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol(), this.appService.getSubopcion())
-    //   .subscribe(
-    //     res => {
-    //       this.opciones = res.json();
-    //     },
-    //     err => {
-    //       console.log(err);
-    //     }
-    //   );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -160,17 +146,12 @@ export class ViajeComponent implements OnInit {
       });
     //Establece el formulario viaje propio
     this.formularioViaje = this.viajePropioModelo.formulario;
-    //
-    let usuario = this.appService.getUsuario();
-    this.usuarioNombre.setValue(usuario.nombre);
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
-    //Establece la primera opcion seleccionada
-    this.seleccionarOpcion(22, 0);
-    //Obtiene la lista completa de registros
-    this.listar();
     //Obtiene la lista de sucursales
     this.listarSucursales();
+    //Establece la primera opcion seleccionada
+    // this.seleccionarOpcion(22, 0);
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar', 0);
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
     //Autocompletado Vehiculo - Buscar por alias
@@ -232,7 +213,8 @@ export class ViajeComponent implements OnInit {
     this.idMod = this.autocompletado.value.id;
     this.servicio.obtenerPorId(viaje.id).subscribe(res => {
       let viajeRes = res.json();
-      this.formularioViaje.patchValue(viaje);
+      console.log(this.autocompletado.value);
+      this.formularioViaje.patchValue(viajeRes);
        // Le paso el IndiceSeleccionado
       this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje, this.indiceSeleccionado);
       this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje, this.indiceSeleccionado);
@@ -244,10 +226,13 @@ export class ViajeComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
-    this.tipoViaje.setValue(true);
-    this.formularioViaje.get('esRemolquePropio').setValue(true);
-    this.formularioViaje.get('esViajePropio').setValue(true);
     let usuario = this.appService.getUsuario();
+    this.usuarioNombre.setValue(usuario.nombre);
+    console.log("entra a val def");
+    this.tipoViaje.setValue(true);
+    console.log(this.formularioViaje.value, this.indiceSeleccionado);
+    this.formularioViaje.get('esViajePropio').setValue(true);
+    this.formularioViaje.get('esRemolquePropio').setValue(true);
     let sucursal = this.appService.getUsuario().sucursal;
     let empresa = this.appService.getEmpresa();
     this.formularioViaje.get('usuarioAlta').setValue(usuario);
@@ -256,6 +241,8 @@ export class ViajeComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(res => {     //Establece la fecha actual
       this.formularioViaje.get('fecha').setValue(res.json());
     })
+    console.log(this.formularioViaje.value, this.indiceSeleccionado);
+
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -271,17 +258,13 @@ export class ViajeComponent implements OnInit {
     this.viajeGastoComponente.vaciarListas();
     this.viajeInsumoComponente.vaciarListas();
     this.viajePeajeComponente.vaciarListas();
-    this.viajeTramoComponente.vaciarListas();
-  }
-  //Establece el tipo de viaje
-  public establecerTipoViaje(): void {
-    // this.viajeTramoComponente.establecerTipoViaje(this.tipoViaje.value);
-    this.formularioViaje.get('esViajePropio').setValue(this.tipoViaje.value);
+    // this.viajeTramoComponente.vaciarListas();
   }
   //Obtiene el listado de sucursales
   private listarSucursales() {
     this.sucursalServicio.listar().subscribe(
       res => {
+        console.log(res.json());
         this.sucursales = res.json();
         this.render = true;
       },
@@ -294,11 +277,11 @@ export class ViajeComponent implements OnInit {
   private establecerCamposSoloLectura(opcion): void {
     console.log(opcion);
     if (opcion) {
-      this.tipoViaje.disable();
+      this.formularioViaje.get('esViajePropio').disable();
       this.formularioViaje.get('esRemolquePropio').disable();
       this.formularioViaje.get('sucursal').disable();
     } else {
-      this.tipoViaje.enable();
+      this.formularioViaje.get('esViajePropio').enable();
       this.formularioViaje.get('esRemolquePropio').enable();
       this.formularioViaje.get('sucursal').enable();
     }
@@ -356,14 +339,13 @@ export class ViajeComponent implements OnInit {
     //   this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     //   this.viajePeajeComponente.reestablecerFormularioYLista();
     // }
-    setTimeout(function () {
-      document.getElementById(componente).focus();
-    }, 20);
+    // setTimeout(function () {
+    //   document.getElementById(componente).focus();
+    // }, 20);
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
     this.reestablecerFormulario(undefined);
-    this.listar();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
@@ -384,8 +366,8 @@ export class ViajeComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.banderaSoloLectura = true;
-        this.establecerCamposSoloLectura(true);
+        this.banderaSoloLectura = false;
+        this.establecerCamposSoloLectura(false);
         this.establecerValoresPestania(nombre, true, true, false, true, 'idAutocompletado');
         break;
       case 4:
@@ -395,6 +377,7 @@ export class ViajeComponent implements OnInit {
         break;
       case 5:
         this.banderaSoloLectura = true;
+        this.listar();
         break;
       default:
         break;
@@ -519,7 +502,7 @@ export class ViajeComponent implements OnInit {
   public agregarViaje(){
     this.loaderService.show();
     this.idMod = null;
-    this.tipoViaje.enable();
+    // this.tipoViaje.enable();
     let empresa = this.appService.getEmpresa();
     // let vehiculo = this.formularioViaje.get('vehiculo').value;
     // this.formularioViaje.get('empresa').setValue(vehiculo.empresa);
@@ -533,7 +516,7 @@ export class ViajeComponent implements OnInit {
         let resultado = res.json();
         if (res.status == 201) {
           this.formularioViaje.patchValue(resultado);
-          this.viajeTramoComponente.establecerViaje(this.formularioViaje.value.id);
+          // this.viajeTramoComponente.establecerViaje(this.formularioViaje.value.id);
           this.idMod = resultado.id;
           this.toastr.success("Registro agregado con éxito");
           this.loaderService.hide();
@@ -549,7 +532,7 @@ export class ViajeComponent implements OnInit {
   //Actualiza el viaje (CABECERA)
   public actualizarViaje(){
     this.loaderService.show();
-    this.tipoViaje.enable();
+    // this.tipoViaje.enable();
     this.establecerCamposSoloLectura(false);
     this.servicio.actualizar(this.formularioViaje.value).subscribe(
       res => {
@@ -606,7 +589,6 @@ export class ViajeComponent implements OnInit {
     this.autocompletado.setValue(undefined);
     this.idMod = null;
     this.vaciarListas();
-
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -654,7 +636,6 @@ export class ViajeComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formularioViaje.patchValue(elemento);
-    this.tipoViaje.setValue(this.formularioViaje.value.esRemolquePropio);
     this.establecerValoresPorDefecto();
     this.cambioAutocompletado();
   }
@@ -664,7 +645,6 @@ export class ViajeComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formularioViaje.patchValue(elemento);
-    this.tipoViaje.setValue(this.formularioViaje.value.esRemolquePropio);
     this.establecerValoresPorDefecto();
     this.cambioAutocompletado();
   }

@@ -115,7 +115,7 @@
                 <label for="idTramoImporte" class="tamanio-label">Importe *</label>
                 <input id="idTramoImporte" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe"
                     autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                    placeholder="$ 0.00">
+                    (blur)="establecerDecimales(formularioViajeTramo.get('importe'), 2)" placeholder="$ 0.00">
             </div>
         </div>
         <div class="col-md-4">

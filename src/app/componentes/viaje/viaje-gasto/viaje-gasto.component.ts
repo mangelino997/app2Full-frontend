@@ -59,6 +59,8 @@ export class ViajeGastoComponent implements OnInit {
       });
     //Establece el formulario viaje  gasto
     this.formularioViajeGasto = this.viajeGastoModelo.formulario;
+    //Limpia el formulario y las listas
+    this.reestablecerFormulario();
     //Obtiene la lista de rubros de productos
     this.listarRubrosProductos();
     //Establece los valores por defecto del formulario viaje gasto
@@ -111,11 +113,12 @@ export class ViajeGastoComponent implements OnInit {
     this.servicio.agregar(this.formularioViajeGasto.value).subscribe(
       res=>{
         let resultado = res.json();
+        let viajeCabecera = resultado.viaje;
+        console.log(viajeCabecera);
         if (res.status == 201) {
           console.log(resultado);
-          let idViaje = this.formularioViajeGasto.value.viaje.id;
           this.reestablecerFormulario();
-          this.establecerViaje(idViaje);
+          this.formularioViajeGasto.value.viaje = viajeCabecera;
           this.listar();
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
@@ -135,11 +138,12 @@ export class ViajeGastoComponent implements OnInit {
   public modificarGasto(): void {
     this.servicio.actualizar(this.formularioViajeGasto.value).subscribe(
       res=>{
-        let idViaje = this.formularioViajeGasto.value.viaje.id;
-        console.log(idViaje);
+        let resultado = res.json();
+        let viajeCabecera = resultado.viaje;
+        console.log(viajeCabecera);
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.establecerViaje(idViaje);
+          this.formularioViajeGasto.value.viaje = viajeCabecera;
           this.establecerValoresPorDefecto(0);
           this.btnGasto = true;
           this.enviarDatos();
@@ -224,7 +228,7 @@ export class ViajeGastoComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
     this.listaGastos = lista;
     this.viaje = viaje;
-    this.establecerViaje(viaje.id);
+    this.formularioViajeGasto.get('viaje').patchValue(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
     this.enviarDatos();

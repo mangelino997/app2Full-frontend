@@ -72,6 +72,8 @@ export class ViajeInsumoComponent implements OnInit {
         })
       }
     })
+    //Limpia el formulario y las listas
+    this.reestablecerFormulario();
     //Obtiene la lista de insumos productos
     this.listarInsumos();
     //Establece los valores por defecto
@@ -166,11 +168,12 @@ export class ViajeInsumoComponent implements OnInit {
     this.servicio.agregar(this.formularioViajeInsumo.value).subscribe(
       res=>{
         let resultado = res.json();
+        let viajeCabecera = resultado.viaje;
+        console.log(viajeCabecera);
         if (res.status == 201) {
           console.log(resultado);
-          let idViaje = this.formularioViajeInsumo.value.viaje.id;
           this.reestablecerFormulario();
-          this.establecerViaje(idViaje);
+          this.formularioViajeInsumo.value.viaje = viajeCabecera;
           this.listar();
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
@@ -190,11 +193,12 @@ export class ViajeInsumoComponent implements OnInit {
   public modificarInsumo(): void {
     this.servicio.actualizar(this.formularioViajeInsumo.value).subscribe(
       res=>{
-        let idViaje = this.formularioViajeInsumo.value.viaje.id;
-        console.log(idViaje);
+        let resultado = res.json();
+        let viajeCabecera = resultado.viaje;
+        console.log(viajeCabecera);
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.establecerViaje(idViaje);
+          this.formularioViajeInsumo.value.viaje = viajeCabecera;
           this.establecerValoresPorDefecto(0);
           this.btnInsumo = true;
           this.enviarDatos();
@@ -268,7 +272,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.listaInsumos = lista;
     this.recargarListaCompleta(this.listaInsumos);
     this.viaje = viaje;
-    this.establecerViaje(viaje.id);
+    this.formularioViajeInsumo.get('viaje').patchValue(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
     this.enviarDatos();

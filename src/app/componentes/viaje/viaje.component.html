@@ -52,7 +52,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idEsPropio" class="tamanio-label-titulo">Tipo de Viaje *</label>
                                     <mat-select id="idEsPropio" class="form-control form-control-sm"
-                                        [formControl]="tipoViaje" (selectionChange)="establecerTipoViaje()">
+                                        formControlName="esViajePropio" >
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>
@@ -96,7 +96,7 @@
                                         [formControl]="tipoViaje.value ? formularioViaje.get('vehiculo') : formularioViaje.get('vehiculoProveedor')"
                                         [matAutocomplete]="autoVehiculo" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
-                                        placeholder="Buscar por Dominio o Tipo/Marca Vehículo" required>
+                                        placeholder="Buscar por Dominio o Tipo/Marca Vehículo" >
                                     <mat-autocomplete #autoVehiculo="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemVehiculo of resultadosVehiculos"
@@ -121,7 +121,7 @@
                                         [formControl]="formularioViaje.get('esRemolquePropio').value ? formularioViaje.get('vehiculoRemolque') : formularioViaje.get('vehiculoRemolqueProveedor')"
                                         [matAutocomplete]="autoVehiculoRemolque" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
-                                        placeholder="Buscar por Dominio o Tipo/Marca Vehículo" required>
+                                        placeholder="Buscar por Dominio o Tipo/Marca Vehículo" >
                                     <mat-autocomplete #autoVehiculoRemolque="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemVehiculoRemolque of resultadosVehiculosRemolques"
@@ -144,7 +144,7 @@
                                         [formControl]="tipoViaje.value ? formularioViaje.get('personal') : formularioViaje.get('choferProveedor')"
                                         [matAutocomplete]="autoChofer" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
-                                        placeholder="Buscar por N° Legajo, Nombre o Num. Doc." required>
+                                        placeholder="Buscar por N° Legajo, Nombre o Num. Doc." >
                                     <mat-autocomplete #autoChofer="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemChofer of resultadosChoferes" [value]="itemChofer">

@@ -61,6 +61,8 @@ export class ViajeEfectivoComponent implements OnInit {
       });
     //Establece el formulario viaje  efectivo
     this.formularioViajeEfectivo = this.viajeEfectivoModelo.formulario;
+    //Limpia el formulario y las listas
+    this.reestablecerFormulario();
     //Obtiene la lista de empresas
     this.listarEmpresas();
     //Establece los valores por defecto del formulario viaje efectivo
@@ -119,10 +121,12 @@ export class ViajeEfectivoComponent implements OnInit {
     console.log(this.formularioViajeEfectivo.value);
     this.servicio.agregar(this.formularioViajeEfectivo.value).subscribe(
       res=>{
+        let resultado = res.json();
+        let viajeCabecera = resultado.viaje;
+        console.log(viajeCabecera);
         if (res.status == 201) {
-          let idViaje = this.formularioViajeEfectivo.value.viaje.id;
           this.formularioViajeEfectivo.reset();
-          this.establecerViaje(idViaje);
+          this.formularioViajeEfectivo.value.viaje = viajeCabecera;
           this.listar();
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
@@ -142,11 +146,12 @@ export class ViajeEfectivoComponent implements OnInit {
   public modificarEfectivo(): void {
     this.servicio.actualizar(this.formularioViajeEfectivo.value).subscribe(
       res=>{
-        let idViaje = this.formularioViajeEfectivo.value.viaje.id;
-        console.log(res);
+        let resultado = res.json();
+        let viajeCabecera = resultado.viaje;
+        console.log(viajeCabecera);     
         if (res.status == 200) {
           this.formularioViajeEfectivo.reset();
-          this.establecerViaje(idViaje);
+          this.formularioViajeEfectivo.value.viaje = viajeCabecera;
           this.listar();
           this.establecerValoresPorDefecto(0);
           // this.calcularImporteTotal();
@@ -235,7 +240,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.listaEfectivos = lista;
     this.recargarListaCompleta(this.listaEfectivos);
     this.viaje = viaje;
-    this.establecerViaje(viaje.id);
+    this.formularioViajeEfectivo.get('viaje').patchValue(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
     // this.calcularImporteTotal();

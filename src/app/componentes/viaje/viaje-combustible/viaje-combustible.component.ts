@@ -71,6 +71,8 @@ export class ViajeCombustibleComponent implements OnInit {
         })
       }
     })
+    //Limpia el formulario y las listas
+    this.reestablecerFormulario();
     //Obtiene la lista de insumos
     this.listarInsumos();
     //Establece los valores por defecto del formulario viaje combustible
@@ -188,11 +190,12 @@ export class ViajeCombustibleComponent implements OnInit {
     this.servicio.agregar(this.formularioViajeCombustible.value).subscribe(
       res=>{
         let resultado = res.json();
+        let viajeCabecera = resultado.viaje;
+        console.log(viajeCabecera);
         if (res.status == 201) {
           console.log(resultado);
-          let idViaje = this.formularioViajeCombustible.value.viaje.id;
           this.formularioViajeCombustible.reset();
-          this.establecerViaje(idViaje);
+          this.formularioViajeCombustible.value.viaje = viajeCabecera;
           this.listar();
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
@@ -211,16 +214,16 @@ export class ViajeCombustibleComponent implements OnInit {
   //Modifica los datos del combustible
   public modificarCombustible(): void {
     // this.btnCombustible = true;
-
     this.servicio.actualizar(this.formularioViajeCombustible.value).subscribe(
       res=>{
         let resultado = res.json();
+        let viajeCabecera = resultado.viaje;
+        console.log(viajeCabecera);
         if (res.status == 200) {
           console.log(resultado);
-          let idViaje = this.formularioViajeCombustible.value.viaje.id;
           this.btnCombustible = true;
           this.formularioViajeCombustible.reset();
-          this.establecerViaje(idViaje);
+          this.formularioViajeCombustible.value.viaje = viajeCabecera;
           this.listar();
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
@@ -319,7 +322,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listaCombustibles = lista;
     this.recargarListaCompleta(this.listaCombustibles);
     this.viaje = viaje;
-    this.establecerViaje(viaje.id);
+    this.formularioViajeCombustible.get('viaje').patchValue(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
   }
