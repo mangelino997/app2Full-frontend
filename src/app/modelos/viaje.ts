@@ -39,6 +39,14 @@ export class Viaje {
             observaciones: new FormControl(),
             alias: new FormControl(),
             usuarioAlta: new FormControl(),
+            viajeTramos: new FormControl(),
+            viajeEfectivos: new FormControl(),
+            viajePeajes: new FormControl(),
+            viajeCombustibles: new FormControl(),
+            viajeGastos: new FormControl(),
+            viajeInsumos: new FormControl(),
+
+
         })
     }
 }

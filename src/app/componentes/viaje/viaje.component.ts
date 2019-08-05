@@ -146,15 +146,14 @@ export class ViajeComponent implements OnInit {
       });
     //Establece el formulario viaje propio
     this.formularioViaje = this.viajePropioModelo.formulario;
-    //Establece la primera opcion seleccionada
-    // this.seleccionarOpcion(22, 0);
-    //Obtiene la lista de sucursales
-    this.listarSucursales();
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    
+    //Establece la primera opcion seleccionada
+    this.seleccionarOpcion(22, 0);
+    //Obtiene la lista de sucursales
+    this.listarSucursales();
     //Establece los valores por defecto
-    // this.establecerValoresPorDefecto();
+    this.establecerValoresPorDefecto();
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViaje.get('vehiculo').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -236,8 +235,10 @@ export class ViajeComponent implements OnInit {
     console.log(this.formularioViaje.value, this.indiceSeleccionado, empresa);
     this.formularioViaje.get('esViajePropio').setValue(true);
     this.formularioViaje.get('esRemolquePropio').setValue(true);
-    this.formularioViaje.get('usuarioAlta').setValue(usuario);
     this.formularioViaje.get('sucursal').setValue(sucursal);
+    this.formularioViaje.get('empresaEmision').patchValue(empresa);
+    this.formularioViaje.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
+    this.formularioViaje.get('usuarioAlta').setValue(usuario);
     this.fechaServicio.obtenerFecha().subscribe(res => {     //Establece la fecha actual
       this.formularioViaje.get('fecha').setValue(res.json());
     })
@@ -296,7 +297,7 @@ export class ViajeComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.vaciarListas();
-    this.establecerValoresPorDefecto();
+    // this.establecerValoresPorDefecto();
     //Ejecuta los siguientes metodos solo cuando el componente esta incializado
     if(this.viajeTramoComponente){
       this.viajeTramoComponente.reestablecerFormulario();
@@ -505,13 +506,13 @@ export class ViajeComponent implements OnInit {
     this.loaderService.show();
     this.idMod = null;
     // this.tipoViaje.enable();
-    let empresa = this.appService.getEmpresa();
+    // let empresa = this.appService.getEmpresa();
     // let vehiculo = this.formularioViaje.get('vehiculo').value;
     // this.formularioViaje.get('empresa').setValue(vehiculo.empresa);
-    this.formularioViaje.get('empresaEmision').setValue(empresa);
-    this.formularioViaje.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
-    let usuario = this.appService.getUsuario();
-    this.formularioViaje.get('usuarioAlta').setValue(usuario);
+    // this.formularioViaje.get('empresaEmision').setValue(empresa);
+    // this.formularioViaje.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
+    // let usuario = this.appService.getUsuario();
+    // this.formularioViaje.get('usuarioAlta').setValue(usuario);
     console.log(this.formularioViaje.value);
     this.servicio.agregar(this.formularioViaje.value).subscribe(
       res => {
@@ -649,6 +650,10 @@ export class ViajeComponent implements OnInit {
     this.formularioViaje.patchValue(elemento);
     this.establecerValoresPorDefecto();
     this.cambioAutocompletado();
+  }
+  //Establece los valores del viaje en viajeCabecera del appService
+  public establecerViajeCabecera(){
+    this.appService.setViajeCabecera(this.formularioViaje.value);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

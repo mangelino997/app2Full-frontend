@@ -31,6 +31,8 @@ export class AppService {
   public empresa:any;
   //Define el usuario
   public usuario:any;
+  //Define el viaje cabecera
+  public viajeCabecera:any;
   //Define la subopcion
   public subopcion:any;
   //Define el tema
@@ -82,6 +84,14 @@ export class AppService {
   //Establece el usuario
   public setUsuario(usuario) {
     this.usuario = usuario;
+  }
+  //Obtiene el viaje cabecera
+  public getViajeCabecera() {
+    return this.viajeCabecera;
+  }
+  //Establece el viaje cabecera
+  public setViajeCabecera(viajeCabecera) {
+    this.viajeCabecera = viajeCabecera;
   }
   //Establece el rol del usuario actual
   public setRol(rol): void {

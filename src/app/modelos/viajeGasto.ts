@@ -12,7 +12,7 @@ export class ViajeGasto {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            viaje: this.viajeFormulario.formulario,
+            viaje: new FormControl(),
             reparto: new FormControl(),
             sucursal: new FormControl(),
             usuarioAlta: new FormControl(),
