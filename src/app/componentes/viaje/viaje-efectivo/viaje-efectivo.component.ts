@@ -306,7 +306,9 @@ export class ViajeEfectivoComponent implements OnInit {
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
+    let viaje= this.formularioViajeEfectivo.value.viaje;
     this.formularioViajeEfectivo.reset();
+    this.formularioViajeEfectivo.value.viaje = viaje;
     this.btnEfectivo = true;
   }
   //Funcion para comparar y mostrar elemento de campo select

@@ -330,14 +330,17 @@ export class ViajeTramoComponent implements OnInit {
   public agregarTramo(): void {
     this.loaderService.show();
     this.formularioViajeTramo.enable();
-    console.log(this.formularioViajeTramo.value);
+    let empresa = this.appServicio.getEmpresa();
+    let usuario = this.appServicio.getUsuario();
+    this.formularioViajeTramo.get('viaje.empresaEmision').patchValue(empresa);
+    this.formularioViajeTramo.get('viaje.afipCondicionIva').setValue(empresa.afipCondicionIva);
+    this.formularioViajeTramo.get('viaje.usuarioAlta').setValue(usuario);
     this.numeroOrden++;
     this.formularioViajeTramo.get('numeroOrden').setValue(this.numeroOrden);
     let fecha = this.formularioViajeTramo.get('fechaTramo').value;
     this.formularioViajeTramo.get('fechaAlta').setValue(fecha);
     let km = this.formularioViajeTramo.get('tramo').value.km;
     this.formularioViajeTramo.get('km').setValue(km);
-    let usuario = this.appServicio.getUsuario();
     this.formularioViajeTramo.get('usuarioAlta').setValue(usuario);
     this.formularioViajeTramo.value.viaje.id = null;
     console.log(this.formularioViajeTramo.value);
@@ -373,6 +376,7 @@ export class ViajeTramoComponent implements OnInit {
   public modificarTramo(): void {
     this.loaderService.show();
     // this.establecerTipoViaje();  REVISAAR
+    console.log(this.formularioViajeTramo.value);
     this.servicio.actualizar(this.formularioViajeTramo.value).subscribe(
       res=>{
         let resultado = res.json();
@@ -534,7 +538,12 @@ export class ViajeTramoComponent implements OnInit {
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario() {
     this.vaciarListas();
+    let viaje= this.formularioViajeTramo.value.viaje;
+    console.log(this.formularioViajeTramo.value);
     this.formularioViajeTramo.reset();
+    this.formularioViajeTramo.value.viaje = viaje;
+    console.log(this.formularioViajeTramo.value);
+
     this.indiceTramo = null;
     this.btnTramo = true;
   }

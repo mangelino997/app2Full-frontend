@@ -52,7 +52,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idEsPropio" class="tamanio-label-titulo">Tipo de Viaje *</label>
                                     <mat-select id="idEsPropio" class="form-control form-control-sm"
-                                        formControlName="esViajePropio" >
+                                        [formControl]="formularioViaje.get('esViajePropio')" >
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>
@@ -63,7 +63,7 @@
                                     <label for="idEsRemolquePropio" class="tamanio-label-titulo">Tipo de Remolque
                                         *</label>
                                     <mat-select id="idEsRemolquePropio" class="form-control form-control-sm"
-                                        formControlName="esRemolquePropio">
+                                        [formControl]="formularioViaje.get('esRemolquePropio')">
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>

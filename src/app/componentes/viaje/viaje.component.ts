@@ -146,14 +146,15 @@ export class ViajeComponent implements OnInit {
       });
     //Establece el formulario viaje propio
     this.formularioViaje = this.viajePropioModelo.formulario;
-    //Obtiene la lista de sucursales
-    this.listarSucursales();
     //Establece la primera opcion seleccionada
     // this.seleccionarOpcion(22, 0);
+    //Obtiene la lista de sucursales
+    this.listarSucursales();
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+    
     //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
+    // this.establecerValoresPorDefecto();
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViaje.get('vehiculo').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -227,17 +228,16 @@ export class ViajeComponent implements OnInit {
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
     let usuario = this.appService.getUsuario();
+    let sucursal = this.appService.getUsuario().sucursal;
+    let empresa = this.appService.getEmpresa();
     this.usuarioNombre.setValue(usuario.nombre);
     console.log("entra a val def");
     this.tipoViaje.setValue(true);
-    console.log(this.formularioViaje.value, this.indiceSeleccionado);
+    console.log(this.formularioViaje.value, this.indiceSeleccionado, empresa);
     this.formularioViaje.get('esViajePropio').setValue(true);
     this.formularioViaje.get('esRemolquePropio').setValue(true);
-    let sucursal = this.appService.getUsuario().sucursal;
-    let empresa = this.appService.getEmpresa();
     this.formularioViaje.get('usuarioAlta').setValue(usuario);
     this.formularioViaje.get('sucursal').setValue(sucursal);
-    this.formularioViaje.get('empresaEmision').setValue(empresa);
     this.fechaServicio.obtenerFecha().subscribe(res => {     //Establece la fecha actual
       this.formularioViaje.get('fecha').setValue(res.json());
     })
@@ -267,6 +267,8 @@ export class ViajeComponent implements OnInit {
         console.log(res.json());
         this.sucursales = res.json();
         this.render = true;
+        this.establecerValoresPorDefecto();
+
       },
       err => {
         console.log(err);
@@ -345,7 +347,7 @@ export class ViajeComponent implements OnInit {
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario(undefined);
+    // this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
@@ -584,7 +586,7 @@ export class ViajeComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formularioViaje.reset();
+    // this.formularioViaje.reset();
     this.formularioViaje.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.idMod = null;
