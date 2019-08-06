@@ -370,7 +370,7 @@ export class ViajeComponent implements OnInit {
         break;
       case 3:
         this.banderaSoloLectura = false;
-        this.establecerCamposSoloLectura(false);
+        this.establecerCamposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, false, true, 'idAutocompletado');
         break;
       case 4:
@@ -645,6 +645,7 @@ export class ViajeComponent implements OnInit {
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     console.log(elemento);
+    this.appService.setViajeCabecera(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formularioViaje.patchValue(elemento);

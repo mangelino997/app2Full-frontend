@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
@@ -22,6 +22,8 @@ export class ViajeEfectivoComponent implements OnInit {
   @Output() dataEvent = new EventEmitter<any>();
   //Define un formulario viaje  efectivo para validaciones de campos
   public formularioViajeEfectivo:FormGroup;
+  //Define el importe Total como un formControl
+  public importeTotal = new FormControl();
   //Define la lista de adelantos de efectivo (tabla)
   public listaEfectivos:Array<any> = [];
   public listaCompleta = new MatTableDataSource([]);
@@ -69,11 +71,16 @@ export class ViajeEfectivoComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
-  private listar(){
+  private listar(idViajeCabecera){
     this.loaderService.show();
-    console.log(this.formularioViajeEfectivo.value.viaje.id);
-    if(this.formularioViajeEfectivo.value.viaje.id){
-      this.servicio.listarEfectivos(this.formularioViajeEfectivo.value.viaje.id).subscribe(
+    let id;
+    console.log(this.formularioViajeEfectivo.value);
+    if(idViajeCabecera != undefined)
+      id=idViajeCabecera;
+      else
+       id=this.formularioViajeEfectivo.value.viaje.id;
+
+      this.servicio.listarEfectivos(id).subscribe(
         res=>{
           console.log("Efectivos: " + res.json());
           this.listaEfectivos = res.json();
@@ -86,7 +93,6 @@ export class ViajeEfectivoComponent implements OnInit {
           this.loaderService.hide();
         }
       );
-    }
   }
   //Obtiene el listado de empresas
   private listarEmpresas() {
@@ -107,7 +113,8 @@ export class ViajeEfectivoComponent implements OnInit {
       this.formularioViajeEfectivo.get('fechaCaja').setValue(res.json());
     })
     if(opcion == 1) {
-      this.formularioViajeEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales('0.00', 2));
+      // this.formularioViajeEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales('0.00', 2));
+      this.importeTotal.setValue(this.appServicio.establecerDecimales('0.00', 2));
     }
     this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
   }
@@ -117,17 +124,14 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajeEfectivo.get('tipoComprobante').setValue({id:16});
     this.formularioViajeEfectivo.get('sucursal').setValue(this.appServicio.getUsuario().sucursal);
     this.formularioViajeEfectivo.get('usuarioAlta').setValue(this.appServicio.getUsuario());
-    this.listaEfectivos.push(this.formularioViajeEfectivo.value);
+    let idViajeCabecera = this.formularioViajeEfectivo.value.viaje.id;
+    this.formularioViajeEfectivo.value.viaje = {id: idViajeCabecera};
     console.log(this.formularioViajeEfectivo.value);
     this.servicio.agregar(this.formularioViajeEfectivo.value).subscribe(
       res=>{
-        let resultado = res.json();
-        let viajeCabecera = resultado.viaje;
-        console.log(viajeCabecera);
         if (res.status == 201) {
-          this.formularioViajeEfectivo.reset();
-          this.formularioViajeEfectivo.value.viaje = viajeCabecera;
-          this.listar();
+          this.reestablecerFormulario();
+          this.listar(undefined);
           this.establecerValoresPorDefecto(0);
           this.enviarDatos();
           document.getElementById('idFechaCajaAE').focus();
@@ -144,20 +148,15 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Modifica los datos del Efectivo
   public modificarEfectivo(): void {
+    let idViajeCabecera = this.formularioViajeEfectivo.value.viaje.id;
+    this.formularioViajeEfectivo.value.viaje = {id: idViajeCabecera};
     this.servicio.actualizar(this.formularioViajeEfectivo.value).subscribe(
       res=>{
-        let resultado = res.json();
-        let viajeCabecera = resultado.viaje;
-        console.log(viajeCabecera);     
         if (res.status == 200) {
-          this.formularioViajeEfectivo.reset();
-          this.formularioViajeEfectivo.value.viaje = viajeCabecera;
-          this.listar();
+          this.reestablecerFormulario();
+          this.listar(undefined);
           this.establecerValoresPorDefecto(0);
-          // this.calcularImporteTotal();
-          this.enviarDatos();
           this.btnEfectivo = true;
-          // this.enviarDatos(); REVISAR SI LO PUEDO ELIMINAR
           document.getElementById('idFechaCajaAE').focus();
           this.toastr.success("Registro actualizado con éxito");
           this.loaderService.hide();
@@ -177,7 +176,7 @@ export class ViajeEfectivoComponent implements OnInit {
     let elemento = this.listaEfectivos[indice];
     elemento.importe = this.appServicio.establecerDecimales(elemento.importe, 2);
     this.formularioViajeEfectivo.patchValue(elemento);
-    this.formularioViajeEfectivo.get('importeTotal').setValue(0);
+    // this.formularioViajeEfectivo.get('importeTotal').setValue(0);
   }
   //Elimina un  efectivo de la tabla por indice
   public eliminarEfectivo(indice, elemento): void {
@@ -185,7 +184,6 @@ export class ViajeEfectivoComponent implements OnInit {
       this.listaEfectivos.splice(indice, 1);
       this.recargarListaCompleta(this.listaEfectivos);
       this.establecerValoresPorDefecto(0);
-      // this.calcularImporteTotal();
       this.enviarDatos();
     } else {
       this.loaderService.show();
@@ -195,12 +193,12 @@ export class ViajeEfectivoComponent implements OnInit {
           this.listaEfectivos.splice(indice, 1);
           this.recargarListaCompleta(this.listaEfectivos);
           this.establecerValoresPorDefecto(0);
-          // this.calcularImporteTotal();
           this.enviarDatos();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         },
         err => {
+          this.toastr.error("Error al eliminar el registro");
           this.loaderService.hide();
         });
     }
@@ -219,7 +217,8 @@ export class ViajeEfectivoComponent implements OnInit {
       console.log(item.importe);
       total += parseFloat(item.importe);
     });
-    this.formularioViajeEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
+    // this.formularioViajeEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
+    this.importeTotal.setValue(this.appServicio.establecerDecimales(total, 2));
   }
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
@@ -242,9 +241,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.viaje = viaje;
     this.formularioViajeEfectivo.get('viaje').patchValue(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
-    this.listar();
-    // this.calcularImporteTotal();
-    this.enviarDatos();
+    this.listar(undefined);
 
   }
   //Establece los campos solo lectura
@@ -274,7 +271,7 @@ export class ViajeEfectivoComponent implements OnInit {
   public cancelar(){
     this.reestablecerFormulario();
     this.formularioViajeEfectivo.get('viaje').setValue(this.viaje);
-    this.listar();
+    this.listar(undefined);
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
   }
@@ -306,9 +303,15 @@ export class ViajeEfectivoComponent implements OnInit {
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
-    let viaje= this.formularioViajeEfectivo.value.viaje;
+    let viaje;
+    if(this.formularioViajeEfectivo.value.viaje)
+      viaje= this.formularioViajeEfectivo.value.viaje;
+      else
+        viaje = this.appServicio.getViajeCabecera();
     this.formularioViajeEfectivo.reset();
     this.formularioViajeEfectivo.value.viaje = viaje;
+    console.log(this.formularioViajeEfectivo.value);
+    this.indiceEfectivo = null;
     this.btnEfectivo = true;
   }
   //Funcion para comparar y mostrar elemento de campo select

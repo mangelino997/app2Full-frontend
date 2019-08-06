@@ -52,7 +52,7 @@
         <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
         <input id="idPrecioUnitarioOC" type="text" formControlName="precioUnitario" autocomplete="off"
           (blur)="calcularImporte(formularioViajeCombustible)" class="form-control form-control-sm number-right"
-          placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)" [readonly]="soloLectura">
+          placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)" [readonly]="soloLectura || formularioViajeCombustible.get('precioUnitario').value != 0">
       </div>
     </div>
     <div class="col-md-3">
