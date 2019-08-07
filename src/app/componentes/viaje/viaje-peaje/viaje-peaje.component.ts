@@ -71,13 +71,15 @@ export class ViajePeajeComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
-  private listar(){
+  private listar(idViajeCabecera){
     this.loaderService.show();
-    console.log(this.formularioViajePeaje.value.viaje.id);
-    if(this.formularioViajePeaje.value.viaje.id){
-      this.servicio.listarPeajes(this.formularioViajePeaje.value.viaje.id).subscribe(
+    let id;
+    if(idViajeCabecera != undefined)
+      id=idViajeCabecera;
+      else
+       id=this.formularioViajePeaje.value.viaje.id;
+      this.servicio.listarPeajes(id).subscribe(
         res=>{
-          console.log("Peajes: " + res.json());
           this.listaPeajes = res.json();
           this.recargarListaCompleta(this.listaPeajes);
           this.loaderService.hide();
@@ -88,7 +90,7 @@ export class ViajePeajeComponent implements OnInit {
           this.loaderService.hide();
         }
       );
-    }
+    
   }
   //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
   private recargarListaCompleta(listaTramos){
@@ -98,7 +100,6 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Establece el viaje de guia de servicio (CABECERA)
   public establecerViaje(idViaje){
-    console.log(idViaje);
     this.formularioViajePeaje.get('viaje').setValue({id: idViaje});
   }
   //Establece los valores por defecto del formulario viaje gasto
@@ -119,19 +120,12 @@ export class ViajePeajeComponent implements OnInit {
   public agregarPeaje(): void {
     this.formularioViajePeaje.get('tipoComprobante').setValue({ id: 17 });
     this.formularioViajePeaje.get('usuarioAlta').setValue(this.appService.getUsuario());
-    console.log(this.formularioViajePeaje.value);
     this.servicio.agregar(this.formularioViajePeaje.value).subscribe(
       res=>{
-        let resultado = res.json();
-        let viajeCabecera = resultado.viaje;
-        console.log(viajeCabecera);
         if (res.status == 201) {
-          console.log(resultado);
           this.reestablecerFormulario();
-          this.formularioViajePeaje.value.viaje = viajeCabecera;
-          this.listar();
+          this.listar(undefined);
           this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
           document.getElementById('idProveedorP').focus();
           this.toastr.success("Registro agregado con éxito");
           this.loaderService.hide();
@@ -146,22 +140,21 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Modifica los datos del Peaje
   public modificarPeaje(): void {
+    let usuarioMod = this.appService.getUsuario();
+    this.formularioViajePeaje.value.usuarioMod = usuarioMod;
+    let idViajeCabecera = this.formularioViajePeaje.value.viaje.id;
+    this.formularioViajePeaje.value.viaje = {id: idViajeCabecera};
     this.servicio.actualizar(this.formularioViajePeaje.value).subscribe(
       res=>{
-        let resultado = res.json();
-        let viajeCabecera = resultado.viaje;
-        console.log(viajeCabecera);
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.formularioViajePeaje.value.viaje = viajeCabecera;
+          this.listar(undefined);
           this.establecerValoresPorDefecto(0);
           this.btnPeaje = true;
-          this.enviarDatos();
           document.getElementById('idProveedor').focus();
           this.toastr.success("Registro actualizado con éxito");
           this.loaderService.hide();
         }
-        this.listar();
       },  
       err=>{
         let error = err.json();
@@ -176,9 +169,6 @@ export class ViajePeajeComponent implements OnInit {
     this.btnPeaje = false;
     this.formularioViajePeaje.patchValue(this.listaPeajes[indice]);
     this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe,2));
-    // this.formularioViajePeaje.get('puntoVenta').setValue(this.establecerCerosIzqTabla(this.formularioViajePeaje.get('puntoVenta'), '0000', -5));
-    // this.formularioViajePeaje.get('numeroComprobante').setValue(this.establecerCerosIzqTabla(this.formularioViajePeaje.get('numeroComprobante'), '0000000', -8));
-    console.log(this.formularioViajePeaje.value);
   }
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(indice, elemento): void {
@@ -186,7 +176,6 @@ export class ViajePeajeComponent implements OnInit {
       this.listaPeajes.splice(indice, 1);
       this.recargarListaCompleta(this.listaPeajes);
       this.establecerValoresPorDefecto(0);
-      this.enviarDatos();
     } else {
       this.loaderService.show();
       this.servicio.eliminar(elemento.id).subscribe(
@@ -195,7 +184,6 @@ export class ViajePeajeComponent implements OnInit {
           this.listaPeajes.splice(indice, 1);
           this.recargarListaCompleta(this.listaPeajes);
           this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         },
@@ -204,7 +192,6 @@ export class ViajePeajeComponent implements OnInit {
         });
     }
     document.getElementById('idProveedorP').focus();
-    this.enviarDatos();
   }
   //Calcula el total de combustible y el total de urea
   private calcularImporteTotal(): void {
@@ -222,17 +209,13 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero cuando el elemento es un numerico
   public establecerCerosIzqTabla(elemento, string, cantidad) {
-    console.log(elemento.value.toString);
       elemento.setValue((string + elemento.value.toString()).slice(cantidad));
   }
   //Define como se muestran los ceros a la izquierda en tablas
   public mostrarCeros(elemento, string, cantidad) {
     return elemento ? (string + elemento).slice(cantidad) : elemento;
   }
-  //Envia la lista de tramos a Viaje
-  public enviarDatos(): void {
-    this.dataEvent.emit(this.listaPeajes);
-  }
+  
   //Establece la lista de efectivos
   public establecerLista(lista, viaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
@@ -240,8 +223,7 @@ export class ViajePeajeComponent implements OnInit {
     this.viaje = viaje;
     this.formularioViajePeaje.get('viaje').patchValue(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
-    this.listar();
-    this.enviarDatos();
+    this.listar(undefined);
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -270,7 +252,7 @@ export class ViajePeajeComponent implements OnInit {
   public cancelar(){
     this.reestablecerFormulario();
     this.formularioViajePeaje.get('viaje').setValue(this.viaje);
-    this.listar();
+    this.listar(undefined);
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorP').focus();
   }
@@ -304,7 +286,11 @@ export class ViajePeajeComponent implements OnInit {
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
-    let viaje= this.formularioViajePeaje.value.viaje;
+    let viaje;
+    if(this.formularioViajePeaje.value.viaje)
+      viaje= this.formularioViajePeaje.value.viaje;
+      else
+        viaje = this.appService.getViajeCabecera();
     this.formularioViajePeaje.reset();
     this.formularioViajePeaje.value.viaje = viaje;
     this.indicePeaje = null;

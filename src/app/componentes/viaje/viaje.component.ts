@@ -210,6 +210,7 @@ export class ViajeComponent implements OnInit {
   //Establece el formulario y listas al seleccionar un elemento del autocompletado
   public cambioAutocompletado(): void {
     let viaje = this.autocompletado.value;
+    this.appService.setViajeCabecera(viaje);
     this.idMod = this.autocompletado.value.id;
     this.servicio.obtenerPorId(viaje.id).subscribe(res => {
       let viajeRes = res.json();

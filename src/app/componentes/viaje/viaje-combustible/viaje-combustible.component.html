@@ -131,13 +131,14 @@
           </ng-container>
           <ng-container matColumnDef="mod" sticky >
             <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="modCombustible(i)"><span
-                class="cursor-color" *ngIf="!soloLectura">mod</span></td>
+            <td mat-cell *matCellDef="let elemento;  let i = index;" >
+              <span class="cursor-color" *ngIf="!soloLectura" (click)="modCombustible(i)">mod</span>
+            </td>
           </ng-container>
           <ng-container matColumnDef="eliminar" sticky >
               <th mat-header-cell *matHeaderCellDef>-</th>
-              <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="eliminarCombustible(i, elemento)"><span
-                  class="cursor-color-rojo" *ngIf="!soloLectura">X</span>
+              <td mat-cell *matCellDef="let elemento;  let i = index;" >
+                <span class="cursor-color-rojo" *ngIf="!soloLectura" (click)="eliminarCombustible(i, elemento)">X</span>
               </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>

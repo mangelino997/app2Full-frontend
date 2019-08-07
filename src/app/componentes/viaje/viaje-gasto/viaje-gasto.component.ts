@@ -19,8 +19,6 @@ import { ViajeGastoService } from 'src/app/servicios/viaje-gasto';
   styleUrls: ['./viaje-gasto.component.css']
 })
 export class ViajeGastoComponent implements OnInit {
-  //Evento que envia los datos del formulario a Viaje
-  @Output() dataEvent = new EventEmitter<any>();
   //Define un formulario viaje  gasto para validaciones de campos
   public formularioViajeGasto: FormGroup;
   //Define la lista de ordenes de gastos (tabla)
@@ -67,13 +65,16 @@ export class ViajeGastoComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
-  private listar(){
+  private listar(idViajeCabecera){
     this.loaderService.show();
-    console.log(this.formularioViajeGasto.value.viaje.id);
-    if(this.formularioViajeGasto.value.viaje.id){
-      this.servicio.listarGastos(this.formularioViajeGasto.value.viaje.id).subscribe(
+    let id;
+    if(idViajeCabecera != undefined)
+      id=idViajeCabecera;
+      else
+       id=this.formularioViajeGasto.value.viaje.id;
+    
+      this.servicio.listarGastos(id).subscribe(
         res=>{
-          console.log("Gastos: " + res.json());
           this.listaGastos = res.json();
           this.recargarListaCompleta(this.listaGastos);
           this.loaderService.hide();
@@ -84,7 +85,7 @@ export class ViajeGastoComponent implements OnInit {
           this.loaderService.hide();
         }
       );
-    }
+    
   }
   //Establece los valores por defecto del formulario viaje gasto
   public establecerValoresPorDefecto(opcion): void {
@@ -109,19 +110,12 @@ export class ViajeGastoComponent implements OnInit {
     let usuario = this.appComponent.getUsuario();
     this.formularioViajeGasto.get('sucursal').setValue(usuario.sucursal);
     this.formularioViajeGasto.get('usuarioAlta').setValue(usuario);
-    console.log(this.formularioViajeGasto.value);
     this.servicio.agregar(this.formularioViajeGasto.value).subscribe(
       res=>{
-        let resultado = res.json();
-        let viajeCabecera = resultado.viaje;
-        console.log(viajeCabecera);
         if (res.status == 201) {
-          console.log(resultado);
           this.reestablecerFormulario();
-          this.formularioViajeGasto.value.viaje = viajeCabecera;
-          this.listar();
+          this.listar(undefined);
           this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
           document.getElementById('idFechaG').focus();
           this.toastr.success("Registro agregado con éxito");
           this.loaderService.hide();
@@ -136,22 +130,21 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Modifica los datos del Gasto
   public modificarGasto(): void {
+    let usuarioMod = this.appService.getUsuario();
+    this.formularioViajeGasto.value.usuarioMod = usuarioMod;
+    let idViajeCabecera = this.formularioViajeGasto.value.viaje.id;
+    this.formularioViajeGasto.value.viaje = {id: idViajeCabecera};
     this.servicio.actualizar(this.formularioViajeGasto.value).subscribe(
       res=>{
-        let resultado = res.json();
-        let viajeCabecera = resultado.viaje;
-        console.log(viajeCabecera);
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.formularioViajeGasto.value.viaje = viajeCabecera;
+          this.listar(undefined);
           this.establecerValoresPorDefecto(0);
           this.btnGasto = true;
-          this.enviarDatos();
           document.getElementById('idFechaG').focus();
           this.toastr.success("Registro actualizado con éxito");
           this.loaderService.hide();
         }
-        this.listar();
       },  
       err=>{
         let error = err.json();
@@ -175,7 +168,6 @@ export class ViajeGastoComponent implements OnInit {
       this.listaGastos.splice(indice, 1);
       this.recargarListaCompleta(this.listaGastos);
       this.establecerValoresPorDefecto(0);
-      this.enviarDatos();
     } else {
       this.loaderService.show();
       this.servicio.eliminar(elemento.id).subscribe(res => {
@@ -183,7 +175,6 @@ export class ViajeGastoComponent implements OnInit {
           this.listaGastos.splice(indice, 1);
           this.recargarListaCompleta(this.listaGastos);
           this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         },
@@ -192,7 +183,6 @@ export class ViajeGastoComponent implements OnInit {
         });
     }
     document.getElementById('idFechaG').focus();
-    this.enviarDatos();
   }
   //Calcula el importe a partir de cantidad y precio unitario
   public calcularImporte(formulario): void {
@@ -213,10 +203,6 @@ export class ViajeGastoComponent implements OnInit {
     });
     this.formularioViajeGasto.get('importeTotal').setValue(importeTotal.toFixed(2));
   }
-  //Envia la lista de tramos a Viaje
-  public enviarDatos(): void {
-    this.dataEvent.emit(this.listaGastos);
-  }
   //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
   private recargarListaCompleta(listaTramos){
     this.listaCompleta = new MatTableDataSource(listaTramos);
@@ -230,8 +216,7 @@ export class ViajeGastoComponent implements OnInit {
     this.viaje = viaje;
     this.formularioViajeGasto.get('viaje').patchValue(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
-    this.listar();
-    this.enviarDatos();
+    this.listar(undefined);
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -260,13 +245,12 @@ export class ViajeGastoComponent implements OnInit {
   public cancelar(){
     this.reestablecerFormulario();
     this.formularioViajeGasto.get('viaje').setValue(this.viaje);
-    this.listar();
+    this.listar(undefined);
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaG').focus();
   }
   //Establece el viaje de guia de servicio (CABECERA)
   public establecerViaje(idViaje){
-    console.log(idViaje);
     this.formularioViajeGasto.get('viaje').setValue({id: idViaje});
   }
   //Establece selects solo lectura
@@ -298,10 +282,13 @@ export class ViajeGastoComponent implements OnInit {
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
-    let viaje= this.formularioViajeGasto.value.viaje;
+    let viaje;
+    if(this.formularioViajeGasto.value.viaje)
+      viaje= this.formularioViajeGasto.value.viaje;
+      else
+        viaje = this.appService.getViajeCabecera();
     this.formularioViajeGasto.reset();
     this.formularioViajeGasto.value.viaje = viaje;
-
     this.btnGasto = true;
   }
   //Funcion para comparar y mostrar elemento de campo select

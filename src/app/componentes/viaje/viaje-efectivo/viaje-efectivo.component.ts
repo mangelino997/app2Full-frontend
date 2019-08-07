@@ -18,8 +18,6 @@ import { ViajeEfectivoService } from 'src/app/servicios/viaje-efectivo';
   styleUrls: ['./viaje-efectivo.component.css']
 })
 export class ViajeEfectivoComponent implements OnInit {
-  //Evento que envia los datos del formulario a Viaje
-  @Output() dataEvent = new EventEmitter<any>();
   //Define un formulario viaje  efectivo para validaciones de campos
   public formularioViajeEfectivo:FormGroup;
   //Define el importe Total como un formControl
@@ -74,7 +72,6 @@ export class ViajeEfectivoComponent implements OnInit {
   private listar(idViajeCabecera){
     this.loaderService.show();
     let id;
-    console.log(this.formularioViajeEfectivo.value);
     if(idViajeCabecera != undefined)
       id=idViajeCabecera;
       else
@@ -82,7 +79,6 @@ export class ViajeEfectivoComponent implements OnInit {
 
       this.servicio.listarEfectivos(id).subscribe(
         res=>{
-          console.log("Efectivos: " + res.json());
           this.listaEfectivos = res.json();
           this.recargarListaCompleta(this.listaEfectivos);
           this.loaderService.hide();
@@ -126,14 +122,12 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajeEfectivo.get('usuarioAlta').setValue(this.appServicio.getUsuario());
     let idViajeCabecera = this.formularioViajeEfectivo.value.viaje.id;
     this.formularioViajeEfectivo.value.viaje = {id: idViajeCabecera};
-    console.log(this.formularioViajeEfectivo.value);
     this.servicio.agregar(this.formularioViajeEfectivo.value).subscribe(
       res=>{
         if (res.status == 201) {
           this.reestablecerFormulario();
           this.listar(undefined);
           this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
           document.getElementById('idFechaCajaAE').focus();
           this.toastr.success("Registro agregado con éxito");
           this.loaderService.hide();
@@ -148,6 +142,8 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Modifica los datos del Efectivo
   public modificarEfectivo(): void {
+    let usuarioMod = this.appServicio.getUsuario();
+    this.formularioViajeEfectivo.value.usuarioMod = usuarioMod;
     let idViajeCabecera = this.formularioViajeEfectivo.value.viaje.id;
     this.formularioViajeEfectivo.value.viaje = {id: idViajeCabecera};
     this.servicio.actualizar(this.formularioViajeEfectivo.value).subscribe(
@@ -176,7 +172,6 @@ export class ViajeEfectivoComponent implements OnInit {
     let elemento = this.listaEfectivos[indice];
     elemento.importe = this.appServicio.establecerDecimales(elemento.importe, 2);
     this.formularioViajeEfectivo.patchValue(elemento);
-    // this.formularioViajeEfectivo.get('importeTotal').setValue(0);
   }
   //Elimina un  efectivo de la tabla por indice
   public eliminarEfectivo(indice, elemento): void {
@@ -184,7 +179,6 @@ export class ViajeEfectivoComponent implements OnInit {
       this.listaEfectivos.splice(indice, 1);
       this.recargarListaCompleta(this.listaEfectivos);
       this.establecerValoresPorDefecto(0);
-      this.enviarDatos();
     } else {
       this.loaderService.show();
       this.servicio.eliminar(elemento.id).subscribe(
@@ -193,7 +187,6 @@ export class ViajeEfectivoComponent implements OnInit {
           this.listaEfectivos.splice(indice, 1);
           this.recargarListaCompleta(this.listaEfectivos);
           this.establecerValoresPorDefecto(0);
-          this.enviarDatos();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         },
@@ -203,26 +196,19 @@ export class ViajeEfectivoComponent implements OnInit {
         });
     }
     document.getElementById('idFechaCajaAE').focus();
-    this.enviarDatos();
   }
   //Establece el viaje de guia de servicio (CABECERA)
   public establecerViaje(idViaje){
-    console.log(idViaje);
     this.formularioViajeEfectivo.get('viaje').setValue({id: idViaje});
   }
   //Calcula el importe total para agregar
   private calcularImporteTotal(): void {
     let total = 0;
     this.listaEfectivos.forEach(item => {
-      console.log(item.importe);
       total += parseFloat(item.importe);
     });
     // this.formularioViajeEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
     this.importeTotal.setValue(this.appServicio.establecerDecimales(total, 2));
-  }
-  //Envia la lista de tramos a Viaje
-  public enviarDatos(): void {
-    this.dataEvent.emit(this.listaEfectivos);
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
@@ -234,7 +220,6 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Establece la lista de efectivos
   public establecerLista(lista, viaje, pestaniaViaje): void {
-    console.log(pestaniaViaje);
     this.establecerValoresPorDefecto(1);
     this.listaEfectivos = lista;
     this.recargarListaCompleta(this.listaEfectivos);
@@ -307,10 +292,9 @@ export class ViajeEfectivoComponent implements OnInit {
     if(this.formularioViajeEfectivo.value.viaje)
       viaje= this.formularioViajeEfectivo.value.viaje;
       else
-        viaje = this.appServicio.getViajeCabecera();
+        viaje = this.appServicio.getViajeCabecera();    
     this.formularioViajeEfectivo.reset();
     this.formularioViajeEfectivo.value.viaje = viaje;
-    console.log(this.formularioViajeEfectivo.value);
     this.indiceEfectivo = null;
     this.btnEfectivo = true;
   }
