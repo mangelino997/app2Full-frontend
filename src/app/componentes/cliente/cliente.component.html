@@ -279,9 +279,9 @@
                       <div class="form-group has-float-label">
                         <label for="idDescuentoFlete" class="tamanio-label">Descuento en Flete</label>
                         <input id="idDescuentoFlete" type="text" formControlName="descuentoFlete" autocomplete="off"
-                          class="form-control form-control-sm number-right" placeholder="$ 0.00"
-                          [readonly]="soloLectura" [textMask]="obtenerMascaraImporte(2, 2)"
-                          (blur)="setDecimales(formulario.get('descuentoFlete'), 2)">
+                          class="form-control form-control-sm number-right" placeholder="0.00 %" 
+                          [readonly]="soloLectura" [textMask]="obtenerMascaraPorcentaje()"
+                          (blur)="desenmascararPorcentaje(formulario.get('descuentoFlete'), 2)">
                       </div>
                     </div>
                     <div class="col-md-3">

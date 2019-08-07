@@ -289,7 +289,7 @@ export class ClienteComponent implements OnInit {
     let elemento = this.autocompletado.value;
     this.formulario.patchValue(elemento);
     this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
-    this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.establecerDecimales(elemento.descuentoFlete, 2) : null);
+    this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.desenmascararPorcentaje(elemento.descuentoFlete.toString(), 2) : null);
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
   }
   //Establece los valores por defecto
@@ -624,13 +624,7 @@ export class ClienteComponent implements OnInit {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
   }
-  //Formatea el numero a x decimales
-  public setDecimales(formulario, cantidad) {
-    let valor = formulario.value;
-    if(valor != '') {
-      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
-    }
-  }
+  
   //Manejo de colores de campos y labels con patron erroneo
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
@@ -688,7 +682,7 @@ export class ClienteComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
     this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
-    this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.establecerDecimales(elemento.descuentoFlete, 2) : null);
+    this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.desenmascararPorcentaje(elemento.descuentoFlete.toString(), 2) : null);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
@@ -696,7 +690,7 @@ export class ClienteComponent implements OnInit {
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
     this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
-    this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.establecerDecimales(elemento.descuentoFlete, 2) : null);
+    this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.desenmascararPorcentaje(elemento.descuentoFlete.toString(), 2) : null);
   }
   //Cambio de elemento seleccionado en condicion venta
   public cambioCondicionVenta() {
@@ -782,6 +776,22 @@ export class ClienteComponent implements OnInit {
   //Obtiene la mascara de importe
   public obtenerMascaraImporte(intLimite, decimalLimite) {
     return this.appService.mascararImporte(intLimite, decimalLimite);
+  }
+  //Obtiene la mascara de importe
+  public obtenerMascaraPorcentaje() {
+    return this.appService.mascararPorcentajeDosEnteros();
+  }
+  //Formatea el numero a x decimales
+  public setDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if(valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    }
+  }
+  //Establece los decimales de porcentaje
+  public desenmascararPorcentaje(formulario, cantidad): void {
+
+    formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

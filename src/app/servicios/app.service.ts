@@ -288,7 +288,7 @@ export class AppService {
     };
     return mascara;
   }
-  //Obtiene la mascara de porcentaje
+  //Obtiene la mascara de porcentaje (con la posibilidad de que tenga 3 enteros antes del punto)
   public mascararPorcentaje() {
     let mascara = {
       mask: createNumberMask({
@@ -296,6 +296,25 @@ export class AppService {
         suffix: '',
         thousandsSeparatorSymbol: ',',
         integerLimit: 3,
+        requireDecimal: true,
+        allowDecimal: true,
+        decimalLimit: 2,
+        decimalSymbol: '.',
+        allowLeadingZeroes: true,
+      }),
+      guide: false,
+      keepCharPositions: true
+    };
+    return mascara;
+  }
+  //Obtiene la mascara de porcentaje (acotado a maximo 99.99 %)
+  public mascararPorcentajeDosEnteros() {
+    let mascara = {
+      mask: createNumberMask({
+        prefix: '% ',
+        suffix: '',
+        thousandsSeparatorSymbol: ',',
+        integerLimit: 2,
         requireDecimal: true,
         allowDecimal: true,
         decimalLimit: 2,
