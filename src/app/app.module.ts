@@ -348,6 +348,8 @@ import { CompraComprobante } from './modelos/compra-comprobante';
 import { CompraComprobanteItem } from './modelos/compra-comprobante-item';
 import { CompraComprobantePercepcion } from './modelos/compra-comprobante-percepcion';
 import { CompraComprobantePercepcionJurisdiccion } from './modelos/compra-comprobante-percepcion-jurisdiccion';
+import { OrdenVentaCliente } from './modelos/ordenVentaCliente';
+import { OrdenVentaEmpresa } from './modelos/ordenVentaEmpresa';
 
 //Rutas
 const appRoutes: Routes = [
@@ -882,6 +884,8 @@ const stompConfig: StompConfig = {
     CompraComprobanteItem,
     CompraComprobantePercepcion,
     CompraComprobantePercepcionJurisdiccion,
+    OrdenVentaCliente,
+    OrdenVentaEmpresa,
     {
       provide: StompConfig,
       useValue: stompConfig

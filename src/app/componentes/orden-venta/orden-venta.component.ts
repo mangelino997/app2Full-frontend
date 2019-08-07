@@ -23,6 +23,7 @@ import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.se
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 import { EliminarModalComponent } from '../eliminar-modal/eliminar-modal.component';
 import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
+import { FechaService } from 'src/app/servicios/fecha.service';
 
 @Component({
   selector: 'app-orden-venta',
@@ -112,6 +113,8 @@ export class OrdenVentaComponent implements OnInit {
   public importeSecoPor:FormControl = new FormControl();
   //Define importes ref por
   public importeRefPor:FormControl = new FormControl();
+  //Define la Fecha Actual
+  public FECHA_ACTUAL: string = null;
   //Define la escala actual
   public escalaActual:any;
   //Define la cantidad de resultados que trae listaTarifasDeOrdVta
@@ -128,7 +131,7 @@ export class OrdenVentaComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private clienteServicio: ClienteService,
+    private toastr: ToastrService, private clienteServicio: ClienteService, private fechaService: FechaService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService, public dialog: MatDialog,
     private appService: AppService, private clienteOVService: ClienteOrdenVentaService,
     private ordenVenta: OrdenVenta, private ordenVentaServicio: OrdenVentaService,
@@ -152,6 +155,11 @@ export class OrdenVentaComponent implements OnInit {
           })
         }
       });
+      //Obtiene la Fecha Actual
+      this.fechaService.obtenerFecha().subscribe(res => {
+        this.FECHA_ACTUAL= res.json();
+        console.log(res.json());
+      });
      }
 
   ngOnInit() {
@@ -174,9 +182,6 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioTramo = this.ordenVentaTramo.formulario;
     //Obtiene la lista de Vendedores
     this.listarVendedores();
-    //Inicializa a tipoTarifa
-    this.tipoTarifa.setValue('porEscala');
-    this.cambioTipoTarifa();
     //Selecciona la pestania agregar por defecto
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado - Buscar por nombre cliente
@@ -306,8 +311,6 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioListar.get('empresa').setValue(empresa);
     else 
       this.formulario.get('empresa').setValue(empresa);
-    
-    console.log(this.formularioListar);
   }
   
   //Reestablecer campos
@@ -337,9 +340,15 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.formulario.get('seguro').setValue(this.appService.establecerDecimales('7', 2));
-    this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0', 2));
-    this.formulario.get('esContado').setValue(false);
+    console.log("est def");
+    //Inicializa valores para el formulario
+    this.formulario.get('seguro').setValue(this.appService.establecerDecimales('7.00', 2));
+    this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('esContado').setValue(true);
+    this.formulario.get('estaActiva').setValue(true);
+    //Inicializa a tipoTarifa
+    this.tipoTarifa.setValue('porEscala');
+    this.cambioTipoTarifa();
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarLista() {
@@ -416,17 +425,18 @@ export class OrdenVentaComponent implements OnInit {
   //Agrega una Orden de Venta
   public agregar() {
     this.loaderService.show();
+    console.log(this.formulario.value);
     this.ordenVentaServicio.agregar(this.formulario.value).subscribe(
       res => {
         var elemento = res.json();
         if (res.status == 201) {
+          this.habilitarFormTarifa(true);
+          this.recargarFormulario(elemento);
+          this.toastr.success("Registro agregado con éxito");
+          this.loaderService.hide();
           setTimeout(function () {
             document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
-          this.toastr.success("Registro agregado con éxito");
-          this.habilitarFormTarifa(true);
-          this.loaderService.hide();
-          this.recargarFormulario(elemento);
         }
       },
       err => {
@@ -540,13 +550,14 @@ export class OrdenVentaComponent implements OnInit {
   // }
   //Habilita o deshabilita el Formulario de Orden Venta Tarifa
   public habilitarFormTarifa(estado){
+    //Inicializa valores para formularioEscala y formularioTramo
+    this.formularioEscala.get('preciosDesde').setValue(this.FECHA_ACTUAL);
+    this.formularioTramo.get('preciosDesde').setValue(this.FECHA_ACTUAL);
     if(estado){
-      // this.formularioTarifa.get('tipoTarifa').enable();
       this.formularioTarifa.get('preciosDesde').enable();
+      this.formularioTarifa.get('preciosDesde').setValue(this.FECHA_ACTUAL);
       this.tipoTarifa.enable();
-      // this.listarOrdenVentaTarifas();
     }else{
-      // this.formularioTarifa.get('tipoTarifa').disable();
       this.formularioTarifa.get('preciosDesde').disable();
       this.tipoTarifa.disable();
     }
@@ -766,7 +777,7 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Obtiene la mascara de porcentaje
   public mascararPorcentaje() {
-    return this.appService.mascararPorcentaje();
+    return this.appService.mascararPorcentajeDosEnteros();
   }
   //Obtiene la mascara de porcentaje
   public mascararPorcentajePorMil() {
@@ -1447,7 +1458,7 @@ export class VerTarifaDialogo {
   }
   //Obtiene la mascara de porcentaje
   public mascararPorcentaje() {
-    return this.appService.mascararPorcentaje();
+    return this.appService.mascararPorcentajeDosEnteros();
   }
   //Obtiene la mascara de km
   public obtenerMascaraKm(intLimite) {

@@ -333,7 +333,7 @@ export class AppService {
         prefix: '‰ ',
         suffix: '',
         thousandsSeparatorSymbol: ',',
-        integerLimit: 3,
+        integerLimit: 2,
         requireDecimal: true,
         allowDecimal: true,
         decimalLimit: 2,
