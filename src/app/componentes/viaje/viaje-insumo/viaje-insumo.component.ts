@@ -101,10 +101,6 @@ export class ViajeInsumoComponent implements OnInit {
         }
       );
   }
-  //Establece el viaje de guia de servicio (CABECERA)
-  public establecerViaje(idViaje){
-    this.formularioViajeInsumo.get('viaje').setValue({id: idViaje});
-  }
   //Obtiene el listado de insumos
   private listarInsumos() {
     this.insumoProductoServicio.listarInsumos().subscribe(

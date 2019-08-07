@@ -109,7 +109,6 @@ export class ViajeEfectivoComponent implements OnInit {
       this.formularioViajeEfectivo.get('fechaCaja').setValue(res.json());
     })
     if(opcion == 1) {
-      // this.formularioViajeEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales('0.00', 2));
       this.importeTotal.setValue(this.appServicio.establecerDecimales('0.00', 2));
     }
     this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
@@ -196,10 +195,6 @@ export class ViajeEfectivoComponent implements OnInit {
         });
     }
     document.getElementById('idFechaCajaAE').focus();
-  }
-  //Establece el viaje de guia de servicio (CABECERA)
-  public establecerViaje(idViaje){
-    this.formularioViajeEfectivo.get('viaje').setValue({id: idViaje});
   }
   //Calcula el importe total para agregar
   private calcularImporteTotal(): void {

@@ -103,10 +103,6 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listaCompleta.sort = this.sort; 
     this.calcularTotalCombustibleYUrea();
   }
-  //Establece el viaje de guia de servicio (CABECERA)
-  public establecerViaje(idViaje){
-    this.formularioViajeCombustible.get('viaje').setValue({id: idViaje});
-  }
   //Establece los valores por defecto del formulario viaje combustible
   public establecerValoresPorDefecto(opcion): void {
     //Establece la fecha actual

@@ -98,10 +98,6 @@ export class ViajePeajeComponent implements OnInit {
     this.listaCompleta.sort = this.sort; 
     this.calcularImporteTotal();
   }
-  //Establece el viaje de guia de servicio (CABECERA)
-  public establecerViaje(idViaje){
-    this.formularioViajePeaje.get('viaje').setValue({id: idViaje});
-  }
   //Establece los valores por defecto del formulario viaje gasto
   public establecerValoresPorDefecto(opcion): void {
     this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));

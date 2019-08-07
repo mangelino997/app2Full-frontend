@@ -249,10 +249,6 @@ export class ViajeGastoComponent implements OnInit {
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaG').focus();
   }
-  //Establece el viaje de guia de servicio (CABECERA)
-  public establecerViaje(idViaje){
-    this.formularioViajeGasto.get('viaje').setValue({id: idViaje});
-  }
   //Establece selects solo lectura
   private establecerSelectsSoloLectura(opcion): void {
     if (opcion) {

@@ -214,9 +214,8 @@ export class ViajeComponent implements OnInit {
     this.idMod = this.autocompletado.value.id;
     this.servicio.obtenerPorId(viaje.id).subscribe(res => {
       let viajeRes = res.json();
-      console.log(this.autocompletado.value);
       this.formularioViaje.patchValue(viajeRes);
-       // Le paso el IndiceSeleccionado
+       // Le paso el IndiceSeleccionado, viaje, lista
       this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje, this.indiceSeleccionado);
       this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje, this.indiceSeleccionado);
       this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje, this.indiceSeleccionado);
@@ -231,9 +230,7 @@ export class ViajeComponent implements OnInit {
     let sucursal = this.appService.getUsuario().sucursal;
     let empresa = this.appService.getEmpresa();
     this.usuarioNombre.setValue(usuario.nombre);
-    console.log("entra a val def");
     this.tipoViaje.setValue(true);
-    console.log(this.formularioViaje.value, this.indiceSeleccionado, empresa);
     this.formularioViaje.get('esViajePropio').setValue(true);
     this.formularioViaje.get('esRemolquePropio').setValue(true);
     this.formularioViaje.get('sucursal').setValue(sucursal);
@@ -243,7 +240,6 @@ export class ViajeComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(res => {     //Establece la fecha actual
       this.formularioViaje.get('fecha').setValue(res.json());
     })
-    console.log(this.formularioViaje.value, this.indiceSeleccionado);
 
   }
   //Vacia la lista de resultados de autocompletados
@@ -266,11 +262,9 @@ export class ViajeComponent implements OnInit {
   private listarSucursales() {
     this.sucursalServicio.listar().subscribe(
       res => {
-        console.log(res.json());
         this.sucursales = res.json();
         this.render = true;
         this.establecerValoresPorDefecto();
-
       },
       err => {
         console.log(err);
@@ -279,7 +273,6 @@ export class ViajeComponent implements OnInit {
   }
   //Establece los campos select en solo lectura
   private establecerCamposSoloLectura(opcion): void {
-    console.log(opcion);
     if (opcion) {
       this.formularioViaje.get('esViajePropio').disable();
       this.formularioViaje.get('esRemolquePropio').disable();
@@ -298,7 +291,6 @@ export class ViajeComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.vaciarListas();
-    // this.establecerValoresPorDefecto();
     //Ejecuta los siguientes metodos solo cuando el componente esta incializado
     if(this.viajeTramoComponente){
       this.viajeTramoComponente.reestablecerFormulario();
@@ -329,7 +321,6 @@ export class ViajeComponent implements OnInit {
       this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
     // if (this.banderaSoloLectura) {
-    //   console.log(this.indiceSeleccionado);
     //   this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     //   this.viajeTramoComponente.vaciarListas();
     //   this.viajeCombustibleComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
@@ -343,9 +334,9 @@ export class ViajeComponent implements OnInit {
     //   this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     //   this.viajePeajeComponente.reestablecerFormularioYLista();
     // }
-    // setTimeout(function () {
-    //   document.getElementById(componente).focus();
-    // }, 20);
+    setTimeout(function () {
+      document.getElementById(componente).focus();
+    }, 20);
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -424,8 +415,6 @@ export class ViajeComponent implements OnInit {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
         this.formularioViaje.get('id').setValue(res.json());
-        // this.viajeRemitoGSComponente.listarTramos(res.json());
-
       },
       err => {
         console.log(err);
@@ -436,7 +425,6 @@ export class ViajeComponent implements OnInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -456,12 +444,6 @@ export class ViajeComponent implements OnInit {
         this.tipoViaje.disable();
       }
     }
-    // if(!this.estadoFormulario) {
-    //   this.formularioViaje.get('viajeTramos').reset();
-    // } else {
-    //   this.formularioViaje.get('viajeTramos').setValue($event);
-    // }
-    // this.viajeRemitoGSComponente.establecerListaTramos($event);
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {
@@ -506,21 +488,11 @@ export class ViajeComponent implements OnInit {
   public agregarViaje(){
     this.loaderService.show();
     this.idMod = null;
-    // this.tipoViaje.enable();
-    // let empresa = this.appService.getEmpresa();
-    // let vehiculo = this.formularioViaje.get('vehiculo').value;
-    // this.formularioViaje.get('empresa').setValue(vehiculo.empresa);
-    // this.formularioViaje.get('empresaEmision').setValue(empresa);
-    // this.formularioViaje.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
-    // let usuario = this.appService.getUsuario();
-    // this.formularioViaje.get('usuarioAlta').setValue(usuario);
-    console.log(this.formularioViaje.value);
     this.servicio.agregar(this.formularioViaje.value).subscribe(
       res => {
         let resultado = res.json();
         if (res.status == 201) {
           this.formularioViaje.patchValue(resultado);
-          // this.viajeTramoComponente.establecerViaje(this.formularioViaje.value.id);
           this.idMod = resultado.id;
           this.toastr.success("Registro agregado con éxito");
           this.loaderService.hide();
@@ -536,7 +508,6 @@ export class ViajeComponent implements OnInit {
   //Actualiza el viaje (CABECERA)
   public actualizarViaje(){
     this.loaderService.show();
-    // this.tipoViaje.enable();
     this.establecerCamposSoloLectura(false);
     this.servicio.actualizar(this.formularioViaje.value).subscribe(
       res => {
@@ -585,14 +556,6 @@ export class ViajeComponent implements OnInit {
         this.viajePeajeComponente.establecerFoco();
         break;
     }
-  }
-  //Reestablece el formulario
-  private reestablecerFormulario(id) {
-    // this.formularioViaje.reset();
-    this.formularioViaje.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
-    this.idMod = null;
-    this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -645,7 +608,6 @@ export class ViajeComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    console.log(elemento);
     this.appService.setViajeCabecera(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
