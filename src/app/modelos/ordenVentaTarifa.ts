@@ -12,7 +12,7 @@ export class OrdenVentaTarifa {
             ordenVenta: new FormControl(),
             tipoTarifa: new FormControl('', Validators.required),
             listaOrdenVentaEscala: new FormControl(),
-            listaOrdenVentaTarifa: new FormControl(),
+            listaOrdenVentaTramo: new FormControl(),
 
         })
     }

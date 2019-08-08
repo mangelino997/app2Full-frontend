@@ -39,6 +39,8 @@ export class ViajeCombustibleComponent implements OnInit {
   public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
   public viaje: any;
+  //Define el viaje Cabecera
+  public VIAJE_CABECERA: any;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -76,15 +78,15 @@ export class ViajeCombustibleComponent implements OnInit {
     //Establece los valores por defecto del formulario viaje combustible
     this.establecerValoresPorDefecto(1);
   }
+  //Establece el id del viaje de Cabecera
+  public establecerViajeCabecera(viajeCabecera){
+    this.VIAJE_CABECERA = viajeCabecera;
+    console.log(this.VIAJE_CABECERA);
+  }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
-  private listar(idViajeCabecera){
+  private listar(){
     this.loaderService.show();
-    let id;
-    if(idViajeCabecera != undefined)
-      id=idViajeCabecera;
-      else
-       id=this.formularioViajeCombustible.value.viaje.id;
-      this.servicio.listarCombustibles(id).subscribe(
+      this.servicio.listarCombustibles(this.VIAJE_CABECERA.id).subscribe(
         res=>{
           this.listaCombustibles = res.json();
           this.recargarListaCompleta(this.listaCombustibles);
@@ -179,13 +181,13 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajeCombustible.get('tipoComprobante').setValue({ id: 15 });
     this.formularioViajeCombustible.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajeCombustible.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    let idViajeCabecera = this.formularioViajeCombustible.value.viaje.id;
+    let idViajeCabecera = this.VIAJE_CABECERA.id;
     this.formularioViajeCombustible.value.viaje = {id: idViajeCabecera};
     this.servicio.agregar(this.formularioViajeCombustible.value).subscribe(
       res=>{
         if (res.status == 201) {
           this.reestablecerFormulario();
-          this.listar(undefined);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           document.getElementById('idProveedorOC').focus();
           this.toastr.success("Registro agregado con éxito");
@@ -203,13 +205,13 @@ export class ViajeCombustibleComponent implements OnInit {
   public modificarCombustible(): void {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeCombustible.value.usuarioMod = usuarioMod;
-    let idViajeCabecera = this.formularioViajeCombustible.value.viaje.id;
+    let idViajeCabecera = this.VIAJE_CABECERA.id;
     this.formularioViajeCombustible.value.viaje = {id: idViajeCabecera};
     this.servicio.actualizar(this.formularioViajeCombustible.value).subscribe(
       res=>{
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.listar(undefined);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           this.btnCombustible = true;
           document.getElementById('idProveedorOC').focus();
@@ -276,7 +278,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.reestablecerFormulario();
     this.formularioViajeCombustible.reset();
     this.formularioViajeCombustible.get('viaje').setValue(this.viaje);
-    this.listar(undefined);
+    this.listar();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
   }
@@ -294,8 +296,9 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listaCombustibles = lista;
     this.recargarListaCompleta(this.listaCombustibles);
     this.formularioViajeCombustible.get('viaje').patchValue(viaje);
+    this.establecerViajeCabecera(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
-    this.listar(undefined);
+    this.listar();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -343,14 +346,8 @@ export class ViajeCombustibleComponent implements OnInit {
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
-    let viaje;
-    if(this.formularioViajeCombustible.value.viaje)
-      viaje= this.formularioViajeCombustible.value.viaje;
-      else
-        viaje = this.appServicio.getViajeCabecera();
-    viaje = this.appServicio.getViajeCabecera();
     this.formularioViajeCombustible.reset();
-    this.formularioViajeCombustible.value.viaje = viaje;
+    this.formularioViajeCombustible.value.viaje = this.VIAJE_CABECERA;
     this.indiceCombustible = null;
     this.btnCombustible = true;
   }

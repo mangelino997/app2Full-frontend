@@ -145,7 +145,7 @@
                                         [matAutocomplete]="autoChofer" autocomplete="off"
                                         [readonly]="soloLecturaCabecera" (blur)="establecerViajeCabecera()"
                                         placeholder="Buscar por N° Legajo, Nombre o Num. Doc." >
-                                    <mat-autocomplete #autoChofer="matAutocomplete"
+                                    <mat-autocomplete #autoChofer="matAutocomplete" 
                                         [displayWith]="displayFn.bind(this)">
                                         <mat-option *ngFor="let itemChofer of resultadosChoferes" [value]="itemChofer">
                                             {{itemChofer.alias}}

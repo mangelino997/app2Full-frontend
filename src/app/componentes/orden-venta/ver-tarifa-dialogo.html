@@ -2,6 +2,16 @@
     <h5>Lista de Precios - {{tipoTarifa=='porEscala'? 'Por Escala': 'Por Tramo'}} - Tarifa: {{ordenVentaTarifa.tipoTarifa.nombre}}</h5>
     <div class="col-md-12 text-center">
         <!--Formulario para Orden Venta Tarifa por Escala-->
+          <div class="row"> 
+            <div class="col"></div>
+            <div class="col-md-3"  >
+              <div class="form-group has-float-label" >
+                <label for="idPreciosDesde" class="tamanio-label">Precios Desde </label>
+                <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" 
+                  class="form-control form-control-sm" readonly>
+              </div>
+            </div>
+          </div>
           <div class="row" *ngIf="tipoTarifa == 'porEscala'"> 
             <div class="col-md-12">
               <form [formGroup]="formularioEscala">
@@ -19,8 +29,9 @@
                 </div>
                 <div class="col-md-2">
                   <div class="form-group has-float-label">
-                    <label for="idImportePor" class="tamanio-label">Importes por: *</label>
+                    <label for="idImportePor" class="tamanio-label">Importe Por: *</label>
                     <mat-select id="idImportePor" class="form-control form-control-sm" [formControl]="importePor"
+                      [disabled]="ordenVentaTarifa.tipoTarifa.porPorcentaje"
                       (selectionChange)="cambioImportesPor()" required>
                       <mat-option [value]="false">Precio Fijo</mat-option>
                       <mat-option [value]="true">Precio Unitario</mat-option>
@@ -30,7 +41,8 @@
                 <div class="col-md-2" >
                   <div class="form-group has-float-label">
                     <label for="idImporteFijo" class="tamanio-label">Precio Fijo <span *ngIf="importePor">*</span></label>
-                    <input id="idImporteFijo" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
+                    <input id="idImporteFijo" [textMask]="mascaraImporte(10, 2)" 
+                      [readOnly]="soloLectura || ordenVentaTarifa.tipoTarifa.porPorcentaje"
                       class="form-control form-control-sm number-right" formControlName="importeFijo" placeholder="$ 0.00"
                       type="text" autocomplete="off" (blur)="setDecimales(formularioEscala.get('importeFijo'), 2)" required>
                   </div>
@@ -40,7 +52,8 @@
                     <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario <span
                         *ngIf="!importePor">*</span></label>
                     <input id="idPrecioUnitario" [textMask]="mascaraImporte(10, 2)" formControlName="precioUnitario"
-                      type="text" autocomplete="off" class="form-control form-control-sm number-right" [readOnly]="soloLectura"
+                      type="text" autocomplete="off" class="form-control form-control-sm number-right" 
+                      [readOnly]="soloLectura || ordenVentaTarifa.tipoTarifa.porPorcentaje"
                       (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)" placeholder="$ 0.00" required>
                   </div>
                 </div>
@@ -54,11 +67,12 @@
                       (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" >
                   </div>
                 </div>
-                <div class="col" >
+                <div class="col-md-2" >
                   <div class="form-group has-float-label">
                     <label for="idMinimo" class="tamanio-label">Mínimo </label>
                     <input id="idMinimo" [textMask]="mascaraImporte(10, 2)" formControlName="minimo" type="text"
-                      autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)" [readOnly]="soloLectura"
+                      autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)"
+                      [readOnly]="soloLectura || ordenVentaTarifa.tipoTarifa.porPorcentaje"
                       class="form-control form-control-sm number-right" placeholder="$ 0.00" >
                   </div>
                 </div>

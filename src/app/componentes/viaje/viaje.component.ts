@@ -617,7 +617,13 @@ export class ViajeComponent implements OnInit {
   }
   //Establece los valores del viaje en viajeCabecera del appService
   public establecerViajeCabecera(){
-    this.appService.setViajeCabecera(this.formularioViaje.value);
+    this.viajeTramoComponente.establecerViajeCabecera(this.formularioViaje.value);
+    this.viajeCombustibleComponente.establecerViajeCabecera(this.formularioViaje.value);
+    this.viajeEfectivoComponente.establecerViajeCabecera(this.formularioViaje.value);
+    this.viajeGastoComponente.establecerViajeCabecera(this.formularioViaje.value);
+    this.viajeInsumoComponente.establecerViajeCabecera(this.formularioViaje.value);
+    this.viajePeajeComponente.establecerViajeCabecera(this.formularioViaje.value);
+
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

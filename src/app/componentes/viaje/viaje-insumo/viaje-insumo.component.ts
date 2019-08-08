@@ -41,6 +41,8 @@ export class ViajeInsumoComponent implements OnInit {
   public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
   public viaje: any;
+  //Define el viaje Cabecera
+  public VIAJE_CABECERA: any;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -79,16 +81,15 @@ export class ViajeInsumoComponent implements OnInit {
     //Establece los valores por defecto
     this.establecerValoresPorDefecto(1);
   }
+  //Establece el id del viaje de Cabecera
+  public establecerViajeCabecera(viajeCabecera){
+    this.VIAJE_CABECERA = viajeCabecera;
+    console.log(this.VIAJE_CABECERA);
+  }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
-  private listar(idViajeCabecera){
+  private listar(){
     this.loaderService.show();
-    let id;
-    if(idViajeCabecera != undefined)
-      id=idViajeCabecera;
-      else
-       id=this.formularioViajeInsumo.value.viaje.id;
-
-      this.servicio.listarInsumos(id).subscribe(
+      this.servicio.listarInsumos(this.VIAJE_CABECERA.id).subscribe(
         res=>{
           this.listaInsumos = res.json();
           this.recargarListaCompleta(this.listaInsumos);
@@ -162,13 +163,13 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajeInsumo.get('tipoComprobante').setValue({ id: 18 });
     this.formularioViajeInsumo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajeInsumo.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    let idViajeCabecera = this.formularioViajeInsumo.value.viaje.id;
+    let idViajeCabecera = this.VIAJE_CABECERA.id;
     this.formularioViajeInsumo.value.viaje = {id: idViajeCabecera};
     this.servicio.agregar(this.formularioViajeInsumo.value).subscribe(
       res=>{
         if (res.status == 201) {
           this.reestablecerFormulario();
-          this.listar(undefined);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           document.getElementById('idProveedor').focus();
           this.toastr.success("Registro agregado con éxito");
@@ -186,7 +187,7 @@ export class ViajeInsumoComponent implements OnInit {
   public modificarInsumo(): void {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeInsumo.value.usuarioMod = usuarioMod;
-    let idViajeCabecera = this.formularioViajeInsumo.value.viaje.id;
+    let idViajeCabecera = this.VIAJE_CABECERA.id;
     this.formularioViajeInsumo.value.viaje = {id: idViajeCabecera};
     this.servicio.actualizar(this.formularioViajeInsumo.value).subscribe(
       res=>{
@@ -194,7 +195,7 @@ export class ViajeInsumoComponent implements OnInit {
         let viajeCabecera = resultado.viaje;
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.listar(undefined);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           this.btnInsumo = true;
           document.getElementById('idProveedor').focus();
@@ -258,8 +259,9 @@ export class ViajeInsumoComponent implements OnInit {
     this.recargarListaCompleta(this.listaInsumos);
     this.viaje = viaje;
     this.formularioViajeInsumo.get('viaje').patchValue(viaje);
+    this.establecerViajeCabecera(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
-    this.listar(undefined);
+    this.listar();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -288,7 +290,7 @@ export class ViajeInsumoComponent implements OnInit {
   public cancelar(){
     this.reestablecerFormulario();
     this.formularioViajeInsumo.get('viaje').setValue(this.viaje);
-    this.listar(undefined);
+    this.listar();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedor').focus();
   }
@@ -329,13 +331,8 @@ export class ViajeInsumoComponent implements OnInit {
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
-    let viaje;
-    if(this.formularioViajeInsumo.value.viaje)
-      viaje= this.formularioViajeInsumo.value.viaje;
-      else
-        viaje = this.appServicio.getViajeCabecera();
     this.formularioViajeInsumo.reset();
-    this.formularioViajeInsumo.value.viaje = viaje;
+    this.formularioViajeInsumo.value.viaje = this.VIAJE_CABECERA;
     this.indiceInsumo = null;
     this.btnInsumo = true;
   }

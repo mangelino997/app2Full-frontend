@@ -36,6 +36,8 @@ export class ViajePeajeComponent implements OnInit {
   public indiceSeleccionado:number = 1;
   //Define el viaje actual de los tramos
   public viaje:any;
+  //Define el viaje Cabecera
+  public VIAJE_CABECERA: any;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -70,15 +72,15 @@ export class ViajePeajeComponent implements OnInit {
     //Establece los valores por defecto del formulario viaje peaje
     this.establecerValoresPorDefecto(1);
   }
+  //Establece el id del viaje de Cabecera
+  public establecerViajeCabecera(viajeCabecera){
+    this.VIAJE_CABECERA = viajeCabecera;
+    console.log(this.VIAJE_CABECERA);
+  }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
-  private listar(idViajeCabecera){
+  private listar(){
     this.loaderService.show();
-    let id;
-    if(idViajeCabecera != undefined)
-      id=idViajeCabecera;
-      else
-       id=this.formularioViajePeaje.value.viaje.id;
-      this.servicio.listarPeajes(id).subscribe(
+      this.servicio.listarPeajes(this.VIAJE_CABECERA.id).subscribe(
         res=>{
           this.listaPeajes = res.json();
           this.recargarListaCompleta(this.listaPeajes);
@@ -120,7 +122,7 @@ export class ViajePeajeComponent implements OnInit {
       res=>{
         if (res.status == 201) {
           this.reestablecerFormulario();
-          this.listar(undefined);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           document.getElementById('idProveedorP').focus();
           this.toastr.success("Registro agregado con éxito");
@@ -138,13 +140,13 @@ export class ViajePeajeComponent implements OnInit {
   public modificarPeaje(): void {
     let usuarioMod = this.appService.getUsuario();
     this.formularioViajePeaje.value.usuarioMod = usuarioMod;
-    let idViajeCabecera = this.formularioViajePeaje.value.viaje.id;
+    let idViajeCabecera = this.VIAJE_CABECERA.id;
     this.formularioViajePeaje.value.viaje = {id: idViajeCabecera};
     this.servicio.actualizar(this.formularioViajePeaje.value).subscribe(
       res=>{
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.listar(undefined);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           this.btnPeaje = true;
           document.getElementById('idProveedor').focus();
@@ -218,8 +220,9 @@ export class ViajePeajeComponent implements OnInit {
     this.listaPeajes = lista;
     this.viaje = viaje;
     this.formularioViajePeaje.get('viaje').patchValue(viaje);
+    this.establecerViajeCabecera(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
-    this.listar(undefined);
+    this.listar();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -248,7 +251,7 @@ export class ViajePeajeComponent implements OnInit {
   public cancelar(){
     this.reestablecerFormulario();
     this.formularioViajePeaje.get('viaje').setValue(this.viaje);
-    this.listar(undefined);
+    this.listar();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorP').focus();
   }
@@ -282,13 +285,8 @@ export class ViajePeajeComponent implements OnInit {
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
-    let viaje;
-    if(this.formularioViajePeaje.value.viaje)
-      viaje= this.formularioViajePeaje.value.viaje;
-      else
-        viaje = this.appService.getViajeCabecera();
     this.formularioViajePeaje.reset();
-    this.formularioViajePeaje.value.viaje = viaje;
+    this.formularioViajePeaje.value.viaje = this.VIAJE_CABECERA;
     this.indicePeaje = null;
     this.btnPeaje = true;
   }

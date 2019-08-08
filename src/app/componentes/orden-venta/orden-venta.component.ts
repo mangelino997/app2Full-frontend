@@ -935,6 +935,8 @@ export class VerTarifaDialogo {
   public tipoTarifa: string = null;
   //Define la Orden Venta como un FormControl
   public ordenVenta = new FormControl();
+  //Define la Fecha Actual como un FormControl
+  public preciosDesde = new FormControl();
   //Define la Orden Venta Tarifa
   public ordenVentaTarifa: any=null;
   //Define importes por
@@ -983,6 +985,7 @@ export class VerTarifaDialogo {
     //Inicializa valores
     this.ordenVentaTarifa = this.data.ordenVentaTarifa;
     this.ordenVenta.setValue(this.ordenVentaTarifa.ordenVenta);
+    this.preciosDesde.setValue(this.data.fechaActual);
     //Inicializa el Formulario 
     this.formularioEscala = this.ordenVentaEscala.formulario;
     this.formularioTramo = this.ordenVentaTramo.formulario;
@@ -1104,34 +1107,41 @@ export class VerTarifaDialogo {
   //Obtiene la lista de registros segun el tipoTarifa
   public listar(){
     this.loaderService.show();
+    console.log(this.ordenVentaTarifa);
     if(this.tipoTarifa == 'porEscala'){
-      this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
-        res=>{
-          console.log(res.json());
-          this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;
-          this.loaderService.hide();
-        },
-        err=>{
-          let error= err.json();
-          this.toastr.error(error.mensaje);
-          this.loaderService.hide();
-        }
-      )
+      this.listaCompleta = new MatTableDataSource(this.ordenVentaTarifa.listaOrdenVentaEscala);
+      this.listaCompleta.sort = this.sort;
+      this.loaderService.hide();
+      // this.ordenVentaEscalaService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
+      //   res=>{
+      //     console.log(res.json());
+      //     this.listaCompleta = new MatTableDataSource(res.json());
+      //     this.listaCompleta.sort = this.sort;
+      //     this.loaderService.hide();
+      //   },
+      //   err=>{
+      //     let error= err.json();
+      //     this.toastr.error(error.mensaje);
+      //     this.loaderService.hide();
+      //   }
+      // )
     }
     if(this.tipoTarifa == 'porTramo'){
-      this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
-        res=>{
-          this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;
-          this.loaderService.hide();
-        },
-        err=>{
-          let error= err.json();
-          this.toastr.error(error.mensaje);
-          this.loaderService.hide();
-        }
-      )
+      this.listaCompleta = new MatTableDataSource(this.ordenVentaTarifa.listaOrdenVentaTramo);
+      this.listaCompleta.sort = this.sort;
+      this.loaderService.hide();
+      // this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
+      //   res=>{
+      //     this.listaCompleta = new MatTableDataSource(res.json());
+      //     this.listaCompleta.sort = this.sort;
+      //     this.loaderService.hide();
+      //   },
+      //   err=>{
+      //     let error= err.json();
+      //     this.toastr.error(error.mensaje);
+      //     this.loaderService.hide();
+      //   }
+      // )
     }
   }
   //Elimina un registro segun el tipoTarifa
@@ -1237,12 +1247,15 @@ export class VerTarifaDialogo {
     this.formularioEscala.get('porcentaje').setValue(null);
     // this.formularioEscala.get('minimo').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formularioEscala.get('minimo').setValue(null);
+    this.formularioEscala.get('preciosDesde').setValue(this.data.fechaActual);
 
     this.formularioTramo.get('ordenVentaTarifa').setValue(this.ordenVentaTarifa);
     this.formularioTramo.get('importeFijoSeco').setValue('0.00');
     this.formularioTramo.get('importeFijoRef').setValue('0.00');
     this.formularioTramo.get('precioUnitarioSeco').setValue('0.00');
     this.formularioTramo.get('precioUnitarioRef').setValue('0.00');
+    this.formularioTramo.get('preciosDesde').setValue(this.data.fechaActual);
+
 
     if(this.indiceSeleccionado==2 || this.indiceSeleccionado == 4){
       this.soloLectura = true;

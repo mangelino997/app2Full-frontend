@@ -36,6 +36,8 @@ export class ViajeGastoComponent implements OnInit {
   public indiceSeleccionado: number = 1;
   //Define el viaje actual de los tramos
   public viaje: any;
+  //Define el viaje Cabecera
+  public VIAJE_CABECERA: any;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -64,16 +66,15 @@ export class ViajeGastoComponent implements OnInit {
     //Establece los valores por defecto del formulario viaje gasto
     this.establecerValoresPorDefecto(1);
   }
+  //Establece el id del viaje de Cabecera
+  public establecerViajeCabecera(viajeCabecera){
+    this.VIAJE_CABECERA = viajeCabecera;
+    console.log(this.VIAJE_CABECERA);
+  }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar(idViajeCabecera){
     this.loaderService.show();
-    let id;
-    if(idViajeCabecera != undefined)
-      id=idViajeCabecera;
-      else
-       id=this.formularioViajeGasto.value.viaje.id;
-    
-      this.servicio.listarGastos(id).subscribe(
+      this.servicio.listarGastos(this.VIAJE_CABECERA.id).subscribe(
         res=>{
           this.listaGastos = res.json();
           this.recargarListaCompleta(this.listaGastos);
@@ -132,7 +133,7 @@ export class ViajeGastoComponent implements OnInit {
   public modificarGasto(): void {
     let usuarioMod = this.appService.getUsuario();
     this.formularioViajeGasto.value.usuarioMod = usuarioMod;
-    let idViajeCabecera = this.formularioViajeGasto.value.viaje.id;
+    let idViajeCabecera = this.VIAJE_CABECERA.id;
     this.formularioViajeGasto.value.viaje = {id: idViajeCabecera};
     this.servicio.actualizar(this.formularioViajeGasto.value).subscribe(
       res=>{
@@ -215,6 +216,7 @@ export class ViajeGastoComponent implements OnInit {
     this.listaGastos = lista;
     this.viaje = viaje;
     this.formularioViajeGasto.get('viaje').patchValue(viaje);
+    this.establecerViajeCabecera(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar(undefined);
   }
@@ -278,13 +280,8 @@ export class ViajeGastoComponent implements OnInit {
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
-    let viaje;
-    if(this.formularioViajeGasto.value.viaje)
-      viaje= this.formularioViajeGasto.value.viaje;
-      else
-        viaje = this.appService.getViajeCabecera();
     this.formularioViajeGasto.reset();
-    this.formularioViajeGasto.value.viaje = viaje;
+    this.formularioViajeGasto.value.viaje = this.VIAJE_CABECERA;
     this.btnGasto = true;
   }
   //Funcion para comparar y mostrar elemento de campo select

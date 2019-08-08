@@ -96,7 +96,7 @@
                 <label for="idTramoCantidad" class="tamanio-label">Cantidad *</label>
                 <input id="idTramoCantidad" [textMask]="mascararEnteros(4)" type="text" formControlName="cantidad"
                     autocomplete="off" class="form-control form-control-sm number-right"
-                    [readonly]="soloLectura"
+                    [readonly]="soloLectura || formularioViajeTramo.get('viajeTarifa').value==1"
                     (blur)="calcularImporte(formularioViajeTramo, null, null)" placeholder="0">
             </div>
         </div>
@@ -105,7 +105,7 @@
                 <label for="idTramoPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
                 <input id="idTramoPrecioUnitario" [textMask]="mascararImporte(8, 3)" type="text"
                     formControlName="precioUnitario" autocomplete="off"
-                    class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                    class="form-control form-control-sm number-right" [readonly]="soloLectura || formularioViajeTramo.get('viajeTarifa').value==1"
                     placeholder="$ 0.000"
                     (blur)="calcularImporte(formularioViajeTramo, formularioViajeTramo.get('precioUnitario'), 3)">
             </div>
