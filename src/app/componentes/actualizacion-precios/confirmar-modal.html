@@ -1,5 +1,5 @@
 <div class="row justify-content-center contenedor">
-  <div class="col-md-12 text-center">
+  <div class="col-md-12 text-center" *ngIf="formulario">
     <h5>¿Está seguro que desea realizar los siguientes cambios?</h5>
     <h6>La nueva fecha desde será: {{formulario[0].preciosDesde | date: 'dd/MM/yyyy'}}</h6>
     <div class="row" *ngIf="!porEscala">
@@ -89,5 +89,18 @@
     </div>
     <button mat-raised-button color="accent" (click)="dialogRef.close()">No</button>
     <button mat-raised-button color="primary" (click)="actualizar()" [mat-dialog-close]="1">Si</button>
+  </div>
+  <div class="col-md-12 text-center" *ngIf="!formulario">
+    <div class="row">
+      <div class="col  text-center">
+          <h5>¿Está seguro?</h5>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+        <button mat-raised-button color="accent" (click)="dialogRef.close()">No</button>
+        <button mat-raised-button color="primary" [mat-dialog-close]="1">Si</button>
+      </div>
+    </div>
   </div>
 </div>

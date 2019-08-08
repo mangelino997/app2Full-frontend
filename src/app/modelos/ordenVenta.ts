@@ -1,6 +1,9 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { OrdenVentaEmpresa } from './ordenVentaEmpresa';
 import { OrdenVentaCliente } from './ordenVentaCliente';
+import { Injectable } from '@angular/core';
+@Injectable()
+
 //Define la entidad de la base de datos.
 export class OrdenVenta {
     //define un formulario FormGroup

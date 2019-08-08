@@ -24,6 +24,7 @@ import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSort, MatTableDataSource }
 import { EliminarModalComponent } from '../eliminar-modal/eliminar-modal.component';
 import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
+import { ConfimarDialogo } from '../actualizacion-precios/actualizacion-precios.component';
 
 @Component({
   selector: 'app-orden-venta',
@@ -49,6 +50,8 @@ export class OrdenVentaComponent implements OnInit {
   public listaDeEscalas: Array<any> = [];
   //Define la lista para los tramos agregados
   public listaDeTramos: Array<any> = [];
+  //Define la lista para Tarifas
+  public listaDeTarifas: Array<any> = [];
   //Define la lista de pestanias
   public pestanias = null;
   //Define un formulario para validaciones de campos
@@ -113,8 +116,6 @@ export class OrdenVentaComponent implements OnInit {
   public importeSecoPor:FormControl = new FormControl();
   //Define importes ref por
   public importeRefPor:FormControl = new FormControl();
-  //Define la Fecha Actual
-  public FECHA_ACTUAL: string = null;
   //Define la escala actual
   public escalaActual:any;
   //Define la cantidad de resultados que trae listaTarifasDeOrdVta
@@ -124,7 +125,7 @@ export class OrdenVentaComponent implements OnInit {
   //Bandera boolean para determinar si modifica o agrega un atarifa
   public btnActualizarTarifa: boolean= false;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'tarifa', 'escala', 'porPorcentaje', 'precioDesde', 'ver', 'mod', 'eliminar'];
+  public columnas: string[] = ['id', 'tarifa', 'escala', 'porPorcentaje', 'ver', 'eliminar'];
   //Define las columnas de la tabla para la pestaña LISTAR
   public columnasListar: string[] = ['id', 'descripcion', 'vendedor', 'seguro', 'cr', 'esContado', 'mod'];
   //Define la matSort
@@ -155,11 +156,6 @@ export class OrdenVentaComponent implements OnInit {
           })
         }
       });
-      //Obtiene la Fecha Actual
-      this.fechaService.obtenerFecha().subscribe(res => {
-        this.FECHA_ACTUAL= res.json();
-        console.log(res.json());
-      });
      }
 
   ngOnInit() {
@@ -168,18 +164,21 @@ export class OrdenVentaComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
     });
-    //Define el formulario de orden venta y orden venta tarifa
+    
+    //Define el formulario de orden venta (contiene a clienteOrdenVentaForm, empresaOrdenVentaForm )
     this.formulario = this.ordenVenta.formulario;
+    //Define el formulario de orden venta tarifa
     this.formularioTarifa = this.ordenVentaTarifa.formulario;
+    //Define el formulario de orden venta escala
+    this.formularioEscala = this.ordenVentaEscala.formulario;
+    //Define el formulario de orden venta tramo
+    this.formularioTramo = this.ordenVentaTramo.formulario;
+    //Define el formulario para la pestaña listar
     this.formularioListar = new FormGroup({
       tipo: new FormControl(),
       cliente: new FormControl(),
       empresa: new FormControl()
     });    
-    //Define el formulario de orden venta escala
-    this.formularioEscala = this.ordenVentaEscala.formulario;
-    //Define el formulario de orden venta tramo
-    this.formularioTramo = this.ordenVentaTramo.formulario;
     //Obtiene la lista de Vendedores
     this.listarVendedores();
     //Selecciona la pestania agregar por defecto
@@ -201,6 +200,13 @@ export class OrdenVentaComponent implements OnInit {
       }
     });
   }
+  //Obtiene la fecha actual
+  // public obtenerFechaActual(){
+  //   this.fechaService.obtenerFecha().subscribe(res => {
+  //     this.FECHA_ACTUAL= res.json();
+  //   });
+  //   return this.FECHA_ACTUAL;
+  // }
   //Obtiene el id para la orden venta
   private obtenerSiguienteId(){
     this.ordenVentaServicio.obtenerSiguienteId().subscribe(
@@ -249,35 +255,35 @@ export class OrdenVentaComponent implements OnInit {
   public establecerTipo(): void {
     let tipoOrdenVenta = this.formulario.get('tipoOrdenVenta').value;
     if (!tipoOrdenVenta) {
-      this.formulario.get('cliente').setValue(null);
-      this.formulario.get('cliente').setValidators([]);
-      this.formulario.get('empresa').setValidators(Validators.required);
-      this.formulario.get('cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario
+      this.formulario.get('cliente.cliente').setValue(null);
+      this.formulario.get('cliente.cliente').setValidators([]);
+      this.formulario.get('empresa.empresa').setValidators(Validators.required);
+      this.formulario.get('cliente.cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario
       this.listarOrdenesVentas('empresa');
         
     } 
     if (tipoOrdenVenta) {
-      this.formulario.get('empresa').setValue(null);
-        this.formulario.get('empresa').setValidators([]);
-        this.formulario.get('cliente').setValidators(Validators.required);
-        this.formulario.get('empresa').updateValueAndValidity(); //Actualiza las validaciones en el Formulario
+      this.formulario.get('empresa.empresa').setValue(null);
+        this.formulario.get('empresa.empresa').setValidators([]);
+        this.formulario.get('cliente.cliente').setValidators(Validators.required);
+        this.formulario.get('empresa.empresa').updateValueAndValidity(); //Actualiza las validaciones en el Formulario
     } 
   }
   //
   public establecerTipoEnListar(){
     let tipo = this.formularioListar.get('tipo').value;
     if(tipo == 'empresa'){
-      this.formularioListar.get('cliente').setValue(null);
-      this.formularioListar.get('cliente').setValidators([]);
-      this.formularioListar.get('empresa').setValidators(Validators.required);
-      this.formularioListar.get('cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
+      this.formularioListar.get('cliente.cliente').setValue(null);
+      this.formularioListar.get('cliente.cliente').setValidators([]);
+      this.formularioListar.get('empresa.empresa').setValidators(Validators.required);
+      this.formularioListar.get('cliente.cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
       this.establecerEmpresa();
     }
     if(tipo == 'cliente'){
-      this.formularioListar.get('empresa').setValue(null);
-      this.formularioListar.get('empresa').setValidators([]);
-      this.formularioListar.get('cliente').setValidators(Validators.required);
-      this.formularioListar.get('empresa').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
+      this.formularioListar.get('empresa.empresa').setValue(null);
+      this.formularioListar.get('empresa.empresa').setValidators([]);
+      this.formularioListar.get('cliente.cliente').setValidators(Validators.required);
+      this.formularioListar.get('empresa.empresa').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
     }
   }
   //Listar ordenes de ventas por Empresa/Cliente
@@ -286,7 +292,7 @@ export class OrdenVentaComponent implements OnInit {
     switch (tipo) {
       case 'empresa':
         this.establecerEmpresa();
-        this.ordenVentaServicio.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
+        this.ordenVentaServicio.listarPorEmpresa(this.formulario.value.empresa.empresa.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
             this.loaderService.hide();
@@ -294,7 +300,7 @@ export class OrdenVentaComponent implements OnInit {
         );
         break;
       case 'cliente':
-        this.ordenVentaServicio.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
+        this.ordenVentaServicio.listarPorCliente(this.formulario.value.cliente.id).subscribe(
           res => {
             this.ordenesVentas = res.json();
             this.loaderService.hide();
@@ -308,9 +314,11 @@ export class OrdenVentaComponent implements OnInit {
     let empresa = this.appService.getEmpresa();
     this.empresa.setValue(empresa.razonSocial);
     if(this.indiceSeleccionado == 5)
-      this.formularioListar.get('empresa').setValue(empresa);
+      this.formularioListar.get('empresa.empresa').setValue(empresa);
     else 
-      this.formulario.get('empresa').setValue(empresa);
+      this.formulario.get('empresa.empresa').setValue(empresa);
+
+    console.log(this.formulario.value);
   }
   
   //Reestablecer campos
@@ -326,13 +334,14 @@ export class OrdenVentaComponent implements OnInit {
     this.listaDeEscalas = [];
     this.listaDeTramos = [];
     this.tipoTarifa.setValue('porEscala');
+    this.cambioTipoTarifa();
     this.btnActualizarOrdVta = false;
-    this.establecerValoresPorDefecto();
-    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+    // this.establecerValoresPorDefecto();
+    // this.habilitarFormTarifa(true);
+    this.formulario.get('empresa.empresa').setValue(this.appService.getEmpresa());
     if (this.indiceSeleccionado != 1) {
-      this.formularioTarifa.get('tipoTarifa').disable();
-      this.formularioTarifa.get('preciosDesde').disable();
-      this.tipoTarifa.disable();
+      // this.formularioTarifa.get('tipoTarifa').disable();
+      // this.tipoTarifa.disable();
     }
     if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
       // this.formulario.get('vendedor').disable();
@@ -340,13 +349,21 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    console.log("est def");
     //Inicializa valores para el formulario
     this.formulario.get('seguro').setValue(this.appService.establecerDecimales('7.00', 2));
     this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('esContado').setValue(true);
     this.formulario.get('estaActiva').setValue(true);
+    this.formulario.get('tipoOrdenVenta').setValue(false);
+    this.establecerTipo();
+    this.establecerEmpresa();
     //Inicializa a tipoTarifa
+    //Obtiene la fecha actual
+    this.fechaService.obtenerFecha().subscribe(res => {
+      this.preciosDesde.setValue(res.json());
+    });
+    this.formularioTarifa.get('tipoTarifa').enable();
+    this.tipoTarifa.enable();
     this.tipoTarifa.setValue('porEscala');
     this.cambioTipoTarifa();
   }
@@ -430,7 +447,7 @@ export class OrdenVentaComponent implements OnInit {
       res => {
         var elemento = res.json();
         if (res.status == 201) {
-          this.habilitarFormTarifa(true);
+          // this.habilitarFormTarifa(true);
           this.recargarFormulario(elemento);
           this.toastr.success("Registro agregado con éxito");
           this.loaderService.hide();
@@ -458,7 +475,7 @@ export class OrdenVentaComponent implements OnInit {
             document.getElementById('idTipoOrdenVenta').focus();
           }, 20);
           this.toastr.success("Registro actualizado con éxito");
-          this.habilitarFormTarifa(true);
+          // this.habilitarFormTarifa(true);
           this.loaderService.hide();
           this.recargarFormulario(elemento);
         }
@@ -549,49 +566,51 @@ export class OrdenVentaComponent implements OnInit {
   //   }
   // }
   //Habilita o deshabilita el Formulario de Orden Venta Tarifa
-  public habilitarFormTarifa(estado){
-    //Inicializa valores para formularioEscala y formularioTramo
-    this.formularioEscala.get('preciosDesde').setValue(this.FECHA_ACTUAL);
-    this.formularioTramo.get('preciosDesde').setValue(this.FECHA_ACTUAL);
-    if(estado){
-      this.formularioTarifa.get('preciosDesde').enable();
-      this.formularioTarifa.get('preciosDesde').setValue(this.FECHA_ACTUAL);
-      this.tipoTarifa.enable();
-    }else{
-      this.formularioTarifa.get('preciosDesde').disable();
-      this.tipoTarifa.disable();
-    }
-  }
+  // public habilitarFormTarifa(estado){
+  //   if(estado){
+  //     this.formularioTarifa.get('tipoTarifa').enable();
+  //     this.tipoTarifa.enable();
+  //   }else{
+  //     this.formularioTarifa.get('tipoTarifa').disable();
+  //     this.tipoTarifa.disable();
+  //   }
+  //   this.fechaService.obtenerFecha().subscribe(res => {
+  //   });
+  // }
   //Obtiene la lista de Orden Venta Tarifas por el id de la Orden Venta creada
   private listarOrdenVentaTarifas(){
-    this.ordenVentaTarifaService.listarPorOrdenVenta(this.formulario.value.id).subscribe(
-      res=>{
-        console.log(res.json());
-        let cantidad = res.json();
-        this.lengthTable = cantidad.length;
-        this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
-        this.listaTarifasDeOrdVta.sort = this.sort;
-      },
-      err=>{
-        let error= err.json();
-        this.toastr.error(error.mensaje);
-      }
-    )
+    this.listaTarifasDeOrdVta = new MatTableDataSource(this.listaDeTarifas);
+    this.listaTarifasDeOrdVta.sort = this.sort;
+    // this.ordenVentaTarifaService.listarPorOrdenVenta(this.formulario.value.id).subscribe(
+    //   res=>{
+    //     console.log(res.json());
+    //     let cantidad = res.json();
+    //     this.lengthTable = cantidad.length;
+    //     this.listaTarifasDeOrdVta = new MatTableDataSource(res.json());
+    //     this.listaTarifasDeOrdVta.sort = this.sort;
+    //   },
+    //   err=>{
+    //     let error= err.json();
+    //     this.toastr.error(error.mensaje);
+    //   }
+    // )
   }
   //Agrega un registro a Orden Venta Tarifa
   public agregarTarifa(){
-    this.formularioTarifa.get('ordenVenta').setValue({id: this.formulario.value.id});
-    this.ordenVentaTarifaService.agregar(this.formularioTarifa.value).subscribe(
-      res=>{
-        this.toastr.success("Registro agregado con éxito");
-        this.listarOrdenVentaTarifas();
-      },
-      err=>{
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-      }
-    );
+    this.listaDeTarifas.push(this.formularioTarifa.value);
+    this.listarOrdenVentaTarifas();
     this.formularioTarifa.reset();
+    // this.formularioTarifa.get('ordenVenta').setValue({id: this.formulario.value.id});
+    // this.ordenVentaTarifaService.agregar(this.formularioTarifa.value).subscribe(
+    //   res=>{
+    //     this.toastr.success("Registro agregado con éxito");
+    //     this.listarOrdenVentaTarifas();
+    //   },
+    //   err=>{
+    //     let error = err.json();
+    //     this.toastr.error(error.mensaje);
+    //   }
+    // );
   }
   //Actualizar un registro a Orden Venta Tarifa
   public actualizarTarifa(){
@@ -600,7 +619,7 @@ export class OrdenVentaComponent implements OnInit {
       res=>{
         if(res.status==200){
           this.btnActualizarTarifa = false;
-          this.habilitarFormTarifa(true);
+          // this.habilitarFormTarifa(true);
           this.listarOrdenVentaTarifas();
           this.toastr.success("Registro actualizado agregado con éxito");
         }
@@ -619,12 +638,13 @@ export class OrdenVentaComponent implements OnInit {
       data: {
         tarifa: this.tipoTarifa.value,
         ordenVentaTarifa: tarifa,
-        indiceSeleccionado: this.indiceSeleccionado
+        indiceSeleccionado: this.indiceSeleccionado,
+        fechaActual: this.preciosDesde.value
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      if(this.formulario.get('empresa').value)
-        this.listarOrdenesVentas('empresa');
+      if(this.formulario.get('empresa.empresa').value)
+        this.listarOrdenesVentas('empresa.empresa');
       if(this.formulario.get('cliente').value)
         this.listarOrdenesVentas('cliente');
       setTimeout(function () {
@@ -646,21 +666,39 @@ export class OrdenVentaComponent implements OnInit {
     this.tipoTarifa.disable();
   }
   //Abre el modal de ver Orden Venta Tarifa
-  public eliminarOrdenVentaTarifa(elemento){
-    this.loaderService.show();
-    this.ordenVentaTarifaService.eliminar(elemento.id).subscribe(
-      res=>{
-        var respuesta = res.json();
-        this.toastr.success(respuesta.mensaje);
-        this.loaderService.hide();
-        this.listarOrdenVentaTarifas()
+  public eliminarOrdenVentaTarifa(index){
+    const dialogRef = this.dialog.open(ConfimarDialogo, {
+      width: '200px',
+      data: {
+        formulario: null,
+        porEscala: null,
+        ordenVenta: null
       },
-      err=>{
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-        this.loaderService.hide();
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+      if (result == 1) {
+        this.listaDeTarifas.splice(index, 1);
+        this.listarOrdenVentaTarifas();
+        this.formularioTarifa.reset();
       }
-    )
+    });
+
+    
+    // this.loaderService.show();
+    // this.ordenVentaTarifaService.eliminar(elemento.id).subscribe(
+    //   res=>{
+    //     var respuesta = res.json();
+    //     this.toastr.success(respuesta.mensaje);
+    //     this.loaderService.hide();
+    //     this.listarOrdenVentaTarifas()
+    //   },
+    //   err=>{
+    //     let error = err.json();
+    //     this.toastr.error(error.mensaje);
+    //     this.loaderService.hide();
+    //   }
+    // )
   }
   //Obtiene la lista de resultados para la pestania Listar
   public buscarLista(){
