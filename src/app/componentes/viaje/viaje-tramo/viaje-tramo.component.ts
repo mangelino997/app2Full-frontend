@@ -426,6 +426,8 @@ export class ViajeTramoComponent implements OnInit {
     elemento.importe = this.appServicio.establecerDecimales(elemento.importe.toString(), 2);
     this.formularioViajeTramo.patchValue(elemento);
     this.formularioViajeTramo.value.viaje = this.VIAJE_CABECERA;
+    console.log(elemento.viajeTramoClientes);
+    this.listaDadorDestinatario = elemento.viajeTramoClientes;
     this.establecerEstadoTipoCarga();
   }
   //Elimina un tramo de la tabla por indice
@@ -572,16 +574,18 @@ export class ViajeTramoComponent implements OnInit {
     }
   }
   //Abre un dialogo para agregar dadores y destinatarios
-  public verDadorDestinatarioDialogo(elemento): void {
+  public verDadorDestinatarioDialogo(): void {
     const dialogRef = this.dialog.open(DadorDestinatarioDialogo, {
       width: '1200px',
       data: {
         tema: this.appServicio.getTema(),
-        elemento: elemento
+        listaDadorDestinatario: this.listaDadorDestinatario
       }
     });
     dialogRef.afterClosed().subscribe(viajeTramoClientes => {
-      
+      console.log(viajeTramoClientes);
+      if(viajeTramoClientes.length>0)
+        this.formularioViajeTramo.get('viajeTramoClientes').setValue(viajeTramoClientes);
     });
   }
   //Abre un dialogo para ver la lista de dadores y destinatarios
@@ -645,12 +649,15 @@ export class DadorDestinatarioDialogo {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
-    private viajeTramoClienteModelo: ViajeTramoCliente, private viajeTramoClienteService: ViajeTramoClienteService ,private clienteServicio: ClienteService) { }
+    private viajeTramoClienteModelo: ViajeTramoCliente, private viajeTramoClienteService: ViajeTramoClienteService ,private clienteServicio: ClienteService,
+    private viajeTramoCliente: ViajeTramoClienteService) { }
   ngOnInit() {
     //Establece el tema
     this.tema = this.data.tema;
     //Establece el formulario
     this.formulario = this.viajeTramoClienteModelo.formulario;
+    //Inicializa la tabla
+    this.inicializarTabla();
     //Autocompletado Cliente Dador - Buscar por alias
     this.formulario.get('clienteDador').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -667,25 +674,17 @@ export class DadorDestinatarioDialogo {
         })
       }
     })
-    
-    //Establece la lista de dadores-destinatarios
-    this.listarDadoresDestinatarios();
   }
   onNoClick(): void {
     this.dialogRef.close();
   }
-  //Obtiene la lista completa de dadores-destinatarios por el id del viaje
-  private listarDadoresDestinatarios(){
-    this.viajeTramoClienteService.listarPorViajeTramo(this.data.elemento.id).subscribe(
-      res=>{
-        this.listaDadorDestinatario = res.json();
-        this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
-        this.listaCompleta.sort = this.sort; 
-      },
-      err=>{
-        this.toastr.error("Error al obtener la lista de dadores-destinatarios");
-      }
-    )
+  //Establece la tabla de dadores y destinatarios
+  private inicializarTabla(){
+    if(this.data.listaDadorDestinatario.length >0){
+      this.listaDadorDestinatario = this.data.listaDadorDestinatario;
+      this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+      this.listaCompleta.sort = this.sort; 
+    }
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -695,37 +694,33 @@ export class DadorDestinatarioDialogo {
   }
   //Agrega el dador y el destinatario a la tabla
   public agregarDadorDestinatario(): void {
-    this.formulario.get('viajeTramo').setValue({id: this.data.elemento.id});
-    this.viajeTramoClienteService.agregar(this.formulario.value).subscribe(
-      res=>{
-        if(res.status == 201){
-          this.listarDadoresDestinatarios();
-          this.formulario.reset();
-          this.resultadosClientes = [];
-          document.getElementById('idTramoDadorCarga').focus();
-          this.toastr.success("Registro agregado con éxito");
-        }
-      },
-      err=>{
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-      }
-    );
-    
+    // this.formulario.get('viajeTramo').setValue({id: this.data.elemento.id});
+    console.log(this.formulario.value);
+    this.listaDadorDestinatario.push(this.formulario.value);
+    this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+    this.listaCompleta.sort = this.sort; 
+    this.formulario.reset();
   }
   //Elimina un dador-destinatario de la tabla
-  public eliminarDadorDestinatario(id): void {
-    this.viajeTramoClienteService.eliminar(id).subscribe(
-      res=>{
-        this.listarDadoresDestinatarios();
-        this.resultadosClientes = [];
-        document.getElementById('idTramoDadorCarga').focus();
-        this.toastr.success("Registro eliminado con éxito");
-      },
-      err=>{
-        this.toastr.error("Error al eliminar el registro");
-      }
-    )
+  public eliminarDadorDestinatario(elemento, indice): void {
+    if(elemento.id){
+      this.viajeTramoClienteService.eliminar(elemento.id).subscribe(
+        res=>{
+          this.listaDadorDestinatario.splice(indice, 1);
+          this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+          this.listaCompleta.sort = this.sort;
+          this.toastr.success("Registro eliminado con éxito.");
+        },
+        err=>{
+          this.toastr.error("Error al eliminar el registro.");
+        }
+      )
+    }else{
+      this.listaDadorDestinatario.splice(indice, 1);
+      this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+      this.listaCompleta.sort = this.sort;
+    }
+     
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
@@ -747,7 +742,8 @@ export class DadorDestTablaDialogo {
   //Define la observacion
   public listaDadorDestinatario: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['dador', 'destinatario', 'eliminar'];
+  public columnas: string[] = ['dador', 'destinatario'];
+  public listaCompleta = new MatTableDataSource([]);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -757,6 +753,11 @@ export class DadorDestTablaDialogo {
     this.tema = this.data.tema;
     //Establece la lista de dadores-destinatarios
     this.listaDadorDestinatario = this.data.elemento.viajeTramoClientes;
+    if(this.listaDadorDestinatario.length>0){
+      this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+      this.listaCompleta.sort = this.sort;
+    }
+     
   }
   onNoClick(): void {
     this.dialogRef.close();

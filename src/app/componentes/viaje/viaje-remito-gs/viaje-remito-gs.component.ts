@@ -161,7 +161,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Establece el foco en fecha
   public establecerFoco(): void {
     setTimeout(function() {
-      document.getElementById('idTramoRG').focus();
+      // document.getElementById('idTramoRG').focus();
     }, 100);
   }
   //Define como se muestran los ceros a la izquierda en tablas

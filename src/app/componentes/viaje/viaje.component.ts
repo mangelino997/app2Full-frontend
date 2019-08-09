@@ -547,7 +547,7 @@ export class ViajeComponent implements OnInit {
       case 4:
         break;
       case 5:
-        this.viajeRemitoGSComponente.establecerFoco();
+        // this.viajeRemitoGSComponente.establecerFoco();
         break;
       case 6:
         this.viajeGastoComponente.establecerFoco();
