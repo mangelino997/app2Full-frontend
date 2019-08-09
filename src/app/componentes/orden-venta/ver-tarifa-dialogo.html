@@ -19,7 +19,7 @@
                 <div class="col-md-1">
                   <div class="form-group has-float-label">
                     <label for="idEscala" class="tamanio-label">Escala *</label>
-                    <mat-select id="idVendedor" class="form-control form-control-sm" formControlName="escalaTarifa"
+                    <mat-select id="idEscala" class="form-control form-control-sm" formControlName="escalaTarifa"
                       [compareWith]="compareFn" >
                       <mat-option *ngFor="let item of listaEscalasTarifas" [value]="item" >
                         {{item.valor}}
@@ -31,7 +31,6 @@
                   <div class="form-group has-float-label">
                     <label for="idImportePor" class="tamanio-label">Importe Por: *</label>
                     <mat-select id="idImportePor" class="form-control form-control-sm" [formControl]="importePor"
-                      [disabled]="ordenVentaTarifa.tipoTarifa.porPorcentaje"
                       (selectionChange)="cambioImportesPor()" required>
                       <mat-option [value]="false">Precio Fijo</mat-option>
                       <mat-option [value]="true">Precio Unitario</mat-option>
@@ -41,9 +40,8 @@
                 <div class="col-md-2" >
                   <div class="form-group has-float-label">
                     <label for="idImporteFijo" class="tamanio-label">Precio Fijo <span *ngIf="importePor">*</span></label>
-                    <input id="idImporteFijo" [textMask]="mascaraImporte(10, 2)" 
-                      [readOnly]="soloLectura || ordenVentaTarifa.tipoTarifa.porPorcentaje"
-                      class="form-control form-control-sm number-right" formControlName="importeFijo" placeholder="$ 0.00"
+                    <input id="idImporteFijo" class="form-control form-control-sm number-right" formControlName="importeFijo"
+                      [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura" placeholder="$ 0.00"
                       type="text" autocomplete="off" (blur)="setDecimales(formularioEscala.get('importeFijo'), 2)" required>
                   </div>
                 </div>
@@ -53,8 +51,7 @@
                         *ngIf="!importePor">*</span></label>
                     <input id="idPrecioUnitario" [textMask]="mascaraImporte(10, 2)" formControlName="precioUnitario"
                       type="text" autocomplete="off" class="form-control form-control-sm number-right" 
-                      [readOnly]="soloLectura || ordenVentaTarifa.tipoTarifa.porPorcentaje"
-                      (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)" placeholder="$ 0.00" required>
+                      [readOnly]="soloLectura" (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)" placeholder="$ 0.00" required>
                   </div>
                 </div>
                 <div class="col-md-2" >
@@ -62,17 +59,16 @@
                     <label for="idSegunTarifa" class="tamanio-label">% Según Tarifa<span
                         *ngIf="tipoTarifaEstado">*</span></label>
                     <input id="idSegunTarifa" [textMask]="mascararPorcentaje()" formControlName="porcentaje" type="text"
-                      autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00"
-                       [readOnly]="soloLectura || !ordenVentaTarifa.tipoTarifa.porPorcentaje"
-                      (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" >
+                      autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00" required
+                       [readOnly]="soloLectura " (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" >
                   </div>
                 </div>
-                <div class="col-md-2" >
+                <div class="col-md-1" >
                   <div class="form-group has-float-label">
                     <label for="idMinimo" class="tamanio-label">Mínimo </label>
                     <input id="idMinimo" [textMask]="mascaraImporte(10, 2)" formControlName="minimo" type="text"
                       autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)"
-                      [readOnly]="soloLectura || ordenVentaTarifa.tipoTarifa.porPorcentaje"
+                      [readOnly]="soloLectura"
                       class="form-control form-control-sm number-right" placeholder="$ 0.00" >
                   </div>
                 </div>
@@ -82,6 +78,8 @@
                     (click)="agregar()" *ngIf="idMod == null">Agregar</button>
                   <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid"
                     (click)="modificar()" *ngIf="idMod != null">Actualizar</button>
+                  <button mat-raised-button color="primary" (click)="cancelar()">Cancelar</button>
+
                 </div>
               </div>
               </form>
@@ -186,6 +184,7 @@
                       [disabled]="!formularioTramo.valid || indiceSeleccionado==2 ">Agregar</button>
                     <button mat-raised-button color="primary" (click)="modificar()"
                       *ngIf="idMod != null">Actualizar</button>
+                    <button mat-raised-button color="primary" (click)="cancelar()">Cancelar</button>
                   </div>
                 </div>
               </form>
@@ -229,14 +228,14 @@
                   </ng-container>
                   <ng-container matColumnDef="mod" >
                     <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento" >
-                      <span (click)="controlModEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
+                    <td mat-cell *matCellDef="let elemento; let i=index" >
+                      <span (click)="controlModEscala(elemento, i)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
                         class="cursor-color">mod</span></td>
                   </ng-container>
                   <ng-container matColumnDef="eliminar" >
                     <th mat-header-cell *matHeaderCellDef>-</th>
                     <td mat-cell *matCellDef="let elemento; let i = index;" >
-                      <span class="cursor-color" (click)="controlEliminarEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3">
+                      <span class="cursor-color" (click)="controlEliminarEscala(i)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3">
                         X
                       </span>
                   </td>
@@ -302,7 +301,7 @@
                   <ng-container matColumnDef="eliminar" >
                     <th mat-header-cell *matHeaderCellDef>-</th>
                     <td mat-cell *matCellDef="let elemento; let i = index;" >
-                      <span (click)="controlEliminarTramo(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
+                      <span (click)="controlEliminarTramo(i)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
                         class="cursor-color">X</span></td>
                   </ng-container>
                   <tr mat-header-row *matHeaderRowDef="columnasTramo"></tr>
@@ -313,7 +312,8 @@
           <br>
           <div class="row">
             <div class="col text-center">
-              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" (click)="dialogRef.close()">Cerrar</button> 
+              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" [mat-dialog-close]="ordenVentaTarifa" 
+              >Aceptar</button> 
             </div>
           </div>
           <div class="row" *ngIf="show">

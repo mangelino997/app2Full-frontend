@@ -213,7 +213,7 @@
                 <ng-container matColumnDef="ver" >
                   <th mat-header-cell *matHeaderCellDef >-</th>
                   <td mat-cell *matCellDef="let elemento;  let i = index;" >
-                    <span class="cursor-color" (click)="verOrdenVentaTarifa(elemento)" >ver</span>
+                    <span class="cursor-color" (click)="verOrdenVentaTarifa(elemento, i)" >ver</span>
                   </td>
                 </ng-container>
                 <!-- <ng-container matColumnDef="mod" >

@@ -66,7 +66,26 @@ export class OrdenVentaService {
   }
   //Agrega un registro
   public agregar(elemento) {
-    return this.http.post(this.url, elemento, this.options);
+    console.log(elemento);
+    let obj = Object.assign({}, elemento);
+    let ordenVentaForm = obj.ordenVenta;
+    let clienteOrdenVenta = obj.clienteOrdenVenta;
+    let empresaOrdenVenta = obj.empresaOrdenVenta;
+    let blob = new Blob([null], {type : 'application/pdf'});
+    const formData = new FormData(); 
+
+    formData.append('ordenVenta', blob, ordenVentaForm);
+    formData.append('clienteOrdenVenta', blob, clienteOrdenVenta);
+    formData.append('empresaOrdenVenta', blob, empresaOrdenVenta);
+    formData.append('personal', JSON.stringify(obj));
+    console.log(obj);
+		return fetch(this.url, {
+      method: "POST",
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      },
+      body: formData
+    });
   }
   //Actualiza un registro
   public actualizar(elemento) {
