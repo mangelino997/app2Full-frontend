@@ -118,6 +118,8 @@ export class ViajePeajeComponent implements OnInit {
   public agregarPeaje(): void {
     this.formularioViajePeaje.get('tipoComprobante').setValue({ id: 17 });
     this.formularioViajePeaje.get('usuarioAlta').setValue(this.appService.getUsuario());
+    let idViajeCabecera = this.VIAJE_CABECERA.id;
+    this.formularioViajePeaje.value.viaje = {id: idViajeCabecera};
     this.servicio.agregar(this.formularioViajePeaje.value).subscribe(
       res=>{
         if (res.status == 201) {

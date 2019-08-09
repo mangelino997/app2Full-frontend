@@ -303,7 +303,7 @@ import { RepartoEntranteComponent } from './componentes/reparto-entrante/reparto
 import { VentaConceptoComponent } from './componentes/venta-concepto/venta-concepto.component';
 import { ViajeUnidadNegocioComponent } from './componentes/viaje-unidad-negocio/viaje-unidad-negocio.component';
 import { OpcionComponent } from './componentes/opcion/opcion.component';
-import { ViajeTramoComponent, DadorDestinatarioDialogo } from './componentes/viaje/viaje-tramo/viaje-tramo.component';
+import { ViajeTramoComponent, DadorDestinatarioDialogo, DadorDestTablaDialogo } from './componentes/viaje/viaje-tramo/viaje-tramo.component';
 import { ViajeCombustibleComponent } from './componentes/viaje/viaje-combustible/viaje-combustible.component';
 import { ViajeEfectivoComponent } from './componentes/viaje/viaje-efectivo/viaje-efectivo.component';
 import { ViajeInsumoComponent } from './componentes/viaje/viaje-insumo/viaje-insumo.component';
@@ -573,6 +573,7 @@ const stompConfig: StompConfig = {
     ViajeUnidadNegocioComponent,
     OpcionComponent,
     DadorDestinatarioDialogo,
+    DadorDestTablaDialogo,
     ObservacionesDialogo,
     ViajeTramoComponent,
     ViajeCombustibleComponent,
@@ -901,6 +902,7 @@ const stompConfig: StompConfig = {
     VistaPreviaDialogo,
     PestaniaDialogo,
     DadorDestinatarioDialogo,
+    DadorDestTablaDialogo,
     ObservacionesDialogo,
     ListaUsuariosDialogo,
     CambiarMonedaPrincipalDialogo,

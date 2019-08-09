@@ -64,6 +64,8 @@ export class ViajeTramoComponent implements OnInit {
   public numeroOrden: number;
   //Define si los campos son de solo lectura
   public soloLectura: boolean = false;
+  //Define si los campos 'cantidad' y 'precioUnitario' son de solo lectura
+  public soloLecturaPrecioCantidad: boolean = false;
   //Define el indice del tramo para las modificaciones
   public indiceTramo: number;
   //Define si muestra el boton agregar tramo o actualizar tramo
@@ -190,6 +192,7 @@ export class ViajeTramoComponent implements OnInit {
   public establecerTipoViaje(tipoViaje): void {
     this.tipoViaje = tipoViaje;
     let viajeTarifa = this.formularioViajeTramo.get('viajeTarifa').value;
+    console.log(tipoViaje, viajeTarifa);
     let modalidadCarga = this.formularioViajeTramo.get('viajeTipo').value;
     let km = this.formularioViajeTramo.get('km').value;
     if (this.tipoViaje != null && viajeTarifa && modalidadCarga && km) {
@@ -199,6 +202,7 @@ export class ViajeTramoComponent implements OnInit {
           let importe = km * modalidadCarga.costoPorKmPropio;
           this.formularioViajeTramo.get('importe').setValue(parseFloat(this.appServicio.establecerDecimales(importe, 3)));
           this.formularioViajeTramo.get('cantidad').setValue(0);
+          this.soloLecturaPrecioCantidad= true;
           // this.formularioViajeTramo.get('cantidad').disable();
           // this.formularioViajeTramo.get('precioUnitario').disable();
         } else {
@@ -207,8 +211,9 @@ export class ViajeTramoComponent implements OnInit {
       } else {
         this.formularioViajeTramo.get('cantidad').enable();
         this.formularioViajeTramo.get('precioUnitario').enable();
-        this.formularioViajeTramo.get('cantidad').reset();
-        this.formularioViajeTramo.get('precioUnitario').reset();
+        // this.formularioViajeTramo.get('cantidad').reset();
+        // this.formularioViajeTramo.get('precioUnitario').reset();
+        this.soloLecturaPrecioCantidad= false;
       }
     }
   }
@@ -412,10 +417,11 @@ export class ViajeTramoComponent implements OnInit {
     );
   }
   //Modifica un tramo de la tabla por indice
-  public modTramo(indice): void {
+  public modTramo(indice, elemento): void {
+    console.log(elemento);
     this.indiceTramo = indice;
     this.btnTramo = false;
-    let elemento = this.listaTramos[indice];
+    // let elemento = this.listaTramos[indice];
     elemento.precioUnitario = this.appServicio.establecerDecimales(elemento.precioUnitario.toString(), 2);
     elemento.importe = this.appServicio.establecerDecimales(elemento.importe.toString(), 2);
     this.formularioViajeTramo.patchValue(elemento);
@@ -579,16 +585,17 @@ export class ViajeTramoComponent implements OnInit {
     });
   }
   //Abre un dialogo para ver la lista de dadores y destinatarios
-  // public verDadorDestTablaDialogo(elemento): void {
-  //   const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
-  //     width: '1200px',
-  //     data: {
-  //       tema: this.appServicio.getTema(),
-  //       elemento: elemento
-  //     }
-  //   });
-  //   dialogRef.afterClosed().subscribe(resultado => { });
-  // }
+  public verDadorDestTablaDialogo(elemento): void {
+    console.log(elemento);
+    const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
+      width: '1200px',
+      data: {
+        tema: this.appServicio.getTema(),
+        elemento: elemento
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => { });
+  }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
@@ -729,29 +736,29 @@ export class DadorDestinatarioDialogo {
     }
   }
 }
-//Componente DadorDestTablaDialogo
-// @Component({
-//   selector: 'dador-dest-tabla-dialogo',
-//   templateUrl: 'dador-dest-tabla-dialogo.component.html'
-// })
-// export class DadorDestTablaDialogo {
-//   //Define el tema
-//   public tema: string;
-//   //Define la observacion
-//   public listaDadorDestinatario: Array<any> = [];
-//   //Define las columnas de la tabla
-//   public columnas: string[] = ['dador', 'destinatario', 'eliminar'];
-//   //Define la matSort
-//   @ViewChild(MatSort) sort: MatSort;
-//   //Constructor
-//   constructor(public dialogRef: MatDialogRef<DadorDestTablaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-//   ngOnInit() {
-//     //Establece el tema
-//     this.tema = this.data.tema;
-//     //Establece la lista de dadores-destinatarios
-//     this.listaDadorDestinatario = this.data.elemento.viajeTramoClientes;
-//   }
-//   onNoClick(): void {
-//     this.dialogRef.close();
-//   }
-// }
+// Componente DadorDestTablaDialogo
+@Component({
+  selector: 'dador-dest-tabla-dialogo',
+  templateUrl: 'dador-dest-tabla-dialogo.component.html'
+})
+export class DadorDestTablaDialogo {
+  //Define el tema
+  public tema: string;
+  //Define la observacion
+  public listaDadorDestinatario: Array<any> = [];
+  //Define las columnas de la tabla
+  public columnas: string[] = ['dador', 'destinatario', 'eliminar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<DadorDestTablaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  ngOnInit() {
+    //Establece el tema
+    this.tema = this.data.tema;
+    //Establece la lista de dadores-destinatarios
+    this.listaDadorDestinatario = this.data.elemento.viajeTramoClientes;
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}

@@ -111,6 +111,8 @@ export class ViajeGastoComponent implements OnInit {
     let usuario = this.appComponent.getUsuario();
     this.formularioViajeGasto.get('sucursal').setValue(usuario.sucursal);
     this.formularioViajeGasto.get('usuarioAlta').setValue(usuario);
+    let idViajeCabecera = this.VIAJE_CABECERA.id;
+    this.formularioViajeGasto.value.viaje = {id: idViajeCabecera};
     this.servicio.agregar(this.formularioViajeGasto.value).subscribe(
       res=>{
         if (res.status == 201) {

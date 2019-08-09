@@ -158,17 +158,20 @@ export class ViajeCombustibleComponent implements OnInit {
   //Establece el precio unitario
   public establecerPrecioUnitario(formulario, elemento): void {
     let insumoProducto = formulario.get(elemento).value;
+    console.log(insumoProducto.id);
     this.insumoProductoServicio.obtenerPrecioUnitario(insumoProducto.id).subscribe(
       res => {
         let precioUnitarioViaje = parseFloat(res.text());
-        if (precioUnitarioViaje != 0) {
+        console.log(precioUnitarioViaje);
+
+        if (precioUnitarioViaje != 0 ) {
           formulario.get('precioUnitario').setValue(precioUnitarioViaje);
           this.establecerCeros(formulario.get('precioUnitario'));
           // formulario.get('precioUnitario').disable();
-        } else {
-          formulario.get('precioUnitario').enable();
-          formulario.get('precioUnitario').reset();
-        }
+          }else {
+            formulario.get('precioUnitario').enable();
+            formulario.get('precioUnitario').reset();
+          }
       },
       err => {
         console.log(err);
