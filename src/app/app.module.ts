@@ -284,7 +284,7 @@ import { RolSubopcionComponent, RolSubopcionDialog } from './componentes/rol-sub
 import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from './componentes/subopcion-pestania/subopcion-pestania.component'; //Probado
 import { UsuarioEmpresaComponent, UsuarioEmpresaDialog } from './componentes/usuario-empresa/usuario-empresa.component';
 import { ViajeComponent } from './componentes/viaje/viaje.component';
-import { ActualizacionPreciosComponent, ListaPreciosDialogo, ConfimarDialogo } from './componentes/actualizacion-precios/actualizacion-precios.component';
+import { ActualizacionPreciosComponent, ListaPreciosDialogo, ConfirmarDialogo } from './componentes/actualizacion-precios/actualizacion-precios.component';
 import { CaeAnticipadoComponent } from './componentes/cae-anticipado/cae-anticipado.component';
 import { EstadoServicioAfipComponent } from './componentes/estado-servicio-afip/estado-servicio-afip.component';
 import { EmitirFacturaComponent, ViajeDialogo, ObservacionDialogo, TotalConceptoDialogo, TotalCargaDialogo } from './componentes/emitir-factura/emitir-factura.component';
@@ -586,7 +586,7 @@ const stompConfig: StompConfig = {
     CambiarMonedaPrincipalDialogo,
     CambiarCobradorPrincipalDialogo,
     ListaPreciosDialogo,
-    ConfimarDialogo,
+    ConfirmarDialogo,
     ViajeDialogo,
     PlanCuentaComponent,
     TipoCuentaContableComponent,
@@ -909,7 +909,7 @@ const stompConfig: StompConfig = {
     CambiarCobradorPrincipalDialogo,
     CambiarOVporDefectoDialogo,
     ListaPreciosDialogo,
-    ConfimarDialogo,
+    ConfirmarDialogo,
     ViajeDialogo,
     ClienteEventualComponent,
     AforoComponent,

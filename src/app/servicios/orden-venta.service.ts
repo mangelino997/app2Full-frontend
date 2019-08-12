@@ -71,13 +71,53 @@ export class OrdenVentaService {
     let ordenVentaForm = obj.ordenVenta;
     let clienteOrdenVenta = obj.clienteOrdenVenta;
     let empresaOrdenVenta = obj.empresaOrdenVenta;
-    let blob = new Blob([null], {type : 'application/pdf'});
-    const formData = new FormData(); 
+    let ordenesVentasTarifas = obj.ordenVentaTarifa;
+    let ordenesVentasEscalas = obj.ordenVentaTarifa.listaOrdenVentaEscala;
+    let ordenesVentasTramos = obj.ordenVentaTarifa.listaOrdenVentaTramo;
 
-    formData.append('ordenVenta', blob, ordenVentaForm);
-    formData.append('clienteOrdenVenta', blob, clienteOrdenVenta);
-    formData.append('empresaOrdenVenta', blob, empresaOrdenVenta);
-    formData.append('personal', JSON.stringify(obj));
+    // let blob = new Blob([null], {type : 'application/pdf'});
+    let noBlobPdf = new Blob([null], {});
+    const formData = new FormData(); 
+    let objNull= null;
+    if(clienteOrdenVenta.cliente)
+      formData.append('clienteOrdenVenta', JSON.stringify(clienteOrdenVenta));
+      else{
+        formData.append('clienteOrdenVenta', JSON.stringify(''));
+      }
+      
+    if(empresaOrdenVenta.empresa)
+      formData.append('empresaOrdenVenta', JSON.stringify(empresaOrdenVenta));
+      else{
+        formData.append('empresaOrdenVenta', JSON.stringify(''));
+      }
+
+    if(ordenesVentasTarifas)
+      formData.append('ordenesVentasTarifas', JSON.stringify(ordenesVentasTarifas));
+      else{
+        formData.append('ordenesVentasTarifas', JSON.stringify(''));
+      }
+
+    // if(ordenesVentasEscalas)
+    //   formData.append('ordenesVentasEscalas', JSON.stringify(ordenesVentasEscalas));
+    //   else{
+    //     formData.append('ordenesVentasEscalas', JSON.stringify(''));
+    //   }
+
+    // if(ordenesVentasTramos)
+    //   formData.append('ordenesVentasTramos', JSON.stringify(ordenesVentasTramos));
+    //   else{
+    //     formData.append('ordenesVentasTramos', JSON.stringify(''));
+    //   }
+    
+      console.log(obj);
+
+    obj.clienteOrdenVenta = null;
+    obj.empresaOrdenVenta = null;
+    // obj.ordenVentaTarifa.listaOrdenVentaEscala = null;
+    // obj.ordenVentaTarifa.listaOrdenVentaTramo = null;
+    obj.ordenVentaTarifa = null;
+
+    formData.append('ordenVenta', JSON.stringify(obj));
     console.log(obj);
 		return fetch(this.url, {
       method: "POST",

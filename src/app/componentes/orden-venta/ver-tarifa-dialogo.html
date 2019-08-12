@@ -20,7 +20,7 @@
                   <div class="form-group has-float-label">
                     <label for="idEscala" class="tamanio-label">Escala *</label>
                     <mat-select id="idEscala" class="form-control form-control-sm" formControlName="escalaTarifa"
-                      [compareWith]="compareFn" >
+                      [compareWith]="compareFn" [disabled]="idMod">
                       <mat-option *ngFor="let item of listaEscalasTarifas" [value]="item" >
                         {{item.valor}}
                       </mat-option>
@@ -179,7 +179,7 @@
                         style="width: 137px;">
                     </div>
                   </div>
-                  <div class="col-md-1">
+                  <div class="col-md-2">
                     <button mat-raised-button color="primary" (click)="agregar()" *ngIf="idMod == null"
                       [disabled]="!formularioTramo.valid || indiceSeleccionado==2 ">Agregar</button>
                     <button mat-raised-button color="primary" (click)="modificar()"

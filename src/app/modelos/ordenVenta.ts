@@ -15,10 +15,8 @@ export class OrdenVenta {
             id: new FormControl(),
             version: new FormControl(),
             nombre: new FormControl('', Validators.required),
-            // cliente: new FormControl(),
-            // empresa: new FormControl(),
-            cliente: this.ordenVentaClienteModelo.formulario,
-            empresa: this.ordenVentaEmpresaModelo.formulario,
+            clienteOrdenVenta: this.ordenVentaClienteModelo.formulario,
+            empresaOrdenVenta: this.ordenVentaEmpresaModelo.formulario,
             vendedor: new FormControl('', Validators.required),
             seguro: new FormControl('', Validators.required),
             comisionCR: new FormControl(),
@@ -28,6 +26,7 @@ export class OrdenVenta {
             tipoOrdenVenta: new FormControl(),
             fechaAlta: new FormControl(),
             activaDesde: new FormControl(),
+            ordenVentaTarifa: new FormControl(),
 
         })
     }

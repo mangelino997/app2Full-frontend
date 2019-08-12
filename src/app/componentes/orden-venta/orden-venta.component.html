@@ -33,8 +33,8 @@
               <div class="form-group has-float-label">
                 <label for="idCliente" class="tamanio-label">Cliente *</label>
                 <input id="idCliente" class="form-control form-control-sm" type="text" matInput [readOnly]="soloLectura"
-                  [formControl]="formulario.get('cliente.cliente')" [matAutocomplete]="autoCliente" autocomplete="off" 
-                  (blur)="verificarSeleccion(formulario.get('cliente.cliente'))">
+                  [formControl]="formulario.get('clienteOrdenVenta.cliente')" [matAutocomplete]="autoCliente" autocomplete="off" 
+                  (blur)="verificarSeleccion(formulario.get('clienteOrdenVenta.cliente'))">
                 <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
                   (optionSelected)="listarOrdenesVentas('cliente')">
                   <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
@@ -127,16 +127,6 @@
                   class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
             </div>
-            <!-- <div class="col-md-2" *ngIf="indiceSeleccionado == 1 && !btnActualizarOrdVta">
-              <button id="idBoton" [disabled]="!formulario.valid" mat-raised-button color="primary" formnovalidate
-              (click)="agregar()">Crear Orden de Venta
-              </button>
-            </div>
-            <div class="col-md-2" *ngIf="indiceSeleccionado == 1 && btnActualizarOrdVta">
-              <button id="idBoton" [disabled]="!formulario.valid" mat-raised-button color="primary" formnovalidate
-              (click)="actualizar()">Actualizar Orden Venta
-              </button>
-            </div> -->
           </div>
       </form>
     </div>
@@ -148,7 +138,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoTarifa" class="tamanio-label">Tipo Tarifa *</label>
               <mat-select id="idTipoTarifa" class="form-control form-control-sm" [formControl]="tipoTarifa" 
-              [compareWith]="compareT" (selectionChange)="cambioTipoTarifa()" >
+              [compareWith]="compareT" (selectionChange)="cambioTipoTarifa()" [disabled]="listaDeTarifas.length > 0" >
                 <mat-option value="porEscala">Por Escala</mat-option>
                 <mat-option value="porTramo">Por Tramo</mat-option>
               </mat-select>
@@ -183,7 +173,7 @@
           <div class="col-md-1">
             <button id="idBoton" [disabled]="!formulario.valid || !formularioTarifa.valid || !preciosDesde.valid" mat-raised-button color="primary" (click)="agregarTarifa()"
             *ngIf="!btnActualizarTarifa"> <!--[disabled]="!btnActualizarOrdVta || !formularioTarifa.valid"-->
-              Añadir
+              Agregar
             </button>
             <button id="idBoton" [disabled]="!btnActualizarOrdVta || !formularioTarifa.valid" mat-raised-button color="primary" (click)="actualizarTarifa()"
             *ngIf="btnActualizarTarifa" >
@@ -241,17 +231,19 @@
               Finalizar
             </button>
           </div>
-          <div class="col-md-2" >
+          <!-- <div class="col-md-2" >
             <button id="idBoton" [disabled]="!formulario.valid && !show" mat-raised-button color="primary" formnovalidate
             (click)="accion(indiceSeleccionado)">{{pestaniaActual}} 
             </button>
-            <div class="row" *ngIf="show">
-              <div class="col text-center">
-                <app-progreso></app-progreso>
-              </div>
+          </div> -->
+          <div class="col"></div>
+        </div>
+        <div class="row">
+          <div class="row" *ngIf="show">
+            <div class="col text-center">
+              <app-progreso></app-progreso>
             </div>
           </div>
-          <div class="col"></div>
         </div>
       </form>
     </div>

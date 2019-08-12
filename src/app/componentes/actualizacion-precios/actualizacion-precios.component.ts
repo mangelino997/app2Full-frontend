@@ -225,7 +225,7 @@ export class ActualizacionPreciosComponent implements OnInit {
   }
   //Abre un modal con los datos actualizados antes de confirmar 
   public confirmar() {
-    const dialogRef = this.dialog.open(ConfimarDialogo, {
+    const dialogRef = this.dialog.open(ConfirmarDialogo, {
       width: '1100px',
       data: {
         // formulario: this.ordenVenta, 
@@ -437,7 +437,7 @@ export class ListaPreciosDialogo {
   selector: 'confirmar-dialogo',
   templateUrl: 'confirmar-modal.html',
 })
-export class ConfimarDialogo {
+export class ConfirmarDialogo {
   //Define el formulario que envía a la base de datos
   public formulario: Array<any> = [];
   //Define la variable como un booleano
@@ -449,7 +449,7 @@ export class ConfimarDialogo {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<ConfimarDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
+  constructor(public dialogRef: MatDialogRef<ConfirmarDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService,
     private loaderService: LoaderService) { }
   //Al inicializarse el componente
