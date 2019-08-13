@@ -11,8 +11,8 @@ export class OrdenVentaTarifa {
             version: new FormControl(),
             ordenVenta: new FormControl(),
             tipoTarifa: new FormControl('', Validators.required),
-            listaOrdenVentaEscala: new FormControl(),
-            listaOrdenVentaTramo: new FormControl(),
+            // listaOrdenVentaEscala: new FormControl(),
+            // listaOrdenVentaTramo: new FormControl(),
 
         })
     }

@@ -54,6 +54,7 @@ export class OrdenVentaTarifaService {
   }
   //Agrega un registro
   public agregar(elemento) {
+    console.log(elemento);
     return this.http.post(this.url, elemento, this.options);
   }
   //Actualiza un registro
