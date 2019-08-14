@@ -152,6 +152,8 @@ export class ViajeComponent implements OnInit {
     this.seleccionarOpcion(22, 0);
     //Obtiene la lista de sucursales
     this.listarSucursales();
+    //Reestablece el formulario
+    this.reestablecerFormulario();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
     //Autocompletado Vehiculo - Buscar por alias
@@ -205,7 +207,10 @@ export class ViajeComponent implements OnInit {
         }
       }
     })
-    
+  }
+  //Reestablece el formulario
+  private reestablecerFormulario(){
+    this.formularioViaje.reset();
   }
   //Establece el formulario y listas al seleccionar un elemento del autocompletado
   public cambioAutocompletado(): void {
@@ -340,7 +345,8 @@ export class ViajeComponent implements OnInit {
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    // this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario();
+    this.establecerValoresPorDefecto();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {

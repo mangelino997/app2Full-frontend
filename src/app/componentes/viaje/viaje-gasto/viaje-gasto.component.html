@@ -59,7 +59,7 @@
       <button mat-raised-button color="primary" (click)="modificarGasto()" 
         [disabled]="!formularioViajeGasto.valid" *ngIf="!btnGasto">Actualizar Gasto
       </button>
-      <button mat-raised-button (click)="cancelar()" [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4">Cancelar</button>
+      <button mat-raised-button (click)="cancelar()" [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnGasto">Cancelar</button>
     </div>
   </div>
   <div class="row">

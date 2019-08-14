@@ -62,6 +62,10 @@ export class ViajeCombustibleService {
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
   }
+  //Anula un registro
+  public anularCombustible(elemento) {
+    return this.http.put(this.url + '/anularCombustible', elemento, this.options);
+  }
   //Elimina un registro
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);

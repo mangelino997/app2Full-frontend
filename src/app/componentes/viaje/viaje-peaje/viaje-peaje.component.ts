@@ -102,8 +102,8 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Establece los valores por defecto del formulario viaje gasto
   public establecerValoresPorDefecto(opcion): void {
-    this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe,2));
+    // this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
+    // this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe,2));
     this.formularioViajePeaje.get('puntoVenta').setValue(this.establecerCerosIzq(this.formularioViajePeaje.get('puntoVenta'), '0000', -5));
     this.formularioViajePeaje.get('numeroComprobante').setValue(this.establecerCerosIzq(this.formularioViajePeaje.get('numeroComprobante'), '0000000', -8));
 
@@ -116,6 +116,10 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Agrega datos a la tabla de peajes
   public agregarPeaje(): void {
+    if(!this.formularioViajePeaje.value.importe){
+      this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
+      this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe,2));
+    }
     this.formularioViajePeaje.get('tipoComprobante').setValue({ id: 17 });
     this.formularioViajePeaje.get('usuarioAlta').setValue(this.appService.getUsuario());
     let idViajeCabecera = this.VIAJE_CABECERA.id;
@@ -140,6 +144,10 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Modifica los datos del Peaje
   public modificarPeaje(): void {
+    if(!this.formularioViajePeaje.value.importe){
+      this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
+      this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe,2));
+    }
     let usuarioMod = this.appService.getUsuario();
     this.formularioViajePeaje.value.usuarioMod = usuarioMod;
     let idViajeCabecera = this.VIAJE_CABECERA.id;

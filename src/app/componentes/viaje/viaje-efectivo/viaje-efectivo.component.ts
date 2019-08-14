@@ -46,7 +46,7 @@ export class ViajeEfectivoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['sucursal', 'adelanto', 'fecha', 'empresa', 'importe', 'observaciones', 'anulado', 'obsAnulado', 'mod', 'eliminar'];
+  public columnas: string[] = ['sucursal', 'adelanto', 'fecha', 'empresa', 'importe', 'observaciones', 'anulado', 'obsAnulado', 'mod', 'anular'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -112,7 +112,7 @@ export class ViajeEfectivoComponent implements OnInit {
     if(opcion == 1) {
       this.importeTotal.setValue(this.appServicio.establecerDecimales('0.00', 2));
     }
-    this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
+    // this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
   }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
@@ -120,6 +120,8 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajeEfectivo.get('tipoComprobante').setValue({id:16});
     this.formularioViajeEfectivo.get('sucursal').setValue(this.appServicio.getUsuario().sucursal);
     this.formularioViajeEfectivo.get('usuarioAlta').setValue(this.appServicio.getUsuario());
+    if(!this.formularioViajeEfectivo.value.importe)
+      this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
     let idViajeCabecera = this.VIAJE_CABECERA.id;
     this.formularioViajeEfectivo.value.viaje = {id: idViajeCabecera};
     this.servicio.agregar(this.formularioViajeEfectivo.value).subscribe(
@@ -144,6 +146,8 @@ export class ViajeEfectivoComponent implements OnInit {
   public modificarEfectivo(): void {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeEfectivo.value.usuarioMod = usuarioMod;
+    if(!this.formularioViajeEfectivo.value.importe)
+      this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
     let idViajeCabecera = this.VIAJE_CABECERA.id;
     this.formularioViajeEfectivo.value.viaje = {id: idViajeCabecera};
     this.servicio.actualizar(this.formularioViajeEfectivo.value).subscribe(
@@ -174,27 +178,21 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajeEfectivo.patchValue(elemento);
   }
   //Elimina un  efectivo de la tabla por indice
-  public eliminarEfectivo(indice, elemento): void {
-    if(this.indiceSeleccionado == 1) {
-      this.listaEfectivos.splice(indice, 1);
-      this.recargarListaCompleta(this.listaEfectivos);
-      this.establecerValoresPorDefecto(0);
-    } else {
-      this.loaderService.show();
-      this.servicio.eliminar(elemento.id).subscribe(
+  public anularEfectivo(elemento): void {
+    this.loaderService.show();
+    elemento.viaje = {id: this.VIAJE_CABECERA.id};
+      this.servicio.anularEfectivo(elemento).subscribe(
         res => {
           let respuesta = res.json();
-          this.listaEfectivos.splice(indice, 1);
-          this.recargarListaCompleta(this.listaEfectivos);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         },
         err => {
-          this.toastr.error("Error al eliminar el registro");
+          this.toastr.error("Error al anular el registro");
           this.loaderService.hide();
         });
-    }
     document.getElementById('idFechaCajaAE').focus();
   }
   //Calcula el importe total para agregar

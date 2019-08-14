@@ -62,6 +62,10 @@ export class ViajeInsumoService {
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
   }
+  //Actualiza un registro
+  public anularInsumo(elemento) {
+    return this.http.put(this.url + '/anularInsumo', elemento, this.options);
+  }
   //Elimina un registro
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);

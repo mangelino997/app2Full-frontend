@@ -49,7 +49,7 @@ export class ViajeInsumoComponent implements OnInit {
   private subscription: Subscription;
   //Define las columnas de la tabla
   public columnas: string[] = ['sucursal', 'orden', 'fecha', 'proveedor', 'insumo', 'cantidad', 'precioUnitario', 'importe', 'observaciones',
-                              'anulado', 'obsAnulado', 'mod', 'eliminar'];
+                              'anulado', 'obsAnulado', 'mod', 'anular'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -119,9 +119,9 @@ export class ViajeInsumoComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajeInsumo.get('fecha').setValue(res.json());
     })
-    this.formularioViajeInsumo.get('cantidad').setValue('0');
-    this.formularioViajeInsumo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
-    this.formularioViajeInsumo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
+    // this.formularioViajeInsumo.get('cantidad').setValue('0');
+    // this.formularioViajeInsumo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
+    // this.formularioViajeInsumo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
     if (opcion == 1) {
       this.importeTotal.setValue(this.appServicio.establecerDecimales('0.00', 2));
       // this.formularioViajeInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros('0'));
@@ -149,6 +149,12 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
+    if(!this.formularioViajeInsumo.value.cantidad)
+      this.formularioViajeInsumo.get('cantidad').setValue('0');
+    if(!this.formularioViajeInsumo.value.importe)
+      this.formularioViajeInsumo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
+    if(!this.formularioViajeInsumo.value.precioUnitario)
+      this.formularioViajeInsumo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
     this.establecerDecimales(formulario.get('precioUnitario'), 2);
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
@@ -220,27 +226,20 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajeInsumo.get('precioUnitario').setValue(this.appServicio.establecerDecimales(this.formularioViajeInsumo.value.precioUnitario ,2));
   }
   //Elimina una orden insumo de la tabla por indice
-  public eliminarInsumo(indice, elemento): void {
-    if (this.indiceSeleccionado == 1) {
-      this.listaInsumos.splice(indice, 1);
-      this.recargarListaCompleta(this.listaInsumos);
-      this.establecerValoresPorDefecto(0);
-    } else {
-      this.loaderService.show();
-      this.servicio.eliminar(elemento.id).subscribe(res => {
+  public anularInsumo(elemento): void {
+    this.loaderService.show();
+    elemento.viaje = {id: this.VIAJE_CABECERA.id};
+      this.servicio.anularInsumo(elemento).subscribe(res => {
           let respuesta = res.json();
-          this.listaInsumos.splice(indice, 1);
-          this.recargarListaCompleta(this.listaInsumos);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         },
         err => {
-          let error = err.json();
+          this.toastr.error("Error al anular el registro");
           this.loaderService.hide();
-          this.toastr.error(error.mensaje);
         });
-    }
     document.getElementById('idProveedor').focus();
   }
   //Calcula el importe total al agregar

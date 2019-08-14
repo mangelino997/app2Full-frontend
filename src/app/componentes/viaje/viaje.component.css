@@ -37,5 +37,9 @@
 }
 .btn-width {
     padding: 0px 0px !important;
-    min-width: 45px !important;
+    width: 50%;
+}
+.btn-width-full {
+    padding: 0px 0px !important;
+    width: 100%;
 }
