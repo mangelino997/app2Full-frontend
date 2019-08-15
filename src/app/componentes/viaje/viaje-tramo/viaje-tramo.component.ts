@@ -29,6 +29,8 @@ import { Viaje } from 'src/app/modelos/viaje';
   styleUrls: ['./viaje-tramo.component.css']
 })
 export class ViajeTramoComponent implements OnInit {
+  @Output() dataEvent = new EventEmitter();
+
   //Define un formulario viaje propio tramo para validaciones de campos
   public formularioViajeTramo: FormGroup;
   //Define el formulario para Viaje Cabecera
@@ -133,12 +135,13 @@ export class ViajeTramoComponent implements OnInit {
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar(){
     this.loaderService.show();
-    console.log(this.VIAJE_CABECERA.id);
       this.servicio.listarTramos(this.VIAJE_CABECERA.id).subscribe(
         res=>{
           this.listaTramos = res.json();
           this.recargarListaCompleta(this.listaTramos);
+          this.emitirTramos(this.listaTramos); 
           this.loaderService.hide();
+
         },
         err=>{
           let error = err.json();
@@ -147,20 +150,19 @@ export class ViajeTramoComponent implements OnInit {
         }
       );
   }
+  //Emite los tramos al Padre
+  public emitirTramos(lista){
+    this.dataEvent.emit(lista);
+  }
   //Establece los valores por defecto del formulario viaje tramo
   public establecerValoresPorDefecto(): void {
-    //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajeTramo.get('fechaTramo').setValue(res.json());
     })
-    // this.formularioViajeTramo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
-    // this.formularioViajeTramo.get('cantidad').setValue('0');
-    // this.formularioViajeTramo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
   }
   //Establece el id del viaje de Cabecera
   public establecerViajeCabecera(viajeCabecera){
     this.VIAJE_CABECERA = viajeCabecera;
-    console.log(this.VIAJE_CABECERA);
   }
   //Obtiene la mascara de importes
   public mascararImporte(intLimite, decimalLimite) {
@@ -331,19 +333,20 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajeTramo.get('km').setValue(km);
     this.formularioViajeTramo.get('numeroOrden').setValue(this.numeroOrden);
     this.formularioViajeTramo.get('usuarioAlta').setValue(usuario);
+
     if(!this.formularioViajeTramo.value.importe)
       this.formularioViajeTramo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
     if(!this.formularioViajeTramo.value.cantidad)
       this.formularioViajeTramo.get('cantidad').setValue('0');
     if(!this.formularioViajeTramo.value.precioUnitario)
       this.formularioViajeTramo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
+
     if(this.listaTramos.length > 0){
       this.agregar();
     }else{
-      console.log(this.VIAJE_CABECERA);
       this.formularioViaje.patchValue(this.VIAJE_CABECERA);
       this.formularioViaje.value.sucursal = this.VIAJE_CABECERA.sucursal;
-      this.formularioViajeTramo.value.id = null;
+      this.formularioViajeTramo.value.id = 0;
       this.viajeTramos.push(this.formularioViajeTramo.value);
       this.formularioViaje.get('viajeTramos').setValue(this.viajeTramos);
       this.formularioViaje.get('viajeInsumos').setValue([]);
@@ -352,7 +355,6 @@ export class ViajeTramoComponent implements OnInit {
       this.formularioViaje.get('viajeCombustibles').setValue([]);
       this.formularioViaje.get('viajeEfectivos').setValue([]);
       this.formularioViaje.value.id = null;
-      console.log(this.formularioViaje.value);
       this.viajeServicio.agregar(this.formularioViaje.value).subscribe(
         res=>{
           let resultado = res.json();
@@ -407,6 +409,7 @@ export class ViajeTramoComponent implements OnInit {
       this.formularioViajeTramo.get('cantidad').setValue('0');
     if(!this.formularioViajeTramo.value.precioUnitario)
       this.formularioViajeTramo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
+
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeTramo.value.usuarioMod = usuarioMod;
     let idViajeCabecera = this.VIAJE_CABECERA.id;
@@ -435,47 +438,40 @@ export class ViajeTramoComponent implements OnInit {
   }
   //Modifica un tramo de la tabla por indice
   public modTramo(indice, elemento): void {
-    console.log(elemento);
     this.indiceTramo = indice;
     this.btnTramo = false;
-    // let elemento = this.listaTramos[indice];
     elemento.precioUnitario = this.appServicio.establecerDecimales(elemento.precioUnitario.toString(), 2);
     elemento.importe = this.appServicio.establecerDecimales(elemento.importe.toString(), 2);
     this.formularioViajeTramo.patchValue(elemento);
     this.formularioViajeTramo.value.viaje = this.VIAJE_CABECERA;
-    console.log(elemento.viajeTramoClientes);
     this.listaDadorDestinatario = elemento.viajeTramoClientes;
     this.establecerEstadoTipoCarga();
   }
   //Elimina un tramo de la tabla por indice
   public eliminarTramo(indice, elemento): void {
-    if (this.indiceSeleccionado == 1) {
-      this.listaTramos.splice(indice, 1);
-      this.recargarListaCompleta(this.listaTramos);
-      this.establecerValoresPorDefecto();
-      this.establecerViajeTarifaPorDefecto();
-    } else {
+    console.log(indice);
+    if(this.listaTramos.length == 1){
+      this.toastr.warning("No se puede eliminar todos los registros de Tramos");
+    }else{
       this.loaderService.show();
       this.servicio.eliminar(elemento.id).subscribe(
-        res => {
-          let respuesta = res.json();
-          this.listaTramos.splice(indice, 1);
-          this.recargarListaCompleta(this.listaTramos);
-          this.establecerValoresPorDefecto();
-          this.establecerViajeTarifaPorDefecto();
-          this.toastr.success(respuesta.mensaje);
-          this.listar();
-          this.loaderService.hide();
-        },
-        err => {
-          let error = err.json();
-          this.toastr.error("Error al eliminar el registro");
-          this.loaderService.hide();
-        });
+      res => {
+            let respuesta = res.json();
+            this.listar();
+            this.establecerValoresPorDefecto();
+            this.establecerViajeTarifaPorDefecto();
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+      },
+      err => {
+            let error = err.json();
+            this.toastr.error("Error al eliminar el registro");
+            this.loaderService.hide();
+      });
+      this.establecerValoresPorDefecto();
+      this.establecerViajeTarifaPorDefecto();
+      this.resultadosTramos = [];
     }
-    this.establecerValoresPorDefecto();
-    this.establecerViajeTarifaPorDefecto();
-    this.resultadosTramos = [];
     document.getElementById('idTramoFecha').focus();
   }
   //Limpia el formulario
@@ -509,7 +505,6 @@ export class ViajeTramoComponent implements OnInit {
     switch (indice) {
       case 1:
         this.soloLectura = false;
-        // this.establecerValoresPorDefecto();
         this.listarViajesTarifas();
         this.establecerCamposSelectSoloLectura(false);
         break;
@@ -547,6 +542,7 @@ export class ViajeTramoComponent implements OnInit {
   private recargarListaCompleta(listaTramos){
     this.listaCompleta = new MatTableDataSource(listaTramos);
     this.listaCompleta.sort = this.sort; 
+    this.emitirTramos(listaTramos);
   }
   //Establece el foco en fecha
   public establecerFoco(): void {
@@ -559,6 +555,7 @@ export class ViajeTramoComponent implements OnInit {
     this.listaTramos = [];
     this.resultadosTramos = [];
     this.listaCompleta = new MatTableDataSource([]);
+    this.emitirTramos(this.listaTramos);
   }
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario() {
@@ -600,14 +597,12 @@ export class ViajeTramoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(viajeTramoClientes => {
-      console.log(viajeTramoClientes);
       if(viajeTramoClientes.length>0)
         this.formularioViajeTramo.get('viajeTramoClientes').setValue(viajeTramoClientes);
     });
   }
   //Abre un dialogo para ver la lista de dadores y destinatarios
   public verDadorDestTablaDialogo(elemento): void {
-    console.log(elemento);
     const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
       width: '1200px',
       data: {
@@ -711,8 +706,6 @@ export class DadorDestinatarioDialogo {
   }
   //Agrega el dador y el destinatario a la tabla
   public agregarDadorDestinatario(): void {
-    // this.formulario.get('viajeTramo').setValue({id: this.data.elemento.id});
-    console.log(this.formulario.value);
     this.listaDadorDestinatario.push(this.formulario.value);
     this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
     this.listaCompleta.sort = this.sort; 

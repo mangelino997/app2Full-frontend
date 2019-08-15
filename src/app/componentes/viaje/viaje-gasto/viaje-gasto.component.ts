@@ -19,6 +19,7 @@ import { ViajeGastoService } from 'src/app/servicios/viaje-gasto';
   styleUrls: ['./viaje-gasto.component.css']
 })
 export class ViajeGastoComponent implements OnInit {
+  @Output() dataEvent = new EventEmitter();
   //Define un formulario viaje  gasto para validaciones de campos
   public formularioViajeGasto: FormGroup;
   //Define la lista de ordenes de gastos (tabla)
@@ -69,7 +70,6 @@ export class ViajeGastoComponent implements OnInit {
   //Establece el id del viaje de Cabecera
   public establecerViajeCabecera(viajeCabecera){
     this.VIAJE_CABECERA = viajeCabecera;
-    console.log(this.VIAJE_CABECERA);
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar(idViajeCabecera){
@@ -78,6 +78,7 @@ export class ViajeGastoComponent implements OnInit {
         res=>{
           this.listaGastos = res.json();
           this.recargarListaCompleta(this.listaGastos);
+          this.emitirGastos(this.listaGastos);
           this.loaderService.hide();
         },
         err=>{
@@ -86,11 +87,13 @@ export class ViajeGastoComponent implements OnInit {
           this.loaderService.hide();
         }
       );
-    
+  }
+  //Emite los gastos al Padre
+  public emitirGastos(lista){
+    this.dataEvent.emit(lista);
   }
   //Establece los valores por defecto del formulario viaje gasto
   public establecerValoresPorDefecto(opcion): void {
-    //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajeGasto.get('fecha').setValue(res.json());
     })
@@ -206,10 +209,11 @@ export class ViajeGastoComponent implements OnInit {
     });
     this.formularioViajeGasto.get('importeTotal').setValue(importeTotal.toFixed(2));
   }
-  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
-  private recargarListaCompleta(listaTramos){
-    this.listaCompleta = new MatTableDataSource(listaTramos);
+  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaGastos'
+  private recargarListaCompleta(listaGastos){
+    this.listaCompleta = new MatTableDataSource(listaGastos);
     this.listaCompleta.sort = this.sort; 
+    this.emitirGastos(listaGastos);
     this.calcularImporteTotal();
   }
   //Establece la lista de efectivos

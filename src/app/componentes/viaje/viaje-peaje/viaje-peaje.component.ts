@@ -75,7 +75,6 @@ export class ViajePeajeComponent implements OnInit {
   //Establece el id del viaje de Cabecera
   public establecerViajeCabecera(viajeCabecera){
     this.VIAJE_CABECERA = viajeCabecera;
-    console.log(this.VIAJE_CABECERA);
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar(){
@@ -84,6 +83,7 @@ export class ViajePeajeComponent implements OnInit {
         res=>{
           this.listaPeajes = res.json();
           this.recargarListaCompleta(this.listaPeajes);
+          this.emitirPeajes(this.listaPeajes);
           this.loaderService.hide();
         },
         err=>{
@@ -92,22 +92,22 @@ export class ViajePeajeComponent implements OnInit {
           this.loaderService.hide();
         }
       );
-    
   }
-  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
-  private recargarListaCompleta(listaTramos){
-    this.listaCompleta = new MatTableDataSource(listaTramos);
+  //Emite los peajes al Padre
+  public emitirPeajes(lista){
+    this.dataEvent.emit(lista);
+  }
+  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaPeajes'
+  private recargarListaCompleta(listaPeajes){
+    this.listaCompleta = new MatTableDataSource(listaPeajes);
     this.listaCompleta.sort = this.sort; 
+    this.emitirPeajes(listaPeajes);
     this.calcularImporteTotal();
   }
   //Establece los valores por defecto del formulario viaje gasto
   public establecerValoresPorDefecto(opcion): void {
-    // this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
-    // this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe,2));
     this.formularioViajePeaje.get('puntoVenta').setValue(this.establecerCerosIzq(this.formularioViajePeaje.get('puntoVenta'), '0000', -5));
     this.formularioViajePeaje.get('numeroComprobante').setValue(this.establecerCerosIzq(this.formularioViajePeaje.get('numeroComprobante'), '0000000', -8));
-
-    //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajePeaje.get('fecha').setValue(res.json());
     })

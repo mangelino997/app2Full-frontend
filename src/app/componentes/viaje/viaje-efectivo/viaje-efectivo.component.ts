@@ -18,6 +18,7 @@ import { ViajeEfectivoService } from 'src/app/servicios/viaje-efectivo';
   styleUrls: ['./viaje-efectivo.component.css']
 })
 export class ViajeEfectivoComponent implements OnInit {
+  @Output() dataEvent = new EventEmitter();
   //Define un formulario viaje  efectivo para validaciones de campos
   public formularioViajeEfectivo:FormGroup;
   //Define el importe Total como un formControl
@@ -73,7 +74,6 @@ export class ViajeEfectivoComponent implements OnInit {
   //Establece el id del viaje de Cabecera
   public establecerViajeCabecera(viajeCabecera){
     this.VIAJE_CABECERA = viajeCabecera;
-    console.log(this.VIAJE_CABECERA);
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar(){
@@ -82,6 +82,7 @@ export class ViajeEfectivoComponent implements OnInit {
         res=>{
           this.listaEfectivos = res.json();
           this.recargarListaCompleta(this.listaEfectivos);
+          this.emitirEfectivos(this.listaEfectivos); 
           this.loaderService.hide();
         },
         err=>{
@@ -90,6 +91,10 @@ export class ViajeEfectivoComponent implements OnInit {
           this.loaderService.hide();
         }
       );
+  }
+  //Emite los efectivos al Padre
+  public emitirEfectivos(lista){
+    this.dataEvent.emit(lista);
   }
   //Obtiene el listado de empresas
   private listarEmpresas() {
@@ -104,7 +109,6 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Establece los valores por defecto del formulario viaje adelanto efectivo
   public establecerValoresPorDefecto(opcion): void {
-    //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.fechaActual = res.json();
       this.formularioViajeEfectivo.get('fechaCaja').setValue(res.json());
@@ -112,7 +116,6 @@ export class ViajeEfectivoComponent implements OnInit {
     if(opcion == 1) {
       this.importeTotal.setValue(this.appServicio.establecerDecimales('0.00', 2));
     }
-    // this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
   }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
@@ -201,7 +204,6 @@ export class ViajeEfectivoComponent implements OnInit {
     this.listaEfectivos.forEach(item => {
       total += parseFloat(item.importe);
     });
-    // this.formularioViajeEfectivo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
     this.importeTotal.setValue(this.appServicio.establecerDecimales(total, 2));
   }
   //Establece los ceros en los numeros flotantes
@@ -259,6 +261,7 @@ export class ViajeEfectivoComponent implements OnInit {
   private recargarListaCompleta(listaEfectivos){
     this.listaCompleta = new MatTableDataSource(listaEfectivos);
     this.listaCompleta.sort = this.sort; 
+    this.emitirEfectivos(listaEfectivos);
     this.calcularImporteTotal();
   }
   //Establece los campos select en solo lectura o no

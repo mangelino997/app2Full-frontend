@@ -156,8 +156,6 @@
                             <div class="col-md-2">
                                 <div class="row">
                                     <button mat-raised-button class="btn-width-full">Vtos</button>
-                                    <!-- <button mat-raised-button color="primary" class="btn-width" (click)="agregarViaje()" *ngIf="idMod == null && indiceSeleccionado == 1">Abrir Viaje</button>
-                                    <button mat-raised-button color="primary" class="btn-width" (click)="actualizarViaje()" *ngIf="idMod != null && indiceSeleccionado == 1">Mod. Viaje</button> -->
                                 </div>
                             </div>
                         </div>
@@ -166,53 +164,53 @@
             </div>
         </mat-card>
         <br>
-        <mat-horizontal-stepper [linear]="!estadoFormulario" (selectionChange)="onStepChange($event)" #stepper>
+        <mat-horizontal-stepper linear (selectionChange)="onStepChange($event)" #stepper>
             <ng-template matStepperIcon="edit" let-index="index">
                 {{index+1}}
             </ng-template>
-            <mat-step [stepControl]="formularioViajeTramo">
+            <mat-step [stepControl]="formularioViajeTramo" >
                 <ng-template matStepLabel>Tramos</ng-template><br>
                 <form [formGroup]="formularioViajeTramo">
                     <app-viaje-tramo (dataEvent)="recibirTramos($event)"></app-viaje-tramo>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajeCombustible">
+            <mat-step [stepControl]="formularioViajeTramo" >
                 <ng-template matStepLabel>Ordenes Combustibles</ng-template><br>
                 <form [formGroup]="formularioViajeCombustible">
                     <app-viaje-combustible (dataEvent)="recibirCombustibles($event)"></app-viaje-combustible>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajeEfectivo">
+            <mat-step [stepControl]="formularioViajeTramo">
                 <ng-template matStepLabel>Adelantos Efectivo</ng-template><br>
                 <form [formGroup]="formularioViajeEfectivo">
                     <app-viaje-efectivo (dataEvent)="recibirEfectivos($event)"></app-viaje-efectivo>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajeInsumo">
+            <mat-step [stepControl]="formularioViajeTramo">
                 <ng-template matStepLabel>Ordenes Insumo</ng-template><br>
                 <form [formGroup]="formularioViajeInsumo">
                     <app-viaje-insumo (dataEvent)="recibirInsumos($event)"></app-viaje-insumo>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajeRemitoDC">
+            <mat-step [stepControl]="formularioViajeTramo">
                 <ng-template matStepLabel>Remitos Dadores Carga</ng-template><br>
                 <form [formGroup]="formularioViajeRemitoDC">
 
                 </form>
             </mat-step>
-            <!-- <mat-step [stepControl]="formularioViajeRemito">
+            <!-- <mat-step [stepControl]="formularioViajeTramo">
                 <ng-template matStepLabel>Remitos Generales</ng-template><br>
                 <form [formGroup]="formularioViajeRemito">
                     <app-viaje-remito-gs (dataEvent)="recibirRemitos($event)"></app-viaje-remito-gs>
                 </form>
             </mat-step> -->
-            <mat-step [stepControl]="formularioViajeGasto">
+            <mat-step [stepControl]="formularioViajeTramo">
                 <ng-template matStepLabel>Gastos</ng-template><br>
                 <form [formGroup]="formularioViajeGasto">
                     <app-viaje-gasto (dataEvent)="recibirGastos($event)"></app-viaje-gasto>
                 </form>
             </mat-step>
-            <mat-step [stepControl]="formularioViajePeaje">
+            <mat-step [stepControl]="formularioViajeTramo">
                 <ng-template matStepLabel>Peaje</ng-template><br>
                 <form [formGroup]="formularioViajePeaje">
                     <app-viaje-peaje (dataEvent)="recibirPeajes($event)"></app-viaje-peaje>

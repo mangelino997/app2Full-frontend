@@ -20,6 +20,7 @@ import { ViajeInsumoService } from 'src/app/servicios/viaje-insumo';
   styleUrls: ['./viaje-insumo.component.css']
 })
 export class ViajeInsumoComponent implements OnInit {
+  @Output() dataEvent = new EventEmitter();
   //Define un formulario viaje  insumo para validaciones de campos
   public formularioViajeInsumo: FormGroup;
   //Define la lista de resultados proveedores de busqueda
@@ -84,7 +85,6 @@ export class ViajeInsumoComponent implements OnInit {
   //Establece el id del viaje de Cabecera
   public establecerViajeCabecera(viajeCabecera){
     this.VIAJE_CABECERA = viajeCabecera;
-    console.log(this.VIAJE_CABECERA);
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar(){
@@ -93,6 +93,7 @@ export class ViajeInsumoComponent implements OnInit {
         res=>{
           this.listaInsumos = res.json();
           this.recargarListaCompleta(this.listaInsumos);
+          this.emitirInsumos(this.listaInsumos);
           this.loaderService.hide();
         },
         err=>{
@@ -101,6 +102,10 @@ export class ViajeInsumoComponent implements OnInit {
           this.loaderService.hide();
         }
       );
+  }
+  //Emite los insumos al Padre
+  public emitirInsumos(lista){
+    this.dataEvent.emit(lista);
   }
   //Obtiene el listado de insumos
   private listarInsumos() {
@@ -115,16 +120,11 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Establece los valores por defecto del formulario viaje insumo
   private establecerValoresPorDefecto(opcion): void {
-    //Establece la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajeInsumo.get('fecha').setValue(res.json());
     })
-    // this.formularioViajeInsumo.get('cantidad').setValue('0');
-    // this.formularioViajeInsumo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
-    // this.formularioViajeInsumo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
     if (opcion == 1) {
       this.importeTotal.setValue(this.appServicio.establecerDecimales('0.00', 2));
-      // this.formularioViajeInsumo.get('importeTotal').setValue(this.appComponent.establecerCeros('0'));
     }
   }
   //Establece el precio unitario
@@ -248,7 +248,6 @@ export class ViajeInsumoComponent implements OnInit {
     this.listaInsumos.forEach(item => {
       total += parseFloat(item.importe);
     })
-    // this.formularioViajeInsumo.get('importeTotal').setValue(this.appServicio.establecerDecimales(total, 2));
     this.importeTotal.setValue(this.appServicio.establecerDecimales(total, 2));
   }
   //Establece la lista de efectivos
@@ -301,10 +300,11 @@ export class ViajeInsumoComponent implements OnInit {
       this.formularioViajeInsumo.get('insumoProducto').enable();
     }
   }
-  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
-  private recargarListaCompleta(listaTramos){
-    this.listaCompleta = new MatTableDataSource(listaTramos);
+  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaInsumos'
+  private recargarListaCompleta(listaInsumos){
+    this.listaCompleta = new MatTableDataSource(listaInsumos);
     this.listaCompleta.sort = this.sort; 
+    this.emitirInsumos(listaInsumos);
     this.calcularImporteTotal();
   }
   //Establece los ceros en los numeros flotantes

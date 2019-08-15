@@ -5,7 +5,7 @@ import { FechaService } from '../../servicios/fecha.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { VehiculoService } from '../../servicios/vehiculo.service';
 import { PersonalService } from '../../servicios/personal.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ViajeTramoComponent } from './viaje-tramo/viaje-tramo.component';
 import { ViajeCombustibleComponent } from './viaje-combustible/viaje-combustible.component';
@@ -61,21 +61,37 @@ export class ViajeComponent implements OnInit {
   //Define un formulario viaje propio para validaciones de campos
   public formularioViaje: FormGroup;
   //Define un formulario viaje  tramo para validaciones de campos
-  public formularioViajeTramo: FormGroup = new FormGroup({});
+  public formularioViajeTramo: FormGroup = new FormGroup({
+    lista: new FormControl('', Validators.required)
+  });
   //Define un formulario viaje  combustible para validaciones de campos
-  public formularioViajeCombustible: FormGroup = new FormGroup({});
+  public formularioViajeCombustible: FormGroup = new FormGroup({
+    lista: new FormControl('', Validators.required)
+  });
   //Define un formulario viaje  efectivo para validaciones de campos
-  public formularioViajeEfectivo: FormGroup = new FormGroup({});
+  public formularioViajeEfectivo: FormGroup = new FormGroup({
+    lista: new FormControl('', Validators.required)
+  });
   //Define un formulario viaje  insumo para validaciones de campos
-  public formularioViajeInsumo: FormGroup = new FormGroup({});
+  public formularioViajeInsumo: FormGroup = new FormGroup({
+    lista: new FormControl('', Validators.required)
+  });
   //Define un formulario viaje remitos dadores de carga para validaciones de campos
-  public formularioViajeRemitoDC: FormGroup = new FormGroup({});
+  public formularioViajeRemitoDC: FormGroup = new FormGroup({
+    lista: new FormControl()
+  });
   //Define un formulario viaje remito para validaciones de campos
-  public formularioViajeRemito: FormGroup = new FormGroup({});
+  public formularioViajeRemito: FormGroup = new FormGroup({
+    lista: new FormControl()
+  });
   //Define un formulario viaje  gasto para validaciones de campos
-  public formularioViajeGasto: FormGroup = new FormGroup({});
+  public formularioViajeGasto: FormGroup = new FormGroup({
+    lista: new FormControl('', Validators.required)
+  });
   //Define un formulario viaje  peaje para validaciones de campos
-  public formularioViajePeaje: FormGroup = new FormGroup({});
+  public formularioViajePeaje: FormGroup = new FormGroup({
+    lista: new FormControl('', Validators.required)
+  });
   //Define la lista completa de registros
   public listaCompleta= new MatTableDataSource([]);
   //Define la opcion seleccionada
@@ -325,20 +341,6 @@ export class ViajeComponent implements OnInit {
       this.viajePeajeComponente.reestablecerFormulario();
       this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
-    // if (this.banderaSoloLectura) {
-    //   this.viajeTramoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    //   this.viajeTramoComponente.vaciarListas();
-    //   this.viajeCombustibleComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    //   this.viajeCombustibleComponente.reestablecerFormularioYLista();
-    //   this.viajeEfectivoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    //   this.viajeEfectivoComponente.reestablecerFormularioYLista();
-    //   this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    //   this.viajeInsumoComponente.reestablecerFormularioYLista();
-    //   this.viajeGastoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    //   this.viajeGastoComponente.reestablecerFormularioYLista();
-    //   this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    //   this.viajePeajeComponente.reestablecerFormularioYLista();
-    // }
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -442,54 +444,51 @@ export class ViajeComponent implements OnInit {
   }
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
-    this.estadoFormulario = false;
+    if($event.length > 0)
+      this.formularioViajeTramo.get('lista').setValue($event);
+       else
+       this.formularioViajeTramo.get('lista').setValue(null);
     this.tipoViaje.enable();
-    for (const key in $event) {
-      if ($event[key].id > 0 || $event[key].id == null) {
-        this.estadoFormulario = true;
-        this.tipoViaje.disable();
-      }
-    }
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {
-    // this.formularioViaje.get('viajeCombustibles').setValue($event);
+    if($event.length > 0)
+      this.formularioViajeCombustible.get('lista').setValue($event);
+       else
+       this.formularioViajeCombustible.get('lista').setValue(null);
   }
   //Recibe la lista de adelantos de efectivo de Viaje Efectivo
   public recibirEfectivos($event) {
-    // this.formularioViaje.get('viajeEfectivos').setValue($event);
+    if($event.length > 0)
+      this.formularioViajeEfectivo.get('lista').setValue($event);
+       else
+       this.formularioViajeEfectivo.get('lista').setValue(null);
   }
   //Recibe la lista de ordenes de insumo de Viaje Insumo
   public recibirInsumos($event) {
-    // this.formularioViaje.get('viajeInsumos').setValue($event);
+    if($event.length > 0)
+      this.formularioViajeInsumo.get('lista').setValue($event);
+       else
+       this.formularioViajeInsumo.get('lista').setValue(null);
   }
   //Recibe la lista de gastos de Viaje Gasto
   public recibirGastos($event) {
-    // this.formularioViaje.get('viajeGastos').setValue($event);
+    if($event.length > 0)
+      this.formularioViajeGasto.get('lista').setValue($event);
+       else
+       this.formularioViajeGasto.get('lista').setValue(null);
   }
   //Recibe la lista de peajes de Viaje Peaje
   public recibirPeajes($event) {
-    // this.formularioViaje.get('viajePeajes').setValue($event);
+    if($event.length > 0)
+      this.formularioViajePeaje.get('lista').setValue($event);
+       else
+       this.formularioViajePeaje.get('lista').setValue(null);
   }
   //Recibe la lista de remitos de Viaje Remito
   public recibirRemitos($event) {
     console.log($event);
-  }
-  //Dependiendo en que pestaña esta, es la acción que realiza
-  public accion(): void {
-    switch (this.indiceSeleccionado) {
-      case 1:
-        // this.agregar();
-        break;
-      case 2:
-        break;
-      case 3:
-        // this.actualizar();
-        break;
-      case 4:
-        break;
-    }
-  }
+  } 
   //Agrega el viaje (CABECERA)
   public agregarViaje(){
     this.loaderService.show();
@@ -657,7 +656,6 @@ export class ViajeComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    // var opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
