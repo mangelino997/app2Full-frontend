@@ -25,6 +25,7 @@ import { EliminarModalComponent } from '../eliminar-modal/eliminar-modal.compone
 import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { ConfirmarDialogo } from '../actualizacion-precios/actualizacion-precios.component';
+import { promise } from 'protractor';
 
 @Component({
   selector: 'app-orden-venta',
@@ -261,16 +262,18 @@ export class OrdenVentaComponent implements OnInit {
   public establecerTipo(): void {
     // let tipoOrdenVenta = this.tipoOrdenVenta.value;
     if (!this.tipoOrdenVenta.value) {
-      this.formulario.get('clientes').setValue([]);
-      this.formulario.get('clientes').setValidators([]);
+      this.cliente.reset();
+      // this.formulario.get('clientes').setValue([]);
+      // this.formulario.get('clientes').setValidators([]);
       // this.formulario.get('empresas').setValidators(Validators.required);
       // this.formulario.get('clientes').updateValueAndValidity();//Actualiza las validaciones en el Formulario
       // this.listarOrdenesVentas('empresas');
         
     } 
     if (this.tipoOrdenVenta.value) {
-      this.formulario.get('empresas').setValue([]);
-        this.formulario.get('empresas').setValidators([]);
+      this.empresa.reset();
+      // this.formulario.get('empresas').setValue([]);
+      //   this.formulario.get('empresas').setValidators([]);
         // this.formulario.get('clientes').setValidators(Validators.required);
         // this.formulario.get('empresas').updateValueAndValidity(); //Actualiza las validaciones en el Formulario
     } 
@@ -602,29 +605,30 @@ export class OrdenVentaComponent implements OnInit {
   public agregarTarifa(){
     this.loaderService.show();
     if(this.listaDeTarifas.length == 0){
+      let usuarioAlta = this.appService.getUsuario();
+      let empresa = this.appService.getEmpresa();
       this.formulario.get('id').setValue(null);
       this.formulario.get('ordenesVentasTarifas').setValue(this.formularioTarifa.value);
-      if(this.formulario.value.clientes.length > 0){
-        this.formulario.value.empresas = [];
-        this.formulario.value.clientes = [this.cliente.value];
-      }else{
-        this.formulario.value.empresas = [this.appService.getEmpresa()];
-        this.formulario.value.clientes = [];
-      }
       console.log(this.formulario.value);
-      this.ordenVentaServicio.agregar(this.formulario.value).then(
+      this.ordenVentaServicio.agregar(this.formulario.value, usuarioAlta, empresa, this.cliente.value).then(
         res=>{
           if(res.status== 201){
-            console.log(res, res.text());
-            this.formularioTarifa.reset();
-            this.establecerOrdenVentaCabecera(res.text());
-            this.formulario.disable();
-            this.listarOrdenVentaTarifas();
-            this.toastr.success("Registro agregado con éxito");
-            this.loaderService.hide();
-            setTimeout(function () {
-              document.getElementById('idTipoTarifa').focus();
-            }, 20);
+            let respuesta = res.json();
+            respuesta.then(
+              data=>{
+                console.log(data.id);
+                this.formularioTarifa.reset();
+                this.establecerOrdenVentaCabecera(data.id);
+                this.formulario.disable();
+                this.listarOrdenVentaTarifas();
+                this.toastr.success("Registro agregado con éxito");
+                this.loaderService.hide();
+                setTimeout(function () {
+                  document.getElementById('idTipoTarifa').focus();
+                }, 20);
+              }
+            );
+            
           }
           this.loaderService.hide();
         },

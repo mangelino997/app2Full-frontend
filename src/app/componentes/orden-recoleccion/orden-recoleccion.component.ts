@@ -59,6 +59,8 @@ export class OrdenRecoleccionComponent implements OnInit {
   public pestanias = null;
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
+  //Define un formulario para la pestaña Listar
+  public formularioListar:FormGroup;
   //Define el siguiente id
   public siguienteId:number = null;
   //Define la lista completa de registros
@@ -116,6 +118,12 @@ export class OrdenRecoleccionComponent implements OnInit {
       });
     //Define el formulario de orden venta
     this.formulario = this.ordenRecoleccion.formulario;
+    //Define el formulario para la pestña Listar
+    this.formularioListar = new FormGroup({
+      fechaDesde: new FormControl(),
+      fechaHasta: new FormControl(),
+      remitente: new FormControl()
+    });
     this.reestablecerFormulario(undefined);
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
@@ -161,6 +169,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
+        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;    
         this.loaderService.hide();
@@ -513,6 +522,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    console.log(this.formulario.value);
     let domicilioYBarrio= this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
     let localidadYProvincia= this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
     this.domicilioBarrio.setValue(domicilioYBarrio);

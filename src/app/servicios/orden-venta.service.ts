@@ -65,12 +65,25 @@ export class OrdenVentaService {
     return this.http.get(this.url + '/listarPorCliente/' + id, this.options);
   }
   //Agrega un registro
-  public agregar(elemento) {
+  public agregar(elemento, usuarioAlta, empresa, cliente) {
     console.log(elemento);
     let obj = Object.assign({}, elemento);
-    // let ordenVentaForm = obj.ordenVenta;
-    let clienteOrdenVenta = obj.clientes;
-    let empresaOrdenVenta = obj.empresas;
+    console.log(cliente);
+    let clienteOrdenVenta;
+    let empresaOrdenVenta;
+    if(cliente){
+      clienteOrdenVenta = {
+        cliente: cliente,
+        usuarioAlta: {id: usuarioAlta.id}
+      };
+      empresaOrdenVenta = null;
+    }else{
+      empresaOrdenVenta = {
+        empresa: empresa,
+        usuarioAlta: {id: usuarioAlta.id}
+      };
+      clienteOrdenVenta = null
+    }
     let ordenVentaTarifa = obj.ordenesVentasTarifas;
     // let ordenesVentasEscalas = obj.ordenVentaTarifa.listaOrdenVentaEscala;
     // let ordenesVentasTramos = obj.ordenVentaTarifa.listaOrdenVentaTramo;
@@ -82,13 +95,13 @@ export class OrdenVentaService {
     if(clienteOrdenVenta)
       formData.append('clienteOrdenVenta', JSON.stringify(clienteOrdenVenta));
       else{
-        formData.append('clienteOrdenVenta', JSON.stringify(''));
+        formData.append('clienteOrdenVenta', null);
       }
       
     if(empresaOrdenVenta)
       formData.append('empresaOrdenVenta', JSON.stringify(empresaOrdenVenta));
       else{
-        formData.append('empresaOrdenVenta', JSON.stringify(''));
+        formData.append('empresaOrdenVenta',null);
       }
 
     if(ordenVentaTarifa)

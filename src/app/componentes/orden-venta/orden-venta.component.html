@@ -124,7 +124,7 @@
               <div class="form-group has-float-label" >
                 <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
                 <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" autocomplete="off" required
-                  class="form-control form-control-sm" [readonly]="soloLectura">
+                  class="form-control form-control-sm" [readonly]="soloLectura || ORDEN_VTA_CABECERA">
               </div>
             </div>
           </div>

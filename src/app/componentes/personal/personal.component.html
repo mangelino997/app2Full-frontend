@@ -308,22 +308,6 @@
                   <div class="row">
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idAntiguedadAntAnio" class="tamanio-label">Antiguedad Ant. Años</label>
-                        <input id="idAntiguedadAntAnio" [textMask]="mascararEnteros(2)" type="text"
-                          formControlName="antiguedadAntAnio" autocomplete="off"
-                          class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
-                      </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
-                        <label for="idAntiguedadAntMes" class="tamanio-label">Antiguedad Ant. Meses</label>
-                        <input id="idAntiguedadAntMes" [textMask]="mascararEnteros(2)" type="text"
-                          formControlName="antiguedadAntMes" autocomplete="off"
-                          class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
-                      </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="form-group has-float-label">
                         <label for="idCategoria" class="tamanio-label">Categoría *</label>
                         <mat-select class="form-control form-control-sm" formControlName="categoria"
                           id="idCategoria" [compareWith]="compareFn">
@@ -342,6 +326,22 @@
                             {{itemSindicato.nombre}}
                           </mat-option>
                         </mat-select>
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group has-float-label">
+                        <label for="idAntiguedadAntAnio" class="tamanio-label">Antigüedad Anterior Años</label>
+                        <input id="idAntiguedadAntAnio" [textMask]="mascararEnteros(2)" type="text"
+                          formControlName="antiguedadAntAnio" autocomplete="off"
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
+                      </div>
+                    </div>
+                    <div class="col-md-3">
+                      <div class="form-group has-float-label">
+                        <label for="idAntiguedadAntMes" class="tamanio-label"> Antigüedad Anterior Meses</label>
+                        <input id="idAntiguedadAntMes" [textMask]="mascararEnteros(2)" type="text"
+                          formControlName="antiguedadAntMes" autocomplete="off"
+                          class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0">
                       </div>
                     </div>
                   </div>
