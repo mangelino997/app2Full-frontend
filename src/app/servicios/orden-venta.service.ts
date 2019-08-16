@@ -66,9 +66,7 @@ export class OrdenVentaService {
   }
   //Agrega un registro
   public agregar(elemento, usuarioAlta, empresa, cliente) {
-    console.log(elemento);
     let obj = Object.assign({}, elemento);
-    console.log(cliente);
     let clienteOrdenVenta;
     let empresaOrdenVenta;
     if(cliente){
@@ -85,10 +83,6 @@ export class OrdenVentaService {
       clienteOrdenVenta = null
     }
     let ordenVentaTarifa = obj.ordenesVentasTarifas;
-    // let ordenesVentasEscalas = obj.ordenVentaTarifa.listaOrdenVentaEscala;
-    // let ordenesVentasTramos = obj.ordenVentaTarifa.listaOrdenVentaTramo;
-
-    // let blob = new Blob([null], {type : 'application/pdf'});
     let noBlobPdf = new Blob([null], {});
     const formData = new FormData(); 
     let objNull= null;
@@ -110,33 +104,6 @@ export class OrdenVentaService {
         formData.append('ordenVentaTarifa', JSON.stringify(''));
       }
 
-    // if(ordenesVentasEscalas)
-    //   formData.append('ordenesVentasEscalas', JSON.stringify(ordenesVentasEscalas));
-    //   else{
-    //     formData.append('ordenesVentasEscalas', JSON.stringify(''));
-    //   }
-
-    // if(ordenesVentasTramos)
-    //   formData.append('ordenesVentasTramos', JSON.stringify(ordenesVentasTramos));
-    //   else{
-    //     formData.append('ordenesVentasTramos', JSON.stringify(''));
-    //   }
-    
-    // if(clienteOrdenVenta.cliente)
-    //   obj.clientes = [clienteOrdenVenta.cliente];
-    //   else
-    //   obj.clientes = [];
-
-    // if(empresaOrdenVenta.empresa)
-    //   obj.empresas = [empresaOrdenVenta.empresa];
-    //   else
-    //   obj.empresas = [];
-
-    // obj.clienteOrdenVenta = {id: null};
-    // obj.empresaOrdenVenta = {id: null};
-    // obj.ordenVentaTarifa.listaOrdenVentaEscala = null;
-    // obj.ordenVentaTarifa.listaOrdenVentaTramo = null;
-    // obj.ordenesVentasTarifas = [];
     formData.append('ordenVenta', JSON.stringify(obj));
     console.log(obj);
 		return fetch(this.url, {

@@ -17,7 +17,8 @@ export class OrdenVentaTramo {
             importeFijoRef: new FormControl('00'),
             precioUnitarioSeco: new FormControl('00'),
             precioUnitarioRef: new FormControl('00'),
-            preciosDesde: new FormControl(),
+            ordenVentaPrecio: new FormControl(),
+            preciosDesde: new FormControl()
         })
     }
 }
