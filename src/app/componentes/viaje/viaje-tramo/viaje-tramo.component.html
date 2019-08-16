@@ -11,8 +11,8 @@
             <div class="form-group has-float-label">
                 <label for="idTramo" class="tamanio-label">Tramo *</label>
                 <input id="idTramo" class="form-control form-control-sm" type="text" matInput
-                    [formControl]="formularioViajeTramo.get('tramo')" [matAutocomplete]="autoTramo"
-                    autocomplete="off" [readonly]="soloLectura" placeholder="Buscar por Origen"
+                    [formControl]="formularioViajeTramo.get('tramo')" [matAutocomplete]="autoTramo" autocomplete="off"
+                    [readonly]="soloLectura" placeholder="Buscar por Origen"
                     (blur)="verificarSeleccion(formularioViajeTramo.get('tramo'))">
                 <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFn.bind(this)"
                     (optionSelected)="establecerKm()">
@@ -105,8 +105,8 @@
                 <label for="idTramoPrecioUnitario" class="tamanio-label">Precio Unitario *</label>
                 <input id="idTramoPrecioUnitario" [textMask]="mascararImporte(8, 3)" type="text"
                     formControlName="precioUnitario" autocomplete="off"
-                    class="form-control form-control-sm number-right" [readonly]="soloLectura || soloLecturaPrecioCantidad"
-                    placeholder="$ 0.000"
+                    class="form-control form-control-sm number-right"
+                    [readonly]="soloLectura || soloLecturaPrecioCantidad" placeholder="$ 0.000"
                     (blur)="calcularImporte(formularioViajeTramo, formularioViajeTramo.get('precioUnitario'), 3)">
             </div>
         </div>
@@ -120,21 +120,24 @@
         </div>
         <div class="col-md-6">
             <div class="inline">
-                <button mat-raised-button (click)="verDadorDestinatarioDialogo()" [disabled]="soloLecturaDadorDestinatario">
+                <button mat-raised-button (click)="verDadorDestinatarioDialogo()"
+                    [disabled]="soloLecturaDadorDestinatario">
                     Dador-Destinatario
                 </button>
                 <button mat-raised-button (click)="abrirObservacionesDialogo()">Observaciones</button>
                 <button mat-raised-button color="primary" (click)="agregarTramo()"
-                    [disabled]="!formularioViajeTramo.valid" *ngIf="btnTramo && !soloLectura && listaTramos.length > 0">Agregar Tramo
+                    [disabled]="!formularioViajeTramo.valid"
+                    *ngIf="btnTramo && !soloLectura && listaTramos.length > 0">Agregar Tramo
                 </button>
                 <button mat-raised-button color="primary" (click)="agregarTramo()"
-                    [disabled]="!formularioViaje.valid || !formularioViajeTramo.valid" 
+                    [disabled]="!formularioViaje.valid || !formularioViajeTramo.valid"
                     *ngIf="btnTramo && !soloLectura && listaTramos.length == 0">Agregar Tramo
                 </button>
                 <button mat-raised-button color="primary" (click)="modificarTramo()"
                     [disabled]="!formularioViajeTramo.valid" *ngIf="!btnTramo && !soloLectura">Actualizar Tramo
                 </button>
-                <button mat-raised-button (click)="cancelar()" [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnTramo">Cancelar</button>
+                <button mat-raised-button (click)="cancelar()"
+                    [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnTramo">Cancelar</button>
             </div>
         </div>
     </div>
@@ -142,64 +145,73 @@
         <div class="tabla">
             <div class="tabla-ancho">
                 <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                    <ng-container matColumnDef="id" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                    <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.numeroOrden}}</td>
+                    <ng-container matColumnDef="id">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                        <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.numeroOrden}}</td>
                     </ng-container>
-                    <ng-container matColumnDef="fecha" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaTramo | date: 'dd/MM/yyyy'}}</td>
+                    <ng-container matColumnDef="fecha">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.fechaTramo | date: 'dd/MM/yyyy'}}</td>
                     </ng-container>
-                    <ng-container matColumnDef="tramo" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.tramo.origen.nombre}} -> {{elemento.tramo.destino.nombre}}</td>
+                    <ng-container matColumnDef="tramo">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.tramo.origen.nombre}} ->
+                            {{elemento.tramo.destino.nombre}}</td>
                     </ng-container>
-                    <ng-container matColumnDef="km" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.km : '--'}}</td>
+                    <ng-container matColumnDef="km">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.km : '--'}}</td>
                     </ng-container>
-                    <ng-container matColumnDef="empresa" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.empresa? elemento.empresa.razonSocial : '--'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="tipoCarga" >
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Carga</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.viajeTipoCarga? elemento.viajeTipoCarga.nombre : '--'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="tipoViaje" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Viaje</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.viajeTipo? elemento.viajeTipo.nombre : '--'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="tarifa" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.viajeTarifa? elemento.viajeTarifa.nombre : '--'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="destinatario" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Dador - Destinatario</th>
-                    <td mat-cell *matCellDef="let elemento">
-                        <span class="cursor-color" (click)="verDadorDestTablaDialogo(elemento)">ver</span>
-                    </td>
-                    </ng-container>
-                    <ng-container matColumnDef="unidadNegocio" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Un. Negocio</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.viajeUnidadNegocio? elemento.viajeUnidadNegocio.nombre : '--'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="obs" >
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+                    <ng-container matColumnDef="empresa">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
                         <td mat-cell *matCellDef="let elemento">
-                            <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+                            {{elemento.empresa? elemento.empresa.razonSocial : '--'}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="tipoCarga">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Carga</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            {{elemento.viajeTipoCarga? elemento.viajeTipoCarga.nombre : '--'}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="tipoViaje">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Viaje</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.viajeTipo? elemento.viajeTipo.nombre : '--'}}
                         </td>
                     </ng-container>
-                    <ng-container matColumnDef="mod" sticky >
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento;  let i = index;" >
-                        <span class="cursor-color" *ngIf="!soloLectura" (click)="modTramo(i, elemento)">mod</span>
-                    </td>
+                    <ng-container matColumnDef="tarifa">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            {{elemento.viajeTarifa? elemento.viajeTarifa.nombre : '--'}}</td>
                     </ng-container>
-                    <ng-container matColumnDef="eliminar" sticky >
+                    <ng-container matColumnDef="destinatario">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Dador - Destinatario</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span class="cursor-color" (click)="verDadorDestTablaDialogo(elemento)">ver</span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="unidadNegocio">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Un. Negocio</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            {{elemento.viajeUnidadNegocio? elemento.viajeUnidadNegocio.nombre : '--'}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="obs">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs.</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span class="cursor-color"
+                                (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="editar">
                         <th mat-header-cell *matHeaderCellDef>-</th>
-                        <td mat-cell *matCellDef="let elemento;  let i = index;" >
-                            <span class="cursor-color-rojo" *ngIf="!soloLectura" (click)="eliminarTramo(i, elemento)">X</span>
+                        <td mat-cell *matCellDef="let elemento;  let i = index;">
+                            <span class="cursor-color" *ngIf="!soloLectura"
+                                (click)="modTramo(i, elemento)">editar</span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="eliminar">
+                        <th mat-header-cell *matHeaderCellDef>-</th>
+                        <td mat-cell *matCellDef="let elemento;  let i = index;">
+                            <span class="cursor-color-rojo" *ngIf="!soloLectura"
+                                (click)="eliminarTramo(i, elemento)">X</span>
                         </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="columnas"></tr>

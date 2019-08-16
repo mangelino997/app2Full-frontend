@@ -2,7 +2,6 @@ import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/cor
 import { FormGroup } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { AppComponent } from 'src/app/app.component';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
 import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
@@ -50,9 +49,11 @@ export class ViajeCombustibleComponent implements OnInit {
   public columnas: string[] = ['sucursal', 'orden', 'fecha', 'proveedor', 'insumoProducto', 'cantidad', 'precioUnitario', 'observaciones', 'anulado', 'obsAnulado', 'mod', 'anular'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define estado de campo precio unitario
+  public estadoPrecioUnitario:boolean = false;
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajeCombustibleModelo: ViajeCombustible,
-    private fechaServicio: FechaService, private appComponent: AppComponent, 
+    private fechaServicio: FechaService, private appService: AppService,
     private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog, private appServicio: AppService,
     private servicio: ViajeCombustibleService, private toastr: ToastrService, private loaderService: LoaderService) { }
   //Al inicilizarse el componente
@@ -80,35 +81,35 @@ export class ViajeCombustibleComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Establece el id del viaje de Cabecera
-  public establecerViajeCabecera(viajeCabecera){
+  public establecerViajeCabecera(viajeCabecera) {
     this.VIAJE_CABECERA = viajeCabecera;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
-  private listar(){
+  private listar() {
     this.loaderService.show();
-      this.servicio.listarCombustibles(this.VIAJE_CABECERA.id).subscribe(
-        res=>{
-          this.listaCombustibles = res.json();
-          this.recargarListaCompleta(this.listaCombustibles);
-          this.emitirCombustibles(this.listaCombustibles);
-          this.loaderService.hide();
-        },
-        err=>{
-          let error = err.json();
-          this.toastr.error(error.mensaje);
-          this.loaderService.hide();
-        }
-      );
+    this.servicio.listarCombustibles(this.VIAJE_CABECERA.id).subscribe(
+      res => {
+        this.listaCombustibles = res.json();
+        this.recargarListaCompleta(this.listaCombustibles);
+        this.emitirCombustibles(this.listaCombustibles);
+        this.loaderService.hide();
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Emite los combustibles al Padre
-  public emitirCombustibles(lista){
+  public emitirCombustibles(lista) {
     this.dataEvent.emit(lista);
   }
   //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaCombustibles'
-  private recargarListaCompleta(listaCombustibles){
+  private recargarListaCompleta(listaCombustibles) {
     this.listaCompleta = new MatTableDataSource(listaCombustibles);
-    this.listaCompleta.sort = this.sort; 
-    this.emitirCombustibles(listaCombustibles);
+    this.listaCompleta.sort = this.sort;
+    // this.emitirCombustibles(listaCombustibles);
     this.calcularTotalCombustibleYUrea();
   }
   //Establece los valores por defecto del formulario viaje combustible
@@ -117,8 +118,8 @@ export class ViajeCombustibleComponent implements OnInit {
       this.formularioViajeCombustible.get('fecha').setValue(res.json());
     })
     if (opcion == 1) {
-      this.formularioViajeCombustible.get('totalCombustible').setValue(this.appComponent.establecerCeros('0.00'));
-      this.formularioViajeCombustible.get('totalUrea').setValue(this.appComponent.establecerCeros('0.00'));
+      this.formularioViajeCombustible.get('totalCombustible').setValue(this.appService.setDecimales('0', 2));
+      this.formularioViajeCombustible.get('totalUrea').setValue(this.appService.setDecimales('0', 2));
     }
   }
   //Obtiene el listado de insumos
@@ -146,13 +147,12 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
-    if(!this.formularioViajeCombustible.value.cantidad)
-      this.formularioViajeCombustible.get('cantidad').setValue('0');
-    if(!this.formularioViajeCombustible.value.precioUnitario)
-      this.formularioViajeCombustible.get('precioUnitario').setValue(this.appComponent.establecerCeros('0.00'));
-    if(!this.formularioViajeCombustible.value.importe)
-      this.formularioViajeCombustible.get('importe').setValue(this.appComponent.establecerCeros('0.00'));
-      
+    if (!formulario.value.cantidad)
+      formulario.get('cantidad').setValue('0');
+    if (!formulario.value.precioUnitario)
+      formulario.get('precioUnitario').setValue(this.appService.setDecimales('0', 2));
+    if (!formulario.value.importe)
+      formulario.get('importe').setValue(this.appService.setDecimales('0', 2));
     this.establecerDecimales(formulario.get('precioUnitario'), 2);
     this.establecerDecimales(formulario.get('cantidad'), 2);
     let cantidad = formulario.get('cantidad').value;
@@ -169,13 +169,15 @@ export class ViajeCombustibleComponent implements OnInit {
     this.insumoProductoServicio.obtenerPrecioUnitario(insumoProducto.id).subscribe(
       res => {
         let precioUnitarioViaje = parseFloat(res.text());
-        if (precioUnitarioViaje != 0 ) {
+        if (precioUnitarioViaje != 0) {
           formulario.get('precioUnitario').setValue(precioUnitarioViaje);
           this.establecerCeros(formulario.get('precioUnitario'));
-          }else {
-            formulario.get('precioUnitario').enable();
-            formulario.get('precioUnitario').reset();
-          }
+          this.estadoPrecioUnitario = true;
+        } else {
+          formulario.get('precioUnitario').enable();
+          formulario.get('precioUnitario').reset();
+          this.estadoPrecioUnitario = false;
+        }
       },
       err => {
         console.log(err);
@@ -186,12 +188,12 @@ export class ViajeCombustibleComponent implements OnInit {
   public agregarCombustible(): void {
     this.formularioViajeCombustible.get('precioUnitario').enable();
     this.formularioViajeCombustible.get('tipoComprobante').setValue({ id: 15 });
-    this.formularioViajeCombustible.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formularioViajeCombustible.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formularioViajeCombustible.get('sucursal').setValue(this.appService.getUsuario().sucursal);
+    this.formularioViajeCombustible.get('usuarioAlta').setValue(this.appService.getUsuario());
     let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeCombustible.value.viaje = {id: idViajeCabecera};
+    this.formularioViajeCombustible.value.viaje = { id: idViajeCabecera };
     this.servicio.agregar(this.formularioViajeCombustible.value).subscribe(
-      res=>{
+      res => {
         if (res.status == 201) {
           this.reestablecerFormulario();
           this.listar();
@@ -201,7 +203,7 @@ export class ViajeCombustibleComponent implements OnInit {
           this.loaderService.hide();
         }
       },
-      err=>{
+      err => {
         let resultado = err.json();
         this.toastr.error(resultado.mensaje);
         this.loaderService.hide();
@@ -213,9 +215,9 @@ export class ViajeCombustibleComponent implements OnInit {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeCombustible.value.usuarioMod = usuarioMod;
     let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeCombustible.value.viaje = {id: idViajeCabecera};
+    this.formularioViajeCombustible.value.viaje = { id: idViajeCabecera };
     this.servicio.actualizar(this.formularioViajeCombustible.value).subscribe(
-      res=>{
+      res => {
         if (res.status == 200) {
           this.reestablecerFormulario();
           this.listar();
@@ -226,7 +228,7 @@ export class ViajeCombustibleComponent implements OnInit {
           this.loaderService.hide();
         }
       },
-      err=>{
+      err => {
         let resultado = err.json();
         this.toastr.error(resultado.mensaje);
         this.loaderService.hide();
@@ -243,26 +245,26 @@ export class ViajeCombustibleComponent implements OnInit {
   //Elimina un combustible de la tabla por indice
   public anularCombustible(elemento): void {
     this.loaderService.show();
-    elemento.viaje = {id: this.VIAJE_CABECERA.id};
-      this.servicio.anularCombustible(elemento).subscribe(
-        res => {
-          let respuesta = res.json();
-          this.listar();
-          this.establecerValoresPorDefecto(0);
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
-        },
-        err => {
-          this.toastr.error("Error al anular el registro");
-          this.loaderService.hide();
-        });
+    elemento.viaje = { id: this.VIAJE_CABECERA.id };
+    this.servicio.anularCombustible(elemento).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.listar();
+        this.establecerValoresPorDefecto(0);
+        this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error("Error al anular el registro");
+        this.loaderService.hide();
+      });
     document.getElementById('idProveedorOC').focus();
   }
   //Calcula el total de combustible y el total de urea
   private calcularTotalCombustibleYUrea(): void {
     let totalCombustible = 0;
     let totalUrea = 0;
-    if(this.listaCombustibles.length>0){
+    if (this.listaCombustibles.length > 0) {
       this.listaCombustibles.forEach(item => {
         if (item.insumoProducto.id == 1) {
           totalCombustible += Number(item.cantidad);
@@ -275,7 +277,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajeCombustible.get('totalUrea').setValue(totalUrea.toFixed(2));
   }
   //Limpia el formulario
-  public cancelar(){
+  public cancelar() {
     this.reestablecerFormulario();
     this.formularioViajeCombustible.reset();
     this.formularioViajeCombustible.get('viaje').setValue(this.viaje);
@@ -285,11 +287,11 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
-    elemento.setValue(this.appComponent.establecerCeros(elemento.value));
+    elemento.setValue(this.appService.setDecimales(elemento.value, 2));
   }
   //Establece los ceros en los numeros flotantes en tablas
   public establecerCerosTabla(elemento) {
-    return this.appComponent.establecerCeros(elemento);
+    return this.appService.setDecimales(elemento, 2);
   }
   //Establece la lista de combustibles
   public establecerLista(lista, viaje, pestaniaViaje): void {
@@ -334,7 +336,7 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Establece el foco en fecha
   public establecerFoco(): void {
-    setTimeout(function() {
+    setTimeout(function () {
       document.getElementById('idProveedorOC').focus();
     }, 100);
   }
@@ -354,7 +356,7 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -378,7 +380,7 @@ export class ViajeCombustibleComponent implements OnInit {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
       width: '1200px',
       data: {
-        tema: this.appComponent.getTema(),
+        tema: this.appService.getTema(),
         elemento: elemento
       }
     });
@@ -409,9 +411,5 @@ export class ViajeCombustibleComponent implements OnInit {
     if (valor) {
       formulario.setValue(this.appServicio.desenmascararLitros(valor));
     }
-  }
-  //Establece la cantidad con decimales
-  public establecerCantidad(){
-    this.establecerDecimales(this.formularioViajeCombustible.get('cantidad'), 2);
   }
 }
