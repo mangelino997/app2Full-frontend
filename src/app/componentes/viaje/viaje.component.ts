@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { RolOpcionService } from '../../servicios/rol-opcion.service';
 import { FechaService } from '../../servicios/fecha.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { VehiculoService } from '../../servicios/vehiculo.service';
@@ -229,20 +228,27 @@ export class ViajeComponent implements OnInit {
   }
   //Establece el formulario y listas al seleccionar un elemento del autocompletado
   public cambioAutocompletado(): void {
+    this.loaderService.show();
     let viaje = this.autocompletado.value;
     this.appService.setViajeCabecera(viaje);
     this.idMod = this.autocompletado.value.id;
-    this.servicio.obtenerPorId(viaje.id).subscribe(res => {
-      let viajeRes = res.json();
-      this.formularioViaje.patchValue(viajeRes);
-      // Le paso el IndiceSeleccionado, viaje, lista
-      this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje, this.indiceSeleccionado);
-      this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje, this.indiceSeleccionado);
-      this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje, this.indiceSeleccionado);
-      this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje, this.indiceSeleccionado);
-      this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje, this.indiceSeleccionado);
-      this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje, this.indiceSeleccionado);
-    });
+    this.servicio.obtenerPorId(viaje.id).subscribe(
+      res => {
+        let viajeRes = res.json();
+        this.formularioViaje.patchValue(viajeRes);
+        // Le paso el IndiceSeleccionado, viaje, lista
+        this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje, this.indiceSeleccionado);
+        this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje, this.indiceSeleccionado);
+        this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje, this.indiceSeleccionado);
+        this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje, this.indiceSeleccionado);
+        this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje, this.indiceSeleccionado);
+        this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje, this.indiceSeleccionado);
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
@@ -341,7 +347,7 @@ export class ViajeComponent implements OnInit {
     }
     setTimeout(function () {
       document.getElementById(componente).focus();
-    }, 50);
+    }, 80);
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {

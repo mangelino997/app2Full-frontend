@@ -97,7 +97,7 @@
                 <input id="idTramoCantidad" [textMask]="mascararEnteros(4)" type="text" formControlName="cantidad"
                     autocomplete="off" class="form-control form-control-sm number-right"
                     [readonly]="soloLectura || soloLecturaPrecioCantidad"
-                    (blur)="calcularImporte(formularioViajeTramo, null, null)" placeholder="0">
+                    (blur)="calcularImporte(formularioViajeTramo, null, 3)" placeholder="0">
             </div>
         </div>
         <div class="col-md-2">
@@ -106,8 +106,8 @@
                 <input id="idTramoPrecioUnitario" [textMask]="mascararImporte(8, 3)" type="text"
                     formControlName="precioUnitario" autocomplete="off"
                     class="form-control form-control-sm number-right"
-                    [readonly]="soloLectura || soloLecturaPrecioCantidad" placeholder="$ 0.000"
-                    (blur)="calcularImporte(formularioViajeTramo, formularioViajeTramo.get('precioUnitario'), 3)">
+                    [readonly]="soloLectura || soloLecturaPrecioCantidad" placeholder="$ 0.00"
+                    (blur)="calcularImporte(formularioViajeTramo, formularioViajeTramo.get('precioUnitario'), 2)">
             </div>
         </div>
         <div class="col-md-2">
@@ -120,23 +120,25 @@
         </div>
         <div class="col-md-6">
             <div class="inline">
-                <button mat-raised-button (click)="verDadorDestinatarioDialogo()"
+                <button class="margin-left-3" mat-raised-button (click)="verDadorDestinatarioDialogo()"
                     [disabled]="soloLecturaDadorDestinatario">
                     Dador-Destinatario
                 </button>
-                <button mat-raised-button (click)="abrirObservacionesDialogo()">Observaciones</button>
-                <button mat-raised-button color="primary" (click)="agregarTramo()"
+                <button class="margin-left-3" mat-raised-button
+                    (click)="abrirObservacionesDialogo()">Observaciones</button>
+                <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarTramo()"
                     [disabled]="!formularioViajeTramo.valid"
-                    *ngIf="btnTramo && !soloLectura && listaTramos.length > 0">Agregar Tramo
+                    *ngIf="btnTramo && !soloLectura && listaTramos.length > 0 && !show">Agregar Tramo
                 </button>
-                <button mat-raised-button color="primary" (click)="agregarTramo()"
+                <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarTramo()"
                     [disabled]="!formularioViaje.valid || !formularioViajeTramo.valid"
-                    *ngIf="btnTramo && !soloLectura && listaTramos.length == 0">Agregar Tramo
+                    *ngIf="btnTramo && !soloLectura && listaTramos.length == 0 && !show">Agregar Tramo
                 </button>
-                <button mat-raised-button color="primary" (click)="modificarTramo()"
-                    [disabled]="!formularioViajeTramo.valid" *ngIf="!btnTramo && !soloLectura">Actualizar Tramo
+                <button class="margin-left-3" mat-raised-button color="primary" (click)="modificarTramo()"
+                    [disabled]="!formularioViajeTramo.valid" *ngIf="!btnTramo && !soloLectura && !show">Actualizar Tramo
                 </button>
-                <button mat-raised-button (click)="cancelar()"
+                <app-progreso class="margin-left-3" *ngIf="show"></app-progreso>
+                <button class="margin-left-3" mat-raised-button (click)="cancelar()"
                     [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnTramo">Cancelar</button>
             </div>
         </div>
@@ -209,9 +211,9 @@
                     </ng-container>
                     <ng-container matColumnDef="eliminar">
                         <th mat-header-cell *matHeaderCellDef>-</th>
-                        <td mat-cell *matCellDef="let elemento;  let i = index;">
+                        <td mat-cell *matCellDef="let elemento; let i = index;">
                             <span class="cursor-color-rojo" *ngIf="!soloLectura"
-                                (click)="eliminarTramo(i, elemento)">X</span>
+                                (click)="eliminarTramo(elemento)">x</span>
                         </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="columnas"></tr>

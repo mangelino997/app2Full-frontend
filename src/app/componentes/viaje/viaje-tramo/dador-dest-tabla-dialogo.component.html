@@ -1,11 +1,11 @@
 <div class="{{tema}}">
-    <h4 class="text-center">Dador - Destinatario</h4>
+    <h4 class="text-center">Dador de Carga - Destinatario</h4>
     <br>
     <div class="row">
         <div class="col-md-12">
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="dador" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Dador</th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Dador de Carga</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.clienteDador? elemento.clienteDador.razonSocial : '--'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="destinatario" sticky>
@@ -17,32 +17,7 @@
             </table>
         </div>
     </div>
-    <!-- <div class="row">
-        <div class="col">
-            <table class="table table-bordered table-striped table-sm">
-                <thead>
-                    <tr>
-                        <th class="text-center" style="width:10%" scope="col">#</th>
-                        <th class="text-center" style="width:45%" scope="col">Dador Carga</th>
-                        <th class="text-center" style="width:45%" scope="col">Destinatario</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let l of listaDadorDestinatario ; let i = index">
-                        <td align="center">
-                            <span>{{i + 1}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.clienteDador.razonSocial}}</span>
-                        </td>
-                        <td align="center">
-                            <span>{{l.clienteDestinatario.razonSocial}}</span>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div> -->
+    <br>
     <div class="row">
         <div class="col text-center">
             <button mat-raised-button (click)="onNoClick()">Cerrar</button>

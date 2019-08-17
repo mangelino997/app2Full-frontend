@@ -27,7 +27,7 @@ export class Arbol {
   })
 export class PlanCuentaService {
   //Define la ruta al servicio web
-  private ruta:string = "/plandecuenta";
+  private ruta:string = "/plancuenta";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket

@@ -296,7 +296,7 @@ export class ViajeTramoComponent implements OnInit {
     } else {
       this.formularioViajeTramo.get('viajeTipoCarga').enable();
       this.formularioViajeTramo.get('viajeTramoClientes').enable();
-      this.formularioViajeTramo.get('viajeTramoClientes').setValue([]);
+      // this.formularioViajeTramo.get('viajeTramoClientes').setValue([]);
       this.formularioViajeTramo.get('viajeTramoClientes').setValidators(Validators.required);
       this.formularioViajeTramo.get('viajeTramoClientes').updateValueAndValidity();//Actualiza las validaciones en el Formulario
     }
@@ -313,8 +313,7 @@ export class ViajeTramoComponent implements OnInit {
       formulario.get('precioUnitario').setValue(parseFloat(precioUnitario).toFixed(cant));
       if (cantidad != null && precioUnitario != null) {
         let importe = cantidad * precioUnitario;
-        formulario.get('importe').setValue(importe);
-        this.appServicio.establecerDecimales(formulario.get('importe').value, cant)
+        formulario.get('importe').setValue(this.appServicio.establecerDecimales(importe, 2));
       }
     }
 
@@ -353,7 +352,6 @@ export class ViajeTramoComponent implements OnInit {
       this.formularioViaje.value.id = null;
       this.viajeServicio.agregar(this.formularioViaje.value).subscribe(
         res => {
-          let resultado = res.json();
           if (res.status == 201) {
             // this.appServicio.setViajeCabecera(resultado);
             this.reestablecerFormulario();
@@ -405,7 +403,6 @@ export class ViajeTramoComponent implements OnInit {
       this.formularioViajeTramo.get('cantidad').setValue('0');
     if (!this.formularioViajeTramo.value.precioUnitario)
       this.formularioViajeTramo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
-
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeTramo.value.usuarioMod = usuarioMod;
     let idViajeCabecera = this.VIAJE_CABECERA.id;
@@ -440,11 +437,10 @@ export class ViajeTramoComponent implements OnInit {
     elemento.importe = this.appServicio.establecerDecimales(elemento.importe.toString(), 2);
     this.formularioViajeTramo.patchValue(elemento);
     this.formularioViajeTramo.value.viaje = this.VIAJE_CABECERA;
-    // this.listaDadorDestinatario = elemento.viajeTramoClientes;
     this.establecerEstadoTipoCarga();
   }
   //Elimina un tramo de la tabla por indice
-  public eliminarTramo(indice, elemento): void {
+  public eliminarTramo(elemento): void {
     if (this.listaTramos.length == 1) {
       this.toastr.warning("No se puede eliminar todos los registros de Tramos");
     } else {
@@ -459,7 +455,6 @@ export class ViajeTramoComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-          let error = err.json();
           this.toastr.error("Error al eliminar el registro");
           this.loaderService.hide();
         });
@@ -473,7 +468,7 @@ export class ViajeTramoComponent implements OnInit {
   public cancelar() {
     this.reestablecerFormulario();
     this.formularioViajeTramo.get('viaje').setValue(this.viaje);
-    this.listar();
+    // this.listar();
     this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
     document.getElementById('idTramoFecha').focus();
@@ -592,8 +587,10 @@ export class ViajeTramoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(viajeTramoClientes => {
-      if (viajeTramoClientes.length > 0) {
-        this.formularioViajeTramo.get('viajeTramoClientes').setValue(viajeTramoClientes);
+      if(viajeTramoClientes) {
+        if (viajeTramoClientes.length > 0) {
+          this.formularioViajeTramo.get('viajeTramoClientes').setValue(viajeTramoClientes);
+        }
       }
     });
   }
