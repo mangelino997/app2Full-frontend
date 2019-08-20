@@ -350,6 +350,9 @@ import { CompraComprobantePercepcion } from './modelos/compra-comprobante-percep
 import { CompraComprobantePercepcionJurisdiccion } from './modelos/compra-comprobante-percepcion-jurisdiccion';
 import { OrdenVentaCliente } from './modelos/ordenVentaCliente';
 import { OrdenVentaEmpresa } from './modelos/ordenVentaEmpresa';
+import { DeduccionGeneralComponent } from './componentes/deduccion-general/deduccion-general.component';
+import { AfipDeduccionGeneralService } from './servicios/afip-deduccion-general.service';
+import { AfipDeduccionGeneral } from './modelos/afipDeduccionGeneral';
 
 //Rutas
 const appRoutes: Routes = [
@@ -458,11 +461,12 @@ const appRoutes: Routes = [
   { path: 'cuentasbancariaschequeras', component: ChequeraComponent, canActivate: [GuardiaService] },
   { path: 'gestiondecobrostalonariosreciboscobradores', component: TalonarioReciboCobradorComponent, canActivate: [GuardiaService] },
   { path: 'gestiondecobrostalonariosreciboslote', component: TalonarioReciboLoteComponent, canActivate: [GuardiaService] },
-  { path: 'bugimagen', component: BugImagenDialogoComponent, canActivate: [GuardiaService] }
+  { path: 'bugimagen', component: BugImagenDialogoComponent, canActivate: [GuardiaService] },
+  { path: 'impuestoalasgananciasdeduccionesgenerales', component: DeduccionGeneralComponent, canActivate: [GuardiaService] },
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
@@ -623,7 +627,8 @@ const stompConfig: StompConfig = {
     PdfDialogoComponent,
     ListasDePreciosDialog,
     BugImagenDialogoComponent,
-    CambiarOVporDefectoDialogo
+    CambiarOVporDefectoDialogo,
+    DeduccionGeneralComponent
   ],
   imports: [
     BrowserModule,
@@ -887,6 +892,8 @@ const stompConfig: StompConfig = {
     CompraComprobantePercepcionJurisdiccion,
     OrdenVentaCliente,
     OrdenVentaEmpresa,
+    AfipDeduccionGeneralService,
+    AfipDeduccionGeneral,
     {
       provide: StompConfig,
       useValue: stompConfig
