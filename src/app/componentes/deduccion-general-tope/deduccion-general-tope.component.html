@@ -1,0 +1,202 @@
+<div id="companiaseguropoliza" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+  <div class="row">
+    <div class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>DEDUCCION GENERAL TOPE</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 1">
+    <div class="col-md-4 text-center">
+      <h5>{{pestaniaActual}} Deducción General Tope</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+          <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
+          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+            [formControl]="autocompletado" [matAutocomplete]="auto1" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
+          <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFn.bind(this)"
+            (optionSelected)="cambioAutocompletado()">
+            <mat-option *ngFor="let item of resultados" [value]="item">
+              {{item.descripcion}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label for="idAnio" class="tamanio-label">Año Fiscal *</label>
+              <mat-select id="idAnio" class="form-control form-control-sm" formControlName="anio"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let item of anioFiscal" [value]="item">
+                  {{item}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label for="idDeduccion" class="tamanio-label">Deducción General *</label>
+              <mat-select id="idDeduccion" class="form-control form-control-sm" formControlName="afipDeduccionGeneral"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let item of deduccionesGenerales" [value]="item">
+                  {{item.descripcion}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label id="labelDescripcion" for="idDescripcion" class="descripcion-label">Descripción</label>
+              <input id="idDescripcion" type="text" formControlName="descripcion" autocomplete="off" [readonly]="soloLectura"
+                class="form-control form-control-sm" (ngModelChange)="cambioCampo('idDescripcion', 'labelDescripcion')"
+                maxlength="60">
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label id="labelImporte" for="idImporte" class="descripcion-label">Importe Tope</label>
+              <input id="idImporte" type="text" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura" [textMask]="mascararEnterosConDecimales(10)" (blur)="establecerDecimales(formulario.get('importe'), 2)"
+                placeholder="$0.00">
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label id="labelPorcentajeGanancia" for="idPorcentajeGanancia" class="descripcion-label">% Tope Ganacia Neta</label>
+              <input id="idPorcentajeGanancia" type="text" formControlName="porcentajeGananciaNeta" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura" (blur)="establecerPorcentaje(formulario.get('porcentajeGananciaNeta'), 2)"
+                [textMask]="mascararPorcentaje()" placeholder="00.00%">
+            </div>
+          </div>
+        </div>
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+          (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid || !condicion">
+          {{pestaniaActual}}
+        </button>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado == 1">
+    <div class="col-md-10">
+    <br>
+    <form [formGroup]="formulario" class="contenedor"> 
+        <div class="row">
+          <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelAnioLista" for="idAnioLista" class="descripcion-label">Año Fiscal *</label>
+                <input id="idAnioLista" type="number" [formControl]="anio" autocomplete="off" 
+                 class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button id="idBoton" *ngIf="!show" mat-raised-button color="primary" 
+            (click)="listar()" [disabled]="!anio.value">Buscar
+          </button>
+          </div>
+        </div>
+        <div class="row" *ngIf="indiceSeleccionado == 3">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idDeduccionGeneral" class="tamanio-label">Deducción General *</label>
+              <mat-select id="idDeduccionGeneral" class="form-control form-control-sm" formControlName="afipDeduccionGeneral"
+                [compareWith]="compareFn" readOnly>
+                  <mat-option *ngFor="let item of deduccionesGenerales" [value]="item">
+                    {{item.descripcion}}
+                  </mat-option>
+                </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelDescripcion" for="idDescripcion" class="descripcion-label">Descripción</label>
+              <input id="idDescripcion" type="text" formControlName="descripcion" autocomplete="off" [readonly]="soloLectura"
+                class="form-control form-control-sm" (ngModelChange)="cambioCampo('idDescripcion', 'labelDescripcion')"
+                maxlength="60">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelImporte" for="idImporte" class="descripcion-label">Importe Tope</label>
+              <input id="idImporte" type="text" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura" [textMask]="mascararEnterosConDecimales(10)" (blur)="establecerDecimales(formulario.get('importe'), 2)"
+                placeholder="$0.00">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelPorcentajeGanancia" for="idPorcentajeGanancia" class="descripcion-label">% Tope Ganacia Neta</label>
+              <input id="idPorcentajeGanancia" type="text" formControlName="porcentajeGananciaNeta" autocomplete="off" class="form-control form-control-sm"
+                [readonly]="soloLectura" (blur)="establecerPorcentaje(formulario.get('porcentajeGananciaNeta'), 2)"
+                [textMask]="mascararPorcentaje()" placeholder="00.00%">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid || !condicion">
+              {{pestaniaActual}}
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="col-md-10">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <app-progreso></app-progreso>
+        </div>
+      </div>
+      <br>
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="anio" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.anio}}</td>
+        </ng-container>
+        <ng-container matColumnDef="deduccionGeneral" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Deducción General</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.afipDeduccionGeneral.descripcion}}</td>
+        </ng-container>
+        <ng-container matColumnDef="descripcion" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.descripcion}}</td>
+        </ng-container>
+        <ng-container matColumnDef="importe" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Tope</th>
+          <td mat-cell *matCellDef="let elemento">$ {{elemento.importe | number: '1.2-2'}}</td>
+        </ng-container>
+        <ng-container matColumnDef="porcentajeGananciaNeta" sticky>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>% Tope Ganancia Neta</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.porcentajeGananciaNeta | number: '1.2-2'}} %</td>
+        </ng-container>
+        <ng-container matColumnDef="mod" sticky>
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento" >
+            <span class="cursor-color" *ngIf="indiceSeleccionado==3 || indiceSeleccionado == 5" (click)="activarActualizar(elemento)">editar</span>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="eliminar" sticky>
+          <th mat-header-cell *matHeaderCellDef>-</th>
+          <td mat-cell *matCellDef="let elemento" >
+            <span class="cursor-color" *ngIf="indiceSeleccionado== 3" (click)="activarEliminar(elemento.id)">x</span>
+          </td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+    </div>
+  </div>
+</div>

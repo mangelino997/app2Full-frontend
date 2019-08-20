@@ -35,4 +35,8 @@ export class FechaService {
   public listarAnios(){
     return this.http.get(this.url + '/listarAnios', this.options);
   }
+  //Obtiene una lista de Años Ficales
+  public listarAnioFiscal(){
+    return this.http.get(this.url + '/listarAnioFiscal', this.options);
+  }
 }

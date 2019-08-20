@@ -353,6 +353,9 @@ import { OrdenVentaEmpresa } from './modelos/ordenVentaEmpresa';
 import { DeduccionGeneralComponent } from './componentes/deduccion-general/deduccion-general.component';
 import { AfipDeduccionGeneralService } from './servicios/afip-deduccion-general.service';
 import { AfipDeduccionGeneral } from './modelos/afipDeduccionGeneral';
+import { DeduccionGeneralTopeComponent } from './componentes/deduccion-general-tope/deduccion-general-tope.component';
+import { AfipDeduccionGeneralTopeService } from './servicios/afip-deduccion-general-tope.service';
+import { AfipDeduccionGeneralTope } from './modelos/afipDeduccionGeneralTope';
 
 //Rutas
 const appRoutes: Routes = [
@@ -463,6 +466,8 @@ const appRoutes: Routes = [
   { path: 'gestiondecobrostalonariosreciboslote', component: TalonarioReciboLoteComponent, canActivate: [GuardiaService] },
   { path: 'bugimagen', component: BugImagenDialogoComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasdeduccionesgenerales', component: DeduccionGeneralComponent, canActivate: [GuardiaService] },
+  { path: 'impuestoalasgananciasdeduccionesgeneralestopes', component: DeduccionGeneralTopeComponent, canActivate: [GuardiaService] },
+
 ]
 
 const stompConfig: StompConfig = {
@@ -628,7 +633,8 @@ const stompConfig: StompConfig = {
     ListasDePreciosDialog,
     BugImagenDialogoComponent,
     CambiarOVporDefectoDialogo,
-    DeduccionGeneralComponent
+    DeduccionGeneralComponent,
+    DeduccionGeneralTopeComponent
   ],
   imports: [
     BrowserModule,
@@ -894,6 +900,8 @@ const stompConfig: StompConfig = {
     OrdenVentaEmpresa,
     AfipDeduccionGeneralService,
     AfipDeduccionGeneral,
+    AfipDeduccionGeneralTopeService,
+    AfipDeduccionGeneralTope,
     {
       provide: StompConfig,
       useValue: stompConfig
