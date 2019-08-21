@@ -356,6 +356,9 @@ import { AfipDeduccionGeneral } from './modelos/afipDeduccionGeneral';
 import { DeduccionGeneralTopeComponent } from './componentes/deduccion-general-tope/deduccion-general-tope.component';
 import { AfipDeduccionGeneralTopeService } from './servicios/afip-deduccion-general-tope.service';
 import { AfipDeduccionGeneralTope } from './modelos/afipDeduccionGeneralTope';
+import { DeduccionPersonalComponent } from './componentes/deduccion-personal/deduccion-personal.component';
+import { AfipDeduccionPersonalService } from './servicios/afip-deduccion-personal.service';
+import { AfipDeduccionPersonal } from './modelos/afipDeduccionPersonal';
 
 //Rutas
 const appRoutes: Routes = [
@@ -467,7 +470,7 @@ const appRoutes: Routes = [
   { path: 'bugimagen', component: BugImagenDialogoComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasdeduccionesgenerales', component: DeduccionGeneralComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasdeduccionesgeneralestopes', component: DeduccionGeneralTopeComponent, canActivate: [GuardiaService] },
-
+  { path: 'impuestoalasgananciasdeduccionespersonales', component: DeduccionPersonalComponent, canActivate: [GuardiaService] },
 ]
 
 const stompConfig: StompConfig = {
@@ -634,7 +637,8 @@ const stompConfig: StompConfig = {
     BugImagenDialogoComponent,
     CambiarOVporDefectoDialogo,
     DeduccionGeneralComponent,
-    DeduccionGeneralTopeComponent
+    DeduccionGeneralTopeComponent,
+    DeduccionPersonalComponent
   ],
   imports: [
     BrowserModule,
@@ -902,6 +906,8 @@ const stompConfig: StompConfig = {
     AfipDeduccionGeneral,
     AfipDeduccionGeneralTopeService,
     AfipDeduccionGeneralTope,
+    AfipDeduccionPersonalService,
+    AfipDeduccionPersonal,
     {
       provide: StompConfig,
       useValue: stompConfig
