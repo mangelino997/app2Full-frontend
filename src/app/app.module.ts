@@ -362,6 +362,7 @@ import { AfipDeduccionPersonal } from './modelos/afipDeduccionPersonal';
 import { GananciaNetaComponent } from './componentes/ganancia-neta/ganancia-neta.component';
 import { AfipGananciaNetaService } from './servicios/afip-ganancia-neta.service';
 import { AfipGananciaNeta } from './modelos/afipGananciaNeta';
+import { AfipAlicuotaGananciaService } from './servicios/afip-alicuota-ganancia.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -916,6 +917,7 @@ const stompConfig: StompConfig = {
     AfipDeduccionPersonal,
     AfipGananciaNetaService,
     AfipGananciaNeta,
+    AfipAlicuotaGananciaService,
     {
       provide: StompConfig,
       useValue: stompConfig

@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class AfipGananciaNetaService {
+export class AfipAlicuotaGananciaService {
   //Define la ruta al servicio web
-  private ruta:string = "/afipganancianeta";
+  private ruta:string = "/afipalicuotaganancia";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -50,25 +50,6 @@ export class AfipGananciaNetaService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene la lista de registros por año
-  public listarPorAnio(anio) {
-    return this.http.get(this.url + '/listarPorAnio/' + anio , this.options);
-  }
-  //Obtiene la lista de registros
-  public listarPorFiltros(anio, idMes) {
-    return this.http.get(this.url + '/listarPorFiltros/' + anio + '/' + idMes, this.options);
-  }//Obtiene la lista de registros
-  public listarPorAfipAlicuotaGanancia(idAfipAlicuotaGanancia) {
-    return this.http.get(this.url + '/listarPorAfipAlicuotaGanancia/' + idAfipAlicuotaGanancia, this.options);
-  }
-  //Obtiene un listado por descripción
-  // public listarPorDescripcion(descripcion) {
-  //   return this.http.get(this.url + '/listarPorDescripcion/' + descripcion, this.options).map(res => {
-  //     return res.json().map(data => {
-  //       return data;
-  //     })
-  //   })
-  // }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

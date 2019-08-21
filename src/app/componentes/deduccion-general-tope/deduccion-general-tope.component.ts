@@ -199,7 +199,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
         setTimeout(function () {
-          document.getElementById('idAnio').focus();
+          document.getElementById('idAnioFiscal').focus();
         }, 20);
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
