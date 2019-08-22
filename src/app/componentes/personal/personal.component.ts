@@ -29,7 +29,6 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { FotoService } from 'src/app/servicios/foto.service';
 import { PdfService } from 'src/app/servicios/pdf.service';
-import { Pdf } from 'src/app/modelos/pdf';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 
@@ -131,7 +130,7 @@ export class PersonalComponent implements OnInit {
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService,
-    private fotoService: FotoService, private pdfServicio: PdfService, private pdf: Pdf, public dialog: MatDialog) {
+    private fotoService: FotoService, private pdfServicio: PdfService, public dialog: MatDialog) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -144,7 +143,6 @@ export class PersonalComponent implements OnInit {
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
-          console.log(this.pestanias);
         },
         err => {
           console.log(err);
@@ -169,8 +167,9 @@ export class PersonalComponent implements OnInit {
     // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
+      let empresa = this.appService.getEmpresa();
       if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
+        this.servicio.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
           this.resultados = response;
         })
       }
@@ -271,6 +270,10 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('foto.nombre').setValue(null);
       this.formulario.get('foto.datos').setValue(atob(this.formulario.get('foto.datos').value));
     });
+  }
+  //Compara la foto por defecto para determinar si el usuario cargo una foto (cambio de logo de boton)
+  public determinarFotoCargada(): boolean {
+    return this.formulario.get('foto.nombre').value == 'jit-usuario-defecto.jpg';
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
@@ -382,7 +385,7 @@ export class PersonalComponent implements OnInit {
     this.servicio.obtenerPorId(id).subscribe(
       res => {
         let elemento = res.json();
-        this.formulario.setValue(elemento);
+        // this.formulario.patchValue(elemento);
         this.establecerFotoYPdfs(elemento);
       },
       err => {
@@ -450,7 +453,6 @@ export class PersonalComponent implements OnInit {
   private listarCategorias() {
     this.categoriaServicio.listar().subscribe(
       res => {
-        console.log(res.json());
         this.resultadosCategorias = res.json();
       },
       err => {
@@ -535,7 +537,6 @@ export class PersonalComponent implements OnInit {
   public cambioAutocompletado() {
     let elemAutocompletado = this.autocompletado.value;
     this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
-    
     // this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
     // this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
     // this.formulario.get('aporteAdicObraSocial').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteAdicObraSocial, 2));
@@ -746,7 +747,6 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
-    console.log(this.formulario);
     this.servicio.actualizar(this.formulario.value).then(
       res => {
         var respuesta = res.json();
@@ -780,8 +780,10 @@ export class PersonalComponent implements OnInit {
   }
   //Reestablece los campos agregar
   private reestablecerFormulario(id) {
+    let foto = this.formulario.get('foto').value;
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
+    this.formulario.get('foto').setValue(foto);
     this.autocompletado.setValue(undefined);
     this.nacionalidadNacimiento.setValue(undefined);
     //this.vaciarListas();
@@ -891,12 +893,12 @@ export class PersonalComponent implements OnInit {
     }
   }
   //Controla si el adjunto es un PDF o JPEG y llama al readURL apropiado
-  public controlAdjunto(event){
+  public controlAdjunto(event) {
     let adjunto = event;
-    let extension =  adjunto.target.files[0].type.split("/");
-    if(extension[extension.length - 1] == 'pdf'){
+    let extension = adjunto.target.files[0].type.split("/");
+    if (extension[extension.length - 1] == 'pdf') {
       this.readPdfURL(event, 'pdfDni');
-    }else{
+    } else {
       this.readImageURL(event, 'pdfDni');
     }
   }
@@ -947,7 +949,7 @@ export class PersonalComponent implements OnInit {
     } else {
       this.formulario.get(campo + '.nombre').setValue('');
       this.formulario.get(campo + '.datos').setValue('');
-      if(campo == 'foto'){
+      if (campo == 'foto') {
         this.obtenerFotoPorDefecto();
       }
     }
@@ -1010,7 +1012,7 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene el dni para mostrarlo
   public verDni() {
-    let extension =  this.formulario.get('pdfDni').value.nombre.split(".");
+    let extension = this.formulario.get('pdfDni').value.nombre.split(".");
     if (extension[extension.length - 1] == 'pdf') {
       this.verPDF('pdfDni');
     } else {
@@ -1055,25 +1057,26 @@ export class PersonalComponent implements OnInit {
   }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
-    this.autocompletado.setValue(elemento);
     if (elemento.foto) {
-      this.formulario.get('foto.datos').setValue(atob(elemento.foto.datos));
+      elemento.foto.datos = atob(elemento.foto.datos);
     }
     if (elemento.pdfLicConducir) {
-      this.formulario.get('pdfLicConducir.datos').setValue(atob(elemento.pdfLicConducir.datos));
+      elemento.pdfLicConducir.datos = atob(elemento.pdfLicConducir.datos);
     }
     if (elemento.pdfLinti) {
-      this.formulario.get('pdfLinti.datos').setValue(atob(elemento.pdfLinti.datos));
+      elemento.pdfLinti.datos = atob(elemento.pdfLinti.datos);
     }
     if (elemento.pdfLibSanidad) {
-      this.formulario.get('pdfLibSanidad.datos').setValue(atob(elemento.pdfLibSanidad.datos));
+      elemento.pdfLibSanidad.datos = atob(elemento.pdfLibSanidad.datos);
     }
     if (elemento.pdfDni) {
-      this.formulario.get('pdfDni.datos').setValue(atob(elemento.pdfDni.datos));
+      elemento.pdfDni.datos = atob(elemento.pdfDni.datos);
     }
     if (elemento.pdfAltaTemprana) {
-      this.formulario.get('pdfAltaTemprana.datos').setValue(atob(elemento.pdfAltaTemprana.datos));
+      elemento.pdfAltaTemprana.datos = atob(elemento.pdfAltaTemprana.datos);
     }
+    // this.autocompletado.patchValue(elemento);
+    this.formulario.patchValue(elemento);
     this.cambioEsChofer();
   }
   //Establece la nacionalidad

@@ -60,7 +60,7 @@
             <div class="form-group has-float-label">
                 <label for="idTramoTipoViaje" class="tamanio-label">Modalidad de Carga *</label>
                 <mat-select id="idTramoTipoViaje" class="form-control form-control-sm" formControlName="viajeTipo"
-                    [compareWith]="compareFn" (selectionChange)="establecerEstadoTipoCarga()">
+                    [compareWith]="compareFn" (selectionChange)="establecerEstadoTipoCarga(false)">
                     <mat-option *ngFor="let itemViajeTipo of viajesTipos" [value]="itemViajeTipo">
                         {{itemViajeTipo.nombre}}
                     </mat-option>

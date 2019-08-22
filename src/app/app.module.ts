@@ -476,12 +476,10 @@ const appRoutes: Routes = [
   { path: 'impuestoalasgananciasdeduccionesgeneralestopes', component: DeduccionGeneralTopeComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasdeduccionespersonalesdescripcion', component: DeduccionPersonalComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasganancianetaescala', component: GananciaNetaComponent, canActivate: [GuardiaService] },
-
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.123:8080/jitws/socket',
-  
+  url: 'ws://localhost:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
