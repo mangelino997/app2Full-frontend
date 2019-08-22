@@ -363,6 +363,10 @@ import { GananciaNetaComponent } from './componentes/ganancia-neta/ganancia-neta
 import { AfipGananciaNetaService } from './servicios/afip-ganancia-neta.service';
 import { AfipGananciaNeta } from './modelos/afipGananciaNeta';
 import { AfipAlicuotaGananciaService } from './servicios/afip-alicuota-ganancia.service';
+import { DeduccionPersonalTablaComponent } from './componentes/deduccion-personal-tabla/deduccion-personal-tabla.component';
+import { AfipDeduccionPersonalTabla } from './modelos/afipDeduccionPersonalTabla';
+import { AfipTipoBeneficioDeduccionService } from './servicios/afip-tipo-beneficio-deduccion.service';
+import { AfipTipoBeneficioService } from './servicios/afip-tipo-beneficio.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -476,6 +480,7 @@ const appRoutes: Routes = [
   { path: 'impuestoalasgananciasdeduccionesgeneralestopes', component: DeduccionGeneralTopeComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasdeduccionespersonalesdescripcion', component: DeduccionPersonalComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasganancianetaescala', component: GananciaNetaComponent, canActivate: [GuardiaService] },
+  { path: 'impuestoalasgananciasdeduccionespersonalestablas', component: DeduccionPersonalTablaComponent, canActivate: [GuardiaService] },
 ]
 
 const stompConfig: StompConfig = {
@@ -643,7 +648,8 @@ const stompConfig: StompConfig = {
     DeduccionGeneralComponent,
     DeduccionGeneralTopeComponent,
     DeduccionPersonalComponent,
-    GananciaNetaComponent
+    GananciaNetaComponent,
+    DeduccionPersonalTablaComponent
   ],
   imports: [
     BrowserModule,
@@ -916,6 +922,9 @@ const stompConfig: StompConfig = {
     AfipGananciaNetaService,
     AfipGananciaNeta,
     AfipAlicuotaGananciaService,
+    AfipDeduccionPersonalTabla,
+    AfipTipoBeneficioDeduccionService,
+    AfipTipoBeneficioService,
     {
       provide: StompConfig,
       useValue: stompConfig
