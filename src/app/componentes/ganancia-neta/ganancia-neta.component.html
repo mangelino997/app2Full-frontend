@@ -75,11 +75,14 @@
               (click)="actualizar()" [disabled]="!formulario.valid">
               Actualizar
             </button>
+            <button id="idBoton" *ngIf="idMod" mat-raised-button formnovalidate (click)="cancelar()" >
+              Cancelar
+            </button>
           </div>
         </div>
 
         <div class="row ">
-          <div class="col-md-10">
+          <div class="col-md-12">
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
               <ng-container matColumnDef="anio" sticky>
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
@@ -135,14 +138,14 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
                 <label id="labelAnioListar" for="idAnioListar" class="descripcion-label">Año Fiscal *</label>
-                <input id="idAnioListar" type="number" [formControl]="anio" autocomplete="off" 
+                <input id="idAnioListar" type="number" formControlName="anio" autocomplete="off" 
                  class="form-control form-control-sm">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
             <label for="idGananciaNetaListar" class="tamanio-label">Ganancia Neta *</label>
-              <mat-select id="idGananciaNetaListar" class="form-control form-control-sm" formControlName="gananciaNeta" >
+              <mat-select id="idGananciaNetaListar" class="form-control form-control-sm" formControlName="gananciaNeta" (selectionChange)="cambioGananciaNeta()" >
                 <mat-option [value]="false">Anual</mat-option>
                 <mat-option [value]="true">Mes</mat-option>
               </mat-select>
@@ -175,16 +178,23 @@
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="anioMes" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Año/Mes</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.anio}}/{{elemento.mes? elemento.mes.nombre: ''}}</td>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            {{formularioListar.value.gananciaNeta == false? 'Año':'Mes'}}</th>
+          <td mat-cell *matCellDef="let elemento">
+            <span *ngIf="!formularioListar.value.gananciaNeta">{{formularioListar.value.anio}}</span>
+            <span *ngIf="formularioListar.value.gananciaNeta">{{formularioListar.value.mes.nombre}}</span>
+          </td>
         </ng-container>
         <ng-container matColumnDef="gananciaNetaDeMas" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Ganancia Neta de más de $</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento; let i=index">
+            <span *ngIf="i == 0">$ 0</span>
+            <span *ngIf="i > 0">{{resultadosPorFiltro[i-1].importe}}</span>
+          </td>
         </ng-container>
         <ng-container matColumnDef="gananciaNetaA" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Ganancia Neta A $</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.importe}}</td>
         </ng-container>
         <ng-container matColumnDef="importeFijo" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Fijo a Pagar</th>
@@ -192,14 +202,17 @@
         </ng-container>
         <ng-container matColumnDef="alicuota" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Alicuota a Pagar s/Exced.</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento">{{elemento.afipAlicuotaGanancia.alicuota}}</td>
         </ng-container>
         <ng-container matColumnDef="excedente" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Excedente de $</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+          <td mat-cell *matCellDef="let elemento; let i=index">
+            <span *ngIf="i == 0">$ 0</span>
+            <span *ngIf="i > 0">{{resultadosPorFiltro[i-1].importe}}</span>
+          </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnasListar"></tr>
-        <tr mat-row *matRowDef="let row; columnasListar: columnas;"></tr> 
+        <tr mat-row *matRowDef="let row; columns: columnasListar;"></tr> 
       </table>
     </div>
   </div>

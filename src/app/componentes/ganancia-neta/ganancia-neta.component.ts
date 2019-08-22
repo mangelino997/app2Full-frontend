@@ -51,6 +51,8 @@ export class GananciaNetaComponent implements OnInit {
   public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
+  //Define la lista de resultados de busqueda
+  public resultadosPorFiltro: Array<any> = [];
   //Define la lista de Años Fiscales
   public anioFiscal: Array<any> = [];
   //Define la lista de Meses
@@ -164,16 +166,24 @@ export class GananciaNetaComponent implements OnInit {
       }
     );
   }
-  //Carga la tabla
+  //Controla el cambio de seleccion
+  public cambioGananciaNeta(){
+    if(!this.formularioListar.value.gananciaNeta)
+      this.formularioListar.get('mes').reset();
+  }
+  //Carga la tabla por Filtros
   public listarPorFiltro(){
     this.loaderService.show();
-    let mes =  this.formularioListar.value.mes;
+    let mes = null;
     let anio = this.formularioListar.value.anio;
-    if(!mes)
+    if(this.formularioListar.value.mes)
+      mes = this.formularioListar.value.mes.id;
+      else
       mes = 0;
     this.servicio.listarPorFiltros(anio, mes).subscribe(
       res => {
         console.log(res.json());
+        this.resultadosPorFiltro = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
@@ -386,6 +396,11 @@ export class GananciaNetaComponent implements OnInit {
         this.loaderService.hide();
       }
     );
+  }
+  //Limpia los campos en la pestaña Actualizar
+  public cancelar(){
+    this.formulario.reset();
+    this.formulario.disable();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
