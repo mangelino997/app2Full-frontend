@@ -42,7 +42,7 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="labelImporte" for="idImporte" class="descripcion-label">Ganancia Neta Acumulada *</label>
-              <input id="idImporte" type="text" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
+              <input id="idImporte" type="text" formControlName="importe" autocomplete="off" class="form-control form-control-sm number-right"
                 [readonly]="soloLectura" [textMask]="mascararEnterosConDecimales(10)" (blur)="controlImporte()" placeholder="$0.00"
                 >
             </div>
@@ -50,7 +50,7 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="labelImporteFijo" for="idImporteFijo" class="descripcion-label">Importe Fijo a Pagar *</label>
-              <input id="idImporteFijo" type="text" formControlName="importeFijo" autocomplete="off" class="form-control form-control-sm"
+              <input id="idImporteFijo" type="text" formControlName="importeFijo" autocomplete="off" class="form-control form-control-sm number-right"
                 [readonly]="soloLectura" [textMask]="mascararEnterosConDecimales(10)" (blur)="controlImporteFijo()" placeholder="$0.00"
                  >
             </div>
@@ -67,15 +67,15 @@
             </div>
           </div>
           <div class="col-md-2">
-            <button id="idBoton" *ngIf="mostrarBoton && !show && !idMod" mat-raised-button color="primary" formnovalidate
+            <button id="idBotonPestania" *ngIf="mostrarBoton && !show && !idMod" mat-raised-button color="primary" formnovalidate
               (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
               {{pestaniaActual}}
             </button>
-            <button id="idBoton" *ngIf="idMod" mat-raised-button color="primary" formnovalidate
+            <button id="idBotonActualizar" *ngIf="idMod" mat-raised-button color="primary" formnovalidate
               (click)="actualizar()" [disabled]="!formulario.valid">
               Actualizar
             </button>
-            <button id="idBoton" *ngIf="idMod" mat-raised-button formnovalidate (click)="cancelar()" >
+            <button id="idBotonCancelar" *ngIf="idMod" mat-raised-button formnovalidate (click)="cancelar()" >
               Cancelar
             </button>
           </div>
@@ -163,7 +163,7 @@
             </div>
           </div>
           <div class="col-md-2">
-            <button id="idBoton" mat-raised-button color="primary" formnovalidate
+            <button id="idBotonBuscarListar" mat-raised-button color="primary" formnovalidate
               (click)="listarPorFiltro()" [disabled]="!anio.valid">
               Buscar
             </button>
