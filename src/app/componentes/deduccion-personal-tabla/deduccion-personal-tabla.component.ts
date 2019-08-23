@@ -1,6 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -67,7 +67,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   constructor(private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private fechaService: FechaService,
     private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipTipoBeneficioDeduccionService, 
     private modelo: AfipDeduccionPersonalTabla, private mesService: MesService, private afipTipoBenecioService: AfipTipoBeneficioService,
-    private afipDeduccionPersonalService: AfipDeduccionPersonalService) {
+    private afipDeduccionPersonalService: AfipDeduccionPersonalService, public dialog: MatDialog) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
@@ -184,7 +184,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
         // this.establecerValoresPestania(nombre, true, true, true, 'idAnio');
         break;
       case 5:
-        this.establecerValoresPestania(nombre, false, false, true, 'idAnioFiscal');
+        this.establecerValoresPestania(nombre, false, false, false, 'idAnioFiscal');
         break;
       default:
         break;
@@ -210,7 +210,6 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.loaderService.show();    
     this.anio.setValue(this.formulario.value.anio);
     this.tipoBeneficio.setValue(this.formulario.value.afipTipoBeneficio);
-    console.log(this.anio.value, this.tipoBeneficio.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -240,6 +239,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           this.formulario.get('afipTipoBeneficio').setValue(this.tipoBeneficio.value);
+          this.formulario.get('anio').setValue(this.anio.value);
           setTimeout(function () {
             document.getElementById('idAnioFiscal').focus();
           }, 20);
@@ -256,25 +256,47 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   }
   //Carga la Lista Completa - Tabla
   public listar(){
+    this.loaderService.show();
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
-    this.servicio.listarPorAnioYTipoBeneficio(this.anio.value, this.tipoBeneficio.value.id).subscribe(
-      res => {
-        console.log(res.json());
-        let respuesta = res.json();
-        if(respuesta.length == 0){
-          this.toastr.error("Sin datos para ésta consulta");
+    switch(this.indiceSeleccionado){
+      case 1: 
+      this.servicio.listar().subscribe(
+        res => {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.loaderService.hide();
+        },
+        err => {
+          let error = err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
         }
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.loaderService.hide();
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-        this.loaderService.hide();
-      }
-    );
+      );
+      break;
+
+      case 2:
+      case 3:
+      case 4:
+      case 5:
+        this.servicio.listarPorAnioYTipoBeneficio(this.anio.value, this.tipoBeneficio.value.id).subscribe(
+          res => {
+            let respuesta = res.json();
+            if(respuesta.length == 0){
+              this.toastr.error("Sin datos para ésta consulta");
+            }
+            this.listaCompleta = new MatTableDataSource(res.json());
+            this.listaCompleta.sort = this.sort;
+            this.loaderService.hide();
+          },
+          err => {
+            let error = err.json();
+            this.toastr.error(error.mensaje);
+            this.loaderService.hide();
+          }
+        );
+        break;
+    }    
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -291,16 +313,6 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.formulario.reset();
     this.idMod = null;
     this.resultados = [];
-    // if(this.indiceSeleccionado == 1 || this.indiceSeleccionado == 3){
-    //   setTimeout(function () {
-    //     document.getElementById('idAnioFiscal').focus();
-    //   }, 20);
-    // }else{
-    //   setTimeout(function () {
-    //     document.getElementById('idAnio').focus();
-    //   }, 20);
-    // }
-    
   }
   //Reestablece los valores
   private reestablecerValores(){
@@ -345,7 +357,8 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     }
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
-  }//Controla el cambio de seleccion
+  }
+  //Controla el cambio de seleccion
   public cambioTipoBeneficio(elemento){
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
@@ -353,8 +366,18 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   }
   //Limpia los campos en la pestaña Actualizar
   public cancelar(){
-    this.formulario.reset();
-    this.formulario.disable();
+    if(this.indiceSeleccionado == 3){
+      let anio = this.formulario.value.anio;
+      let tipoBeneficio = this.formulario.value.afipTipoBeneficio
+      this.formulario.reset();
+      this.formulario.get('anio').enable();
+      this.formulario.get('anio').setValue(anio);
+      this.formulario.get('afipTipoBeneficio').enable();
+      this.formulario.get('afipTipoBeneficio').setValue(tipoBeneficio);
+    }else{
+      this.formulario.reset();
+      this.formulario.enable();
+    }
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -402,4 +425,73 @@ export class DeduccionPersonalTablaComponent implements OnInit {
       valor.setValue(null);
     }
   } 
+  //Abre ventana Dialog 
+  public verModaAnual(elemento): void {
+    const dialogRef = this.dialog.open(ImporteAnualDialogo, {
+      width: '750px',
+      data: { 
+        elemento: elemento
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
+  }
+}
+//Componente ventana modal/dialog
+@Component({
+  selector: 'importe-anual-dialog',
+  templateUrl: 'importe-anual-dialog.html',
+})
+export class ImporteAnualDialogo {
+  //Define el elemento que se pasa por paramentro
+  public elemento: FormControl= new FormControl();
+  //Lista de meses con sus importes
+  public lista: Array<any> = [];
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define las columnas de la tabla
+  public columnas: string[] = ['mes', 'importeMensual'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<ImporteAnualDialogo>, @Inject(MAT_DIALOG_DATA) public data, private mesService: MesService,
+  private toastr: ToastrService) { }
+  //Al inicializarse el componente
+  ngOnInit() {
+    this.elemento.setValue(this.data.elemento);
+    console.log(this.elemento.value); 
+    this.listarMeses();
+  }
+  //Obtiene la lista de meses y le añade el importe
+  private listarMeses(){
+    this.mesService.listar().subscribe(
+      res=>{
+        console.log(res.json());
+        let respuesta = res.json();
+        this.calcularImporteMensual(respuesta);
+      },
+      err=>{
+        this.toastr.error("Error al obtener la lista de meses");
+      }
+    )
+    
+  }
+  //Calcula el importe mensual
+  private calcularImporteMensual(listaMeses){
+    let importeAcumulado = this.elemento.value.importe;
+    listaMeses.forEach(item => {
+      let importeMensual = (importeAcumulado/12)*item.id;
+      let fila = {mes: item.nombre, importeMensual: importeMensual};
+      this.lista.push(fila);
+    });
+    console.log(this.lista);
+    this.listaCompleta = new MatTableDataSource(this.lista);
+    this.listaCompleta.sort = this.sort;
+  }
+  //Cierra el dialogo
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+   
 }

@@ -363,7 +363,7 @@ import { GananciaNetaComponent } from './componentes/ganancia-neta/ganancia-neta
 import { AfipGananciaNetaService } from './servicios/afip-ganancia-neta.service';
 import { AfipGananciaNeta } from './modelos/afipGananciaNeta';
 import { AfipAlicuotaGananciaService } from './servicios/afip-alicuota-ganancia.service';
-import { DeduccionPersonalTablaComponent } from './componentes/deduccion-personal-tabla/deduccion-personal-tabla.component';
+import { DeduccionPersonalTablaComponent, ImporteAnualDialogo } from './componentes/deduccion-personal-tabla/deduccion-personal-tabla.component';
 import { AfipDeduccionPersonalTabla } from './modelos/afipDeduccionPersonalTabla';
 import { AfipTipoBeneficioDeduccionService } from './servicios/afip-tipo-beneficio-deduccion.service';
 import { AfipTipoBeneficioService } from './servicios/afip-tipo-beneficio.service';
@@ -484,7 +484,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -649,7 +649,8 @@ const stompConfig: StompConfig = {
     DeduccionGeneralTopeComponent,
     DeduccionPersonalComponent,
     GananciaNetaComponent,
-    DeduccionPersonalTablaComponent
+    DeduccionPersonalTablaComponent,
+    ImporteAnualDialogo
   ],
   imports: [
     BrowserModule,
@@ -963,7 +964,8 @@ const stompConfig: StompConfig = {
     ListasDePreciosDialog,
     EliminarModalComponent,
     PdfDialogoComponent,
-    BugImagenDialogoComponent
+    BugImagenDialogoComponent,
+    ImporteAnualDialogo
   ]
 })
 export class AppModule { }
