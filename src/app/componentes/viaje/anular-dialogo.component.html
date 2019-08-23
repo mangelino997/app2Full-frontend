@@ -1,0 +1,17 @@
+<div class="{{tema}}">
+    <h4 class="text-center">¿Está seguro de anular el registro?</h4>
+    <form [formGroup]="formulario">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="idObservaciones" class="tamanio-label">Observaciones *</label>
+                    <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="3"></textarea>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row justify-content-center">
+        <button mat-raised-button [mat-dialog-close]="formulario">No</button>
+        <button style="margin-left: 5px;" mat-raised-button color="primary" [mat-dialog-close]="formulario" [disabled]="!formulario.valid">Si</button>
+    </div>
+</div>

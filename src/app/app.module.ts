@@ -367,6 +367,8 @@ import { DeduccionPersonalTablaComponent } from './componentes/deduccion-persona
 import { AfipDeduccionPersonalTabla } from './modelos/afipDeduccionPersonalTabla';
 import { AfipTipoBeneficioDeduccionService } from './servicios/afip-tipo-beneficio-deduccion.service';
 import { AfipTipoBeneficioService } from './servicios/afip-tipo-beneficio.service';
+import { AnularDialogo } from './componentes/viaje/anular-dialogo.component';
+import { NormalizarDialogo } from './componentes/viaje/normalizar-dialogo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -618,6 +620,8 @@ const stompConfig: StompConfig = {
     ClienteEventualComponent,
     AforoComponent,
     ObservacionDialogo,
+    AnularDialogo,
+    NormalizarDialogo,
     TotalCargaDialogo,
     TotalConceptoDialogo,
     ChequesRechazadosComponent,
@@ -963,7 +967,9 @@ const stompConfig: StompConfig = {
     ListasDePreciosDialog,
     EliminarModalComponent,
     PdfDialogoComponent,
-    BugImagenDialogoComponent
+    BugImagenDialogoComponent,
+    AnularDialogo,
+    NormalizarDialogo
   ]
 })
 export class AppModule { }

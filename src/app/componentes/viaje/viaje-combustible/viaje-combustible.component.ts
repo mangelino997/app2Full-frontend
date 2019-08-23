@@ -12,6 +12,8 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ViajeCombustibleService } from 'src/app/servicios/viaje-combustible';
 import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
+import { AnularDialogo } from '../anular-dialogo.component';
+import { NormalizarDialogo } from '../normalizar-dialogo.component';
 
 @Component({
   selector: 'app-viaje-combustible',
@@ -46,11 +48,11 @@ export class ViajeCombustibleComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['sucursal', 'orden', 'fecha', 'proveedor', 'insumoProducto', 'cantidad', 'precioUnitario', 'observaciones', 'anulado', 'obsAnulado', 'mod', 'anular'];
+  public columnas: string[] = ['anular', 'mod', 'sucursal', 'orden', 'fecha', 'proveedor', 'insumoProducto', 'cantidad', 'precioUnitario', 'observaciones', 'anulado', 'obsAnulado'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define estado de campo precio unitario
-  public estadoPrecioUnitario:boolean = false;
+  public estadoPrecioUnitario: boolean = false;
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajeCombustibleModelo: ViajeCombustible,
     private fechaServicio: FechaService, private appService: AppService,
@@ -110,7 +112,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listaCompleta = new MatTableDataSource(listaCombustibles);
     this.listaCompleta.sort = this.sort;
     // this.emitirCombustibles(listaCombustibles);
-    this.calcularTotalCombustibleYUrea();
+    this.calcularTotalLitros();
   }
   //Establece los valores por defecto del formulario viaje combustible
   public establecerValoresPorDefecto(opcion): void {
@@ -119,6 +121,7 @@ export class ViajeCombustibleComponent implements OnInit {
     })
     if (opcion == 1) {
       this.formularioViajeCombustible.get('totalCombustible').setValue(this.appService.setDecimales('0', 2));
+      this.formularioViajeCombustible.get('totalAceite').setValue(this.appService.setDecimales('0', 2));
       this.formularioViajeCombustible.get('totalUrea').setValue(this.appService.setDecimales('0', 2));
     }
   }
@@ -244,36 +247,84 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Elimina un combustible de la tabla por indice
   public anularCombustible(elemento): void {
-    this.loaderService.show();
-    elemento.viaje = { id: this.VIAJE_CABECERA.id };
-    this.servicio.anularCombustible(elemento).subscribe(
-      res => {
-        let respuesta = res.json();
-        this.listar();
-        this.establecerValoresPorDefecto(0);
-        this.toastr.success(respuesta.mensaje);
-        this.loaderService.hide();
-      },
-      err => {
-        this.toastr.error("Error al anular el registro");
-        this.loaderService.hide();
-      });
-    document.getElementById('idProveedorOC').focus();
+    const dialogRef = this.dialog.open(AnularDialogo, {
+      width: '800px',
+      data: {
+        tema: this.appService.getTema()
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado.value.observaciones) {
+        this.loaderService.show();
+        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        this.servicio.anularCombustible(elemento).subscribe(
+          res => {
+            let respuesta = res.json();
+            this.listar();
+            // this.establecerValoresPorDefecto(0);
+            // this.calcularTotalLitros();
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+          },
+          err => {
+            this.toastr.error("No se pudo anular el registro");
+            this.loaderService.hide();
+          }
+        );
+      }
+      document.getElementById('idProveedorOC').focus();
+    });
+  }
+  //Elimina un combustible de la tabla por indice
+  public normalizarCombustible(elemento): void {
+    const dialogRef = this.dialog.open(NormalizarDialogo, {
+      width: '800px',
+      data: {
+        tema: this.appService.getTema()
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if(resultado) {
+        this.loaderService.show();
+        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        this.servicio.normalizarCombustible(elemento).subscribe(
+          res => {
+            let respuesta = res.json();
+            this.listar();
+            // this.establecerValoresPorDefecto(0);
+            // this.calcularTotalLitros();
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+          },
+          err => {
+            this.toastr.error("No se pudo normalizar el registro");
+            this.loaderService.hide();
+          }
+        );
+      }
+      document.getElementById('idProveedorOC').focus();
+    });
   }
   //Calcula el total de combustible y el total de urea
-  private calcularTotalCombustibleYUrea(): void {
+  private calcularTotalLitros(): void {
     let totalCombustible = 0;
+    let totalAceite = 0;
     let totalUrea = 0;
     if (this.listaCombustibles.length > 0) {
       this.listaCombustibles.forEach(item => {
-        if (item.insumoProducto.id == 1) {
-          totalCombustible += Number(item.cantidad);
-        } else if (item.insumoProducto.id == 3) {
-          totalUrea += Number(item.cantidad);
+        if (!item.estaAnulado) {
+          if (item.insumoProducto.id == 1) {
+            totalCombustible += Number(item.cantidad);
+          } else if (item.insumoProducto.id == 2) {
+            totalAceite += Number(item.cantidad);
+          } else if (item.insumoProducto.id == 3) {
+            totalUrea += Number(item.cantidad);
+          }
         }
       })
     }
     this.formularioViajeCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
+    this.formularioViajeCombustible.get('totalAceite').setValue(totalAceite.toFixed(2));
     this.formularioViajeCombustible.get('totalUrea').setValue(totalUrea.toFixed(2));
   }
   //Limpia el formulario

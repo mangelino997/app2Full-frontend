@@ -26,6 +26,7 @@ export class ViajeCombustible {
             estaAnulado: new FormControl(),
             observacionesAnulado: new FormControl(),
             totalCombustible: new FormControl(),
+            totalAceite: new FormControl(),
             totalUrea: new FormControl(),
             importe: new FormControl(),
             usuarioMod: new FormControl(),
