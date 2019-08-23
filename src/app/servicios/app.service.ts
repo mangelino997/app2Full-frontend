@@ -146,9 +146,9 @@ export class AppService {
       valor = valor.replace('$ ', '');
       valor = valor.replace(' km', '');
       valor = valor.replace(/\,/g, '');
-      // valor = parseFloat(valor).toFixed(cantidad);
+      valor = parseFloat(valor).toFixed(cantidad);
     }
-    return parseFloat(valor).toFixed(cantidad);
+    return valor;
   }
   //Valida el CUIT/CUIL
   public validarCUIT(cuit) {

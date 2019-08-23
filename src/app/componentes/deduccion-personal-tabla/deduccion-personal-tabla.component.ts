@@ -80,7 +80,6 @@ export class DeduccionPersonalTablaComponent implements OnInit {
       }
     );
    }
-
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -184,7 +183,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
         // this.establecerValoresPestania(nombre, true, true, true, 'idAnio');
         break;
       case 5:
-        this.establecerValoresPestania(nombre, false, false, false, 'idAnioFiscal');
+        this.establecerValoresPestania(nombre, false, false, false, 'idAnio');
         break;
       default:
         break;
@@ -406,8 +405,8 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     }
   }
   //Obtiene la mascara de importe
-  public mascararEnterosConDecimales(intLimite) {
-    return this.appService.mascararEnterosConDecimales(intLimite);
+  public mascararImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite, 2);
   }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {

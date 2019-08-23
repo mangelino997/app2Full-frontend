@@ -86,7 +86,7 @@
               <div class="form-group has-float-label">
                 <label id="labelImporte" for="idImporte" class="descripcion-label">Importe Acumulado *</label>
                 <input id="idImporte" type="text" formControlName="importe" autocomplete="off" class="form-control form-control-sm number-right"
-                  [readonly]="soloLectura" [textMask]="mascararEnterosConDecimales(10)"  placeholder="$0.00"
+                  [readonly]="soloLectura" [textMask]="mascararImporte(10)"  placeholder="$0.00"
                   (blur)="establecerDecimales(formulario.get('importe'), 2)">
               </div>
             </div>
