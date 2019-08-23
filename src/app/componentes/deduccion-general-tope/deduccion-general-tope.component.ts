@@ -132,6 +132,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
     this.anio.setValue(undefined);
+    this.condicion = false;
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.resultados = [];
@@ -160,7 +161,6 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
-    console.log(indice);
     switch (indice) {
       case 1:
         this.agregar(); 
@@ -177,30 +177,40 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   //Obtiene el listado de registros
   public listar() {
     this.loaderService.show();
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
     this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
-        console.log(res.json());
+        let respuesta = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
   }
+  //Verifica si hay campos vacios
+  private verificarCamposVacios(){
+    let importe = this.formulario.value.importe;
+    let importeFijo = this.formulario.value.porcentajeGananciaNeta;
+    let descripcion = this.formulario.value.descripcion;
+    if(!importe || importe == undefined)
+      this.formulario.get('importe').setValue(0);
+    if(!importeFijo || importeFijo == undefined)
+      this.formulario.get('porcentajeGananciaNeta').setValue(0);
+  }
   //Metodo Agregar 
   private agregar() {
     this.loaderService.show();    
-    console.log(this.formulario.value);
+    this.verificarCamposVacios();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
-        setTimeout(function () {
-          document.getElementById('idAnioFiscal').focus();
-        }, 20);
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -213,15 +223,13 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
+    this.verificarCamposVacios();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          this.listar();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -266,11 +274,24 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
-    this.anio.setValue(undefined);
     this.resultados = [];
-    setTimeout(function () {
-      document.getElementById('idAnio').focus();
-    }, 20);
+    if(this.indiceSeleccionado == 1){
+      setTimeout(function () {
+        document.getElementById('idAnio').focus();
+      }, 20);
+    }else{
+      setTimeout(function () {
+        document.getElementById('idAnioLista').focus();
+      }, 20);
+    }
+  }
+  //Controla el cambio en el campo "anio"
+  public cambioAnio(elemento){
+    if(elemento != undefined){
+      this.anio.setValue(elemento);
+    }
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -337,18 +358,16 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     }
   }
   //Obtiene la mascara de importe
-  public mascararEnterosConDecimales(intLimite) {
-    return this.appService.mascararEnterosConDecimales(intLimite);
+  public mascararImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite, 2);
   }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;
     if(valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
-      this.condicion = true;
-    }else{
-      this.condicion = false;
     }
+    this.verificarCondicion();
   }
   //Mascara un porcentaje
   public mascararPorcentaje() {
@@ -359,9 +378,19 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     let valor = formulario.value;
     if(valor){
       formulario.setValue(this.appService.desenmascararPorcentaje(valor, cantidad));
-      this.condicion = true;
-    }else{
+    }
+    this.verificarCondicion();
+  }
+  //Verifica el estado de los campos import y ganancia. Establece la condicion
+  private verificarCondicion(){
+    let importe = this.formulario.value.importe;
+    let porcentajeGananciaNeta = this.formulario.value.porcentajeGananciaNeta;
+    if((!importe || importe == undefined) && (!porcentajeGananciaNeta || porcentajeGananciaNeta == undefined)){
       this.condicion = false;
+      this.toastr.error("Ambos montos no pueden ser nulos");
+    }
+    else{
+      this.condicion = true;
     }
   }
   //Verifica si se selecciono un elemento del autocompletado

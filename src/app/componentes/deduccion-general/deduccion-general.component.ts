@@ -69,14 +69,6 @@ export class DeduccionGeneralComponent implements OnInit {
             console.log(err);
           }
         );
-      //Controla el autocompletado
-      this.autocompletado.valueChanges.subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.servicio.listarPorDescripcion(data).subscribe(res => {
-            this.resultados = res;
-          })
-        }
-      });
      }
 
   ngOnInit() {
@@ -89,6 +81,16 @@ export class DeduccionGeneralComponent implements OnInit {
     this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+    //Controla el autocompletado
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorDescripcion(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }else{
+        this.formulario.reset();
+      }
+    });
   }
 //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {

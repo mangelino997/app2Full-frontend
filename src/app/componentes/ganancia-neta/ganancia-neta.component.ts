@@ -146,28 +146,39 @@ export class GananciaNetaComponent implements OnInit {
     )
   }
   //Carga la tabla
-  public listarPorAnio(){
+  public listar(){
     this.loaderService.show();
-    let anio = null;
-    if(this.anio.value)
-      anio = this.anio.value;
-      else
-      anio = this.formulario.value.anio;
-    this.servicio.listarPorAnio(anio).subscribe(
+    this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
-        console.log(res.json());
+        let respuesta = res.json;
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
   }
+  //Controla el cambio en el campo "anio"
+  public cambioAnio(elemento){
+    if(elemento != undefined){
+      this.anio.setValue(elemento);
+    }
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
+  }
+  //Controla el cambio en el campo "anio" pestaña listar
+  public cambioAnioListar(){
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
+  }
   //Controla el cambio de seleccion
   public cambioGananciaNeta(){
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
     if(!this.formularioListar.value.gananciaNeta)
       this.formularioListar.get('mes').reset();
   }
@@ -182,14 +193,12 @@ export class GananciaNetaComponent implements OnInit {
       mes = 0;
     this.servicio.listarPorFiltros(anio, mes).subscribe(
       res => {
-        console.log(res.json());
         this.resultadosPorFiltro = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -242,7 +251,6 @@ export class GananciaNetaComponent implements OnInit {
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
-    console.log(indice);
     switch (indice) {
       case 1:
         this.agregar(); 
@@ -260,24 +268,17 @@ export class GananciaNetaComponent implements OnInit {
   public agregar() {
     this.loaderService.show();    
     let anio = this.formulario.value.anio;
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
         if(this.indiceSeleccionado == 1){
           this.formulario.get('anio').setValue(anio);
-          setTimeout(function () {
-            document.getElementById('idAnioFiscal').focus();
-          }, 20);
         }else{
           this.anio.setValue(anio);
-          setTimeout(function () {
-            document.getElementById('idAnio').focus();
-          }, 20);
         }
         this.toastr.success(respuesta.mensaje);
-        this.listarPorAnio();
+        this.listar();
         this.loaderService.hide();
       },
       err => {
@@ -289,7 +290,6 @@ export class GananciaNetaComponent implements OnInit {
   //Actualiza un registro
   public actualizar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
     let anio = this.formulario.value.anio;
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -298,17 +298,11 @@ export class GananciaNetaComponent implements OnInit {
           this.reestablecerFormulario(undefined);
           if(this.indiceSeleccionado == 1){
             this.formulario.get('anio').setValue(anio);
-            setTimeout(function () {
-              document.getElementById('idAnioFiscal').focus();
-            }, 20);
           }else{
             this.anio.setValue(anio);
-            setTimeout(function () {
-              document.getElementById('idAnio').focus();
-            }, 20);
           }
           this.toastr.success(respuesta.mensaje);
-          this.listarPorAnio();
+          this.listar();
           this.loaderService.hide();
         }
       },
@@ -334,9 +328,15 @@ export class GananciaNetaComponent implements OnInit {
     this.anio.setValue(undefined);
     this.idMod = null;
     this.resultados = [];
-    setTimeout(function () {
-      document.getElementById('idAnioFiscal').focus();
-    }, 20);
+    if(this.indiceSeleccionado == 1){
+      setTimeout(function () {
+        document.getElementById('idAnioFiscal').focus();
+      }, 20);
+    }else{
+      setTimeout(function () {
+        document.getElementById('idAnio').focus();
+      }, 20);
+    }
   }
   //Controla que el campo "importe" (Ganancia Neta Acumulada) no sea menor o igual a cero
   public controlImporte(){
@@ -378,7 +378,7 @@ export class GananciaNetaComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.establecerDecimales(this.formulario.get('importe'), 2);
     this.establecerDecimales(this.formulario.get('importeFijo'), 2);
-    this.listarPorAnio();
+    this.listar();
   }
   //elimina el registro seleccionado
   public activarEliminar(idElemento){
@@ -387,7 +387,7 @@ export class GananciaNetaComponent implements OnInit {
       res=>{
         let respuesta = res.json();
         this.toastr.success(respuesta.mensaje);
-        this.listarPorAnio();
+        this.listar();
         this.loaderService.hide();
       },
       err=>{
@@ -429,8 +429,8 @@ export class GananciaNetaComponent implements OnInit {
     }
   }
   //Obtiene la mascara de importe
-  public mascararEnterosConDecimales(intLimite) {
-    return this.appService.mascararEnterosConDecimales(intLimite);
+  public mascararImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite, 2);
   }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
