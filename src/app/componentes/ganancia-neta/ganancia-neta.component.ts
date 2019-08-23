@@ -146,28 +146,36 @@ export class GananciaNetaComponent implements OnInit {
     )
   }
   //Carga la tabla
-  public listarPorAnio(){
+  public listar(){
     this.loaderService.show();
-    let anio = null;
-    if(this.anio.value)
-      anio = this.anio.value;
-      else
-      anio = this.formulario.value.anio;
-    this.servicio.listarPorAnio(anio).subscribe(
+    this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
   }
+  //Controla el cambio en el campo "anio"
+  public cambioAnio(elemento){
+    if(elemento != undefined){
+      this.anio.setValue(elemento);
+    }
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
+  }
+  //Controla el cambio en el campo "anio" pestaña listar
+  public cambioAnioListar(){
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
+  }
   //Controla el cambio de seleccion
   public cambioGananciaNeta(){
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
     if(!this.formularioListar.value.gananciaNeta)
       this.formularioListar.get('mes').reset();
   }
@@ -277,7 +285,7 @@ export class GananciaNetaComponent implements OnInit {
           }, 20);
         }
         this.toastr.success(respuesta.mensaje);
-        this.listarPorAnio();
+        this.listar();
         this.loaderService.hide();
       },
       err => {
@@ -308,7 +316,7 @@ export class GananciaNetaComponent implements OnInit {
             }, 20);
           }
           this.toastr.success(respuesta.mensaje);
-          this.listarPorAnio();
+          this.listar();
           this.loaderService.hide();
         }
       },
@@ -378,7 +386,7 @@ export class GananciaNetaComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.establecerDecimales(this.formulario.get('importe'), 2);
     this.establecerDecimales(this.formulario.get('importeFijo'), 2);
-    this.listarPorAnio();
+    this.listar();
   }
   //elimina el registro seleccionado
   public activarEliminar(idElemento){
@@ -387,7 +395,7 @@ export class GananciaNetaComponent implements OnInit {
       res=>{
         let respuesta = res.json();
         this.toastr.success(respuesta.mensaje);
-        this.listarPorAnio();
+        this.listar();
         this.loaderService.hide();
       },
       err=>{
