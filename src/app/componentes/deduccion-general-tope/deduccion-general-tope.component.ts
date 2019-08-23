@@ -132,6 +132,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
     this.anio.setValue(undefined);
+    this.condicion = false;
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.resultados = [];
@@ -201,8 +202,6 @@ export class DeduccionGeneralTopeComponent implements OnInit {
       this.formulario.get('importe').setValue(0);
     if(!importeFijo || importeFijo == undefined)
       this.formulario.get('porcentajeGananciaNeta').setValue(0);
-    if(!descripcion || descripcion == undefined)
-      this.formulario.get('descripcion').setValue('');
   }
   //Metodo Agregar 
   private agregar() {
@@ -386,10 +385,13 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   private verificarCondicion(){
     let importe = this.formulario.value.importe;
     let porcentajeGananciaNeta = this.formulario.value.porcentajeGananciaNeta;
-    if((!importe || importe == undefined) && (!porcentajeGananciaNeta || porcentajeGananciaNeta == undefined))
+    if((!importe || importe == undefined) && (!porcentajeGananciaNeta || porcentajeGananciaNeta == undefined)){
       this.condicion = false;
-    else 
+      this.toastr.error("Ambos montos no pueden ser nulos");
+    }
+    else{
       this.condicion = true;
+    }
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
