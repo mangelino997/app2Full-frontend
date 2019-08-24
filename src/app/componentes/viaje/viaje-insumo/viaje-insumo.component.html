@@ -1,12 +1,11 @@
-<form [formGroup]="formularioViajeInsumo">
+<form class="margin-top-10" [formGroup]="formularioViajeInsumo">
   <div class="row">
     <div class="col-md-6">
       <div class="form-group has-float-label">
         <label for="idProveedor" class="tamanio-label">Proveedor *</label>
         <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
-          [formControl]="formularioViajeInsumo.get('proveedor')" [matAutocomplete]="autoProveedor"
-          autocomplete="off" [readonly]="soloLectura"
-          placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento"
+          [formControl]="formularioViajeInsumo.get('proveedor')" [matAutocomplete]="autoProveedor" autocomplete="off"
+          [readonly]="soloLectura" placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento"
           (blur)="verificarSeleccion(formularioViajeInsumo.get('proveedor'))">
         <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayFn.bind(this)">
           <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
@@ -16,19 +15,17 @@
       </div>
     </div>
     <span class="spacer"></span>
-    <button mat-raised-button>Consultar Ultimas Cargas</button>
+    <button style="height: 30px;" mat-raised-button>Consultar Ultimas Cargas</button>
   </div>
   <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idFecha" class="tamanio-label">Fecha</label>
         <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
           [readonly]="soloLectura">
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idInsumoProducto" class="tamanio-label">Insumo *</label>
         <mat-select id="idInsumoProducto" class="form-control form-control-sm" formControlName="insumoProducto"
@@ -40,12 +37,12 @@
         </mat-select>
       </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idCantidadAV" class="tamanio-label">Cantidad *</label>
         <input id="idCantidadAV" [textMask]="mascararEnteros(8)" type="text" formControlName="cantidad"
-          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-          placeholder="0"> <!--(blur)="calcularImporte(formularioViajeInsumo)"-->
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0"
+          (blur)="calcularImporte(formularioViajeInsumo)">
       </div>
     </div>
     <div class="col-md-3">
@@ -59,8 +56,8 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idImporteAV" class="tamanio-label">Importe *</label>
-        <input id="idImporteAV" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe" autocomplete="off"
-          class="form-control form-control-sm number-right" [readonly]="true" placeholder="$ 0.00">
+        <input id="idImporteAV" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="$ 0.00">
       </div>
     </div>
   </div>
@@ -73,78 +70,105 @@
       </div>
     </div>
     <div class="col-md-3">
-      <button mat-raised-button color="primary" (click)="agregarInsumo()"
+      <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarInsumo()"
         [disabled]="!formularioViajeInsumo.valid" *ngIf="btnInsumo">Agregar Orden
       </button>
-      <button mat-raised-button color="primary" (click)="modificarInsumo()"
+      <button class="margin-left-3" mat-raised-button color="primary" (click)="modificarInsumo()"
         [disabled]="!formularioViajeInsumo.valid" *ngIf="!btnInsumo">Actualizar Orden
       </button>
-      <button mat-raised-button (click)="cancelar()" [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnInsumo">Cancelar</button>
+      <button class="margin-left-3" mat-raised-button (click)="cancelar()"
+        [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnInsumo">Cancelar</button>
     </div>
   </div>
   <div class="row">
     <div class="tabla">
       <div class="tabla-ancho">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="sucursal" >
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="orden" >
+          <ng-container matColumnDef="orden">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
-            <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+            <td mat-cell *matCellDef="let elemento; let i=index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}</td>
           </ng-container>
-          <ng-container matColumnDef="fecha" >
+          <ng-container matColumnDef="anular">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento; let i = index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura"
+                (click)="anularInsumo(elemento)" matTooltip="Anular" matTooltipPosition="above">
+                <mat-icon>close</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="mod">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento; let i = index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura" (click)="modInsumo(i)"
+                matTooltip="Anular" matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="sucursal">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.sucursal.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="fecha">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
           </ng-container>
-          <ng-container matColumnDef="proveedor" >
+          <ng-container matColumnDef="proveedor">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.proveedor.razonSocial}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.proveedor.razonSocial}}</td>
           </ng-container>
-          <ng-container matColumnDef="insumo" >
+          <ng-container matColumnDef="insumo">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.insumoProducto.nombre}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.insumoProducto.nombre}}</td>
           </ng-container>
-          <ng-container matColumnDef="cantidad" >
+          <ng-container matColumnDef="cantidad">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.cantidad}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.cantidad}}</td>
           </ng-container>
-          <ng-container matColumnDef="precioUnitario" >
+          <ng-container matColumnDef="precioUnitario">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
-            <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.precioUnitario)}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">$
+              {{establecerCerosTabla(elemento.precioUnitario)}}</td>
           </ng-container>
-          <ng-container matColumnDef="importe" >
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-              <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importe)}}</td>
+          <ng-container matColumnDef="importe">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">$
+              {{establecerCerosTabla(elemento.importe)}}</td>
           </ng-container>
-          <ng-container matColumnDef="observaciones" >
+          <ng-container matColumnDef="observaciones">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
-            <td mat-cell *matCellDef="let elemento">
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
               <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
             </td>
           </ng-container>
-          <ng-container matColumnDef="anulado" >
+          <ng-container matColumnDef="anulado">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.estaAnulado? 'Sí': 'No'}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.estaAnulado? 'Sí': 'No'}}</td>
           </ng-container>
-          <ng-container matColumnDef="obsAnulado" >
+          <ng-container matColumnDef="obsAnulado">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
-            <td mat-cell *matCellDef="let elemento">
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
               <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
             </td>
-          </ng-container>
-          <ng-container matColumnDef="mod" sticky >
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento;  let i = index;">
-              <span class="cursor-color" *ngIf="!soloLectura" (click)="modInsumo(i)">mod</span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="anular" sticky >
-              <th mat-header-cell *matHeaderCellDef>-</th>
-              <td mat-cell *matCellDef="let elemento;  let i = index;">
-                <span class="cursor-color-rojo" *ngIf="!soloLectura" (click)="anularInsumo(elemento)">anular</span>
-              </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

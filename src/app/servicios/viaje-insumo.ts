@@ -66,6 +66,10 @@ export class ViajeInsumoService {
   public anularInsumo(elemento) {
     return this.http.put(this.url + '/anularInsumo', elemento, this.options);
   }
+  //Normaliza un registro
+  public normalizarInsumo(elemento) {
+    return this.http.put(this.url + '/normalizarInsumo', elemento, this.options);
+  }
   //Elimina un registro
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);

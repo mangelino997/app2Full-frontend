@@ -13,6 +13,8 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ViajeInsumo } from 'src/app/modelos/viajeInsumo';
 import { ViajeInsumoService } from 'src/app/servicios/viaje-insumo';
+import { AnularDialogo } from '../anular-dialogo.component';
+import { NormalizarDialogo } from '../normalizar-dialogo.component';
 
 @Component({
   selector: 'app-viaje-insumo',
@@ -49,8 +51,8 @@ export class ViajeInsumoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['sucursal', 'orden', 'fecha', 'proveedor', 'insumo', 'cantidad', 'precioUnitario', 'importe', 'observaciones',
-                              'anulado', 'obsAnulado', 'mod', 'anular'];
+  public columnas: string[] = ['orden', 'anular', 'mod', 'sucursal', 'fecha', 'proveedor', 'insumo', 'cantidad', 'precioUnitario', 'importe', 'observaciones',
+                              'anulado', 'obsAnulado'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -141,6 +143,7 @@ export class ViajeInsumoComponent implements OnInit {
           formulario.get('precioUnitario').enable();
           formulario.get('precioUnitario').reset();
         }
+        this.calcularImporte(formulario);
       },
       err => {
         console.log(err);
@@ -225,22 +228,62 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajeInsumo.get('importe').setValue(this.appServicio.establecerDecimales(this.formularioViajeInsumo.value.importe ,2));
     this.formularioViajeInsumo.get('precioUnitario').setValue(this.appServicio.establecerDecimales(this.formularioViajeInsumo.value.precioUnitario ,2));
   }
-  //Elimina una orden insumo de la tabla por indice
+  //Elimina un insumo de la tabla por indice
   public anularInsumo(elemento): void {
-    this.loaderService.show();
-    elemento.viaje = {id: this.VIAJE_CABECERA.id};
-      this.servicio.anularInsumo(elemento).subscribe(res => {
-          let respuesta = res.json();
-          this.listar();
-          this.establecerValoresPorDefecto(0);
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
-        },
-        err => {
-          this.toastr.error("Error al anular el registro");
-          this.loaderService.hide();
-        });
-    document.getElementById('idProveedor').focus();
+    const dialogRef = this.dialog.open(AnularDialogo, {
+      width: '800px',
+      data: {
+        tema: this.appServicio.getTema()
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado.value.observaciones) {
+        this.loaderService.show();
+        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.observacionesAnulado = resultado.value.observaciones;
+        this.servicio.anularInsumo(elemento).subscribe(
+          res => {
+            let respuesta = res.json();
+            this.listar();
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+          },
+          err => {
+            this.toastr.error("No se pudo anular el registro");
+            this.loaderService.hide();
+          }
+        );
+      }
+      document.getElementById('idProveedor').focus();
+    });
+  }
+  //Normaliza un insumo de la tabla por indice
+  public normalizarInsumo(elemento): void {
+    const dialogRef = this.dialog.open(NormalizarDialogo, {
+      width: '800px',
+      data: {
+        tema: this.appServicio.getTema()
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado) {
+        this.loaderService.show();
+        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        this.servicio.normalizarInsumo(elemento).subscribe(
+          res => {
+            let respuesta = res.json();
+            this.listar();
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+          },
+          err => {
+            this.toastr.error("No se pudo normalizar el registro");
+            this.loaderService.hide();
+          }
+        );
+      }
+      document.getElementById('idProveedor').focus();
+    });
   }
   //Calcula el importe total al agregar
   private calcularImporteTotal(): void {
