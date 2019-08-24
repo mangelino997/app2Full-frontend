@@ -151,7 +151,6 @@ import { ViajeCombustibleService } from './servicios/viaje-combustible';
 import { TalonarioReciboLoteService } from './servicios/talonario-recibo-lote.service';
 import { FotoService } from './servicios/foto.service';
 
-
 //Modelos
 import { Viaje } from './modelos/viaje';
 import { ViajeRemito } from './modelos/viajeRemito';
@@ -216,6 +215,7 @@ import { TalonarioReciboLote } from './modelos/talonarioReciboLote';
 import { OrdenVentaTarifa } from './modelos/ordenVentaTarifa';
 import { TalonarioReciboCobrador } from './modelos/talonarioReciboCobrador';
 import { Soporte } from './modelos/soporte';
+
 //Componentes
 import { AppComponent } from './app.component';
 import { LoginComponent } from './componentes/login/login.component';
@@ -486,7 +486,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.123:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE

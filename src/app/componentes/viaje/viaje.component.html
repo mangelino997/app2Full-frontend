@@ -166,55 +166,57 @@
                 </div>
             </div>
         </mat-card>
-        <br>
-        <mat-horizontal-stepper linear (selectionChange)="onStepChange($event)" #stepper>
+        <mat-horizontal-stepper class="margin-top-5" linear (selectionChange)="onStepChange($event)" #stepper>
             <ng-template matStepperIcon="edit" let-index="index">
                 {{index+1}}
             </ng-template>
-            <mat-step [stepControl]="formularioViajeTramo" >
-                <ng-template matStepLabel>Tramos</ng-template><br>
+            <mat-step [stepControl]="formularioViajeTramo">
+                <ng-template matStepLabel>Tramos</ng-template>
                 <form [formGroup]="formularioViajeTramo">
                     <app-viaje-tramo (dataEvent)="recibirTramos($event)"></app-viaje-tramo>
                 </form>
+                <div class="row justify-content-center">
+                    <button mat-raised-button color="primary">Finalizar</button>
+                </div>
             </mat-step>
             <mat-step [stepControl]="formularioViajeTramo" >
-                <ng-template matStepLabel>Ordenes Combustibles</ng-template><br>
+                <ng-template matStepLabel>Ordenes Combustibles</ng-template>
                 <form [formGroup]="formularioViajeCombustible">
                     <app-viaje-combustible (dataEvent)="recibirCombustibles($event)"></app-viaje-combustible>
                 </form>
             </mat-step>
             <mat-step [stepControl]="formularioViajeTramo">
-                <ng-template matStepLabel>Adelantos Efectivo</ng-template><br>
+                <ng-template matStepLabel>Adelantos Efectivo</ng-template>
                 <form [formGroup]="formularioViajeEfectivo">
                     <app-viaje-efectivo (dataEvent)="recibirEfectivos($event)"></app-viaje-efectivo>
                 </form>
             </mat-step>
             <mat-step [stepControl]="formularioViajeTramo">
-                <ng-template matStepLabel>Ordenes Insumo</ng-template><br>
+                <ng-template matStepLabel>Ordenes Insumo</ng-template>
                 <form [formGroup]="formularioViajeInsumo">
                     <app-viaje-insumo (dataEvent)="recibirInsumos($event)"></app-viaje-insumo>
                 </form>
             </mat-step>
             <mat-step [stepControl]="formularioViajeTramo">
-                <ng-template matStepLabel>Remitos Dadores Carga</ng-template><br>
+                <ng-template matStepLabel>Remitos Dadores Carga</ng-template>
                 <form [formGroup]="formularioViajeRemitoDC">
 
                 </form>
             </mat-step>
             <!-- <mat-step [stepControl]="formularioViajeTramo">
-                <ng-template matStepLabel>Remitos Generales</ng-template><br>
+                <ng-template matStepLabel>Remitos Generales</ng-template>
                 <form [formGroup]="formularioViajeRemito">
                     <app-viaje-remito-gs (dataEvent)="recibirRemitos($event)"></app-viaje-remito-gs>
                 </form>
             </mat-step> -->
             <mat-step [stepControl]="formularioViajeTramo">
-                <ng-template matStepLabel>Gastos</ng-template><br>
+                <ng-template matStepLabel>Gastos</ng-template>
                 <form [formGroup]="formularioViajeGasto">
                     <app-viaje-gasto (dataEvent)="recibirGastos($event)"></app-viaje-gasto>
                 </form>
             </mat-step>
             <mat-step [stepControl]="formularioViajeTramo">
-                <ng-template matStepLabel>Peaje</ng-template><br>
+                <ng-template matStepLabel>Peaje</ng-template>
                 <form [formGroup]="formularioViajePeaje">
                     <app-viaje-peaje (dataEvent)="recibirPeajes($event)"></app-viaje-peaje>
                 </form>
@@ -237,36 +239,36 @@
     <div class="row justify-content-center" *ngIf="indiceSeleccionado == 5">
         <div class="col-md-12">
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="id" sticky>
+                <ng-container matColumnDef="id">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
                   <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
                 </ng-container>
-                <ng-container matColumnDef="empresaEmision" sticky>
+                <ng-container matColumnDef="empresaEmision">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa Emisión</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.empresaEmision? elemento.empresaEmision.razonSocial : '--'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="sucursal" sticky>
+                <ng-container matColumnDef="sucursal">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.sucursal? elemento.sucursal.nombre : '--'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="fecha" sticky>
+                <ng-container matColumnDef="fecha">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="vehiculo" sticky>
+                <ng-container matColumnDef="vehiculo">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Vehículo</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.vehiculo? elemento.vehiculo.dominio : '--'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="chofer" sticky>
+                <ng-container matColumnDef="chofer">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Chofer</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.personal? elemento.personal.nombreCompleto : '--'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="ver" sticky >
+                <ng-container matColumnDef="ver">
                   <th mat-header-cell *matHeaderCellDef>-</th>
                   <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarConsultar(elemento)"><span
                       class="cursor-color">ver</span></td>
                 </ng-container>
-                <ng-container matColumnDef="mod" sticky >
+                <ng-container matColumnDef="mod">
                   <th mat-header-cell *matHeaderCellDef>-</th>
                   <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarActualizar(elemento)"><span
                       class="cursor-color">mod</span></td>

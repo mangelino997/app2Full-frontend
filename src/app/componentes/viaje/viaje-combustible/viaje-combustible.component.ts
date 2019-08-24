@@ -48,7 +48,7 @@ export class ViajeCombustibleComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['anular', 'mod', 'sucursal', 'orden', 'fecha', 'proveedor', 'insumoProducto', 'cantidad', 'precioUnitario', 'observaciones', 'anulado', 'obsAnulado'];
+  public columnas: string[] = ['orden', 'anular', 'mod', 'sucursal', 'fecha', 'proveedor', 'insumoProducto', 'cantidad', 'precioUnitario', 'observaciones', 'anulado', 'obsAnulado'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define estado de campo precio unitario
@@ -181,6 +181,7 @@ export class ViajeCombustibleComponent implements OnInit {
           formulario.get('precioUnitario').reset();
           this.estadoPrecioUnitario = false;
         }
+        this.calcularImporte(formulario);
       },
       err => {
         console.log(err);
@@ -257,12 +258,11 @@ export class ViajeCombustibleComponent implements OnInit {
       if (resultado.value.observaciones) {
         this.loaderService.show();
         elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.observacionesAnulado = resultado.value.observaciones;
         this.servicio.anularCombustible(elemento).subscribe(
           res => {
             let respuesta = res.json();
             this.listar();
-            // this.establecerValoresPorDefecto(0);
-            // this.calcularTotalLitros();
             this.toastr.success(respuesta.mensaje);
             this.loaderService.hide();
           },
@@ -275,7 +275,7 @@ export class ViajeCombustibleComponent implements OnInit {
       document.getElementById('idProveedorOC').focus();
     });
   }
-  //Elimina un combustible de la tabla por indice
+  //Normaliza un combustible de la tabla por indice
   public normalizarCombustible(elemento): void {
     const dialogRef = this.dialog.open(NormalizarDialogo, {
       width: '800px',
@@ -291,8 +291,6 @@ export class ViajeCombustibleComponent implements OnInit {
           res => {
             let respuesta = res.json();
             this.listar();
-            // this.establecerValoresPorDefecto(0);
-            // this.calcularTotalLitros();
             this.toastr.success(respuesta.mensaje);
             this.loaderService.hide();
           },

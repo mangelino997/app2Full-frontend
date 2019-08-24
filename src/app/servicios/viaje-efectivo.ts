@@ -66,6 +66,10 @@ export class ViajeEfectivoService {
   public anularEfectivo(elemento) {
     return this.http.put(this.url + '/anularEfectivo', elemento, this.options);
   }
+  //Normaliza un registro
+  public normalizarEfectivo(elemento) {
+    return this.http.put(this.url + '/normalizarEfectivo', elemento, this.options);
+  }
   //Elimina un registro
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);

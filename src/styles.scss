@@ -429,7 +429,6 @@ button.toast-close-button {
 .sidenav {
   width: 200px;
 }
-
 /* Cambia el color del boton de la subopcion al seleccionarlo */
 .activar-boton-subopcion {
   background-color: blue !important;
@@ -601,4 +600,27 @@ table {
 }
 .number-right {
   text-align: right;
+}
+tr.mat-header-row {
+  height: 35px !important;
+}
+.mat-icon-button-table {
+  padding: 0px !important;
+  min-width: 0px !important;
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+  border-radius: 50% !important;
+}
+tr.mat-footer-row, tr.mat-row {
+  height: 32px !important;
+}
+.margin-left-3 {
+  margin-left: 3px;
+}
+.margin-top-5 {
+  margin-top: 5px;
+}
+.margin-top-10 {
+  margin-top: 10px;
 }

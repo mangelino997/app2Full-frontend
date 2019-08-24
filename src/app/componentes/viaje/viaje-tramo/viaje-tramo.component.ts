@@ -78,12 +78,14 @@ export class ViajeTramoComponent implements OnInit {
   public VIAJE_CABECERA: any;
   //Define el viaje actual de los tramos
   public viaje: any;
+  //Define la fecha actual
+  public fechaActual:any;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'fecha', 'tramo', 'km', 'empresa', 'tipoCarga', 'tipoViaje', 'tarifa', 'destinatario', 'unidadNegocio', 'obs', 'editar', 'eliminar'];
+  public columnas: string[] = ['eliminar', 'editar', 'id', 'fecha', 'tramo', 'km', 'empresa', 'tipoCarga', 'tipoViaje', 'tarifa', 'destinatario', 'unidadNegocio', 'obs'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -155,7 +157,8 @@ export class ViajeTramoComponent implements OnInit {
   //Establece los valores por defecto del formulario viaje tramo
   public establecerValoresPorDefecto(): void {
     this.fechaServicio.obtenerFecha().subscribe(res => {
-      this.formularioViajeTramo.get('fechaTramo').setValue(res.json());
+      this.fechaActual = res.json();
+      this.formularioViajeTramo.get('fechaTramo').setValue(this.fechaActual);
     })
   }
   //Establece el id del viaje de Cabecera
@@ -557,6 +560,7 @@ export class ViajeTramoComponent implements OnInit {
     this.vaciarListas();
     this.formularioViajeTramo.reset();
     this.formularioViajeTramo.value.viaje = this.VIAJE_CABECERA;
+    this.formularioViajeTramo.get('fechaTramo').setValue(this.fechaActual);
     this.indiceTramo = null;
     this.btnTramo = true;
   }

@@ -1,4 +1,4 @@
-<form [formGroup]="formularioViajeEfectivo">
+<form class="margin-top-10" [formGroup]="formularioViajeEfectivo">
   <div class="row">
     <div class="col-md-3">
       <div class="form-group has-float-label">
@@ -21,9 +21,9 @@
     <div class="col-md-3">
       <div class="form-group has-float-label">
         <label for="idImporteAE" class="tamanio-label">Importe *</label>
-        <input id="idImporteAE" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe" autocomplete="off"
-            class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="$ 0.00"
-            (blur)="establecerDecimales(formularioViajeEfectivo.get('importe'), 2)">
+        <input id="idImporteAE" [textMask]="mascararImporte(8, 2)" type="text" formControlName="importe"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+          placeholder="$ 0.00" (blur)="establecerDecimales(formularioViajeEfectivo.get('importe'), 2)">
       </div>
     </div>
   </div>
@@ -36,66 +36,88 @@
       </div>
     </div>
     <div class="col-md-3">
-      <button mat-raised-button color="primary" (click)="agregarEfectivo()"
-        [disabled]="!formularioViajeEfectivo.valid || indiceSeleccionado==2 || indiceSeleccionado==4" *ngIf="btnEfectivo">Agregar Adelanto
+      <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarEfectivo()"
+        [disabled]="!formularioViajeEfectivo.valid || indiceSeleccionado==2 || indiceSeleccionado==4"
+        *ngIf="btnEfectivo">Agregar
       </button>
-      <button mat-raised-button color="primary" (click)="modificarEfectivo()"
-        [disabled]="!formularioViajeEfectivo.valid" *ngIf="!btnEfectivo">Actualizar Adelanto
+      <button class="margin-left-3" mat-raised-button color="primary" (click)="modificarEfectivo()"
+        [disabled]="!formularioViajeEfectivo.valid" *ngIf="!btnEfectivo">Actualizar
       </button>
-      <button mat-raised-button (click)="cancelar()" [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnEfectivo">Cancelar</button>
+      <button class="margin-left-3" mat-raised-button (click)="cancelar()"
+        [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnEfectivo">Cancelar</button>
     </div>
   </div>
   <div class="row">
     <div class="tabla">
       <div class="tabla-ancho">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="sucursal" >
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-            <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.sucursal.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="adelanto" >
+          <ng-container matColumnDef="adelanto">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Adelanto</th>
-            <td mat-cell *matCellDef="let elemento; let i=index">{{i+1}}</td>
+            <td mat-cell *matCellDef="let elemento; let i=index" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i+1}}</td>
           </ng-container>
-          <ng-container matColumnDef="fecha" >
+          <ng-container matColumnDef="anular">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento; let i = index;"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && !elemento.estaAnulado"
+                (click)="anularEfectivo(elemento)" matTooltip="Anular" matTooltipPosition="above">
+                <mat-icon>close</mat-icon>
+              </button>
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && elemento.estaAnulado"
+                (click)="normalizarEfectivo(elemento)" matTooltip="Normalizar" matTooltipPosition="above">
+                <mat-icon>open_in_browser</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="mod">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento; let i = index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura" (click)="modEfectivo(i)"
+                matTooltip="Editar" matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="sucursal">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+            <td mat-cell *matCellDef="let elemento; let i=index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.sucursal.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="fecha">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.fechaCaja | date: 'dd/MM/yyyy'}}</td>
+            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.fechaCaja | date: 'dd/MM/yyyy'}}</td>
           </ng-container>
-          <ng-container matColumnDef="empresa" >
+          <ng-container matColumnDef="empresa">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.empresa.razonSocial}}</td>
           </ng-container>
-          <ng-container matColumnDef="importe" >
+          <ng-container matColumnDef="importe">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-            <td mat-cell *matCellDef="let elemento">$ {{establecerCerosTabla(elemento.importe)}}</td>
+            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">$ {{establecerCerosTabla(elemento.importe)}}</td>
           </ng-container>
-          <ng-container matColumnDef="observaciones" >
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
-              <td mat-cell *matCellDef="let elemento">
-                <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
-              </td>
+          <ng-container matColumnDef="observaciones">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+            </td>
           </ng-container>
-          <ng-container matColumnDef="anulado" >
+          <ng-container matColumnDef="anulado">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.estaAnulado? 'Sí' : 'No'}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.estaAnulado? 'Sí' : 'No'}}</td>
           </ng-container>
-          <ng-container matColumnDef="obsAnulado" >
+          <ng-container matColumnDef="obsAnulado">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
-            <td mat-cell *matCellDef="let elemento">
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
               <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
             </td>
-          </ng-container>
-          <ng-container matColumnDef="mod" sticky >
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento;  let i = index;" >
-              <span class="cursor-color" *ngIf="!soloLectura" (click)="modEfectivo(i)">mod</span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="anular" sticky>
-              <th mat-header-cell *matHeaderCellDef>-</th>
-              <td mat-cell *matCellDef="let elemento;  let i = index;">
-                <span class="cursor-color-rojo" *ngIf="!soloLectura" (click)="anularEfectivo(elemento)">anular</span>
-              </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
@@ -108,8 +130,8 @@
     <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idImporteAE" class="tamanio-label">Importe Total *</label>
-        <input id="idImporteAE" [textMask]="mascararImporte(8, 2)" type="text" [formControl]="importeTotal" 
-          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true">
+        <input id="idImporteAE" [textMask]="mascararImporte(8,2)" type="text" [formControl]="importeTotal"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="$ 0.00">
       </div>
     </div>
   </div>

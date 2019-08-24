@@ -1,4 +1,4 @@
-<form [formGroup]="formularioViajeCombustible">
+<form class="margin-top-10" [formGroup]="formularioViajeCombustible">
   <div class="row">
     <div class="col-md-6">
       <div class="form-group has-float-label">
@@ -72,10 +72,10 @@
     </div>
     <div class="col-md-3">
       <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarCombustible()"
-        *ngIf="btnCombustible" [disabled]="!formularioViajeCombustible.valid">Agregar Orden
+        *ngIf="btnCombustible" [disabled]="!formularioViajeCombustible.valid">Agregar
       </button>
       <button class="margin-left-3" mat-raised-button color="primary" (click)="modificarCombustible()"
-        [disabled]="!formularioViajeCombustible.valid" *ngIf="!btnCombustible">Actualizar Orden
+        [disabled]="!formularioViajeCombustible.valid" *ngIf="!btnCombustible">Actualizar
       </button>
       <button class="margin-left-3" mat-raised-button (click)="cancelar()"
         [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnCombustible">Cancelar</button>
@@ -85,14 +85,20 @@
     <div class="tabla">
       <div class="tabla-ancho">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+          <ng-container matColumnDef="orden">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
+            <td mat-cell *matCellDef="let elemento; let i=index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}</td>
+          </ng-container>
           <ng-container matColumnDef="anular">
             <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento; let i = index;" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-              <button mat-icon-button *ngIf="!soloLectura && !elemento.estaAnulado"
+            <td mat-cell *matCellDef="let elemento; let i = index;"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && !elemento.estaAnulado"
                 (click)="anularCombustible(elemento)" matTooltip="Anular" matTooltipPosition="above">
                 <mat-icon>close</mat-icon>
               </button>
-              <button mat-icon-button *ngIf="!soloLectura && elemento.estaAnulado"
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && elemento.estaAnulado"
                 (click)="normalizarCombustible(elemento)" matTooltip="Normalizar" matTooltipPosition="above">
                 <mat-icon>open_in_browser</mat-icon>
               </button>
@@ -100,54 +106,67 @@
           </ng-container>
           <ng-container matColumnDef="mod">
             <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento; let i = index;" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-              <button mat-icon-button *ngIf="!soloLectura" (click)="modCombustible(i)" matTooltip="Editar"
-                matTooltipPosition="above">
+            <td mat-cell *matCellDef="let elemento; let i = index;"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura" (click)="modCombustible(i)"
+                matTooltip="Editar" matTooltipPosition="above">
                 <mat-icon>edit</mat-icon>
               </button>
             </td>
           </ng-container>
           <ng-container matColumnDef="sucursal">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.sucursal.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="orden">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
-            <td mat-cell *matCellDef="let elemento; let i=index" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.sucursal.nombre}}</td>
           </ng-container>
           <ng-container matColumnDef="fecha">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
           </ng-container>
           <ng-container matColumnDef="proveedor">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
-            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.proveedor.razonSocial}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.proveedor.razonSocial}}</td>
           </ng-container>
           <ng-container matColumnDef="insumoProducto">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo Producto</th>
-            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.insumoProducto.nombre}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.insumoProducto.nombre}}</td>
           </ng-container>
           <ng-container matColumnDef="cantidad">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
-            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.cantidad}} Lt.</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.cantidad}} Lt.
+            </td>
           </ng-container>
           <ng-container matColumnDef="precioUnitario">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
-            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">$ {{establecerCerosTabla(elemento.precioUnitario)}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">$
+              {{establecerCerosTabla(elemento.precioUnitario)}}</td>
           </ng-container>
           <ng-container matColumnDef="observaciones">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs.</th>
-            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
               <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
             </td>
           </ng-container>
           <ng-container matColumnDef="anulado">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
-            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.estaAnulado? 'Sí': 'No'}}</td>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.estaAnulado? 'Sí': 'No'}}</td>
           </ng-container>
           <ng-container matColumnDef="obsAnulado">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
-            <td mat-cell *matCellDef="let elemento" [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
               <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
             </td>
           </ng-container>
