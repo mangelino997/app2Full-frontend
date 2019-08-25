@@ -166,7 +166,7 @@
                 </div>
             </div>
         </mat-card>
-        <mat-horizontal-stepper class="margin-top-5" linear (selectionChange)="onStepChange($event)" #stepper>
+        <mat-horizontal-stepper class="margin-top-5" [linear]="estadoFormulario" (selectionChange)="onStepChange($event)" #stepper>
             <ng-template matStepperIcon="edit" let-index="index">
                 {{index+1}}
             </ng-template>

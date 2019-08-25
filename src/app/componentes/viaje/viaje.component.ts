@@ -448,11 +448,14 @@ export class ViajeComponent implements OnInit {
   }
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
-    if ($event.length > 0)
+    if ($event.length > 0) {
+      this.estadoFormulario = false;
       this.formularioViajeTramo.get('lista').setValue($event);
-    else
+    } else {
+      this.estadoFormulario = true;
       this.formularioViajeTramo.get('lista').setValue(null);
-    this.tipoViaje.enable();
+    }
+    // this.tipoViaje.enable();
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {

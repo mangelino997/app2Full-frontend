@@ -85,11 +85,6 @@
     <div class="tabla">
       <div class="tabla-ancho">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="orden">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
-            <td mat-cell *matCellDef="let elemento; let i=index"
-              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}</td>
-          </ng-container>
           <ng-container matColumnDef="anular">
             <th mat-header-cell *matHeaderCellDef>-</th>
             <td mat-cell *matCellDef="let elemento; let i = index;"
@@ -113,6 +108,11 @@
                 <mat-icon>edit</mat-icon>
               </button>
             </td>
+          </ng-container>
+          <ng-container matColumnDef="orden">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
+            <td mat-cell *matCellDef="let elemento; let i=index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}</td>
           </ng-container>
           <ng-container matColumnDef="sucursal">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>

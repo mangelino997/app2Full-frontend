@@ -139,7 +139,7 @@ export class ViajeTramoComponent implements OnInit {
       res => {
         this.listaTramos = res.json();
         this.recargarListaCompleta(this.listaTramos);
-        // this.emitirTramos(this.listaTramos);
+        this.emitirTramos(this.listaTramos);
         this.loaderService.hide();
 
       },
@@ -150,7 +150,7 @@ export class ViajeTramoComponent implements OnInit {
       }
     );
   }
-  //Emite los tramos al Padre
+  //Emite tamaño lista tramos al Padre
   public emitirTramos(lista) {
     this.dataEvent.emit(lista);
   }
@@ -540,7 +540,7 @@ export class ViajeTramoComponent implements OnInit {
   private recargarListaCompleta(listaTramos) {
     this.listaCompleta = new MatTableDataSource(listaTramos);
     this.listaCompleta.sort = this.sort;
-    this.emitirTramos(listaTramos);
+    // this.emitirTramos(listaTramos);
   }
   //Establece el foco en fecha
   public establecerFoco(): void {
@@ -553,7 +553,7 @@ export class ViajeTramoComponent implements OnInit {
     this.listaTramos = [];
     this.resultadosTramos = [];
     this.listaCompleta = new MatTableDataSource([]);
-    this.emitirTramos(this.listaTramos);
+    // this.emitirTramos(this.listaTramos);
   }
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario() {

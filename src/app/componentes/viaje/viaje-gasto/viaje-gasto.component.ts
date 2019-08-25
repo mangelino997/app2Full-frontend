@@ -12,6 +12,9 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ViajeGasto } from 'src/app/modelos/viajeGasto';
 import { ViajeGastoService } from 'src/app/servicios/viaje-gasto';
+import { EliminarModalComponent } from '../../eliminar-modal/eliminar-modal.component';
+import { AnularDialogo } from '../anular-dialogo.component';
+import { NormalizarDialogo } from '../normalizar-dialogo.component';
 
 @Component({
   selector: 'app-viaje-gasto',
@@ -24,7 +27,7 @@ export class ViajeGastoComponent implements OnInit {
   public formularioViajeGasto: FormGroup;
   //Define la lista de ordenes de gastos (tabla)
   public listaGastos: Array<any> = [];
-  public listaCompleta= new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define la lista de resultados rubro producto de busqueda
   public resultadosRubrosProductos: Array<any> = [];
   //Define si los campos son de solo lectura
@@ -44,7 +47,7 @@ export class ViajeGastoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['fecha', 'rubro', 'cantidad', 'precioUnitario', 'importe', 'obs', 'anulado', 'obsAnulado', 'mod', 'eliminar'];
+  public columnas: string[] = ['eliminar', 'mod', 'fecha', 'rubro', 'cantidad', 'precioUnitario', 'importe', 'obs', 'anulado', 'obsAnulado'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -68,28 +71,28 @@ export class ViajeGastoComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Establece el id del viaje de Cabecera
-  public establecerViajeCabecera(viajeCabecera){
+  public establecerViajeCabecera(viajeCabecera) {
     this.VIAJE_CABECERA = viajeCabecera;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
-  private listar(idViajeCabecera){
+  private listar() {
     this.loaderService.show();
-      this.servicio.listarGastos(this.VIAJE_CABECERA.id).subscribe(
-        res=>{
-          this.listaGastos = res.json();
-          this.recargarListaCompleta(this.listaGastos);
-          this.emitirGastos(this.listaGastos);
-          this.loaderService.hide();
-        },
-        err=>{
-          let error = err.json();
-          this.toastr.error(error.mensaje);
-          this.loaderService.hide();
-        }
-      );
+    this.servicio.listarGastos(this.VIAJE_CABECERA.id).subscribe(
+      res => {
+        this.listaGastos = res.json();
+        this.recargarListaCompleta(this.listaGastos);
+        this.emitirGastos(this.listaGastos);
+        this.loaderService.hide();
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Emite los gastos al Padre
-  public emitirGastos(lista){
+  public emitirGastos(lista) {
     this.dataEvent.emit(lista);
   }
   //Establece los valores por defecto del formulario viaje gasto
@@ -115,19 +118,19 @@ export class ViajeGastoComponent implements OnInit {
     this.formularioViajeGasto.get('sucursal').setValue(usuario.sucursal);
     this.formularioViajeGasto.get('usuarioAlta').setValue(usuario);
     let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeGasto.value.viaje = {id: idViajeCabecera};
+    this.formularioViajeGasto.value.viaje = { id: idViajeCabecera };
     this.servicio.agregar(this.formularioViajeGasto.value).subscribe(
-      res=>{
+      res => {
         if (res.status == 201) {
           this.reestablecerFormulario();
-          this.listar(undefined);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           document.getElementById('idFechaG').focus();
           this.toastr.success("Registro agregado con éxito");
           this.loaderService.hide();
         }
       },
-      err=>{
+      err => {
         let resultado = err.json();
         this.toastr.error(resultado.mensaje);
         this.loaderService.hide();
@@ -139,20 +142,20 @@ export class ViajeGastoComponent implements OnInit {
     let usuarioMod = this.appService.getUsuario();
     this.formularioViajeGasto.value.usuarioMod = usuarioMod;
     let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeGasto.value.viaje = {id: idViajeCabecera};
+    this.formularioViajeGasto.value.viaje = { id: idViajeCabecera };
     this.servicio.actualizar(this.formularioViajeGasto.value).subscribe(
-      res=>{
+      res => {
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.listar(undefined);
+          this.listar();
           this.establecerValoresPorDefecto(0);
           this.btnGasto = true;
           document.getElementById('idFechaG').focus();
           this.toastr.success("Registro actualizado con éxito");
           this.loaderService.hide();
         }
-      },  
-      err=>{
+      },
+      err => {
         let error = err.json();
         this.toastr.error(error.mensaje);
         this.loaderService.hide();
@@ -164,31 +167,65 @@ export class ViajeGastoComponent implements OnInit {
     this.indiceGasto = indice;
     this.btnGasto = false;
     this.formularioViajeGasto.patchValue(this.listaGastos[indice]);
-    this.formularioViajeGasto.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajeGasto.value.importe ,2));
-    this.formularioViajeGasto.get('precioUnitario').setValue(this.appService.establecerDecimales(this.formularioViajeGasto.value.precioUnitario ,2));
-
+    this.formularioViajeGasto.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajeGasto.value.importe, 2));
+    this.formularioViajeGasto.get('precioUnitario').setValue(this.appService.establecerDecimales(this.formularioViajeGasto.value.precioUnitario, 2));
   }
-  //Elimina un gasto de la tabla por indice
-  public eliminarGasto(indice, elemento): void {
-    if (this.indiceSeleccionado == 1 || elemento.id == null) {
-      this.listaGastos.splice(indice, 1);
-      this.recargarListaCompleta(this.listaGastos);
-      this.establecerValoresPorDefecto(0);
-    } else {
-      this.loaderService.show();
-      this.servicio.eliminar(elemento.id).subscribe(res => {
-          let respuesta = res.json();
-          this.listaGastos.splice(indice, 1);
-          this.recargarListaCompleta(this.listaGastos);
-          this.establecerValoresPorDefecto(0);
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
-        },
-        err => {
-          this.loaderService.hide();
-        });
-    }
-    document.getElementById('idFechaG').focus();
+  //Anula un gasto de la tabla por indice
+  public anularGasto(elemento): void {
+    const dialogRef = this.dialog.open(AnularDialogo, {
+      width: '800px',
+      data: {
+        tema: this.appService.getTema()
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado.value.observaciones) {
+        this.loaderService.show();
+        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.observacionesAnulado = resultado.value.observaciones;
+        this.servicio.anular(elemento).subscribe(
+          res => {
+            let respuesta = res.json();
+            this.listar();
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+          },
+          err => {
+            this.toastr.error("No se pudo anular el registro");
+            this.loaderService.hide();
+          }
+        );
+      }
+      document.getElementById('idFechaG').focus();
+    });
+  }
+  //Normaliza un gasto de la tabla por indice
+  public normalizarGasto(elemento): void {
+    const dialogRef = this.dialog.open(NormalizarDialogo, {
+      width: '800px',
+      data: {
+        tema: this.appService.getTema()
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado) {
+        this.loaderService.show();
+        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        this.servicio.normalizar(elemento).subscribe(
+          res => {
+            let respuesta = res.json();
+            this.listar();
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+          },
+          err => {
+            this.toastr.error("No se pudo normalizar el registro");
+            this.loaderService.hide();
+          }
+        );
+      }
+      document.getElementById('idFechaG').focus();
+    });
   }
   //Calcula el importe a partir de cantidad y precio unitario
   public calcularImporte(formulario): void {
@@ -205,15 +242,17 @@ export class ViajeGastoComponent implements OnInit {
   private calcularImporteTotal(): void {
     let importeTotal = 0;
     this.listaGastos.forEach(item => {
-      importeTotal += Number(item.importe);
+      if(!item.estaAnulado) {
+        importeTotal += Number(item.importe);
+      }
     });
     this.formularioViajeGasto.get('importeTotal').setValue(importeTotal.toFixed(2));
   }
   //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaGastos'
-  private recargarListaCompleta(listaGastos){
+  private recargarListaCompleta(listaGastos) {
     this.listaCompleta = new MatTableDataSource(listaGastos);
-    this.listaCompleta.sort = this.sort; 
-    this.emitirGastos(listaGastos);
+    this.listaCompleta.sort = this.sort;
+    // this.emitirGastos(listaGastos);
     this.calcularImporteTotal();
   }
   //Establece la lista de efectivos
@@ -224,7 +263,7 @@ export class ViajeGastoComponent implements OnInit {
     this.formularioViajeGasto.get('viaje').patchValue(viaje);
     this.establecerViajeCabecera(viaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
-    this.listar(undefined);
+    this.listar();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -250,10 +289,12 @@ export class ViajeGastoComponent implements OnInit {
     }
   }
   //Limpia el formulario
-  public cancelar(){
-    this.reestablecerFormulario();
+  public cancelar() {
+    this.formularioViajeGasto.reset();
+    this.formularioViajeGasto.value.viaje = this.VIAJE_CABECERA;
+    this.btnGasto = true;
     this.formularioViajeGasto.get('viaje').setValue(this.viaje);
-    this.listar(undefined);
+    // this.listar();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaG').focus();
   }

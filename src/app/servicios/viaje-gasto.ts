@@ -62,6 +62,14 @@ export class ViajeGastoService {
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
   }
+  //Actualiza un registro
+  public anular(elemento) {
+    return this.http.put(this.url + '/anular', elemento, this.options);
+  }
+  //Normaliza un registro
+  public normalizar(elemento) {
+    return this.http.put(this.url + '/normalizar', elemento, this.options);
+  }
   //Elimina un registro
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);

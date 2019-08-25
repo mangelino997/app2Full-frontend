@@ -84,18 +84,17 @@
     <div class="tabla">
       <div class="tabla-ancho">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="orden">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
-            <td mat-cell *matCellDef="let elemento; let i=index"
-              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}</td>
-          </ng-container>
           <ng-container matColumnDef="anular">
             <th mat-header-cell *matHeaderCellDef>-</th>
             <td mat-cell *matCellDef="let elemento; let i = index"
               [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura"
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && !elemento.estaAnulado"
                 (click)="anularInsumo(elemento)" matTooltip="Anular" matTooltipPosition="above">
                 <mat-icon>close</mat-icon>
+              </button>
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && elemento.estaAnulado"
+                (click)="normalizarInsumo(elemento)" matTooltip="Normalizar" matTooltipPosition="above">
+                <mat-icon>open_in_browser</mat-icon>
               </button>
             </td>
           </ng-container>
@@ -104,10 +103,15 @@
             <td mat-cell *matCellDef="let elemento; let i = index"
               [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
               <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura" (click)="modInsumo(i)"
-                matTooltip="Anular" matTooltipPosition="above">
+                matTooltip="Editar" matTooltipPosition="above">
                 <mat-icon>edit</mat-icon>
               </button>
             </td>
+          </ng-container>
+          <ng-container matColumnDef="orden">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
+            <td mat-cell *matCellDef="let elemento; let i=index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}</td>
           </ng-container>
           <ng-container matColumnDef="sucursal">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
