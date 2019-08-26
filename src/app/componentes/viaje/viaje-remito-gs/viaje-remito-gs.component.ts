@@ -9,6 +9,7 @@ import { MatSort, MatTableDataSource } from '@angular/material';
 import { ViajeTramoService } from 'src/app/servicios/viaje-tramo.service';
 import { ViajeTramo } from 'src/app/modelos/viajeTramo';
 import { LoaderService } from 'src/app/servicios/loader.service';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-viaje-remito-gs',
@@ -29,6 +30,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Define la lista de tramos
   public listaTramos: Array<any> = [];
   public listaCompleta = new MatTableDataSource([]);
+  public seleccionCheck = new SelectionModel(true, []);
   //Defiene la lista de sucursales
   public sucursales: Array<any> = [];
   //Define las columnas de la tabla
@@ -47,8 +49,29 @@ export class ViajeRemitoGSComponent implements OnInit {
     this.formularioViajeTramo = this.ViajeTramo.formulario;
     //Obtiene la lista de sucursales
     this.listarSucursales();
-    //Obtiene la lista de Tramos
-    // this.listarTramos();
+  }
+  public estanTodosSeleccionados() {
+    const numSelected = this.seleccionCheck.selected.length;
+    const numRows = this.listaCompleta.data.length;
+    return numSelected === numRows;
+  }
+  public seleccionarTodos() {
+    if(this.estanTodosSeleccionados()) {
+      this.seleccionCheck.clear();
+      this.listaCompleta.data.forEach(elemento => elemento.estaPendiente = true);
+    } else {
+      this.listaCompleta.data.forEach(elemento => {
+        elemento.estaPendiente = false;
+        this.seleccionCheck.select(elemento);
+      });
+    }
+  }
+  //Al seleccionar o deseleccionar un checkbox, establece estaPendiente
+  public cambioCheckbox(event, elemento) {
+    elemento.estaPendiente = !event.checked;
+  }
+  public verLista() {
+    console.log(this.listaCompleta);
   }
   //Obtiene el listado de sucursales
   private listarSucursales() {
@@ -56,59 +79,31 @@ export class ViajeRemitoGSComponent implements OnInit {
       this.sucursales = res.json();
     });
   }
-  //Establece la lista de tramos
+  //Establece la lista de tramos (se establece de componente padre)
   public establecerTramos(tramos) {
     this.listaTramos = tramos;
-  }
-  //Obtiene una lista de los tramos por el idGuiaServicio
-  public listarTramos(viaje) {
-    this.formularioViajeTramo.value.viaje = viaje;
-    if (this.formularioViajeTramo.value.viaje.id) {
-      this.viajeTramoService.listarTramos(this.formularioViajeTramo.value.viaje.id).subscribe(
-        res => {
-          this.listaTramos = res.json();
-          this.recargarListaCompleta(this.listaTramos);
-          this.loaderService.hide();
-        },
-        err => {
-          let error = err.json();
-          this.toastr.error(error.mensaje);
-          this.loaderService.hide();
-        }
-      );
-    }
-  }
-  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
-  private recargarListaCompleta(listaTramos) {
-    this.listaCompleta = new MatTableDataSource(listaTramos);
-    this.listaCompleta.sort = this.sort;
   }
   //Obtiene la lista de remitos pendiente por filtro (sucursal, sucursal destino y numero de camion)
   public listarRemitosPorFiltro(): void {
     let sucursal = this.appService.getUsuario().sucursal;
     let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
     let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
-    let viaje = this.formularioViajeRemito.get('tramo').value;
+    let tramo = this.formularioViajeRemito.get('tramo').value;
     this.viajeRemitoServicio.listarPendientesPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(res => {
       let listaRemitosPendientes = res.json();
       for (var i = 0; i < listaRemitosPendientes.length; i++) {
-        listaRemitosPendientes[i].viajeTramo = viaje;
+        listaRemitosPendientes[i].viajeTramo = tramo;
         this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
         this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosPendientes[i]));
       }
+      this.establecerRemitos(this.remitos);
     });
-    // if (tipo) {
-    //   this.viajeRemitoServicio.listarAsignadosPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion, viaje.id).subscribe(res => {
-    //     let listaRemitosAsignados = res.json();
-    //     for (var i = 0; i < listaRemitosAsignados.length; i++) {
-    //       listaRemitosAsignados[i].viajeTramo = this.formularioViajeRemito.get('tramo').value;
-    //       this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
-    //       this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosAsignados[i]));
-    //     }
-    //   })
-    // } else {
-
-    // }
+  }
+  //Establece la lista de remitos a la tabla
+  private establecerRemitos(lista) {
+    this.listaCompleta = new MatTableDataSource(lista.value);
+    this.listaCompleta.sort = this.sort;
+    console.log(this.listaCompleta);
   }
   //Asigna o Quita remitos de tramo
   public asignarRemitos(): void {
@@ -124,29 +119,9 @@ export class ViajeRemitoGSComponent implements OnInit {
         this.toastr.error(respuesta.mensaje);
       }
     );
-    // if (opcion) {
-    //   this.viajeRemitoServicio.quitar(this.formularioViajeRemito.value.remitos).subscribe(
-    //     res => {
-    //       let respuesta = res.json();
-    //       this.reestablecerFormulario();
-    //       document.getElementById('idTipoRemitoRG').focus();
-    //       this.toast.success(respuesta.mensaje);
-    //     },
-    //     err => {
-    //       let respuesta = err.json();
-    //       this.toast.error(respuesta.mensaje);
-    //     }
-    //   )
-    // } else {
-
-    // }
   }
   //Reestablece el formulario
   private reestablecerFormulario(): void {
-    // this.formularioViajeRemito.get('tipoRemito').reset();
-    // this.formularioViajeRemito.get('tramo').reset();
-    // this.formularioViajeRemito.get('numeroCamion').reset();
-    // this.formularioViajeRemito.get('sucursalDestino').reset();
     this.formularioViajeRemito.reset();
     while (this.remitos.length != 0) {
       this.remitos.removeAt(0);
