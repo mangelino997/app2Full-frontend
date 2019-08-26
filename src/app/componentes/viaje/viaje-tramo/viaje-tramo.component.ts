@@ -564,6 +564,15 @@ export class ViajeTramoComponent implements OnInit {
     this.indiceTramo = null;
     this.btnTramo = true;
   }
+  //Finalizar
+  public finalizar() {
+    this.formularioViajeTramo.reset();
+    this.indiceTramo = null;
+    this.btnTramo = true;
+    this.establecerValoresPorDefecto();
+    this.establecerViajeTarifaPorDefecto();
+    this.vaciarListas();
+  }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {

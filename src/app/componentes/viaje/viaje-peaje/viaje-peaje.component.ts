@@ -44,7 +44,7 @@ export class ViajePeajeComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['fecha', 'proveedor', 'puntoVenta', 'ticket', 'importe', 'mod', 'eliminar'];
+  public columnas: string[] = ['eliminar', 'mod', 'fecha', 'proveedor', 'puntoVenta', 'ticket', 'importe'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -175,6 +175,8 @@ export class ViajePeajeComponent implements OnInit {
     this.btnPeaje = false;
     this.formularioViajePeaje.patchValue(this.listaPeajes[indice]);
     this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe, 2));
+    this.establecerCerosIzq(this.formularioViajePeaje.get('puntoVenta'), '0000', -5);
+    this.establecerCerosIzq(this.formularioViajePeaje.get('numeroComprobante'), '0000000', -8);
   }
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(elemento): void {
@@ -185,7 +187,7 @@ export class ViajePeajeComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      if (resultado.value.observaciones) {
+      if (resultado) {
         this.loaderService.show();
         this.servicio.eliminar(elemento.id).subscribe(
           res => {
@@ -266,6 +268,14 @@ export class ViajePeajeComponent implements OnInit {
     this.formularioViajePeaje.get('viaje').setValue(this.viaje);
     this.establecerValoresPorDefecto();
     document.getElementById('idProveedorP').focus();
+  }
+  //Finalizar
+  public finalizar() {
+    this.formularioViajePeaje.reset();
+    this.indicePeaje = null;
+    this.btnPeaje = true;
+    this.establecerValoresPorDefecto();
+    this.vaciarListas();
   }
   //Establece selects solo lectura
   private establecerSelectsSoloLectura(opcion): void {

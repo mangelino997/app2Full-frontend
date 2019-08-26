@@ -339,6 +339,14 @@ export class ViajeInsumoComponent implements OnInit {
     this.establecerValoresPorDefecto();
     document.getElementById('idProveedor').focus();
   }
+  //Finalizar
+  public finalizar() {
+    this.formularioViajeInsumo.reset();
+    this.indiceInsumo = null;
+    this.btnInsumo = true;
+    this.establecerValoresPorDefecto();
+    this.vaciarListas();
+  }
   //Establece los campos select en solo lectura o no
   private establecerCamposSelectSoloLectura(opcion): void {
     if (opcion) {
@@ -424,7 +432,8 @@ export class ViajeInsumoComponent implements OnInit {
       width: '1200px',
       data: {
         tema: this.appComponent.getTema(),
-        elemento: elemento
+        elemento: elemento,
+        soloLectura: true
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });

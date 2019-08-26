@@ -102,8 +102,8 @@
             <th mat-header-cell *matHeaderCellDef>-</th>
             <td mat-cell *matCellDef="let elemento; let i = index"
               [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura" (click)="modInsumo(i)"
-                matTooltip="Editar" matTooltipPosition="above">
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && !elemento.estaAnulado"
+                (click)="modInsumo(i)" matTooltip="Editar" matTooltipPosition="above">
                 <mat-icon>edit</mat-icon>
               </button>
             </td>

@@ -1,6 +1,6 @@
-<form [formGroup]="formularioViajePeaje">
+<form class="margin-top-10" [formGroup]="formularioViajePeaje">
   <div class="row">
-    <div class="col-md-6">
+    <div class="col-md-7">
       <div class="form-group has-float-label">
         <label for="idProveedorP" class="tamanio-label">Proveedor *</label>
         <input id="idProveedorP" class="form-control form-control-sm" type="text" matInput
@@ -16,16 +16,14 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idFechaP" class="tamanio-label">Fecha</label>
         <input id="idFechaP" type="date" formControlName="fecha" autocomplete="off" class="form-control form-control-sm"
           [readonly]="soloLectura">
       </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-2">
       <div class="form-group has-float-label">
         <label for="idPuntoVentaG" class="tamanio-label">Punto de Venta *</label>
         <input id="idPuntoVentaG" [textMask]="mascararEnteros(5)" type="text" formControlName="puntoVenta"
@@ -33,7 +31,7 @@
           (blur)="establecerCerosIzq(formularioViajePeaje.get('puntoVenta'), '0000', -5)">
       </div>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-1">
       <div class="form-group has-float-label">
         <label for="idLetraG" class="tamanio-label">Letra *</label>
         <mat-select id="idLetraG" formControlName="letra" class="form-control form-control-sm"
@@ -61,13 +59,13 @@
       </div>
     </div>
     <div class="col-md-3">
-      <button mat-raised-button color="primary" (click)="agregarPeaje()" *ngIf="btnPeaje"
+      <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarPeaje()" *ngIf="btnPeaje"
         [disabled]="!formularioViajePeaje.valid">Agregar Peaje
       </button>
-      <button mat-raised-button color="primary" (click)="modificarPeaje()" *ngIf="!btnPeaje"
+      <button class="margin-left-3" mat-raised-button color="primary" (click)="modificarPeaje()" *ngIf="!btnPeaje"
         [disabled]="!formularioViajePeaje.valid">Actualizar Peaje
       </button>
-      <button mat-raised-button (click)="cancelar()"
+      <button class="margin-left-3" mat-raised-button (click)="cancelar()"
         [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnPeaje">Cancelar</button>
     </div>
   </div>
@@ -79,7 +77,7 @@
             <th mat-header-cell *matHeaderCellDef>-</th>
             <td mat-cell *matCellDef="let elemento; let i = index">
               <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura"
-                (click)="eliminarPeaje(elemento)" matTooltip="Anular" matTooltipPosition="above">
+                (click)="eliminarPeaje(elemento)" matTooltip="Eliminar" matTooltipPosition="above">
                 <mat-icon>close</mat-icon>
               </button>
             </td>

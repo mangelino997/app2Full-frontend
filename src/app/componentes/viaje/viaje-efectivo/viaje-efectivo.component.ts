@@ -243,7 +243,9 @@ export class ViajeEfectivoComponent implements OnInit {
   private calcularImporteTotal(): void {
     let total = 0;
     this.listaEfectivos.forEach(item => {
-      total += parseFloat(item.importe);
+      if(item.estaAnulado) {
+        total += parseFloat(item.importe);
+      }
     });
     this.importeTotal.setValue(this.appServicio.setDecimales(total, 2));
   }
@@ -298,6 +300,14 @@ export class ViajeEfectivoComponent implements OnInit {
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaCajaAE').focus();
   }
+  //Finalizar
+  public finalizar() {
+    this.formularioViajeEfectivo.reset();
+    this.indiceEfectivo = null;
+    this.btnEfectivo = true;
+    this.establecerValoresPorDefecto(0);
+    this.vaciarListas();
+  }
   //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaEfectivos'
   private recargarListaCompleta(listaEfectivos) {
     this.listaCompleta = new MatTableDataSource(listaEfectivos);
@@ -345,7 +355,8 @@ export class ViajeEfectivoComponent implements OnInit {
       width: '1200px',
       data: {
         tema: this.appServicio.getTema(),
-        elemento: elemento
+        elemento: elemento,
+        soloLectura: true
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });

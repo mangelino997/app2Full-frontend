@@ -334,6 +334,14 @@ export class ViajeCombustibleComponent implements OnInit {
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
   }
+  //Finalizar
+  public finalizar() {
+    this.formularioViajeCombustible.reset();
+    this.indiceCombustible = null;
+    this.btnCombustible = true;
+    this.establecerValoresPorDefecto(0);
+    this.vaciarListas();
+  }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
     elemento.setValue(this.appService.setDecimales(elemento.value, 2));
@@ -430,7 +438,8 @@ export class ViajeCombustibleComponent implements OnInit {
       width: '1200px',
       data: {
         tema: this.appService.getTema(),
-        elemento: elemento
+        elemento: elemento,
+        soloLectura: true
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });

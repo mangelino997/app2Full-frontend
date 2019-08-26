@@ -12,7 +12,6 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ViajeGasto } from 'src/app/modelos/viajeGasto';
 import { ViajeGastoService } from 'src/app/servicios/viaje-gasto';
-import { EliminarModalComponent } from '../../eliminar-modal/eliminar-modal.component';
 import { AnularDialogo } from '../anular-dialogo.component';
 import { NormalizarDialogo } from '../normalizar-dialogo.component';
 
@@ -294,9 +293,16 @@ export class ViajeGastoComponent implements OnInit {
     this.formularioViajeGasto.value.viaje = this.VIAJE_CABECERA;
     this.btnGasto = true;
     this.formularioViajeGasto.get('viaje').setValue(this.viaje);
-    // this.listar();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaG').focus();
+  }
+  //Finalizar
+  public finalizar() {
+    this.formularioViajeGasto.reset();
+    this.indiceGasto = null;
+    this.btnGasto = true;
+    this.establecerValoresPorDefecto(0);
+    this.vaciarListas();
   }
   //Establece selects solo lectura
   private establecerSelectsSoloLectura(opcion): void {
@@ -352,7 +358,8 @@ export class ViajeGastoComponent implements OnInit {
       width: '1200px',
       data: {
         tema: this.appComponent.getTema(),
-        elemento: elemento
+        elemento: elemento,
+        soloLectura: true
       }
     });
     dialogRef.afterClosed().subscribe(resultado => { });

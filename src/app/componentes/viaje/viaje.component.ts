@@ -60,37 +60,21 @@ export class ViajeComponent implements OnInit {
   //Define un formulario viaje propio para validaciones de campos
   public formularioViaje: FormGroup;
   //Define un formulario viaje  tramo para validaciones de campos
-  public formularioViajeTramo: FormGroup = new FormGroup({
-    lista: new FormControl('', Validators.required)
-  });
+  public formularioViajeTramo: FormGroup = new FormGroup({});
   //Define un formulario viaje  combustible para validaciones de campos
-  public formularioViajeCombustible: FormGroup = new FormGroup({
-    lista: new FormControl('', Validators.required)
-  });
+  public formularioViajeCombustible: FormGroup = new FormGroup({});
   //Define un formulario viaje  efectivo para validaciones de campos
-  public formularioViajeEfectivo: FormGroup = new FormGroup({
-    lista: new FormControl('', Validators.required)
-  });
+  public formularioViajeEfectivo: FormGroup = new FormGroup({});
   //Define un formulario viaje  insumo para validaciones de campos
-  public formularioViajeInsumo: FormGroup = new FormGroup({
-    lista: new FormControl('', Validators.required)
-  });
+  public formularioViajeInsumo: FormGroup = new FormGroup({});
   //Define un formulario viaje remitos dadores de carga para validaciones de campos
-  public formularioViajeRemitoDC: FormGroup = new FormGroup({
-    lista: new FormControl()
-  });
+  public formularioViajeRemitoDC: FormGroup = new FormGroup({});
   //Define un formulario viaje remito para validaciones de campos
-  public formularioViajeRemito: FormGroup = new FormGroup({
-    lista: new FormControl()
-  });
+  public formularioViajeRemito: FormGroup = new FormGroup({});
   //Define un formulario viaje  gasto para validaciones de campos
-  public formularioViajeGasto: FormGroup = new FormGroup({
-    lista: new FormControl('', Validators.required)
-  });
+  public formularioViajeGasto: FormGroup = new FormGroup({});
   //Define un formulario viaje  peaje para validaciones de campos
-  public formularioViajePeaje: FormGroup = new FormGroup({
-    lista: new FormControl('', Validators.required)
-  });
+  public formularioViajePeaje: FormGroup = new FormGroup({});
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
@@ -263,9 +247,10 @@ export class ViajeComponent implements OnInit {
     this.formularioViaje.get('empresaEmision').patchValue(empresa);
     this.formularioViaje.get('afipCondicionIva').setValue(empresa.afipCondicionIva);
     this.formularioViaje.get('usuarioAlta').setValue(usuario);
-    this.fechaServicio.obtenerFecha().subscribe(res => {     //Establece la fecha actual
+    //Establece la fecha actual
+    this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViaje.get('fecha').setValue(res.json());
-    })
+    });
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -450,47 +435,47 @@ export class ViajeComponent implements OnInit {
   public recibirTramos($event) {
     if ($event.length > 0) {
       this.estadoFormulario = false;
-      this.formularioViajeTramo.get('lista').setValue($event);
+      // this.formularioViajeTramo.get('lista').setValue($event);
     } else {
       this.estadoFormulario = true;
-      this.formularioViajeTramo.get('lista').setValue(null);
+      // this.formularioViajeTramo.get('lista').setValue(null);
     }
     // this.tipoViaje.enable();
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {
-    if ($event.length > 0)
-      this.formularioViajeCombustible.get('lista').setValue($event);
-    else
-      this.formularioViajeCombustible.get('lista').setValue(null);
+    // if ($event.length > 0)
+    //   this.formularioViajeCombustible.get('lista').setValue($event);
+    // else
+    //   this.formularioViajeCombustible.get('lista').setValue(null);
   }
   //Recibe la lista de adelantos de efectivo de Viaje Efectivo
   public recibirEfectivos($event) {
-    if ($event.length > 0)
-      this.formularioViajeEfectivo.get('lista').setValue($event);
-    else
-      this.formularioViajeEfectivo.get('lista').setValue(null);
+    // if ($event.length > 0)
+    //   this.formularioViajeEfectivo.get('lista').setValue($event);
+    // else
+    //   this.formularioViajeEfectivo.get('lista').setValue(null);
   }
   //Recibe la lista de ordenes de insumo de Viaje Insumo
   public recibirInsumos($event) {
-    if ($event.length > 0)
-      this.formularioViajeInsumo.get('lista').setValue($event);
-    else
-      this.formularioViajeInsumo.get('lista').setValue(null);
+    // if ($event.length > 0)
+    //   this.formularioViajeInsumo.get('lista').setValue($event);
+    // else
+    //   this.formularioViajeInsumo.get('lista').setValue(null);
   }
   //Recibe la lista de gastos de Viaje Gasto
   public recibirGastos($event) {
-    if ($event.length > 0)
-      this.formularioViajeGasto.get('lista').setValue($event);
-    else
-      this.formularioViajeGasto.get('lista').setValue(null);
+    // if ($event.length > 0)
+    //   this.formularioViajeGasto.get('lista').setValue($event);
+    // else
+    //   this.formularioViajeGasto.get('lista').setValue(null);
   }
   //Recibe la lista de peajes de Viaje Peaje
   public recibirPeajes($event) {
-    if ($event.length > 0)
-      this.formularioViajePeaje.get('lista').setValue($event);
-    else
-      this.formularioViajePeaje.get('lista').setValue(null);
+    // if ($event.length > 0)
+    //   this.formularioViajePeaje.get('lista').setValue($event);
+    // else
+    //   this.formularioViajePeaje.get('lista').setValue(null);
   }
   //Recibe la lista de remitos de Viaje Remito
   public recibirRemitos($event) {
@@ -537,6 +522,25 @@ export class ViajeComponent implements OnInit {
         this.loaderService.hide();
       }
     );
+  }
+  //Finaliza un viaje
+  public finalizar(): void {
+    this.autocompletado.reset();
+    this.formularioViaje.reset();
+    this.obtenerSiguienteId();
+    this.establecerValoresPorDefecto();
+    this.viajeTramoComponente.finalizar();
+    this.viajeCombustibleComponente.finalizar();
+    this.viajeEfectivoComponente.finalizar();
+    this.viajeInsumoComponente.finalizar();
+    this.viajeGastoComponente.finalizar();
+    this.viajePeajeComponente.finalizar();
+    if(this.indiceSeleccionado == 1) {
+      document.getElementById('idFecha').focus();
+    } else {
+      document.getElementById('idAutocompletado').focus();
+    }
+    this.toastr.success('Registro finalizado con éxito');
   }
   //Verifica el estado del formulario
   public obtenerEstadoFormulario(formulario, estado) {
