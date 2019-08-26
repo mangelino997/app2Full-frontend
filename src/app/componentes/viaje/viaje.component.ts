@@ -435,12 +435,10 @@ export class ViajeComponent implements OnInit {
   public recibirTramos($event) {
     if ($event.length > 0) {
       this.estadoFormulario = false;
-      // this.formularioViajeTramo.get('lista').setValue($event);
     } else {
       this.estadoFormulario = true;
-      // this.formularioViajeTramo.get('lista').setValue(null);
     }
-    // this.tipoViaje.enable();
+    this.viajeRemitoGSComponente.establecerTramos($event);
   }
   //Recibe la lista de combustibles de Viaje Combustible
   public recibirCombustibles($event) {

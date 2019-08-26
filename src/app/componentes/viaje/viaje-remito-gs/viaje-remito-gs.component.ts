@@ -36,8 +36,8 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(private viajeRemito: ViajeRemito, private ViajeTramo: ViajeTramo ,private viajeRemitoServicio: ViajeRemitoService, private viajeTramoService: ViajeTramoService,
-    private appService: AppService, private sucursalServicio: SucursalService, private loaderService: LoaderService, 
+  constructor(private viajeRemito: ViajeRemito, private ViajeTramo: ViajeTramo, private viajeRemitoServicio: ViajeRemitoService, private viajeTramoService: ViajeTramoService,
+    private appService: AppService, private sucursalServicio: SucursalService, private loaderService: LoaderService,
     private toastr: ToastrService) { }
   //Al inicializarse el componente
   ngOnInit() {
@@ -56,19 +56,21 @@ export class ViajeRemitoGSComponent implements OnInit {
       this.sucursales = res.json();
     });
   }
+  //Establece la lista de tramos
+  public establecerTramos(tramos) {
+    this.listaTramos = tramos;
+  }
   //Obtiene una lista de los tramos por el idGuiaServicio
-  public listarTramos(viaje){
+  public listarTramos(viaje) {
     this.formularioViajeTramo.value.viaje = viaje;
-    console.log(this.formularioViajeTramo.value.viaje.id);
-    if(this.formularioViajeTramo.value.viaje.id){
+    if (this.formularioViajeTramo.value.viaje.id) {
       this.viajeTramoService.listarTramos(this.formularioViajeTramo.value.viaje.id).subscribe(
-        res=>{
-          console.log("Tramos: " + res.json());
+        res => {
           this.listaTramos = res.json();
           this.recargarListaCompleta(this.listaTramos);
           this.loaderService.hide();
         },
-        err=>{
+        err => {
           let error = err.json();
           this.toastr.error(error.mensaje);
           this.loaderService.hide();
@@ -77,9 +79,9 @@ export class ViajeRemitoGSComponent implements OnInit {
     }
   }
   //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
-  private recargarListaCompleta(listaTramos){
+  private recargarListaCompleta(listaTramos) {
     this.listaCompleta = new MatTableDataSource(listaTramos);
-    this.listaCompleta.sort = this.sort; 
+    this.listaCompleta.sort = this.sort;
   }
   //Obtiene la lista de remitos pendiente por filtro (sucursal, sucursal destino y numero de camion)
   public listarRemitosPorFiltro(): void {
@@ -105,7 +107,7 @@ export class ViajeRemitoGSComponent implements OnInit {
     //     }
     //   })
     // } else {
-      
+
     // }
   }
   //Asigna o Quita remitos de tramo
@@ -136,7 +138,7 @@ export class ViajeRemitoGSComponent implements OnInit {
     //     }
     //   )
     // } else {
-      
+
     // }
   }
   //Reestablece el formulario
@@ -160,7 +162,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   }
   //Establece el foco en fecha
   public establecerFoco(): void {
-    setTimeout(function() {
+    setTimeout(function () {
       // document.getElementById('idTramoRG').focus();
     }, 100);
   }
