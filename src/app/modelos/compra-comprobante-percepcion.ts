@@ -16,7 +16,8 @@ export class CompraComprobantePercepcion {
             importe: new FormControl('', Validators.required),
             puntoVenta: new FormControl('', Validators.maxLength(5)),
             letra: new FormControl('', Validators.maxLength(1)),
-            numero: new FormControl('', Validators.maxLength(8))
+            numero: new FormControl('', Validators.maxLength(8)),
+            compraCptePercepcionJurisdicciones: new FormControl() //Lista de compraCptePercepcionJurisdiccionForm
         })
     }
 }
