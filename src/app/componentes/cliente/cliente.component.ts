@@ -137,10 +137,6 @@ export class ClienteComponent implements OnInit {
         this.render = true;
       }
     );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if(typeof data == 'string'&& data.length>2) {
@@ -294,6 +290,7 @@ export class ClienteComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
+    this.formulario.get('estaActiva').setValue(true);
     this.formulario.get('esSeguroPropio').setValue(false);
     this.formulario.get('imprimirControlDeuda').setValue(false);
     this.formulario.get('companiaSeguro').disable();
@@ -411,6 +408,7 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('zona').enable();
       this.formulario.get('rubro').enable();
       this.formulario.get('imprimirControlDeuda').enable();
+      this.formulario.get('estaActiva').enable();
     } else {
       this.formulario.get('sucursalLugarPago').disable();
       this.formulario.get('afipCondicionIva').disable();
@@ -424,6 +422,7 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('zona').disable();
       this.formulario.get('rubro').disable();
       this.formulario.get('imprimirControlDeuda').disable();
+      this.formulario.get('estaActiva').disable();
     }
   }
   //Establece valores al seleccionar una pestania
@@ -1099,74 +1098,21 @@ export class ListasDePreciosDialog {
         }
           else{
             this.agregar(formulario);
-            // this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
-            //   res=>{
-            //     console.log(res);
-            //     if(res.status == 201){
-            //       this.toastr.success("Registro agregado con éxito");
-            //       this.formulario.reset();
-            //       this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
-            //         res=>{
-            //           console.log(res.json());
-            //           this.listaPrecios = res.json();
-            //           this.listar();
-            //         },
-            //         err=>{
-            //           this.toastr.error("Error al obtener la Lista de Precios");
-            //         }
-            //       );
-            //       this.loaderService.hide();
-            //     }
-            //   },
-            //   err=>{
-            //     let error = err.json();
-            //     this.toastr.error(error.mensaje);
-            //     this.loaderService.hide();
-            //   }
-            // );
         }       
       })
     }else{
       this.agregar(formulario);
-    //   this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
-    //     res=>{
-    //       console.log(res);
-    //       if(res.status == 201){
-    //         this.toastr.success("Registro agregado con éxito");
-    //         this.formulario.reset();
-    //         this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
-    //           res=>{
-    //             console.log(res.json());
-    //             this.listaPrecios = res.json();
-    //             this.listar();
-    //           },
-    //           err=>{
-    //             this.toastr.error("Error al obtener la Lista de Precios");
-    //           }
-    //         );
-    //         this.loaderService.hide();
-    //       }
-    //     },
-    //     err=>{
-    //       let error = err.json();
-    //       this.toastr.error(error.mensaje);
-    //       this.loaderService.hide();
-    //     }
-    //   );
-    // }
     }
   }
   //Agrega directamente una lista de precio
   private agregar(formulario){
     this.clienteOrdenVtaService.agregar(formulario.value).subscribe(
       res=>{
-        console.log(res);
         if(res.status == 201){
           this.toastr.success("Registro agregado con éxito");
           this.formulario.reset();
           this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
             res=>{
-              console.log(res.json());
               this.listaPrecios = res.json();
               this.listar();
             },
@@ -1188,42 +1134,15 @@ export class ListasDePreciosDialog {
   public agregarListaPrecio(){
     this.loaderService.show();
     let usuario = this.appService.getUsuario();
-    console.log(this.indiceSeleccionado);
     if(this.indiceSeleccionado == 3){
       this.formulario.get('usuarioAlta').setValue(usuario);
       this.formulario.get('cliente').setValue({id: this.idCliente});
       // this.formulario.get('ordenVentaTarifaPorDefecto').setValue();
-      console.log(this.formulario.value);
       if(this.formulario.value.esOrdenVentaPorDefecto == true){
         this.controlarOVPorDefecto(this.formulario);
       }
         else{
           this.agregar(this.formulario);
-          // this.clienteOrdenVtaService.agregar(this.formulario.value).subscribe(
-          //   res=>{
-          //     console.log(res);
-          //     if(res.status == 201){
-          //       this.toastr.success("Registro agregado con éxito");
-          //       this.formulario.reset();
-          //       this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
-          //         res=>{
-          //           console.log(res.json());
-          //           this.listaPrecios = res.json();
-          //           this.listar();
-          //         },
-          //         err=>{
-          //           this.toastr.error("Error al obtener la Lista de Precios");
-          //         }
-          //       );
-          //       this.loaderService.hide();
-          //     }
-          //   },
-          //   err=>{
-          //     let error = err.json();
-          //     this.toastr.error(error.mensaje);
-          //     this.loaderService.hide();
-          //   }
-          // );
         }
     } 
     if(this.indiceSeleccionado != 3){ //Controlo desde el front que SOLO UNA  lista de precio sea porDefecto=true (OV) 
@@ -1246,17 +1165,13 @@ export class ListasDePreciosDialog {
     if(this.indiceSeleccionado == 3){
       this.formulario.get('usuarioMod').setValue(usuario);
       this.formulario.get('cliente').setValue({id: this.idCliente});
-      console.log(this.formulario.value);
       // this.formulario.get('ordenVentaTarifaPorDefecto').setValue({id: null});
-      console.log(this.formulario.value);
       this.clienteOrdenVtaService.actualizar(this.formulario.value).subscribe(
         res=>{
-          console.log(res);
             this.formulario.reset();
             this.toastr.success("Registro actualizado con éxito");
             this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
               res=>{
-                console.log(res.json());
                 this.listaPrecios = res.json();
                 this.listar();
               },
@@ -1275,11 +1190,9 @@ export class ListasDePreciosDialog {
       );
     }
     if(this.indiceSeleccionado != 3){
-      console.log(this.listaPrecios);
       this.formulario.value.ordenVenta.estaActiva = this.formulario.get('estaActiva').value;
       this.formulario.value.ordenVenta.usuarioMod = usuario;
       this.listaPrecios[this.indice] = this.formulario.value;
-      console.log(this.listaPrecios);
       this.limpiarCampos(null);
       this.listar();
       this.loaderService.hide();

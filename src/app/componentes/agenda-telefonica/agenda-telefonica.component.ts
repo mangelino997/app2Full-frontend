@@ -63,18 +63,6 @@ export class AgendaTelefonicaComponent implements OnInit {
           console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
-    //Defiene autocompletado
-    this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
-      }
-    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -106,11 +94,16 @@ export class AgendaTelefonicaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
     // this.listar();
-  }
-  //Establece el formulario al seleccionar elemento de autocompletado
-  public cambioAutocompletado(elemento) {
-    this.formulario.patchValue(elemento);
-    //this.autoLocalidad.setValue(elemento.localidad);
+    //Defiene autocompletado
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }else{
+        this.formulario.reset();
+      }
+    })
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -334,6 +327,12 @@ export class AgendaTelefonicaComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
+  }
+  //Establece el formulario al seleccionar elemento del autocompletado
+  public cambioAutocompletado() {
+    var elemento = this.autocompletado.value;
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

@@ -115,10 +115,6 @@ export class ProveedorComponent implements OnInit {
           this.loaderService.hide();
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -237,7 +233,7 @@ export class ProveedorComponent implements OnInit {
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto(): void {
-    this.formulario.get('estaActivo').setValue(true);
+    this.formulario.get('estaActiva').setValue(true);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -253,14 +249,14 @@ export class ProveedorComponent implements OnInit {
       this.formulario.get('afipCondicionIva').enable();
       this.formulario.get('tipoDocumento').enable();
       this.formulario.get('condicionCompra').enable();
-      this.formulario.get('estaActivo').enable();
+      this.formulario.get('estaActiva').enable();
       this.formulario.get('tipoCuentaBancaria').enable();
     } else {
       this.formulario.get('tipoProveedor').disable();
       this.formulario.get('afipCondicionIva').disable();
       this.formulario.get('tipoDocumento').disable();
       this.formulario.get('condicionCompra').disable();
-      this.formulario.get('estaActivo').disable();
+      this.formulario.get('estaActiva').disable();
       this.formulario.get('tipoCuentaBancaria').disable();
     }
   }
@@ -271,6 +267,7 @@ export class ProveedorComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.vaciarListas();
+    this.establecerValoresPorDefecto();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);

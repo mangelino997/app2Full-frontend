@@ -102,6 +102,7 @@ export class Personal {
             esAcompReparto: new FormControl('', Validators.required),
             observaciones: new FormControl('', Validators.maxLength(200)),
             alias: new FormControl('', Validators.maxLength(100)),
+            estaActiva: new FormControl('', Validators.required),
             foto: this.foto.formulario,
             pdfLicConducir: this.pdf.crearFormulario(),
             pdfLibSanidad: this.pdf.crearFormulario(),

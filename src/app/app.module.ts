@@ -369,6 +369,9 @@ import { AfipTipoBeneficioDeduccionService } from './servicios/afip-tipo-benefic
 import { AfipTipoBeneficioService } from './servicios/afip-tipo-beneficio.service';
 import { AnularDialogo } from './componentes/viaje/anular-dialogo.component';
 import { NormalizarDialogo } from './componentes/viaje/normalizar-dialogo.component';
+import { FacturaDebitoCreditoComponent } from './componentes/factura-debito-credito/factura-debito-credito.component';
+import { FacturaDebitoCredito } from './modelos/facturaDebitoCredito';
+import { CompraComprobanteVencimiento } from './modelos/compra-comprobante-vencimiento';
 
 //Rutas
 const appRoutes: Routes = [
@@ -483,10 +486,12 @@ const appRoutes: Routes = [
   { path: 'impuestoalasgananciasdeduccionespersonalesdescripcion', component: DeduccionPersonalComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasganancianetaescala', component: GananciaNetaComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasdeduccionespersonalestablas', component: DeduccionPersonalTablaComponent, canActivate: [GuardiaService] },
+  { path: 'comprobantesproveedoresfacturasdebitosycreditos', component: FacturaDebitoCreditoComponent, canActivate: [GuardiaService] },
+
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -654,7 +659,8 @@ const stompConfig: StompConfig = {
     DeduccionPersonalComponent,
     GananciaNetaComponent,
     DeduccionPersonalTablaComponent,
-    ImporteAnualDialogo
+    ImporteAnualDialogo,
+    FacturaDebitoCreditoComponent
   ],
   imports: [
     BrowserModule,
@@ -930,6 +936,8 @@ const stompConfig: StompConfig = {
     AfipDeduccionPersonalTabla,
     AfipTipoBeneficioDeduccionService,
     AfipTipoBeneficioService,
+    FacturaDebitoCredito,
+    CompraComprobanteVencimiento,
     {
       provide: StompConfig,
       useValue: stompConfig

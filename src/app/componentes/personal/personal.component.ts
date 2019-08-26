@@ -160,11 +160,6 @@ export class PersonalComponent implements OnInit {
           this.loaderService.hide();
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = new MatTableDataSource(res);
-    //   this.listaCompleta.sort = this.sort;
-    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       let empresa = this.appService.getEmpresa();
@@ -260,7 +255,7 @@ export class PersonalComponent implements OnInit {
     //Obtiene la foto por defecto
     this.obtenerFotoPorDefecto();
     //Establece los valores por defecto
-    // this.establecerValoresPorDefecto();
+    this.establecerValoresPorDefecto();
   }
   //Obtiene la foto por defecto
   private obtenerFotoPorDefecto(): void {
@@ -307,6 +302,7 @@ export class PersonalComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
+    this.formulario.get('estaActiva').setValue(true);
     this.formulario.get('esAcompReparto').setValue(false);
     this.formulario.get('recibeAdelanto').setValue(false);
     this.formulario.get('recibePrestamo').setValue(false);
@@ -501,6 +497,7 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('afipSiniestrado').enable();
       this.formulario.get('afipLocalidad').enable();
       this.formulario.get('obraSocial').enable();
+      this.formulario.get('estaActiva').enable();
       if (opcionPestania == 3) {
         this.formulario.get('fechaFin').enable();
       } else {
@@ -531,6 +528,7 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('afipSiniestrado').disable();
       this.formulario.get('afipLocalidad').disable();
       this.formulario.get('obraSocial').disable();
+      this.formulario.get('estaActiva').disable();
     }
   }
   //Cambio en elemento autocompletado

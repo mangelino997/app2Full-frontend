@@ -29,6 +29,7 @@ export class Cliente {
             condicionVenta: new FormControl('', Validators.required),
             resumenCliente: new FormControl(),
             situacionCliente: new FormControl(),
+            estaActiva: new FormControl(),
             ordenVenta: new FormControl(),
             sucursalLugarPago: new FormControl(),
             creditoLimite: new FormControl(),
