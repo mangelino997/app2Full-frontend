@@ -296,6 +296,16 @@
                         </mat-select>
                       </div>
                     </div>
+                    <div class="col-md-3">
+                      <div class="form-group has-float-label">
+                        <label for="idEstaActivo" class="tamanio-label">Estado *</label>
+                        <mat-select id="idEstaActivo" class="form-control form-control-sm"
+                          [compareWith]="compareFn" formControlName="estaActiva">
+                          <mat-option [value]="true">Activa</mat-option>
+                          <mat-option [value]="false">Suspendida</mat-option>
+                        </mat-select>
+                      </div>
+                    </div>
                   </div>
                   <div class="row">
                     <div class="col-md-3">

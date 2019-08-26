@@ -35,7 +35,7 @@ export class Proveedor {
             numeroCBU: new FormControl('', [Validators.min(1), Validators.minLength(22), Validators.maxLength(22)]),
             aliasCBU: new FormControl('', Validators.maxLength(45)),
             tipoProveedor: new FormControl('', Validators.required),
-            estaActivo: new FormControl('', Validators.required),
+            estaActiva: new FormControl('', Validators.required),
             alias: new FormControl('', Validators.maxLength(100)),
             fechaAlta: new FormControl(),
             fechaBaja: new FormControl()

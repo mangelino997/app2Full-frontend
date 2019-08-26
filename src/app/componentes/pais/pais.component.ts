@@ -61,18 +61,7 @@ export class PaisComponent implements OnInit {
           console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
-    //Autocompletado - Buscar por nombre
-    this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorNombre(data).subscribe(res => {
-          this.resultados = res;
-        })
-      }
-    })
+    
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -89,8 +78,17 @@ export class PaisComponent implements OnInit {
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    // this.listar();
+    //Autocompletado - Buscar por nombre
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+      else{
+        this.formulario.reset();
+      }
+    });
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -231,6 +229,12 @@ export class PaisComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     console.log();
+  }
+  //Establece el formulario al seleccionar elemento del autocompletado
+  public cambioAutocompletado() {
+    var elemento = this.autocompletado.value;
+    this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
