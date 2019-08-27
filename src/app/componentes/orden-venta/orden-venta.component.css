@@ -7,13 +7,16 @@
 .tabla-ancho {
     width: 1000px !important;
 }
+.mat-raised-button-icon {
+    min-width: 50px !important;
+}
 td.tarifa {
     width: 50%;
 }
-td.escala{
+td.escala {
     width: 25%;
 }
-td.porcentaje{
+td.porcentaje {
     width: 25%;
 }
 .cdk-overlay-pane {

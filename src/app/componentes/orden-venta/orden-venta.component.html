@@ -11,123 +11,125 @@
   <div *ngIf="indiceSeleccionado < 5" class="row justify-content-center contenedor">
     <div class="col-md-10 text-center">
       <form [formGroup]="formulario">
-          <h5>{{pestaniaActual}} Orden de Venta</h5>
-          <div class="row"> 
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idTipoOrdenVenta" class="tamanio-label">Tipo *</label>
-                <mat-select id="idTipoOrdenVenta" [formControl]="tipoOrdenVenta" class="form-control form-control-sm"
-                  (selectionChange)="establecerTipo()" [compareWith]="compareT" required [disabled]="soloLectura || soloLecturaMod">
-                  <mat-option [value]="false">Por Empresa</mat-option>
-                  <mat-option [value]="true">Por Cliente</mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-4" *ngIf="tipoOrdenVenta.value == false">
-              <div class="form-group has-float-label">
-                <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-                <input id="idEmpresa" type="text" [formControl]="empresa" class="form-control form-control-sm" readonly >
-              </div>
-            </div>
-            <div class="col-md-4" *ngIf="tipoOrdenVenta.value == true">
-              <div class="form-group has-float-label">
-                <label for="idCliente" class="tamanio-label">Cliente *</label>
-                <input id="idCliente" class="form-control form-control-sm" type="text" matInput [readOnly]="soloLectura || soloLecturaMod"
-                  [formControl]="cliente" [matAutocomplete]="autoCliente" autocomplete="off" 
-                  ><!--(blur)="verificarSeleccion(formulario.get('clienteOrdenVenta.cliente'))" [formControl]="formulario.get('clienteOrdenVenta.cliente')" -->
-                <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
-                  (optionSelected)="listarOrdenesVentas('cliente')">
-                  <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
-                    {{itemCliente.alias}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
-            </div>
-            <div class="col-md-4" *ngIf="mostrarAutocompletado">
-              <div class="form-group has-float-label">
-                <label for="idOrdenVenta" class="orden-venta-label">Orden Venta *</label>
-                <mat-select id="idOrdenVenta" class="form-control form-control-sm" [formControl]="ordenventa"
-                  [compareWith]="compareFn" (selectionChange)="cargarDatosOrden()"  [disabled]="soloLectura" >
-                  <mat-option *ngFor="let orden of ordenesVentas" [value]="orden">
-                    {{orden.nombre}} - {{orden.vendedor.nombre}} - {{orden.activaDesde}}
-                    <!--{{orden.clientes.length > 0 ? orden.clientes[0].razonSocial : orden.empresas[0].razonSocial}} --->
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idEsContado" class="tamanio-label">Está Activa *</label>
-                <mat-select id="idEsContado" class="form-control form-control-sm" formControlName="estaActiva"  [disabled]="soloLectura">
-                  <mat-option [value]="false">No</mat-option>
-                  <mat-option [value]="true">Si</mat-option>
-                </mat-select>
-              </div>
+        <h5>{{pestaniaActual}} Orden de Venta</h5>
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idTipoOrdenVenta" class="tamanio-label">Tipo *</label>
+              <mat-select id="idTipoOrdenVenta" [formControl]="tipoOrdenVenta" class="form-control form-control-sm"
+                (selectionChange)="establecerTipo()" [compareWith]="compareT" required>
+                <mat-option [value]="false">Por Empresa</mat-option>
+                <mat-option [value]="true">Por Cliente</mat-option>
+              </mat-select>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group has-float-label">
-                <label for="idDescripcion" class="descripcion-label">Descripción *</label>
-                <input id="idDescripcion" type="text" formControlName="nombre" autocomplete="off"
-                  class="form-control form-control-sm" maxlength="45" [readonly]="soloLectura">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idVendedor" class="tamanio-label">Vendedor *</label>
-                <mat-select id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
-                  [compareWith]="compareFn"  [disabled]="soloLectura">
-                  <mat-option *ngFor="let itemVendedor of vendedores" [value]="itemVendedor">
-                    {{itemVendedor.nombre}}
-                  </mat-option>
-                </mat-select>
-              </div>
+          <div class="col-md-4" *ngIf="tipoOrdenVenta.value == false">
+            <div class="form-group has-float-label">
+              <label for="idEmpresa" class="tamanio-label">Empresa *</label>
+              <input id="idEmpresa" type="text" [formControl]="empresa" class="form-control form-control-sm" readonly>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idSeguro" class="tamanio-label">Seguro *</label>
-                <input id="idSeguro" [textMask]="mascararPorcentajePorMil()" type="text" formControlName="seguro"
-                  autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                  placeholder="‰ 7.00" (blur)="establecerPorcentajePorMil(formulario.get('seguro'), 2)">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idComisionCR" class="tamanio-label">Comisión Contra Reembolso</label>
-                <input id="idComisionCR" [textMask]="mascararPorcentaje()" type="text" formControlName="comisionCR"
-                  autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                  placeholder="% 00.00" (blur)="establecerPorcentaje(formulario.get('comisionCR'), 2)">
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idEsContado" class="tamanio-label">Es Contado *</label>
-                <mat-select id="idEsContado" class="form-control form-control-sm" formControlName="esContado"  [disabled]="soloLectura">
-                  <mat-option [value]="false">No</mat-option>
-                  <mat-option [value]="true">Si</mat-option>
-                </mat-select>
-              </div>
+          <div class="col-md-4" *ngIf="tipoOrdenVenta.value == true">
+            <div class="form-group has-float-label">
+              <label for="idCliente" class="tamanio-label">Cliente *</label>
+              <input id="idCliente" class="form-control form-control-sm" type="text" matInput
+                [readOnly]="soloLectura || soloLecturaMod" [formControl]="cliente" [matAutocomplete]="autoCliente"
+                autocomplete="off">
+              <!--(blur)="verificarSeleccion(formulario.get('clienteOrdenVenta.cliente'))" [formControl]="formulario.get('clienteOrdenVenta.cliente')" -->
+              <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
+                (optionSelected)="listarOrdenesVentas('cliente')">
+                <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
+                  {{itemCliente.alias}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-8">
-              <div class="form-group has-float-label">
-                <label for="idObservaciones" class="tamanio-label">Observaciones</label>
-                <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" 
-                  maxlength="200" rows="2" [readonly]="soloLectura"></textarea>
-              </div>
-            </div>
-            <div class="col-md-3" > <!--Antes : *ngIf="indiceSeleccionado == 1 || lengthTable < 1"-->
-              <div class="form-group has-float-label" >
-                <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
-                <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" autocomplete="off" required
-                  class="form-control form-control-sm" [readonly]="soloLectura || ORDEN_VTA_CABECERA">
-              </div>
+          <div class="col-md-4" *ngIf="mostrarAutocompletado">
+            <div class="form-group has-float-label">
+              <label for="idOrdenVenta" class="orden-venta-label">Orden Venta *</label>
+              <mat-select id="idOrdenVenta" class="form-control form-control-sm" [formControl]="ordenventa"
+                [compareWith]="compareFn" (selectionChange)="cargarDatosOrden()">
+                <mat-option *ngFor="let orden of ordenesVentas" [value]="orden">
+                  {{orden.nombre}} - {{orden.vendedor.nombre}} - {{orden.activaDesde}}
+                  <!--{{orden.clientes.length > 0 ? orden.clientes[0].razonSocial : orden.empresas[0].razonSocial}} --->
+                </mat-option>
+              </mat-select>
             </div>
           </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idEsContado" class="tamanio-label">Está Activa *</label>
+              <mat-select id="idEsContado" class="form-control form-control-sm" formControlName="estaActiva">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idDescripcion" class="descripcion-label">Descripción *</label>
+              <input id="idDescripcion" type="text" formControlName="nombre" autocomplete="off"
+                class="form-control form-control-sm" maxlength="45" [readonly]="soloLectura">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idVendedor" class="tamanio-label">Vendedor *</label>
+              <mat-select id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let itemVendedor of vendedores" [value]="itemVendedor">
+                  {{itemVendedor.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idSeguro" class="tamanio-label">Seguro *</label>
+              <input id="idSeguro" [textMask]="mascararPorcentajePorMil()" type="text" formControlName="seguro"
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                placeholder="‰ 7.00" (blur)="establecerPorcentajePorMil(formulario.get('seguro'), 2)">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idComisionCR" class="tamanio-label">Comisión Contra Reembolso</label>
+              <input id="idComisionCR" [textMask]="mascararPorcentaje()" type="text" formControlName="comisionCR"
+                autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                placeholder="% 00.00" (blur)="establecerPorcentaje(formulario.get('comisionCR'), 2)">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idEsContado" class="tamanio-label">Es Contado *</label>
+              <mat-select id="idEsContado" class="form-control form-control-sm" formControlName="esContado">
+                <mat-option [value]="false">No</mat-option>
+                <mat-option [value]="true">Si</mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-8">
+            <div class="form-group has-float-label">
+              <label for="idObservaciones" class="tamanio-label">Observaciones</label>
+              <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones"
+                maxlength="200" rows="2" [readonly]="soloLectura"></textarea>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <!--Antes : *ngIf="indiceSeleccionado == 1 || lengthTable < 1"-->
+            <div class="form-group has-float-label">
+              <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
+              <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" autocomplete="off" required
+                class="form-control form-control-sm" [readonly]="soloLectura || ORDEN_VTA_CABECERA">
+            </div>
+          </div>
+        </div>
       </form>
     </div>
     <!--Formulario para Orden Venta Tarifa-->
@@ -137,8 +139,8 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idTipoTarifa" class="tamanio-label">Tipo Tarifa *</label>
-              <mat-select id="idTipoTarifa" class="form-control form-control-sm" [formControl]="tipoTarifa" 
-              [compareWith]="compareT" (selectionChange)="cambioTipoTarifa()" [disabled]="listaDeTarifas.length > 0" >
+              <mat-select id="idTipoTarifa" class="form-control form-control-sm" [formControl]="tipoTarifa"
+                [compareWith]="compareT" (selectionChange)="cambioTipoTarifa()"> <!--[disabled]="listaDeTarifas.length > 0"-->
                 <mat-option value="porEscala">Por Escala</mat-option>
                 <mat-option value="porTramo">Por Tramo</mat-option>
               </mat-select>
@@ -148,133 +150,129 @@
             <div class="form-group has-float-label">
               <label for="idTipoTarifa" class="tamanio-label">Tarifa *</label>
               <mat-select id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
-                [compareWith]="compareFn" > <!--[disabled]="!btnActualizarTarifa"-->
-                  <mat-option disabled>
-                    <table>
-                      <tr>
-                        <td class="tarifa">Tarifa</td>
-                        <td class="escala">Por Escala</td>
-                        <td class="porcentaje">Por Porcentaje</td>
-                      </tr>
-                    </table>
-                  </mat-option>
-                  <mat-option *ngFor="let itemTipoTarifa of listaTarifas" [value]="itemTipoTarifa">
-                    <table>
-                      <tr>
-                        <td class="tarifa"><span>{{itemTipoTarifa.nombre}}</span></td>
-                        <td class="escala"><span>   -{{itemTipoTarifa.porEscala? 'Sí': 'No'}}-</span></td>
-                        <td class="porcentaje"><span>   -{{itemTipoTarifa.porPorcentaje? 'Sí': 'No'}}-</span></td>
-                      </tr>
-                    </table>
-                  </mat-option>
+                [compareWith]="compareFn">
+                <!--[disabled]="!btnActualizarTarifa"-->
+                <mat-option disabled>
+                  <table>
+                    <tr>
+                      <td class="tarifa">Tarifa</td>
+                      <td class="escala">Por Escala</td>
+                      <td class="porcentaje">Por Porcentaje</td>
+                    </tr>
+                  </table>
+                </mat-option>
+                <mat-option *ngFor="let itemTipoTarifa of listaTarifas" [value]="itemTipoTarifa">
+                  <table>
+                    <tr>
+                      <td class="tarifa"><span>{{itemTipoTarifa.nombre}}</span></td>
+                      <td class="escala"><span> -{{itemTipoTarifa.porEscala? 'Sí': 'No'}}-</span></td>
+                      <td class="porcentaje"><span> -{{itemTipoTarifa.porPorcentaje? 'Sí': 'No'}}-</span></td>
+                    </tr>
+                  </table>
+                </mat-option>
               </mat-select>
             </div>
           </div>
           <div class="col-md-4">
-            <button id="idBoton" [disabled]="!formulario.valid || !formularioTarifa.valid || !preciosDesde.valid" mat-raised-button color="primary" (click)="agregarTarifa()"
-            > <!--[disabled]="!btnActualizarOrdVta || !formularioTarifa.valid"-->
+            <button id="idBoton" [disabled]="!formulario.valid || !formularioTarifa.valid || !preciosDesde.valid"
+              mat-raised-button color="primary" (click)="agregarTarifa()">
+              <!--[disabled]="!btnActualizarOrdVta || !formularioTarifa.valid"-->
               Agregar Tarifa
             </button>
-            <button id="idBoton" [disabled]="!formulario.valid" mat-raised-button color="primary" (click)="accion(indiceSeleccionado)"
-            *ngIf="btnOrdenVta" >
-              {{pestaniaActual}} Orden Vta
-            </button>
-          </div>
-        </div>
-        <div class="tabla">
-          <div class="tabla-ancho" style="height: 200px !important;">
-            <table mat-table [dataSource]="listaTarifasDeOrdVta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="id" >
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                  <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
-                </ng-container>
-                <ng-container matColumnDef="tarifa" >
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.nombre}} </td>
-                </ng-container>
-                <ng-container matColumnDef="escala" >
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porEscala ? 'Sí': 'No'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="porPorcentaje" >
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Porcentaje</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porPorcentaje ? 'Sí': 'No'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="ver" >
-                  <th mat-header-cell *matHeaderCellDef >-</th>
-                  <td mat-cell *matCellDef="let elemento;  let i = index;" >
-                    <span class="cursor-color" (click)="verTarifaOrdenVenta(elemento)" >ver</span>
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="eliminar" >
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento; let i = index;" >
-                    <span class="cursor-color" (click)="eliminarTarifaOrdenVenta(elemento)"
-                     *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">x</span>
-                  </td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-              </table>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-2">
-            <button id="idBotonFinalizar" mat-raised-button color="primary" (click)="reestablecerCampos()">
-              Finalizar
-            </button>
+          <div class="col-md-12">
+            <table mat-table [dataSource]="listaTarifasDeOrdVta" matSort class="mat-elevation-z1">
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+              </ng-container>
+              <ng-container matColumnDef="tarifa">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.nombre}} </td>
+              </ng-container>
+              <ng-container matColumnDef="escala">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porEscala ? 'Sí': 'No'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="porPorcentaje">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Porcentaje</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porPorcentaje ? 'Sí': 'No'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="ver">
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td mat-cell *matCellDef="let elemento; let i = index;">
+                  <button mat-icon-button class="mat-raised-button-icon" (click)="verTarifaOrdenVenta(elemento)" 
+                    matTooltip="Cargar Precios" matTooltipPosition="above">
+                    <mat-icon>playlist_add</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="eliminar">
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td mat-cell *matCellDef="let elemento; let i = index;">
+                  <button mat-icon-button class="mat-raised-button-icon" (click)="eliminarTarifaOrdenVenta(elemento)"
+                    *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" matTooltip="Eliminar" matTooltipPosition="above">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+              <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+            </table>
           </div>
-          <!-- <div class="col-md-2" >
-            <button id="idBoton" [disabled]="!formulario.valid && !show" mat-raised-button color="primary" formnovalidate
-            (click)="accion(indiceSeleccionado)">{{pestaniaActual}} 
-            </button>
-          </div> -->
-          <div class="col"></div>
         </div>
-        <div class="row" *ngIf="show">
-            <div class="col text-center">
-              <app-progreso></app-progreso>
-            </div>
+        <br>
+        <div class="row justify-content-center">
+          <button mat-raised-button color="primary" (click)="accion(indiceSeleccionado)">
+            {{pestaniaActual}}
+          </button>
         </div>
+        <!-- <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div> -->
       </form>
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <br>
-    <div class="col-md-10 ">
+    <div class="col-md-10">
       <form [formGroup]="formularioListar">
         <div class="row justify-content-center text-center">
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idTipoOrdenVenta" class="tamanio-label">Cliente/Empresa *</label>
-                <mat-select id="idTipoOrdenVenta" formControlName="tipo" class="form-control form-control-sm"
-                    (selectionChange)="establecerTipoEnListar()" required>
+              <mat-select id="idTipoOrdenVenta" formControlName="tipo" class="form-control form-control-sm"
+                (selectionChange)="establecerTipoEnListar()" required>
                 <mat-option value="empresa">Empresa</mat-option>
                 <mat-option value="cliente">Cliente</mat-option>
               </mat-select>
             </div>
           </div>
           <div class="col-md-6" *ngIf="formularioListar.get('tipo').value == 'empresa'">
-              <div class="form-group has-float-label">
-                <label for="idEmpresa" class="tamanio-label">Empresa *</label>
-                <input id="idEmpresa" type="text" [formControl]="empresa" class="form-control form-control-sm" readonly >
-              </div>
+            <div class="form-group has-float-label">
+              <label for="idEmpresa" class="tamanio-label">Empresa *</label>
+              <input id="idEmpresa" type="text" [formControl]="empresa" class="form-control form-control-sm" readonly>
+            </div>
           </div>
           <div class="col-md-6" *ngIf="formularioListar.get('tipo').value == 'cliente'">
-              <div class="form-group has-float-label">
-                <label for="idCliente" class="tamanio-label">Cliente *</label>
-                <input id="idCliente" class="form-control form-control-sm" type="text" matInput [readOnly]="soloLectura"
-                  [matAutocomplete]="autoCliente" autocomplete="off" [formControl]="formularioListar.get('cliente')"
-                  (blur)="verificarSeleccion(formularioListar.get('cliente'))"> 
-                <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
-                  <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
-                    {{itemCliente.alias}}
-                  </mat-option>
-                </mat-autocomplete>
+            <div class="form-group has-float-label">
+              <label for="idCliente" class="tamanio-label">Cliente *</label>
+              <input id="idCliente" class="form-control form-control-sm" type="text" matInput [readOnly]="soloLectura"
+                [matAutocomplete]="autoCliente" autocomplete="off" [formControl]="formularioListar.get('cliente')"
+                (blur)="verificarSeleccion(formularioListar.get('cliente'))">
+              <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
+                <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
+                  {{itemCliente.alias}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
           </div>
           <div class="col-md-1">
-            <button id="idBoton" [disabled]="!formularioListar.valid" mat-raised-button color="primary" (click)="buscarLista()">
+            <button id="idBoton" [disabled]="!formularioListar.valid" mat-raised-button color="primary"
+              (click)="buscarLista()">
               Buscar
             </button>
           </div>
@@ -282,48 +280,48 @@
         <div class="row justify-content-center text-center">
           <div class="col-md-12">
             <table mat-table [dataSource]="listaOrdenVenta" matSort class="mat-elevation-z1">
-                  <ng-container matColumnDef="id" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="descripcion" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="vendedor" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Vendedor</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.vendedor.nombre}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="seguro" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Seguro</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.seguro == 0"></span>
-                      <span *ngIf="elemento.seguro > 0">{{establecerDecimales(elemento.seguro, 2)}} ‰ </span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="cr" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>comision Contra Reembolso</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.comisionCR == 0"></span>
-                      <span *ngIf="elemento.comisionCR > 0">{{establecerDecimales(elemento.comisionCR, 2)}} %</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="esContado" sticky>
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Contado</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.esContado? 'Sí' : 'No'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="mod" sticky >
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarActualizar(elemento)"><span
-                        class="cursor-color">mod</span></td>
-                  </ng-container>
-                  <ng-container matColumnDef="eliminar" sticky >
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarEliminar(elemento)"><span
-                        class="cursor-color">x</span></td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="columnasListar"></tr>
-                  <tr mat-row *matRowDef="let row; columns: columnasListar;"></tr>
+              <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+              </ng-container>
+              <ng-container matColumnDef="descripcion">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+              </ng-container>
+              <ng-container matColumnDef="vendedor">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Vendedor</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.vendedor.nombre}}</td>
+              </ng-container>
+              <ng-container matColumnDef="seguro">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Seguro</th>
+                <td mat-cell *matCellDef="let elemento">
+                  <span *ngIf="elemento.seguro == 0"></span>
+                  <span *ngIf="elemento.seguro > 0">{{establecerDecimales(elemento.seguro, 2)}} ‰ </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="cr">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>comision Contra Reembolso</th>
+                <td mat-cell *matCellDef="let elemento">
+                  <span *ngIf="elemento.comisionCR == 0"></span>
+                  <span *ngIf="elemento.comisionCR > 0">{{establecerDecimales(elemento.comisionCR, 2)}} %</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="esContado">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Contado</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.esContado? 'Sí' : 'No'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="mod">
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarActualizar(elemento)"><span
+                    class="cursor-color">mod</span></td>
+              </ng-container>
+              <ng-container matColumnDef="eliminar">
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarEliminar(elemento)"><span
+                    class="cursor-color">x</span></td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="columnasListar"></tr>
+              <tr mat-row *matRowDef="let row; columns: columnasListar;"></tr>
             </table>
           </div>
         </div>

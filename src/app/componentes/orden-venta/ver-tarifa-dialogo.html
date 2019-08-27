@@ -1,324 +1,346 @@
-  <div class="row justify-content-center contenedor">
-    <h5>Lista de Precios - {{tipoTarifa=='porEscala'? 'Por Escala': 'Por Tramo'}} - Tarifa: {{ordenVentaTarifa.tipoTarifa.nombre}}</h5>
-    <div class="col-md-12 text-center">
-        <!--Formulario para Orden Venta Tarifa por Escala-->
-          <div class="row"> 
-            <div class="col"></div>
-            <div class="col-md-3"  >
-              <div class="form-group has-float-label" >
-                <label for="idPreciosDesde" class="tamanio-label">Precios Desde </label>
-                <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" 
-                  class="form-control form-control-sm" readonly>
-              </div>
-            </div>
-          </div>
-          <div class="row" *ngIf="tipoTarifa == 'porEscala'"> 
-            <div class="col-md-12">
-              <form [formGroup]="formularioEscala">
-              <div class="row">
-                <div class="col-md-1">
-                  <div class="form-group has-float-label">
-                    <label for="idEscala" class="tamanio-label">Escala *</label>
-                    <mat-select id="idEscala" class="form-control form-control-sm" formControlName="escalaTarifa"
-                      [compareWith]="compareFn" [disabled]="idMod">
-                      <mat-option *ngFor="let item of listaEscalasTarifas" [value]="item" >
-                        {{item.valor}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="form-group has-float-label">
-                    <label for="idImportePor" class="tamanio-label">Importe Por: *</label>
-                    <mat-select id="idImportePor" class="form-control form-control-sm" [formControl]="importePor"
-                      (selectionChange)="cambioImportesPor()" required>
-                      <mat-option [value]="false">Precio Fijo</mat-option>
-                      <mat-option [value]="true">Precio Unitario</mat-option>
-                    </mat-select>
-                  </div>
-                </div>
-                <div class="col-md-2" >
-                  <div class="form-group has-float-label">
-                    <label for="idImporteFijo" class="tamanio-label">Precio Fijo <span *ngIf="importePor">*</span></label>
-                    <input id="idImporteFijo" class="form-control form-control-sm number-right" formControlName="importeFijo"
-                      [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura" placeholder="$ 0.00"
-                      type="text" autocomplete="off" (blur)="setDecimales(formularioEscala.get('importeFijo'), 2)" required>
-                  </div>
-                </div>
-                <div class="col-md-2" >
-                  <div class="form-group has-float-label">
-                    <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario <span
-                        *ngIf="!importePor">*</span></label>
-                    <input id="idPrecioUnitario" [textMask]="mascaraImporte(10, 2)" formControlName="precioUnitario"
-                      type="text" autocomplete="off" class="form-control form-control-sm number-right" 
-                      [readOnly]="soloLectura" (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)" placeholder="$ 0.00" required>
-                  </div>
-                </div>
-                <div class="col-md-2" >
-                  <div class="form-group has-float-label">
-                    <label for="idSegunTarifa" class="tamanio-label">% Según Tarifa<span
-                        *ngIf="tipoTarifaEstado">*</span></label>
-                    <input id="idSegunTarifa" [textMask]="mascararPorcentaje()" formControlName="porcentaje" type="text"
-                      autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00" required
-                       [readOnly]="soloLectura " (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)" >
-                  </div>
-                </div>
-                <div class="col-md-1" >
-                  <div class="form-group has-float-label">
-                    <label for="idMinimo" class="tamanio-label">Mínimo </label>
-                    <input id="idMinimo" [textMask]="mascaraImporte(10, 2)" formControlName="minimo" type="text"
-                      autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)"
-                      [readOnly]="soloLectura"
-                      class="form-control form-control-sm number-right" placeholder="$ 0.00" >
-                  </div>
-                </div>
-                <div class="col">
-                  <button mat-raised-button color="primary" 
-                  [disabled]="!formularioEscala.valid || indiceSeleccionado==2 "
-                    (click)="agregar()" *ngIf="idMod == null">Agregar</button>
-                  <button mat-raised-button color="primary" [disabled]="!formularioEscala.valid"
-                    (click)="actualizar()" *ngIf="idMod != null">Actualizar</button>
-                  <button mat-raised-button color="primary" (click)="cancelar()">Cancelar</button>
-                </div>
-              </div>
-              </form>
-            </div>
-          </div>
-          <!--Formulario para Orden Venta Tarifa por Tramo-->
-          <div class="row" *ngIf="tipoTarifa == 'porTramo'"> 
-            <div class="col-md-12">
-              <form [formGroup]="formularioTramo">
-                <div class="row">
-                  <div class="col-md-9">
-                    <div class="form-group has-float-label">
-                      <label for="idTramo" class="tamanio-label">Tramo *</label>
-                      <input id="idTramo" class="form-control form-control-sm" formControlName="tramo" type="text" matInput
-                        [formControl]="formularioTramo.get('tramo')" [matAutocomplete]="autoTramo" autocomplete="off"
-                        [readonly]="soloLectura" required>
-                      <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFc.bind(this)" 
-                        (optionSelected)="cambioAutocompletadoTramo()">
-                        <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">
-                          {{itemTramo.origen.nombre}}, {{itemTramo.origen.provincia.nombre}}
-                          - {{itemTramo.destino.nombre}}, {{itemTramo.destino.provincia.nombre}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </div>
-                  </div>
-                  <div class="col-md-3">
-                    <div class="form-group has-float-label">
-                      <label for="idKmTramo" class="tamanio-label">Km *</label>
-                      <input id="idKmTramo" class="form-control form-control-sm margin-left-5 number-right" type="text"
-                        [formControl]="formularioTramo.get('kmTramo')" autocomplete="off" readonly
-                        [textMask]="obtenerMascaraKm(5)" placeholder="0 km" >
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-2">
-                    <div class="form-group has-float-label">
-                      <label for="idKmPactado" class="tamanio-label">Km Pactado</label>
-                      <input id="idKmPactado" class="form-control form-control-sm margin-left-5 number-right" [readOnly]="soloLectura"
-                        formControlName="kmPactado" type="text" autocomplete="off" [textMask]="obtenerMascaraKm(5)"
-                        placeholder="0 km"  (blur)="establecerKm(formularioTramo.get('kmPactado'), 0)">
-                    </div>
-                  </div>
-                  <div class="col-md-2" >
-                    <div class="form-group has-float-label">
-                      <label for="idImporteSecoPor" class="tamanio-label">Imp. Seco por: *</label>
-                          <mat-select id="idImporteSecoPor" class="form-control form-control-sm" [formControl]="importeSecoPor"
-                            (selectionChange)="cambioImportesSecoPor()" required>
-                          <mat-option [value]="false">Imp. Fijo Seco</mat-option>
-                        <mat-option [value]="true">Precio Un. Seco</mat-option>
-                      </mat-select>
-                    </div>
-                  </div>
-                  <div class="col-md-2" >
-                    <div class="form-group has-float-label">
-                      <label for="idImporteRefPor" class="tamanio-label">Imp. Ref. por: *</label>
-                      <mat-select id="idImporteRefPor" class="form-control form-control-sm" [formControl]="importeRefPor"
-                        (selectionChange)="cambioImportesRefPor()">
-                        <mat-option [value]="false">Imp. Fijo Ref.</mat-option>
-                        <mat-option [value]="true">Precio Un. Ref.</mat-option>
-                      </mat-select>
-                    </div>
-                  </div>
-                  <div class="col-md-2" >
-                    <div class="form-group has-float-label" *ngIf="!importeSecoPor.value">
-                      <label for="idImporteFijoSeco" class="tamanio-label">Imp. Fijo Seco <span
-                          *ngIf="importeSecoPor">*</span></label>
-                      <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
-                        class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoSeco"
-                        (blur)="controlPreciosTramo(1)" type="text" autocomplete="off" placeholder="$ 0.00"
-                        style="width: 130px;">
-                    </div>
-                    <div class="form-group has-float-label" *ngIf="importeSecoPor.value">
-                      <label for="idPrecioUnitarioSeco" class="tamanio-label">Precio Un. Seco <span
-                          *ngIf="!importeSecoPor">*</span></label>
-                      <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
-                        class="form-control form-control-sm margin-left-5 number-right" type="text" autocomplete="off"
-                        formControlName="precioUnitarioSeco" (blur)="controlPreciosTramo(2)" placeholder="$ 0.00"
-                        style="width: 142px;">
-                    </div>
-                  </div>
-                  <div class="col-md-2">
-                    <div class="form-group has-float-label" *ngIf="!importeRefPor.value">
-                      <label for="idImporteFijoRef" class="tamanio-label">Imp. Fijo Ref. <span
-                          *ngIf="importeRefPor">*</span></label>
-                      <input id="idImporteFijoRef" [textMask]="mascaraImporte(10, 2)"
-                        class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoRef"
-                        (blur)="controlPreciosTramoRef(1)" type="text" autocomplete="off" placeholder="$ 0.00"
-                        style="width: 124px;">
-                    </div>
-                    <div class="form-group has-float-label" *ngIf="importeRefPor.value">
-                      <label for="idPrecioUnitarioRef" class="tamanio-label">Precio Un. Ref. <span
-                          *ngIf="!importeRefPor">*</span></label>
-                      <input id="idPrecioUnitarioRef" [textMask]="mascaraImporte(10, 2)"
-                        class="form-control form-control-sm margin-left-5 number-right" type="text" autocomplete="off"
-                        (blur)="controlPreciosTramoRef(2)" formControlName="precioUnitarioRef" placeholder="$ 0.00"
-                        style="width: 137px;">
-                    </div>
-                  </div>
-                  <div class="col-md-2">
-                    <button mat-raised-button color="primary" (click)="agregar()" *ngIf="idMod == null"
-                      [disabled]="!formularioTramo.valid || indiceSeleccionado==2 ">Agregar</button>
-                    <button mat-raised-button color="primary" (click)="actualizar()"
-                      *ngIf="idMod != null">Actualizar</button>
-                    <button mat-raised-button color="primary" (click)="cancelar()">Cancelar</button>
-                  </div>
-                </div>
-              </form>
-            </div>
-          </div>
-
-          <div class="tabla" *ngIf="tipoTarifa == 'porEscala'">
-              <div class="" >
-                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                  <ng-container matColumnDef="escala" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.escalaTarifa? elemento.escalaTarifa.valor: '--'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="precioFijo" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.importeFijo == 0"></span>
-                      <span *ngIf="elemento.importeFijo > 0">$ {{establecerDecimales(elemento.importeFijo, 2)}}</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="precioUnitario" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.precioUnitario == 0"></span>
-                      <span *ngIf="elemento.precioUnitario > 0">$ {{establecerDecimales(elemento.precioUnitario, 2)}}</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="porcentaje" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>% Según Tarifa</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.porcentaje == 0"></span>
-                      <span *ngIf="elemento.porcentaje > 0">% {{establecerDecimales(elemento.porcentaje, 2)}}</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="minimo" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Mínimo</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.minimo == 0"></span>
-                      <span *ngIf="elemento.minimo > 0">$ {{establecerDecimales(elemento.minimo, 2)}}</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="mod" >
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento; let i=index" >
-                      <span (click)="controlModEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
-                        class="cursor-color">mod</span></td>
-                  </ng-container>
-                  <ng-container matColumnDef="eliminar" >
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento; let i = index;" >
-                      <span class="cursor-color" (click)="controlEliminarEscala(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3">
-                        X
-                      </span>
-                  </td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="columnasEscala"></tr>
-                  <tr mat-row *matRowDef="let row; columns: columnasEscala;"></tr>
-                </table>
-              </div>
-          </div>
-          <div class="tabla" *ngIf="tipoTarifa == 'porTramo'">
-              <div class="">
-                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                  <ng-container matColumnDef="tramoOrigen" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Origen</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.origen.nombre: '--'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="tramoDestino" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Destino</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.destino.nombre: '--'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="km" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.km : '--'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="kmPactado" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Km Pactado</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.kmPactado: '--'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="precioFijoSeco" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Seco</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.importeFijoSeco == 0"></span>
-                      <span *ngIf="elemento.importeFijoSeco > 0">$ {{establecerDecimales(elemento.importeFijoSeco, 2)}}</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="precioUnitSeco" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Seco</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.precioUnitarioSeco == 0"></span>
-                      <span *ngIf="elemento.precioUnitarioSeco > 0">$ {{establecerDecimales(elemento.precioUnitarioSeco, 2)}}</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="precioFijoRefrig" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Regrigerado</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.importeFijoRef == 0"></span>
-                      <span *ngIf="elemento.importeFijoRef > 0">$ {{establecerDecimales(elemento.importeFijoRef, 2)}}</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="precioUnitRefrig" >
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Refrigerado</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.precioUnitarioRef == 0"></span>
-                      <span *ngIf="elemento.precioUnitarioRef > 0">$ {{establecerDecimales(elemento.precioUnitarioRef, 2)}}</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="mod" >
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span  (click)="controlModTramo(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
-                        class="cursor-color">mod</span></td>
-                  </ng-container>
-                  <ng-container matColumnDef="eliminar" >
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento; let i = index;" >
-                      <span (click)="controlEliminarTramo(elemento)" *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3"
-                        class="cursor-color">X</span></td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="columnasTramo"></tr>
-                  <tr mat-row *matRowDef="let row; columns: columnasTramo;"></tr>
-                </table>
-              </div>
-          </div>
-          <br>
+<div class="row justify-content-center contenedor">
+  <h5>Lista de Precios - <b>{{tipoTarifa=='porEscala'? 'Por Escala': 'Por Tramo'}}</b> - Tarifa:
+    <b>{{ordenVentaTarifa.tipoTarifa.nombre}}</b></h5>
+  <div class="col-md-12 text-center">
+    <!--Formulario para Orden Venta Tarifa por Escala-->
+    <div class="row">
+      <div class="col"></div>
+      <div class="col-md-3">
+        <div class="form-group has-float-label">
+          <label for="idPreciosDesde" class="tamanio-label">Precios Desde</label>
+          <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" class="form-control form-control-sm"
+            readonly>
+        </div>
+      </div>
+    </div>
+    <div class="row" *ngIf="tipoTarifa == 'porEscala'">
+      <div class="col-md-12">
+        <form [formGroup]="formularioEscala">
           <div class="row">
-            <div class="col text-center">
-              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" [mat-dialog-close]="ordenVentaTarifa" 
-              >Aceptar</button> 
+            <div class="col-md-1">
+              <div class="form-group has-float-label">
+                <label for="idEscala" class="tamanio-label">Escala *</label>
+                <mat-select id="idEscala" class="form-control form-control-sm" formControlName="escalaTarifa"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of listaEscalasTarifas" [value]="item">
+                    {{item.valor}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idImportePor" class="tamanio-label">Importe Por: *</label>
+                <mat-select id="idImportePor" class="form-control form-control-sm" [formControl]="importePor"
+                  (selectionChange)="cambioImportesPor()" required>
+                  <mat-option [value]="false">Precio Fijo</mat-option>
+                  <mat-option [value]="true">Precio Unitario</mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idImporteFijo" class="tamanio-label">Precio Fijo <span *ngIf="importePor">*</span></label>
+                <input id="idImporteFijo" class="form-control form-control-sm number-right"
+                  formControlName="importeFijo" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
+                  placeholder="$ 0.00" type="text" autocomplete="off"
+                  (blur)="setDecimales(formularioEscala.get('importeFijo'), 2)" required>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idPrecioUnitario" class="tamanio-label">Precio Unitario <span
+                    *ngIf="!importePor">*</span></label>
+                <input id="idPrecioUnitario" [textMask]="mascaraImporte(10, 2)" formControlName="precioUnitario"
+                  type="text" autocomplete="off" class="form-control form-control-sm number-right"
+                  [readOnly]="soloLectura" (blur)="setDecimales(formularioEscala.get('precioUnitario'), 2)"
+                  placeholder="$ 0.00" required>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idSegunTarifa" class="tamanio-label">% Según Tarifa<span
+                    *ngIf="tipoTarifaEstado">*</span></label>
+                <input id="idSegunTarifa" [textMask]="mascararPorcentaje()" formControlName="porcentaje" type="text"
+                  autocomplete="off" class="form-control form-control-sm number-right" placeholder="% 00.00" required
+                  [readOnly]="soloLectura " (blur)="setPorcentaje(formularioEscala.get('porcentaje'), 2)">
+              </div>
+            </div>
+            <div class="col-md-1">
+              <div class="form-group has-float-label">
+                <label for="idMinimo" class="tamanio-label">Mínimo </label>
+                <input id="idMinimo" [textMask]="mascaraImporte(10, 2)" formControlName="minimo" type="text"
+                  autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)" [readOnly]="soloLectura"
+                  class="form-control form-control-sm number-right" placeholder="$ 0.00">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button mat-raised-button class="mat-raised-button-icon" color="primary"
+                [disabled]="!formularioEscala.valid || indiceSeleccionado==2" (click)="agregar()" *ngIf="idMod == null"
+                matTooltip="Agregar" matTooltipPosition="above">
+                <mat-icon>add</mat-icon>
+              </button>
+              <button mat-raised-button class="mat-raised-button-icon" color="primary"
+                [disabled]="!formularioEscala.valid" (click)="actualizar()" *ngIf="idMod != null" matTooltip="Editar"
+                matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button class="margin-left-3 mat-raised-button-icon" mat-raised-button (click)="cancelar()"
+                matTooltip="Cancelar" matTooltipPosition="above" *ngIf="idMod != null">
+                <mat-icon>close</mat-icon>
+              </button>
             </div>
           </div>
-          <div class="row" *ngIf="show">
-            <div class="col text-center">
-              <app-progreso></app-progreso>
+        </form>
+      </div>
+    </div>
+    <!--Formulario para Orden Venta Tarifa por Tramo-->
+    <div class="row" *ngIf="tipoTarifa == 'porTramo'">
+      <div class="col-md-12">
+        <form [formGroup]="formularioTramo">
+          <div class="row">
+            <div class="col-md-9">
+              <div class="form-group has-float-label">
+                <label for="idTramo" class="tamanio-label">Tramo *</label>
+                <input id="idTramo" class="form-control form-control-sm" formControlName="tramo" type="text" matInput
+                  [formControl]="formularioTramo.get('tramo')" [matAutocomplete]="autoTramo" autocomplete="off"
+                  [readonly]="soloLectura" required>
+                <mat-autocomplete #autoTramo="matAutocomplete" [displayWith]="displayFc.bind(this)"
+                  (optionSelected)="cambioAutocompletadoTramo()">
+                  <mat-option *ngFor="let itemTramo of resultadosTramos" [value]="itemTramo">
+                    {{itemTramo.origen.nombre}}, {{itemTramo.origen.provincia.nombre}}
+                    - {{itemTramo.destino.nombre}}, {{itemTramo.destino.provincia.nombre}}
+                  </mat-option>
+                </mat-autocomplete>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label for="idKmTramo" class="tamanio-label">Km *</label>
+                <input id="idKmTramo" class="form-control form-control-sm margin-left-5 number-right" type="text"
+                  [formControl]="formularioTramo.get('kmTramo')" autocomplete="off" readonly
+                  [textMask]="obtenerMascaraKm(5)" placeholder="0 km">
+              </div>
             </div>
           </div>
+          <div class="row">
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idKmPactado" class="tamanio-label">Km Pactado</label>
+                <input id="idKmPactado" class="form-control form-control-sm margin-left-5 number-right"
+                  [readOnly]="soloLectura" formControlName="kmPactado" type="text" autocomplete="off"
+                  [textMask]="obtenerMascaraKm(5)" placeholder="0 km"
+                  (blur)="establecerKm(formularioTramo.get('kmPactado'), 0)">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idImporteSecoPor" class="tamanio-label">Imp. Seco por: *</label>
+                <mat-select id="idImporteSecoPor" class="form-control form-control-sm" [formControl]="importeSecoPor"
+                  (selectionChange)="cambioImportesSecoPor()" required>
+                  <mat-option [value]="false">Imp. Fijo Seco</mat-option>
+                  <mat-option [value]="true">Precio Un. Seco</mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label for="idImporteRefPor" class="tamanio-label">Imp. Ref. por: *</label>
+                <mat-select id="idImporteRefPor" class="form-control form-control-sm" [formControl]="importeRefPor"
+                  (selectionChange)="cambioImportesRefPor()">
+                  <mat-option [value]="false">Imp. Fijo Ref.</mat-option>
+                  <mat-option [value]="true">Precio Un. Ref.</mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label" *ngIf="!importeSecoPor.value">
+                <label for="idImporteFijoSeco" class="tamanio-label">Imp. Fijo Seco <span
+                    *ngIf="importeSecoPor">*</span></label>
+                <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
+                  class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoSeco"
+                  (blur)="controlPreciosTramo(1)" type="text" autocomplete="off" placeholder="$ 0.00"
+                  style="width: 130px;">
+              </div>
+              <div class="form-group has-float-label" *ngIf="importeSecoPor.value">
+                <label for="idPrecioUnitarioSeco" class="tamanio-label">Precio Un. Seco <span
+                    *ngIf="!importeSecoPor">*</span></label>
+                <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
+                  class="form-control form-control-sm margin-left-5 number-right" type="text" autocomplete="off"
+                  formControlName="precioUnitarioSeco" (blur)="controlPreciosTramo(2)" placeholder="$ 0.00"
+                  style="width: 142px;">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label" *ngIf="!importeRefPor.value">
+                <label for="idImporteFijoRef" class="tamanio-label">Imp. Fijo Ref. <span
+                    *ngIf="importeRefPor">*</span></label>
+                <input id="idImporteFijoRef" [textMask]="mascaraImporte(10, 2)"
+                  class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoRef"
+                  (blur)="controlPreciosTramoRef(1)" type="text" autocomplete="off" placeholder="$ 0.00"
+                  style="width: 124px;">
+              </div>
+              <div class="form-group has-float-label" *ngIf="importeRefPor.value">
+                <label for="idPrecioUnitarioRef" class="tamanio-label">Precio Un. Ref. <span
+                    *ngIf="!importeRefPor">*</span></label>
+                <input id="idPrecioUnitarioRef" [textMask]="mascaraImporte(10, 2)"
+                  class="form-control form-control-sm margin-left-5 number-right" type="text" autocomplete="off"
+                  (blur)="controlPreciosTramoRef(2)" formControlName="precioUnitarioRef" placeholder="$ 0.00"
+                  style="width: 137px;">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button mat-raised-button class="mat-raised-button-icon" color="primary" (click)="agregar()"
+                *ngIf="idMod == null" [disabled]="!formularioTramo.valid || indiceSeleccionado==2" matTooltip="Agregar"
+                matTooltipPosition="above">
+                <mat-icon>add</mat-icon>
+              </button>
+              <button mat-raised-button class="mat-raised-button-icon" color="primary" (click)="actualizar()"
+                *ngIf="idMod != null" matTooltip="Editar" matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-raised-button class="mat-raised-button-icon" (click)="cancelar()" matTooltip="Cancelar"
+                matTooltipPosition="above">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div *ngIf="tipoTarifa == 'porEscala'">
+      <div class="row">
+        <div class="col">
+          <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+            <ng-container matColumnDef="escala">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.escalaTarifa? elemento.escalaTarifa.valor: '--'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="precioFijo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo</th>
+              <td mat-cell *matCellDef="let elemento">
+                <span>$ {{establecerDecimales(elemento.importeFijo, 2)}}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="precioUnitario">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
+              <td mat-cell *matCellDef="let elemento">
+                <span>$ {{establecerDecimales(elemento.precioUnitario, 2)}}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="porcentaje">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>% Según Tarifa</th>
+              <td mat-cell *matCellDef="let elemento">
+                <span>% {{establecerDecimales(elemento.porcentaje, 2)}}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="minimo">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Mínimo</th>
+              <td mat-cell *matCellDef="let elemento">
+                <span>$ {{establecerDecimales(elemento.minimo, 2)}}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="mod">
+              <th mat-header-cell *matHeaderCellDef>-</th>
+              <td mat-cell *matCellDef="let elemento; let i=index">
+                <button mat-icon-button class="mat-icon-button-table" (click)="controlModEscala(elemento)"
+                  *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Editar" matTooltipPosition="above">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="eliminar">
+              <th mat-header-cell *matHeaderCellDef>-</th>
+              <td mat-cell *matCellDef="let elemento; let i = index">
+                <button mat-icon-button class="mat-icon-button-table" (click)="controlEliminarEscala(elemento)"
+                  *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Eliminar"
+                  matTooltipPosition="above">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnasEscala"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnasEscala;"></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="tabla" *ngIf="tipoTarifa == 'porTramo'">
+      <div class="">
+        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+          <ng-container matColumnDef="tramoOrigen">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Origen</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.origen.nombre: '--'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="tramoDestino">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Destino</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.destino.nombre: '--'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="km">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.km : '--'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="kmPactado">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Km Pactado</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.kmPactado: '--'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="precioFijoSeco">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Seco</th>
+            <td mat-cell *matCellDef="let elemento">
+              <span>$ {{establecerDecimales(elemento.importeFijoSeco, 2)}}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="precioUnitSeco">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Seco</th>
+            <td mat-cell *matCellDef="let elemento">
+              <span>$ {{establecerDecimales(elemento.precioUnitarioSeco, 2)}}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="precioFijoRefrig">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Regrigerado</th>
+            <td mat-cell *matCellDef="let elemento">
+              <span>$ {{establecerDecimales(elemento.importeFijoRef, 2)}}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="precioUnitRefrig">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Refrigerado</th>
+            <td mat-cell *matCellDef="let elemento">
+              <span>$ {{establecerDecimales(elemento.precioUnitarioRef, 2)}}</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="mod">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento">
+              <button mat-icon-button class="mat-icon-button-table" (click)="controlModTramo(elemento)"
+                *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Editar" matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="eliminar">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento">
+              <button mat-icon-button class="mat-icon-button-table" (click)="controlEliminarTramo(elemento)"
+                *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Eliminar" matTooltipPosition="above">
+                <mat-icon>close</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnasTramo"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnasTramo;"></tr>
+        </table>
+      </div>
+    </div>
+    <br>
+    <div class="row" *ngIf="!show">
+      <div class="col text-center">
+        <button mat-raised-button (click)="cerrar()">Cerrar</button>
+      </div>
+    </div>
+    <div class="row" *ngIf="show">
+      <div class="col text-center">
+        <app-progreso></app-progreso>
+      </div>
     </div>
   </div>
+</div>

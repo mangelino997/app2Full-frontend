@@ -8,11 +8,11 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class OrdenVentaService {
   //Define la ruta al servicio web
-  private ruta:string = "/ordenventa";
+  private ruta: string = "/ordenventa";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la subcripcion
@@ -20,7 +20,7 @@ export class OrdenVentaService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -31,7 +31,7 @@ export class OrdenVentaService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -69,44 +69,38 @@ export class OrdenVentaService {
     let obj = Object.assign({}, elemento);
     let clienteOrdenVenta;
     let empresaOrdenVenta;
-    if(cliente){
+    if (cliente) {
       clienteOrdenVenta = {
         cliente: cliente,
-        usuarioAlta: {id: usuarioAlta.id}
+        usuarioAlta: { id: usuarioAlta.id }
       };
       empresaOrdenVenta = null;
-    }else{
+    } else {
       empresaOrdenVenta = {
         empresa: empresa,
-        usuarioAlta: {id: usuarioAlta.id}
+        usuarioAlta: { id: usuarioAlta.id }
       };
       clienteOrdenVenta = null
     }
     let ordenVentaTarifa = obj.ordenesVentasTarifas;
-    let noBlobPdf = new Blob([null], {});
-    const formData = new FormData(); 
-    let objNull= null;
-    if(clienteOrdenVenta)
+    const formData = new FormData();
+    if (clienteOrdenVenta)
       formData.append('clienteOrdenVenta', JSON.stringify(clienteOrdenVenta));
-      else{
-        formData.append('clienteOrdenVenta', null);
-      }
-      
-    if(empresaOrdenVenta)
+    else {
+      formData.append('clienteOrdenVenta', null);
+    }
+    if (empresaOrdenVenta)
       formData.append('empresaOrdenVenta', JSON.stringify(empresaOrdenVenta));
-      else{
-        formData.append('empresaOrdenVenta',null);
-      }
-
-    if(ordenVentaTarifa)
+    else {
+      formData.append('empresaOrdenVenta', null);
+    }
+    if (ordenVentaTarifa)
       formData.append('ordenVentaTarifa', JSON.stringify(ordenVentaTarifa));
-      else{
-        formData.append('ordenVentaTarifa', JSON.stringify(''));
-      }
-
+    else {
+      formData.append('ordenVentaTarifa', JSON.stringify(''));
+    }
     formData.append('ordenVenta', JSON.stringify(obj));
-    console.log(obj);
-		return fetch(this.url, {
+    return fetch(this.url, {
       method: "POST",
       headers: {
         'Authorization': localStorage.getItem('token')
