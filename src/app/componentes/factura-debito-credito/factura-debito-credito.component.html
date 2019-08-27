@@ -19,10 +19,9 @@
                 <div class="col-md-12">
                   <div class="form-group has-float-label">
                     <label for="idAutocompletado" class="tamanio-label">Buscar Proveedor *</label>
-                    <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text"
-                      matInput [formControl]="formulario.get('proveedor')" [matAutocomplete]="auto" autocomplete="off"
-                      (blur)="verificarSeleccion(autocompletado)">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+                    <input id="idAutocompletado" class="form-control form-control-sm" type="text"
+                      matInput [formControl]="formulario.get('proveedor')" [matAutocomplete]="auto" autocomplete="off">
+                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                       <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="establecerValores(item)">
                           {{item.alias}}
                       </mat-option>
@@ -69,7 +68,7 @@
                   <div class="form-group has-float-label">
                     <label id="labelFechaEmision" for="idFechaEmision" class="descripcion-label">Fecha de Emisión *</label>
                     <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off" 
-                    class="form-control form-control-sm" >
+                    (blur)="cambioFechaEmision()" class="form-control form-control-sm" >
                   </div>
                 </div>
               </div>
@@ -78,7 +77,7 @@
                   <div class="form-group has-float-label">
                     <label id="labelFechaContable" for="idFechaContable" class="descripcion-label">Fecha Contable *</label>
                     <input id="idFechaContable" type="date" formControlName="fechaContable" autocomplete="off" 
-                    class="form-control form-control-sm" >
+                    (blur)="verificarFechaContable()" class="form-control form-control-sm" >
                   </div>
                 </div>
               </div>
@@ -93,28 +92,28 @@
                   <div class="form-group has-float-label">
                     <label id="labelCodigoAfip" for="idCodigoAfip" class="descripcion-label">Código Afip</label>
                     <input id="idCodigoAfip" type="text" formControlName="codigoAfip" autocomplete="off" [textMask]="mascararEnteros(3)" 
-                    class="form-control form-control-sm" (blur)="cambioCodigoAfip()">
+                    class="form-control form-control-sm" (blur)="cambioCodigoAfip()" minlength="3">
                   </div>
                 </div>
                 <div class="col-md-3">
                   <div class="form-group has-float-label">
                     <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Venta</label>
-                    <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" 
-                    class="form-control form-control-sm" >
+                    <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" [textMask]="mascararEnteros(5)" 
+                    (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)" class="form-control form-control-sm" >
                   </div>
                 </div>
                 <div class="col-md-3">
                   <div class="form-group has-float-label">
                     <label id="labelLetra" for="idLetra" class="descripcion-label">Letra</label>
-                    <input id="idLetra" type="text" formControlName="letra" autocomplete="off" 
-                    class="form-control form-control-sm" >
+                    <input id="idLetra" type="text" formControlName="letra" autocomplete="off" maxlength="1"
+                    (blur)="cambioLetra()" class="form-control form-control-sm" >
                   </div>
                 </div>
                 <div class="col-md-3">
                   <div class="form-group has-float-label">
                     <label id="labelNumero" for="idNumero" class="descripcion-label">Número</label>
-                    <input id="idNumero" type="text" formControlName="numero" autocomplete="off" 
-                    class="form-control form-control-sm" >
+                    <input id="idNumero" type="text" formControlName="numero" autocomplete="off" [textMask]="mascararEnteros(8)" 
+                    (blur)="verificarComprobante()" class="form-control form-control-sm" >
                   </div>
                 </div>
               </div>
@@ -123,8 +122,8 @@
                   <div class="form-group has-float-label">
                     <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
                     <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
-                      [compareWith]="compareFn">
-                      <mat-option *ngFor="let item of tiposComprobantes" [value]="item" >
+                      [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()">
+                      <mat-option *ngFor="let item of tiposComprobantes" [value]="item">
                         {{item.nombre}}
                       </mat-option>
                     </mat-select>
@@ -203,7 +202,7 @@
             </div>
           </div>
 
-          <div class="row">
+          <div class="row" style="margin-top: 50px;">
             <div class="col">
               <button id="idBotonPercepciones" mat-raised-button color="primary">Percepciones </button>
             </div>

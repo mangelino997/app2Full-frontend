@@ -6,9 +6,9 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class AfipComprobanteService {
+export class CompraComprobanteService {
   //Define la ruta al servicio web
-  private ruta:string = "/afipcomprobante";
+  private ruta:string = "/compracomprobante";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
@@ -46,37 +46,13 @@ export class AfipComprobanteService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
-  //Obtiene letra por id de quien paga
-  public obtenerLetra(condicionIva, idTipoComprobante) {
-    return this.http.get(this.url + '/obtenerLetra/' + condicionIva + "/" + idTipoComprobante, this.options);
-  }
-  //Obtiene letra por codigo de afip
-  public obtenerLetraPorCodigoAfip(codigoAfip) {
-    return this.http.get(this.url + '/obtenerLetraPorCodigoAfip/' + codigoAfip, this.options);
-  }
-  //Obtiene CodigoAfip por id de tipoComprobante y letra
-  public obtenerCodigoAfip(idTipoComprobante, letra) {
-    return this.http.get(this.url + '/obtenerCodigoAfip/' + idTipoComprobante + '/' + letra , this.options);
-  }
-  //Obtiene Por CodigoAfip por codigo de Afip
-  public obtenerPorCodigoAfip(codigoAfip) {
-    return this.http.get(this.url + '/obtenerPorCodigoAfip/' + codigoAfip , this.options);
-  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene la lista de registros
-  public listarPorTipoComprobante(idTipoComprobante) {
-    return this.http.get(this.url + '/listarPorTipoComprobante/' + idTipoComprobante, this.options);
-  }
-  //Obtiene un listado por nombre
-  public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
+  //Verifica Unicidad en el Comprobante
+  public verificarUnicidadComprobante(idProveedor, codigoAfip, puntoVenta, numero) {
+    return this.http.get(this.url + '/verificarUnicidadComprobante/' + idProveedor + '/' + codigoAfip + '/' + puntoVenta + '/' + numero, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

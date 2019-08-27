@@ -1,0 +1,140 @@
+<div class="row justify-content-center contenedor">
+    <h5>Agregar Item</h5>
+    <div class="col-md-12 text-center">
+          <div class="row"> 
+            <div class="col-md-12">
+              <form [formGroup]="formulario">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group has-float-label">
+                            <label for="idInsumoProducto" class="tamanio-label">Insumo/Producto</label>
+                            <input id="idInsumoProducto" class="form-control form-control-sm" type="text"
+                            matInput [formControl]="formulario.get('insumoProducto')" [matAutocomplete]="auto" autocomplete="off">
+                            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="establecerValores()">
+                            <mat-option *ngFor="let item of resultados" [value]="item">
+                                {{item.alias}}
+                            </mat-option>
+                            </mat-autocomplete>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group has-float-label">
+                            <label id="labelUnidadMedida" for="idUnidadMedida" class="descripcion-label">Unidad de Medida</label>
+                            <input id="idUnidadMedida" type="text" [formControl]="unidadMedida" autocomplete="off" readonly
+                            class="form-control form-control-sm" >
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group has-float-label">
+                            <label id="labelCantidad" for="idCantidad" class="descripcion-label">Cantidad</label>
+                            <input id="idCantidad" type="text" formControlName="cantidad" autocomplete="off" 
+                            class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(8)"
+                            >
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label id="labelPrecioUnitario" for="idPrecioUnitario" class="descripcion-label">Precio Unitario</label>
+                            <input id="idPrecioUnitario" type="text" formControlName="precioUnitario" autocomplete="off" 
+                            class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(8)"
+                            (blur)="calcularImporte()">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label id="labelImporteNetoGravado" for="idImporteNetoGravado" class="descripcion-label">Importe</label>
+                            <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado" autocomplete="off" readonly
+                            class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)" 
+                            (blur)="calcularImporte()">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idDeposito" class="tamanio-label">Depósito</label>
+                            <mat-select id="idDeposito" class="form-control form-control-sm" formControlName="depositoInsumoProducto"
+                            [compareWith]="compareFn">
+                            <mat-option *ngFor="let item of tiposDepositos" [value]="item">
+                                {{item.nombre}}
+                            </mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <div class="form-group has-float-label">
+                                    <label id="labelCuentaContable" for="idCuentaContable" class="descripcion-label">Cuenta Contable</label>
+                                    <input id="idCuentaContable" type="text" formControlName="cuentaContable" autocomplete="off" 
+                                    class="form-control form-control-sm" >
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button id="idBotonPlanCuenta" mat-raised-button color="primary">Plan de Cuenta </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group has-float-label">
+                                    <label id="labelObservacion" for="idObservacion" class="descripcion-label">Observaciones</label>
+                                    <input id="idObservacion" type="text" formControlName="observaciones" autocomplete="off" 
+                                    class="form-control form-control-sm" >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <fieldset ng-form="part_one">  
+                            <legend>
+                                ITC
+                            </legend>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group has-float-label">
+                                        <label id="labelITCporLitro" for="idITCporLitro" class="descripcion-label">ITC por Litro</label>
+                                        <input id="idITCporLitro" type="text" formControlName="itcPorLitro" autocomplete="off" 
+                                        class="form-control form-control-sm" [textMask]="mascararCuatroDecimales(2)" 
+                                        (blur)="establecerDecimales(formulario.get('itcPorLitro'), 4)">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group has-float-label">
+                                        <label id="labelImporteITC" for="idImporteITC" class="descripcion-label">Importe ITC</label>
+                                        <input id="idImporteITC" type="text" formControlName="importeITC" autocomplete="off" 
+                                        class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)"
+                                        (blur)="calcularImporteITC()">
+                                    </div>
+                                </div>
+                                <div class="col-md-4"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4"></div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+
+          <br>
+          <div class="row">
+            <div class="col text-center">
+              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" [mat-dialog-close]="ordenVentaTarifa" 
+              >Agregar</button> 
+              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show"  
+              >Cerrar</button> 
+            </div>
+          </div>
+          <div class="row" *ngIf="show">
+            <div class="col text-center">
+              <app-progreso></app-progreso>
+            </div>
+          </div>
+    </div>
+  </div>
