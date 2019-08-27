@@ -369,9 +369,10 @@ import { AfipTipoBeneficioDeduccionService } from './servicios/afip-tipo-benefic
 import { AfipTipoBeneficioService } from './servicios/afip-tipo-beneficio.service';
 import { AnularDialogo } from './componentes/viaje/anular-dialogo.component';
 import { NormalizarDialogo } from './componentes/viaje/normalizar-dialogo.component';
-import { FacturaDebitoCreditoComponent } from './componentes/factura-debito-credito/factura-debito-credito.component';
+import { FacturaDebitoCreditoComponent, AgregarItemDialogo } from './componentes/factura-debito-credito/factura-debito-credito.component';
 import { FacturaDebitoCredito } from './modelos/facturaDebitoCredito';
 import { CompraComprobanteVencimiento } from './modelos/compra-comprobante-vencimiento';
+import { CompraComprobanteService } from './servicios/compra-comprobante.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -491,7 +492,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -660,7 +661,8 @@ const stompConfig: StompConfig = {
     GananciaNetaComponent,
     DeduccionPersonalTablaComponent,
     ImporteAnualDialogo,
-    FacturaDebitoCreditoComponent
+    FacturaDebitoCreditoComponent,
+    AgregarItemDialogo
   ],
   imports: [
     BrowserModule,
@@ -938,6 +940,7 @@ const stompConfig: StompConfig = {
     AfipTipoBeneficioService,
     FacturaDebitoCredito,
     CompraComprobanteVencimiento,
+    CompraComprobanteService,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -979,7 +982,8 @@ const stompConfig: StompConfig = {
     BugImagenDialogoComponent,
     AnularDialogo,
     NormalizarDialogo,
-    ImporteAnualDialogo
+    ImporteAnualDialogo,
+    AgregarItemDialogo
   ]
 })
 export class AppModule { }
