@@ -1151,7 +1151,11 @@ export class VerTarifaDialogo {
   public actualizar() {
     this.loaderService.show();
     if (this.tipoTarifa == 'porEscala') {
-      this.ordenVentaEscalaService.actualizar(this.formularioEscala.value).subscribe(
+      let formulario = this.formularioEscala.value;
+      if(formulario.minimo == 'NaN') {
+        formulario.minimo = '0.00';
+      }
+      this.ordenVentaEscalaService.actualizar(formulario).subscribe(
         res => {
           if (res.status == 200) {
             this.listar();

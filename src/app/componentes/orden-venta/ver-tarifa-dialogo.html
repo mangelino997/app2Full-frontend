@@ -68,7 +68,7 @@
             </div>
             <div class="col-md-1">
               <div class="form-group has-float-label">
-                <label for="idMinimo" class="tamanio-label">Mínimo </label>
+                <label for="idMinimo" class="tamanio-label">Mínimo</label>
                 <input id="idMinimo" [textMask]="mascaraImporte(10, 2)" formControlName="minimo" type="text"
                   autocomplete="off" (blur)="setDecimales(formularioEscala.get('minimo'), 2)" [readOnly]="soloLectura"
                   class="form-control form-control-sm number-right" placeholder="$ 0.00">
