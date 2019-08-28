@@ -138,9 +138,9 @@
         <div class="row">
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idTipoTarifa" class="tamanio-label">Tipo Tarifa *</label>
-              <mat-select id="idTipoTarifa" class="form-control form-control-sm" [formControl]="tipoTarifa"
-                [compareWith]="compareT" (selectionChange)="cambioTipoTarifa()"> <!--[disabled]="listaDeTarifas.length > 0"-->
+              <label for="idTipoTarifaFC" class="tamanio-label">Tipo Tarifa *</label>
+              <mat-select id="idTipoTarifaFC" class="form-control form-control-sm" [formControl]="tipoTarifa"
+                [compareWith]="compareT" (selectionChange)="cambioTipoTarifa()">
                 <mat-option value="porEscala">Por Escala</mat-option>
                 <mat-option value="porTramo">Por Tramo</mat-option>
               </mat-select>
@@ -151,7 +151,6 @@
               <label for="idTipoTarifa" class="tamanio-label">Tarifa *</label>
               <mat-select id="idTipoTarifa" class="form-control form-control-sm" formControlName="tipoTarifa"
                 [compareWith]="compareFn">
-                <!--[disabled]="!btnActualizarTarifa"-->
                 <mat-option disabled>
                   <table>
                     <tr>
@@ -176,7 +175,6 @@
           <div class="col-md-4">
             <button id="idBoton" [disabled]="!formulario.valid || !formularioTarifa.valid || !preciosDesde.valid"
               mat-raised-button color="primary" (click)="agregarTarifa()">
-              <!--[disabled]="!btnActualizarOrdVta || !formularioTarifa.valid"-->
               Agregar Tarifa
             </button>
           </div>
@@ -202,7 +200,7 @@
               </ng-container>
               <ng-container matColumnDef="ver">
                 <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento; let i = index;">
+                <td mat-cell *matCellDef="let elemento; let i = index">
                   <button mat-icon-button class="mat-raised-button-icon" (click)="verTarifaOrdenVenta(elemento)" 
                     matTooltip="Cargar Precios" matTooltipPosition="above">
                     <mat-icon>playlist_add</mat-icon>
@@ -211,7 +209,7 @@
               </ng-container>
               <ng-container matColumnDef="eliminar">
                 <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento; let i = index;">
+                <td mat-cell *matCellDef="let elemento; let i = index">
                   <button mat-icon-button class="mat-raised-button-icon" (click)="eliminarTarifaOrdenVenta(elemento)"
                     *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" matTooltip="Eliminar" matTooltipPosition="above">
                     <mat-icon>close</mat-icon>
@@ -224,7 +222,7 @@
           </div>
         </div>
         <br>
-        <div class="row justify-content-center">
+        <div *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" class="row justify-content-center">
           <button mat-raised-button color="primary" (click)="accion(indiceSeleccionado)">
             {{pestaniaActual}}
           </button>

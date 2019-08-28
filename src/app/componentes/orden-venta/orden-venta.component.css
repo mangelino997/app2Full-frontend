@@ -1,11 +1,10 @@
 .tabla {
     width: 100%;
-    height: 300px;
+    height: 300px !important;
     overflow: auto !important;
-    overflow-y: scroll;
 }
 .tabla-ancho {
-    width: 1000px !important;
+    width: 1200px !important;
 }
 .mat-raised-button-icon {
     min-width: 50px !important;

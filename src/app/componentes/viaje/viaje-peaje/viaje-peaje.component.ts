@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
 import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { ViajePeaje } from 'src/app/modelos/viajePeaje';
 import { ViajePeajeService } from 'src/app/servicios/viaje-peaje';
-import { EliminarModalComponent } from '../../eliminar-modal/eliminar-modal.component';
+import { ConfirmarDialogoComponent } from '../../confirmar-dialogo/confirmar-dialogo.component';
 
 @Component({
   selector: 'app-viaje-peaje',
@@ -180,7 +180,7 @@ export class ViajePeajeComponent implements OnInit {
   }
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(elemento): void {
-    const dialogRef = this.dialog.open(EliminarModalComponent, {
+    const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
       width: '800px',
       data: {
         tema: this.appService.getTema()

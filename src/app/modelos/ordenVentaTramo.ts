@@ -9,15 +9,14 @@ export class OrdenVentaTramo {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            ordenVentaTarifa: new FormControl('', Validators.required),
+            ordenVentaTarifa: new FormControl(),
             tramo: new FormControl('', Validators.required),
             kmTramo: new FormControl(),
             kmPactado: new FormControl(),
-            importeFijoSeco: new FormControl('00'),
-            importeFijoRef: new FormControl('00'),
-            precioUnitarioSeco: new FormControl('00'),
-            precioUnitarioRef: new FormControl('00'),
-            ordenVentaPrecio: new FormControl(),
+            importeFijoSeco: new FormControl(),
+            importeFijoRef: new FormControl(),
+            precioUnitarioSeco: new FormControl(),
+            precioUnitarioRef: new FormControl(),
             preciosDesde: new FormControl()
         })
     }

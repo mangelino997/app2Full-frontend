@@ -215,6 +215,7 @@ import { TalonarioReciboLote } from './modelos/talonarioReciboLote';
 import { OrdenVentaTarifa } from './modelos/ordenVentaTarifa';
 import { TalonarioReciboCobrador } from './modelos/talonarioReciboCobrador';
 import { Soporte } from './modelos/soporte';
+import { MensajeExcepcion } from './modelos/mensaje-excepcion';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -340,7 +341,6 @@ import { DepositoInsumoProductoComponent } from './componentes/deposito-insumo-p
 import { DepositoInsumoProducto } from './modelos/depositoInsumoProducto';
 import { TalonarioReciboCobradorComponent } from './componentes/talonario-recibo-cobrador/talonario-recibo-cobrador.component';
 import { TalonarioReciboLoteComponent } from './componentes/talonario-recibo-lote/talonario-recibo-lote.component';
-import { EliminarModalComponent } from './componentes/eliminar-modal/eliminar-modal.component';
 import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
 import { BugImagen } from './modelos/bugImagen';
@@ -373,6 +373,7 @@ import { FacturaDebitoCreditoComponent, AgregarItemDialogo } from './componentes
 import { FacturaDebitoCredito } from './modelos/facturaDebitoCredito';
 import { CompraComprobanteVencimiento } from './modelos/compra-comprobante-vencimiento';
 import { CompraComprobanteService } from './servicios/compra-comprobante.service';
+import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -649,7 +650,6 @@ const stompConfig: StompConfig = {
     TalonarioReciboCobradorComponent,
     TalonarioReciboLoteComponent,
     VerTarifaDialogo,
-    EliminarModalComponent,
     PdfDialogoComponent,
     ListasDePreciosDialog,
     BugImagenDialogoComponent,
@@ -661,7 +661,8 @@ const stompConfig: StompConfig = {
     DeduccionPersonalTablaComponent,
     ImporteAnualDialogo,
     FacturaDebitoCreditoComponent,
-    AgregarItemDialogo
+    AgregarItemDialogo,
+    ConfirmarDialogoComponent
   ],
   imports: [
     BrowserModule,
@@ -910,6 +911,7 @@ const stompConfig: StompConfig = {
     TalonarioReciboLoteService,
     SoporteService,
     Soporte,
+    MensajeExcepcion,
     TalonarioReciboLote,
     FotoService,
     OrdenVentaTarifa,
@@ -976,7 +978,7 @@ const stompConfig: StompConfig = {
     PlanCuentaDialogo,
     VerTarifaDialogo,
     ListasDePreciosDialog,
-    EliminarModalComponent,
+    ConfirmarDialogoComponent,
     PdfDialogoComponent,
     BugImagenDialogoComponent,
     AnularDialogo,
