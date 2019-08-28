@@ -19,7 +19,7 @@
                     </div>
                     <div class="col-md-1">
                         <div class="form-group has-float-label">
-                            <label id="labelUnidadMedida" for="idUnidadMedida" class="descripcion-label">Unidad de Medida</label>
+                            <label id="labelUnidadMedida" for="idUnidadMedida" class="descripcion-label">U. Medida</label>
                             <input id="idUnidadMedida" type="text" [formControl]="unidadMedida" autocomplete="off" readonly
                             class="form-control form-control-sm" >
                         </div>
@@ -29,7 +29,7 @@
                             <label id="labelCantidad" for="idCantidad" class="descripcion-label">Cantidad</label>
                             <input id="idCantidad" type="text" formControlName="cantidad" autocomplete="off" 
                             class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(8)"
-                            >
+                            (blur)="establecerDecimales(formulario.get('cantidad'), 2)">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -45,7 +45,7 @@
                             <label id="labelImporteNetoGravado" for="idImporteNetoGravado" class="descripcion-label">Importe</label>
                             <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado" autocomplete="off" readonly
                             class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)" 
-                            (blur)="calcularImporte()">
+                            (blur)="establecerDecimales(formulario.get('importeNetoGravado'), 2)">
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -63,15 +63,15 @@
 
                 <div class="row">
                     <div class="col-md-4">
-                        <div class="row">
-                            <div class="col-md-9">
+                        <div class="row" style="padding-top: 36px;">
+                            <div class="col-md-7">
                                 <div class="form-group has-float-label">
                                     <label id="labelCuentaContable" for="idCuentaContable" class="descripcion-label">Cuenta Contable</label>
                                     <input id="idCuentaContable" type="text" formControlName="cuentaContable" autocomplete="off" 
                                     class="form-control form-control-sm" >
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col">
                                 <button id="idBotonPlanCuenta" mat-raised-button color="primary">Plan de Cuenta </button>
                             </div>
                         </div>
@@ -86,8 +86,8 @@
                         </div>
                     </div>
                     <div class="col-md-8">
-                        <fieldset ng-form="part_one">  
-                            <legend>
+                        <fieldset class="scheduler-border">  
+                            <legend class="scheduler-border">
                                 ITC
                             </legend>
                             <div class="row">
@@ -107,27 +107,143 @@
                                         (blur)="calcularImporteITC()">
                                     </div>
                                 </div>
-                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <div class="form-group has-float-label">
+                                        <label id="labelNetoITC" for="idNetoITC" class="descripcion-label">Neto ITC 
+                                            <span *ngIf="formulario.value.insumoProducto">
+                                                ({{formulario.value.insumoProducto.itcNeto | number: '1.2-2'}}%)
+                                            </span>
+                                            <span *ngIf="!formulario.value.insumoProducto">(0.00%)</span>
+                                        </label>
+                                        <input id="idNetoITC" type="text" [formControl]="netoITC" autocomplete="off" readonly
+                                        class="form-control form-control-sm">
+                                    </div>
+                                </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-4"></div>
-                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <div class="form-group has-float-label">
+                                        <label for="idDeducirDeNoGravado" class="tamanio-label">Deducir de No Gravado</label>
+                                        <mat-select id="idDeducirDeNoGravado" class="form-control form-control-sm" [formControl]="deducirDeNoGravado"
+                                        (selectionChange)="cambioDeducirNoGravado()" [compareWith]="compareFn">
+                                            <mat-option [value]="true">Sí</mat-option>
+                                            <mat-option [value]="false">No</mat-option>
+                                        </mat-select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group has-float-label">
+                                        <label id="labelImporteNoGravado" for="idImporteNoGravado" class="descripcion-label">Importe No Gravado</label>
+                                        <input id="idImporteNoGravado" type="text" [formControl]="importeNoGravado" autocomplete="off" 
+                                        class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)"
+                                        (blur)="calcularNetoNoGravado()" >
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group has-float-label">
+                                        <label id="labelNetoNoGravado" for="idNetoNoGravado" class="descripcion-label">Neto No Gravado</label>
+                                        <input id="idNetoNoGravado" type="text" [formControl]="netoNoGravado" autocomplete="off" readonly
+                                        class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)" >
+                                    </div>
+                                </div>
                             </div>
                         </fieldset>
                     </div>
                 </div>
+                <mat-divider></mat-divider>
 
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label id="labelImporteGravado" for="idImporteGravado" class="descripcion-label">Importe Gravado</label>
+                            <input id="idImporteGravado" type="text" formControlName="importeNetoGravado" autocomplete="off" 
+                            class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)" 
+                            (blur)="establecerDecimales(formulario.get('importeNetoGravado'), 2)">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idAlicuotaIva" class="tamanio-label">Alícuota IVA</label>
+                            <mat-select id="idAlicuotaIva" class="form-control form-control-sm" formControlName="alicuotaIva"
+                            [compareWith]="compareFn" (selectionChange)="calcularImporteIVA()">
+                            <mat-option *ngFor="let item of afipAlicuotasIva" [value]="item">
+                                {{item.alicuota | number: '1.2-2'}}
+                            </mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label id="labelImporteIva" for="idImporteIva" class="descripcion-label">Importe IVA</label>
+                            <input id="idImporteIva" type="text" formControlName="importeIva" autocomplete="off" 
+                            class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)" 
+                            (blur)="establecerDecimales(formulario.get('importeIva'), 2)">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label id="labelAfipAlicuotaIva" for="idAfipAlicuotaIva" class="descripcion-label">Condición de IVA</label>
+                            <input id="idImporteIva" type="text" [formControl]="condicionIva" autocomplete="off" readonly
+                            class="form-control form-control-sm">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label id="labelImporteITC2" for="idImporteITC2" class="descripcion-label">Importe ITC</label>
+                            <input id="idImporteITC2" type="text" formControlName="importeITC" autocomplete="off" 
+                            class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)" 
+                            (blur)="establecerDecimales(formulario.get('importeITC'), 2)">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label id="labelImporteNoGravado2" for="idImporteNoGravado2" class="descripcion-label">Importe No Gravado</label>
+                            <input id="idImporteNoGravado2" type="text" formControlName="importeNoGravado" autocomplete="off" 
+                            class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)" 
+                            (blur)="establecerDecimales(formulario.get('importeNoGravado'), 2)">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label id="labelImporteNoExento" for="idImporteNoExento" class="descripcion-label">Importe Exento</label>
+                            <input id="idImporteNoExento" type="text" formControlName="importeExento" autocomplete="off" 
+                            class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)" 
+                            (blur)="establecerDecimales(formulario.get('importeExento'), 2)">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label id="labelImporteImpInt" for="idImporteImpInt" class="descripcion-label">Importe Impuesto Interno</label>
+                            <input id="idImporteImpInt" type="text" formControlName="importeImpuestoInterno" autocomplete="off" 
+                            class="form-control form-control-sm" placeholder="0.00" [textMask]="mascararDecimales(10)" 
+                            (blur)="calcularSubtotal()">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label id="labelSubtotal" for="idSubtotal" class="descripcion-label">Subtotal del Item</label>
+                            <input id="idSubtotal" type="text" [formControl]="subtotal" autocomplete="off" 
+                            class="form-control form-control-sm" placeholder="0.00">
+                        </div>
+                    </div>
+                </div>
               </form>
             </div>
           </div>
-
+          <div class="row">
+              <div class="col-md-10"></div>
+              <div class="col">
+                  <span>Items: {{listaItems.length}}</span>
+              </div>
+          </div>
           <br>
           <div class="row">
             <div class="col text-center">
-              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" [mat-dialog-close]="ordenVentaTarifa" 
-              >Agregar</button> 
-              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show"  
+              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" (click)="agregarItem()"
+              >Agregar</button>
+              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" [mat-dialog-close]="listaItems" 
               >Cerrar</button> 
             </div>
           </div>

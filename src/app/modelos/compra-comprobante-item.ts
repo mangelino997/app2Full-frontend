@@ -16,7 +16,7 @@ export class CompraComprobanteItem {
             precioUnitario: new FormControl(),
             importeNetoGravado: new FormControl(),
             afipAlicuotaIva: new FormControl(),
-            alicuotaiva: new FormControl(),
+            alicuotaIva: new FormControl(),
             importeIva: new FormControl(),
             importeNoGravado: new FormControl(),
             importeExento: new FormControl(),
