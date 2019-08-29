@@ -18,6 +18,9 @@ export class MensajeExcepcion {
     //Defiene codigo de orden venta tarifa y escala
     public static DD_ORDENVENTATARIFA_ESCALA = "Valor de escala existente";
 
+    //Define código de orden venta tarifa y tramo
+    public static DD_ORDENVENTATARIFA_TRAMO = "Tramo existente";
+
     /*
     * FIN DATO DUPLICADO
     */

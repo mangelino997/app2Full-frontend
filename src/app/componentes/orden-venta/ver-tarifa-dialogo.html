@@ -194,9 +194,9 @@
                 matTooltip="Editar" matTooltipPosition="above" *ngIf="idMod != null">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-raised-button class="mat-raised-button-icon" (click)="cancelar()" matTooltip="Cancelar"
+              <button mat-raised-button class="mat-raised-button-icon margin-left-3" (click)="cancelar()" matTooltip="Cancelar"
                 matTooltipPosition="above" *ngIf="idMod != null">
-                <mat-icon>cancel_presentation</mat-icon>
+                <mat-icon>close</mat-icon>
               </button>
             </div>
           </div>
@@ -250,7 +250,7 @@
                 <button mat-icon-button class="mat-icon-button-table" (click)="controlEliminarEscala(elemento)"
                   *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Eliminar"
                   matTooltipPosition="above">
-                  <mat-icon>close</mat-icon>
+                  <mat-icon>delete</mat-icon>
                 </button>
               </td>
             </ng-container>
@@ -268,7 +268,7 @@
             <td mat-cell *matCellDef="let elemento">
               <button mat-icon-button class="mat-icon-button-table" (click)="controlEliminarTramo(elemento)"
                 *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Eliminar" matTooltipPosition="above">
-                <mat-icon>close</mat-icon>
+                <mat-icon>delete</mat-icon>
               </button>
             </td>
           </ng-container>
