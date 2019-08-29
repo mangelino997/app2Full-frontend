@@ -18,6 +18,10 @@ import { CompraComprobanteItem } from 'src/app/modelos/compra-comprobante-item';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
 import { DepositoInsumoProductoService } from 'src/app/servicios/deposito-insumo-producto.service';
 import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
+import { CompraComprobantePercepcion } from 'src/app/modelos/compra-comprobante-percepcion';
+import { TipoPercepcionService } from 'src/app/servicios/tipo-percepcion.service';
+import { MesService } from 'src/app/servicios/mes.service';
+import { ProvinciaService } from 'src/app/servicios/provincia.service';
 
 @Component({
   selector: 'app-factura-debito-credito',
@@ -60,6 +64,8 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public resultados: Array<any> = [];
   //Define la lista de tipos de comprobantes
   public tiposComprobantes: Array<any> = [];
+  //Define la lista de tipos de condiciones de compra
+  public condicionesCompra: Array<any> = [];
   //Define la lista de Años Fiscales
   public anioFiscal: Array<any> = [];
   //Define la lista de Meses
@@ -83,7 +89,8 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   constructor(private fechaService: FechaService, private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, 
     private servicio: CondicionCompraService, private modelo: FacturaDebitoCredito, private subopcionPestaniaService: SubopcionPestaniaService,
     private tipoComprobanteService: TipoComprobanteService, private afipComprobanteService: AfipComprobanteService, 
-    private proveedorService: ProveedorService, private compraComprobanteService: CompraComprobanteService, public dialog: MatDialog) {
+    private proveedorService: ProveedorService, private compraComprobanteService: CompraComprobanteService, public dialog: MatDialog,
+    private condicionCompraService: CondicionCompraService) {
       //Obtiene la lista de pestanias
       this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -105,12 +112,16 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.modelo.formulario;
+    //Reestablece el formulario
+    this.reestablecerFormulario(undefined);
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la fecha Actual
     this.obtenerFecha();
     //Obtiene la lista de tipos de comprobantes
     this.listarTipoComprobante();
+    //Obtiene la lista de Condiciones de Compra
+    this.listarCondicionCompra();
     //Autocompletado Proveedor- Buscar por alias
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -140,6 +151,17 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       },
       err=>{
         this.toastr.error("Error al obtener la lista de Tipos de Comprobantes");
+      }
+    )
+  }
+  //Carga la lista de tipos de condiciones de compra
+  private listarCondicionCompra(){
+    this.condicionCompraService.listar().subscribe(
+      res=>{
+        this.condicionesCompra = res.json();
+      },
+      err=>{
+        this.toastr.error("Error al obtener la lista de Tipos de Condiciones de Compra");
       }
     )
   }
@@ -233,15 +255,6 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       }
     );
   }
-  //Reestablece los campos formularios
-  private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.resultados = [];
-    this.obtenerFecha();
-    setTimeout(function () {
-      document.getElementById('idProveedor').focus();
-    }, 20);
-  }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
@@ -259,7 +272,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.localidad.setValue(localidad);
     this.condicionIVA.setValue(elemento.afipCondicionIva.nombre);
     this.tipoProveedor.setValue(elemento.tipoProveedor.nombre);
-
+    this.formulario.get('condicionCompra').setValue(elemento.condicionCompra);
   } 
   //Controla el cambio en el campo "Codigo Afip"
   public cambioCodigoAfip(){
@@ -411,10 +424,121 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      setTimeout(function () {
-        document.getElementById('idActualizacion').focus();
-      }, 20);
+      console.log(result);
+      if(this.listaCompleta.data.length > 0){
+        result.forEach(item =>{
+          this.listaCompleta.data.push(item);
+        });
+        this.listaCompleta.sort = this.sort;
+      }else{
+        this.listaCompleta = new MatTableDataSource(result);
+        this.listaCompleta.sort = this.sort;
+      }
+      
+      this.calcularImportes();
     });
+  }
+  //Abre modal para agregar los items
+  public detallePercepcionDialogo() {
+    const dialogRef = this.dialog.open(DetallePercepcionesDialogo, {
+      width: '95%',
+      maxWidth: '100vw',
+      data: {
+        proveedor: this.formulario.value.proveedor
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
+    });
+  }
+  //Calcula los importes
+  public calcularImportes(){
+    this.establecerImportesPorDefecto();
+    this.listaCompleta.data.forEach(
+      item=>{
+        //Obtiene los importes de cada item
+        let itemImpNoGravado = Number(item.importeNoGravado);
+        let itemImpExento = Number(item.importeExento);
+        let itemImpInt = Number(item.importeImpuestoInterno);
+        let itemImpNetoGravado = Number(item.importeNetoGravado);
+        let itemImpIva = Number(item.importeIva);
+        //Suma los importes anteriores con los nuevos
+        let impNoGravado = Number(this.formulario.value.importeNoGravado) + itemImpNoGravado;
+        let impExento = Number(this.formulario.value.importeExento) + itemImpExento;
+        let impInt = Number(this.formulario.value.importeImpuestoInterno) + itemImpInt;
+        let impNetoGravado = Number(this.formulario.value.importeNetoGravado) + itemImpNetoGravado;
+        let impIva = Number(this.formulario.value.importeIVA) + itemImpIva;
+        //Setea el valor correspondiente en los importes del formulario
+        if(impNoGravado > 0)
+          this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales(impNoGravado, 2));
+          else
+          this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+        if(impExento > 0)
+          this.formulario.get('importeExento').setValue(this.appService.establecerDecimales(impExento, 2));
+          else
+          this.formulario.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
+        if(impInt > 0)
+          this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales(impInt, 2));
+          else
+          this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales('0.00', 2));
+        if(impNetoGravado > 0)
+          this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(impNetoGravado, 2));
+          else
+          this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+        if(impIva > 0)
+          this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales(impIva, 2));
+          else
+          this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales('0.00', 2));
+      }
+    );
+    this.calcularImporteTotal();
+  }
+  //Calcula el Importe Total
+  private calcularImporteTotal(){
+    let importePercepciones = Number(this.formulario.value.importeNoGravado);
+    let importeNoGravado = Number(this.formulario.value.importeNoGravado);
+    let importeExento = Number(this.formulario.value.importeExento);
+    let importeImpInt = Number(this.formulario.value.importeImpuestoInterno);
+    let importeNetoGravado = Number(this.formulario.value.importeNetoGravado);
+    let IVA = Number(this.formulario.value.importeIVA);
+
+    let importeTotal = importePercepciones + importeNoGravado + importeExento + importeImpInt + importeNetoGravado + IVA;
+    this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales(importeTotal,2));
+
+  }
+  //Elimina un item de la tabla
+  public activarEliminar(indice){
+    this.listaCompleta.data.splice(indice, 1);
+    this.listaCompleta.sort = this.sort;
+    if(this.listaCompleta.data.length == 0){
+      this.establecerImportesPorDefecto();
+    }
+    this.calcularImportes();
+  }
+  //Reestablece el formulario
+  private reestablecerFormulario(id){
+    this.formulario.reset();
+    this.domicilio.reset();
+    this.localidad.reset();
+    this.condicionIVA.reset();
+    this.tipoProveedor.reset();
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
+    this.resultados = [];
+    this.obtenerFecha();
+    this.establecerImportesPorDefecto();
+    setTimeout(function () {
+      document.getElementById('idAutocompletado').focus();
+    }, 20);
+  }
+  //Inicializa valores por defecto
+  private establecerImportesPorDefecto(){
+    this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales('0.00', 2));
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -474,7 +598,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   } 
 }
 
-//Componente Confirmar
+//Componente Agregar Item Dialogo
 @Component({
   selector: 'agregar-item-dialogo',
   templateUrl: 'agregar-item-dialogo.html',
@@ -511,7 +635,9 @@ export class AgregarItemDialogo {
   constructor(public dialogRef: MatDialogRef<AgregarItemDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: CompraComprobanteItem, private insumoProductoService: InsumoProductoService,
     private appService: AppService, private depositoInsumoProductoService: DepositoInsumoProductoService, 
-    private afipAlicuotaIvaService: AfipAlicuotaIvaService) { }
+    private afipAlicuotaIvaService: AfipAlicuotaIvaService) {
+      dialogRef.disableClose = true;
+     }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -521,12 +647,13 @@ export class AgregarItemDialogo {
       });
     //Establece el formulario
     this.formulario = this.modelo.formulario;
+    //Obtiene la lista de afip alicuota iva
+    this.listarAfipAlicuotaIva();
     //Obtiene la lista de Depositos
     this.listarDepositos();
     //Inicializa los valores por defecto
-    this.establecerValoresPorDefecto();
-    //Obtiene la lista de afip alicuota iva
-    this.listarAfipAlicuotaIva();
+    this.reestablecerFormulario();
+    
     //Autocompletado InsumoProducto- Buscar por alias
     this.formulario.get('insumoProducto').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -550,36 +677,21 @@ export class AgregarItemDialogo {
     this.afipAlicuotaIvaService.listar().subscribe(
       res=>{
         this.afipAlicuotasIva = res.json();
+        this.establecerAfipAlicuotaIva();
       },
       err=>{
         console.log(err);
       }
     );
   }
-  //Inicializa valores por defecto
-  private establecerValoresPorDefecto(){
-    //Campos del Formulario General
-    this.formulario.get('cantidad').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formulario.get('precioUnitario').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formulario.get('importeITC').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formulario.get('importeIva').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formulario.get('afipAlicuotaIva').setValue(this.data.proveedor.afipCondicionIva);
-    this.condicionIva.setValue(this.data.proveedor.afipCondicionIva.nombre);
-    this.subtotal.setValue(this.appService.establecerDecimales('0.00', 2));
+  //Inicializa el campo Afip Alicuota Iva
+  private establecerAfipAlicuotaIva(){
     this.afipAlicuotasIva.forEach(
       item=>{
         if(item.porDefecto == true)
           this.formulario.get('alicuotaIva').setValue(item);
       }
     );
-    //Campos del Formulario ITC
-    this.importeITC.setValue(this.appService.establecerDecimales('0.00', 2));
-    this.netoITC.setValue(this.appService.establecerDecimales('0.00', 2));
-    this.deducirDeNoGravado.setValue(null);
-    this.importeNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
-    this.netoNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
   }
   //Establece valores por el insumoProducto seleccionado
   public establecerValores(){
@@ -589,22 +701,6 @@ export class AgregarItemDialogo {
       this.unidadMedida.setValue(insumoProducto.unidadMedida.nombre);
       this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(insumoProducto.itcPorLitro.toString(), 4));
     }
-  }
-  //Agregar item
-  public agregar() {
-    
-  }
-  //Actualizar item
-  public actualizar() {
-
-  }
-  //Eliminar un item
-  public eliminar() {
-
-  }
-  //Setea en el formulario el item a actualizar
-  public activarMod() {
-
   }
   //Calcula el Importe
   public calcularImporte(){
@@ -622,6 +718,7 @@ export class AgregarItemDialogo {
     if(precioUnitario == null || precioUnitario == undefined || cantidad == null || cantidad == undefined){
       this.toastr.error("Error al calcular el importe. Campo vacío en 'Precio Unitario' o en 'Cantidad'.");
     }
+    this.calcularImporteIVA();
   }
   //Calcula el Importe ITC 
   public calcularImporteITC(){
@@ -692,10 +789,10 @@ export class AgregarItemDialogo {
     let alicuotaIva = null;
     let importeIva = null;
     importeGravado = this.formulario.get('importeNetoGravado').value;
-    alicuotaIva = this.formulario.get('alicuotaIva').value;
+    alicuotaIva = this.formulario.get('alicuotaIva').value.alicuota;
     if(importeGravado && alicuotaIva){
       importeIva = (importeGravado*alicuotaIva)/100;
-      this.formulario.get('importeIva').setValue(importeIva);
+      this.formulario.get('importeIva').setValue(this.appService.establecerDecimales(importeIva, 2));
     }
   }
   //Calcula el Subtotal del Item
@@ -709,23 +806,45 @@ export class AgregarItemDialogo {
     let importeImpuestoInterno = null;
     let subtotal = null;
 
-    importeGravado = this.formulario.value.importeNetoGravado;
-    importeIva = this.formulario.value.importeIva;
-    importeItc = this.formulario.value.importeITC;
-    importeNoGravado = this.formulario.value.importeNoGravado;
-    importeExento = this.formulario.value.importeExento;
-    importeImpuestoInterno = this.formulario.value.importeImpuestoInterno;
+    importeGravado = Number(this.formulario.value.importeNetoGravado);
+    importeIva = Number(this.formulario.value.importeIva);
+    importeItc = Number(this.formulario.value.importeITC);
+    importeNoGravado = Number(this.formulario.value.importeNoGravado);
+    importeExento = Number(this.formulario.value.importeExento);
+    importeImpuestoInterno = Number(this.formulario.value.importeImpuestoInterno);
 
     subtotal = importeGravado + importeIva + importeItc + importeNoGravado + importeExento + importeImpuestoInterno;
+    console.log(importeGravado, importeIva , importeItc , importeNoGravado , importeExento , importeImpuestoInterno);
     this.subtotal.setValue(this.appService.establecerDecimales(subtotal, 2));
 
   }
   //Agrega un item a la lista de items
   public agregarItem(){
-    console.log(this.formulario.value);
+    this.controlarCamposVacios();
     this.listaItems.push(this.formulario.value);
     this.toastr.success("Item agregado con éxito.");
     this.reestablecerFormulario();
+  }
+  //Controla campso vacios. Establece en cero los nulos
+  private controlarCamposVacios(){
+    if(!this.formulario.value.cantidad || this.formulario.value.cantidad==undefined)
+      this.formulario.get('cantidad').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(!this.formulario.value.precioUnitario || this.formulario.value.precioUnitario==undefined)
+      this.formulario.get('precioUnitario').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(!this.formulario.value.importeNetoGravado || this.formulario.value.importeNetoGravado==undefined)
+      this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(!this.formulario.value.importeNoGravado || this.formulario.value.importeNoGravado==undefined)
+      this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(!this.formulario.value.importeExento || this.formulario.value.importeExento==undefined)
+      this.formulario.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(!this.formulario.value.importeImpuestoInterno || this.formulario.value.importeImpuestoInterno==undefined)
+      this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(!this.formulario.value.importeITC || this.formulario.value.importeITC==undefined)
+      this.formulario.get('importeITC').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(!this.formulario.value.importeIva || this.formulario.value.importeIva==undefined)
+      this.formulario.get('importeIva').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(!this.formulario.value.afipAlicuotaIva || this.formulario.value.afipAlicuotaIva==undefined)
+      this.formulario.get('afipAlicuotaIva').setValue(this.data.proveedor.afipCondicionIva);
   }
   //Reestablece el Formulario y los FormControls
   private reestablecerFormulario(){
@@ -736,7 +855,174 @@ export class AgregarItemDialogo {
     this.importeNoGravado.reset();
     this.netoNoGravado.reset();
     this.unidadMedida.reset();
-    this.establecerValoresPorDefecto();
+    this.establecerAfipAlicuotaIva();
+    this.formulario.get('afipAlicuotaIva').setValue(this.data.proveedor.afipCondicionIva);
+    this.condicionIva.setValue(this.data.proveedor.afipCondicionIva.nombre);
+    this.deducirDeNoGravado.setValue(null);
+    this.subtotal.setValue(this.appService.establecerDecimales('0.00', 2));
+    //Establece foco
+    setTimeout(function () {
+      document.getElementById('idInsumoProducto').focus();
+    }, 20);
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+   private compararFn(a, b) {
+     if (a != null && b != null) {
+       return a.id === b.id;
+     }
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if (elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Mascara decimales
+  public mascararDecimales(limit) {
+    return this.appService.mascararEnterosConDecimales(limit);
+  }
+  //Mascara para cuatro decimales
+  public mascararCuatroDecimales(limit){
+    return this.appService.mascararEnterosCon4Decimales(limit);
+  }
+   //Obtiene la mascara de importe
+   public mascararImporte(intLimite) {
+     return this.appService.mascararImporte(intLimite, 2);
+   }
+   //Obtiene la mascara de enteros
+   public mascararEnteros(intLimite) {
+     return this.appService.mascararEnteros(intLimite);
+   }
+   //Establece los decimales
+   public establecerDecimales(formulario, cantidad): void {
+     let valor = formulario.value;
+     if(valor) {
+       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+     }else{
+     }
+   }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+
+//Componente Agregar Item Dialogo
+@Component({
+  selector: 'detalle-percepciones-dialogo',
+  templateUrl: 'detalle-percepciones-dialogo.html',
+  styleUrls: ['./factura-debito-credito.component.css']
+})
+export class DetallePercepcionesDialogo {
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define la lista de Años 
+  public anios: Array<any> = [];
+  //Define la lista de Meses 
+  public meses: Array<any> = [];
+  //Define la lista de provincias 
+  public provincias: Array<any> = [];
+  //Define la lista de resultados de busqueda para insumoProducto
+  public resultados: Array<any> = [];
+  //Define la lista de tipos de percepciones
+  public tiposPercepciones: Array<any> = [];
+  //Define el campo Condicion de Iva como FormControl
+  public provincia: FormControl = new FormControl();
+  //Define el campo Importe de Jurisdiccion FormControl
+  public importeJurisdiccion: FormControl = new FormControl();
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<DetallePercepcionesDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
+    private loaderService: LoaderService, private modelo: CompraComprobantePercepcion, private compraComprobantePercepcion: CompraComprobantePercepcion,
+    private insumoProductoService: InsumoProductoService, private appService: AppService, private tipoPercepcionService: TipoPercepcionService,
+    private fechaService: FechaService, private mesService: MesService, private provinciaService: ProvinciaService) {
+      dialogRef.disableClose = true;
+     }
+  //Al inicializarse el componente
+  ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    //Establece el formulario
+    this.formulario = this.modelo.formulario;
+    //Obtiene la lista de recepciones
+    this.listarPercepciones();
+    //Obtiene la lista de anios mas menos uno
+    this.listarAniosMasMenosUno();
+    //Obtiene la lista de meses
+    this.listarMeses();
+    //Obtiene la lista de provincias
+    this.listarProvincias();
+    //Inicializa los valores por defecto
+    this.reestablecerFormulario();
+    
+    //Autocompletado InsumoProducto- Buscar por alias
+    this.formulario.get('insumoProducto').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.insumoProductoService.listarPorAlias(data).subscribe(response => {
+          this.resultados = response;
+        })
+      }
+    })
+  }
+  //Carga la lista de tipos de percepciones
+  public listarPercepciones(){
+    this.tipoPercepcionService.listar().subscribe(
+      res=>{
+        this.tiposPercepciones = res.json();
+      },
+      err=>{
+        console.log(err);
+      }
+    )
+  }
+  //Carga la lista de anios
+  private listarAniosMasMenosUno(){
+    this.fechaService.listarAniosMasMenosUno().subscribe(
+      res=>{
+        this.anios = res.json();
+      },
+      err=>{
+        this.toastr.error("Error al obtener la lista de años");
+      }
+    )
+  }
+  //Carga la lista de meses
+  private listarMeses(){
+    this.mesService.listarMeses().subscribe(
+      res=>{
+        this.meses = res.json();
+      },
+      err=>{
+        this.toastr.error("Error al obtener la lista de meses");
+      }
+    )
+  }
+  //Carga la lista de provincias
+  private listarProvincias(){
+    this.provinciaService.listar().subscribe(
+      res=>{
+        this.provincias = res.json();
+      },
+      err=>{
+        this.toastr.error("Error al obtener la lista de provincias");
+      }
+    )
+  }
+  //Reestablece el Formulario y los FormControls
+  private reestablecerFormulario(){
+    this.formulario.reset();
+    //Establece foco
+    setTimeout(function () {
+      document.getElementById('idInsumoProducto').focus();
+    }, 20);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

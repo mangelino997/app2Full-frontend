@@ -369,10 +369,11 @@ import { AfipTipoBeneficioDeduccionService } from './servicios/afip-tipo-benefic
 import { AfipTipoBeneficioService } from './servicios/afip-tipo-beneficio.service';
 import { AnularDialogo } from './componentes/viaje/anular-dialogo.component';
 import { NormalizarDialogo } from './componentes/viaje/normalizar-dialogo.component';
-import { FacturaDebitoCreditoComponent, AgregarItemDialogo } from './componentes/factura-debito-credito/factura-debito-credito.component';
+import { FacturaDebitoCreditoComponent, AgregarItemDialogo, DetallePercepcionesDialogo } from './componentes/factura-debito-credito/factura-debito-credito.component';
 import { FacturaDebitoCredito } from './modelos/facturaDebitoCredito';
 import { CompraComprobanteVencimiento } from './modelos/compra-comprobante-vencimiento';
 import { CompraComprobanteService } from './servicios/compra-comprobante.service';
+import { TipoPercepcionService } from './servicios/tipo-percepcion.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -661,7 +662,8 @@ const stompConfig: StompConfig = {
     DeduccionPersonalTablaComponent,
     ImporteAnualDialogo,
     FacturaDebitoCreditoComponent,
-    AgregarItemDialogo
+    AgregarItemDialogo,
+    DetallePercepcionesDialogo
   ],
   imports: [
     BrowserModule,
@@ -940,6 +942,7 @@ const stompConfig: StompConfig = {
     FacturaDebitoCredito,
     CompraComprobanteVencimiento,
     CompraComprobanteService,
+    TipoPercepcionService,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -982,7 +985,8 @@ const stompConfig: StompConfig = {
     AnularDialogo,
     NormalizarDialogo,
     ImporteAnualDialogo,
-    AgregarItemDialogo
+    AgregarItemDialogo,
+    DetallePercepcionesDialogo
   ]
 })
 export class AppModule { }

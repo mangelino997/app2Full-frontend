@@ -134,125 +134,127 @@
           </div>
 
           <div class="row">
-            <div class="col-md-12">
-              <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="id" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-                </ng-container>
-                <ng-container matColumnDef="producto" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo/Producto</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
-                </ng-container>
-                <ng-container matColumnDef="deposito" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Depósito</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
-                </ng-container>
-                <ng-container matColumnDef="cantidad" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
-                </ng-container>
-                <ng-container matColumnDef="precioUnitario" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>P.U</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento | number: '1.2-2'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="importeNetoGravado" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Neto Gravado</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento | number: '1.2-2'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="alicuotaIva" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento | number: '1.2-2'}}%</td>
-                </ng-container>
-                <ng-container matColumnDef="IVA" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>IVA</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento | number: '1.2-2'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="importeNoGravado" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>No Gravado</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento | number: '1.2-2'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="importeExento" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Exento</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento | number: '1.2-2'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="impuestoInterno" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. Interno</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento | number: '1.2-2'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="importeITC" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. ITC</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento | number: '1.2-2'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="cuentaContable" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Cont.</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
-                </ng-container>
-                <ng-container matColumnDef="eliminar" sticky>
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento" >
-                    <span class="cursor-color-rojo" (click)="activarEliminar(elemento.id)">
-                      Quitar
-                    </span>
-                  </td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-              </table>
+            <div class="tabla">
+              <div class="tabla-ancho">
+                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                  <ng-container matColumnDef="id">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                    <td mat-cell *matCellDef="let elemento; let i=index">{{i+1}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="producto">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo/Producto</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.insumoProducto.alias}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="deposito">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Depósito</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.depositoInsumoProducto.nombre}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="cantidad">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.cantidad | number: '1.2-2'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="precioUnitario">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>P.U</th>
+                    <td mat-cell *matCellDef="let elemento">$ {{elemento.precioUnitario | number: '1.2-2'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="importeNetoGravado">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Neto Gravado</th>
+                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeNetoGravado | number: '1.2-2'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="alicuotaIva">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.alicuotaIva.alicuota | number: '1.2-2'}}%</td>
+                  </ng-container>
+                  <ng-container matColumnDef="IVA">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>IVA</th>
+                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeIva | number: '1.2-2'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="importeNoGravado">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>No Gravado</th>
+                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeNoGravado | number: '1.2-2'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="importeExento">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Exento</th>
+                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeExento | number: '1.2-2'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="impuestoInterno">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. Interno</th>
+                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeImpuestoInterno | number: '1.2-2'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="importeITC">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. ITC</th>
+                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeITC | number: '1.2-2'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="cuentaContable">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Cont.</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.cuentaContable? elemento.cuentaContable : '-'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="eliminar">
+                    <th mat-header-cell *matHeaderCellDef>-</th>
+                    <td mat-cell *matCellDef="let elemento; let i=index" >
+                      <span class="cursor-color-rojo" (click)="activarEliminar(i)">
+                        Quitar
+                      </span>
+                    </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                  <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                </table>
+              </div>
             </div>
           </div>
 
           <div class="row" style="margin-top: 50px;">
             <div class="col">
-              <button id="idBotonPercepciones" mat-raised-button color="primary">Percepciones </button>
+              <button id="idBotonPercepciones" mat-raised-button color="primary" (click)="detallePercepcionDialogo()">Percepciones </button>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
-                <label id="labelImportePercepciones" for="idImportePercepciones" class="descripcion-label">Importe Percepciones</label>
+                <label id="labelImportePercepciones" for="idImportePercepciones" class="descripcion-label">Imp. Percepciones</label>
                 <input id="idImportePercepciones" type="text" formControlName="importePercepcion" autocomplete="off" readonly
-                class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelImporteNoGravado" for="idImporteNoGravado" class="descripcion-label">Importe No Gravado</label>
                 <input id="idImporteNoGravado" type="text" formControlName="importeNoGravado" autocomplete="off" readonly
-                class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelExento" for="idExento" class="descripcion-label">Importe Exento</label>
                 <input id="idExento" type="text" formControlName="importeExento" autocomplete="off" readonly
-                class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelimporteImpuestoInterno" for="idimporteImpuestoInterno" class="descripcion-label">Importe Imp. Int.</label>
                 <input id="idimporteImpuestoInterno" type="text" formControlName="importeImpuestoInterno" autocomplete="off" readonly
-                class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelImporteNetoGravado" for="idImporteNetoGravado" class="descripcion-label">Importe Neto Grav.</label>
                 <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado" autocomplete="off" readonly
-                class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelimporteIVA" for="idimporteIVA" class="descripcion-label">IVA</label>
                 <input id="idimporteIVA" type="text" formControlName="importeIVA" autocomplete="off" readonly
-                class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelImporteTotal" for="idImporteTotal" class="descripcion-label">Importe Total</label>
                 <input id="idImporteTotal" type="text" formControlName="importeTotal" autocomplete="off" readonly
-                class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
               </div>
             </div>
           </div>
@@ -261,8 +263,12 @@
             <div class="col-md-2">
               <div class="form-group has-float-label">
                 <label id="labelCondicionCompra" for="idCondicionCompra" class="descripcion-label">Condición de Compra *</label>
-                <input id="idCondicionCompra" type="text" formControlName="condicionCompra" autocomplete="off" readonly
-                class="form-control form-control-sm" >
+                <mat-select id="idCondicionCompra" class="form-control form-control-sm" formControlName="condicionCompra"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of condicionesCompra" [value]="item">
+                    {{item.nombre}}
+                  </mat-option>
+                </mat-select>
               </div>
             </div>
             <div class="col-md-2">
