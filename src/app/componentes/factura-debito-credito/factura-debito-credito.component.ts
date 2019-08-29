@@ -17,6 +17,7 @@ import { CompraComprobanteService } from 'src/app/servicios/compra-comprobante.s
 import { CompraComprobanteItem } from 'src/app/modelos/compra-comprobante-item';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
 import { DepositoInsumoProductoService } from 'src/app/servicios/deposito-insumo-producto.service';
+import { AfipAlicuotaIvaService } from 'src/app/servicios/afip-alicuota-iva.service';
 
 @Component({
   selector: 'app-factura-debito-credito',
@@ -403,9 +404,10 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   //Abre modal para agregar los items
   public agregarItemDialogo() {
     const dialogRef = this.dialog.open(AgregarItemDialogo, {
-      width: '1100px',
+      width: '95%',
+      maxWidth: '100vw',
       data: {
-
+        proveedor: this.formulario.value.proveedor
       },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -476,21 +478,30 @@ export class FacturaDebitoCreditoComponent implements OnInit {
 @Component({
   selector: 'agregar-item-dialogo',
   templateUrl: 'agregar-item-dialogo.html',
+  styleUrls: ['./factura-debito-credito.component.css']
 })
 export class AgregarItemDialogo {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista de items 
-  public listaItem: Array<any> = [];
+  public listaItems: Array<any> = [];
   //Define la lista de resultados de busqueda para insumoProducto
   public resultados: Array<any> = [];
-  //Define la lista de resultados de busqueda pata deposito
+  //Define la lista de tipos de depositos
   public tiposDepositos: Array<any> = [];
+  //Define la lista de afip alicuotas iva
+  public afipAlicuotasIva: Array<any> = [];
   //Define el campo Unidad de Medida como FormControl
   public unidadMedida: FormControl = new FormControl();
-  //Define el campo Neto ITC como FormControl
+  //Define el campo Condicion de Iva como FormControl
+  public condicionIva: FormControl = new FormControl();
+  //Define el campo Subtotal como FormControl
+  public subtotal: FormControl = new FormControl();
+  //Define los campos de ITC como FormControls
+  public importeITC: FormControl = new FormControl();
   public netoITC: FormControl = new FormControl();
-  //Define el campo Neto No Gravado como FormControl
+  public deducirDeNoGravado: FormControl = new FormControl();
+  public importeNoGravado: FormControl = new FormControl();
   public netoNoGravado: FormControl = new FormControl();
   //Define el mostrar del circulo de progreso
   public show = false;
@@ -499,7 +510,8 @@ export class AgregarItemDialogo {
   //Constructor
   constructor(public dialogRef: MatDialogRef<AgregarItemDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: CompraComprobanteItem, private insumoProductoService: InsumoProductoService,
-    private appService: AppService, private depositoInsumoProductoService: DepositoInsumoProductoService ) { }
+    private appService: AppService, private depositoInsumoProductoService: DepositoInsumoProductoService, 
+    private afipAlicuotaIvaService: AfipAlicuotaIvaService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -513,6 +525,8 @@ export class AgregarItemDialogo {
     this.listarDepositos();
     //Inicializa los valores por defecto
     this.establecerValoresPorDefecto();
+    //Obtiene la lista de afip alicuota iva
+    this.listarAfipAlicuotaIva();
     //Autocompletado InsumoProducto- Buscar por alias
     this.formulario.get('insumoProducto').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -528,20 +542,44 @@ export class AgregarItemDialogo {
         this.tiposDepositos = res.json();
       },
       err=>{
-        let error = err.json();
-        this.toastr.error(error.mensaje);
+        console.log(err);
       }
     )
   }
+  private listarAfipAlicuotaIva(){
+    this.afipAlicuotaIvaService.listar().subscribe(
+      res=>{
+        this.afipAlicuotasIva = res.json();
+      },
+      err=>{
+        console.log(err);
+      }
+    );
+  }
   //Inicializa valores por defecto
   private establecerValoresPorDefecto(){
-    this.formulario.get('cantidad').setValue(this.appService.establecerDecimales('0', 2));
-    this.formulario.get('precioUnitario').setValue(this.appService.establecerDecimales('0', 2));
-    this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0', 2));
-    this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0', 2));
-    this.netoNoGravado.setValue(this.appService.establecerDecimales('0', 2));
-    this.formulario.get('importeITC').setValue(this.appService.establecerDecimales('0', 2));
-    this.netoITC.setValue(this.appService.establecerDecimales('0', 2));
+    //Campos del Formulario General
+    this.formulario.get('cantidad').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('precioUnitario').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeITC').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('importeIva').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('afipAlicuotaIva').setValue(this.data.proveedor.afipCondicionIva);
+    this.condicionIva.setValue(this.data.proveedor.afipCondicionIva.nombre);
+    this.subtotal.setValue(this.appService.establecerDecimales('0.00', 2));
+    this.afipAlicuotasIva.forEach(
+      item=>{
+        if(item.porDefecto == true)
+          this.formulario.get('alicuotaIva').setValue(item);
+      }
+    );
+    //Campos del Formulario ITC
+    this.importeITC.setValue(this.appService.establecerDecimales('0.00', 2));
+    this.netoITC.setValue(this.appService.establecerDecimales('0.00', 2));
+    this.deducirDeNoGravado.setValue(null);
+    this.importeNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
+    this.netoNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
   }
   //Establece valores por el insumoProducto seleccionado
   public establecerValores(){
@@ -549,6 +587,7 @@ export class AgregarItemDialogo {
     insumoProducto = this.formulario.get('insumoProducto').value;
     if(insumoProducto){
       this.unidadMedida.setValue(insumoProducto.unidadMedida.nombre);
+      this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(insumoProducto.itcPorLitro.toString(), 4));
     }
   }
   //Agregar item
@@ -584,21 +623,120 @@ export class AgregarItemDialogo {
       this.toastr.error("Error al calcular el importe. Campo vacío en 'Precio Unitario' o en 'Cantidad'.");
     }
   }
-  //Calcula el Importe
+  //Calcula el Importe ITC 
   public calcularImporteITC(){
+    console.log(this.formulario.get('itcPorLitro').value);
+
     let cantidad = null;
-    let importeITC = null;
     let itcPorLitro = null;
-    cantidad = this.formulario.get('cantidad').value;
-    itcPorLitro = this.formulario.get('itcPorLitro').value;
+    let importeITC = null;
+    let netoITC = null;
+    let insumoNetoITC = null;
+    cantidad = Number(this.formulario.get('cantidad').value);
+    itcPorLitro = Number(this.formulario.get('itcPorLitro').value);
     // this.establecerDecimales(this.formulario.get('importeITC'), 2);
-    if(itcPorLitro){
-      importeITC = itcPorLitro * cantidad;
+    console.log(itcPorLitro);
+    if(itcPorLitro == 0 || itcPorLitro == '0.0000' || itcPorLitro == null || itcPorLitro == undefined ){
+      this.importeITC.setValue(this.appService.establecerDecimales('0.00', 2));
+      this.netoITC.setValue(this.appService.establecerDecimales('0.00', 2));
+      this.deducirDeNoGravado.setValue(null);
+      this.importeNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
+      this.netoNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
+
+      this.formulario.get('importeITC').setValue(this.appService.establecerDecimales('0.00', 2));
+      this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+
+      this.importeITC.disable();
+      this.netoITC.disable();
+      this.deducirDeNoGravado.disable();
+      this.importeNoGravado.disable();
+      this.netoNoGravado.disable();
+    }else{
+      this.importeITC.enable();
+      this.netoITC.enable();
+      this.deducirDeNoGravado.enable();
+      this.importeNoGravado.enable();
+      this.netoNoGravado.enable();
+
+
+      importeITC = itcPorLitro*cantidad;
+      insumoNetoITC = Number(this.formulario.value.insumoProducto.itcNeto);
+      netoITC = (importeITC*insumoNetoITC)/100;
+      console.log(importeITC, insumoNetoITC ,netoITC);
+      this.importeITC.setValue(this.appService.establecerDecimales(importeITC, 2));
       this.formulario.get('importeITC').setValue(this.appService.establecerDecimales(importeITC, 2));
+      this.netoITC.setValue(this.appService.establecerDecimales(netoITC, 2));
     }
-    if(itcPorLitro == 0 || itcPorLitro == '0.00' ){
-      
+  }
+  //Maneja el cambio en el select "Deducir de No Gravado"
+  public cambioDeducirNoGravado(){
+    console.log(this.deducirDeNoGravado.value);
+    if(this.deducirDeNoGravado.value){
+      this.importeNoGravado.enable();
+    }else{
+      this.importeNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
+      this.netoNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
+      this.importeNoGravado.disable();
     }
+  }
+  //Calcula el Neto No Gravado
+  public calcularNetoNoGravado(){
+    this.establecerDecimales(this.importeNoGravado, 2);
+    let netoNoGravado = null;
+    netoNoGravado = this.importeNoGravado.value - this.netoITC.value;
+    this.netoNoGravado.setValue(this.appService.establecerDecimales(netoNoGravado, 2));
+  }
+  //Calcula el Importe IVA
+  public calcularImporteIVA(){
+    let importeGravado = null;
+    let alicuotaIva = null;
+    let importeIva = null;
+    importeGravado = this.formulario.get('importeNetoGravado').value;
+    alicuotaIva = this.formulario.get('alicuotaIva').value;
+    if(importeGravado && alicuotaIva){
+      importeIva = (importeGravado*alicuotaIva)/100;
+      this.formulario.get('importeIva').setValue(importeIva);
+    }
+  }
+  //Calcula el Subtotal del Item
+  public calcularSubtotal(){
+    this.establecerDecimales(this.formulario.get('importeImpuestoInterno'), 2);
+    let importeGravado = null;
+    let importeIva = null;
+    let importeItc = null;
+    let importeNoGravado = null;
+    let importeExento = null;
+    let importeImpuestoInterno = null;
+    let subtotal = null;
+
+    importeGravado = this.formulario.value.importeNetoGravado;
+    importeIva = this.formulario.value.importeIva;
+    importeItc = this.formulario.value.importeITC;
+    importeNoGravado = this.formulario.value.importeNoGravado;
+    importeExento = this.formulario.value.importeExento;
+    importeImpuestoInterno = this.formulario.value.importeImpuestoInterno;
+
+    subtotal = importeGravado + importeIva + importeItc + importeNoGravado + importeExento + importeImpuestoInterno;
+    this.subtotal.setValue(this.appService.establecerDecimales(subtotal, 2));
+
+  }
+  //Agrega un item a la lista de items
+  public agregarItem(){
+    console.log(this.formulario.value);
+    this.listaItems.push(this.formulario.value);
+    this.toastr.success("Item agregado con éxito.");
+    this.reestablecerFormulario();
+  }
+  //Reestablece el Formulario y los FormControls
+  private reestablecerFormulario(){
+    this.formulario.reset();
+    this.importeITC.reset();
+    this.netoITC.reset();
+    this.deducirDeNoGravado.reset();
+    this.importeNoGravado.reset();
+    this.netoNoGravado.reset();
+    this.unidadMedida.reset();
+    this.establecerValoresPorDefecto();
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
