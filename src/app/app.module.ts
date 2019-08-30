@@ -373,11 +373,8 @@ import { FacturaDebitoCreditoComponent, AgregarItemDialogo, DetallePercepcionesD
 import { FacturaDebitoCredito } from './modelos/facturaDebitoCredito';
 import { CompraComprobanteVencimiento } from './modelos/compra-comprobante-vencimiento';
 import { CompraComprobanteService } from './servicios/compra-comprobante.service';
-<<<<<<< HEAD
 import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
-=======
 import { TipoPercepcionService } from './servicios/tipo-percepcion.service';
->>>>>>> 392b63db4a205867986bcb839d510ba3ebced280
 
 //Rutas
 const appRoutes: Routes = [
@@ -666,11 +663,8 @@ const stompConfig: StompConfig = {
     ImporteAnualDialogo,
     FacturaDebitoCreditoComponent,
     AgregarItemDialogo,
-<<<<<<< HEAD
-    ConfirmarDialogoComponent
-=======
+    ConfirmarDialogoComponent,
     DetallePercepcionesDialogo
->>>>>>> 392b63db4a205867986bcb839d510ba3ebced280
   ],
   imports: [
     BrowserModule,

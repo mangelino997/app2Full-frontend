@@ -14,7 +14,7 @@ export class OrdenVenta {
             version: new FormControl(),
             nombre: new FormControl('', Validators.required),
             vendedor: new FormControl('', Validators.required),
-            seguro: new FormControl('', Validators.required),
+            seguro: new FormControl(),
             comisionCR: new FormControl(),
             observaciones: new FormControl(),
             esContado: new FormControl(),

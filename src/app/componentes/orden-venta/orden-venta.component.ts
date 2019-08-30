@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ClienteService } from '../../servicios/cliente.service';
@@ -313,6 +313,11 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioEscala.reset();
     this.formularioTramo.reset();
     this.formularioListar.reset();
+    this.soloLectura = false;
+    this.tipoOrdenVenta.enable();
+    this.formulario.enable();
+    this.preciosDesde.enable();
+    this.tipoTarifa.enable();
     this.cliente.reset();
     this.vaciarLista();
     this.ordenventa.reset();
@@ -327,8 +332,8 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    this.formulario.get('seguro').setValue(this.appService.establecerDecimales('7.00', 2));
-    this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0.00', 2));
+    // this.formulario.get('seguro').setValue(this.appService.establecerDecimales('7.00', 2));
+    // this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('esContado').setValue(true);
     this.formulario.get('estaActiva').setValue(true);
     this.soloLecturaMod = false;
@@ -487,6 +492,12 @@ export class OrdenVentaComponent implements OnInit {
       let empresa = this.appService.getEmpresa();
       this.formulario.get('id').setValue(null);
       this.formulario.get('ordenesVentasTarifas').setValue(this.formularioTarifa.value);
+      if (!this.formulario.get('seguro').value) {
+        this.formulario.get('seguro').setValue(this.appService.setDecimales('7', 2));
+      }
+      if (!this.formulario.get('comisionCR').value) {
+        this.formulario.get('comisionCR').setValue(this.appService.setDecimales('0', 2));
+      }
       this.servicio.agregar(this.formulario.value, usuarioAlta, empresa, this.cliente.value).then(
         res => {
           if (res.status == 201) {
@@ -540,11 +551,11 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Reestablece los campos al agregar orden de venta
   public agregarOrdenVenta(): void {
-    this.soloLectura = false;
-    this.tipoOrdenVenta.enable();
-    this.formulario.enable();
-    this.preciosDesde.enable();
-    this.tipoTarifa.enable();
+    // this.soloLectura = false;
+    // this.tipoOrdenVenta.enable();
+    // this.formulario.enable();
+    // this.preciosDesde.enable();
+    // this.tipoTarifa.enable();
     this.reestablecerCampos();
     document.getElementById('idTipoOrdenVenta').focus();
     this.toastr.success('Registro agregado con éxito');
@@ -552,6 +563,12 @@ export class OrdenVentaComponent implements OnInit {
   //Actualiza una orden de venta
   public actualizarOrdenVenta(): void {
     this.loaderService.show();
+    if (this.formulario.get('seguro').value) {
+      this.formulario.get('seguro').setValue(this.appService.setDecimales(7, 2));
+    }
+    if (this.formulario.get('comisionCR').value) {
+      this.formulario.get('comisionCR').setValue(this.appService.setDecimales(0, 2));
+    }
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -739,12 +756,12 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Controla que los porcentajes queden bien establecidos
   private establecerPorcentajes(elemento) {
-    if (elemento.seguro)
+    if (elemento.seguro) {
       this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentajePorMil(elemento.seguro.toString(), 2));
-    if (elemento.comisionCR == 0)
-      this.formulario.get('comisionCR').setValue(this.appService.desenmascararPorcentaje('0.00', 2));
-    else
+    }
+    if (elemento.comisionCR) {
       this.formulario.get('comisionCR').setValue(this.appService.desenmascararPorcentaje(elemento.comisionCR.toString(), 2));
+    }
   }
   //Obtiene la mascara de importe
   public mascaraImporte(intLimite, decimalLimite) {
@@ -858,7 +875,7 @@ export class OrdenVentaComponent implements OnInit {
   templateUrl: 'ver-tarifa-dialogo.html',
   styleUrls: ['./orden-venta.component.css']
 })
-export class VerTarifaDialogo implements AfterViewInit {
+export class VerTarifaDialogo {
   //Define un formulario para Orden Venta Escala o Tramo
   public formularioTramo: FormGroup;
   public formularioEscala: FormGroup;
@@ -912,9 +929,6 @@ export class VerTarifaDialogo implements AfterViewInit {
     private ordenVentaTramoService: OrdenVentaTramoService, private loaderService: LoaderService, private escalaTarifaService: EscalaTarifaService,
     private appService: AppService, private tramoService: TramoService) {
     dialogRef.disableClose = true;
-  }
-  ngAfterViewInit(): void {
-    // document.getElementById('idEscala').focus();
   }
   //Al inicializarse el componente
   ngOnInit() {
@@ -1005,11 +1019,9 @@ export class VerTarifaDialogo implements AfterViewInit {
       if (realizarAgregar == true) {
         this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
           res => {
-            let respuesta = res.json();
             if (res.status == 201) {
               this.listar();
               this.cancelar();
-              // this.reestablecerFormularios();
               document.getElementById('idEscala').focus();
               this.toastr.success("Registro agregado con éxito");
             }
@@ -1023,14 +1035,11 @@ export class VerTarifaDialogo implements AfterViewInit {
         )
       }
     } else {
-      console.log(this.formularioTramo.value);
       this.ordenVentaTramoService.agregar(this.formularioTramo.value).subscribe(
         res => {
-          let respuesta = res.json();
           if (res.status == 201) {
             this.listar();
             this.cancelar();
-            // this.reestablecerFormularios();
             document.getElementById('idTramo').focus();
             this.toastr.success("Registro agregado con éxito");
           }
@@ -1079,7 +1088,6 @@ export class VerTarifaDialogo implements AfterViewInit {
     } else {
       this.ordenVentaTramoService.actualizar(this.formularioTramo.value).subscribe(
         res => {
-          let respuesta = res.json();
           if (res.status == 200) {
             this.cancelar();
             this.listar();
@@ -1106,11 +1114,10 @@ export class VerTarifaDialogo implements AfterViewInit {
     if (this.tipoTarifa == 'porEscala') {
       this.ordenVentaEscalaService.eliminar(elemento.id).subscribe(
         res => {
-          var respuesta = res.json();
-          this.toastr.success("Registro eliminado con éxito");
           this.reestablecerFormularios();
-          this.loaderService.hide();
           this.listar();
+          this.toastr.success("Registro eliminado con éxito");
+          this.loaderService.hide();
         },
         err => {
           let error = err.json();
@@ -1121,7 +1128,6 @@ export class VerTarifaDialogo implements AfterViewInit {
     } else {
       this.ordenVentaTramoService.eliminar(elemento.id).subscribe(
         res => {
-          var respuesta = res.json();
           this.toastr.success("Registro eliminado con éxito");
           this.reestablecerFormularios();
           this.listar();
@@ -1150,7 +1156,6 @@ export class VerTarifaDialogo implements AfterViewInit {
           this.loaderService.hide();
         }
       )
-
     } else {
       this.ordenVentaTramoService.listarPorOrdenVentaTarifa(this.ordenVentaTarifa.id).subscribe(
         res => {
@@ -1184,11 +1189,12 @@ export class VerTarifaDialogo implements AfterViewInit {
     } else {
       this.tipoTarifa = "porTramo";
       this.formularioTramo.get('ordenVentaTarifa').setValue({ id: this.ordenVentaTarifa.id });
-      this.formularioTramo.get('importeFijoSeco').setValue('0.00');
-      this.formularioTramo.get('importeFijoRef').setValue('0.00');
-      this.formularioTramo.get('precioUnitarioSeco').setValue('0.00');
-      this.formularioTramo.get('precioUnitarioRef').setValue('0.00');
+      this.formularioTramo.get('importeFijoSeco').setValue(null);
+      this.formularioTramo.get('importeFijoRef').setValue(null);
+      this.formularioTramo.get('precioUnitarioSeco').setValue(null);
+      this.formularioTramo.get('precioUnitarioRef').setValue(null);
       this.formularioTramo.get('preciosDesde').setValue(this.preciosDesde.value);
+      this.controlarCamposTramo();
     }
   }
   //Controla campos habilitados y deshabilitados
@@ -1199,25 +1205,34 @@ export class VerTarifaDialogo implements AfterViewInit {
       this.formularioEscala.get('precioUnitario').disable();
       this.formularioEscala.get('minimo').disable();
       this.formularioEscala.get('porcentaje').enable();
-      if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
-        this.soloLectura = true;
-      }
     } else {
-      //Inicializa por defecto el select de 'importePor' cuando es porEscala
-      if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
-        this.soloLectura = true;
-        this.importePor.disable();
-      }
-      else {
-        this.soloLectura = false;
-        this.importePor.enable();
-        this.importePor.setValue(false);
-      }
       this.formularioEscala.get('importeFijo').enable();
       this.formularioEscala.get('precioUnitario').enable();
       this.formularioEscala.get('minimo').enable();
       this.formularioEscala.get('porcentaje').disable();
       this.cambioImportesPor();
+    }
+    if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
+      this.soloLectura = true;
+      this.importePor.disable();
+    }
+    else {
+      this.soloLectura = false;
+      this.importePor.enable();
+      this.importePor.setValue(false);
+    }
+  }
+  //Controla estado campos por tramo
+  public controlarCamposTramo(): void {
+    if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
+      this.soloLectura = true;
+      this.importeSecoPor.disable();
+      this.importeRefPor.disable();
+    }
+    else {
+      this.soloLectura = false;
+      this.importeSecoPor.enable();
+      this.importeRefPor.enable();
     }
   }
   //Controla el modificar en Escala
