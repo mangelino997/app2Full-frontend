@@ -215,6 +215,7 @@ import { TalonarioReciboLote } from './modelos/talonarioReciboLote';
 import { OrdenVentaTarifa } from './modelos/ordenVentaTarifa';
 import { TalonarioReciboCobrador } from './modelos/talonarioReciboCobrador';
 import { Soporte } from './modelos/soporte';
+import { MensajeExcepcion } from './modelos/mensaje-excepcion';
 
 //Componentes
 import { AppComponent } from './app.component';
@@ -340,7 +341,6 @@ import { DepositoInsumoProductoComponent } from './componentes/deposito-insumo-p
 import { DepositoInsumoProducto } from './modelos/depositoInsumoProducto';
 import { TalonarioReciboCobradorComponent } from './componentes/talonario-recibo-cobrador/talonario-recibo-cobrador.component';
 import { TalonarioReciboLoteComponent } from './componentes/talonario-recibo-lote/talonario-recibo-lote.component';
-import { EliminarModalComponent } from './componentes/eliminar-modal/eliminar-modal.component';
 import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from './componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
 import { BugImagen } from './modelos/bugImagen';
@@ -373,6 +373,7 @@ import { FacturaDebitoCreditoComponent, AgregarItemDialogo, DetallePercepcionesD
 import { FacturaDebitoCredito } from './modelos/facturaDebitoCredito';
 import { CompraComprobanteVencimiento } from './modelos/compra-comprobante-vencimiento';
 import { CompraComprobanteService } from './servicios/compra-comprobante.service';
+import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
 import { TipoPercepcionService } from './servicios/tipo-percepcion.service';
 
 //Rutas
@@ -492,7 +493,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.123:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -650,7 +651,6 @@ const stompConfig: StompConfig = {
     TalonarioReciboCobradorComponent,
     TalonarioReciboLoteComponent,
     VerTarifaDialogo,
-    EliminarModalComponent,
     PdfDialogoComponent,
     ListasDePreciosDialog,
     BugImagenDialogoComponent,
@@ -663,6 +663,7 @@ const stompConfig: StompConfig = {
     ImporteAnualDialogo,
     FacturaDebitoCreditoComponent,
     AgregarItemDialogo,
+    ConfirmarDialogoComponent,
     DetallePercepcionesDialogo
   ],
   imports: [
@@ -912,6 +913,7 @@ const stompConfig: StompConfig = {
     TalonarioReciboLoteService,
     SoporteService,
     Soporte,
+    MensajeExcepcion,
     TalonarioReciboLote,
     FotoService,
     OrdenVentaTarifa,
@@ -979,7 +981,7 @@ const stompConfig: StompConfig = {
     PlanCuentaDialogo,
     VerTarifaDialogo,
     ListasDePreciosDialog,
-    EliminarModalComponent,
+    ConfirmarDialogoComponent,
     PdfDialogoComponent,
     BugImagenDialogoComponent,
     AnularDialogo,

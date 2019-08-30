@@ -8,8 +8,7 @@
       <div class="col-md-3">
         <div class="form-group has-float-label">
           <label for="idPreciosDesde" class="tamanio-label">Precios Desde</label>
-          <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" class="form-control form-control-sm"
-            readonly>
+          <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" class="form-control form-control-sm">
         </div>
       </div>
     </div>
@@ -159,16 +158,14 @@
                     *ngIf="importeSecoPor">*</span></label>
                 <input id="idImporteFijoSeco" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
                   class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoSeco"
-                  (blur)="controlPreciosTramo(1)" type="text" autocomplete="off" placeholder="$ 0.00"
-                  style="width: 130px;">
+                  (blur)="controlPreciosTramo(1)" type="text" autocomplete="off" placeholder="$ 0.00">
               </div>
               <div class="form-group has-float-label" *ngIf="importeSecoPor.value">
                 <label for="idPrecioUnitarioSeco" class="tamanio-label">Precio Un. Seco <span
                     *ngIf="!importeSecoPor">*</span></label>
                 <input id="idPrecioUnitarioSeco" [textMask]="mascaraImporte(10, 2)" [readOnly]="soloLectura"
                   class="form-control form-control-sm margin-left-5 number-right" type="text" autocomplete="off"
-                  formControlName="precioUnitarioSeco" (blur)="controlPreciosTramo(2)" placeholder="$ 0.00"
-                  style="width: 142px;">
+                  formControlName="precioUnitarioSeco" (blur)="controlPreciosTramo(2)" placeholder="$ 0.00">
               </div>
             </div>
             <div class="col-md-2">
@@ -177,16 +174,14 @@
                     *ngIf="importeRefPor">*</span></label>
                 <input id="idImporteFijoRef" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right" formControlName="importeFijoRef"
-                  (blur)="controlPreciosTramoRef(1)" type="text" autocomplete="off" placeholder="$ 0.00"
-                  style="width: 124px;">
+                  (blur)="controlPreciosTramoRef(1)" type="text" autocomplete="off" placeholder="$ 0.00">
               </div>
               <div class="form-group has-float-label" *ngIf="importeRefPor.value">
                 <label for="idPrecioUnitarioRef" class="tamanio-label">Precio Un. Ref. <span
                     *ngIf="!importeRefPor">*</span></label>
                 <input id="idPrecioUnitarioRef" [textMask]="mascaraImporte(10, 2)"
                   class="form-control form-control-sm margin-left-5 number-right" type="text" autocomplete="off"
-                  (blur)="controlPreciosTramoRef(2)" formControlName="precioUnitarioRef" placeholder="$ 0.00"
-                  style="width: 137px;">
+                  (blur)="controlPreciosTramoRef(2)" formControlName="precioUnitarioRef" placeholder="$ 0.00">
               </div>
             </div>
             <div class="col-md-2">
@@ -196,11 +191,11 @@
                 <mat-icon>add</mat-icon>
               </button>
               <button mat-raised-button class="mat-raised-button-icon" color="primary" (click)="actualizar()"
-                *ngIf="idMod != null" matTooltip="Editar" matTooltipPosition="above">
+                matTooltip="Editar" matTooltipPosition="above" *ngIf="idMod != null">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-raised-button class="mat-raised-button-icon" (click)="cancelar()" matTooltip="Cancelar"
-                matTooltipPosition="above">
+              <button mat-raised-button class="mat-raised-button-icon margin-left-3" (click)="cancelar()" matTooltip="Cancelar"
+                matTooltipPosition="above" *ngIf="idMod != null">
                 <mat-icon>close</mat-icon>
               </button>
             </div>
@@ -255,7 +250,7 @@
                 <button mat-icon-button class="mat-icon-button-table" (click)="controlEliminarEscala(elemento)"
                   *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Eliminar"
                   matTooltipPosition="above">
-                  <mat-icon>close</mat-icon>
+                  <mat-icon>delete</mat-icon>
                 </button>
               </td>
             </ng-container>
@@ -266,15 +261,30 @@
       </div>
     </div>
     <div class="tabla" *ngIf="tipoTarifa == 'porTramo'">
-      <div class="">
+      <div class="tabla-ancho">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="tramoOrigen">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Origen</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.origen.nombre: '--'}}</td>
+          <ng-container matColumnDef="eliminar">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento">
+              <button mat-icon-button class="mat-icon-button-table" (click)="controlEliminarTramo(elemento)"
+                *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Eliminar" matTooltipPosition="above">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
           </ng-container>
-          <ng-container matColumnDef="tramoDestino">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo Destino</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.destino.nombre: '--'}}</td>
+          <ng-container matColumnDef="mod">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento">
+              <button mat-icon-button class="mat-icon-button-table" (click)="controlModTramo(elemento)"
+                *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Editar" matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="origendestino">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.tramo? elemento.tramo.origen.nombre: '--'}} ->
+              {{elemento.tramo? elemento.tramo.destino.nombre: '--'}}</td>
           </ng-container>
           <ng-container matColumnDef="km">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
@@ -291,39 +301,21 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="precioUnitSeco">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Seco</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Un. Seco</th>
             <td mat-cell *matCellDef="let elemento">
               <span>$ {{establecerDecimales(elemento.precioUnitarioSeco, 2)}}</span>
             </td>
           </ng-container>
           <ng-container matColumnDef="precioFijoRefrig">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Regrigerado</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Fijo Ref.</th>
             <td mat-cell *matCellDef="let elemento">
               <span>$ {{establecerDecimales(elemento.importeFijoRef, 2)}}</span>
             </td>
           </ng-container>
           <ng-container matColumnDef="precioUnitRefrig">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Refrigerado</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Un. Ref.</th>
             <td mat-cell *matCellDef="let elemento">
               <span>$ {{establecerDecimales(elemento.precioUnitarioRef, 2)}}</span>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="mod">
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento">
-              <button mat-icon-button class="mat-icon-button-table" (click)="controlModTramo(elemento)"
-                *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Editar" matTooltipPosition="above">
-                <mat-icon>edit</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="eliminar">
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento">
-              <button mat-icon-button class="mat-icon-button-table" (click)="controlEliminarTramo(elemento)"
-                *ngIf="indiceSeleccionado==1 || indiceSeleccionado==3" matTooltip="Eliminar" matTooltipPosition="above">
-                <mat-icon>close</mat-icon>
-              </button>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnasTramo"></tr>
