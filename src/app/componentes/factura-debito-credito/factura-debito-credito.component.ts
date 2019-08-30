@@ -22,6 +22,7 @@ import { CompraComprobantePercepcion } from 'src/app/modelos/compra-comprobante-
 import { TipoPercepcionService } from 'src/app/servicios/tipo-percepcion.service';
 import { MesService } from 'src/app/servicios/mes.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
+import { CompraComprobantePercepcionJurisdiccion } from 'src/app/modelos/compra-comprobante-percepcion-jurisdiccion';
 
 @Component({
   selector: 'app-factura-debito-credito',
@@ -49,8 +50,6 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public formulario: FormGroup;
   //Define un formulario para la pestaña Listar y  sus validaciones de campos
   public formularioListar: FormGroup;
-  //Define la lista completa de registros
-  public listaCompleta = new MatTableDataSource([]);
   //Define los formControl para los datos del cliente
   public domicilio: FormControl = new FormControl();
   public localidad: FormControl = new FormControl();
@@ -76,10 +75,11 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public resultadosCompaniasSeguros: Array<any> = [];
   //Defien la lista de empresas
   public empresas: Array<any> = [];
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'producto', 'deposito', 'cantidad', 'precioUnitario', 'importeNetoGravado', 'alicuotaIva', 'IVA',
    'importeNoGravado', 'importeExento', 'impuestoInterno', 'importeITC', 'cuentaContable', 'eliminar'];
-
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -425,6 +425,9 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
+      //Seteo la lista de Item en el formulario
+      this.formulario.get('compraComprobanteItems').setValue(result);
+      //Cargo los items a la tabla
       if(this.listaCompleta.data.length > 0){
         result.forEach(item =>{
           this.listaCompleta.data.push(item);
@@ -434,7 +437,6 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         this.listaCompleta = new MatTableDataSource(result);
         this.listaCompleta.sort = this.sort;
       }
-      
       this.calcularImportes();
     });
   }
@@ -444,12 +446,34 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       width: '95%',
       maxWidth: '100vw',
       data: {
-        proveedor: this.formulario.value.proveedor
+        detallePercepcion: this.formulario.value.compraComprobantePercepciones
       },
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
+      if(result){
+        this.formulario.get('compraComprobantePercepciones').setValue(result);
+        this.calcularImportesPercepciones(result);
+      }else{
+        this.formulario.get('compraComprobantePercepciones').setValue([]);
+        this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales('0.00', 2));
+      }
     });
+  }
+  //Calcula el importe total de detalle percepciones
+  public calcularImportesPercepciones(listaPercepciones){
+    let importePercepciones = null;
+    //Suma el importe de las percepciones
+    listaPercepciones.forEach(
+      item=>{
+        importePercepciones += Number(item.importe);
+      }
+    );
+    //Setea el valor correspondiente en el formulario
+    if(importePercepciones > 0)
+      this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales(importePercepciones, 2));
+      else
+      this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales('0.00', 2));
   }
   //Calcula los importes
   public calcularImportes(){
@@ -918,6 +942,8 @@ export class AgregarItemDialogo {
 export class DetallePercepcionesDialogo {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para validaciones de campos
+  public formularioPorJurisdiccion: FormGroup;
   //Define la lista de Años 
   public anios: Array<any> = [];
   //Define la lista de Meses 
@@ -928,17 +954,29 @@ export class DetallePercepcionesDialogo {
   public resultados: Array<any> = [];
   //Define la lista de tipos de percepciones
   public tiposPercepciones: Array<any> = [];
+  //Define un boolean para controlar vista de campos Percepción por Jurisdicción
+  public mostrarCamposPorJurisdiccion: boolean = false;
   //Define el campo Condicion de Iva como FormControl
   public provincia: FormControl = new FormControl();
   //Define el campo Importe de Jurisdiccion FormControl
   public importeJurisdiccion: FormControl = new FormControl();
+  //Define la lista completa de registros para la primera tabla
+  public listaCompletaPorJurisdiccion = new MatTableDataSource([]);
+  //Define la lista completa de registros para la segunda tabla
+  public listaCompleta = new MatTableDataSource([]);
+  //Define las columnas de la primer tabla (percepciones por jurisdiccion)
+  public columnasPercepcionPorJurisdiccion: string[] = ['provincia', 'importe', 'eliminar'];
+  //Define las columnas de la segunda tabla (percepciones)
+  public columnasPercepcion: string[] = ['tipoPercepcion', 'anio', 'mes', 'importe', 'eliminar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<DetallePercepcionesDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
-    private loaderService: LoaderService, private modelo: CompraComprobantePercepcion, private compraComprobantePercepcion: CompraComprobantePercepcion,
+    private loaderService: LoaderService, private modelo: CompraComprobantePercepcion, private modeloPorJurisdiccion: CompraComprobantePercepcionJurisdiccion,
     private insumoProductoService: InsumoProductoService, private appService: AppService, private tipoPercepcionService: TipoPercepcionService,
     private fechaService: FechaService, private mesService: MesService, private provinciaService: ProvinciaService) {
       dialogRef.disableClose = true;
@@ -950,8 +988,16 @@ export class DetallePercepcionesDialogo {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-    //Establece el formulario
+    //Establece el formulario General (sin detalle por jurisdicción)
     this.formulario = this.modelo.formulario;
+    //Establece el formulario Por Jurisdiccion 
+    this.formularioPorJurisdiccion = this.modeloPorJurisdiccion.formulario;
+    //Establece la lista de percepciones
+    console.log([this.data.detallePercepcion]);
+    if(this.data.detallePercepcion){
+      this.listaCompleta = new MatTableDataSource(this.data.detallePercepcion);
+      this.listaCompleta.sort = this.sort;
+    }
     //Obtiene la lista de recepciones
     this.listarPercepciones();
     //Obtiene la lista de anios mas menos uno
@@ -960,17 +1006,8 @@ export class DetallePercepcionesDialogo {
     this.listarMeses();
     //Obtiene la lista de provincias
     this.listarProvincias();
-    //Inicializa los valores por defecto
-    this.reestablecerFormulario();
-    
-    //Autocompletado InsumoProducto- Buscar por alias
-    this.formulario.get('insumoProducto').valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.insumoProductoService.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
-      }
-    })
+    //Reestablece el formulario general
+    this.reestablecerFormularioGeneral();
   }
   //Carga la lista de tipos de percepciones
   public listarPercepciones(){
@@ -996,7 +1033,7 @@ export class DetallePercepcionesDialogo {
   }
   //Carga la lista de meses
   private listarMeses(){
-    this.mesService.listarMeses().subscribe(
+    this.mesService.listar().subscribe(
       res=>{
         this.meses = res.json();
       },
@@ -1016,12 +1053,97 @@ export class DetallePercepcionesDialogo {
       }
     )
   }
-  //Reestablece el Formulario y los FormControls
-  private reestablecerFormulario(){
-    this.formulario.reset();
-    //Establece foco
+  //Controla el cambio en el campo de selecicon Tipo de Percepción
+  public cambioTipoPercepcion(){
+    let elemento = this.formulario.get('tipoPercepcion').value;
+    if(elemento.detallePorJurisdiccion){
+      this.mostrarCamposPorJurisdiccion = true;
+    }else{
+      this.mostrarCamposPorJurisdiccion = false;
+    }
+  }
+  //Agrega una precepcion a la primera tabla (percepcion por jurisdiccion)
+  public agregarPercepcionPorJurisdiccion(){
+    if(this.listaCompletaPorJurisdiccion.data.length == 0){
+      this.listaCompletaPorJurisdiccion = new MatTableDataSource([this.formularioPorJurisdiccion.value]);
+      this.listaCompletaPorJurisdiccion.sort = this.sort;
+      this.toastr.success("Percepción por jurisdicción agregada con éxito.");
+      this.reestablecerFormularioPorJurisdiccion();
+    }else{
+      //Controla unicidad de la provincia en la tabla
+      let indice = null;
+      indice = this.listaCompletaPorJurisdiccion.data.findIndex(
+        item => item.provincia.id === this.formularioPorJurisdiccion.value.provincia.id);
+        if(indice >= 0){ //La provincia ya fue cargada anteriormente
+          this.toastr.error("La provincia seleccionada ya fue agregada a la tabla.");
+          this.formularioPorJurisdiccion.get('provincia').reset();
+          setTimeout(function () {
+            document.getElementById('idProvincia').focus();
+          }, 20);
+        }else{ //La provincia no se encuentra en la tabla (devuelve -1)
+          this.listaCompletaPorJurisdiccion.data.push(this.formularioPorJurisdiccion.value);
+          this.listaCompletaPorJurisdiccion.sort = this.sort;
+          this.toastr.success("Percepción por jurisdicción agregada con éxito.");
+          this.reestablecerFormularioPorJurisdiccion();
+        }
+    }
+  }
+  //Controla antes de Agregar Percepcion
+  public controlarAgregarPercepcion(){
+    if(this.mostrarCamposPorJurisdiccion){ //Controla que los importes coincidan cuando es por jurisdiccion
+      let importe = null;
+      this.listaCompletaPorJurisdiccion.data.forEach(
+        item => {
+          importe += Number(item.importe);
+        }
+      );
+      if(importe == Number(this.formulario.value.importe)){ //Controla igualdad de importes
+        this.agregarPercepcion();
+      }else{
+        this.toastr.error("La suma de importes por jurisdicción es diferente al importe de cabecera.");
+      }
+    }
+    if(!this.mostrarCamposPorJurisdiccion){
+      this.agregarPercepcion();
+    }
+  }
+  //Agrega una percepcion a la segunda tabla
+  private agregarPercepcion(){
+    this.formulario.get('compraCptePercepcionJurisdicciones').setValue(this.listaCompletaPorJurisdiccion.data);
+    if(this.listaCompleta.data.length == 0){
+      this.listaCompleta = new MatTableDataSource([this.formulario.value]);
+      this.listaCompleta.sort = this.sort;
+    }else{
+      this.listaCompleta.data.push(this.formulario.value);
+      this.listaCompleta.sort = this.sort;
+    }
+    this.toastr.success("Percepción agregada con éxito.");
+    this.reestablecerFormularioGeneral();
+  }
+  //Elimina un item de la primera tabla
+  public activarEliminarPorJurisdiccion(indice){
+    this.listaCompletaPorJurisdiccion.data.splice(indice, 1);
+    this.listaCompletaPorJurisdiccion.sort = this.sort;
+  }
+  //Elimina un item de segunda la tabla
+  public activarEliminarPercepcion(indice){
+    this.listaCompleta.data.splice(indice, 1);
+    this.listaCompleta.sort = this.sort;
+  }
+  //Reestablece el Formulario general
+  private reestablecerFormularioPorJurisdiccion(){
+    this.formularioPorJurisdiccion.reset();
     setTimeout(function () {
-      document.getElementById('idInsumoProducto').focus();
+      document.getElementById('idProvincia').focus();
+    }, 20);
+  }
+  //Reestablece el Formulario percepciones por jurisdiccion
+  private reestablecerFormularioGeneral(){
+    this.formulario.reset();
+    this.listaCompletaPorJurisdiccion = new MatTableDataSource([]);
+    this.listaCompletaPorJurisdiccion.sort = this.sort;
+    setTimeout(function () {
+      document.getElementById('idTipoPercepcion').focus();
     }, 20);
   }
   //Define el mostrado de datos y comparacion en campo select
@@ -1063,7 +1185,12 @@ export class DetallePercepcionesDialogo {
      }else{
      }
    }
-  onNoClick(): void {
-    this.dialogRef.close();
+  closeDialog(opcion) {
+    if(opcion == 'aceptar'){
+      this.dialogRef.close(this.listaCompleta.data);
+    }
+    if(opcion == 'cerrar'){
+      this.dialogRef.close(null);
+    }
   }
 }

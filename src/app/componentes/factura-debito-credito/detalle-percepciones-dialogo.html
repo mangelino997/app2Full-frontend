@@ -5,18 +5,18 @@
                 <div class="col-md-12">
                   <form [formGroup]="formulario">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group has-float-label">
                                 <label for="idTipoPercepcion" class="tamanio-label">Tipo de Percepción *</label>
                                 <mat-select id="idTipoPercepcion" class="form-control form-control-sm" formControlName="tipoPercepcion"
-                                [compareWith]="compareFn">
+                                [compareWith]="compareFn" (selectionChange)="cambioTipoPercepcion()">
                                     <mat-option *ngFor="let item of tiposPercepciones" [value]="item">
-                                        {{item}}
+                                        {{item.nombre}}
                                     </mat-option>
                                 </mat-select>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <div class="form-group has-float-label">
                                 <label for="idAnio" class="tamanio-label">Año *</label>
                                 <mat-select id="idAnio" class="form-control form-control-sm" formControlName="anio"
@@ -27,7 +27,7 @@
                                 </mat-select>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <div class="form-group has-float-label">
                                 <label for="idMes" class="tamanio-label">Mes *</label>
                                 <mat-select id="idMes" class="form-control form-control-sm" formControlName="mes"
@@ -42,7 +42,8 @@
                             <div class="form-group has-float-label">
                                 <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
                                 <input id="idImporte" type="text" formControlName="importe" autocomplete="off" 
-                                class="form-control form-control-sm" placeholder="$0.00" [textMask]="mascararImporte(8)">
+                                class="form-control form-control-sm" placeholder="$0.00" [textMask]="mascararImporte(8)"
+                                (blur)="establecerDecimales(formulario.get('importe'), 2)">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -52,7 +53,7 @@
                                 class="form-control form-control-sm" >
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <div class="form-group has-float-label">
                                 <label id="labelLetra" for="idLetra" class="descripcion-label">Letra</label>
                                 <input id="idLetra" type="text" formControlName="letra" autocomplete="off" readonly
@@ -68,14 +69,14 @@
                         </div>
                     </div>
 
-                    <div class="row" *ngIf="formulario.get('tipoPercepcion').value">
+                    <div class="row" *ngIf="mostrarCamposPorJurisdiccion">
                         <div class="col-md-6">
                             <div class="row">
                                 <div class="col-md-5">
                                     <div class="form-group has-float-label">
                                         <label for="idProvincia" class="tamanio-label">Provincia *</label>
-                                        <mat-select id="idProvincia" class="form-control form-control-sm" [formControl]="provincia"
-                                        [compareWith]="compareFn">
+                                        <mat-select id="idProvincia" class="form-control form-control-sm" [compareWith]="compareFn"
+                                        [formControl]="formularioPorJurisdiccion.get('provincia')">
                                             <mat-option *ngFor="let item of provincias" [value]="item">
                                                 {{item.nombre}}
                                             </mat-option>
@@ -85,21 +86,22 @@
                                 <div class="col-md-5">
                                     <div class="form-group has-float-label">
                                         <label id="labelImporteJurisdiccion" for="importeJurisdiccion" class="descripcion-label">Importe *</label>
-                                        <input id="importeJurisdiccion" type="text" formControlName="importeJurisdiccion" autocomplete="off" 
-                                        class="form-control form-control-sm" placeholder="$0.00" [textMask]="mascararImporte(8)">
+                                        <input id="importeJurisdiccion" type="text" autocomplete="off" [textMask]="mascararImporte(8)"
+                                        [formControl]="formularioPorJurisdiccion.get('importe')" placeholder="$0.00"
+                                        (blur)="establecerDecimales(formularioPorJurisdiccion.get('importe'), 2)" class="form-control form-control-sm">
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <button id="idBotonAgregarPercepcion" mat-raised-button color="primary" *ngIf="!show" 
-                                    (click)="agregarPercepcionJurisdiccion()" [disabled]="!importeJurisdiccion || !provincia">Agregar</button>
+                                    (click)="agregarPercepcionPorJurisdiccion()" [disabled]="!formularioPorJurisdiccion.valid">Agregar</button>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <table mat-table [dataSource]="listaPercepcionJurisdiccion" matSort class="mat-elevation-z1">
+                                    <table mat-table [dataSource]="listaCompletaPorJurisdiccion" matSort class="mat-elevation-z1">
                                         <ng-container matColumnDef="provincia">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Provincia</th>
-                                            <td mat-cell *matCellDef="let elemento; let i=index">{{i}}</td>
+                                            <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.provincia.nombre}}</td>
                                         </ng-container>
                                         <ng-container matColumnDef="importe">
                                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
@@ -108,30 +110,65 @@
                                         <ng-container matColumnDef="eliminar">
                                             <th mat-header-cell *matHeaderCellDef>-</th>
                                             <td mat-cell *matCellDef="let elemento; let i=index" >
-                                            <span class="cursor-color-rojo" (click)="activarEliminar(i)">
+                                            <span class="cursor-color-rojo" (click)="activarEliminarPorJurisdiccion(i)">
                                                 Quitar
                                             </span>
                                             </td>
                                         </ng-container>
-                                        <tr mat-header-row *matHeaderRowDef="columnasPercepcionJurisdiccion"></tr>
-                                        <tr mat-row *matRowDef="let row; columns: columnasPercepcionJurisdiccion;"></tr>
-                                        </table>
+                                        <tr mat-header-row *matHeaderRowDef="columnasPercepcionPorJurisdiccion"></tr>
+                                        <tr mat-row *matRowDef="let row; columns: columnasPercepcionPorJurisdiccion;"></tr>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-    
-                    <mat-divider style="padding-top: 30px;"></mat-divider>
+                    <div class="" style="padding-top: 15px;"></div>
+                    <div class="row">
+                        <div class="col-md-1">
+                          <button id="idBoton" mat-raised-button color="primary" (click)="controlarAgregarPercepcion()">Agregar</button>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-9">
+                            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                                <ng-container matColumnDef="tipoPercepcion">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Percepción</th>
+                                    <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.tipoPercepcion.nombre}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="anio">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
+                                    <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.anio}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="mes">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Mes</th>
+                                    <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.mes.nombre}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="importe">
+                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                                    <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
+                                </ng-container>
+                                <ng-container matColumnDef="eliminar">
+                                    <th mat-header-cell *matHeaderCellDef>-</th>
+                                    <td mat-cell *matCellDef="let elemento; let i=index" >
+                                    <span class="cursor-color-rojo" (click)="activarEliminarPercepcion(i)">
+                                        Quitar
+                                    </span>
+                                    </td>
+                                </ng-container>
+                                <tr mat-header-row *matHeaderRowDef="columnasPercepcion"></tr>
+                                <tr mat-row *matRowDef="let row; columns: columnasPercepcion;"></tr>
+                            </table>
+                        </div>
+                    </div>
                   </form>
                 </div>
               </div>
               <br>
               <div class="row">
                 <div class="col text-center">
-                  <button id="idBoton" mat-raised-button color="primary" *ngIf="!show" (click)="agregarItem()"
-                  [disabled]="!formulario.valid">Agregar</button>
-                  <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" [mat-dialog-close]="listaItems" 
-                  >Cerrar</button> 
+                  <button id="idBoton" mat-raised-button color="primary" *ngIf="!show" (click)="closeDialog('aceptar')">Aceptar</button>
+                  <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" (click)="closeDialog('cerrar')">Cerrar</button> 
                 </div>
               </div>
               <div class="row" *ngIf="show">
