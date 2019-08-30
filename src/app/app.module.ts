@@ -369,11 +369,15 @@ import { AfipTipoBeneficioDeduccionService } from './servicios/afip-tipo-benefic
 import { AfipTipoBeneficioService } from './servicios/afip-tipo-beneficio.service';
 import { AnularDialogo } from './componentes/viaje/anular-dialogo.component';
 import { NormalizarDialogo } from './componentes/viaje/normalizar-dialogo.component';
-import { FacturaDebitoCreditoComponent, AgregarItemDialogo } from './componentes/factura-debito-credito/factura-debito-credito.component';
+import { FacturaDebitoCreditoComponent, AgregarItemDialogo, DetallePercepcionesDialogo } from './componentes/factura-debito-credito/factura-debito-credito.component';
 import { FacturaDebitoCredito } from './modelos/facturaDebitoCredito';
 import { CompraComprobanteVencimiento } from './modelos/compra-comprobante-vencimiento';
 import { CompraComprobanteService } from './servicios/compra-comprobante.service';
+<<<<<<< HEAD
 import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
+=======
+import { TipoPercepcionService } from './servicios/tipo-percepcion.service';
+>>>>>>> 392b63db4a205867986bcb839d510ba3ebced280
 
 //Rutas
 const appRoutes: Routes = [
@@ -662,7 +666,11 @@ const stompConfig: StompConfig = {
     ImporteAnualDialogo,
     FacturaDebitoCreditoComponent,
     AgregarItemDialogo,
+<<<<<<< HEAD
     ConfirmarDialogoComponent
+=======
+    DetallePercepcionesDialogo
+>>>>>>> 392b63db4a205867986bcb839d510ba3ebced280
   ],
   imports: [
     BrowserModule,
@@ -942,6 +950,7 @@ const stompConfig: StompConfig = {
     FacturaDebitoCredito,
     CompraComprobanteVencimiento,
     CompraComprobanteService,
+    TipoPercepcionService,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -984,7 +993,8 @@ const stompConfig: StompConfig = {
     AnularDialogo,
     NormalizarDialogo,
     ImporteAnualDialogo,
-    AgregarItemDialogo
+    AgregarItemDialogo,
+    DetallePercepcionesDialogo
   ]
 })
 export class AppModule { }

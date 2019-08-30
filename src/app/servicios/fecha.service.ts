@@ -35,6 +35,14 @@ export class FechaService {
   public listarAnios(){
     return this.http.get(this.url + '/listarAnios', this.options);
   }
+  //Obtiene fecha y hora actual
+  public obtenerFechaYHora(){
+    return this.http.get(this.url + '/obtenerFechaYHora', this.options);
+  }
+  //Obtiene lista de anios mas menos uno
+  public listarAniosMasMenosUno(){
+    return this.http.get(this.url + '/listarAniosMasMenosUno', this.options);
+  }
   //Obtiene una lista de Años Ficales
   public listarAnioFiscal(){
     return this.http.get(this.url + '/listarAnioFiscal', this.options);

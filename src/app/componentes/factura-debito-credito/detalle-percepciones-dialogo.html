@@ -1,0 +1,143 @@
+<div class="row justify-content-center contenedor">
+        <h5>Detalle Percepciones</h5>
+        <div class="col-md-12 text-center">
+              <div class="row"> 
+                <div class="col-md-12">
+                  <form [formGroup]="formulario">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group has-float-label">
+                                <label for="idTipoPercepcion" class="tamanio-label">Tipo de Percepción *</label>
+                                <mat-select id="idTipoPercepcion" class="form-control form-control-sm" formControlName="tipoPercepcion"
+                                [compareWith]="compareFn">
+                                    <mat-option *ngFor="let item of tiposPercepciones" [value]="item">
+                                        {{item}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idAnio" class="tamanio-label">Año *</label>
+                                <mat-select id="idAnio" class="form-control form-control-sm" formControlName="anio"
+                                [compareWith]="compareFn">
+                                    <mat-option *ngFor="let item of anios" [value]="item">
+                                        {{item}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idMes" class="tamanio-label">Mes *</label>
+                                <mat-select id="idMes" class="form-control form-control-sm" formControlName="mes"
+                                [compareWith]="compareFn">
+                                    <mat-option *ngFor="let item of meses" [value]="item">
+                                        {{item.nombre}}
+                                    </mat-option>
+                                </mat-select>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
+                                <input id="idImporte" type="text" formControlName="importe" autocomplete="off" 
+                                class="form-control form-control-sm" placeholder="$0.00" [textMask]="mascararImporte(8)">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto de Venta</label>
+                                <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" readonly
+                                class="form-control form-control-sm" >
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label id="labelLetra" for="idLetra" class="descripcion-label">Letra</label>
+                                <input id="idLetra" type="text" formControlName="letra" autocomplete="off" readonly
+                                class="form-control form-control-sm" >
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label id="labelNumero" for="idNumero" class="descripcion-label">Número</label>
+                                <input id="idNumero" type="text" formControlName="numero" autocomplete="off" readonly
+                                class="form-control form-control-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" *ngIf="formulario.get('tipoPercepcion').value">
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group has-float-label">
+                                        <label for="idProvincia" class="tamanio-label">Provincia *</label>
+                                        <mat-select id="idProvincia" class="form-control form-control-sm" [formControl]="provincia"
+                                        [compareWith]="compareFn">
+                                            <mat-option *ngFor="let item of provincias" [value]="item">
+                                                {{item.nombre}}
+                                            </mat-option>
+                                        </mat-select>
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group has-float-label">
+                                        <label id="labelImporteJurisdiccion" for="importeJurisdiccion" class="descripcion-label">Importe *</label>
+                                        <input id="importeJurisdiccion" type="text" formControlName="importeJurisdiccion" autocomplete="off" 
+                                        class="form-control form-control-sm" placeholder="$0.00" [textMask]="mascararImporte(8)">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="idBotonAgregarPercepcion" mat-raised-button color="primary" *ngIf="!show" 
+                                    (click)="agregarPercepcionJurisdiccion()" [disabled]="!importeJurisdiccion || !provincia">Agregar</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table mat-table [dataSource]="listaPercepcionJurisdiccion" matSort class="mat-elevation-z1">
+                                        <ng-container matColumnDef="provincia">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Provincia</th>
+                                            <td mat-cell *matCellDef="let elemento; let i=index">{{i}}</td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="importe">
+                                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                                            <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
+                                        </ng-container>
+                                        <ng-container matColumnDef="eliminar">
+                                            <th mat-header-cell *matHeaderCellDef>-</th>
+                                            <td mat-cell *matCellDef="let elemento; let i=index" >
+                                            <span class="cursor-color-rojo" (click)="activarEliminar(i)">
+                                                Quitar
+                                            </span>
+                                            </td>
+                                        </ng-container>
+                                        <tr mat-header-row *matHeaderRowDef="columnasPercepcionJurisdiccion"></tr>
+                                        <tr mat-row *matRowDef="let row; columns: columnasPercepcionJurisdiccion;"></tr>
+                                        </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <mat-divider style="padding-top: 30px;"></mat-divider>
+                  </form>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col text-center">
+                  <button id="idBoton" mat-raised-button color="primary" *ngIf="!show" (click)="agregarItem()"
+                  [disabled]="!formulario.valid">Agregar</button>
+                  <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" [mat-dialog-close]="listaItems" 
+                  >Cerrar</button> 
+                </div>
+              </div>
+              <div class="row" *ngIf="show">
+                <div class="col text-center">
+                  <app-progreso></app-progreso>
+                </div>
+              </div>
+        </div>
+      </div>

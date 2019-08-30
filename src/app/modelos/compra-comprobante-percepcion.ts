@@ -7,9 +7,9 @@ export class CompraComprobantePercepcion {
     constructor() {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
-            id: new FormControl('', Validators.required),
-            version: new FormControl('', Validators.required),
-            compraComprobante: new FormControl('', Validators.required),
+            id: new FormControl(),
+            version: new FormControl(),
+            compraComprobante: new FormControl(),
             tipoPercepcion: new FormControl('', Validators.required),
             anio: new FormControl('', [Validators.required, Validators.maxLength(4)]),
             mes: new FormControl('', Validators.required),
