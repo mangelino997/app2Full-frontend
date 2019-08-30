@@ -23,6 +23,7 @@ import { TipoPercepcionService } from 'src/app/servicios/tipo-percepcion.service
 import { MesService } from 'src/app/servicios/mes.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
 import { CompraComprobantePercepcionJurisdiccion } from 'src/app/modelos/compra-comprobante-percepcion-jurisdiccion';
+import { CompraComprobanteVencimiento } from 'src/app/modelos/compra-comprobante-vencimiento';
 
 @Component({
   selector: 'app-factura-debito-credito',
@@ -44,6 +45,8 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public soloLectura: boolean = false;
   //Define si mostrar el boton
   public mostrarBoton: boolean = null;
+  //Define si mostrar el boton de vencimientos
+  public mostrarBotonVencimiento: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -273,6 +276,10 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.condicionIVA.setValue(elemento.afipCondicionIva.nombre);
     this.tipoProveedor.setValue(elemento.tipoProveedor.nombre);
     this.formulario.get('condicionCompra').setValue(elemento.condicionCompra);
+    if(elemento.condicionCompra.id == 1)
+      this.mostrarBotonVencimiento = true;
+      else
+      this.mostrarBotonVencimiento = false;
   } 
   //Controla el cambio en el campo "Codigo Afip"
   public cambioCodigoAfip(){
@@ -440,7 +447,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       this.calcularImportes();
     });
   }
-  //Abre modal para agregar los items
+  //Abre modal para agregar detalle de percepciones
   public detallePercepcionDialogo() {
     const dialogRef = this.dialog.open(DetallePercepcionesDialogo, {
       width: '95%',
@@ -458,6 +465,20 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         this.formulario.get('compraComprobantePercepciones').setValue([]);
         this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales('0.00', 2));
       }
+    });
+  }
+  //Abre modal para agregar los vencimientos
+  public detalleVencimientosDialogo() {
+    const dialogRef = this.dialog.open(DetalleVencimientosDialogo, {
+      width: '95%',
+      maxWidth: '100vw',
+      data: {
+        proveedor: this.formulario.value.proveedor,
+        importeTotal: this.formulario.value.importeTotal
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
     });
   }
   //Calcula el importe total de detalle percepciones
@@ -1145,6 +1166,145 @@ export class DetallePercepcionesDialogo {
     setTimeout(function () {
       document.getElementById('idTipoPercepcion').focus();
     }, 20);
+  }
+  //Define el mostrado de datos y comparacion en campo select
+  public compareFn = this.compararFn.bind(this);
+   private compararFn(a, b) {
+     if (a != null && b != null) {
+       return a.id === b.id;
+     }
+  }
+  //Formatea el valor del autocompletado
+  public displayFn(elemento) {
+    if (elemento != undefined) {
+      return elemento.alias ? elemento.alias : elemento;
+    } else {
+      return elemento;
+    }
+  }
+  //Mascara decimales
+  public mascararDecimales(limit) {
+    return this.appService.mascararEnterosConDecimales(limit);
+  }
+  //Mascara para cuatro decimales
+  public mascararCuatroDecimales(limit){
+    return this.appService.mascararEnterosCon4Decimales(limit);
+  }
+   //Obtiene la mascara de importe
+   public mascararImporte(intLimite) {
+     return this.appService.mascararImporte(intLimite, 2);
+   }
+   //Obtiene la mascara de enteros
+   public mascararEnteros(intLimite) {
+     return this.appService.mascararEnteros(intLimite);
+   }
+   //Establece los decimales
+   public establecerDecimales(formulario, cantidad): void {
+     let valor = formulario.value;
+     if(valor) {
+       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+     }else{
+     }
+   }
+  closeDialog(opcion) {
+    if(opcion == 'aceptar'){
+      this.dialogRef.close(this.listaCompleta.data);
+    }
+    if(opcion == 'cerrar'){
+      this.dialogRef.close(null);
+    }
+  }
+}
+
+
+//Componente Agregar Item Dialogo
+@Component({
+  selector: 'detalle-vencimientos-dialogo',
+  templateUrl: 'detalle-vencimientos-dialogo.html',
+  styleUrls: ['./factura-debito-credito.component.css']
+})
+export class DetalleVencimientosDialogo {
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define un formulario para validaciones de campos
+  public formularioPorJurisdiccion: FormGroup;
+  //Define la lista de Fechas de Vencimientos
+  public fechasVencimiento: Array<any> = [];
+  //Define la lista de condiciones de compra
+  public condicionesCompra: Array<any> = [];
+  //Define el campo Total Comprobante como FormControl
+  public totalComprobante: FormControl = new FormControl();
+  //Define el campo Condicion de Compra como FormControl
+  public condicionCompra: FormControl = new FormControl();
+  //Define el campo Cantidad Cuotas como FormControl
+  public cantidadCuotas: FormControl = new FormControl();
+  //Define el campo N° de Cuota como FormControl
+  public numeroCuota: FormControl = new FormControl();
+  //Define el campo Diferencia como FormControl
+  public diferencia: FormControl = new FormControl();
+  //Define la lista completa de registros para la tabla
+  public listaCompleta = new MatTableDataSource([]);
+  //Define las columnas de la tabla
+  public columnasPercepcion: string[] = ['numeroCuota', 'fechaVencimiento', 'importe', 'mod', 'eliminar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<DetallePercepcionesDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
+    private loaderService: LoaderService, private modelo: CompraComprobanteVencimiento, private modeloPorJurisdiccion: CompraComprobantePercepcionJurisdiccion,
+    private condicionCompraService: CondicionCompraService, private appService: AppService, private tipoPercepcionService: TipoPercepcionService,
+    private fechaService: FechaService, private mesService: MesService, private provinciaService: ProvinciaService) {
+      dialogRef.disableClose = true;
+     }
+  //Al inicializarse el componente
+  ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    //Establece el formulario General (sin detalle por jurisdicción)
+    this.formulario = this.modelo.formulario;
+    //Establece el formulario Por Jurisdiccion 
+    this.formularioPorJurisdiccion = this.modeloPorJurisdiccion.formulario;
+    //Establece la lista de vencimientos
+    console.log(this.data.compraComprobanteVencimientos);
+    if(this.data.compraComprobanteVencimientos){
+      this.listaCompleta = new MatTableDataSource(this.data.compraComprobanteVencimientos);
+      this.listaCompleta.sort = this.sort;
+    }
+    //Obtiene la lista de recepciones
+    this.listarCondicionesCompra();
+    //Inicializa valores por defecto
+    this.establecerPorDefecto();
+  }
+  //Carga la lista de condiciones de compra
+  public listarCondicionesCompra(){
+    this.condicionCompraService.listar().subscribe(
+      res=>{
+        this.condicionesCompra = res.json();
+        this.establecerCondicionCompra();
+      },
+      err=>{
+        console.log(err);
+      }
+    )
+  }
+  //Establece condicion de compra por defecto
+  private establecerCondicionCompra(){
+    this.condicionCompra.setValue(this.data.proveedor.condicionCompra);
+  }
+  //Establece valores por defecto
+  private establecerPorDefecto(){
+    this.cantidadCuotas.setValue(this.data.proveedor.condicionCompra.cuotas);
+    if(Number(this.data.importeTotal) > 0)
+      this.totalComprobante.setValue(this.appService.establecerDecimales(this.data.importeTotal,2));
+      else
+      this.totalComprobante.setValue(this.appService.establecerDecimales('0.00',2));
+
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

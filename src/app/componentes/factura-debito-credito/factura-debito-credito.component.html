@@ -272,7 +272,8 @@
               </div>
             </div>
             <div class="col-md-2">
-              <button id="idBotonVencimientos" mat-raised-button color="primary">Vencimientos </button>
+              <button id="idBotonVencimientos" mat-raised-button color="primary" [disabled]="!mostrarBotonVencimiento"
+              (click)="detalleVencimientosDialogo()">Vencimientos </button>
             </div>
             <div class="col-md-2">
               <button id="idBotonMediosDePago" mat-raised-button color="primary">Medios de Pago </button>
