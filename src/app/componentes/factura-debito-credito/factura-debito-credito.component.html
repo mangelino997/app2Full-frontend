@@ -212,49 +212,49 @@
               <div class="form-group has-float-label">
                 <label id="labelImportePercepciones" for="idImportePercepciones" class="descripcion-label">Imp. Percepciones</label>
                 <input id="idImportePercepciones" type="text" formControlName="importePercepcion" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" placeholder="$0.00">
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelImporteNoGravado" for="idImporteNoGravado" class="descripcion-label">Importe No Gravado</label>
                 <input id="idImporteNoGravado" type="text" formControlName="importeNoGravado" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" placeholder="$0.00">
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelExento" for="idExento" class="descripcion-label">Importe Exento</label>
                 <input id="idExento" type="text" formControlName="importeExento" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" placeholder="$0.00">
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelimporteImpuestoInterno" for="idimporteImpuestoInterno" class="descripcion-label">Importe Imp. Int.</label>
                 <input id="idimporteImpuestoInterno" type="text" formControlName="importeImpuestoInterno" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" placeholder="$0.00">
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelImporteNetoGravado" for="idImporteNetoGravado" class="descripcion-label">Importe Neto Grav.</label>
                 <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" placeholder="$0.00">
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelimporteIVA" for="idimporteIVA" class="descripcion-label">IVA</label>
                 <input id="idimporteIVA" type="text" formControlName="importeIVA" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" placeholder="$0.00">
               </div>
             </div>
             <div class="col">
               <div class="form-group has-float-label">
                 <label id="labelImporteTotal" for="idImporteTotal" class="descripcion-label">Importe Total</label>
                 <input id="idImporteTotal" type="text" formControlName="importeTotal" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm" >
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm" placeholder="$0.00">
               </div>
             </div>
           </div>
@@ -272,7 +272,8 @@
               </div>
             </div>
             <div class="col-md-2">
-              <button id="idBotonVencimientos" mat-raised-button color="primary">Vencimientos </button>
+              <button id="idBotonVencimientos" mat-raised-button color="primary" [disabled]="!mostrarBotonVencimiento"
+              (click)="detalleVencimientosDialogo()">Vencimientos </button>
             </div>
             <div class="col-md-2">
               <button id="idBotonMediosDePago" mat-raised-button color="primary">Medios de Pago </button>

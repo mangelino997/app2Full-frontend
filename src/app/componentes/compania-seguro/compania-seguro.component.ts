@@ -84,7 +84,7 @@ export class CompaniaSeguroComponent implements OnInit {
     this.formulario = new FormGroup({
       id: new FormControl(),
       version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(60)])
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);

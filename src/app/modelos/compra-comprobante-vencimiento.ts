@@ -7,9 +7,9 @@ export class CompraComprobanteVencimiento {
     constructor() {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
-            id: new FormControl('', Validators.required),
-            version: new FormControl('', Validators.required),
-            compraComprobante: new FormControl('', Validators.required), //se establece en backend
+            id: new FormControl(),
+            version: new FormControl(),
+            compraComprobante: new FormControl(), //se establece en backend
             fecha: new FormControl('', Validators.required),
             importe: new FormControl('', Validators.required)
         })
