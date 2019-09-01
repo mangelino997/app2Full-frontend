@@ -38,7 +38,8 @@ export class Proveedor {
             estaActiva: new FormControl('', Validators.required),
             alias: new FormControl('', Validators.maxLength(100)),
             fechaAlta: new FormControl(),
-            fechaBaja: new FormControl()
+            fechaBaja: new FormControl(),
+            proveedorCuentasContables: new FormControl()
         })
     }
 }

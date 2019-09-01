@@ -1,0 +1,35 @@
+<div class="container-fluid">
+    <div class="row" *ngIf="show">
+        <div class="col text-center">
+            <app-progreso></app-progreso>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md 12">
+            <mat-tree [dataSource]="datos" [treeControl]="treeControl">
+                <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+                    <div id="idFilaSeleccionada{{node.id}}" class="row" *ngIf="!node.editable">
+                        <button *ngIf="!node.esImputable" mat-icon-button matTreeNodeToggle
+                            [attr.aria-label]="'toggle ' + node.filename">
+                            <mat-icon class="mat-icon-rtl-mirror">
+                                {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
+                            </mat-icon>
+                        </button>
+                        <span style="padding-top: 9px; margin-left: 10px;"><b
+                                style="font-size: 16px; margin-right: 5px;">{{node.nombre}}
+                            </b> ({{node.esImputable ? 'Imputable' : 'No Imputable'}} -
+                            {{node.estaActivo ? 'Activo' : 'No Activo'}})
+                        </span>
+                        <button id="idBotonSeleccionado{{node.id}}" *ngIf="node.esImputable" mat-button color="primary"
+                            (click)="seleccionar(node)">Seleccionar</button>
+                    </div>
+                </mat-tree-node>
+            </mat-tree>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <button mat-raised-button color="primary" [mat-dialog-close]="nodoSeleccionado">Aceptar</button>
+        </div>
+    </div>
+</div>

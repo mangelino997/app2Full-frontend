@@ -17,7 +17,9 @@ import { Proveedor } from 'src/app/modelos/proveedor';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
+import { PlanCuentaDialogo } from '../plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 
 @Component({
   selector: 'app-proveedor',
@@ -45,6 +47,8 @@ export class ProveedorComponent implements OnInit {
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
+  //Define la lista de planes de cuentas
+  public planesCuentas = new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada: number = null;
   //Define la lista de condiciones de iva
@@ -75,6 +79,8 @@ export class ProveedorComponent implements OnInit {
   private subscription: Subscription;
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'razonSocial', 'tipoDocumento', 'numeroDocumento', 'telefono', 'domicilio', 'localidad', 'ver', 'mod'];
+  //Define las columnas de la tabla
+  public columnasPlanCuenta: string[] = ['empresa', 'cuentaContable', 'planCuenta', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -85,7 +91,7 @@ export class ProveedorComponent implements OnInit {
     private tipoDocumentoServicio: TipoDocumentoService, private tipoProveedorServicio: TipoProveedorService,
     private condicionCompraServicio: CondicionCompraService, private bancoServicio: BancoService,
     private tipoCuentaBancariaServicio: TipoCuentaBancariaService, private proveedorModelo: Proveedor,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService, private dialog: MatDialog) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -171,6 +177,66 @@ export class ProveedorComponent implements OnInit {
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
   }
+  //Establece el formulario
+  public establecerFormulario() {
+    let elemento = this.autocompletado.value;
+    this.formulario.setValue(elemento);
+    if(elemento.proveedorCuentasContables.length == 0) {
+      this.crearCuentasContables();
+    } else {
+      this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
+    }
+  }
+  //Crea la lista de planes de cuenta
+  public crearCuentasContables(): void {
+    this.loaderService.show();
+    let usuario = this.appService.getUsuario();
+    let token = localStorage.getItem('token');
+    this.usuarioEmpresaService.listarEmpresasActivasDeUsuario(usuario.id, token).subscribe(
+      res => {
+        let planesCuentas = [];
+        let empresas = res.json();
+        let formulario = null;
+        for(let i = 0 ; i < empresas.length ; i++) {
+          formulario = {
+            empresa: empresas[i],
+            planCuenta: null
+          }
+          planesCuentas.push(formulario);
+        }
+        this.planesCuentas = new MatTableDataSource(planesCuentas);
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Abre el dialogo Plan de Cuenta
+  public asignarPlanCuenta(elemento) {
+    const dialogRef = this.dialog.open(PlanCuentaDialogo, {
+      width: '70%',
+      height: '70%',
+      data: {
+        empresa: elemento.empresa,
+        grupoCuentaContable: 4
+      },
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado) {
+        let planCuenta = {
+          id: resultado.id,
+          version: resultado.version,
+          nombre: resultado.nombre
+        }
+        elemento.planCuenta = planCuenta;
+      }
+    });
+  }
+  //Elimina la cuenta contable de la empresa
+  public eliminarPlanCuenta(elemento) {
+    elemento.planCuenta = null;
+  }
   //Obtiene el listado de tipos de proveedores
   private listarTiposProveedores() {
     this.tipoProveedorServicio.listar().subscribe(
@@ -227,10 +293,6 @@ export class ProveedorComponent implements OnInit {
       }
     );
   }
-  //Establece los valores al seleccionar elemento de autocompletado
-  public establecerValores(): void {
-    this.formulario.patchValue(this.autocompletado.value);
-  }
   //Establece valores por defecto
   private establecerValoresPorDefecto(): void {
     this.formulario.get('estaActiva').setValue(true);
@@ -274,10 +336,10 @@ export class ProveedorComponent implements OnInit {
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
+      this.reestablecerFormulario('');
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -358,7 +420,6 @@ export class ProveedorComponent implements OnInit {
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        console.log(res);
         this.formulario.get('id').setValue(res.json());
       },
       err => {
@@ -376,7 +437,6 @@ export class ProveedorComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -384,8 +444,8 @@ export class ProveedorComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
-    // this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
+    this.formulario.get('proveedorCuentasContables').setValue(this.planesCuentas.data);
     console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
@@ -409,6 +469,7 @@ export class ProveedorComponent implements OnInit {
   private actualizar() {
     this.loaderService.show();
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
+    this.formulario.get('proveedorCuentasContables').setValue(this.planesCuentas.data);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -437,6 +498,7 @@ export class ProveedorComponent implements OnInit {
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.vaciarListas();
+    this.crearCuentasContables();
   }
   //Lanza error (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -528,12 +590,14 @@ export class ProveedorComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+    this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
+    this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

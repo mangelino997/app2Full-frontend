@@ -5,7 +5,6 @@ import { MonedaCuentaContable } from 'src/app/modelos/moneda-cuenta-contable';
 import { MonedaCuentaContableService } from 'src/app/servicios/moneda-cuenta-contable.service';
 import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
-import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { MatSort, MatTableDataSource, MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
@@ -13,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { ToastrService } from 'ngx-toastr';
+import { PlanCuentaDialogo } from '../plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 
 export class Arbol {
   id: number;
@@ -137,7 +137,6 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.listarMonedas();
     //Obtiene la empresa del Login
     this.obtenerEmpresa();
-    
   }
   //Obtiene el listado de registros
   private listar() {
@@ -168,7 +167,6 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Controla el cambio en Moneda Cuenta Contable
   public cambioMonedaCuentaContable() {
     if (this.indiceSeleccionado > 1) {
-      console.log(this.formulario.value.moneda.id, this.formulario.value.empresa.id);
       this.monedaCuentaContableServicio.obtenerPorMonedaYEmpresa(this.formulario.value.moneda.id, this.formulario.value.empresa.id).subscribe(
         res => {
           this.formulario.get('planCuenta').setValue(res.json());
@@ -238,10 +236,8 @@ export class MonedaCuentaContableComponent implements OnInit {
   private establecerEstadoCampos(estado) {
     if (estado) {
       this.formulario.get('moneda').enable();
-      // this.formulario.get('planCuenta').enable();
     } else {
       this.formulario.get('moneda').disable();
-      // this.formulario.get('planCuenta').enable();
     }
   }
   //Funcion para determinar que accion se requiere (Agregar, Actualizar, Eliminar)
@@ -316,7 +312,6 @@ export class MonedaCuentaContableComponent implements OnInit {
     let elemento = this.autocompletado.value;
     this.formulario.patchValue(elemento);
     this.formulario.value.moneda = elemento.moneda;
-    console.log(this.formulario.value);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -391,7 +386,8 @@ export class MonedaCuentaContableComponent implements OnInit {
       width: '70%',
       height: '70%',
       data: {
-        empresa: this.formulario.get('empresa').value
+        empresa: this.formulario.get('empresa').value,
+        grupoCuentaContable: 1
       },
     });
     dialogRef.afterClosed().subscribe(resultado => {
@@ -399,124 +395,5 @@ export class MonedaCuentaContableComponent implements OnInit {
         this.formulario.get('planCuenta').setValue(resultado);
       }
     });
-  }
-}
-//Componente Plan de Cuenta
-@Component({
-  selector: 'plan-cuenta-dialogo',
-  templateUrl: 'plan-cuenta-dialogo.component.html',
-  styleUrls: ['moneda-cuenta-contable.component.css']
-})
-export class PlanCuentaDialogo {
-  flatNodeMap = new Map<Nodo, Arbol>();
-  nestedNodeMap = new Map<Arbol, Nodo>();
-  selectedParent: Nodo | null = null;
-  newItemName = '';
-  treeControl: FlatTreeControl<Nodo>;
-  treeFlattener: MatTreeFlattener<Arbol, Nodo>;
-  //Defiene los datos del plan de cuenta
-  datos: MatTreeFlatDataSource<Arbol, Nodo>;
-  //Define el formulario
-  public formulario: FormGroup;
-  //Define el mostrar del circulo de progreso
-  public show = false;
-  //Define la subscripcion a loader.service
-  private subscription: Subscription;
-  //Define el nodo seleccionado
-  public nodoSeleccionado: any;
-  //Define el id del ultimo nodo seleccionado
-  public ultimoNodoSeleccionado: number = 0;
-  //Constructor
-  constructor(private planCuentaServicio: PlanCuentaService, private appService: AppService,
-    private loaderService: LoaderService, public dialogRef: MatDialogRef<PlanCuentaDialogo>,
-    @Inject(MAT_DIALOG_DATA) public data) {
-    this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
-      this.isExpandable, this.getChildren);
-    this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
-    this.datos = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-    this.planCuentaServicio.obtenerPorEmpresaYGrupoCuentaContable(this.data.empresa.id, 1).subscribe(res => {
-      let data = [];
-      data.push(res.json());
-      this.datos.data = data;
-    });
-  }
-  //Al inicializarse el componente
-  ngOnInit(): void {
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
-    //Establece el formulario
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      empresa: new FormControl(),
-      padre: new FormControl(),
-      nombre: new FormControl(),
-      esImputable: new FormControl(),
-      estaActivo: new FormControl(),
-      usuarioAlta: new FormControl(),
-      usuarioMod: new FormControl(),
-      tipoCuentaContable: new FormControl(),
-      nivel: new FormControl(),
-      hijos: new FormControl()
-    });
-  }
-
-  getLevel = (node: Nodo) => node.level;
-
-  isExpandable = (node: Nodo) => node.expandable;
-
-  getChildren = (node: Arbol): Arbol[] => node.hijos;
-
-  hasChild = (_: number, _nodeData: Nodo) => _nodeData.expandable;
-
-  hasNoContent = (_: number, _nodeData: Nodo) => _nodeData.nombre === '';
-
-  transformer = (node: Arbol, level: number) => {
-    const existingNode = this.nestedNodeMap.get(node);
-    const flatNode = existingNode && existingNode.nombre === node.nombre
-      ? existingNode
-      : new Nodo();
-    flatNode.id = node.id;
-    flatNode.version = node.version;
-    flatNode.empresa = node.empresa;
-    flatNode.padre = node.padre;
-    flatNode.nombre = node.nombre;
-    flatNode.esImputable = node.esImputable;
-    flatNode.estaActivo = node.estaActivo;
-    flatNode.usuarioAlta = node.usuarioAlta;
-    flatNode.usuarioMod = node.usuarioMod;
-    flatNode.tipoCuentaContable = node.tipoCuentaContable;
-    flatNode.nivel = node.nivel;
-    flatNode.hijos = node.hijos;
-    flatNode.level = level;
-    flatNode.expandable = !!node.hijos;
-    flatNode.editable = false;
-    this.flatNodeMap.set(flatNode, node);
-    this.nestedNodeMap.set(node, flatNode);
-    return flatNode;
-  }
-  //Obtiene la cuenta seleccionada
-  public seleccionar(nodo): void {
-    this.nodoSeleccionado = nodo;
-    let row = "idFilaSeleccionada" + nodo.id;
-    let btn = "idBotonSeleccionado" + nodo.id;
-    document.getElementById(row).classList.add('pintar-fila');
-    document.getElementById(btn).setAttribute("disabled", "disabled");
-    let ultimaFilaSeleccionada = "idFilaSeleccionada" + this.ultimoNodoSeleccionado;
-    let ultimBtnSeleccionado = "idBotonSeleccionado" + this.ultimoNodoSeleccionado;
-    try {
-      document.getElementById(ultimaFilaSeleccionada).classList.remove('pintar-fila');
-      document.getElementById(ultimBtnSeleccionado).removeAttribute("disabled");
-    } catch (e) { }
-    setTimeout(() => {
-      this.ultimoNodoSeleccionado = nodo.id;
-    }, 20);
-  }
-  //Cierra el dialogo
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }
