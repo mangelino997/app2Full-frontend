@@ -584,12 +584,17 @@ table {
 }
 .mat-header-cell {
   padding-left: 24px !important;
+  font-weight: bold !important;
 }
 .mat-cell {
   padding-left: 24px !important;
 }
 .mat-cell-right {
   text-align: right !important;
+  padding-right: 24px !important;
+}
+.mat-cell-left {
+  text-align: left !important;
   padding-right: 24px !important;
 }
 .mat-header-row {
@@ -611,6 +616,10 @@ tr.mat-header-row {
   height: 30px !important;
   line-height: 30px !important;
   border-radius: 50% !important;
+  text-align: left !important;
+}
+.mat-header-cell {
+  color: rgba(0, 0, 0, 1) !important;
 }
 tr.mat-footer-row, tr.mat-row {
   height: 32px !important;

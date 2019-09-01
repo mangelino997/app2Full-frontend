@@ -184,24 +184,26 @@
             <table mat-table [dataSource]="listaTarifasDeOrdVta" matSort class="mat-elevation-z1">
               <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
               </ng-container>
               <ng-container matColumnDef="tarifa">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.nombre}} </td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.nombre}}</td>
               </ng-container>
               <ng-container matColumnDef="escala">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Escala</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porEscala ? 'Sí': 'No'}}</td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento">
+                  {{elemento.tipoTarifa.porEscala ? 'Sí': 'No'}}</td>
               </ng-container>
               <ng-container matColumnDef="porPorcentaje">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Porcentaje</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.tipoTarifa.porPorcentaje ? 'Sí': 'No'}}</td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento">
+                  {{elemento.tipoTarifa.porPorcentaje ? 'Sí': 'No'}}</td>
               </ng-container>
               <ng-container matColumnDef="ver">
                 <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento; let i = index">
-                  <button mat-icon-button class="mat-raised-button-icon" (click)="verTarifaOrdenVenta(elemento)"
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento; let i = index">
+                  <button mat-icon-button class="mat-icon-button-table" (click)="verTarifaOrdenVenta(elemento)"
                     matTooltip="Cargar Precios" matTooltipPosition="above">
                     <mat-icon>playlist_add</mat-icon>
                   </button>
@@ -209,10 +211,9 @@
               </ng-container>
               <ng-container matColumnDef="eliminar">
                 <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento; let i = index">
-                  <button mat-icon-button class="mat-raised-button-icon" (click)="eliminarTarifaOrdenVenta(elemento)"
-                    *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" matTooltip="Eliminar"
-                    matTooltipPosition="above">
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento; let i = index">
+                  <button mat-icon-button class="mat-icon-button-table" (click)="eliminarTarifaOrdenVenta(elemento)"
+                    *ngIf="estadoBtnEliminar()" matTooltip="Eliminar" matTooltipPosition="above">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -224,7 +225,8 @@
         </div>
         <br>
         <div *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" class="row justify-content-center">
-          <button mat-raised-button color="primary" (click)="accion(indiceSeleccionado)">
+          <button mat-raised-button color="primary" (click)="accion(indiceSeleccionado)"
+            [disabled]="listaTarifasDeOrdVta ? listaTarifasDeOrdVta.data.length == 0 : true">
             {{pestaniaActual}}
           </button>
         </div>
@@ -237,29 +239,29 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-10">
+    <div class="col-md-12">
       <form [formGroup]="formularioListar">
-        <div class="row justify-content-center text-center">
-          <div class="col-md-4">
+        <div class="row text-center">
+          <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idTipoOrdenVenta" class="tamanio-label">Cliente/Empresa *</label>
+              <label for="idTipoOrdenVenta" class="tamanio-label">Tipo *</label>
               <mat-select id="idTipoOrdenVenta" formControlName="tipo" class="form-control form-control-sm"
-                (selectionChange)="establecerTipoEnListar()" required>
+                (selectionChange)="establecerTipoEnListar()">
                 <mat-option value="empresa">Empresa</mat-option>
                 <mat-option value="cliente">Cliente</mat-option>
               </mat-select>
             </div>
           </div>
-          <div class="col-md-6" *ngIf="formularioListar.get('tipo').value == 'empresa'">
+          <div class="col-md-4" *ngIf="formularioListar.get('tipo').value == 'empresa'">
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="tamanio-label">Empresa *</label>
               <input id="idEmpresa" type="text" [formControl]="empresa" class="form-control form-control-sm" readonly>
             </div>
           </div>
-          <div class="col-md-6" *ngIf="formularioListar.get('tipo').value == 'cliente'">
+          <div class="col-md-4" *ngIf="formularioListar.get('tipo').value == 'cliente'">
             <div class="form-group has-float-label">
               <label for="idCliente" class="tamanio-label">Cliente *</label>
-              <input id="idCliente" class="form-control form-control-sm" type="text" matInput [readOnly]="soloLectura"
+              <input id="idCliente" class="form-control form-control-sm" type="text" matInput
                 [matAutocomplete]="autoCliente" autocomplete="off" [formControl]="formularioListar.get('cliente')"
                 (blur)="verificarSeleccion(formularioListar.get('cliente'))">
               <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)">
@@ -270,8 +272,7 @@
             </div>
           </div>
           <div class="col-md-1">
-            <button id="idBoton" [disabled]="!formularioListar.valid" mat-raised-button color="primary"
-              (click)="buscarLista()">
+            <button [disabled]="!formularioListar.valid" mat-raised-button color="primary" (click)="buscarLista()">
               Buscar
             </button>
           </div>
@@ -279,45 +280,53 @@
         <div class="row justify-content-center text-center">
           <div class="col-md-12">
             <table mat-table [dataSource]="listaOrdenVenta" matSort class="mat-elevation-z1">
+              <ng-container matColumnDef="eliminar">
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento;">
+                  <button mat-icon-button class="mat-icon-button-table" (click)="eliminar(elemento.id)"
+                    matTooltip="Eliminar" matTooltipPosition="above">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="mod">
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento;">
+                  <button mat-icon-button class="mat-icon-button-table" (click)="activarActualizar(elemento)"
+                    matTooltip="Editar" matTooltipPosition="above">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
               <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
               </ng-container>
               <ng-container matColumnDef="descripcion">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
               </ng-container>
               <ng-container matColumnDef="vendedor">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Vendedor</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.vendedor.nombre}}</td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.vendedor.nombre}}</td>
               </ng-container>
               <ng-container matColumnDef="seguro">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Seguro</th>
-                <td mat-cell *matCellDef="let elemento">
+                <td class="mat-cell-right" mat-cell *matCellDef="let elemento">
                   <span *ngIf="elemento.seguro == 0"></span>
                   <span *ngIf="elemento.seguro > 0">{{establecerDecimales(elemento.seguro, 2)}} ‰ </span>
                 </td>
               </ng-container>
               <ng-container matColumnDef="cr">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>comision Contra Reembolso</th>
-                <td mat-cell *matCellDef="let elemento">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Comision Contra Reembolso</th>
+                <td class="mat-cell-right" mat-cell *matCellDef="let elemento">
                   <span *ngIf="elemento.comisionCR == 0"></span>
                   <span *ngIf="elemento.comisionCR > 0">{{establecerDecimales(elemento.comisionCR, 2)}} %</span>
                 </td>
               </ng-container>
               <ng-container matColumnDef="esContado">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Contado</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.esContado? 'Sí' : 'No'}}</td>
-              </ng-container>
-              <ng-container matColumnDef="mod">
-                <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarActualizar(elemento)"><span
-                    class="cursor-color">mod</span></td>
-              </ng-container>
-              <ng-container matColumnDef="eliminar">
-                <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento;  let i = index;" (click)="activarEliminar(elemento)"><span
-                    class="cursor-color">x</span></td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.esContado? 'Sí' : 'No'}}</td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="columnasListar"></tr>
               <tr mat-row *matRowDef="let row; columns: columnasListar;"></tr>
