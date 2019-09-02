@@ -376,6 +376,7 @@ import { CompraComprobanteService } from './servicios/compra-comprobante.service
 import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
 import { TipoPercepcionService } from './servicios/tipo-percepcion.service';
 import { PlanCuentaDialogo } from './componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
+import { CompraComprobanteVencimientoService } from './servicios/compra-comprobante-vencimiento.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -494,7 +495,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -947,6 +948,7 @@ const stompConfig: StompConfig = {
     CompraComprobanteVencimiento,
     CompraComprobanteService,
     TipoPercepcionService,
+    CompraComprobanteVencimientoService,
     {
       provide: StompConfig,
       useValue: stompConfig

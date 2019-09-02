@@ -106,57 +106,59 @@
           </div>
   
           <div class="row ">
-            <div class="col-md-12">
-              <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="anio" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.anio}}</td>
-                </ng-container>
-                <ng-container matColumnDef="tipoBeneficio" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Beneficio</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.afipTipoBeneficio.descripcion}}</td>
-                </ng-container>
-                <ng-container matColumnDef="deduccionPersonal" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Deducción Personal</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.afipDeduccionPersonal.descripcion}}</td>
-                </ng-container>
-                <ng-container matColumnDef="importeAcumulado" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Acumulado</th>
-                  <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="tipoImporte" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Importe</th>
-                  <td mat-cell *matCellDef="let elemento">
-                    <span *ngIf="elemento.mes">Mensual</span>
-                    <span *ngIf="!elemento.mes">
-                      <span class="cursor-color" *ngIf="indiceSeleccionado == 2 || indiceSeleccionado ==  5" (click)="verModaAnual(elemento)">Anual</span>
-                      <span *ngIf="indiceSeleccionado == 1 || indiceSeleccionado ==  3">Anual</span>
-                    </span>
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="mes" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Mes</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.mes? elemento.mes.nombre : '-'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="mod" sticky>
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento" >
-                    <span class="cursor-color" (click)="activarActualizar(elemento)" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
-                      editar
-                    </span>
-                  </td>
-                </ng-container>
-                 <ng-container matColumnDef="eliminar" sticky>
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento" >
-                    <span class="cursor-color-rojo" (click)="activarEliminar(elemento.id)" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" >
-                      x
-                    </span>
-                  </td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-              </table>
+            <div class="tabla">
+              <div class="tabla-ancho">
+                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                  <ng-container matColumnDef="anio">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.anio}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="tipoBeneficio">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Beneficio</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.afipTipoBeneficio.descripcion}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="deduccionPersonal">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Deducción Personal</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.afipDeduccionPersonal.descripcion}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="importeAcumulado">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Acumulado</th>
+                    <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="tipoImporte">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Importe</th>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.mes">Mensual</span>
+                      <span *ngIf="!elemento.mes">
+                        <span class="cursor-color" *ngIf="indiceSeleccionado == 2 || indiceSeleccionado ==  5" (click)="verModaAnual(elemento)">Anual</span>
+                        <span *ngIf="indiceSeleccionado == 1 || indiceSeleccionado ==  3">Anual</span>
+                      </span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="mes">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Mes</th>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.mes? elemento.mes.nombre : '-'}}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="mod">
+                    <th mat-header-cell *matHeaderCellDef>-</th>
+                    <td mat-cell *matCellDef="let elemento" >
+                      <span class="cursor-color" (click)="activarActualizar(elemento)" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
+                        editar
+                      </span>
+                    </td>
+                  </ng-container>
+                  <ng-container matColumnDef="eliminar">
+                    <th mat-header-cell *matHeaderCellDef>-</th>
+                    <td mat-cell *matCellDef="let elemento" >
+                      <span class="cursor-color-rojo" (click)="activarEliminar(elemento.id)" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" >
+                        x
+                      </span>
+                    </td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                  <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                </table>
+              </div>
             </div>
           </div>
           
