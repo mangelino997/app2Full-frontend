@@ -376,6 +376,10 @@ import { CompraComprobanteService } from './servicios/compra-comprobante.service
 import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
 import { TipoPercepcionService } from './servicios/tipo-percepcion.service';
 import { PlanCuentaDialogo } from './componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
+import { TipoRetencionComponent } from './componentes/tipo-retencion/tipo-retencion.component';
+import { TipoRetencion } from './modelos/tipoRetencion';
+import { TipoRetencionService } from './servicios/tipo-retencion.service';
+import { TipoPercepcionComponent } from './componentes/tipo-percepcion/tipo-percepcion.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -491,10 +495,14 @@ const appRoutes: Routes = [
   { path: 'impuestoalasgananciasganancianetaescala', component: GananciaNetaComponent, canActivate: [GuardiaService] },
   { path: 'impuestoalasgananciasdeduccionespersonalestablas', component: DeduccionPersonalTablaComponent, canActivate: [GuardiaService] },
   { path: 'comprobantesproveedoresfacturasdebitosycreditos', component: FacturaDebitoCreditoComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontipodechequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontiporetencion', component: TipoRetencionComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontipopercepcion', component: TipoPercepcionComponent, canActivate: [GuardiaService] },
+  
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -666,7 +674,9 @@ const stompConfig: StompConfig = {
     AgregarItemDialogo,
     ConfirmarDialogoComponent,
     DetallePercepcionesDialogo,
-    DetalleVencimientosDialogo
+    DetalleVencimientosDialogo,
+    TipoRetencionComponent,
+    TipoPercepcionComponent
   ],
   imports: [
     BrowserModule,
@@ -852,9 +862,6 @@ const stompConfig: StompConfig = {
     VentaTipoItemService,
     ViajeUnidadNegocio,
     ZonaService,
-    
-    
-    
     TipoCuentaBancaria,
     TipoCuentaContable,
     TipoCuentaContableService,
@@ -947,6 +954,8 @@ const stompConfig: StompConfig = {
     CompraComprobanteVencimiento,
     CompraComprobanteService,
     TipoPercepcionService,
+    TipoRetencion,
+    TipoRetencionService,
     {
       provide: StompConfig,
       useValue: stompConfig
