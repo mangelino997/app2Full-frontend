@@ -380,6 +380,9 @@ import { TipoRetencionComponent } from './componentes/tipo-retencion/tipo-retenc
 import { TipoRetencion } from './modelos/tipoRetencion';
 import { TipoRetencionService } from './servicios/tipo-retencion.service';
 import { TipoPercepcionComponent } from './componentes/tipo-percepcion/tipo-percepcion.component';
+import { CompraComprobanteVencimientoService } from './servicios/compra-comprobante-vencimiento.service';
+import { AdelantoLoteComponent } from './componentes/adelanto-lote/adelanto-lote.component';
+import { AdelantoLote } from './modelos/adelantoLote';
 
 //Rutas
 const appRoutes: Routes = [
@@ -676,7 +679,8 @@ const stompConfig: StompConfig = {
     DetallePercepcionesDialogo,
     DetalleVencimientosDialogo,
     TipoRetencionComponent,
-    TipoPercepcionComponent
+    TipoPercepcionComponent,
+    AdelantoLoteComponent
   ],
   imports: [
     BrowserModule,
@@ -956,6 +960,8 @@ const stompConfig: StompConfig = {
     TipoPercepcionService,
     TipoRetencion,
     TipoRetencionService,
+    CompraComprobanteVencimientoService,
+    AdelantoLote,
     {
       provide: StompConfig,
       useValue: stompConfig

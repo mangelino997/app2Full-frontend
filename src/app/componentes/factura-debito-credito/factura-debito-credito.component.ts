@@ -24,6 +24,7 @@ import { MesService } from 'src/app/servicios/mes.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
 import { CompraComprobantePercepcionJurisdiccion } from 'src/app/modelos/compra-comprobante-percepcion-jurisdiccion';
 import { CompraComprobanteVencimiento } from 'src/app/modelos/compra-comprobante-vencimiento';
+import { CompraComprobanteVencimientoService } from 'src/app/servicios/compra-comprobante-vencimiento.service';
 
 @Component({
   selector: 'app-factura-debito-credito',
@@ -244,8 +245,14 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   //Metodo Agregar 
   public agregar() {
     this.loaderService.show();    
+    let empresa = this.appService.getEmpresa();
+    let usuarioAlta = this.appService.getUsuario();
+    let sucursal = usuarioAlta.sucursal;
+    this.formulario.get('empresa').setValue(empresa);
+    this.formulario.get('sucursal').setValue(sucursal);
+    this.formulario.get('usuarioAlta').setValue(usuarioAlta);
     console.log(this.formulario.value);
-    this.servicio.agregar(this.formulario.value).subscribe(
+    this.compraComprobanteService.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
@@ -479,6 +486,11 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
+      if(result){
+        this.formulario.get('compraComprobanteVencimientos').setValue(result);
+      }else{
+        this.formulario.get('compraComprobanteVencimientos').setValue([]);
+      }
     });
   }
   //Calcula el importe total de detalle percepciones
@@ -1226,6 +1238,8 @@ export class DetallePercepcionesDialogo {
 export class DetalleVencimientosDialogo {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define si habilita el boton Aceptar
+  public btnAceptar: boolean = null;
   //Define un formulario para validaciones de campos
   public formularioPorJurisdiccion: FormGroup;
   //Define la lista de Fechas de Vencimientos
@@ -1240,6 +1254,10 @@ export class DetalleVencimientosDialogo {
   public cantidadCuotas: FormControl = new FormControl();
   //Define el campo N° de Cuota como FormControl
   public numeroCuota: FormControl = new FormControl();
+  //Define el id del registro a modificar
+  public idMod: number = null;
+  //Define el importe total de la tabla
+  public importeTotalTabla: number = null;
   //Define el campo Diferencia como FormControl
   public diferencia: FormControl = new FormControl();
   //Define la lista completa de registros para la tabla
@@ -1255,8 +1273,8 @@ export class DetalleVencimientosDialogo {
   //Constructor
   constructor(public dialogRef: MatDialogRef<DetallePercepcionesDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: CompraComprobanteVencimiento, private modeloPorJurisdiccion: CompraComprobantePercepcionJurisdiccion,
-    private condicionCompraService: CondicionCompraService, private appService: AppService, private tipoPercepcionService: TipoPercepcionService,
-    private fechaService: FechaService, private mesService: MesService, private provinciaService: ProvinciaService) {
+    private condicionCompraService: CondicionCompraService, private appService: AppService, private provinciaService: ProvinciaService,
+    private compraCbteVencimientoService:  CompraComprobanteVencimientoService) {
       dialogRef.disableClose = true;
      }
   //Al inicializarse el componente
@@ -1272,10 +1290,10 @@ export class DetalleVencimientosDialogo {
     this.formularioPorJurisdiccion = this.modeloPorJurisdiccion.formulario;
     //Establece la lista de vencimientos
     console.log(this.data.compraComprobanteVencimientos);
-    if(this.data.compraComprobanteVencimientos){
-      this.listaCompleta = new MatTableDataSource(this.data.compraComprobanteVencimientos);
-      this.listaCompleta.sort = this.sort;
-    }
+    // if(this.data.compraComprobanteVencimientos){
+    //   this.listaCompleta = new MatTableDataSource(this.data.compraComprobanteVencimientos);
+    //   this.listaCompleta.sort = this.sort;
+    // }
     //Obtiene la lista de recepciones
     this.listarCondicionesCompra();
     //Inicializa valores por defecto
@@ -1286,25 +1304,30 @@ export class DetalleVencimientosDialogo {
     this.condicionCompraService.listar().subscribe(
       res=>{
         this.condicionesCompra = res.json();
-        this.establecerCondicionCompra();
       },
       err=>{
         console.log(err);
       }
     )
   }
-  //Establece condicion de compra por defecto
-  private establecerCondicionCompra(){
-    this.condicionCompra.setValue(this.data.proveedor.condicionCompra);
-  }
   //Establece valores por defecto
   private establecerPorDefecto(){
+    this.importeTotalTabla = null;
+    this.totalComprobante.reset();
+    this.condicionCompra.reset();
+    this.cantidadCuotas.reset();
+    this.diferencia.reset();
+    this.btnAceptar = false;
+
+    this.cantidadCuotas.setValue(this.data.proveedor.condicionCompra.cuotas);
+    this.condicionCompra.setValue(this.data.proveedor.condicionCompra);
     this.cantidadCuotas.setValue(this.data.proveedor.condicionCompra.cuotas);
     if(Number(this.data.importeTotal) > 0)
       this.totalComprobante.setValue(this.appService.establecerDecimales(this.data.importeTotal,2));
       else
       this.totalComprobante.setValue(this.appService.establecerDecimales('0.00',2));
-
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
@@ -1320,6 +1343,76 @@ export class DetalleVencimientosDialogo {
     } else {
       return elemento;
     }
+  }
+  //Confirma y genera tabla de vencimientos
+  public confirmar(){
+    this.loaderService.show();
+    let cantidadCuotas = this.cantidadCuotas.value;
+    let totalImporte = this.totalComprobante.value;
+    let idCondicionCompra = this.condicionCompra.value.id;
+    console.log(cantidadCuotas,totalImporte,idCondicionCompra );
+    this.compraCbteVencimientoService.generarTablaVencimientos(cantidadCuotas,totalImporte,idCondicionCompra).subscribe(
+      res=>{
+        console.log(res.json());
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.calcularImporteTabla();
+        this.loaderService.hide();
+      },
+      err=>{
+        this.toastr.error(err.mensaje);
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Actualiza un registro de la tabla
+  public actualizar(){
+    this.listaCompleta.data[this.idMod] = this.formulario.value;
+    this.listaCompleta.sort = this.sort;
+    this.calcularImporteTabla();
+    this.formulario.reset();
+    this.numeroCuota.setValue(null);
+    this.idMod = null;
+  }
+  //Limpia los campos del formulario - cancela el actualizar
+  public cancelar(){
+    this.formulario.reset();
+    this.numeroCuota.setValue(null);
+    this.idMod = null;
+  }
+  //Completa los campos del formulario con los datos del registro a modificar
+  public activarActualizar(elemento, indice){
+    this.formulario.setValue(elemento);
+    this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
+    this.numeroCuota.setValue(indice + 1);
+    this.idMod= indice;
+  }
+  //Activar Eliminar
+  public activarEliminar(indice){
+    this.listaCompleta.data.splice(indice, 1);
+    this.listaCompleta.sort = this.sort;
+    this.calcularImporteTabla();
+  }
+  //Calcula el importe total de la tabla
+  private calcularImporteTabla(){
+    this.importeTotalTabla = 0;
+    this.listaCompleta.data.forEach(
+      item=>{
+        this.importeTotalTabla += Number(item.importe);
+      }
+    );
+    this.calcularDiferencia();
+  }
+  //Calcula la diferencia entre el "totalComprobante" y el "importeTotalTabla"
+  private calcularDiferencia(){
+    let diferencia = null;
+    diferencia = Number(this.totalComprobante.value) - this.importeTotalTabla;
+    console.log(this.importeTotalTabla);
+    this.diferencia.setValue(this.appService.establecerDecimales(diferencia.toString(), 2));
+    if(diferencia == 0)
+      this.btnAceptar = true;
+      else
+      this.btnAceptar = false;
   }
   //Mascara decimales
   public mascararDecimales(limit) {
@@ -1347,7 +1440,11 @@ export class DetalleVencimientosDialogo {
    }
   closeDialog(opcion) {
     if(opcion == 'aceptar'){
+      console.log(this.btnAceptar);
+      if(this.btnAceptar)
       this.dialogRef.close(this.listaCompleta.data);
+      else
+        this.toastr.warning("Campo Diferencia debe ser cero.");
     }
     if(opcion == 'cerrar'){
       this.dialogRef.close(null);

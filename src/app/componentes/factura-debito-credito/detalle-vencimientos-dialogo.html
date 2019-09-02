@@ -1,0 +1,128 @@
+<div class="row justify-content-center contenedor">
+    <h5>Detalle Vencimientos</h5>
+    <div class="col-md-12 text-center">
+          <div class="row justify-content-center"> 
+            <div class="col-md-10">
+              <form [formGroup]="formulario">
+                <div class="row ">
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label id="labelTotalComprobante" for="idTotalComprobante" class="descripcion-label">Total Comprobante *</label>
+                            <input id="idTotalComprobante" type="text" [formControl]="totalComprobante" autocomplete="off" readonly
+                            [textMask]="mascararImporte(10)" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label for="idCondicionCompra" class="tamanio-label">Condición de Compra *</label>
+                            <mat-select id="idCondicionCompra" class="form-control form-control-sm" [formControl]="condicionCompra"
+                            [compareWith]="compareFn">
+                                <mat-option *ngFor="let item of condicionesCompra" [value]="item">
+                                    {{item.nombre}}
+                                </mat-option>
+                            </mat-select>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label id="labelCantidadCuotas" for="importeCantidadCuotas" class="descripcion-label">Cantidad de Cuotas *</label>
+                            <input id="importeCantidadCuotas" type="text" autocomplete="off" [textMask]="mascararEnteros(2)"
+                            [formControl]="cantidadCuotas" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                      <button id="idBotonConfirmar" mat-raised-button color="primary" (click)="confirmar()"
+                      [disabled]="!condicionCompra || !cantidadCuotas">Confirmar</button>
+                    </div>
+                </div>
+                <div class="" style="padding-top: 10px;"></div>
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label id="labelNumeroCuota" for="idNumeroCuota" class="descripcion-label">N° de Cuota</label>
+                            <input id="idNumeroCuota" type="text" [formControl]="numeroCuota" autocomplete="off" readonly
+                            class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label id="labelFechaVencimiento" for="idFechaVencimiento" class="descripcion-label">Fecha de Vencimiento *</label>
+                            <input id="idFechaVencimiento" type="date" formControlName="fecha" autocomplete="off" 
+                            class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
+                            <input id="idImporte" type="text" formControlName="importe" autocomplete="off" [textMask]="mascararImporte(10)"
+                             placeholder="$0.00" (blur)="establecerDecimales(formulario.get('importe'), 2)"
+                            class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                      <button id="idBotonActualizar" mat-raised-button color="primary" (click)="actualizar()"
+                      [disabled]="!formulario.valid">Actualizar</button>
+                      <button id="idBotonCancelar" mat-raised-button color="primary" (click)="cancelar()">Cancelar</button>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                            <ng-container matColumnDef="numeroCuota">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuota</th>
+                                <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="fechaVencimiento">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Vencimiento</th>
+                                <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.fecha}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="importe">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                                <td mat-cell *matCellDef="let elemento; let i=index">${{elemento.importe | number: '1.2-2'}}</td>
+                            </ng-container>
+                            <ng-container matColumnDef="mod">
+                                <th mat-header-cell *matHeaderCellDef>-</th>
+                                <td mat-cell *matCellDef="let elemento; let i=index" >
+                                    <span class="cursor-color" (click)="activarActualizar(elemento, i)">Mod</span>
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="eliminar">
+                                <th mat-header-cell *matHeaderCellDef>-</th>
+                                <td mat-cell *matCellDef="let elemento; let i=index" >
+                                    <span class="cursor-color-rojo" (click)="activarEliminar(i)">Quitar</span>
+                                </td>
+                            </ng-container>
+                            <tr mat-header-row *matHeaderRowDef="columnasPercepcion"></tr>
+                            <tr mat-row *matRowDef="let row; columns: columnasPercepcion;"></tr>
+                        </table>
+                    </div>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-md-3">
+                        <div class="form-group has-float-label">
+                            <label id="labelDiferencia" for="idDiferencia" class="descripcion-label">Diferencia *</label>
+                            <input id="idDiferencia" type="text" [formControl]="diferencia" autocomplete="off" [textMask]="mascararImporte(12)"
+                             placeholder="$0.00" (blur)="establecerDecimales(diferencia, 2)" class="form-control form-control-sm" readonly>
+                        </div>
+                    </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col text-center">
+              <button id="idBoton" mat-raised-button color="primary" (click)="closeDialog('aceptar')">Aceptar</button>
+              <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show" (click)="closeDialog('cerrar')">Cerrar</button> 
+            </div>
+          </div>
+          <div class="row" *ngIf="show">
+            <div class="col text-center">
+              <app-progreso></app-progreso>
+            </div>
+          </div>
+    </div>
+  </div>
