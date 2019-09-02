@@ -82,7 +82,19 @@ export class ViajeRemitoService {
   }
   //Asigna remitos
   public asignar(elemento, idViajeTramo) {
-    return this.http.put(this.url + '/asignar', {elemento, idViajeTramo}, this.options);
+    let obj = Object.assign([], elemento);
+    console.log(obj);
+    const formData = new FormData();
+    formData.append('elementos', JSON.stringify(obj));
+    formData.append('viajeTramo', idViajeTramo);
+    return fetch(this.url + '/asignar', {
+      method: "PUT",
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      },
+      body: formData
+    });
+    // return this.http.put(this.url + '/asignar', {elemento, idViajeTramo}, this.options);
   }
   //Quita remitos
   public quitar(elemento) {

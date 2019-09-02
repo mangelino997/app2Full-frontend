@@ -56,7 +56,7 @@ export class ViajeRemitoGSComponent implements OnInit {
     return numSelected === numRows;
   }
   public seleccionarTodos() {
-    if(this.estanTodosSeleccionados()) {
+    if (this.estanTodosSeleccionados()) {
       this.seleccionCheck.clear();
       this.listaCompleta.data.forEach(elemento => elemento.estaPendiente = true);
     } else {
@@ -103,16 +103,18 @@ export class ViajeRemitoGSComponent implements OnInit {
   private establecerRemitos(lista) {
     this.listaCompleta = new MatTableDataSource(lista.value);
     this.listaCompleta.sort = this.sort;
-    console.log(this.listaCompleta);
   }
   //Asigna o Quita remitos de tramo
   public asignarRemitos(): void {
-    this.viajeRemitoServicio.asignar(this.formularioViajeRemito.value.remitos, 1).subscribe(
+    let tramo = this.formularioViajeRemito.get('tramo').value;
+    console.log(this.listaCompleta.data);
+    this.viajeRemitoServicio.asignar(this.listaCompleta.data, tramo.id).then(
       res => {
+        console.log(res.status);
         let respuesta = res.json();
         this.reestablecerFormulario();
         document.getElementById('idTramoRG').focus();
-        this.toastr.success(respuesta.mensaje);
+        this.toastr.success("Registros agregados con éxito");
       },
       err => {
         let respuesta = err.json();

@@ -92,15 +92,10 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="verLista()">Agregar</button>
-    </div>
-    <div class="col"></div>
-    <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="asignarRemitos()">Pendientes</button>
-    </div>
-    <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="asignarRemitos()">Asignados</button>
-    </div>
+    <button mat-raised-button color="primary" (click)="asignarRemitos()">Agregar</button>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary" (click)="verLista()">Pendientes</button>
+    <button class="margin-left-3" mat-raised-button color="primary" (click)="verLista()">Asignados</button>
   </div>
+  <br>
 </form>

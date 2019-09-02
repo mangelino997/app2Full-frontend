@@ -19,8 +19,8 @@ export class ViajeRemito {
         return this.fb.group({
             id: elemento.id,
             version: elemento.version,
-            sucursalEmision: elemento.sucursalEmision,
-            empresaEmision: elemento.empresaEmision,
+            sucursalIngreso: elemento.sucursalIngreso,
+            empresa: elemento.empresa,
             usuario: elemento.usuario,
             fecha: elemento.fecha,
             numeroCamion: elemento.numeroCamion,
@@ -40,11 +40,8 @@ export class ViajeRemito {
             importeRetiro: elemento.importeRetiro,
             importeEntrega: elemento.importeEntrega,
             estaPendiente: elemento.estaPendiente,
-            viajePropioTramo: elemento.viajePropioTramo,
-            viajeTerceroTramo: elemento.viajeTerceroTramo,
             observaciones: elemento.observacion,
             estaFacturado: elemento.estaFacturado,
-            seguimiento: elemento.seguimiento,
             estaEnReparto: elemento.estaEnReparto,
             alias: elemento.alias
         })
