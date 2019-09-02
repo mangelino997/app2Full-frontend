@@ -377,6 +377,8 @@ import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confi
 import { TipoPercepcionService } from './servicios/tipo-percepcion.service';
 import { PlanCuentaDialogo } from './componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 import { CompraComprobanteVencimientoService } from './servicios/compra-comprobante-vencimiento.service';
+import { AdelantoLoteComponent } from './componentes/adelanto-lote/adelanto-lote.component';
+import { AdelantoLote } from './modelos/adelantoLote';
 
 //Rutas
 const appRoutes: Routes = [
@@ -667,7 +669,8 @@ const stompConfig: StompConfig = {
     AgregarItemDialogo,
     ConfirmarDialogoComponent,
     DetallePercepcionesDialogo,
-    DetalleVencimientosDialogo
+    DetalleVencimientosDialogo,
+    AdelantoLoteComponent
   ],
   imports: [
     BrowserModule,
@@ -949,6 +952,7 @@ const stompConfig: StompConfig = {
     CompraComprobanteService,
     TipoPercepcionService,
     CompraComprobanteVencimientoService,
+    AdelantoLote,
     {
       provide: StompConfig,
       useValue: stompConfig
