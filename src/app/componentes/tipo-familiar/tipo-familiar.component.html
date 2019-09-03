@@ -34,7 +34,7 @@
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="45">
         </div>
         <div class="form-group has-float-label">
-          <label for="idEsDeducibleImpGan" class="tamanio-label">Deducible en Imp. a las Ganancias *</label>
+          <label for="idEsDeducibleImpGan" class="tamanio-label">Es Deducible Imp. Gan. *</label>
           <mat-select id="idEsDeducibleImpGan" class="form-control form-control-sm"
             formControlName="esDeducibleImpGan">
             <mat-option [value]="false">No</mat-option>
@@ -71,7 +71,7 @@
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
         <ng-container matColumnDef="esDeducibleImpGan" sticky>
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Deducible en Imp. a las Ganancias</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Deducible Imp. Gan.</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.esDeducibleImpGan ? 'Si' : 'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="ver" sticky>

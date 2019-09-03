@@ -1,4 +1,4 @@
-<div id="barrio" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+<div id="" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
     <div class="row">
       <div class="centrar">
         <nav mat-tab-nav-bar>
@@ -9,27 +9,16 @@
       </div>
     </div>
     <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-      <div class="col-md-4 text-center">
+      <div class="col-md-6 text-center">
         <h5>Adelanto Sueldos en Lote</h5>
         <form [formGroup]="formulario" class="contenedor">
-          <!-- <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-            <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
-            <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-              [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
-              (optionSelected)="cambioAutocompletado()">
-              <mat-option *ngFor="let item of resultados" [value]="item">
-                {{item.nombre}}
-              </mat-option>
-            </mat-autocomplete>
-          </div> -->
           <div class="row">
             <div class="col-md-12">
               <div class="form-group has-float-label">
                   <label for="idSucursal" class="tamanio-label">Sucursal *</label>
                   <mat-select id="idSucursal" class="form-control form-control-sm"
                     formControlName="sucursal" [compareWith]="compareFn">
-                    <mat-option [value]="">TODOS</mat-option>
+                    <mat-option [value]="0">TODOS</mat-option>
                     <mat-option *ngFor="let item of sucursales" [value]="item">
                       {{item.nombre}}
                     </mat-option>
@@ -42,7 +31,8 @@
               <div class="form-group has-float-label">
                   <label for="idCategoria" class="tamanio-label">Categoría *</label>
                   <mat-select id="idCategoria" class="form-control form-control-sm"
-                    formControlName="categoria" [compareWith]="compareFn">
+                    [formControl]="categoria" [compareWith]="compareFn" (selectionChange)="cambioCategoria()">
+                    <mat-option [value]="0">TODOS</mat-option>
                     <mat-option *ngFor="let item of categorias" [value]="item">
                       {{item.nombre}}
                     </mat-option>
@@ -52,8 +42,8 @@
             <div class="col-md-2">
               <div class="form-group has-float-label">
                 <label id="labelTopeMax" for="idTopeMax" class="tamanio-label">Tope max.</label>
-                <input id="idTopeMax" type="text" [formControl]="topeMax" readonly
-                  class="form-control form-control-sm">
+                <input id="idTopeMax" type="text" [formControl]="topeMax" readonly [textMask]="mascararImporte(10)"
+                  class="form-control form-control-sm number-right">
               </div>
             </div>
           </div>
@@ -70,7 +60,7 @@
             <div class="col-md-12">
               <div class="form-group has-float-label">
                 <label id="labelObservacion" for="idObservacion" class="tamanio-label">Obervaciones</label>
-                <input id="idObservacion" type="date" formControlName="observaciones" readonly
+                <input id="idObservacion" type="text" formControlName="observaciones" readonly maxlength="60"
                   class="form-control form-control-sm">
               </div>
             </div>
@@ -78,9 +68,9 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-group has-float-label">
-                <label for="idImporteIva" class="tamanio-label">Importe *</label>
-                <input id="idImporteIva" type="text" formControlName="importeIva" class="form-control form-control-sm"
-                  style="width: 116px;">
+                <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
+                <input id="idImporte" type="text" formControlName="importe" autocomplete="off" (blur)="controlarImporte()"
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
               </div>
             </div>
           </div>

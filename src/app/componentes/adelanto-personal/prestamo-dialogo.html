@@ -1,0 +1,128 @@
+<div id="" class="container-fluid" >
+    <div class="row justify-content-center contenedor" >
+      <div class="col-md-10 text-center">
+        <h5>Detalle Préstamo</h5>
+        <form [formGroup]="formulario" class="contenedor">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label id="labelTotalPrestamo" for="idTotalPrestamo" class="tamanio-label">Total Préstamo *</label>
+                <input id="idTotalPrestamo" type="text" formControlName="legajo" 
+                  class="form-control form-control-sm number-right">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label id="labelCantidadCuotas" for="idCantidadCuotas" class="tamanio-label">Cantidad de Cuotas *</label>
+                <input id="idCantidadCuotas" type="text" formControlName="apellido" readonly 
+                  class="form-control form-control-sm number-right">
+              </div>
+            </div>
+            <div class="col-md-2">
+                <button id="idBotonConfirmar"  mat-raised-button color="primary" formnovalidate >
+                  Confirmar
+                </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                  <label id="labelNumeroCuota" for="idNumeroCuota" class="tamanio-label">N° de Cuota</label>
+                  <input id="idNumeroCuota" type="text" formControlName="categoria" readonly 
+                    class="form-control form-control-sm ">
+              </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label id="labelFechaVencimiento" for="idFechaVencimiento" class="tamanio-label">Fecha Vencimiento *</label>
+                  <input id="idFechaVencimiento" type="date" formControlName="basicoCategoria"  
+                    class="form-control form-control-sm ">
+              </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                  <label id="labelImporte" for="idImporte" class="tamanio-label">Importe *</label>
+                  <input id="idImporte" type="text" formControlName="basicoCategoria" readonly [textMask]="mascararImporte(10)"
+                    class="form-control form-control-sm number-right">
+              </div>
+            </div>
+            <div class="col-md-4">
+                <button id="idBotonActualizar"  mat-raised-button color="primary" formnovalidate >
+                  Actualizar
+                </button>
+                <button id="idBotonCancelar"  mat-raised-button color="primary" formnovalidate >
+                  Cancelar
+                </button>
+            </div>
+          </div>
+          <div class="row">
+              <div class="col-md-12">
+                  <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                    <ng-container matColumnDef="numeroCuota" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuota</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="fechaVencimiento" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Vencimiento</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="importe" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="mod" sticky>
+                        <th mat-header-cell *matHeaderCellDef>-</th>
+                        <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+                            class="cursor-color">editar</span></td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                    <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                    </table>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col"></div>
+              <div class="col-md-4">
+                <div class="form-group has-float-label">
+                  <label id="labelImporte" for="idImporte" class="tamanio-label">Diferencia</label>
+                  <input id="idImporte" type="text" [formControl]="diferencia" readonly [textMask]="mascararImporte(10)"
+                    class="form-control form-control-sm number-right">
+                </div>
+              </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+      <div class="col-md-6">
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <app-progreso></app-progreso>
+          </div>
+        </div>
+        <br>
+        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+          <ng-container matColumnDef="id" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+          </ng-container>
+          <ng-container matColumnDef="nombre" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="ver" sticky>
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+                class="cursor-color">ver</span></td>
+          </ng-container>
+          <ng-container matColumnDef="mod" sticky>
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+                class="cursor-color">editar</span></td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+        </table>
+      </div>
+    </div> -->
+  </div>

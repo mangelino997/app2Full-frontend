@@ -11,7 +11,8 @@ export class TipoPercepcion {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            nombre: new FormControl('', [Validators.required, Validators.maxLength(60)])
+            nombre: new FormControl('', [Validators.required, Validators.maxLength(60)]),
+            detallePorJurisdiccion: new FormControl('', [Validators.required])
         })
     }
 }

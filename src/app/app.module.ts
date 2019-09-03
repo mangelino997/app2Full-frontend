@@ -381,9 +381,12 @@ import { TipoRetencion } from './modelos/tipoRetencion';
 import { TipoRetencionService } from './servicios/tipo-retencion.service';
 import { TipoPercepcionComponent } from './componentes/tipo-percepcion/tipo-percepcion.component';
 import { CompraComprobanteVencimientoService } from './servicios/compra-comprobante-vencimiento.service';
-import { AdelantoLoteComponent } from './componentes/adelanto-lote/adelanto-lote.component';
-import { AdelantoLote } from './modelos/adelantoLote';
 import { CuentaBancariaDialogoComponent } from './componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
+import { AdelantoLoteComponent, AdelantoLoteDialogo } from './componentes/adelanto-lote/adelanto-lote.component';
+import { TipoPercepcion } from './modelos/tipoPercepcion';
+import { PersonalAdelantoService } from './servicios/personal-adelanto.service';
+import { PersonalAdelanto } from './modelos/personalAdelanto';
+import { AdelantoPersonalComponent, PrestamoDialogo } from './componentes/adelanto-personal/adelanto-personal.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -502,10 +505,13 @@ const appRoutes: Routes = [
   { path: 'configuraciontipodechequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiporetencion', component: TipoRetencionComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipopercepcion', component: TipoPercepcionComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontipofamiliar', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
+  { path: 'adelantosadelantosenlote', component: AdelantoLoteComponent, canActivate: [GuardiaService] },
+  { path: 'adelantosadministrar', component: AdelantoPersonalComponent, canActivate: [GuardiaService] },
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -681,7 +687,10 @@ const stompConfig: StompConfig = {
     TipoRetencionComponent,
     TipoPercepcionComponent,
     AdelantoLoteComponent,
-    CuentaBancariaDialogoComponent
+    CuentaBancariaDialogoComponent,
+    AdelantoLoteDialogo,
+    AdelantoPersonalComponent,
+    PrestamoDialogo
   ],
   imports: [
     BrowserModule,
@@ -962,7 +971,9 @@ const stompConfig: StompConfig = {
     TipoRetencion,
     TipoRetencionService,
     CompraComprobanteVencimientoService,
-    AdelantoLote,
+    PersonalAdelanto,
+    TipoPercepcion,
+    PersonalAdelantoService,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -1008,7 +1019,9 @@ const stompConfig: StompConfig = {
     AgregarItemDialogo,
     DetallePercepcionesDialogo,
     DetalleVencimientosDialogo,
-    CuentaBancariaDialogoComponent
+    CuentaBancariaDialogoComponent,
+    AdelantoLoteDialogo,
+    PrestamoDialogo
   ]
 })
 export class AppModule { }
