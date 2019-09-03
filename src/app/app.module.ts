@@ -383,6 +383,7 @@ import { TipoPercepcionComponent } from './componentes/tipo-percepcion/tipo-perc
 import { CompraComprobanteVencimientoService } from './servicios/compra-comprobante-vencimiento.service';
 import { AdelantoLoteComponent } from './componentes/adelanto-lote/adelanto-lote.component';
 import { AdelantoLote } from './modelos/adelantoLote';
+import { TipoPercepcion } from './modelos/tipoPercepcion';
 
 //Rutas
 const appRoutes: Routes = [
@@ -501,11 +502,12 @@ const appRoutes: Routes = [
   { path: 'configuraciontipodechequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiporetencion', component: TipoRetencionComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipopercepcion', component: TipoPercepcionComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontipofamiliar', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
   
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -680,7 +682,8 @@ const stompConfig: StompConfig = {
     DetalleVencimientosDialogo,
     TipoRetencionComponent,
     TipoPercepcionComponent,
-    AdelantoLoteComponent
+    AdelantoLoteComponent,
+    
   ],
   imports: [
     BrowserModule,
@@ -962,6 +965,7 @@ const stompConfig: StompConfig = {
     TipoRetencionService,
     CompraComprobanteVencimientoService,
     AdelantoLote,
+    TipoPercepcion,
     {
       provide: StompConfig,
       useValue: stompConfig

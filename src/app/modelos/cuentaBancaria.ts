@@ -15,7 +15,7 @@ export class CuentaBancaria {
             tipoCuentaBancaria: new FormControl('', Validators.required),
             numeroCuenta: new FormControl('', Validators.required),
             moneda: new FormControl('', Validators.required),
-            cbu: new FormControl(),
+            cbu: new FormControl('', Validators.required),
             aliasCBU: new FormControl(),
             estaActiva: new FormControl('', Validators.required),
             fechaApertura: new FormControl(),
