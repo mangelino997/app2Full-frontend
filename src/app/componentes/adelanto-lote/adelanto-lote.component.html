@@ -1,4 +1,4 @@
-<div id="barrio" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
+<div id="" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
     <div class="row">
       <div class="centrar">
         <nav mat-tab-nav-bar>
@@ -69,7 +69,7 @@
             <div class="col-md-12">
               <div class="form-group has-float-label">
                 <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
-                <input id="idImporte" type="text" formControlName="importe" autocomplete="off" (blur)="controlImporte()"
+                <input id="idImporte" type="text" formControlName="importe" autocomplete="off" (blur)="controlarImporte()"
                 [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
               </div>
             </div>

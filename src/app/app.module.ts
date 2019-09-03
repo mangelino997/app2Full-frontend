@@ -381,9 +381,10 @@ import { TipoRetencion } from './modelos/tipoRetencion';
 import { TipoRetencionService } from './servicios/tipo-retencion.service';
 import { TipoPercepcionComponent } from './componentes/tipo-percepcion/tipo-percepcion.component';
 import { CompraComprobanteVencimientoService } from './servicios/compra-comprobante-vencimiento.service';
-import { AdelantoLoteComponent } from './componentes/adelanto-lote/adelanto-lote.component';
-import { AdelantoLote } from './modelos/adelantoLote';
+import { AdelantoLoteComponent, AdelantoLoteDialogo } from './componentes/adelanto-lote/adelanto-lote.component';
 import { PersonalAdelantoService } from './servicios/personal-adelanto.service';
+import { PersonalAdelanto } from './modelos/personalAdelanto';
+import { AdelantoPersonalComponent, PrestamoDialogo } from './componentes/adelanto-personal/adelanto-personal.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -503,8 +504,9 @@ const appRoutes: Routes = [
   { path: 'configuraciontiporetencion', component: TipoRetencionComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipopercepcion', component: TipoPercepcionComponent, canActivate: [GuardiaService] },
   { path: 'adelantosadelantosenlote', component: AdelantoLoteComponent, canActivate: [GuardiaService] },
+  { path: 'adelantosadministrar', component: AdelantoPersonalComponent, canActivate: [GuardiaService] },
 
-
+  
   
 ]
 
@@ -684,7 +686,10 @@ const stompConfig: StompConfig = {
     DetalleVencimientosDialogo,
     TipoRetencionComponent,
     TipoPercepcionComponent,
-    AdelantoLoteComponent
+    AdelantoLoteComponent,
+    AdelantoLoteDialogo,
+    AdelantoPersonalComponent,
+    PrestamoDialogo
   ],
   imports: [
     BrowserModule,
@@ -965,7 +970,7 @@ const stompConfig: StompConfig = {
     TipoRetencion,
     TipoRetencionService,
     CompraComprobanteVencimientoService,
-    AdelantoLote,
+    PersonalAdelanto,
     PersonalAdelantoService,
     {
       provide: StompConfig,
@@ -1011,7 +1016,9 @@ const stompConfig: StompConfig = {
     ImporteAnualDialogo,
     AgregarItemDialogo,
     DetallePercepcionesDialogo,
-    DetalleVencimientosDialogo
+    DetalleVencimientosDialogo,
+    AdelantoLoteDialogo,
+    PrestamoDialogo
   ]
 })
 export class AppModule { }

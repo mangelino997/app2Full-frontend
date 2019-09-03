@@ -1,6 +1,6 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 //Define la entidad de la base de datos.
-export class AdelantoLote {
+export class PersonalAdelanto {
     //Define un formulario FormGroup
     public formulario: FormGroup;
     //Constructor

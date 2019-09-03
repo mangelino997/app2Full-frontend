@@ -53,8 +53,9 @@ export class PersonalAdelantoService {
     return this.http.post(this.url, elemento, this.options);
   }
   //Agrega un registro (Lote)
-  public agregarLote(idEmpresa, idSucursal, idCategoria, observaciones, importe) {
-    return this.http.post(this.url + '/agregarLote/' + idEmpresa + '/' + idSucursal + '/' + idCategoria + '/' + observaciones + '/' + importe, this.options);
+  public agregarLote(idEmpresa, idSucursal, idCategoria, idUsuarioAlta, observaciones, importe) {
+    return this.http.post(this.url + '/agregarLote/' + idEmpresa + '/' + idSucursal + '/' + idCategoria + '/' + idUsuarioAlta + '/' 
+    + observaciones + '/' + importe, this.options);
   }
   //Actualiza un registro
   public actualizar(elemento) {
