@@ -80,7 +80,7 @@ export class ViajeGastoComponent implements OnInit {
       res => {
         this.listaGastos = res.json();
         this.recargarListaCompleta(this.listaGastos);
-        this.emitirGastos(this.listaGastos);
+        // this.emitirGastos(this.listaGastos);
         this.loaderService.hide();
       },
       err => {

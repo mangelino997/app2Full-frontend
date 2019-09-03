@@ -383,6 +383,7 @@ import { TipoPercepcionComponent } from './componentes/tipo-percepcion/tipo-perc
 import { CompraComprobanteVencimientoService } from './servicios/compra-comprobante-vencimiento.service';
 import { AdelantoLoteComponent } from './componentes/adelanto-lote/adelanto-lote.component';
 import { AdelantoLote } from './modelos/adelantoLote';
+import { CuentaBancariaDialogoComponent } from './componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -501,7 +502,6 @@ const appRoutes: Routes = [
   { path: 'configuraciontipodechequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiporetencion', component: TipoRetencionComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipopercepcion', component: TipoPercepcionComponent, canActivate: [GuardiaService] },
-  
 ]
 
 const stompConfig: StompConfig = {
@@ -680,7 +680,8 @@ const stompConfig: StompConfig = {
     DetalleVencimientosDialogo,
     TipoRetencionComponent,
     TipoPercepcionComponent,
-    AdelantoLoteComponent
+    AdelantoLoteComponent,
+    CuentaBancariaDialogoComponent
   ],
   imports: [
     BrowserModule,
@@ -1006,7 +1007,8 @@ const stompConfig: StompConfig = {
     ImporteAnualDialogo,
     AgregarItemDialogo,
     DetallePercepcionesDialogo,
-    DetalleVencimientosDialogo
+    DetalleVencimientosDialogo,
+    CuentaBancariaDialogoComponent
   ]
 })
 export class AppModule { }

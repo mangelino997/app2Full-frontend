@@ -84,7 +84,7 @@ export class ViajeEfectivoComponent implements OnInit {
       res => {
         this.listaEfectivos = res.json();
         this.recargarListaCompleta(this.listaEfectivos);
-        this.emitirEfectivos(this.listaEfectivos);
+        // this.emitirEfectivos(this.listaEfectivos);
         this.loaderService.hide();
       },
       err => {
@@ -243,7 +243,7 @@ export class ViajeEfectivoComponent implements OnInit {
   private calcularImporteTotal(): void {
     let total = 0;
     this.listaEfectivos.forEach(item => {
-      if(item.estaAnulado) {
+      if(!item.estaAnulado) {
         total += parseFloat(item.importe);
       }
     });
@@ -312,7 +312,7 @@ export class ViajeEfectivoComponent implements OnInit {
   private recargarListaCompleta(listaEfectivos) {
     this.listaCompleta = new MatTableDataSource(listaEfectivos);
     this.listaCompleta.sort = this.sort;
-    this.emitirEfectivos(listaEfectivos);
+    // this.emitirEfectivos(listaEfectivos);
     this.calcularImporteTotal();
   }
   //Establece los campos select en solo lectura o no

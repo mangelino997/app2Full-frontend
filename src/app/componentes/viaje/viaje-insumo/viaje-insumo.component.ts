@@ -95,7 +95,7 @@ export class ViajeInsumoComponent implements OnInit {
       res => {
         this.listaInsumos = res.json();
         this.recargarListaCompleta(this.listaInsumos);
-        this.emitirInsumos(this.listaInsumos);
+        // this.emitirInsumos(this.listaInsumos);
         this.loaderService.hide();
       },
       err => {
@@ -359,7 +359,7 @@ export class ViajeInsumoComponent implements OnInit {
   private recargarListaCompleta(listaInsumos) {
     this.listaCompleta = new MatTableDataSource(listaInsumos);
     this.listaCompleta.sort = this.sort;
-    this.emitirInsumos(listaInsumos);
+    // this.emitirInsumos(listaInsumos);
     this.calcularImporteTotal();
   }
   //Establece los ceros en los numeros flotantes

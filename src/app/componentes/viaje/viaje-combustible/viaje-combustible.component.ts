@@ -93,7 +93,7 @@ export class ViajeCombustibleComponent implements OnInit {
       res => {
         this.listaCombustibles = res.json();
         this.recargarListaCompleta(this.listaCombustibles);
-        this.emitirCombustibles(this.listaCombustibles);
+        // this.emitirCombustibles(this.listaCombustibles);
         this.loaderService.hide();
       },
       err => {

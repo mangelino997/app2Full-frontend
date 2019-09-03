@@ -1,0 +1,52 @@
+<div class="row justify-content-center">
+  <h6>Cuentas Bancarias - Empresa: {{empresaRazonSocial}}</h6>
+</div>
+<div class="row">
+  <div class="col">
+    <h6>Cliente - Cuenta Bancaria</h6>
+    <table mat-table [dataSource]="cuentasBancarias" matSort class="mat-elevation-z1">
+      <ng-container matColumnDef="banco">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
+        <td mat-cell *matCellDef="let elemento">
+          {{elemento.sucursalBanco ? elemento.sucursalBanco.banco.nombre : null}}</td>
+      </ng-container>
+      <ng-container matColumnDef="sucursal">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+        <td mat-cell *matCellDef="let elemento">
+          {{elemento.sucursalBanco ? elemento.sucursalBanco.nombre : null}}</td>
+      </ng-container>
+      <ng-container matColumnDef="tipoCuenta">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cuenta</th>
+          <td mat-cell *matCellDef="let elemento">
+            {{elemento.tipoCuentaBancaria ? elemento.tipoCuentaBancaria.nombre : null}}</td>
+        </ng-container>
+      <ng-container matColumnDef="numCuenta">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuenta</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento.numeroCuenta}}</td>
+      </ng-container>
+      <ng-container matColumnDef="cbu">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento.cbu}}</td>
+      </ng-container>
+      <ng-container matColumnDef="aliasCbu">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
+        <td mat-cell *matCellDef="let elemento">{{elemento.aliasCBU}}</td>
+      </ng-container>
+      <ng-container matColumnDef="seleccionar">
+        <th mat-header-cell *matHeaderCellDef>-</th>
+        <td mat-cell *matCellDef="let elemento;">
+          <button mat-icon-button class="mat-icon-button-table" [mat-dialog-close]="elemento"
+            matTooltip="Seleccionar" matTooltipPosition="above">
+            <mat-icon>select_all</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="columnasCuentaBancaria"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnasCuentaBancaria;"></tr>
+    </table>
+  </div>
+</div>
+<br>
+<div class="row justify-content-center">
+  <button mat-raised-button (click)="cerrar()">Cerrar</button>
+</div>

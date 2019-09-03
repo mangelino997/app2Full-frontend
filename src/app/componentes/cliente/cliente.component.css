@@ -1,10 +1,18 @@
 .tabla {
-    width: 100%;
+    width: 100% !important;
     height: 300px !important;
     overflow: auto !important;
 }
 .tabla-ancho {
     width: 1890px !important;
+}
+.tabla-cb {
+    width: 100% !important;
+    height: 100% !important;
+    overflow: auto !important;
+}
+.tabla-ancho-cb {
+    width: 1300px !important;
 }
 mat-sidenav.top1 {
     top: 249px !important;

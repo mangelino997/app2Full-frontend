@@ -38,7 +38,8 @@
                         <label for="idAutocompletado" class="tamanio-label">Buscar Cliente</label>
                         <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
                           autocomplete="off" type="text" matInput [formControl]="autocompletado"
-                          [matAutocomplete]="auto" placeholder="Buscar por id, razón social, nombre de fantasía o número de documento">
+                          [matAutocomplete]="auto"
+                          placeholder="Buscar por id, razón social, nombre de fantasía o número de documento">
                         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
                           (optionSelected)="establecerFormulario()">
                           <mat-option *ngFor="let item of resultados" [value]="item">
@@ -279,7 +280,7 @@
                       <div class="form-group has-float-label">
                         <label for="idDescuentoFlete" class="tamanio-label">Descuento en Flete</label>
                         <input id="idDescuentoFlete" type="text" formControlName="descuentoFlete" autocomplete="off"
-                          class="form-control form-control-sm number-right" placeholder="0.00 %" 
+                          class="form-control form-control-sm number-right" placeholder="0.00 %"
                           [readonly]="soloLectura" [textMask]="obtenerMascaraPorcentaje()"
                           (blur)="desenmascararPorcentaje(formulario.get('descuentoFlete'), 2)">
                       </div>
@@ -299,8 +300,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idEstaActivo" class="tamanio-label">Estado *</label>
-                        <mat-select id="idEstaActivo" class="form-control form-control-sm"
-                          [compareWith]="compareFn" formControlName="estaActiva">
+                        <mat-select id="idEstaActivo" class="form-control form-control-sm" [compareWith]="compareFn"
+                          formControlName="estaActiva">
                           <mat-option [value]="true">Activa</mat-option>
                           <mat-option [value]="false">Suspendida</mat-option>
                         </mat-select>
@@ -419,9 +420,83 @@
                   </div>
                 </div>
                 <div class="contenedor-top" *ngIf="opcionSeleccionada == 6">
-
+                  <div class="row">
+                    <div class="col-md-3">
+                      <div class="form-group has-float-label">
+                        <label for="idEsReceptor" class="tamanio-label">Es Receptor FCE MiPyMes *</label>
+                        <mat-select id="idEsReceptor" class="form-control form-control-sm"
+                          formControlName="esReceptorFCE">
+                          <mat-option [value]="false">No</mat-option>
+                          <mat-option [value]="true">Si</mat-option>
+                        </mat-select>
+                      </div>
+                    </div>
+                  </div>
+                  <h6>Cliente - Cuenta Bancaria</h6>
+                  <div class="row">
+                    <div class="tabla-cb">
+                      <div class="tabla-ancho-cb">
+                        <table mat-table [dataSource]="cuentasBancarias" matSort class="mat-elevation-z1">
+                          <ng-container matColumnDef="eliminar">
+                            <th mat-header-cell *matHeaderCellDef>-</th>
+                            <td mat-cell *matCellDef="let elemento;">
+                              <button mat-icon-button class="mat-icon-button-table"
+                                (click)="eliminarCuentaBancaria(elemento)"
+                                *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" matTooltip="Eliminar"
+                                matTooltipPosition="above">
+                                <mat-icon>delete</mat-icon>
+                              </button>
+                            </td>
+                          </ng-container>
+                          <ng-container matColumnDef="empresa">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+                            <td mat-cell *matCellDef="let elemento">
+                              {{elemento.empresa ? elemento.empresa.razonSocial : null}}</td>
+                          </ng-container>
+                          <ng-container matColumnDef="cuentaBancaria">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Bancaria</th>
+                            <td mat-cell *matCellDef="let elemento">
+                              <button mat-icon-button class="mat-icon-button-table"
+                                (click)="seleccionarCuentaBancaria(elemento)"
+                                *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3"
+                                matTooltip="Seleccionar Cuenta Bancaria" matTooltipPosition="above">
+                                <mat-icon>account_balance</mat-icon>
+                              </button>
+                            </td>
+                          </ng-container>
+                          <ng-container matColumnDef="banco">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
+                            <td mat-cell *matCellDef="let elemento">
+                              {{elemento.sucursalBanco ? elemento.sucursalBanco.banco.nombre : null}}</td>
+                          </ng-container>
+                          <ng-container matColumnDef="sucursal">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+                            <td mat-cell *matCellDef="let elemento">
+                              {{elemento.sucursalBanco ? elemento.sucursalBanco.nombre : null}}</td>
+                          </ng-container>
+                          <ng-container matColumnDef="numCuenta">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuenta</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.numeroCuenta}}</td>
+                          </ng-container>
+                          <ng-container matColumnDef="cbu">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.cbu}}</td>
+                          </ng-container>
+                          <ng-container matColumnDef="aliasCbu">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.aliasCBU}}</td>
+                          </ng-container>
+                          <tr mat-header-row *matHeaderRowDef="columnasCuentaBancaria"></tr>
+                          <tr mat-row *matRowDef="let row; columns: columnasCuentaBancaria;"></tr>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="contenedor-top" *ngIf="opcionSeleccionada == 7">
+
+                </div>
+                <div class="contenedor-top" *ngIf="opcionSeleccionada == 8">
 
                 </div>
                 <div class="row" *ngIf="mostrarBoton && !show">
@@ -453,41 +528,42 @@
       </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="id" sticky>
+        <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="razonSocial" sticky>
+        <ng-container matColumnDef="razonSocial">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.razonSocial? elemento.razonSocial : '--'}}</td>
         </ng-container>
-        <ng-container matColumnDef="tipoDocumento" sticky>
+        <ng-container matColumnDef="tipoDocumento">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.tipoDocumento.nombre? elemento.tipoDocumento.nombre : '--'}}</td>
+          <td mat-cell *matCellDef="let elemento">
+            {{elemento.tipoDocumento.nombre? elemento.tipoDocumento.nombre : '--'}}</td>
         </ng-container>
-        <ng-container matColumnDef="numeroDocumento" sticky>
+        <ng-container matColumnDef="numeroDocumento">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.numeroDocumento? elemento.numeroDocumento : '--'}}</td>
         </ng-container>
-        <ng-container matColumnDef="telefono" sticky>
+        <ng-container matColumnDef="telefono">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.telefono? elemento.telefono : '--'}}</td>
         </ng-container>
-        <ng-container matColumnDef="domicilio" sticky>
+        <ng-container matColumnDef="domicilio">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.domicilio? elemento.domicilio: '--'}}</td>
         </ng-container>
-        <ng-container matColumnDef="localidad" sticky>
+        <ng-container matColumnDef="localidad">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}}, {{elemento.localidad.provincia.nombre}}
           </td>
         </ng-container>
-        <ng-container matColumnDef="ver" sticky>
+        <ng-container matColumnDef="ver">
           <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
         </ng-container>
-        <ng-container matColumnDef="mod" sticky>
+        <ng-container matColumnDef="mod">
           <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
               class="cursor-color">editar</span></td>

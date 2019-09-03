@@ -27,6 +27,8 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
+import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
+import { CuentaBancariaDialogoComponent } from '../cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 
 @Component({
   selector: 'app-cliente',
@@ -92,8 +94,12 @@ export class ClienteComponent implements OnInit {
   public resultadosSucursalesPago:Array<any> = [];
   //Define la lista de resultados de busqueda de compania seguro
   public resultadosCompaniasSeguros:Array<any> = [];
+  //Define la lista de cuentas bancarias
+  public cuentasBancarias = new MatTableDataSource([]);
   //Define las columnas de la tabla
   public columnas:string[] = ['id', 'razonSocial', 'tipoDocumento', 'numeroDocumento', 'telefono', 'domicilio', 'localidad', 'ver', 'mod'];
+  //Define las columnas de la tabla cuenta bancaria
+  public columnasCuentaBancaria: string[] = ['eliminar', 'empresa', 'cuentaBancaria', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -113,7 +119,7 @@ export class ClienteComponent implements OnInit {
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
     private companiaSeguroServicio: CompaniaSeguroService, public dialog: MatDialog,
     private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
@@ -215,6 +221,57 @@ export class ClienteComponent implements OnInit {
     this.listarZonas();
     //Obtiene la lista de rubros
     this.listarRubros();
+    //Crea la lista de cuentas bancarias
+    this.crearCuentasBancarias();
+  }
+  //Crea la lista de planes de cuenta
+  public crearCuentasBancarias(): void {
+    this.loaderService.show();
+    let usuario = this.appService.getUsuario();
+    let token = localStorage.getItem('token');
+    this.usuarioEmpresaService.listarEmpresasActivasDeUsuario(usuario.id, token).subscribe(
+      res => {
+        let cuentasBancarias = [];
+        let empresas = res.json();
+        let formulario = null;
+        for(let i = 0 ; i < empresas.length ; i++) {
+          formulario = {
+            empresa: empresas[i],
+            cuentaBancaria: null,
+            sucursalBanco: null,
+            numeroCuenta: null,
+            cbu: null,
+            aliasCBU: null
+          }
+          cuentasBancarias.push(formulario);
+        }
+        this.cuentasBancarias = new MatTableDataSource(cuentasBancarias);
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Abre el dialogo Cuenta Bancarias
+  public seleccionarCuentaBancaria(elemento) {
+    const dialogRef = this.dialog.open(CuentaBancariaDialogoComponent, {
+      width: '90%',
+      height: '50%',
+      data: {
+        empresa: elemento.empresa
+      },
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado) {
+        elemento.id = resultado.id;
+        elemento.version = resultado.version;
+        elemento.sucursalBanco = resultado.sucursalBanco;
+        elemento.numeroCuenta = resultado.numeroCuenta;
+        elemento.cbu = resultado.cbu;
+        elemento.aliasCBU = resultado.aliasCBU;
+      }
+    });
   }
   //Obtiene el listado de cobradores
   private listarCobradores() {

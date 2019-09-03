@@ -84,7 +84,7 @@ export class ViajePeajeComponent implements OnInit {
       res => {
         this.listaPeajes = res.json();
         this.recargarListaCompleta(this.listaPeajes);
-        this.emitirPeajes(this.listaPeajes);
+        // this.emitirPeajes(this.listaPeajes);
         this.loaderService.hide();
       },
       err => {
