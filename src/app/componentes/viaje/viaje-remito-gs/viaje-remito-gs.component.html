@@ -34,13 +34,15 @@
       </div>
     </div>
     <div class="col-md-1">
-      <button mat-raised-button color="primary" (click)="listarRemitosPorFiltro()"
+      <button mat-raised-button color="primary" (click)="listarPendientesPorFiltro()"
         [disabled]="!formularioViajeRemito.valid">Buscar</button>
     </div>
     <div class="col-md-1">
       <button mat-raised-button color="primary" *ngIf="indiceSeleccionado == 3">Remitos Asignados</button>
     </div>
   </div>
+  <h6 *ngIf="tipoRemitos">Remitos Asignados</h6>
+  <h6 *ngIf="!tipoRemitos">Remitos Pendientes</h6>
   <div class="row">
     <div class="tabla">
       <div class="tabla-ancho">
@@ -92,10 +94,11 @@
     </div>
   </div>
   <div class="row">
-    <button mat-raised-button color="primary" (click)="asignarRemitos()">Agregar</button>
+    <button mat-raised-button color="primary" (click)="asignarRemitos()" *ngIf="!tipoRemitos">Asignar</button>
+    <button mat-raised-button color="primary" (click)="quitarRemitos()" *ngIf="tipoRemitos">Quitar</button>
     <span class="spacer"></span>
-    <button mat-raised-button color="primary" (click)="verLista()">Pendientes</button>
-    <button class="margin-left-3" mat-raised-button color="primary" (click)="verLista()">Asignados</button>
+    <button mat-raised-button [color]="tipoRemitos ? 'accent' : 'primary'" (click)="verPendientes()">Pendientes</button>
+    <button class="margin-left-3" mat-raised-button [color]="tipoRemitos ? 'primary' : 'accent'" (click)="verAsignados()">Asignados</button>
   </div>
   <br>
 </form>

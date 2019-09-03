@@ -75,15 +75,14 @@ export class ViajeRemitoService {
     return this.http.get(this.url + '/listarPendientesPorFiltro/' + idSucursal
       + '/' + idSucursalDestino + '/' + numeroCamion, this.options);
   }
-  //Obtiene una lista de remitos asignados por sucursal, sucursal destino, numero de camion y viaje propio tramo
-  public listarAsignadosPorFiltro(idSucursal, idSucursalDestino, numeroCamion, idViajePropioTramo) {
+  //Obtiene una lista de remitos asignados por sucursal, sucursal destino y numero de camion
+  public listarAsignadosPorFiltro(idSucursal, idSucursalDestino, numeroCamion) {
     return this.http.get(this.url + '/listarAsignadosPorFiltro/' + idSucursal
-      + '/' + idSucursalDestino + '/' + numeroCamion + '/' + idViajePropioTramo, this.options);
+      + '/' + idSucursalDestino + '/' + numeroCamion, this.options);
   }
   //Asigna remitos
   public asignar(elemento, idViajeTramo) {
     let obj = Object.assign([], elemento);
-    console.log(obj);
     const formData = new FormData();
     formData.append('elementos', JSON.stringify(obj));
     formData.append('viajeTramo', idViajeTramo);
@@ -94,11 +93,20 @@ export class ViajeRemitoService {
       },
       body: formData
     });
-    // return this.http.put(this.url + '/asignar', {elemento, idViajeTramo}, this.options);
   }
   //Quita remitos
-  public quitar(elemento) {
-    return this.http.put(this.url + '/quitar', elemento, this.options);
+  public quitar(elemento, idViajeTramo) {
+    let obj = Object.assign([], elemento);
+    const formData = new FormData();
+    formData.append('elementos', JSON.stringify(obj));
+    formData.append('viajeTramo', idViajeTramo);
+    return fetch(this.url + '/quitar', {
+      method: "PUT",
+      headers: {
+        'Authorization': localStorage.getItem('token')
+      },
+      body: formData
+    });
   }
   //Agrega un registro
   public agregar(elemento) {
