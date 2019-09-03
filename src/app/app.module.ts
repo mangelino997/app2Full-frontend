@@ -384,6 +384,7 @@ import { CompraComprobanteVencimientoService } from './servicios/compra-comproba
 import { AdelantoLoteComponent } from './componentes/adelanto-lote/adelanto-lote.component';
 import { AdelantoLote } from './modelos/adelantoLote';
 import { TipoPercepcion } from './modelos/tipoPercepcion';
+import { PersonalAdelantoService } from './servicios/personal-adelanto.service';
 
 //Rutas
 const appRoutes: Routes = [
@@ -503,6 +504,9 @@ const appRoutes: Routes = [
   { path: 'configuraciontiporetencion', component: TipoRetencionComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipopercepcion', component: TipoPercepcionComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipofamiliar', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
+  { path: 'adelantosadelantosenlote', component: AdelantoLoteComponent, canActivate: [GuardiaService] },
+
+
   
 ]
 
@@ -966,6 +970,7 @@ const stompConfig: StompConfig = {
     CompraComprobanteVencimientoService,
     AdelantoLote,
     TipoPercepcion,
+    PersonalAdelantoService,
     {
       provide: StompConfig,
       useValue: stompConfig

@@ -59,6 +59,10 @@ public listarPorCategoriaNombre(nombre) {
     })
   })
 }
+//Obtiene el basico categoria
+public obtenerPorCategoria(idCategoria) {
+  return this.http.get(this.url + '/obtenerPorCategoria/' + idCategoria, this.options);
+}
 //Obtiene la lista por categoria
 public listarPorCategoria(idCategoria) {
   return this.http.get(this.url + '/listarPorCategoria/' + idCategoria, this.options);
