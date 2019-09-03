@@ -596,6 +596,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
+    this.formulario.get('cuentasBancarias').setValue(this.cuentasBancarias.data);
     console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {

@@ -53,7 +53,7 @@ export class Cliente {
             fechaAlta: new FormControl(),
             esReceptorFCE: new FormControl(),
             clienteOrdenesVentas: new FormControl(),
-            clienteCuentasBancarias: new FormControl()
+            cuentasBancarias: new FormControl()
         })
     }
 }

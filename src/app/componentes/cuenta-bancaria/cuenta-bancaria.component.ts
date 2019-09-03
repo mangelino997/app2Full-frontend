@@ -9,7 +9,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { LoaderState } from 'src/app/modelos/loader';
 import { CuentaBancaria } from 'src/app/modelos/cuentaBancaria';
 import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
-import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { AppComponent } from 'src/app/app.component';
 import { BancoService } from 'src/app/servicios/banco.service';
 import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
@@ -22,7 +21,6 @@ import { MonedaService } from 'src/app/servicios/moneda.service';
   styleUrls: ['./cuenta-bancaria.component.css']
 })
 export class CuentaBancariaComponent implements OnInit {
-
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -114,7 +112,6 @@ export class CuentaBancariaComponent implements OnInit {
     this.formulario.get('banco').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.bancoService.listarPorNombre(data).subscribe(response => {
-          console.log(response);
           this.bancos = response;
         })
       }
@@ -147,20 +144,10 @@ export class CuentaBancariaComponent implements OnInit {
   private listarMonedas(){
     this.monedaService.listar().subscribe(
       res=>{
-        console.log(res.json());
         this.monedas = res.json();
       }
     )
   }
-  //Obtiene una lista de las Cuentas Bancarias
-  // private listarCuentasBancarias(){
-  //   this.cuentaBancariaService.listar().subscribe(
-  //     res=>{
-  //       console.log(res.json);
-  //       this.cuentasBancarias = res.json();
-  //     }
-  //   )
-  // }
   //Establece el estado de los cobos
   private establecerEstadoCampos(estado){
     if(estado){
@@ -249,7 +236,6 @@ export class CuentaBancariaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -298,7 +284,6 @@ export class CuentaBancariaComponent implements OnInit {
     let usuario = this.appComponent.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
     this.formulario.get('empresa').setValue(this.empresa.value);
-    console.log(this.formulario);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
