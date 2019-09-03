@@ -382,6 +382,7 @@ import { TipoRetencionService } from './servicios/tipo-retencion.service';
 import { TipoPercepcionComponent } from './componentes/tipo-percepcion/tipo-percepcion.component';
 import { CompraComprobanteVencimientoService } from './servicios/compra-comprobante-vencimiento.service';
 import { AdelantoLoteComponent, AdelantoLoteDialogo } from './componentes/adelanto-lote/adelanto-lote.component';
+import { TipoPercepcion } from './modelos/tipoPercepcion';
 import { PersonalAdelantoService } from './servicios/personal-adelanto.service';
 import { PersonalAdelanto } from './modelos/personalAdelanto';
 import { AdelantoPersonalComponent, PrestamoDialogo } from './componentes/adelanto-personal/adelanto-personal.component';
@@ -503,6 +504,7 @@ const appRoutes: Routes = [
   { path: 'configuraciontipodechequera', component: TipoChequeraComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontiporetencion', component: TipoRetencionComponent, canActivate: [GuardiaService] },
   { path: 'configuraciontipopercepcion', component: TipoPercepcionComponent, canActivate: [GuardiaService] },
+  { path: 'configuraciontipofamiliar', component: TipoFamiliarComponent, canActivate: [GuardiaService] },
   { path: 'adelantosadelantosenlote', component: AdelantoLoteComponent, canActivate: [GuardiaService] },
   { path: 'adelantosadministrar', component: AdelantoPersonalComponent, canActivate: [GuardiaService] },
 
@@ -690,6 +692,7 @@ const stompConfig: StompConfig = {
     AdelantoLoteDialogo,
     AdelantoPersonalComponent,
     PrestamoDialogo
+    
   ],
   imports: [
     BrowserModule,
@@ -971,6 +974,7 @@ const stompConfig: StompConfig = {
     TipoRetencionService,
     CompraComprobanteVencimientoService,
     PersonalAdelanto,
+    TipoPercepcion,
     PersonalAdelantoService,
     {
       provide: StompConfig,
