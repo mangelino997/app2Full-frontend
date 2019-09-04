@@ -12,6 +12,7 @@ import { PersonalAdelanto } from 'src/app/modelos/personalAdelanto';
 import { PersonalService } from 'src/app/servicios/personal.service';
 import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
+import { SucursalService } from 'src/app/servicios/sucursal.service';
 
 @Component({
   selector: 'app-adelanto-personal',
@@ -62,7 +63,7 @@ export class AdelantoPersonalComponent implements OnInit {
   public opcionSeleccionada:number = null;
    //Define las columnas de la tabla
   public columnas:string[] = ['sucursal', 'tipoCpte', 'numAdelanto', 'anulado', 'fechaEmision', 'fechaVto', 'personal',
-  'importe', 'observaciones', 'usuario', 'cuota', 'totalCuotas', 'numeroLote', 'anualr', 'ver'];
+  'importe', 'observaciones', 'usuario', 'cuota', 'totalCuotas', 'numeroLote', 'anular', 'ver'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -74,7 +75,8 @@ export class AdelantoPersonalComponent implements OnInit {
   //Constructor
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: PersonalAdelanto, private servicio: PersonalAdelantoService, public dialog: MatDialog,
-    private personalService: PersonalService, private basicoCategoriaService: BasicoCategoriaService, private fechaService: FechaService) {
+    private personalService: PersonalService, private basicoCategoriaService: BasicoCategoriaService, private fechaService: FechaService,
+    private sucursalService: SucursalService) {
       //Obtiene la lista de pestania por rol y subopcion
       this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -108,7 +110,20 @@ export class AdelantoPersonalComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Reestablece el formulario
     this.reestablecerFormulario(undefined);
+    //Obtiene la lista de Sucursal Emision
+    this.listarSucursalesEmision();
     
+  }
+  //Carga la lista de Sucursales de Emision
+  private listarSucursalesEmision(){
+    this.sucursalService.listar().subscribe(
+      res=>{
+        this.sucursales = res.json();
+      },
+      err=>{
+        console.log(err);
+      }
+    )
   }
   //Obtiene la fecha actual
   private obtenerFechaActual(){
@@ -194,6 +209,8 @@ export class AdelantoPersonalComponent implements OnInit {
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
     this.formulario.get('personal').setValue(elemento);
+    this.formulario.get('totalCuotas').setValue(elemento.cuotasPrestamo);
+
     this.categoria.setValue(elemento.categoria.nombre);
     this.nombre.setValue(elemento.nombre);
     this.apellido.setValue(elemento.apellido);
@@ -267,9 +284,10 @@ export class AdelantoPersonalComponent implements OnInit {
   //Abre modal de prestamos
   public abrirPrestamoModal(){
     const dialogRef = this.dialog.open(PrestamoDialogo, {
-      width: '750px',
+      width: '95%',
+      maxWidth: '100vw',
       data: { 
-        personal: this.formulario.get('personal').value
+        personalAdelanto: this.formulario.value
        },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -337,6 +355,8 @@ export class AdelantoPersonalComponent implements OnInit {
 export class PrestamoDialogo {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
+  //Define a personal adelanto como un formControl
+  public personalAdelanto:FormControl = new FormControl();
   //Define el total del prestamo como un formControl
   public totalPrestamo:FormControl = new FormControl();
   //Define la cantidad de cuotas como un formControl
@@ -374,7 +394,7 @@ export class PrestamoDialogo {
     //Define los campos para validaciones
     this.formulario = new FormGroup({
       cuota: new FormControl('', Validators.required),
-      fechaVencimiento: new FormControl('', Validators.required),
+      fechaVto: new FormControl('', Validators.required),
       importe: new FormControl('', Validators.required)
     });
     //Reestablece el formulario
@@ -386,19 +406,21 @@ export class PrestamoDialogo {
     this.totalPrestamo.reset();
     this.totalCuotas.reset();
     this.diferencia.reset();
-    this.totalCuotas.setValue(this.data.personal.cuotasPrestamo);
+    this.personalAdelanto.setValue(this.data.personalAdelanto);
+    this.totalCuotas.setValue(this.personalAdelanto.value.personal.cuotasPrestamo);
   }
   //Realiza la accion confirmar
   public confirmar(){
     this.loaderService.show();
     let totalPrestamo = Number(this.appService.establecerDecimales(this.totalPrestamo.value, 2));
-    let cuotas = this.totalCuotas.value;
-    console.log(totalPrestamo, cuotas);
-    this.servicio.listarCuotas(totalPrestamo, cuotas).subscribe(
+    this.personalAdelanto.value.importe = totalPrestamo;
+    console.log(this.personalAdelanto.value);
+    this.servicio.listarCuotas(this.personalAdelanto.value).subscribe(
       res=>{
         console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.calcularImporteTotal();
         this.loaderService.hide();
       },
       err=>{
@@ -425,9 +447,9 @@ export class PrestamoDialogo {
   }
   //Completa los campos del formulario con los datos del registro a modificar
   public activarActualizar(elemento, indice){
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
-    this.numeroCuota.setValue(indice + 1);
+    this.numeroCuota.setValue(elemento.cuota);
     this.idMod= indice;
   }
   //Calcula el importe total 
@@ -450,10 +472,13 @@ export class PrestamoDialogo {
     totalPrestamo = Number(this.appService.establecerDecimales(this.totalPrestamo.value, 2));
     console.log(totalImporte, totalPrestamo);
     diferencia = totalPrestamo - totalImporte;
-    if(diferencia == 0)
+    if(diferencia == 0){
       this.btnAceptar = true;
-      else
+      this.diferencia.setValue(this.appService.establecerDecimales('0.00', 2));
+    }else{
       this.btnAceptar = true;
+      this.diferencia.setValue(this.appService.establecerDecimales(diferencia, 2));
+    }
   }
   //Obtiene la mascara de importe
   public mascararImporte(intLimite) {
