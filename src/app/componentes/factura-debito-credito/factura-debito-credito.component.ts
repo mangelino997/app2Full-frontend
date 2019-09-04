@@ -691,7 +691,7 @@ export class AgregarItemDialogo {
   //Constructor
   constructor(public dialogRef: MatDialogRef<AgregarItemDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: CompraComprobanteItem, private insumoProductoService: InsumoProductoService,
-    private appService: AppService, private depositoInsumoProductoService: DepositoInsumoProductoService, 
+    private appService: AppService, private depositoInsumoProductoService: DepositoInsumoProductoService, private depositoInsumoProducto: DepositoInsumoProductoService,
     private afipAlicuotaIvaService: AfipAlicuotaIvaService) {
       dialogRef.disableClose = true;
      }
@@ -721,7 +721,7 @@ export class AgregarItemDialogo {
     })
   }
   public listarDepositos(){
-    this.insumoProductoService.listar().subscribe(
+    this.depositoInsumoProducto.listar().subscribe(
       res=>{
         this.tiposDepositos = res.json();
       },
