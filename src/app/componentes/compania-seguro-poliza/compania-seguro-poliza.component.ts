@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs';
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { element } from '@angular/core/src/render3';
+import { FechaService} from 'src/app/servicios/fecha.service';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -63,12 +64,15 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   public poliza: FormControl = new FormControl();
   //Define la lista de polizas de una compania seguro y empresa
   public polizas: Array<any> = [];
+  //Define fecha actual
+  public fechaActual: String;
   //Constructor
   constructor(private servicio: CompaniaSeguroPolizaService,
     private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private appService: AppService,
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaModelo: CompaniaSeguroPoliza, private loaderService: LoaderService,
+    private fechaService: FechaService,
     private pdfServicio: PdfService, public dialog: MatDialog) {
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
@@ -109,6 +113,17 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista de empresas
     this.listarEmpresas();
+
+    //Obtiene la fecha del dia actual
+    this.fechaService.obtenerFecha().subscribe(
+      res => {
+        
+      },
+      err => {
+
+      }
+    );
+
   }
   //Obtiene la lista de empresas
   private listarEmpresas() {

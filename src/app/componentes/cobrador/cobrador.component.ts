@@ -113,8 +113,11 @@ export class CobradorComponent implements OnInit {
   private establecerEstadoCampos(estado) {
     if (estado) {
       this.formulario.get('estaActivo').enable();
+      this.formulario.get('porDefectoClienteEventual').enable();
     } else {
       this.formulario.get('estaActivo').disable();
+      this.formulario.get('porDefectoClienteEventual').disable();
+
     }
   }
   //Establece valores al seleccionar una pestania
@@ -246,6 +249,12 @@ export class CobradorComponent implements OnInit {
           }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
+        }else{
+          this.toastr.error("¡El Nombre ingresado ya existe! ");
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.loaderService.hide();
         }
       },
       err => {
@@ -263,74 +272,32 @@ export class CobradorComponent implements OnInit {
   //Actualiza un registro
   private actualizar(cobrador) {
     this.loaderService.show();
-    console.log(this.nombreOriginal, this.formulario.value.nombre);
-    if(this.nombreOriginal!= this.formulario.value.nombre){
-      this.servicio.listarPorNombre(this.formulario.value.nombre).subscribe(
-        res=>{
-          console.log(res);
-          let respuesta = res;
-          if(respuesta.length == 0){
-            console.log(this.formulario.value);
-            this.servicio.actualizar(cobrador).subscribe(
-              res => {
-                var respuesta = res.json();
-                if (respuesta.codigo == 200) {
-                  this.reestablecerFormulario(undefined);
-                  setTimeout(function () {
-                    document.getElementById('idAutocompletado').focus();
-                  }, 20);
-                  this.toastr.success(respuesta.mensaje);
-                  this.loaderService.hide();
-                }
-              },
-              err => {
-                var respuesta = err.json();
-                console.log(err.mensaje);
-                if (respuesta.codigo == 11002) {
-                  document.getElementById("labelNombre").classList.add('label-error');
-                  document.getElementById("idNombre").classList.add('is-invalid');
-                  document.getElementById("idNombre").focus();
-                  this.toastr.error(respuesta.mensaje);
-                  this.loaderService.hide();
-                }
-              }
-            );
-          }else{
-            this.toastr.error("¡El Nombre ingresado ya existe! ");
-            document.getElementById("labelNombre").classList.add('label-error');
-            document.getElementById("idNombre").classList.add('is-invalid');
-            document.getElementById("idNombre").focus();
-            this.loaderService.hide();
-          }
+    this.servicio.actualizar(cobrador).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          setTimeout(function () {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
         }
-      );
-    }else{
-      this.servicio.actualizar(cobrador).subscribe(
-        res => {
-          var respuesta = res.json();
-          if (respuesta.codigo == 200) {
-            this.reestablecerFormulario(undefined);
-            setTimeout(function () {
-              document.getElementById('idAutocompletado').focus();
-            }, 20);
-            this.toastr.success(respuesta.mensaje);
-            this.loaderService.hide();
-          }
-        },
-        err => {
-          var respuesta = err.json();
-          console.log(err.mensaje);
-          if (respuesta.codigo == 11002) {
-            document.getElementById("labelNombre").classList.add('label-error');
-            document.getElementById("idNombre").classList.add('is-invalid');
-            document.getElementById("idNombre").focus();
-            this.toastr.error(respuesta.mensaje);
-            this.loaderService.hide();
-          }
+        this.loaderService.hide();
+      },
+      err => {
+        var respuesta = err.json();
+        console.log(respuesta.mensaje);
+        console.log(respuesta.codigo);
+        if (respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+          this.loaderService.hide();
         }
-      );
-    }
-    
+        this.loaderService.hide();
+      }
+    );
   }
   //Elimina un registro
   private eliminar() {
