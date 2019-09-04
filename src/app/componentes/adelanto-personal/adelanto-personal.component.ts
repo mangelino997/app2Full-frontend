@@ -345,6 +345,8 @@ export class PrestamoDialogo {
   public diferencia:FormControl = new FormControl();
   //Define el id del registro a modificar
   public idMod: number = null;
+  //Define si habilita el boton Aceptar
+  public btnAceptar: boolean = null;
   //Define el campo N° de Cuota como FormControl
   public numeroCuota: FormControl = new FormControl();
   //Define la lista completa de registros
@@ -359,7 +361,9 @@ export class PrestamoDialogo {
   subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<PrestamoDialogo>, @Inject(MAT_DIALOG_DATA) public data, private appService: AppService,
-  private servicio: PersonalAdelantoService, private toastr: ToastrService, private loaderService: LoaderService,) { }
+  private servicio: PersonalAdelantoService, private toastr: ToastrService, private loaderService: LoaderService,) {
+    dialogRef.disableClose = true;
+   }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -408,7 +412,7 @@ export class PrestamoDialogo {
   public actualizar(){
     this.listaCompleta.data[this.idMod] = this.formulario.value;
     this.listaCompleta.sort = this.sort;
-    // this.calcularImporteTotal();
+    this.calcularImporteTotal();
     this.formulario.reset();
     this.numeroCuota.setValue(null);
     this.idMod = null;
@@ -427,17 +431,29 @@ export class PrestamoDialogo {
     this.idMod= indice;
   }
   //Calcula el importe total 
-  //Calcula el campo diferencia
-  private calcularDiferencia(){
+  private calcularImporteTotal(){
+    let totalImporte = 0;
     this.listaCompleta.data.forEach(
       item=>{
-        let totalImporte = 0;
         //Obtiene el importe de cada item
         let importe = Number(item.importe);
         //Suma los importes
         totalImporte += importe;
       }
     )
+    this.calcularDiferencia(totalImporte);
+  }
+  //Calcula el campo diferencia
+  private calcularDiferencia(totalImporte){
+    let diferencia = 0;
+    let totalPrestamo = 0;
+    totalPrestamo = Number(this.appService.establecerDecimales(this.totalPrestamo.value, 2));
+    console.log(totalImporte, totalPrestamo);
+    diferencia = totalPrestamo - totalImporte;
+    if(diferencia == 0)
+      this.btnAceptar = true;
+      else
+      this.btnAceptar = true;
   }
   //Obtiene la mascara de importe
   public mascararImporte(intLimite) {
@@ -450,9 +466,17 @@ export class PrestamoDialogo {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
-  //Cierra el dialogo
-  onNoClick(): void {
-    this.dialogRef.close();
+  closeDialog(opcion) {
+    if(opcion == 'aceptar'){
+      console.log(this.btnAceptar);
+      if(this.btnAceptar)
+      this.dialogRef.close(this.listaCompleta.data);
+      else
+        this.toastr.warning("Campo Diferencia debe ser cero.");
+    }
+    if(opcion == 'cerrar'){
+      this.dialogRef.close(null);
+    }
   }
    
 }
