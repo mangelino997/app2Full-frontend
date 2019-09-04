@@ -36,7 +36,7 @@
             <div class="col-md-2">
                 <div class="form-group has-float-label">
                   <label id="labelFechaVencimiento" for="idFechaVencimiento" class="tamanio-label">Fecha Vencimiento *</label>
-                  <input id="idFechaVencimiento" type="date" formControlName="fechaVencimiento"  
+                  <input id="idFechaVencimiento" type="date" formControlName="fechaVto"  
                     class="form-control form-control-sm ">
               </div>
             </div>
@@ -44,14 +44,14 @@
                 <div class="form-group has-float-label">
                   <label id="labelImporte" for="idImporte" class="tamanio-label">Importe *</label>
                   <input id="idImporte" type="text" formControlName="importe" class="form-control form-control-sm number-right"
-                [textMask]="mascararImporte(10)" (blur)="establecerDecimales(formulario.get('importe'), 2)" placeholder="$0.00">>
+                [textMask]="mascararImporte(10)" (blur)="establecerDecimales(formulario.get('importe'), 2)" placeholder="$0.00">
               </div>
             </div>
             <div class="col-md-4">
-                <button id="idBotonActualizar"  mat-raised-button color="primary" formnovalidate >
+                <button id="idBotonActualizar"  mat-raised-button color="primary" formnovalidate (click)="actualizar()">
                   Actualizar
                 </button>
-                <button id="idBotonCancelar"  mat-raised-button color="primary" formnovalidate >
+                <button id="idBotonCancelar"  mat-raised-button color="primary" formnovalidate (click)="cancelar()">
                   Cancelar
                 </button>
             </div>
@@ -61,15 +61,15 @@
                   <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                     <ng-container matColumnDef="numeroCuota" sticky>
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuota</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.cuota}}</td>
                     </ng-container>
                     <ng-container matColumnDef="fechaVencimiento" sticky>
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Vencimiento</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                        <td mat-cell *matCellDef="let elemento">{{elemento.fechaVto | date: 'dd/MM/yyyy'}}</td>
                     </ng-container>
                     <ng-container matColumnDef="importe" sticky>
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                        <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
                     </ng-container>
                     <ng-container matColumnDef="mod" sticky>
                         <th mat-header-cell *matHeaderCellDef>-</th>
@@ -81,6 +81,7 @@
                     </table>
               </div>
           </div>
+          <br>
           <div class="row">
               <div class="col"></div>
               <div class="col-md-4">

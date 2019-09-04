@@ -49,8 +49,8 @@ export class PersonalAdelantoService {
     return this.http.get(this.url, this.options);
   }
   //Obtiene la lista de registros
-  public listarCuotas(prestamo, cuotas) {
-    return this.http.get(this.url + '/listarCuotas/' + prestamo + '/' + cuotas, this.options);
+  public listarCuotas(elemento) {
+    return this.http.post(this.url + '/listarCuotas', elemento, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

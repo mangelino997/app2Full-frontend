@@ -140,6 +140,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.fechaService.obtenerFecha().subscribe(
       res=>{
         this.FECHA_ACTUAL.setValue(res.json());
+        this.formulario.get('fechaEmision').setValue(res.json());
         this.formulario.get('fechaContable').setValue(res.json());
       },
       err=>{
@@ -282,6 +283,10 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.localidad.setValue(localidad);
     this.condicionIVA.setValue(elemento.afipCondicionIva.nombre);
     this.tipoProveedor.setValue(elemento.tipoProveedor.nombre);
+    this.domicilio.disable();
+    this.localidad.disable();
+    this.condicionIVA.disable();
+    this.tipoProveedor.disable();
     this.formulario.get('condicionCompra').setValue(elemento.condicionCompra);
     if(elemento.condicionCompra.id == 1)
       this.mostrarBotonVencimiento = true;
@@ -369,10 +374,10 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     fechaEmision = this.formulario.get('fechaEmision').value;
     fechaContable = this.formulario.get('fechaContable').value;
     if(fechaEmision > fechaContable){
-      this.toastr.error("Fecha de emisión debe ser igual o mayor a la fecha contable.");
+      this.toastr.error("Fecha de emisión debe ser igual o menor a la fecha contable.");
       this.formulario.get('fechaEmision').setValue(null);
       setTimeout(function () {
-        document.getElementById('idFechaContable').focus();
+        document.getElementById('idFechaEmision').focus();
       }, 20);
     }
   }
@@ -408,20 +413,29 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public cambioLetra(){
     let tipoComprobante = this.formulario.value.tipoComprobante;
     let letra = this.formulario.value.letra;
-
     if(tipoComprobante && letra){
       this.afipComprobanteService.obtenerCodigoAfip(tipoComprobante.id, letra).subscribe(
         res=>{
-          console.log(res.json());
-          let respuesta = res.json();
-          if(respuesta != null)
-          this.formulario.get('codigoAfip').setValue(respuesta.codigoAfip);
-            else
-            this.formulario.get('codigoAfip').setValue(null);
+          console.log(res, res.status);
+          let respuesta = res.text();
+          if(respuesta){
+            this.formulario.get('codigoAfip').setValue(respuesta);
+          }else{
+            this.formulario.get('codigoAfip').reset();
+            this.formulario.get('letra').reset();
+            setTimeout(function () {
+              document.getElementById('idCodigoAfip').focus();
+            }, 20);
+            this.toastr.error("Ingrese otro Código de Afip");
+          }
         },
         err=>{
-          let error = err.json();
-          this.toastr.error(error.mensaje);
+          this.formulario.get('codigoAfip').reset();
+          this.formulario.get('letra').reset();
+          setTimeout(function () {
+            document.getElementById('idCodigoAfip').focus();
+          }, 20);
+          this.toastr.error("Ingrese otro Código de Afip");
         }
       )
     }else{

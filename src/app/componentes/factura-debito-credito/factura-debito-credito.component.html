@@ -15,127 +15,109 @@
 
           <div class="row">
             <div class="col-md-4">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label for="idAutocompletado" class="tamanio-label">Buscar Proveedor *</label>
-                    <input id="idAutocompletado" class="form-control form-control-sm" type="text"
-                      matInput [formControl]="formulario.get('proveedor')" [matAutocomplete]="auto" autocomplete="off">
-                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                      <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="establecerValores(item)">
-                          {{item.alias}}
-                      </mat-option>
-                    </mat-autocomplete>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label id="labelDomicilio" for="idDomicilio" class="descripcion-label">Domicilio</label>
-                    <input id="idDomicilio" type="text" [formControl]="domicilio" autocomplete="off" readonly
-                    class="form-control form-control-sm" >
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label id="labelLocalidad" for="idLocalidad" class="descripcion-label">Localidad</label>
-                    <input id="idLocalidad" type="text" [formControl]="localidad" autocomplete="off" readonly
-                    class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label id="labelCondicionIVA" for="idCondicionIVA" class="descripcion-label">Condición de IVA</label>
-                    <input id="idCondicionIVA" type="text" [formControl]="condicionIVA" autocomplete="off" readonly
-                    class="form-control form-control-sm" >
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label id="labelTipoProveedor" for="idTipoProveedor" class="descripcion-label">Tipo de Proveedor</label>
-                    <input id="idTipoProveedor" type="text" [formControl]="tipoProveedor" autocomplete="off" readonly
-                    class="form-control form-control-sm" >
-                  </div>
-                </div>
+              <div class="form-group has-float-label">
+                <label for="idAutocompletado" class="tamanio-label">Buscar Proveedor *</label>
+                <input id="idAutocompletado" class="form-control form-control-sm" type="text"
+                  matInput [formControl]="formulario.get('proveedor')" [matAutocomplete]="auto" autocomplete="off">
+                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                  <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="establecerValores(item)">
+                      {{item.alias}}
+                  </mat-option>
+                </mat-autocomplete>
               </div>
             </div>
             <div class="col-md-2">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label id="labelFechaEmision" for="idFechaEmision" class="descripcion-label">Fecha de Emisión *</label>
-                    <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off" 
-                    (blur)="cambioFechaEmision()" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label id="labelFechaContable" for="idFechaContable" class="descripcion-label">Fecha Contable *</label>
-                    <input id="idFechaContable" type="date" formControlName="fechaContable" autocomplete="off" 
-                    (blur)="verificarFechaContable()" class="form-control form-control-sm" >
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <button id="idBotonAgregarItem" mat-raised-button color="primary" (click)="agregarItemDialogo()" 
-                [disabled]="!formulario.get('proveedor').value" >
-                  Agregar Item 
-                </button>
+              <div class="form-group has-float-label">
+                <label id="labelDomicilio" for="idDomicilio" class="descripcion-label">Domicilio</label>
+                  <input id="idDomicilio" type="text" [formControl]="domicilio" autocomplete="off" readonly
+                  class="form-control form-control-sm" >
               </div>
             </div>
-            <div class="col-md-1"></div>
-            <div class="col-md-5">
-              <div class="row">
-                <div class="col-md-3">
-                  <div class="form-group has-float-label">
-                    <label id="labelCodigoAfip" for="idCodigoAfip" class="descripcion-label">Código Afip</label>
-                    <input id="idCodigoAfip" type="text" formControlName="codigoAfip" autocomplete="off" [textMask]="mascararEnteros(3)" 
-                    class="form-control form-control-sm" (blur)="cambioCodigoAfip()" minlength="3">
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group has-float-label">
-                    <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Venta</label>
-                    <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" [textMask]="mascararEnteros(5)" 
-                    (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)" class="form-control form-control-sm" >
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group has-float-label">
-                    <label id="labelLetra" for="idLetra" class="descripcion-label">Letra</label>
-                    <input id="idLetra" type="text" formControlName="letra" autocomplete="off" maxlength="1"
-                    (blur)="cambioLetra()" class="form-control form-control-sm" >
-                  </div>
-                </div>
-                <div class="col-md-3">
-                  <div class="form-group has-float-label">
-                    <label id="labelNumero" for="idNumero" class="descripcion-label">Número</label>
-                    <input id="idNumero" type="text" formControlName="numero" autocomplete="off" [textMask]="mascararEnteros(8)" 
-                    (blur)="verificarComprobante()" class="form-control form-control-sm" >
-                  </div>
-                </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelLocalidad" for="idLocalidad" class="descripcion-label">Localidad</label>
+                <input id="idLocalidad" type="text" [formControl]="localidad" autocomplete="off" readonly
+                class="form-control form-control-sm" >
               </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
-                    <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
-                      [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()">
-                      <mat-option *ngFor="let item of tiposComprobantes" [value]="item">
-                        {{item.nombre}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelCondicionIVA" for="idCondicionIVA" class="descripcion-label">Condición de IVA</label>
+                <input id="idCondicionIVA" type="text" [formControl]="condicionIVA" autocomplete="off" readonly
+                class="form-control form-control-sm" >
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelTipoProveedor" for="idTipoProveedor" class="descripcion-label">Tipo de Proveedor</label>
+                <input id="idTipoProveedor" type="text" [formControl]="tipoProveedor" autocomplete="off" readonly
+                  class="form-control form-control-sm" >
               </div>
             </div>
           </div>
-
+          <div class="row">
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelFechaEmision" for="idFechaEmision" class="descripcion-label">Fecha de Emisión *</label>
+                <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off" 
+                (blur)="cambioFechaEmision()" class="form-control form-control-sm" >
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelFechaContable" for="idFechaContable" class="descripcion-label">Fecha Contable *</label>
+                <input id="idFechaContable" type="date" formControlName="fechaContable" autocomplete="off" 
+                (blur)="verificarFechaContable()" class="form-control form-control-sm" >
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelCodigoAfip" for="idCodigoAfip" class="descripcion-label">Código Afip</label>
+                <input id="idCodigoAfip" type="text" formControlName="codigoAfip" autocomplete="off" [textMask]="mascararEnteros(3)" 
+                class="form-control form-control-sm" (blur)="cambioCodigoAfip()" minlength="3">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Venta</label>
+                <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" [textMask]="mascararEnteros(5)" 
+                  (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)" class="form-control form-control-sm" >
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelLetra" for="idLetra" class="descripcion-label">Letra</label>
+                <input id="idLetra" type="text" formControlName="letra" autocomplete="off" maxlength="1"
+                  (blur)="cambioLetra()" class="form-control form-control-sm" >
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="form-group has-float-label">
+                <label id="labelNumero" for="idNumero" class="descripcion-label">Número</label>
+                <input id="idNumero" type="text" formControlName="numero" autocomplete="off" [textMask]="mascararEnteros(8)" 
+                (blur)="verificarComprobante()" class="form-control form-control-sm" >
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
+                <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
+                  [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()">
+                  <mat-option *ngFor="let item of tiposComprobantes" [value]="item">
+                    {{item.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button id="idBotonAgregarItem" mat-raised-button color="primary" (click)="agregarItemDialogo()" 
+                [disabled]="!formulario.get('proveedor').value" >
+                  Agregar Item 
+              </button>
+            </div>
+          </div>
           <div class="row">
             <div class="tabla">
               <div class="tabla-ancho">
