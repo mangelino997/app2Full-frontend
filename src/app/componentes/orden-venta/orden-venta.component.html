@@ -50,7 +50,6 @@
                 [compareWith]="compareFn" (selectionChange)="cargarDatosOrden()">
                 <mat-option *ngFor="let orden of ordenesVentas" [value]="orden">
                   {{orden.nombre}} - {{orden.vendedor.nombre}} - {{orden.activaDesde}}
-                  <!--{{orden.clientes.length > 0 ? orden.clientes[0].razonSocial : orden.empresas[0].razonSocial}} --->
                 </mat-option>
               </mat-select>
             </div>
@@ -121,11 +120,10 @@
             </div>
           </div>
           <div class="col-md-4">
-            <!--Antes : *ngIf="indiceSeleccionado == 1 || lengthTable < 1"-->
             <div class="form-group has-float-label">
               <label for="idPreciosDesde" class="tamanio-label">Precios Desde *</label>
               <input id="idPreciosDesde" type="date" [formControl]="preciosDesde" autocomplete="off" required
-                class="form-control form-control-sm" [readonly]="soloLectura || ORDEN_VTA_CABECERA">
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -224,7 +222,7 @@
           </div>
         </div>
         <br>
-        <div *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" class="row justify-content-center">
+        <div *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3 || indiceSeleccionado == 4" class="row justify-content-center">
           <button mat-raised-button color="primary" (click)="accion(indiceSeleccionado)"
             [disabled]="listaTarifasDeOrdVta ? listaTarifasDeOrdVta.data.length == 0 : true">
             {{pestaniaActual}}
@@ -283,7 +281,7 @@
               <ng-container matColumnDef="eliminar">
                 <th mat-header-cell *matHeaderCellDef>-</th>
                 <td class="mat-cell-left" mat-cell *matCellDef="let elemento;">
-                  <button mat-icon-button class="mat-icon-button-table" (click)="eliminar(elemento.id)"
+                  <button mat-icon-button class="mat-icon-button-table" (click)="eliminar(elemento.id, false)"
                     matTooltip="Eliminar" matTooltipPosition="above">
                     <mat-icon>delete</mat-icon>
                   </button>
