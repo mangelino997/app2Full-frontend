@@ -37,14 +37,14 @@
             <div class="col-md-5">
               <div class="form-group has-float-label">
                 <label id="labelApellido" for="idApellido" class="tamanio-label">Apellido *</label>
-                <input id="idApellido" type="text" [formControl]="apellido" readonly [textMask]="mascararImporte(10)"
+                <input id="idApellido" type="text" [formControl]="apellido" readonly 
                   class="form-control form-control-sm ">
               </div>
             </div>
             <div class="col-md-5">
               <div class="form-group has-float-label">
                 <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
-                <input id="idNombre" type="text" [formControl]="nombre" readonly [textMask]="mascararImporte(10)"
+                <input id="idNombre" type="text" [formControl]="nombre" readonly 
                   class="form-control form-control-sm ">
               </div>
             </div>
@@ -69,21 +69,21 @@
               <div class="col-md-4">
                 <div class="form-group has-float-label">
                   <label id="labelTopeAdelanto" for="idTopeAdelanto" class="descripcion-label">% Tope Adelanto *</label>
-                  <input id="idTopeAdelanto" type="text" [formControl]="topeAdelanto"
+                  <input id="idTopeAdelanto" type="text" [formControl]="topeAdelanto" readonly
                    autocomplete="off" [textMask]="mascararPorcentaje()" class="form-control form-control-sm number-right" placeholder="00.00%">
                 </div>
               </div>
               <div class="col-md-3">
                 <div class="form-group has-float-label">
                   <label id="labelSaldoActual" for="idSaldoActual" class="descripcion-label">Saldo Actual *</label>
-                  <input id="idSaldoActual" type="text" [formControl]="saldoActual" autocomplete="off" 
+                  <input id="idSaldoActual" type="text" [formControl]="saldoActual" autocomplete="off"  readonly
                   [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
                 </div>
               </div>
               <div class="col-md-5">
                 <div class="form-group has-float-label">
                   <label id="labelImporteDisponible" for="idImporteDisponible" class="descripcion-label">Importe Disponible *</label>
-                  <input id="idImporteDisponible" type="text" [formControl]="importeDisponible" autocomplete="off" 
+                  <input id="idImporteDisponible" type="text" [formControl]="importeDisponible" autocomplete="off"  readonly
                   [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
                 </div>
               </div>
@@ -98,7 +98,7 @@
               </div>
             </div>
             <div class="row">
-              <div class="col-md-2">
+              <div class="col-md-12">
                 <div class="form-group has-float-label">
                   <label id="labelObservacion" for="idObservacion" class="tamanio-label">Observaciones</label>
                   <textarea id="idObservacion" type="text" formControlName="observaciones" maxlength="60" rows="3"
@@ -115,7 +115,7 @@
                 </div>
               </div>
               <div class="col-md-1">
-                <button id="idBotonPrestamo"  mat-raised-button color="primary" formnovalidate >
+                <button id="idBotonPrestamo"  mat-raised-button color="primary" formnovalidate [disabled]="!btnPrestamoModal" (click)="abrirPrestamoModal()">
                   Préstamo
                 </button>
               </div>

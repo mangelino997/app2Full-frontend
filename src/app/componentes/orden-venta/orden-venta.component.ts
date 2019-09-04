@@ -320,7 +320,6 @@ export class OrdenVentaComponent implements OnInit {
     this.soloLectura = false;
     this.tipoOrdenVenta.enable();
     this.formulario.enable();
-    this.preciosDesde.enable();
     this.tipoTarifa.enable();
     this.cliente.reset();
     this.vaciarLista();
@@ -336,8 +335,6 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
-    // this.formulario.get('seguro').setValue(this.appService.establecerDecimales('7.00', 2));
-    // this.formulario.get('comisionCR').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('esContado').setValue(true);
     this.formulario.get('estaActiva').setValue(true);
     this.soloLecturaMod = false;
@@ -398,6 +395,8 @@ export class OrdenVentaComponent implements OnInit {
       case 4:
         this.establecerCamposSoloLectura(4);
         this.establecerValoresPestania(nombre, true, true, true, 'idTipoOrdenVenta');
+        //Obtiene la lista de ordenes de venta por empresa actual
+        this.listarOrdenesVentas('empresa', this.appService.getEmpresa().id);
         break;
       case 5:
         this.formularioListar.get('tipo').setValue('empresa');
@@ -416,7 +415,8 @@ export class OrdenVentaComponent implements OnInit {
         this.actualizarOrdenVenta();
         break;
       case 4:
-        this.eliminar(1);
+        let id = this.formulario.get('id').value;
+        this.eliminar(id, true);
         break;
       default:
         break;
@@ -590,7 +590,7 @@ export class OrdenVentaComponent implements OnInit {
     );
   }
   //Actualizar un registro a Orden Venta Tarifa
-  public eliminar(id) {
+  public eliminar(id, opcion) {
     const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
       width: '500px',
       data: {},
@@ -601,7 +601,15 @@ export class OrdenVentaComponent implements OnInit {
         this.servicio.eliminar(id).subscribe(
           res => {
             if (res.status == 200) {
-              this.buscarLista();
+              if(opcion) {
+                this.establecerCamposSoloLectura(4);
+                this.establecerValoresPestania('Eliminar', true, true, true, 'idTipoOrdenVenta');
+                //Obtiene la lista de ordenes de venta por empresa actual
+                this.listarOrdenesVentas('empresa', this.appService.getEmpresa().id);
+                document.getElementById('idTipoOrdenVenta').focus();
+              } else {
+                this.buscarLista();
+              }
               this.toastr.success("Registro eliminado con éxito");
             }
             this.loaderService.hide();
@@ -719,42 +727,9 @@ export class OrdenVentaComponent implements OnInit {
     this.cambioTipoTarifa();
     this.formulario.patchValue(elemento);
     this.establecerPorcentajes(elemento);
-    if (elemento.empresas.length > 0) {
-      this.tipoOrdenVenta.setValue(false);
-      this.empresa.setValue(elemento.empresas[0].razonSocial);
-      this.listarOrdenesVentas('empresa', elemento.empresas[0].id);
-    }
-    if (elemento.clientes.length > 0) {
-      this.tipoOrdenVenta.setValue(true);
-      this.cliente.setValue(elemento.clientes[0]);
-      this.listarOrdenesVentas('cliente', elemento.clientes[0].id);
-    }
     this.establecerOrdenVentaCabecera(elemento.id);
     this.listarTarifasOrdenVenta();
     this.btnOrdenVta = true;
-  }
-  //Elimina una Orden Venta (Pestaña Listar, accion 'eliminar')
-  public activarEliminar(elemento) {
-    // this.seleccionarPestania(4, this.pestanias[3].nombre, 1);
-    // this.soloLectura = true;
-    // this.btnOrdenVta = true;
-    // this.ordenventa.setValue(elemento);
-    // this.cambioTipoTarifa();
-    // this.formulario.patchValue(elemento);
-    // this.establecerPorcentajes(elemento);
-    // if (elemento.empresas.length > 0) {
-    //   this.tipoOrdenVenta.setValue(false);
-    //   this.empresa.setValue(elemento.empresas[0].razonSocial);
-    //   this.listarOrdenesVentas('empresa', elemento.empresas[0].id);
-    // }
-    // if (elemento.clientes.length > 0) {
-    //   this.tipoOrdenVenta.setValue(true);
-    //   this.cliente.setValue(elemento.clientes[0]);
-    //   this.listarOrdenesVentas('cliente', elemento.clientes[0].id);
-    // }
-    // this.establecerOrdenVentaCabecera(elemento.id);
-    // this.listarTarifasOrdenVenta();
-    // this.btnOrdenVta = true;
   }
   //Carga los datos de la orden de venta seleccionada en los input
   public cargarDatosOrden() {
@@ -765,8 +740,8 @@ export class OrdenVentaComponent implements OnInit {
     this.establecerOrdenVentaCabecera(elemento.id);
     this.listarTarifasOrdenVenta();
     this.btnOrdenVta = true;
-    //Si la orden de venta no esta activa, deshabilita todos los campos excepto 'estaActiva'
-    if (!this.formulario.get('estaActiva').value) {
+    //En la pestaña consultar y eliminar, deshabilita todo
+    if(this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
       this.formulario.get('vendedor').disable();
       this.formulario.get('esContado').disable();
       this.formulario.disable();
@@ -775,11 +750,22 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioTarifa.disable();
       this.btnOrdenVta = false;
     } else {
-      this.formulario.enable();
-      this.formularioEscala.enable();
-      this.formularioTramo.enable();
-      this.formularioTarifa.enable();
-      this.btnOrdenVta = true;
+      //Si la orden de venta no esta activa, deshabilita todos los campos excepto 'estaActiva'
+      if (!this.formulario.get('estaActiva').value) {
+        this.formulario.get('vendedor').disable();
+        this.formulario.get('esContado').disable();
+        this.formulario.disable();
+        this.formularioEscala.disable();
+        this.formularioTramo.disable();
+        this.formularioTarifa.disable();
+        this.btnOrdenVta = false;
+      } else {
+        this.formulario.enable();
+        this.formularioEscala.enable();
+        this.formularioTramo.enable();
+        this.formularioTarifa.enable();
+        this.btnOrdenVta = true;
+      }
     }
     this.tipoTarifa.disable();
     this.formulario.get('estaActiva').enable();
@@ -1433,6 +1419,7 @@ export class VerTarifaDialogo {
       this.formularioEscala.get('importeFijo').setValidators([]);
       this.formularioEscala.get('importeFijo').setValue(null);
       this.formularioEscala.get('importeFijo').disable();
+      this.formularioEscala.get('minimo').reset();
       this.formularioEscala.get('minimo').enable();
     } else {
       this.formularioEscala.get('importeFijo').enable();
@@ -1440,6 +1427,7 @@ export class VerTarifaDialogo {
       this.formularioEscala.get('precioUnitario').setValidators([]);
       this.formularioEscala.get('precioUnitario').setValue(null);
       this.formularioEscala.get('precioUnitario').disable();
+      this.formularioEscala.get('minimo').reset();
       this.formularioEscala.get('minimo').disable();
     }
   }

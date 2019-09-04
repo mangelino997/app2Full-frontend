@@ -9,7 +9,7 @@
                         <div class="form-group has-float-label">
                             <label id="labelTotalComprobante" for="idTotalComprobante" class="descripcion-label">Total Comprobante *</label>
                             <input id="idTotalComprobante" type="text" [formControl]="totalComprobante" autocomplete="off" readonly
-                            [textMask]="mascararImporte(10)" class="form-control form-control-sm">
+                            [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -56,7 +56,7 @@
                             <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
                             <input id="idImporte" type="text" formControlName="importe" autocomplete="off" [textMask]="mascararImporte(10)"
                              placeholder="$0.00" (blur)="establecerDecimales(formulario.get('importe'), 2)"
-                            class="form-control form-control-sm">
+                            class="form-control form-control-sm number-right">
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -105,7 +105,7 @@
                         <div class="form-group has-float-label">
                             <label id="labelDiferencia" for="idDiferencia" class="descripcion-label">Diferencia *</label>
                             <input id="idDiferencia" type="text" [formControl]="diferencia" autocomplete="off" [textMask]="mascararImporte(12)"
-                             placeholder="$0.00" (blur)="establecerDecimales(diferencia, 2)" class="form-control form-control-sm" readonly>
+                             placeholder="$0.00" (blur)="establecerDecimales(diferencia, 2)" class="form-control form-control-sm number-right" readonly>
                         </div>
                     </div>
                 </div>
