@@ -3,11 +3,12 @@ import { BarrioService } from '../../servicios/barrio.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteDialogoComponent } from '../reporte-dialogo/reporte-dialogo.component';
 
 @Component({
   selector: 'app-barrio',
@@ -49,7 +50,8 @@ export class BarrioComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: BarrioService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private loaderService: LoaderService, private appService: AppService) {
+    private toastr: ToastrService, private loaderService: LoaderService, private appService: AppService,
+    private dialog: MatDialog) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -291,5 +293,23 @@ export class BarrioComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    const dialogRef = this.dialog.open(ReporteDialogoComponent, {
+      width: '100%',
+      height: '100%',
+      maxWidth: '100%',
+      maxHeight: '100%',
+      data: {
+        nombre: 'Barrios',
+        empresa: this.appService.getEmpresa().razonSocial,
+        usuario: this.appService.getUsuario().nombre,
+        lista: this.listaCompleta.data
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      
+    });
   }
 }

@@ -387,6 +387,7 @@ import { TipoPercepcion } from './modelos/tipoPercepcion';
 import { PersonalAdelantoService } from './servicios/personal-adelanto.service';
 import { PersonalAdelanto } from './modelos/personalAdelanto';
 import { AdelantoPersonalComponent, PrestamoDialogo } from './componentes/adelanto-personal/adelanto-personal.component';
+import { ReporteDialogoComponent } from './componentes/reporte-dialogo/reporte-dialogo.component';
 
 //Rutas
 const appRoutes: Routes = [
@@ -511,7 +512,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.123:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -690,7 +691,8 @@ const stompConfig: StompConfig = {
     CuentaBancariaDialogoComponent,
     AdelantoLoteDialogo,
     AdelantoPersonalComponent,
-    PrestamoDialogo
+    PrestamoDialogo,
+    ReporteDialogoComponent
   ],
   imports: [
     BrowserModule,
@@ -1021,7 +1023,8 @@ const stompConfig: StompConfig = {
     DetalleVencimientosDialogo,
     CuentaBancariaDialogoComponent,
     AdelantoLoteDialogo,
-    PrestamoDialogo
+    PrestamoDialogo,
+    ReporteDialogoComponent
   ]
 })
 export class AppModule { }

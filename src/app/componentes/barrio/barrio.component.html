@@ -45,7 +45,8 @@
       </form>
     </div>
   </div>
-  <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
+  <div class="row contenedor" [hidden]="indiceSeleccionado != 5">
+    <div class="col-md-3"></div>
     <div class="col-md-6">
       <div class="row" *ngIf="show">
         <div class="col text-center">
@@ -54,20 +55,20 @@
       </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="id" sticky>
+        <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="nombre" sticky>
+        <ng-container matColumnDef="nombre">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="ver" sticky>
+        <ng-container matColumnDef="ver">
           <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
         </ng-container>
-        <ng-container matColumnDef="mod" sticky>
+        <ng-container matColumnDef="mod">
           <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
               class="cursor-color">editar</span></td>
@@ -75,6 +76,9 @@
         <tr mat-header-row *matHeaderRowDef="columnas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
       </table>
+    </div>
+    <div class="col-md-3">
+      <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
     </div>
   </div>
 </div>
