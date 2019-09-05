@@ -173,7 +173,10 @@ export class CobradorComponent implements OnInit {
   }
   //Agrega un registro
   private verificarPrincipal(opcion) {
-    if (this.formulario.get('porDefectoClienteEventual').value == "true") {
+    console.log(this.formulario.get('porDefectoClienteEventual').value);
+
+    if(this.formulario.get('porDefectoClienteEventual').value) {
+     
       this.servicio.obtenerPorDefecto().subscribe(
         res => {
           console.log(res);
@@ -184,6 +187,7 @@ export class CobradorComponent implements OnInit {
       );
     }
     else {
+    
       // this.formulario.get('id').setValue(null);
       this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
       if(opcion==1)
@@ -248,12 +252,6 @@ export class CobradorComponent implements OnInit {
             document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
-        }else{
-          this.toastr.error("¡El Nombre ingresado ya existe! ");
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
           this.loaderService.hide();
         }
       },

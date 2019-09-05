@@ -115,12 +115,15 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.listarEmpresas();
 
     //Obtiene la fecha del dia actual
+    
     this.fechaService.obtenerFecha().subscribe(
       res => {
-        
+        console.log(res);
+        this.fechaActual =res.json();
+        //this.fechaActual = new Date();
       },
       err => {
-
+        console.log("error")
       }
     );
 
