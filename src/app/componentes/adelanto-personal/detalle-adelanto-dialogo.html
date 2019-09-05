@@ -1,0 +1,60 @@
+<div id="" class="container-fluid" >
+    <div class="row justify-content-center contenedor" >
+      <div class="col-md-10 text-center">
+        <h5>Detalle del Adelanto</h5>
+        <form [formGroup]="formulario" class="contenedor">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label id="labelFechaLiquidacion" for="idFechaLiquidacion" class="tamanio-label">Fecha Liquidación</label>
+                <input id="idFechaLiquidacion" type="text" [formControl]="fechaLiquidacion" class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label id="labelNumeroLiquidacion" for="idNumeroLiquidacion" class="tamanio-label">N° Liquidación</label>
+                <input id="idNumeroLiquidacion" type="text" [formControl]="numeroLiquidacion" class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label id="labelNumeroViaje" for="idNumeroViaje" class="tamanio-label">N° Viaje</label>
+                <input id="idNumeroViaje" type="text" formControlName="viaje" class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label id="labelNumeroReparto" for="idNumeroReparto" class="tamanio-label">N° Reparto</label>
+                <input id="idNumeroReparto" type="text" formControlName="reparto" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label id="labelObservacionesAnulado" for="idObservacionesAnulado" class="tamanio-label">Observaciones Anulado</label>
+                <input id="idObservacionesAnulado" type="text" formControlName="observacionesAnulado" class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label id="labelNumeroLiquidacion" for="idNumeroLiquidacion" class="tamanio-label">Usuario Anulación</label>
+                <input id="idNumeroLiquidacion" type="text" [formControl]="usuarioAnulacion" class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group has-float-label">
+                <label id="labelNumeroViaje" for="idNumeroViaje" class="tamanio-label">Usuario última modificación</label>
+                <input id="idNumeroViaje" type="text" [formControl]="usuarioMod" class="form-control form-control-sm">
+              </div>
+            </div>
+          </div>
+          <div class="row text-center">
+            <button id="idBotonCancelar" *ngIf="!show" mat-raised-button color="primary" formnovalidate (click)="closeDialog()">
+              Cancelar            
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>

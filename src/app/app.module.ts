@@ -14,6 +14,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
 import { TextMaskModule } from 'angular2-text-mask';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import {DatePipe} from '@angular/common';
 
 //BUILD PRODUCCION
 //node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod --build-optimizer
@@ -386,7 +387,7 @@ import { AdelantoLoteComponent, AdelantoLoteDialogo } from './componentes/adelan
 import { TipoPercepcion } from './modelos/tipoPercepcion';
 import { PersonalAdelantoService } from './servicios/personal-adelanto.service';
 import { PersonalAdelanto } from './modelos/personalAdelanto';
-import { AdelantoPersonalComponent, PrestamoDialogo } from './componentes/adelanto-personal/adelanto-personal.component';
+import { AdelantoPersonalComponent, PrestamoDialogo, DetalleAdelantoDialogo } from './componentes/adelanto-personal/adelanto-personal.component';
 import { ReporteDialogoComponent } from './componentes/reporte-dialogo/reporte-dialogo.component';
 
 //Rutas
@@ -512,7 +513,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -692,7 +693,8 @@ const stompConfig: StompConfig = {
     AdelantoLoteDialogo,
     AdelantoPersonalComponent,
     PrestamoDialogo,
-    ReporteDialogoComponent
+    ReporteDialogoComponent,
+    DetalleAdelantoDialogo
   ],
   imports: [
     BrowserModule,
@@ -976,6 +978,7 @@ const stompConfig: StompConfig = {
     PersonalAdelanto,
     TipoPercepcion,
     PersonalAdelantoService,
+    DatePipe,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -1024,7 +1027,8 @@ const stompConfig: StompConfig = {
     CuentaBancariaDialogoComponent,
     AdelantoLoteDialogo,
     PrestamoDialogo,
-    ReporteDialogoComponent
+    ReporteDialogoComponent,
+    DetalleAdelantoDialogo
   ]
 })
 export class AppModule { }

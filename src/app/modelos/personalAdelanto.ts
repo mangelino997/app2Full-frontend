@@ -14,7 +14,7 @@ export class PersonalAdelanto {
             personal: new FormControl(),
             tipoComprobante: new FormControl(),
             fechaEmision: new FormControl(),
-            fechaVto: new FormControl(),
+            fechaVto: new FormControl('', Validators.required),
             importe: new FormControl('', Validators.required),
             cuota: new FormControl(),
             totalCuotas: new FormControl(),

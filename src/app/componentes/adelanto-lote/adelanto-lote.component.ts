@@ -202,6 +202,12 @@ export class AdelantoLoteComponent implements OnInit {
           });
           dialogRef.afterClosed().subscribe(result => {
             console.log(result);
+            if(result.length == 0){
+              this.toastr.success("Se agregaron todos los registros correctamente.");
+            }else{
+              this.toastr.error("Registros no guardados");
+
+            }
           });
         }
         this.loaderService.hide();
