@@ -1,7 +1,8 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource, MatSort } from '@angular/material';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
+import 'jspdf-autotable';
+import { FechaService } from 'src/app/servicios/fecha.service';
 
 @Component({
   selector: 'app-reporte-dialogo',
@@ -17,14 +18,17 @@ export class ReporteDialogoComponent implements OnInit {
   public empresa: string = null;
   //Define el usuario
   public usuario: string = null;
+  //Define la fecha actual
+  public fecha:any = null;
   //Define la lista completa
   public lista = new MatTableDataSource([]);
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre'];
+  public columnas: string[] = ['id', 'nombre', 'provincia'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<ReporteDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<ReporteDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data,
+    private fechaServicio: FechaService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el nombre del pdf
@@ -34,42 +38,63 @@ export class ReporteDialogoComponent implements OnInit {
     //Establece el usuario
     this.usuario = this.data.usuario;
     //Establece la lista completa
-    this.lista = new MatTableDataSource(this.data.lista);
+    this.lista = new MatTableDataSource(this.data.datos);
     this.lista.sort = this.sort;
+    //Obtiene la fecha actual
+    this.obtenerFecha();
+  }
+  //Obtiene la fecha actual
+  private obtenerFecha(): void {
+    this.fechaServicio.obtenerFecha().subscribe(
+      res => {
+        let fecha = new Date(res.text());
+        this.fecha = this.establecerCerosIzq(fecha.getDate(), '0', -2) 
+          + "/" + this.establecerCerosIzq(fecha.getMonth()+1, '0', -2) 
+          + "/" + fecha.getFullYear();
+      },
+      err => {
+
+      }
+    );
+  }
+  //Establece la cantidad de ceros correspondientes a la izquierda del numero
+  public establecerCerosIzq(elemento, string, cantidad) {
+    return (string + elemento).slice(cantidad);
+  }
+  private posicionarTexto(pdf, posicion, tamanioTexto, texto) {
+    let pageWidth = pdf.internal.pageSize.width;
+    let txtWidth = pdf.getStringUnitWidth(texto)*tamanioTexto/pdf.internal.scaleFactor;
+    switch(posicion) {
+      case "center":
+        return (pageWidth - txtWidth + 10) / 2;
+      case "right":
+        return (pageWidth - txtWidth - 10);
+    }
+  }
+  //Exporta los datos
+  private exportar(columnas, datos): void {
+    var pdf = new jsPDF('p', 'mm', 'a4');
+    let tamanioTexto = 12;
+    //Establece titulo empresa
+    pdf.setFontSize(12);
+    pdf.text(this.empresa, 10, 10);
+    //Establece fecha
+    pdf.setFontSize(12);
+    pdf.text(this.fecha, this.posicionarTexto(pdf, 'right', tamanioTexto, this.fecha), 10);
+    //Establece titulo listado
+    pdf.setFontSize(12);
+    pdf.text('Listado de ' + this.nombre, this.posicionarTexto(pdf, 'center', tamanioTexto, this.empresa), 18);
+    //Establece tabla
+    pdf.autoTable(columnas, datos,
+    { margin:{ top: 20 }}
+    );
+    pdf.save();
   }
   //Descarga el pdf
   public descargar(): void {
-    this.mostrar = false;
-    setTimeout(() => {
-      var HTML_Width = document.getElementById('idContenedor').clientWidth;
-      var HTML_Height = document.getElementById('idContenedor').clientHeight;
-      var top_left_margin = 15;
-      var PDF_Width = HTML_Width + (top_left_margin * 2);
-      var PDF_Height = (PDF_Width * 1.5) + (top_left_margin * 2);
-      var canvas_image_width = HTML_Width;
-      var canvas_image_height = HTML_Height;
-      var totalPDFPages = Math.ceil(HTML_Height / PDF_Height) - 1;
-      html2canvas(document.getElementById('idContenedor'), { allowTaint: true }).then(function (canvas) {
-        canvas.getContext('2d');
-        var imgData = canvas.toDataURL("image/jpeg", 1.0);
-        var pdf = new jsPDF('p', 'pt', [PDF_Width, PDF_Height]);
-        pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin, canvas_image_width, canvas_image_height);
-        for (var i = 1; i <= totalPDFPages; i++) {
-          pdf.addPage(PDF_Width, PDF_Height);
-          pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height * i) + (top_left_margin * 4), canvas_image_width, canvas_image_height);
-        }
-        pdf.save("HTML-Document.pdf");
-      });
-      this.mostrar = true;
-    }, 50);
-    // //Ocultar seccion de codigo
-    // this.mostrar = false;
-    // setTimeout(() => {
-    //   //Exporta a pdf
-    //   window.frames['myiframe'].print();
-    //   //Cierra el dialogo
-    //   this.cerrar();
-    // }, 50);
+    let columnas = this.data.columnas;
+    let datos = this.data.datos;
+    this.exportar(columnas, datos);
   }
   //Cierra el dialogo
   public cerrar(): void {

@@ -4,11 +4,12 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { ProvinciaService } from '../../servicios/provincia.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { ReporteDialogoComponent } from '../reporte-dialogo/reporte-dialogo.component';
 
 @Component({
   selector: 'app-localidad',
@@ -53,7 +54,7 @@ export class LocalidadComponent implements OnInit {
   //Constructor
   constructor(private servicio: LocalidadService, private subopcionPestaniaService: SubopcionPestaniaService,
     private provinciaServicio: ProvinciaService, private appService: AppService, private toastr: ToastrService,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private dialog: MatDialog) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -114,7 +115,7 @@ export class LocalidadComponent implements OnInit {
   private listarProvincias() {
     this.provinciaServicio.listar().subscribe(res => {
       this.provincias = res.json();
-    })
+    });
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
@@ -258,13 +259,20 @@ export class LocalidadComponent implements OnInit {
     this.vaciarListas();
   }
   //Obtiene la lista de localidades por provincia
-  public listarPorProvincia(provincia) {
+  public listarPorProvincia() {
     this.loaderService.show();
-    this.servicio.listarPorProvincia(provincia.id).subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res.json());
-      this.listaCompleta.sort = this.sort;
-      this.loaderService.hide();
-    })
+    let provincia = this.formulario.get('provincia').value;
+    let id = provincia != '0' ? provincia.id : 0;
+    this.servicio.listarPorProvincia(id).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -315,5 +323,50 @@ export class LocalidadComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
+  //Vacia la lista de localidades
+  public vaciarLista(): void {
+    this.listaCompleta = new MatTableDataSource([]);
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(): Array<any> {
+    let lista = this.listaCompleta.data;
+    let datos = [];
+    lista.forEach(elemento => {
+      let d = [];
+      d.push(elemento.id);
+      d.push(elemento.nombre);
+      d.push(elemento.provincia.nombre);
+      datos.push(d);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let columnas = ["ID", "NOMBRE", "PROVINCIA"];
+    let datos = this.prepararDatos();
+    const dialogRef = this.dialog.open(ReporteDialogoComponent, {
+      width: '100%',
+      height: '100%',
+      maxWidth: '100%',
+      maxHeight: '100%',
+      data: {
+        nombre: 'Localidades',
+        empresa: this.appService.getEmpresa().razonSocial,
+        usuario: this.appService.getUsuario().nombre,
+        datos: datos,
+        columnas: columnas
+      }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      
+    });
+  }
 }

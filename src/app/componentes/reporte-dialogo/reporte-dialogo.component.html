@@ -1,11 +1,10 @@
 <div id="idContenedor">
   <mat-toolbar color="primary" class="toolbar">
-    <span class="title-pdf">Reporte: {{nombre}}</span>
-    <span class="spacer"></span>
     <h4>{{empresa}}</h4>
     <span class="spacer"></span>
-    <h6>Usuario: {{usuario}}</h6>
-    <button class="margin-left-10" mat-mini-fab matTooltip="Descargar" (click)="descargar()" *ngIf="mostrar">
+    <h4>Listado de {{nombre}}</h4>
+    <span class="spacer"></span>
+    <button mat-mini-fab matTooltip="Descargar" (click)="descargar()" *ngIf="mostrar">
       <mat-icon>cloud_download</mat-icon>
     </button>
     <button style="margin-left: 10px;" mat-mini-fab matTooltip="Cerrar" (click)="cerrar()" *ngIf="mostrar">
@@ -18,11 +17,15 @@
         <table mat-table [dataSource]="lista" matSort class="mat-elevation-z1">
           <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[0]}}</td>
           </ng-container>
           <ng-container matColumnDef="nombre">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[1]}}</td>
+          </ng-container>
+          <ng-container matColumnDef="provincia">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Provincia</th>
+              <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[2]}}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

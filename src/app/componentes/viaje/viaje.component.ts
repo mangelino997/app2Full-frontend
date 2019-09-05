@@ -60,7 +60,9 @@ export class ViajeComponent implements OnInit {
   //Define un formulario viaje propio para validaciones de campos
   public formularioViaje: FormGroup;
   //Define un formulario viaje  tramo para validaciones de campos
-  public formularioViajeTramo: FormGroup = new FormGroup({});
+  public formularioViajeTramo: FormGroup = new FormGroup({
+    lista: new FormControl('', Validators.required)
+  });
   //Define un formulario viaje  combustible para validaciones de campos
   public formularioViajeCombustible: FormGroup = new FormGroup({});
   //Define un formulario viaje  efectivo para validaciones de campos
@@ -100,7 +102,7 @@ export class ViajeComponent implements OnInit {
   //Define una bandera para campos solo lectura de componentes hijos
   public banderaSoloLectura: boolean = false;
   //Define si la lista de tramos tiene registros
-  public estadoFormulario: boolean = false;
+  public estadoFormulario: boolean = true;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -259,15 +261,6 @@ export class ViajeComponent implements OnInit {
     this.resultadosVehiculosRemolques = [];
     this.resultadosChoferes = [];
   }
-  //Vacia la lista de componentes hijos
-  private vaciarListasHijos() {
-    this.viajeCombustibleComponente.vaciarListas();
-    this.viajeEfectivoComponente.vaciarListas();
-    this.viajeGastoComponente.vaciarListas();
-    this.viajeInsumoComponente.vaciarListas();
-    this.viajePeajeComponente.vaciarListas();
-    // this.viajeTramoComponente.vaciarListas();
-  }
   //Obtiene el listado de sucursales
   private listarSucursales() {
     this.sucursalServicio.listar().subscribe(
@@ -349,7 +342,7 @@ export class ViajeComponent implements OnInit {
         this.obtenerSiguienteId();
         this.banderaSoloLectura = false;
         this.establecerCamposSoloLectura(false);
-        this.estadoFormulario = false;
+        this.estadoFormulario = true;
         this.establecerValoresPestania(nombre, false, false, false, true, 'idFecha');
         break;
       case 2:
@@ -433,6 +426,7 @@ export class ViajeComponent implements OnInit {
   }
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
+    this.formularioViajeTramo.get('lista').setValue($event);
     if ($event.length > 0) {
       this.estadoFormulario = false;
     } else {
@@ -441,44 +435,17 @@ export class ViajeComponent implements OnInit {
     this.viajeRemitoGSComponente.establecerTramos($event);
   }
   //Recibe la lista de combustibles de Viaje Combustible
-  public recibirCombustibles($event) {
-    // if ($event.length > 0)
-    //   this.formularioViajeCombustible.get('lista').setValue($event);
-    // else
-    //   this.formularioViajeCombustible.get('lista').setValue(null);
-  }
+  public recibirCombustibles($event) {}
   //Recibe la lista de adelantos de efectivo de Viaje Efectivo
-  public recibirEfectivos($event) {
-    // if ($event.length > 0)
-    //   this.formularioViajeEfectivo.get('lista').setValue($event);
-    // else
-    //   this.formularioViajeEfectivo.get('lista').setValue(null);
-  }
+  public recibirEfectivos($event) {}
   //Recibe la lista de ordenes de insumo de Viaje Insumo
-  public recibirInsumos($event) {
-    // if ($event.length > 0)
-    //   this.formularioViajeInsumo.get('lista').setValue($event);
-    // else
-    //   this.formularioViajeInsumo.get('lista').setValue(null);
-  }
+  public recibirInsumos($event) {}
   //Recibe la lista de gastos de Viaje Gasto
-  public recibirGastos($event) {
-    // if ($event.length > 0)
-    //   this.formularioViajeGasto.get('lista').setValue($event);
-    // else
-    //   this.formularioViajeGasto.get('lista').setValue(null);
-  }
+  public recibirGastos($event) {}
   //Recibe la lista de peajes de Viaje Peaje
-  public recibirPeajes($event) {
-    // if ($event.length > 0)
-    //   this.formularioViajePeaje.get('lista').setValue($event);
-    // else
-    //   this.formularioViajePeaje.get('lista').setValue(null);
-  }
+  public recibirPeajes($event) {}
   //Recibe la lista de remitos de Viaje Remito
-  public recibirRemitos($event) {
-    console.log($event);
-  }
+  public recibirRemitos($event) {}
   //Agrega el viaje (CABECERA)
   public agregarViaje() {
     this.loaderService.show();
@@ -538,7 +505,7 @@ export class ViajeComponent implements OnInit {
     } else {
       document.getElementById('idAutocompletado').focus();
     }
-    this.toastr.success('Registro finalizado con éxito');
+    this.toastr.success('Registro agregado con éxito');
   }
   //Verifica el estado del formulario
   public obtenerEstadoFormulario(formulario, estado) {
@@ -672,12 +639,5 @@ export class ViajeComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
-    // else if (keycode == 115) {
-    //   if (opcion < this.opciones.length) {
-    //     this.seleccionarOpcion(opcion + 1, opcion);
-    //   } else {
-    //     this.seleccionarOpcion(1, 0);
-    //   }
-    // }
   }
 }

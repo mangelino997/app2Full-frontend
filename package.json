@@ -31,6 +31,7 @@
     "html2canvas": "^1.0.0-rc.3",
     "jquery": "^3.4.1",
     "jspdf": "^1.5.3",
+    "jspdf-autotable": "^3.2.4",
     "ng2-pdf-viewer": "^5.3.2",
     "ng2-stomp-service": "^1.2.2",
     "ngx-toastr": "^9.2.0",
