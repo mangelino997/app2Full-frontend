@@ -93,7 +93,8 @@
               </div>
           </div>
           <div class="row text-center">
-            <button id="idBotonAceptar" *ngIf="!show" mat-raised-button color="primary" formnovalidate (click)="closeDialog('aceptar')">
+            <button id="idBotonAceptar" *ngIf="!show" mat-raised-button color="primary" formnovalidate 
+            [disabled]="!btnAceptar" (click)="closeDialog('aceptar')">
               Aceptar            
             </button>
             <button id="idBotonCancelar" *ngIf="!show" mat-raised-button color="primary" formnovalidate (click)="closeDialog('cerrar')">
@@ -108,36 +109,4 @@
         </form>
       </div>
     </div>
-    <!-- <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-      <div class="col-md-6">
-        <div class="row" *ngIf="show">
-          <div class="col text-center">
-            <app-progreso></app-progreso>
-          </div>
-        </div>
-        <br>
-        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="id" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-          </ng-container>
-          <ng-container matColumnDef="nombre" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="ver" sticky>
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-                class="cursor-color">ver</span></td>
-          </ng-container>
-          <ng-container matColumnDef="mod" sticky>
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-                class="cursor-color">editar</span></td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-        </table>
-      </div>
-    </div> -->
   </div>

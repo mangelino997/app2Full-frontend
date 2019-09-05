@@ -60,14 +60,14 @@
               <div class="form-group has-float-label">
                 <label id="labelFechaEmision" for="idFechaEmision" class="descripcion-label">Fecha de Emisión *</label>
                 <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off" 
-                (blur)="cambioFechaEmision()" class="form-control form-control-sm" >
+                (blur)="controlarFechaEmision()" class="form-control form-control-sm" >
               </div>
             </div>
             <div class="col-md-2">
               <div class="form-group has-float-label">
                 <label id="labelFechaContable" for="idFechaContable" class="descripcion-label">Fecha Contable *</label>
                 <input id="idFechaContable" type="date" formControlName="fechaContable" autocomplete="off" 
-                (blur)="verificarFechaContable()" class="form-control form-control-sm" >
+                (blur)="controlarFechaContable()" class="form-control form-control-sm" >
               </div>
             </div>
             <div class="col-md-2">

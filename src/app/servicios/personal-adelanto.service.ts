@@ -45,8 +45,13 @@ export class PersonalAdelantoService {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
   //Obtiene la lista de registros
-  public listar() {
+  public listar(){
     return this.http.get(this.url, this.options);
+  }
+  //Obtiene la lista de registros por filtros
+  public listarPorFiltros(idEmpresa, idSucursal, fechaDesde, fechaHasta, adelanto, estado, alias){
+    return this.http.get(this.url + '/listarPorFiltros/'+idEmpresa+'/'+idSucursal+'/'+fechaDesde+'/'+fechaHasta+'/'+adelanto+'/'+estado+
+    '/'+alias , this.options);
   }
   //Obtiene la lista de registros
   public listarCuotas(elemento) {
@@ -55,6 +60,10 @@ export class PersonalAdelantoService {
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
+  }
+  //Agrega un prestamo
+  public agregarPrestamo(elemento) {
+    return this.http.post(this.url + '/agregarPrestamo', elemento, this.options);
   }
   //Agrega un registro (Lote)
   public agregarLote(idEmpresa, idSucursal, idCategoria, idUsuarioAlta, observaciones, importe) {

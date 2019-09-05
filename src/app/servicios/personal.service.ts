@@ -89,7 +89,14 @@ export class PersonalService {
       })
     })
   }
-  
+  //Obtiene un listado por Empresa, Alias y Sucursal
+  public listarActivosPorAliasEmpresaYSucursal(alias, idEmpresa, idSucursal) {
+    return this.http.get(this.url + '/listarActivosPorAliasEmpresaYSucursal/' +alias + '/' + idEmpresa + '/' + idSucursal, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Obtiene un listado de choferes por alias
   public listarChoferPorAlias(alias) {
     return this.http.get(this.url + '/listarChoferPorAlias/' + alias, this.options).map(res => {

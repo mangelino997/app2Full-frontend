@@ -350,7 +350,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     }
   }
   //Controla la 'Fecha Contable'
-  public verificarFechaContable(){
+  public controlarFechaContable(){
     let fechaEmision = this.formulario.value.fechaEmision;
     let fechaContable = this.formulario.value.fechaContable;
     if(fechaEmision == null || fechaEmision == undefined){
@@ -368,7 +368,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     }
   }
   //Controla el cambio en el campo "Fecha de Emision"
-  public cambioFechaEmision(){
+  public controlarFechaEmision(){
     let fechaEmision = null;
     let fechaContable = null;
     fechaEmision = this.formulario.get('fechaEmision').value;
