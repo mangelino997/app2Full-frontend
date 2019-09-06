@@ -1,8 +1,8 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource, MatSort } from '@angular/material';
+import { FechaService } from 'src/app/servicios/fecha.service';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { FechaService } from 'src/app/servicios/fecha.service';
 
 @Component({
   selector: 'app-reporte-dialogo',
@@ -23,7 +23,7 @@ export class ReporteDialogoComponent implements OnInit {
   //Define la lista completa
   public lista = new MatTableDataSource([]);
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'provincia'];
+  public columnas: string[] = [];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -40,6 +40,8 @@ export class ReporteDialogoComponent implements OnInit {
     //Establece la lista completa
     this.lista = new MatTableDataSource(this.data.datos);
     this.lista.sort = this.sort;
+    //Establece las columnas
+    this.columnas = this.data.columnas;
     //Obtiene la fecha actual
     this.obtenerFecha();
   }

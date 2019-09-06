@@ -7,14 +7,14 @@ import {
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
   MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
   MatProgressBarModule, MatStepperModule, MatTreeModule, MatSortModule, MatProgressSpinnerModule,
-  MatTooltipModule } from '@angular/material';
+  MatTooltipModule, MatListModule } from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
 import { TextMaskModule } from 'angular2-text-mask';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
-import {DatePipe} from '@angular/common';
+import { DatePipe } from '@angular/common';
 
 //BUILD PRODUCCION
 //node --max_old_space_size=8192 ./node_modules/@angular/cli/bin/ng build --prod --build-optimizer
@@ -513,7 +513,7 @@ const appRoutes: Routes = [
 ]
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.123:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -722,6 +722,7 @@ const stompConfig: StompConfig = {
     MatSortModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
+    MatListModule,
     TextMaskModule,
     PdfViewerModule,
     ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
@@ -738,6 +739,7 @@ const stompConfig: StompConfig = {
     MatCardModule,
     MatCheckboxModule,
     MatTableModule,
+    MatListModule,
     MatIconModule,
     MatInputModule,
     MatMenuModule,

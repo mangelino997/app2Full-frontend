@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProvinciaService } from '../../servicios/provincia.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -44,7 +44,8 @@ export class LocalidadComponent implements OnInit {
   //Define la lista de resultados de busqueda provincia
   public resultadosProvincias: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'CODIGO POSTAL', 'PROVINCIA', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -343,15 +344,25 @@ export class LocalidadComponent implements OnInit {
       let d = [];
       d.push(elemento.id);
       d.push(elemento.nombre);
+      d.push(elemento.codigoPostal);
       d.push(elemento.provincia.nombre);
       datos.push(d);
     });
     return datos;
   }
+  //Borra las columnas ver y editar para reporte
+  private quitarColumnasReporte(): Array<any> {
+    let lista = Object.assign([], this.columnasSeleccionadas);
+    let indice = lista.indexOf('VER');
+    lista.splice(indice, 1);
+    indice = lista.indexOf('EDITAR');
+    lista.splice(indice, 1);
+    return lista;
+  }
   //Abre el dialogo de reporte
   public abrirReporte(): void {
-    let columnas = ["ID", "NOMBRE", "PROVINCIA"];
     let datos = this.prepararDatos();
+    let columnas = this.quitarColumnasReporte();
     const dialogRef = this.dialog.open(ReporteDialogoComponent, {
       width: '100%',
       height: '100%',

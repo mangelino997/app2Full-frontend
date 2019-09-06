@@ -30,12 +30,8 @@
     "html2canvas": "^1.0.0-rc.3",
     "jquery": "^3.4.1",
     "jspdf": "^1.5.3",
-<<<<<<< HEAD
     "jspdf-autotable": "^3.2.4",
-    "ng2-pdf-viewer": "^5.3.2",
-=======
     "ng2-pdf-viewer": "^5.3.4",
->>>>>>> 27d04a5eb64f693a59c70174a7cd77f68e94c5fe
     "ng2-stomp-service": "^1.2.2",
     "ngx-toastr": "^9.2.0",
     "node-sass": "^4.12.0",
