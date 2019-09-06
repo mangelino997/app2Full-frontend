@@ -36,7 +36,7 @@
                     <div class="col-md-6">
                       <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
                         <label for="idAutocompletado" class="tamanio-label">Buscar Cliente</label>
-                        <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
+                        <input id="idAutocompletado" class="form-control form-control-sm"
                           autocomplete="off" type="text" matInput [formControl]="autocompletado"
                           [matAutocomplete]="auto"
                           placeholder="Buscar por id, razón social, nombre de fantasía o número de documento">
@@ -84,8 +84,6 @@
                         <input id="idSitioWeb" type="text" formControlName="sitioWeb" autocomplete="off"
                           class="form-control form-control-sm" [readonly]="soloLectura"
                           (ngModelChange)="cambioCampo('idSitioWeb', 'labelSitioweb')" maxlength="60">
-                        <!-- pattern="^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org|io))*$"
-                          (blur)="validarPatron('^((w{3})(\.)([0-9a-zA-Z])+(\.)(com.ar|com|net|org|io))*$', 'sitioWeb')" -->
                       </div>
                     </div>
                   </div>
@@ -116,7 +114,7 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idLocalidad" class="tamanio-label">Localidad *</label>
-                        <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
+                        <input id="idLocalidad" class="form-control form-control-sm" type="text" 
                           [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
                           autocomplete="off" [readonly]="soloLectura"
                           (blur)="verificarSeleccion(formulario.get('localidad'))">
@@ -467,24 +465,27 @@
                           <ng-container matColumnDef="banco">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
                             <td mat-cell *matCellDef="let elemento">
-                              {{elemento.sucursalBanco ? elemento.sucursalBanco.banco.nombre : null}}</td>
+                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.banco.nombre : null}}</td>
                           </ng-container>
                           <ng-container matColumnDef="sucursal">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
                             <td mat-cell *matCellDef="let elemento">
-                              {{elemento.sucursalBanco ? elemento.sucursalBanco.nombre : null}}</td>
+                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.nombre : null}}</td>
                           </ng-container>
                           <ng-container matColumnDef="numCuenta">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuenta</th>
-                            <td mat-cell *matCellDef="let elemento">{{elemento.numeroCuenta}}</td>
+                            <td mat-cell *matCellDef="let elemento">
+                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.numeroCuenta : null}}</td>
                           </ng-container>
                           <ng-container matColumnDef="cbu">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
-                            <td mat-cell *matCellDef="let elemento">{{elemento.cbu}}</td>
+                            <td mat-cell *matCellDef="let elemento">
+                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.cbu : null}}</td>
                           </ng-container>
                           <ng-container matColumnDef="aliasCbu">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
-                            <td mat-cell *matCellDef="let elemento">{{elemento.aliasCBU}}</td>
+                            <td mat-cell *matCellDef="let elemento">
+                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.aliasCBU : null}}</td>
                           </ng-container>
                           <tr mat-header-row *matHeaderRowDef="columnasCuentaBancaria"></tr>
                           <tr mat-row *matRowDef="let row; columns: columnasCuentaBancaria;"></tr>
