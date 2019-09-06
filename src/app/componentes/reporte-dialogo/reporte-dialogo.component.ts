@@ -19,7 +19,7 @@ export class ReporteDialogoComponent implements OnInit {
   //Define el usuario
   public usuario: string = null;
   //Define la fecha actual
-  public fecha:any = null;
+  public fecha: any = null;
   //Define la lista completa
   public lista = new MatTableDataSource([]);
   //Define las columnas de la tabla
@@ -50,8 +50,8 @@ export class ReporteDialogoComponent implements OnInit {
     this.fechaServicio.obtenerFecha().subscribe(
       res => {
         let fecha = new Date(res.text());
-        this.fecha = this.establecerCerosIzq(fecha.getDate(), '0', -2) 
-          + "/" + this.establecerCerosIzq(fecha.getMonth()+1, '0', -2) 
+        this.fecha = this.establecerCerosIzq(fecha.getDate(), '0', -2)
+          + "/" + this.establecerCerosIzq(fecha.getMonth() + 1, '0', -2)
           + "/" + fecha.getFullYear();
       },
       err => {
@@ -63,33 +63,69 @@ export class ReporteDialogoComponent implements OnInit {
   public establecerCerosIzq(elemento, string, cantidad) {
     return (string + elemento).slice(cantidad);
   }
-  private posicionarTexto(pdf, posicion, tamanioTexto, texto) {
-    let pageWidth = pdf.internal.pageSize.width;
-    let txtWidth = pdf.getStringUnitWidth(texto)*tamanioTexto/pdf.internal.scaleFactor;
-    switch(posicion) {
-      case "center":
-        return (pageWidth - txtWidth + 10) / 2;
-      case "right":
-        return (pageWidth - txtWidth - 10);
-    }
-  }
   //Exporta los datos
   private exportar(columnas, datos): void {
     var pdf = new jsPDF('p', 'mm', 'a4');
+    var totalPagesExp = "{total_pages_count_string}";
     let tamanioTexto = 12;
-    //Establece titulo empresa
-    pdf.setFontSize(12);
-    pdf.text(this.empresa, 10, 10);
-    //Establece fecha
-    pdf.setFontSize(12);
-    pdf.text(this.fecha, this.posicionarTexto(pdf, 'right', tamanioTexto, this.fecha), 10);
-    //Establece titulo listado
-    pdf.setFontSize(12);
-    pdf.text('Listado de ' + this.nombre, this.posicionarTexto(pdf, 'center', tamanioTexto, this.empresa), 18);
+    let empresa = this.empresa;
+    let nombre = this.nombre;
+    let fecha = this.fecha;
+    let usuario = this.usuario;
+    //Agrega ultima fila con total de items
+    let ultimaFila = [];
+    for (let i = 0; i < columnas.length; i++) {
+      if (i == 0) {
+        ultimaFila.push('Total:');
+      } else if (i == 1) {
+        ultimaFila.push(datos.length);
+      } else {
+        ultimaFila.push(null);
+      }
+    }
+    datos.push(ultimaFila);
+    //Establece la posicion del texto
+    let posicionarTexto = function (posicion, texto) {
+      let pageWidth = pdf.internal.pageSize.width;
+      let txtWidth = pdf.getStringUnitWidth(texto) * tamanioTexto / pdf.internal.scaleFactor;
+      switch (posicion) {
+        case "center":
+          return (pageWidth - txtWidth + 10) / 2;
+        case "right":
+          return (pageWidth - txtWidth - 10);
+      }
+    }
+    let pageContent = function (data) {
+      //HEADER
+      //Establece titulo empresa
+      pdf.setFontSize(12);
+      pdf.text(empresa, 10, 10);
+      //Establece fecha
+      pdf.setFontSize(12);
+      pdf.text(fecha, posicionarTexto('right', fecha), 10);
+      //Establece titulo listado
+      pdf.setFontSize(12);
+      pdf.text('Listado de ' + nombre, posicionarTexto('center', empresa), 18);
+      //FOOTER
+      let str = "Página " + data.pageCount;
+      // Total page number plugin only available in jspdf v1.0+
+      if (typeof pdf.putTotalPages === 'function') {
+        str = str + " de " + totalPagesExp;
+      }
+      pdf.setFontSize(10);
+      pdf.text(usuario, 10, pdf.internal.pageSize.height - 10);
+      pdf.setFontSize(10);
+      pdf.text(str, posicionarTexto('center', 'Pagina 10 de 10'), pdf.internal.pageSize.height - 10);
+    };
     //Establece tabla
-    pdf.autoTable(columnas, datos,
-    { margin:{ top: 20 }}
-    );
+    pdf.autoTable(columnas, datos, {
+      didDrawPage: pageContent,
+      margin: { top: 20 },
+    });
+    // Total page number plugin only available in jspdf v1.0+
+    if (typeof pdf.putTotalPages === 'function') {
+      pdf.putTotalPages(totalPagesExp);
+    }
     pdf.save();
   }
   //Descarga el pdf

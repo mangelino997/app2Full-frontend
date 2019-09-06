@@ -7,13 +7,14 @@ import {
   MatSelectModule, MatTabsModule, MatIconModule, MatCardModule, MatSidenavModule,
   MatAutocompleteModule, MatInputModule, MatRadioModule, MatTableModule, MatDialogModule,
   MatProgressBarModule, MatStepperModule, MatTreeModule, MatSortModule, MatProgressSpinnerModule,
-  MatTooltipModule, MatListModule } from '@angular/material';
+  MatTooltipModule, MatListModule, MatPaginatorModule, MatPaginatorIntl } from '@angular/material';
 import { Routes, RouterModule } from '@angular/router';
 import { HttpModule } from '@angular/http';
 import { ToastrModule } from 'ngx-toastr';
 import { StompConfig, StompService } from '@stomp/ng2-stompjs';
 import { TextMaskModule } from 'angular2-text-mask';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { getDutchPaginatorIntl } from './dutch-paginator-intl';
 import { DatePipe } from '@angular/common';
 
 //BUILD PRODUCCION
@@ -723,6 +724,7 @@ const stompConfig: StompConfig = {
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatListModule,
+    MatPaginatorModule,
     TextMaskModule,
     PdfViewerModule,
     ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
@@ -740,6 +742,7 @@ const stompConfig: StompConfig = {
     MatCheckboxModule,
     MatTableModule,
     MatListModule,
+    MatPaginatorModule,
     MatIconModule,
     MatInputModule,
     MatMenuModule,
@@ -984,7 +987,8 @@ const stompConfig: StompConfig = {
     {
       provide: StompConfig,
       useValue: stompConfig
-    }
+    },
+    { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
   ],
   bootstrap: [AppComponent],
   entryComponents: [
