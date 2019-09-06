@@ -188,6 +188,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
         break;
       case 5:
+        //this.listar();
         setTimeout(function () {
           document.getElementById('idCompaniaSeguro').focus();
         }, 20);
@@ -282,6 +283,22 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       })
     }
   }
+  //Obtiene el listado de registros
+  private listar() {
+    let empresa = this.appService.getEmpresa();
+    this.loaderService.show();
+    this.servicio.listarPorEmpresa(empresa.id).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
+      },
+      err => {
+        console.log(err);
+        this.loaderService.hide();
+      }
+    );
+  }
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguro() {
     let companiaSeguro = this.formulario.get('companiaSeguro').value;
@@ -329,8 +346,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   private obtenerPorId(id) {
     this.servicio.obtenerPorId(id).subscribe(
       res => {
+      
         let elemento = res.json();
-        this.formulario.setValue(elemento);
+        this.formulario.patchValue(elemento);
         this.establecerPdf(elemento);
       },
       err => {
@@ -352,6 +370,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   private establecerPdf(elemento): void {
     this.autocompletado.setValue(elemento);
     if (elemento.pdf) {
+
       this.formulario.get('pdf.datos').setValue(atob(elemento.pdf.datos));
     }
   }
