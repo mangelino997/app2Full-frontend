@@ -14,7 +14,7 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
-          <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+          <input id="idAutocompletado" class="form-control form-control-sm" type="text" 
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
             (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
@@ -116,6 +116,7 @@
         <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
       </table>
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
     </div>
     <div class="col-md-2">
       <div class="row">

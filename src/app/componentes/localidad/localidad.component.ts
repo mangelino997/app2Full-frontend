@@ -2,9 +2,9 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { LocalidadService } from '../../servicios/localidad.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { ProvinciaService } from '../../servicios/provincia.service';
-import { FormGroup, FormControl, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
@@ -48,6 +48,8 @@ export class LocalidadComponent implements OnInit {
   public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -268,6 +270,7 @@ export class LocalidadComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
