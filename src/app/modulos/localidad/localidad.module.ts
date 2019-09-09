@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { LocalidadRoutingModule } from './localidad-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatIconModule, MatToolbarModule, MatDialogModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatToolbarModule, MatDialogModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LocalidadComponent } from 'src/app/componentes/localidad/localidad.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -16,7 +16,7 @@ import { ReporteDialogoComponent } from 'src/app/componentes/reporte-dialogo/rep
 @NgModule({
   declarations: [
     LocalidadComponent,
-    ReporteDialogoComponent
+    //ReporteDialogoComponent
   ],
   imports: [
     CommonModule,
@@ -33,15 +33,14 @@ import { ReporteDialogoComponent } from 'src/app/componentes/reporte-dialogo/rep
     TextMaskModule,
     MatIconModule,
     MatToolbarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatButtonModule,
+    TextMaskModule
   ],
   providers: [
     LocalidadService,
     SubopcionPestaniaService,
     ProvinciaService
   ],
-  entryComponents: [
-    ReporteDialogoComponent
-  ]
 })
 export class LocalidadModule { }
