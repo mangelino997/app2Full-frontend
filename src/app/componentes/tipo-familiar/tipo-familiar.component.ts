@@ -45,7 +45,8 @@ export class TipoFamiliarComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre','esDeducibleImpGan', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'ES DEDUCIBLE IMP. GAN', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -293,5 +294,31 @@ export class TipoFamiliarComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let d = [];
+        d.push(elemento.id);
+        d.push(elemento.nombre);
+        d.push(elemento.codigoPostal);
+        d.push(elemento.provincia.nombre);
+        datos.push(d);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Familiares',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    //this.reporteServicio.abrirDialogo(datos);
   }
 }

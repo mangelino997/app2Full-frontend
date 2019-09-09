@@ -27,6 +27,9 @@ import { ReporteDialogoComponent } from 'src/app/componentes/reporte-dialogo/rep
     MatIconModule,
     MatToolbarModule,
     MatDialogModule
+  ],
+  entryComponents: [
+    ReporteDialogoComponent
   ]
 })
 export class ReporteDialogoModule { }
