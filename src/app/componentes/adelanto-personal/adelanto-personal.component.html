@@ -13,7 +13,7 @@
         <h5>{{pestaniaActual}} Adelanto de Sueldos</h5>
         <form [formGroup]="formulario" class="contenedor">
           <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-10">
               <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
                 <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
                 <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
@@ -179,9 +179,9 @@
                 <label id="labelTipoAdelanto" for="idTipoAdelanto" class="descripcion-label">Tipo Adelanto *</label>
                 <mat-select id="idTipoAdelanto" class="form-control form-control-sm" [formControl]="adelanto"
                   [compareWith]="compareFn">
+                  <mat-option [value]="0">TODOS</mat-option>
                   <mat-option [value]="1">NORMAL</mat-option>
                   <mat-option [value]="2">PRÉSTAMOS</mat-option>
-                  <mat-option [value]="0">TODOS</mat-option>
                 </mat-select>
               </div>
             </div>
@@ -192,9 +192,9 @@
                   <label id="labelEstado" for="idEstado" class="descripcion-label">Estado *</label>
                   <mat-select id="idEstado" class="form-control form-control-sm" [formControl]="estado"
                     [compareWith]="compareFn">
-                    <mat-option [value]="false">PENDIENTES</mat-option>
-                    <mat-option [value]="true">EN LIQUIDACIÓN</mat-option>
-                    <mat-option [value]="null">TODOS</mat-option>
+                    <mat-option [value]="0">TODOS</mat-option>
+                    <mat-option [value]="1">PENDIENTES</mat-option>
+                    <mat-option [value]="2">EN LIQUIDACIÓN</mat-option>
                   </mat-select>
                 </div>
               </div>
@@ -244,11 +244,11 @@
               </div>
             </div>
             <div class="col-md-4">
-              <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!formulario.fechaVto.valid"
-                (click)="actualizar()" *ngIf="indiceSeleccionado == 3">Actualizar
+              <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate 
+               (click)="actualizar()" *ngIf="indiceSeleccionado == 3">Actualizar
               </button>
-              <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!formulario.observaciones.valid"
-                (click)="eliminar()" *ngIf="indiceSeleccionado == 4">Anular
+              <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate 
+               (click)="eliminar()" *ngIf="indiceSeleccionado == 4">Anular
               </button>
               <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate (click)="cancelar()"
                 >Cancelar
@@ -261,55 +261,58 @@
                 <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                   <ng-container matColumnDef="sucursal">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
                   </ng-container>
                   <ng-container matColumnDef="tipoCpte">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte.</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
                   </ng-container>
                   <ng-container matColumnDef="numAdelanto">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Adelanto</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
                   </ng-container>
                   <ng-container matColumnDef="anulado">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.estaAnulado? 'Sí' : 'No'}}</td>
                   </ng-container>
                   <ng-container matColumnDef="fechaEmision">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaEmision | date: 'dd/MM/yyyy'}}</td>
                   </ng-container>
                   <ng-container matColumnDef="fechaVto">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto.</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaVto | date: 'dd/MM/yyyy'}}</td>
                   </ng-container>
                   <ng-container matColumnDef="personal">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Personal</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.personal.nombreCompleto}}</td>
                   </ng-container>
                   <ng-container matColumnDef="importe">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                    <td mat-cell *matCellDef="let elemento">${{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
                   </ng-container>
                   <ng-container matColumnDef="observaciones">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">
+                      <span *ngIf="elemento.observaciones" class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+                      <span *ngIf="!elemento.observaciones">Vacío</span>
+                    </td>
                   </ng-container>
                   <ng-container matColumnDef="usuario">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.usuarioAlta.alias}}</td>
                   </ng-container>
                   <ng-container matColumnDef="cuota">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuota</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.cuota}}</td>
                   </ng-container>
                   <ng-container matColumnDef="totalCuotas">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Cuotas</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.totalCuotas}}</td>
                   </ng-container>
                   <ng-container matColumnDef="numeroLote">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Lote</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
+                    <td mat-cell *matCellDef="let elemento">{{elemento.numeroLote}}</td>
                   </ng-container>
                   <ng-container matColumnDef="anular">
                     <th mat-header-cell *matHeaderCellDef>-</th>

@@ -14,6 +14,7 @@ import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.servi
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
 import { DatePipe } from '@angular/common';
+import { ObservacionDialogComponent } from '../observacion-dialog/observacion-dialog.component';
 
 @Component({
   selector: 'app-adelanto-personal',
@@ -225,6 +226,8 @@ export class AdelantoPersonalComponent implements OnInit {
     let adelanto = null;
     let estado = null;
     let alias = null;
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
     //Setea valores
     empresa = this.appService.getEmpresa();
     usuario = this.appService.getUsuario();
@@ -233,12 +236,14 @@ export class AdelantoPersonalComponent implements OnInit {
     fechaHasta = this.fechaEmisionHasta.value;
     adelanto = this.adelanto.value;
     estado = this.estado.value;
-    alias = this.alias.value.alias;
+    alias = this.alias.value;
 
+    if(estado == 0)
+      estado = null;
     if(alias != undefined || alias != null)
       alias = this.alias.value.alias;
       else
-      alias = "";
+      alias = ""; 
     //Consulta
     this.servicio.listarPorFiltros(empresa.id, idSucursal, fechaDesde, fechaHasta, adelanto, estado, alias).subscribe(
       res=>{
@@ -258,11 +263,14 @@ export class AdelantoPersonalComponent implements OnInit {
       this.servicio.agregarPrestamo(this.listaPrestamos).subscribe(
         res=>{
           console.log(res);
-          this.reestablecerFormulario(undefined);
-          this.toastr.success("Registro agregado con éxito.");
-          setTimeout(function () {
-              document.getElementById("idAutocompletado").focus();
-          }, 20);      
+          let respuesta = res.json();
+          if(res.status == 201){
+            this.reestablecerFormulario(respuesta.id);
+            this.toastr.success("Registro agregado con éxito.");
+            setTimeout(function () {
+                document.getElementById("idAutocompletado").focus();
+            }, 20);
+          }
           this.loaderService.hide();
         },
         err=>{
@@ -276,7 +284,8 @@ export class AdelantoPersonalComponent implements OnInit {
       this.servicio.agregar(this.formulario.value).subscribe(
         res=>{
           console.log(res.json);
-          this.reestablecerFormulario(undefined);
+          let respuesta = res.json();
+          this.reestablecerFormulario(respuesta.id);
           this.toastr.success("Registro agregado con éxito.");
           setTimeout(function () {
             document.getElementById("idAutocompletado").focus();
@@ -297,8 +306,8 @@ export class AdelantoPersonalComponent implements OnInit {
     console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res=>{
-        console.log(res.json);
-        this.reestablecerFormulario(undefined);
+        console.log(res.json());
+        this.listarPorFiltros();
         this.toastr.success("Registro actualizado con éxito.");
         setTimeout(function () {
           document.getElementById("idAutocompletado").focus();
@@ -350,6 +359,7 @@ export class AdelantoPersonalComponent implements OnInit {
       this.formulario.get('importe').disable();
       this.btnPrestamoModal = true;
     }else{
+      this.formulario.get('importe').enable();
       this.btnPrestamoModal = false;
     }
   }
@@ -382,12 +392,32 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id){
+    //Reestablece el formulario de la pestaña Agregar
     this.formulario.reset();
+    this.legajo.setValue(id);
     this.basicoCategoria.reset();
     this.autocompletado.reset();
+    this.nombre.reset();
+    this.apellido.reset();
+    this.categoria.reset();
+    this.basicoCategoria.reset();
+    this.topeAdelanto.reset();
+    this.saldoActual.reset();
+    this.importeDisponible.reset();
+    //Restablece los formControls del formulario listar
+    this.sucursal.reset();
+    this.fechaEmisionDesde.reset();
+    this.fechaEmisionHasta.reset();
+    this.adelanto.reset();
+    this.estado.reset();
+    this.personal.reset();
     this.alias.reset();
+    //Vacía las listas
     this.listaPrestamos = [];
     this.resultados = [];
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
+    //Valores por defecto
     let usuario = this.appService.getUsuario();
     let empresa = this.appService.getEmpresa();
     let sucursal = usuario.sucursal;
@@ -494,6 +524,18 @@ export class AdelantoPersonalComponent implements OnInit {
       this.alias.updateValueAndValidity();//Actualiza la validacion
       this.alias.setValue(null);
     }
+  }
+  //Abre un dialogo para ver las observaciones
+  public verObservacionesDialogo(elemento): void {
+    const dialogRef = this.dialog.open(ObservacionDialogComponent, {
+      width: '1200px',
+      data: {
+        tema: this.appService.getTema(),
+        elemento: elemento,
+        soloLectura: true
+      }
+    });
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Anula un registro de la tabla
   public activarAnular(elemento){
@@ -693,7 +735,7 @@ export class PrestamoDialogo {
   //Completa los campos del formulario con los datos del registro a modificar
   public activarActualizar(elemento, indice){
     this.formulario.get('cuota').setValue(elemento.cuota);
-    this.formulario.get('fechaVto').setValue(this.datePipe.transform(elemento.fechaVto, "yyyy-MM-dd"));
+    // this.formulario.get('fechaVto').setValue(this.datePipe.transform(elemento.fechaVto, "yyyy-MM-dd"));
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
     this.numeroCuota.setValue(elemento.cuota);
     this.idMod= indice;
@@ -717,6 +759,7 @@ export class PrestamoDialogo {
     let totalPrestamo = 0;
     totalPrestamo = Number(this.appService.establecerDecimales(this.totalPrestamo.value, 2));
     diferencia = totalPrestamo - totalImporte;
+    console.log(diferencia, Number(diferencia));
     if(diferencia == 0){
       this.btnAceptar = true;
       this.diferencia.setValue(this.appService.establecerDecimales('0.00', 2));
@@ -786,6 +829,7 @@ export class DetalleAdelantoDialogo {
     this.numeroLiquidacion.setValue(null);
     this.usuarioAnulacion.reset();
     this.usuarioAnulacion.reset();
+    console.log(this.data.personalAdelanto);
     this.formulario.patchValue(this.data.personalAdelanto);
   }
   

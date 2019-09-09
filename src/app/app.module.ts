@@ -151,9 +151,10 @@ import { UsuarioService } from './servicios/usuario.service';
 import { UsuarioEmpresaService } from './servicios/usuario-empresa.service';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 import { LoaderService } from './servicios/loader.service';
+import { ObservacionDialogComponent } from './componentes/observacion-dialog/observacion-dialog.component';
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -167,7 +168,8 @@ const stompConfig: StompConfig = {
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent
+    LoginComponent,
+    ObservacionDialogComponent
   ],
   imports: [
     FormsModule,
