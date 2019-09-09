@@ -3,12 +3,13 @@ import { TipoFamiliarService } from '../../servicios/tipo-familiar.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { TipoFamiliar } from 'src/app/modelos/tipo-familiar';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-tipo-familiar',
@@ -45,13 +46,16 @@ export class TipoFamiliarComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'ES DEDUCIBLE IMP. GAN', 'VER', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'ES DEDUCIBLE IMP. GAN.', 'VER', 'EDITAR'];
   public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: TipoFamiliarService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private loaderService: LoaderService, private appService: AppService, private tipoFamiliar: TipoFamiliar) {
+    private toastr: ToastrService, private loaderService: LoaderService, private appService: AppService, private tipoFamiliar: TipoFamiliar,
+    private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -179,6 +183,7 @@ export class TipoFamiliarComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -300,12 +305,12 @@ export class TipoFamiliarComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let d = [];
-        d.push(elemento.id);
-        d.push(elemento.nombre);
-        d.push(elemento.codigoPostal);
-        d.push(elemento.provincia.nombre);
-        datos.push(d);
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          esdeducibleimpgan: elemento.esDeducibleImpGan ? 'Si' : 'No'
+        }
+        datos.push(f);
     });
     return datos;
   }
@@ -319,6 +324,6 @@ export class TipoFamiliarComponent implements OnInit {
       datos: lista,
       columnas: this.columnasSeleccionadas
     }
-    //this.reporteServicio.abrirDialogo(datos);
+    this.reporteServicio.abrirDialogo(datos);
   }
 }
