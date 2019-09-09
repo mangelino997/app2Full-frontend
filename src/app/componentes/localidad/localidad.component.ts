@@ -344,12 +344,13 @@ export class LocalidadComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let d = [];
-        d.push(elemento.id);
-        d.push(elemento.nombre);
-        d.push(elemento.codigoPostal);
-        d.push(elemento.provincia.nombre);
-        datos.push(d);
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          codigopostal: elemento.codigoPostal,
+          provincia: elemento.provincia.nombre
+        }
+        datos.push(f);
     });
     return datos;
   }
