@@ -222,7 +222,8 @@
           </div>
         </div>
         <br>
-        <div *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3 || indiceSeleccionado == 4" class="row justify-content-center">
+        <div *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3 || indiceSeleccionado == 4"
+          class="row justify-content-center">
           <button mat-raised-button color="primary" (click)="accion(indiceSeleccionado)"
             [disabled]="listaTarifasDeOrdVta ? listaTarifasDeOrdVta.data.length == 0 : true">
             {{pestaniaActual}}
@@ -230,7 +231,7 @@
         </div>
         <!-- <div class="row" *ngIf="show">
           <div class="col text-center">
-            <app-progreso></app-progreso>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div> -->
       </form>

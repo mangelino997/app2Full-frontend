@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { AppComponent } from '../../app.component';
-import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppService } from 'src/app/servicios/app.service';
+import { FechaService } from 'src/app/servicios/fecha.service';
+import { AppComponent } from '../../app.component';
 
 @Component({
   selector: 'app-home',
@@ -12,9 +12,8 @@ export class HomeComponent {
   public fecha: any = null;
   //Define el usuario
   public usuario: any = null;
-  constructor(private appComponent: AppComponent, private fechaService: FechaService, private appService: AppService) {
+  constructor(private appComponent: AppComponent, private appService: AppService, private fechaService: FechaService) {
     this.appComponent.setVisible(true);
-
   }
   //Al iniciarse el componente
   ngOnInit() {

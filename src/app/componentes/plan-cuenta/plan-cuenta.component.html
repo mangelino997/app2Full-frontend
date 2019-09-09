@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <div class="row" *ngIf="show">
     <div class="col text-center">
-      <app-progreso></app-progreso>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
     </div>
   </div>
   <br>
@@ -25,7 +25,8 @@
                 <label for="idGrupoCuentaContable" class="tamanio-label">Grupo Cuenta Contable *</label>
                 <mat-select id="idGrupoCuentaContable" class="form-control form-control-sm" style="width: 200px;"
                   formControlName="grupoCuentaContable" [disabled]="!formulario.valid" [compareWith]="compareFn">
-                  <mat-option *ngFor="let itemGrupoCuentaContable of gruposCuentasContables" [value]="itemGrupoCuentaContable">
+                  <mat-option *ngFor="let itemGrupoCuentaContable of gruposCuentasContables"
+                    [value]="itemGrupoCuentaContable">
                     {{itemGrupoCuentaContable.nombre}}
                   </mat-option>
                 </mat-select>
@@ -34,7 +35,8 @@
                 <label for="idTipoCuentaContable" class="tamanio-label">Tipo Cuenta Contable *</label>
                 <mat-select id="idTipoCuentaContable" class="form-control form-control-sm" style="width: 200px;"
                   formControlName="tipoCuentaContable" [disabled]="!formulario.valid" [compareWith]="compareFn">
-                  <mat-option *ngFor="let itemTipoCuentaContable of tiposCuentasContables" [value]="itemTipoCuentaContable">
+                  <mat-option *ngFor="let itemTipoCuentaContable of tiposCuentasContables"
+                    [value]="itemTipoCuentaContable">
                     {{itemTipoCuentaContable.nombre}}
                   </mat-option>
                 </mat-select>

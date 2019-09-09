@@ -94,8 +94,8 @@
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idNumeroMotor" class="tamanio-label">Número de Motor<span
-                  *ngIf="!esVehiculoRemolque"> *</span></label>
+              <label for="idNumeroMotor" class="tamanio-label">Número de Motor<span *ngIf="!esVehiculoRemolque">
+                  *</span></label>
               <input id="idNumeroMotor" type="text" formControlName="numeroMotor" autocomplete="off"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura || esVehiculoRemolque"
                 [required]="!esVehiculoRemolque" maxlength="25">
@@ -125,17 +125,18 @@
             <div class="row">
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfTitulo')" #fileInputTitulo />
-                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputTitulo.click()"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
                   <i class="material-icons" *ngIf="!formulario.get('pdfTitulo.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfTitulo.nombre').value"
-                  style="color: lightgreen">cloud_done</i>
+                    style="color: lightgreen">cloud_done</i>
                 </button>
-                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo.nombre')" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfTitulo.nombre').value" style="width: 40px;" matTooltip="Quitar">
-                  <i class="material-icons" >close</i>
+                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfTitulo.nombre')"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfTitulo.nombre').value"
+                  style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons">close</i>
                 </button>
-                <button id="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfTitulo')" 
+                <button id="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfTitulo')"
                   [disabled]="!formulario.get('pdfTitulo.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
@@ -145,24 +146,28 @@
           <div class="col-md-3">
             <div class="row">
               <div class="col-md-12">
-                <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')" #fileInputCedulaIdent />
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfCedulaIdent')"
+                  #fileInputCedulaIdent />
                 <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputCedulaIdent.click()"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"  matTooltip="Adjuntar PDF">
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
                   <i class="material-icons" *ngIf="!formulario.get('pdfCedulaIdent.nombre').value">cloud_upload</i>
-                  <i class="material-icons" *ngIf="formulario.get('pdfCedulaIdent.nombre').value" style="color: lightgreen">cloud_done</i>
+                  <i class="material-icons" *ngIf="formulario.get('pdfCedulaIdent.nombre').value"
+                    style="color: lightgreen">cloud_done</i>
                 </button>
-                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfCedulaIdent.nombre')" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfCedulaIdent.nombre').value" style="width: 40px;" matTooltip="Quitar">
-                  <i class="material-icons" >close</i>
+                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfCedulaIdent.nombre')"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfCedulaIdent.nombre').value"
+                  style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons">close</i>
                 </button>
-                <button id="btn-visibility" class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfCedulaIdent')" 
-                  [disabled]="!formulario.get('pdfCedulaIdent.nombre').value" style="width: 40px;" matTooltip="Ver">
+                <button id="btn-visibility" class="btn-height" mat-raised-button color="primary"
+                  (click)="verPDF('pdfCedulaIdent')" [disabled]="!formulario.get('pdfCedulaIdent.nombre').value"
+                  style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
               </div>
             </div>
           </div>
-          
+
         </div>
         <div class="row">
           <div class="col-md-3">
@@ -262,18 +267,19 @@
             <div class="row">
               <div class="col-md-12">
                 <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoRuta')" #fileInputVtoRuta />
-                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoRuta.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"  matTooltip="Adjuntar PDF">
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoRuta.click()"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
                   <i class="material-icons" *ngIf="!formulario.get('pdfVtoRuta.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfVtoRuta.nombre').value" style="color: lightgreen">
                     cloud_done
                   </i>
                 </button>
-                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoRuta.nombre')" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfVtoRuta.nombre').value"  style="width: 40px;" matTooltip="Quitar">
-                  <i class="material-icons" >close</i>
+                <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoRuta.nombre')"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfVtoRuta.nombre').value"
+                  style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons">close</i>
                 </button>
-                <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoRuta')" 
+                <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoRuta')"
                   [disabled]="!formulario.get('pdfVtoRuta.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
@@ -292,18 +298,20 @@
             </div>
             <div class="row">
               <div class="col-md-12">
-                <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoInspTecnica')" #fileInputVtoInspTecnica />
-                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoInspTecnica.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoInspTecnica')"
+                  #fileInputVtoInspTecnica />
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoInspTecnica.click()"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
                   <i class="material-icons" *ngIf="!formulario.get('pdfVtoInspTecnica.nombre').value">cloud_upload</i>
-                  <i class="material-icons" *ngIf="formulario.get('pdfVtoInspTecnica.nombre').value" 
-                  style="color: lightgreen">cloud_done</i>
+                  <i class="material-icons" *ngIf="formulario.get('pdfVtoInspTecnica.nombre').value"
+                    style="color: lightgreen">cloud_done</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoInspTecnica.nombre')"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfVtoInspTecnica.nombre').value" style="width: 40px;" matTooltip="Quitar">
-                  <i class="material-icons" >close</i>
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfVtoInspTecnica.nombre').value"
+                  style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons">close</i>
                 </button>
-                <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoInspTecnica')" 
+                <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoInspTecnica')"
                   [disabled]="!formulario.get('pdfVtoInspTecnica.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
@@ -323,18 +331,20 @@
             </div>
             <div class="row">
               <div class="col-md-12">
-                <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoSenasa')" #fileInputVtoSenasa />
-                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoSenasa.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"  matTooltip="Adjuntar PDF">
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfVtoSenasa')"
+                  #fileInputVtoSenasa />
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputVtoSenasa.click()"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
                   <i class="material-icons" *ngIf="!formulario.get('pdfVtoSenasa.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfVtoSenasa.nombre').value"
-                  style="color: lightgreen">cloud_done</i>
+                    style="color: lightgreen">cloud_done</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfVtoSenasa.nombre')"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfVtoSenasa.nombre').value" style="width: 40px;" matTooltip="Quitar">
-                  <i class="material-icons" >close</i>
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfVtoSenasa.nombre').value"
+                  style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons">close</i>
                 </button>
-                <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoSenasa')" 
+                <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfVtoSenasa')"
                   [disabled]="!formulario.get('pdfVtoSenasa.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
@@ -354,19 +364,21 @@
             </div>
             <div class="row">
               <div class="col-md-12">
-                <input style="display: none;" type="file" (change)="readURL($event, 'pdfHabBromat')" #fileInputHabBromat />
-                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputHabBromat.click()" 
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"  matTooltip="Adjuntar PDF">
+                <input style="display: none;" type="file" (change)="readURL($event, 'pdfHabBromat')"
+                  #fileInputHabBromat />
+                <button id="btn-adjuntar" mat-raised-button color="primary" (click)="fileInputHabBromat.click()"
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar PDF">
                   <i class="material-icons" *ngIf="!formulario.get('pdfHabBromat.nombre').value">cloud_upload</i>
                   <i class="material-icons" *ngIf="formulario.get('pdfHabBromat.nombre').value"
-                  style="color: lightgreen">cloud_done</i>
+                    style="color: lightgreen">cloud_done</i>
                 </button>
                 <button id="btn-close" mat-raised-button color="warn" (click)="eliminarPdf('pdfHabBromat.nombre')"
-                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfHabBromat.nombre').value" style="width: 40px;" matTooltip="Quitar">
-                  <i class="material-icons" >close</i>
+                  [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !formulario.get('pdfHabBromat.nombre').value"
+                  style="width: 40px;" matTooltip="Quitar">
+                  <i class="material-icons">close</i>
                 </button>
-                <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfHabBromat')" 
-                  [disabled]="!formulario.get('pdfHabBromat.nombre').value"  style="width: 40px;" matTooltip="Ver">
+                <button class="btn-visibility" mat-raised-button color="primary" (click)="verPDF('pdfHabBromat')"
+                  [disabled]="!formulario.get('pdfHabBromat.nombre').value" style="width: 40px;" matTooltip="Ver">
                   <i class="material-icons">visibility</i>
                 </button>
               </div>
@@ -380,7 +392,7 @@
         </button>
         <div class="row" *ngIf="show">
           <div class="col text-center">
-            <app-progreso></app-progreso>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
       </form>
@@ -425,95 +437,102 @@
             </div>
           </div>
           <div class="col-md-1">
-            <button mat-raised-button color="primary" [disabled]="!formularioListar.valid" (click)="listar()">Buscar</button>
+            <button mat-raised-button color="primary" [disabled]="!formularioListar.valid"
+              (click)="listar()">Buscar</button>
           </div>
         </div>
       </form>
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <div class="tabla">
         <div class="tabla-ancho">
           <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-            <ng-container matColumnDef="id" >
+            <ng-container matColumnDef="id">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
             </ng-container>
-            <ng-container matColumnDef="tipoVehiculo" >
+            <ng-container matColumnDef="tipoVehiculo">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Vehículo</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.configuracionVehiculo.tipoVehiculo.nombre}}</td>
             </ng-container>
-            <ng-container matColumnDef="dominio" >
+            <ng-container matColumnDef="dominio">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Dominio</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.dominio}}</td>
             </ng-container>
-            <ng-container matColumnDef="marcaVehiculo" >
+            <ng-container matColumnDef="marcaVehiculo">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca Vehículo</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.configuracionVehiculo.marcaVehiculo.nombre}}</td>
             </ng-container>
-            <ng-container matColumnDef="configuracion" >
+            <ng-container matColumnDef="configuracion">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Configuración</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.configuracionVehiculo.descripcion}}</td>
             </ng-container>
-            <ng-container matColumnDef="compañiaSeguro" >
+            <ng-container matColumnDef="compañiaSeguro">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Compañia de Seguro</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.companiaSeguroPoliza.companiaSeguro.nombre}}</td>
             </ng-container>
-            <ng-container matColumnDef="poliza" >
+            <ng-container matColumnDef="poliza">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Póliza</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.companiaSeguroPoliza.numeroPoliza}}
               </td>
             </ng-container>
-            <ng-container matColumnDef="pdfTitulo" >
+            <ng-container matColumnDef="pdfTitulo">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Título</th>
-              <td mat-cell *matCellDef="let elemento" >
-                <span class="cursor-color" *ngIf="elemento.pdfTitulo" (click)="obtenerPDFTabla(elemento.pdfTitulo.id, 'pdfTitulo')">{{elemento.pdfTitulo.nombre}}</span>
+              <td mat-cell *matCellDef="let elemento">
+                <span class="cursor-color" *ngIf="elemento.pdfTitulo"
+                  (click)="obtenerPDFTabla(elemento.pdfTitulo.id, 'pdfTitulo')">{{elemento.pdfTitulo.nombre}}</span>
                 <span *ngIf="!elemento.pdfTitulo">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="pdfCedulaIdent" >
+            <ng-container matColumnDef="pdfCedulaIdent">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Cédula Identidad</th>
-              <td mat-cell *matCellDef="let elemento" >
-                <span class="cursor-color" *ngIf="elemento.pdfCedulaIdent" (click)="obtenerPDFTabla(elemento.pdfCedulaIdent.id, 'pdfCedulaIdent')">{{elemento.pdfCedulaIdent.nombre}}</span>
+              <td mat-cell *matCellDef="let elemento">
+                <span class="cursor-color" *ngIf="elemento.pdfCedulaIdent"
+                  (click)="obtenerPDFTabla(elemento.pdfCedulaIdent.id, 'pdfCedulaIdent')">{{elemento.pdfCedulaIdent.nombre}}</span>
                 <span *ngIf="!elemento.pdfCedulaIdent">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="pdfVtoRuta" >
+            <ng-container matColumnDef="pdfVtoRuta">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Vto. Ruta</th>
-              <td mat-cell *matCellDef="let elemento" >
-                <span class="cursor-color" *ngIf="elemento.pdfVtoRuta" (click)="obtenerPDFTabla(elemento.pdfVtoRuta.id, 'pdfVtoRuta')">{{elemento.pdfVtoRuta.nombre}}</span>
+              <td mat-cell *matCellDef="let elemento">
+                <span class="cursor-color" *ngIf="elemento.pdfVtoRuta"
+                  (click)="obtenerPDFTabla(elemento.pdfVtoRuta.id, 'pdfVtoRuta')">{{elemento.pdfVtoRuta.nombre}}</span>
                 <span *ngIf="!elemento.pdfVtoRuta">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="pdfInspTecnica" >
+            <ng-container matColumnDef="pdfInspTecnica">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Insp. Técnica</th>
-              <td mat-cell *matCellDef="let elemento" >
-                <span class="cursor-color" *ngIf="elemento.pdfVtoInspTecnica" (click)="obtenerPDFTabla(elemento.pdfVtoInspTecnica.id, 'pdfVtoInspTecnica')">{{elemento.pdfVtoInspTecnica.nombre}}</span>
+              <td mat-cell *matCellDef="let elemento">
+                <span class="cursor-color" *ngIf="elemento.pdfVtoInspTecnica"
+                  (click)="obtenerPDFTabla(elemento.pdfVtoInspTecnica.id, 'pdfVtoInspTecnica')">{{elemento.pdfVtoInspTecnica.nombre}}</span>
                 <span *ngIf="!elemento.pdfVtoInspTecnica">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="pdfVtoSenasa" >
+            <ng-container matColumnDef="pdfVtoSenasa">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Vto. Senasa</th>
-              <td mat-cell *matCellDef="let elemento" >
-                <span class="cursor-color" *ngIf="elemento.pdfVtoSenasa" (click)="obtenerPDFTabla(elemento.pdfVtoSenasa.id, 'pdfVtoSenasa')">{{elemento.pdfVtoSenasa.nombre}}</span>
+              <td mat-cell *matCellDef="let elemento">
+                <span class="cursor-color" *ngIf="elemento.pdfVtoSenasa"
+                  (click)="obtenerPDFTabla(elemento.pdfVtoSenasa.id, 'pdfVtoSenasa')">{{elemento.pdfVtoSenasa.nombre}}</span>
                 <span *ngIf="!elemento.pdfVtoSenasa">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="pdfHabBromat" >
+            <ng-container matColumnDef="pdfHabBromat">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Hab. Bromatológica</th>
-              <td mat-cell *matCellDef="let elemento" >
-                <span class="cursor-color" *ngIf="elemento.pdfHabBromat" (click)="obtenerPDFTabla(elemento.pdfHabBromat.id, 'pdfHabBromat')">{{elemento.pdfHabBromat.nombre}}</span>
+              <td mat-cell *matCellDef="let elemento">
+                <span class="cursor-color" *ngIf="elemento.pdfHabBromat"
+                  (click)="obtenerPDFTabla(elemento.pdfHabBromat.id, 'pdfHabBromat')">{{elemento.pdfHabBromat.nombre}}</span>
                 <span *ngIf="!elemento.pdfHabBromat">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="ver" >
+            <ng-container matColumnDef="ver">
               <th mat-header-cell *matHeaderCellDef>-</th>
               <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
                   class="cursor-color">ver</span></td>
             </ng-container>
-            <ng-container matColumnDef="mod" >
+            <ng-container matColumnDef="mod">
               <th mat-header-cell *matHeaderCellDef>-</th>
               <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
                   class="cursor-color">editar</span></td>

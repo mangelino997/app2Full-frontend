@@ -20,7 +20,8 @@
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
                 (blur)="verificarSeleccion(autocompletado)">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="establecerElemento()">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                (optionSelected)="establecerElemento()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.alias}}
                 </mat-option>
@@ -100,8 +101,9 @@
                 <i class="material-icons" *ngIf="formulario.get('bugImagen.nombre').value"
                   style="color: lightgreen">cloud_done</i>
               </button>
-              <button class="btn-height" mat-raised-button color="warn" (click)="eliminarBug('bugImagen.nombre', $event)"
-                [disabled]="!formulario.get('bugImagen.nombre').value || indiceSeleccionado == 2 || indiceSeleccionado == 4" 
+              <button class="btn-height" mat-raised-button color="warn"
+                (click)="eliminarBug('bugImagen.nombre', $event)"
+                [disabled]="!formulario.get('bugImagen.nombre').value || indiceSeleccionado == 2 || indiceSeleccionado == 4"
                 style="width: 40px;" matTooltip="Quitar"><i class="material-icons">close</i>
               </button>
               <button class="btn-height" mat-raised-button color="primary" (click)="verBugImagen()"
@@ -117,7 +119,7 @@
         </button>
         <div class="row" *ngIf="show">
           <div class="col text-center">
-            <app-progreso></app-progreso>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
       </form>
@@ -127,7 +129,7 @@
     <div class="col-md-12">
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <br>

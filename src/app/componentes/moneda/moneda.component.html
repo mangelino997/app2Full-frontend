@@ -15,7 +15,8 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Moneda</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto1" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
+            [formControl]="autocompletado" [matAutocomplete]="auto1" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto1="matAutocomplete" [displayWith]="displayFn.bind(this)"
             (optionSelected)="cambioAutocompletado()">
             <mat-option *ngFor="let item of resultados" [value]="item">
@@ -87,7 +88,7 @@
         </button>
         <div class="row" *ngIf="show">
           <div class="col text-center">
-            <app-progreso></app-progreso>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
       </form>
@@ -97,7 +98,7 @@
     <div class="col-md-8">
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <br>

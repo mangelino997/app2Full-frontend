@@ -113,7 +113,7 @@
         </button>
         <div class="row" *ngIf="show">
           <div class="col text-center">
-            <app-progreso></app-progreso>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
       </form>
@@ -139,7 +139,7 @@
       </div>
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">

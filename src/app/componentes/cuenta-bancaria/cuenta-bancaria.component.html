@@ -1,229 +1,229 @@
 <div id="personal" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
   <div class="row">
-      <div class="col" class="centrar">
-          <nav mat-tab-nav-bar>
-              <a mat-tab-link disabled>CUENTAS BANCARIAS</a>
-              <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-                  (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
-          </nav>
-      </div>
+    <div class="col" class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>CUENTAS BANCARIAS</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+      </nav>
+    </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-      <div class="col-md-6">
-          <h5 class="text-center">{{pestaniaActual}} Cuenta Bancaria</h5>
-          <form [formGroup]="formulario" class="contenedor">
-              <div class="row" *ngIf="mostrarAutocompletado">
-                <div class="col-md-12">
-                  <div class="form-group has-float-label">
-                    <label for="idCuentasBancarias" class="tamanio-label">Buscar</label>
-                    <mat-select id="idCuentasBancarias" class="form-control form-control-sm" style="width: 606px;"
-                      [formControl]="cuentaBan" [compareWith]="compareFn" (selectionChange)="cambioCuentaBancaria()"> 
-                      <mat-option *ngFor="let cuentaBancaria of cuentasBancarias" [value]="cuentaBancaria">
-                        {{cuentaBancaria.sucursalBanco.banco.nombre}} - {{cuentaBancaria.sucursalBanco.nombre}} - {{cuentaBancaria.numeroCuenta}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
+    <div class="col-md-6">
+      <h5 class="text-center">{{pestaniaActual}} Cuenta Bancaria</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row" *ngIf="mostrarAutocompletado">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label for="idCuentasBancarias" class="tamanio-label">Buscar</label>
+              <mat-select id="idCuentasBancarias" class="form-control form-control-sm" style="width: 606px;"
+                [formControl]="cuentaBan" [compareWith]="compareFn" (selectionChange)="cambioCuentaBancaria()">
+                <mat-option *ngFor="let cuentaBancaria of cuentasBancarias" [value]="cuentaBancaria">
+                  {{cuentaBancaria.sucursalBanco.banco.nombre}} - {{cuentaBancaria.sucursalBanco.nombre}} -
+                  {{cuentaBancaria.numeroCuenta}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idCodigo" class="tamanio-label">Código *</label>
+              <input id="idCodigo" type="text" formControlName="id" autocomplete="off"
+                class="form-control form-control-sm" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idEmpresa" class="labelEmpresa">Empresa</label>
+              <input id="idNumeroCuenta" type="text" formControlName="empresa" autocomplete="off"
+                class="form-control form-control-sm" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idAutocompletado" class="tamanio-label">Banco</label>
+              <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('banco')" [matAutocomplete]="auto" autocomplete="off">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                (optionSelected)="cambioAutocompletado()">
+                <mat-option *ngFor="let item of bancos" [value]="item">
+                  {{item.nombre}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idSucursal" class="tamanio-label">Sucursal *</label>
+              <mat-select id="idSucursal" class="form-control form-control-sm" formControlName="sucursalBanco"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let sucursal of sucursales" [value]="sucursal">
+                  {{sucursal.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idTipoCuenta" class="tamanio-label">Tipo Cuenta Bancaria *</label>
+              <mat-select id="idTipoCuenta" class="form-control form-control-sm" formControlName="tipoCuentaBancaria"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let tipo of tiposCuentaBancarias" [value]="tipo">
+                  {{tipo.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idNumeroCuenta" class="tamanio-label">Número de Cuenta *</label>
+              <input id="idNumeroCuenta" type="text" formControlName="numeroCuenta" autocomplete="off" maxlength="20"
+                class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idMoneda" class="tamanio-label">Moneda *</label>
+              <mat-select id="idMoneda" class="form-control form-control-sm" formControlName="moneda"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let moneda of monedas" [value]="moneda">
+                  {{moneda.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idCBU" class="tamanio-label">CBU *</label>
+              <input id="idCBU" type="text" formControlName="cbu" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura" [textMask]="mascararEnteros(22)"
+                (blur)="validarCBU()">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idAliasCBU" class="tamanio-label">Alias CBU</label>
+              <input id="idAliasCBU" type="text" formControlName="aliasCBU" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idEstaActiva" class="tamanio-label">Está Activa *</label>
+              <select id="idEstaActiva" class="form-control form-control-sm" formControlName="estaActiva">
+                <option [value]="false">No</option>
+                <option [value]="true">Si</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idFechaApertura" class="tamanio-label">Fecha de Apertura</label>
+              <input id="idFechaApertura" type="date" formControlName="fechaApertura" autocomplete="off"
+                class="form-control form-control-sm" [readonly]="soloLectura">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="centrar">
+            <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+              {{pestaniaActual}}
+            </button>
+            <div class="row" *ngIf="show">
+              <div class="col text-center">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
               </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idCodigo" class="tamanio-label">Código *</label>
-                    <input id="idCodigo" type="text" formControlName="id" autocomplete="off"
-                    class="form-control form-control-sm" readonly>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idEmpresa" class="labelEmpresa">Empresa</label>
-                    <input id="idNumeroCuenta" type="text" formControlName="empresa" autocomplete="off"
-                    class="form-control form-control-sm" readonly>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group has-float-label" >
-                        <label for="idAutocompletado" class="tamanio-label">Banco</label>
-                        <input id="idAutocompletado" class="form-control form-control-sm"
-                            type="text" matInput [formControl]="formulario.get('banco')" [matAutocomplete]="auto"
-                            autocomplete="off">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
-                            (optionSelected)="cambioAutocompletado()">
-                            <mat-option *ngFor="let item of bancos" [value]="item">
-                              {{item.nombre}}
-                            </mat-option>
-                        </mat-autocomplete>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idSucursal" class="tamanio-label">Sucursal *</label>
-                    <mat-select id="idSucursal" class="form-control form-control-sm" formControlName="sucursalBanco"
-                      [compareWith]="compareFn">
-                      <mat-option *ngFor="let sucursal of sucursales" [value]="sucursal">
-                        {{sucursal.nombre}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idTipoCuenta" class="tamanio-label">Tipo Cuenta Bancaria *</label>
-                    <mat-select id="idTipoCuenta" class="form-control form-control-sm" formControlName="tipoCuentaBancaria"
-                      [compareWith]="compareFn">
-                      <mat-option *ngFor="let tipo of tiposCuentaBancarias" [value]="tipo">
-                        {{tipo.nombre}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idNumeroCuenta" class="tamanio-label">Número de Cuenta *</label>
-                    <input id="idNumeroCuenta" type="text" formControlName="numeroCuenta" autocomplete="off" maxlength="20"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idMoneda" class="tamanio-label">Moneda *</label>
-                    <mat-select id="idMoneda" class="form-control form-control-sm" formControlName="moneda"
-                      [compareWith]="compareFn">
-                      <mat-option *ngFor="let moneda of monedas" [value]="moneda">
-                        {{moneda.nombre}}
-                      </mat-option>
-                    </mat-select>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idCBU" class="tamanio-label">CBU *</label>
-                    <input id="idCBU" type="text" formControlName="cbu" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura" [textMask]="mascararEnteros(22)"  (blur)="validarCBU()">
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idAliasCBU" class="tamanio-label">Alias CBU</label>
-                    <input id="idAliasCBU" type="text" formControlName="aliasCBU" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idEstaActiva" class="tamanio-label">Está Activa *</label>
-                    <select id="idEstaActiva" class="form-control form-control-sm" formControlName="estaActiva">
-                      <option [value]="false">No</option>
-                      <option [value]="true">Si</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group has-float-label">
-                    <label for="idFechaApertura" class="tamanio-label">Fecha de Apertura</label>
-                    <input id="idFechaApertura" type="date" formControlName="fechaApertura" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
-                  </div>
-                </div>
-              </div>
-              <div class="row">
-                  <div class="centrar">
-                      <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary"
-                          formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
-                          {{pestaniaActual}}
-                      </button>
-                      <div class="row" *ngIf="show">
-                          <div class="col text-center">
-                              <app-progreso></app-progreso>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </form>
-      </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
   </div>
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-  <div class="col-md-12">
-    <div class="row" *ngIf="show">
-      <div class="col text-center">
-        <app-progreso></app-progreso>
+    <div class="col-md-12">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+      </div>
+      <br>
+      <div class="example-container justify-content-center">
+        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+          </ng-container>
+          <ng-container matColumnDef="empresa">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
+          </ng-container>
+          <ng-container matColumnDef="banco">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.sucursalBanco.banco.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="sucursal">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.sucursalBanco.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="tipoCuentaBancaria">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cta. Bancaria</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.tipoCuentaBancaria.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="numeroCuenta">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Cuenta</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.numeroCuenta}}</td>
+          </ng-container>
+          <ng-container matColumnDef="moneda">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Moneda</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.moneda.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="CBU">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.cbu}}</td>
+          </ng-container>
+          <ng-container matColumnDef="aliasCBU">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.aliasCBU}}</td>
+          </ng-container>
+          <ng-container matColumnDef="estaActiva">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Esta Activa</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.estaActiva? 'Sí' : 'No'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="fechaApertura">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Apertura</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.fechaApertura | date:'dd-MM-yyyy'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="ver">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+                class="cursor-color">ver</span></td>
+          </ng-container>
+          <ng-container matColumnDef="mod">
+            <th mat-header-cell *matHeaderCellDef>-</th>
+            <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+                class="cursor-color">editar</span></td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+        </table>
       </div>
     </div>
-    <br>
-    <div class="example-container justify-content-center">
-      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1" >
-        <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-        </ng-container>
-        <ng-container matColumnDef="empresa">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
-        </ng-container>
-        <ng-container matColumnDef="banco">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.sucursalBanco.banco.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="sucursal">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.sucursalBanco.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="tipoCuentaBancaria">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cta. Bancaria</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.tipoCuentaBancaria.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="numeroCuenta">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Cuenta</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.numeroCuenta}}</td>
-        </ng-container>
-        <ng-container matColumnDef="moneda">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Moneda</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.moneda.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="CBU">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.cbu}}</td>
-        </ng-container>
-        <ng-container matColumnDef="aliasCBU">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.aliasCBU}}</td>
-        </ng-container>
-        <ng-container matColumnDef="estaActiva">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Esta Activa</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.estaActiva? 'Sí' : 'No'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="fechaApertura">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Apertura</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.fechaApertura | date:'dd-MM-yyyy'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="ver">
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-              class="cursor-color">ver</span></td>
-        </ng-container>
-        <ng-container matColumnDef="mod">
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-              class="cursor-color">editar</span></td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-      </table>
-    </div>
-    
   </div>
-</div>
 </div>

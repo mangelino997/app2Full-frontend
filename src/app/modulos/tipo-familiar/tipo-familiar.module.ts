@@ -1,0 +1,33 @@
+import { NgModule } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import { TipoFamiliarRoutingModule } from './tipo-familiar-routing.module';
+
+import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
+  MatSelectModule, MatProgressBarModule } from '@angular/material';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TipoFamiliarComponent } from 'src/app/componentes/tipo-familiar/tipo-familiar.component';
+import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
+
+@NgModule({
+  declarations: [
+    TipoFamiliarComponent,
+  ],
+  imports: [
+    CommonModule,
+    TipoFamiliarRoutingModule,
+    MatTabsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatSelectModule,
+    MatProgressBarModule
+  ],
+  providers: [
+    TipoFamiliarService
+  ]
+})
+export class TipoFamiliarModule { }

@@ -1,292 +1,301 @@
 <div id="companiaseguropoliza" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
-    <div class="row">
-      <div class="centrar">
-        <nav mat-tab-nav-bar>
-          <a mat-tab-link disabled>COMPROBANTE PROVEEDOR</a>
-          <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-            (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
-        </nav>
-      </div>
-    </div>
-    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-      <div class="col-md-12 text-center">
-        <h5>{{pestaniaActual}} Facturas, Débitos y Créditos</h5>
-        <form [formGroup]="formulario" class="contenedor">
-
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idAutocompletado" class="tamanio-label">Buscar Proveedor *</label>
-                <input id="idAutocompletado" class="form-control form-control-sm" type="text"
-                  matInput [formControl]="formulario.get('proveedor')" [matAutocomplete]="auto" autocomplete="off">
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="establecerValores(item)">
-                      {{item.alias}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelDomicilio" for="idDomicilio" class="descripcion-label">Domicilio</label>
-                  <input id="idDomicilio" type="text" [formControl]="domicilio" autocomplete="off" readonly
-                  class="form-control form-control-sm" >
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelLocalidad" for="idLocalidad" class="descripcion-label">Localidad</label>
-                <input id="idLocalidad" type="text" [formControl]="localidad" autocomplete="off" readonly
-                class="form-control form-control-sm" >
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelCondicionIVA" for="idCondicionIVA" class="descripcion-label">Condición de IVA</label>
-                <input id="idCondicionIVA" type="text" [formControl]="condicionIVA" autocomplete="off" readonly
-                class="form-control form-control-sm" >
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelTipoProveedor" for="idTipoProveedor" class="descripcion-label">Tipo de Proveedor</label>
-                <input id="idTipoProveedor" type="text" [formControl]="tipoProveedor" autocomplete="off" readonly
-                  class="form-control form-control-sm" >
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelFechaEmision" for="idFechaEmision" class="descripcion-label">Fecha de Emisión *</label>
-                <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off" 
-                (blur)="controlarFechaEmision()" class="form-control form-control-sm" >
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelFechaContable" for="idFechaContable" class="descripcion-label">Fecha Contable *</label>
-                <input id="idFechaContable" type="date" formControlName="fechaContable" autocomplete="off" 
-                (blur)="controlarFechaContable()" class="form-control form-control-sm" >
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelCodigoAfip" for="idCodigoAfip" class="descripcion-label">Código Afip</label>
-                <input id="idCodigoAfip" type="text" formControlName="codigoAfip" autocomplete="off" [textMask]="mascararEnteros(3)" 
-                class="form-control form-control-sm" (blur)="cambioCodigoAfip()" minlength="3">
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Venta</label>
-                <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" [textMask]="mascararEnteros(5)" 
-                  (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)" class="form-control form-control-sm" >
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelLetra" for="idLetra" class="descripcion-label">Letra</label>
-                <input id="idLetra" type="text" formControlName="letra" autocomplete="off" maxlength="1"
-                  (blur)="cambioLetra()" class="form-control form-control-sm" >
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelNumero" for="idNumero" class="descripcion-label">Número</label>
-                <input id="idNumero" type="text" formControlName="numero" autocomplete="off" [textMask]="mascararEnteros(8)" 
-                (blur)="verificarComprobante()" class="form-control form-control-sm" >
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
-                <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
-                  [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()">
-                  <mat-option *ngFor="let item of tiposComprobantes" [value]="item">
-                    {{item.nombre}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <button id="idBotonAgregarItem" mat-raised-button color="primary" (click)="agregarItemDialogo()" 
-                [disabled]="!formulario.get('proveedor').value" >
-                  Agregar Item 
-              </button>
-            </div>
-          </div>
-          <div class="row">
-            <div class="tabla">
-              <div class="tabla-ancho">
-                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                  <ng-container matColumnDef="id">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                    <td mat-cell *matCellDef="let elemento; let i=index">{{i+1}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="producto">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo/Producto</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.insumoProducto.alias}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="deposito">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Depósito</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.depositoInsumoProducto.nombre}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="cantidad">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.cantidad | number: '1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="precioUnitario">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>P.U</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{elemento.precioUnitario | number: '1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="importeNetoGravado">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Neto Gravado</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeNetoGravado | number: '1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="alicuotaIva">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.alicuotaIva.alicuota | number: '1.2-2'}}%</td>
-                  </ng-container>
-                  <ng-container matColumnDef="IVA">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>IVA</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeIva | number: '1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="importeNoGravado">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>No Gravado</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeNoGravado | number: '1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="importeExento">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Exento</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeExento | number: '1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="impuestoInterno">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. Interno</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeImpuestoInterno | number: '1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="importeITC">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. ITC</th>
-                    <td mat-cell *matCellDef="let elemento">$ {{elemento.importeITC | number: '1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="cuentaContable">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Cont.</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.cuentaContable? elemento.cuentaContable : '-'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="eliminar">
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento; let i=index" >
-                      <span class="cursor-color-rojo" (click)="activarEliminar(i)">
-                        Quitar
-                      </span>
-                    </td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                  <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <div class="row" style="margin-top: 50px;">
-            <div class="col">
-              <button id="idBotonPercepciones" mat-raised-button color="primary" (click)="detallePercepcionDialogo()">Percepciones </button>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label id="labelImportePercepciones" for="idImportePercepciones" class="descripcion-label">Imp. Percepciones</label>
-                <input id="idImportePercepciones" type="text" formControlName="importePercepcion" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label id="labelImporteNoGravado" for="idImporteNoGravado" class="descripcion-label">Importe No Gravado</label>
-                <input id="idImporteNoGravado" type="text" formControlName="importeNoGravado" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label id="labelExento" for="idExento" class="descripcion-label">Importe Exento</label>
-                <input id="idExento" type="text" formControlName="importeExento" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label id="labelimporteImpuestoInterno" for="idimporteImpuestoInterno" class="descripcion-label">Importe Imp. Int.</label>
-                <input id="idimporteImpuestoInterno" type="text" formControlName="importeImpuestoInterno" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label id="labelImporteNetoGravado" for="idImporteNetoGravado" class="descripcion-label">Importe Neto Grav.</label>
-                <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label id="labelimporteIVA" for="idimporteIVA" class="descripcion-label">IVA</label>
-                <input id="idimporteIVA" type="text" formControlName="importeIVA" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label id="labelImporteTotal" for="idImporteTotal" class="descripcion-label">Importe Total</label>
-                <input id="idImporteTotal" type="text" formControlName="importeTotal" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
-              </div>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelCondicionCompra" for="idCondicionCompra" class="descripcion-label">Condición de Compra *</label>
-                <mat-select id="idCondicionCompra" class="form-control form-control-sm" formControlName="condicionCompra"
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let item of condicionesCompra" [value]="item">
-                    {{item.nombre}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <button id="idBotonVencimientos" mat-raised-button color="primary" [disabled]="!mostrarBotonVencimiento"
-              (click)="detalleVencimientosDialogo()">Vencimientos </button>
-              <button id="idBotonMediosDePago" mat-raised-button color="primary">Medios de Pago </button>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col text-center">
-                <button id="idBotonPestania" mat-raised-button color="primary" formnovalidate
-                (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
-                {{pestaniaActual}}
-              </button>
-            </div>
-          </div>
-          <div class="row" *ngIf="show">
-            <div class="col text-center">
-              <app-progreso></app-progreso>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-      <div class="col-md-12">
-        <div class="row" *ngIf="show">
-          <div class="col text-center">
-            <app-progreso></app-progreso>
-          </div>
-        </div>
-        <br>
-      </div>
+  <div class="row">
+    <div class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>COMPROBANTE PROVEEDOR</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+      </nav>
     </div>
   </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="col-md-12 text-center">
+      <h5>{{pestaniaActual}} Facturas, Débitos y Créditos</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idAutocompletado" class="tamanio-label">Buscar Proveedor *</label>
+              <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('proveedor')" [matAutocomplete]="auto" autocomplete="off">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let item of resultados" [value]="item"
+                  (onSelectionChange)="establecerValores(item)">
+                  {{item.alias}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelDomicilio" for="idDomicilio" class="descripcion-label">Domicilio</label>
+              <input id="idDomicilio" type="text" [formControl]="domicilio" autocomplete="off" readonly
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelLocalidad" for="idLocalidad" class="descripcion-label">Localidad</label>
+              <input id="idLocalidad" type="text" [formControl]="localidad" autocomplete="off" readonly
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelCondicionIVA" for="idCondicionIVA" class="descripcion-label">Condición de IVA</label>
+              <input id="idCondicionIVA" type="text" [formControl]="condicionIVA" autocomplete="off" readonly
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelTipoProveedor" for="idTipoProveedor" class="descripcion-label">Tipo de Proveedor</label>
+              <input id="idTipoProveedor" type="text" [formControl]="tipoProveedor" autocomplete="off" readonly
+                class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelFechaEmision" for="idFechaEmision" class="descripcion-label">Fecha de Emisión *</label>
+              <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off"
+                (blur)="controlarFechaEmision()" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelFechaContable" for="idFechaContable" class="descripcion-label">Fecha Contable *</label>
+              <input id="idFechaContable" type="date" formControlName="fechaContable" autocomplete="off"
+                (blur)="controlarFechaContable()" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelCodigoAfip" for="idCodigoAfip" class="descripcion-label">Código Afip</label>
+              <input id="idCodigoAfip" type="text" formControlName="codigoAfip" autocomplete="off"
+                [textMask]="mascararEnteros(3)" class="form-control form-control-sm" (blur)="cambioCodigoAfip()"
+                minlength="3">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Venta</label>
+              <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off"
+                [textMask]="mascararEnteros(5)" (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)"
+                class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelLetra" for="idLetra" class="descripcion-label">Letra</label>
+              <input id="idLetra" type="text" formControlName="letra" autocomplete="off" maxlength="1"
+                (blur)="cambioLetra()" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelNumero" for="idNumero" class="descripcion-label">Número</label>
+              <input id="idNumero" type="text" formControlName="numero" autocomplete="off"
+                [textMask]="mascararEnteros(8)" (blur)="verificarComprobante()" class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
+              <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
+                [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()">
+                <mat-option *ngFor="let item of tiposComprobantes" [value]="item">
+                  {{item.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button id="idBotonAgregarItem" mat-raised-button color="primary" (click)="agregarItemDialogo()"
+              [disabled]="!formulario.get('proveedor').value">
+              Agregar Item
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="tabla">
+            <div class="tabla-ancho">
+              <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="id">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                  <td mat-cell *matCellDef="let elemento; let i=index">{{i+1}}</td>
+                </ng-container>
+                <ng-container matColumnDef="producto">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo/Producto</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.insumoProducto.alias}}</td>
+                </ng-container>
+                <ng-container matColumnDef="deposito">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Depósito</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.depositoInsumoProducto.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="cantidad">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.cantidad | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="precioUnitario">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>P.U</th>
+                  <td mat-cell *matCellDef="let elemento">$ {{elemento.precioUnitario | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="importeNetoGravado">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Neto Gravado</th>
+                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeNetoGravado | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="alicuotaIva">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.alicuotaIva.alicuota | number: '1.2-2'}}%</td>
+                </ng-container>
+                <ng-container matColumnDef="IVA">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>IVA</th>
+                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeIva | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="importeNoGravado">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>No Gravado</th>
+                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeNoGravado | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="importeExento">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Exento</th>
+                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeExento | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="impuestoInterno">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. Interno</th>
+                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeImpuestoInterno | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="importeITC">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. ITC</th>
+                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeITC | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="cuentaContable">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Cont.</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.cuentaContable? elemento.cuentaContable : '-'}}
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="eliminar">
+                  <th mat-header-cell *matHeaderCellDef>-</th>
+                  <td mat-cell *matCellDef="let elemento; let i=index">
+                    <span class="cursor-color-rojo" (click)="activarEliminar(i)">
+                      Quitar
+                    </span>
+                  </td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="row" style="margin-top: 50px;">
+          <div class="col">
+            <button id="idBotonPercepciones" mat-raised-button color="primary"
+              (click)="detallePercepcionDialogo()">Percepciones </button>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label id="labelImportePercepciones" for="idImportePercepciones" class="descripcion-label">Imp.
+                Percepciones</label>
+              <input id="idImportePercepciones" type="text" formControlName="importePercepcion" autocomplete="off"
+                readonly [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right"
+                placeholder="$0.00">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label id="labelImporteNoGravado" for="idImporteNoGravado" class="descripcion-label">Importe No
+                Gravado</label>
+              <input id="idImporteNoGravado" type="text" formControlName="importeNoGravado" autocomplete="off" readonly
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label id="labelExento" for="idExento" class="descripcion-label">Importe Exento</label>
+              <input id="idExento" type="text" formControlName="importeExento" autocomplete="off" readonly
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label id="labelimporteImpuestoInterno" for="idimporteImpuestoInterno" class="descripcion-label">Importe
+                Imp. Int.</label>
+              <input id="idimporteImpuestoInterno" type="text" formControlName="importeImpuestoInterno"
+                autocomplete="off" readonly [textMask]="mascararImporte(10)"
+                class="form-control form-control-sm number-right" placeholder="$0.00">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label id="labelImporteNetoGravado" for="idImporteNetoGravado" class="descripcion-label">Importe Neto
+                Grav.</label>
+              <input id="idImporteNetoGravado" type="text" formControlName="importeNetoGravado" autocomplete="off"
+                readonly [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right"
+                placeholder="$0.00">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label id="labelimporteIVA" for="idimporteIVA" class="descripcion-label">IVA</label>
+              <input id="idimporteIVA" type="text" formControlName="importeIVA" autocomplete="off" readonly
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label id="labelImporteTotal" for="idImporteTotal" class="descripcion-label">Importe Total</label>
+              <input id="idImporteTotal" type="text" formControlName="importeTotal" autocomplete="off" readonly
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelCondicionCompra" for="idCondicionCompra" class="descripcion-label">Condición de Compra
+                *</label>
+              <mat-select id="idCondicionCompra" class="form-control form-control-sm" formControlName="condicionCompra"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let item of condicionesCompra" [value]="item">
+                  {{item.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <button id="idBotonVencimientos" mat-raised-button color="primary" [disabled]="!mostrarBotonVencimiento"
+              (click)="detalleVencimientosDialogo()">Vencimientos </button>
+            <button id="idBotonMediosDePago" mat-raised-button color="primary">Medios de Pago </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col text-center">
+            <button id="idBotonPestania" mat-raised-button color="primary" formnovalidate
+              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+              {{pestaniaActual}}
+            </button>
+          </div>
+        </div>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+    <div class="col-md-12">
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+      </div>
+      <br>
+    </div>
+  </div>
+</div>

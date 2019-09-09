@@ -13,13 +13,14 @@
       <h5>Tipo de Comprobante: ORDEN DE RECOLECCIÓN</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
-            <div class="col-md-7">
-              <div class="row">
-                <div class="col-md-8">
-                  <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+          <div class="col-md-7">
+            <div class="row">
+              <div class="col-md-8">
+                <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
                   <label for="idAutocompletado" class="tamanio-label">Buscar </label>
                   <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-                    [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
+                    [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+                    (blur)="verificarSeleccion(autocompletado)">
                   <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
                     <mat-option *ngFor="let item of resultados" [value]="item"
                       (onSelectionChange)="formulario.setValue(item)">
@@ -27,237 +28,244 @@
                     </mat-option>
                   </mat-autocomplete>
                 </div>
-                </div>
               </div>
-              <div class="row">
-                <div class="col-md-4">
-                  <div class="form-group has-float-label-icon">
-                    <label for="idFechaEmision" class="tamanio-label">Fecha *</label>
-                    <div class="input-group input-group-sm mb-3">
-                      <div class="input-group-prepend">
-                        <span class="input-group-text">
-                          <mat-icon>date_range</mat-icon>
-                        </span>
-                      </div>
-                      <input id="idFechaEmision" type="text" [formControl]="fechaEmisionFormatoNuevo" autocomplete="off" class="form-control form-control-sm" readonly>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group has-float-label-icon">
+                  <label for="idFechaEmision" class="tamanio-label">Fecha *</label>
+                  <div class="input-group input-group-sm mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text">
+                        <mat-icon>date_range</mat-icon>
+                      </span>
                     </div>
-                  </div>
-                </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-8">
-                    <div class="form-group has-float-label">
-                      <label for="idCliente" class="cliente-label">Remitente *</label>
-                      <input id="idCliente" class="form-control form-control-sm"  type="text" 
-                        matInput [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off" 
-                        (blur)="verificarSeleccion(formulario.get('cliente'))">
-                      <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="cambioRemitente()"> 
-                        <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente" >
-                          {{itemCliente.alias}}
-                        </mat-option>
-                      </mat-autocomplete>
-                    </div>
-                  </div>
-                  <div class="col-md-1">
-                    <button id="btnAgregar" mat-raised-button color="primary" (click)="agregarClienteEventual()">Agregar</button>
-                  </div>
-                </div>
-                <div class="row" >
-                  <div class="form-group has-float-label col-md-8">
-                    <label for="idDomicilioBarrio" class="tamanio-label">Domicilio - Barrio</label>
-                    <input id="idDomicilioBarrio" type="text" [formControl]="domicilioBarrio" autocomplete="off" class="form-control form-control-sm"  readonly>
-                  </div>
-                </div>
-                <div class="row" >
-                  <div class="form-group has-float-label col-md-8">
-                    <label for="idLocalidadProvincia" class="tamanio-label">Localidad - Provincia</label>
-                    <input id="idDomicilioBarrio" type="text" [formControl]="localidadProvincia" autocomplete="off" class="form-control form-control-sm"  readonly>
+                    <input id="idFechaEmision" type="text" [formControl]="fechaEmisionFormatoNuevo" autocomplete="off"
+                      class="form-control form-control-sm" readonly>
                   </div>
                 </div>
               </div>
-              <div class="col-md-2"></div>
-              <div class="col-md-3">
-                <div class="row">
-                  <h5>Retirar en:</h5>
-                  <div class="col-md-12">
-                    <div class="form-group has-float-label">
-                      <label for="idDomicilio" class="tamanio-label">Domicilio *</label>
-                      <input id="idDomicilio" type="text" [formControl]="formulario.get('domicilio')" autocomplete="off"
-                          class="form-control form-control-sm " [readonly]="soloLectura" >
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="form-group has-float-label">
-                      <label for="idBarrio" class="tamanio-label">Barrio </label>
-                        <input id="idBarrio" class="form-control form-control-sm inline-block"  type="text"
-                          matInput [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio" autocomplete="off"
-                          (blur)="verificarSeleccion(formulario.get('barrio'))">
-                        <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFn.bind(this)" >
-                          <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
-                            {{itemBarrio.nombre}}
-                          </mat-option>
-                        </mat-autocomplete>
-                    </div>
-                  </div>
-                </div>
-                <div class="row">
-                  <div class="col-md-12">
-                    <div class="form-group has-float-label">
-                      <label for="idLocalidad" class="tamanio-label">Localidad </label>
-                        <input id="idLocalidad" class="form-control form-control-sm"  type="text"
-                          matInput [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad" autocomplete="off"
-                          (blur)="verificarSeleccion(formulario.get('localidad'))">
-                        <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFn.bind(this)" >
-                          <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
-                            {{itemLocalidad.nombre}}
-                          </mat-option>
-                        </mat-autocomplete>
-                    </div>
-                  </div>
+            </div>
+            <div class="row">
+              <div class="col-md-8">
+                <div class="form-group has-float-label">
+                  <label for="idCliente" class="cliente-label">Remitente *</label>
+                  <input id="idCliente" class="form-control form-control-sm" type="text" matInput
+                    [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
+                    (blur)="verificarSeleccion(formulario.get('cliente'))">
+                  <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
+                    (optionSelected)="cambioRemitente()">
+                    <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
+                      {{itemCliente.alias}}
+                    </mat-option>
+                  </mat-autocomplete>
                 </div>
               </div>
+              <div class="col-md-1">
+                <button id="btnAgregar" mat-raised-button color="primary"
+                  (click)="agregarClienteEventual()">Agregar</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group has-float-label col-md-8">
+                <label for="idDomicilioBarrio" class="tamanio-label">Domicilio - Barrio</label>
+                <input id="idDomicilioBarrio" type="text" [formControl]="domicilioBarrio" autocomplete="off"
+                  class="form-control form-control-sm" readonly>
+              </div>
+            </div>
+            <div class="row">
+              <div class="form-group has-float-label col-md-8">
+                <label for="idLocalidadProvincia" class="tamanio-label">Localidad - Provincia</label>
+                <input id="idDomicilioBarrio" type="text" [formControl]="localidadProvincia" autocomplete="off"
+                  class="form-control form-control-sm" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2"></div>
+          <div class="col-md-3">
+            <div class="row">
+              <h5>Retirar en:</h5>
+              <div class="col-md-12">
+                <div class="form-group has-float-label">
+                  <label for="idDomicilio" class="tamanio-label">Domicilio *</label>
+                  <input id="idDomicilio" type="text" [formControl]="formulario.get('domicilio')" autocomplete="off"
+                    class="form-control form-control-sm " [readonly]="soloLectura">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group has-float-label">
+                  <label for="idBarrio" class="tamanio-label">Barrio </label>
+                  <input id="idBarrio" class="form-control form-control-sm inline-block" type="text" matInput
+                    [formControl]="formulario.get('barrio')" [matAutocomplete]="autoBarrio" autocomplete="off"
+                    (blur)="verificarSeleccion(formulario.get('barrio'))">
+                  <mat-autocomplete #autoBarrio="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                    <mat-option *ngFor="let itemBarrio of resultadosBarrios" [value]="itemBarrio">
+                      {{itemBarrio.nombre}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group has-float-label">
+                  <label for="idLocalidad" class="tamanio-label">Localidad </label>
+                  <input id="idLocalidad" class="form-control form-control-sm" type="text" matInput
+                    [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad" autocomplete="off"
+                    (blur)="verificarSeleccion(formulario.get('localidad'))">
+                  <mat-autocomplete #autoLocalidad="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                    <mat-option *ngFor="let itemLocalidad of resultadosLocalidades" [value]="itemLocalidad">
+                      {{itemLocalidad.nombre}}
+                    </mat-option>
+                  </mat-autocomplete>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
         <mat-divider></mat-divider>
         <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label-icon">
               <label for="idFecha" class="tamanio-label">Fecha de Recolección *</label>
-                <div class="input-group input-group-sm mb-3">
-                  <div class="input-group-prepend">
-                    <span class="input-group-text">
-                      <mat-icon>date_range</mat-icon>
-                    </span>
-                  </div>
-                  <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" (change)="verificarFecha()"
-                  class="form-control form-control-sm" [readonly]="soloLectura">                  
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">
+                    <mat-icon>date_range</mat-icon>
+                  </span>
+                </div>
+                <input id="idFecha" type="date" formControlName="fecha" autocomplete="off" (change)="verificarFecha()"
+                  class="form-control form-control-sm" [readonly]="soloLectura">
               </div>
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idHoraDesde" class="tamanio-label">Hora Desde *</label>
-              <input id="idHoraDesde" type="time" formControlName="horaDesde" autocomplete="off" (blur)="verificarHora()"
-              class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idHoraDesde" type="time" formControlName="horaDesde" autocomplete="off"
+                (blur)="verificarHora()" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label for="idHoraHasta" class="tamanio-label">Hora Hasta *</label> 
-              <input id="idHoraHasta"  type="time" formControlName="horaHasta" autocomplete="off" (blur)="verificarHora()"
-              class="form-control form-control-sm" [readonly]="soloLectura" >
+              <label for="idHoraHasta" class="tamanio-label">Hora Hasta *</label>
+              <input id="idHoraHasta" type="time" formControlName="horaHasta" autocomplete="off"
+                (blur)="verificarHora()" class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idSolicitado" class="tamanio-label">Solicitado Por *</label>
               <input id="idSolicitado" type="text" formControlName="solicitadoPor" autocomplete="off"
-              class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idTelefonoContacto" class="tamanio-label">Teléfono Contacto *</label>
               <input id="idTelefonoContacto" type="number" formControlName="telefonoContacto" autocomplete="off"
-              class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm" [readonly]="soloLectura">
             </div>
           </div>
         </div>
         <div class="row">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idDescripcion" class="tamanio-label">Descripción de la Carga *</label>
-                <input id="idDescripcion" type="text" formControlName="descripcionCarga" autocomplete="off"
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idDescripcion" class="tamanio-label">Descripción de la Carga *</label>
+              <input id="idDescripcion" type="text" formControlName="descripcionCarga" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
-              </div>
             </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idBultos" class="tamanio-label">Bultos *</label>
-                <input id="idBultos" type="text" formControlName="bultos" autocomplete="off"
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idBultos" class="tamanio-label">Bultos *</label>
+              <input id="idBultos" type="text" formControlName="bultos" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0"
                 [textMask]="mascararEnterosSinDecimales(6)" (blur)="establecerEnteros(formulario.get('bultos'))">
-              </div>
             </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idKgEfectivo" class="tamanio-label">Kg Efectivo </label>
-                <input id="idKgEfectivo" type="text" formControlName="kilosEfectivo" autocomplete="off" (blur)="setDecimales($event, 2)"
-                class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00"
-                (blur)="establecerDecimales(formulario.get('kilosEfectivo'), 2)" [textMask]="mascararEnterosConDecimales(8)">
-              </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idKgEfectivo" class="tamanio-label">Kg Efectivo </label>
+              <input id="idKgEfectivo" type="text" formControlName="kilosEfectivo" autocomplete="off"
+                (blur)="setDecimales($event, 2)" class="form-control form-control-sm" [readonly]="soloLectura"
+                placeholder="0.00" (blur)="establecerDecimales(formulario.get('kilosEfectivo'), 2)"
+                [textMask]="mascararEnterosConDecimales(8)">
             </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idM3" class="tamanio-label">m3 </label>
-                <input id="idM3" type="text" formControlName="m3" autocomplete="off" (blur)="setDecimales($event, 2)"
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idM3" class="tamanio-label">m3 </label>
+              <input id="idM3" type="text" formControlName="m3" autocomplete="off" (blur)="setDecimales($event, 2)"
                 class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00"
                 (blur)="establecerDecimales(formulario.get('m3'), 2)" [textMask]="mascararEnterosConDecimales(3)">
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idValorDeclarado" class="tamanio-label">Valor Declarado *</label>
-                <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" autocomplete="off" (blur)="setDecimales($event, 2)"
-                class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00"
-                (blur)="establecerDecimales(formulario.get('valorDeclarado'), 2)" [textMask]="mascararEnterosConDecimales(10)">
-              </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idSucursal" class="tamanio-label">Sucursal Destino *</label>
-                <mat-select id="idRubro" class="form-control form-control-sm" [formControl]="formulario.get('sucursalDestino')"
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let itemSucursal of resultadosSucursales" [value]="itemSucursal">
-                      {{itemSucursal.nombre}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idEntrega" class="tamanio-label">Entrega en Domicilio *</label>
-                <mat-select id="idEntrega" formControlName="entregarEnDomicilio" class="form-control form-control-sm">
-                  <mat-option [value]="true">Sí</mat-option>
-                  <mat-option [value]="false">No</mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idPago" class="tamanio-label">Pago en Origen/Destino *</label>
-                <mat-select id="idPago" formControlName="pagoEnOrigen" class="form-control form-control-sm">
-                  <mat-option [value]="true">Origen</mat-option>
-                  <mat-option [value]="false">Destino</mat-option>
-                </mat-select>
-              </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label for="idValorDeclarado" class="tamanio-label">Valor Declarado *</label>
+              <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" autocomplete="off"
+                (blur)="setDecimales($event, 2)" class="form-control form-control-sm" [readonly]="soloLectura"
+                placeholder="0.00" (blur)="establecerDecimales(formulario.get('valorDeclarado'), 2)"
+                [textMask]="mascararEnterosConDecimales(10)">
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group has-float-label">
-                <label for="idObservaciones" class="tamanio-label">Observaciones </label>
-                <textarea id="idObservaciones" type="text" formControlName="observaciones" autocomplete="off" rows="3"
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idSucursal" class="tamanio-label">Sucursal Destino *</label>
+              <mat-select id="idRubro" class="form-control form-control-sm"
+                [formControl]="formulario.get('sucursalDestino')" [compareWith]="compareFn">
+                <mat-option *ngFor="let itemSucursal of resultadosSucursales" [value]="itemSucursal">
+                  {{itemSucursal.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idEntrega" class="tamanio-label">Entrega en Domicilio *</label>
+              <mat-select id="idEntrega" formControlName="entregarEnDomicilio" class="form-control form-control-sm">
+                <mat-option [value]="true">Sí</mat-option>
+                <mat-option [value]="false">No</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idPago" class="tamanio-label">Pago en Origen/Destino *</label>
+              <mat-select id="idPago" formControlName="pagoEnOrigen" class="form-control form-control-sm">
+                <mat-option [value]="true">Origen</mat-option>
+                <mat-option [value]="false">Destino</mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label for="idObservaciones" class="tamanio-label">Observaciones </label>
+              <textarea id="idObservaciones" type="text" formControlName="observaciones" autocomplete="off" rows="3"
                 class="form-control" [readonly]="soloLectura"></textarea>
-              </div>
             </div>
           </div>
-          <div class="row justify-content-center contenedor">
-            <div class="col-md-12 text-center">
-              <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" [disabled]="!formulario.valid"
-              (click)="accion(indiceSeleccionado)">
+        </div>
+        <div class="row justify-content-center contenedor">
+          <div class="col-md-12 text-center">
+            <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary"
+              [disabled]="!formulario.valid" (click)="accion(indiceSeleccionado)">
               {{pestaniaActual}}
-              </button>
-              <div class="row" *ngIf="show">
-                <div class="col text-center">
-                  <app-progreso></app-progreso>
-                </div>
+            </button>
+            <div class="row" *ngIf="show">
+              <div class="col text-center">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
               </div>
             </div>
           </div>
+        </div>
       </form>
     </div>
   </div>
@@ -268,34 +276,34 @@
       <form [formGroup]="formularioListar" class="contenedor">
         <div class="row">
           <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label for="idFechaEmision" class="tamanio-label">Fecha de Recolección</label>
-                <input id="idFechaEmision"  type="date" formControlName="fechaEmision" autocomplete="off"
+            <div class="form-group has-float-label">
+              <label for="idFechaEmision" class="tamanio-label">Fecha de Recolección</label>
+              <input id="idFechaEmision" type="date" formControlName="fechaEmision" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura">
-              </div>
             </div>
-            <div class="col-md-4">
-              <div class="form-group has-float-label">
-                <label for="idCliente" class="cliente-label">Remitente </label>
-                <input id="idCliente" class="form-control form-control-sm"  type="text" 
-                  matInput [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off" 
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idCliente" class="cliente-label">Remitente </label>
+              <input id="idCliente" class="form-control form-control-sm" type="text" matInput
+                [formControl]="formulario.get('cliente')" [matAutocomplete]="autoCliente" autocomplete="off"
                 (blur)="verificarSeleccion(formulario.get('cliente'))">
-                <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)" (optionSelected)="cambioRemitente()"> 
-                  <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente" >
-                        {{itemCliente.alias}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
+              <mat-autocomplete #autoCliente="matAutocomplete" [displayWith]="displayF.bind(this)"
+                (optionSelected)="cambioRemitente()">
+                <mat-option *ngFor="let itemCliente of resultadosClientes" [value]="itemCliente">
+                  {{itemCliente.alias}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
-            <div class="col-md-1">
-                <button id="idBoton" mat-raised-button color="primary"
-                (click)="listar()">Buscar</button>
-            </div>
+          </div>
+          <div class="col-md-1">
+            <button id="idBoton" mat-raised-button color="primary" (click)="listar()">Buscar</button>
+          </div>
         </div>
       </form>
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
@@ -352,63 +360,4 @@
       </table>
     </div>
   </div>
-  <!-- <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-12">
-      <table class="table table-bordered table-striped table-sm">
-        <thead>
-          <tr>
-            <th class="text-center" style="width:5%" scope="col">#</th>
-            <th class="text-center" style="width:10%" scope="col">Fecha</th>
-            <th class="text-center" style="width:15%" scope="col">Cliente</th>
-            <th class="text-center" style="width:10%" scope="col">Domicilio</th>
-            <th class="text-center" style="width:10%" scope="col">Hora Desde</th>
-            <th class="text-center" style="width:10%" scope="col">Hora Hasta</th>
-            <th class="text-center" style="width:10%" scope="col">Bultos</th>
-            <th class="text-center" style="width:10%" scope="col">Kg Efectivo</th>
-            <th class="text-center" style="width:10%" scope="col">Pago Origen</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
-            <th class="text-center" style="width:5%" scope="col">-</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let l of listaCompleta">
-            <td align="center">
-              <span>{{l.id}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.fechaEmision | date: 'dd-MM-yyyy'}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.cliente.razonSocial}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.domicilio}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.horaDesde}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.horaHasta}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.bultos}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.kilosEfectivo}}</span>
-            </td>
-            <td align="center">
-              <span>{{l.pagoEnOrigen? 'Sí': 'No'}}</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="activarConsultar(l)">Ver</span>
-            </td>
-            <td align="center">
-              <span class="cursor-color" (click)="activarActualizar(l)">Mod</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div> -->
 </div>
-

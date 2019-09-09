@@ -13,7 +13,6 @@
             <h5 class="text-center">{{pestaniaActual}} Familiar Personal</h5>
             <form [formGroup]="formulario" class="contenedor">
                 <div class="contenedor-top-titulo">
-
                     <div class="row">
                         <div class="col-md-9">
                             <div class="form-group has-float-label">
@@ -22,7 +21,6 @@
                                     matInput [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal"
                                     autocomplete="off" (blur)="verificarSeleccion(formulario.get('personal'))">
                                 <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
-                                    <!--(optionSelected)="listarPorPersonal()"-->
                                     <mat-option *ngFor="let item of resultadosPersonal" [value]="item">
                                         {{item.alias}}
                                     </mat-option>
@@ -32,7 +30,7 @@
                     </div>
                     <div class="row" *ngIf="show" class="padding-bar-progreso">
                         <div class="col-md-2 text-center">
-                            <app-progreso></app-progreso>
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                         </div>
                     </div>
                     <div class="row" *ngIf="!show">
@@ -225,7 +223,7 @@
                             </button>
                             <div class="row" *ngIf="show">
                                 <div class="col text-center">
-                                    <app-progreso></app-progreso>
+                                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                                 </div>
                             </div>
                         </div>
@@ -238,7 +236,7 @@
         <div class="col-md-12">
             <div class="row" *ngIf="show">
                 <div class="col text-center">
-                    <app-progreso></app-progreso>
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                 </div>
             </div>
             <div class="row" *ngIf="!show">

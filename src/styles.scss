@@ -640,3 +640,9 @@ tr.mat-footer-row, tr.mat-row {
   padding: 0px !important;
   border-radius: 10px !important;
 }
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+}
