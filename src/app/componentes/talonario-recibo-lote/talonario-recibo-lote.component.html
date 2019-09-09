@@ -15,11 +15,12 @@
         <div class="row">
           <div class="col-md-8">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                <mat-select class="form-control form-control-sm"  [formControl]="autocompletado" id="idAutocompletado"
-                  (selectionChange)="cambioTalRecLote()" [compareWith]="compareFn" >
-                  <mat-option *ngFor="let item of resultados" [value]="item">
-                    Punto de venta: {{establecerCerosIzq(item.puntoVenta, '0000', -5)}} - Desde: {{item.desde}} -> Hasta: {{item.hasta}}
-                  </mat-option>
+              <mat-select class="form-control form-control-sm" [formControl]="autocompletado" id="idAutocompletado"
+                (selectionChange)="cambioTalRecLote()" [compareWith]="compareFn">
+                <mat-option *ngFor="let item of resultados" [value]="item">
+                  Punto de venta: {{establecerCerosIzq(item.puntoVenta, '0000', -5)}} - Desde: {{item.desde}} -> Hasta:
+                  {{item.hasta}}
+                </mat-option>
               </mat-select>
             </div>
           </div>
@@ -31,7 +32,7 @@
               <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm" readonly>
             </div>
           </div>
-          
+
         </div>
         <div class="row">
           <div class="col-md-6">
@@ -46,8 +47,9 @@
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
-              <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" maxlength="5" [readonly]="soloLectura"
-                class="form-control form-control-sm number-right" (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)"  >
+              <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off" maxlength="5"
+                [readonly]="soloLectura" class="form-control form-control-sm number-right"
+                (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)">
             </div>
           </div>
           <div class="col-md-6">
@@ -62,15 +64,17 @@
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idDesde" class="tamanio-label">Desde *</label>
-              <input id="idDesde" type="text" formControlName="desde" autocomplete="off" 
-                class="form-control form-control-sm number-right" [readonly]="soloLectura" (blur)="validarLongitud('desde', 8)">
+              <input id="idDesde" type="text" formControlName="desde" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                (blur)="validarLongitud('desde', 8)">
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label id="labelHasta" for="idHasta" class="tamanio-label">Hasta *</label>
-              <input id="idHasta" type="text" formControlName="hasta" autocomplete="off" 
-                class="form-control form-control-sm number-right" [readonly]="soloLectura" (blur)="validarLongitud('hasta', 8)">
+              <input id="idHasta" type="text" formControlName="hasta" autocomplete="off"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                (blur)="validarLongitud('hasta', 8)">
             </div>
           </div>
         </div>
@@ -78,8 +82,9 @@
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idCai" class="tamanio-label"> C.A.I</label>
-              <input id="idCai" type="text" formControlName="cai" autocomplete="off" [textMask]="obtenerMascaraEnteroSinDecimales(14)"
-                class="form-control form-control-sm number-right" [readonly]="soloLectura" >
+              <input id="idCai" type="text" formControlName="cai" autocomplete="off"
+                [textMask]="obtenerMascaraEnteroSinDecimales(14)" class="form-control form-control-sm number-right"
+                [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-6">
@@ -96,7 +101,7 @@
         </button>
         <div class="row" *ngIf="show">
           <div class="col text-center">
-            <app-progreso></app-progreso>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
       </form>
@@ -106,7 +111,7 @@
     <div class="col-md-10">
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <br>

@@ -17,7 +17,6 @@ import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { OrdenVentaService } from '../../servicios/orden-venta.service';
 import { CondicionVentaService } from '../../servicios/condicion-venta.service';
 import { AppService } from '../../servicios/app.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Cliente } from 'src/app/modelos/cliente';
@@ -221,8 +220,6 @@ export class ClienteComponent implements OnInit {
     this.listarZonas();
     //Obtiene la lista de rubros
     this.listarRubros();
-    //Crea la lista de cuentas bancarias
-    this.crearCuentasBancarias();
   }
   //Crea la lista de planes de cuenta
   public crearCuentasBancarias(): void {
@@ -237,11 +234,8 @@ export class ClienteComponent implements OnInit {
         for(let i = 0 ; i < empresas.length ; i++) {
           formulario = {
             empresa: empresas[i],
-            cuentaBancaria: null,
-            sucursalBanco: null,
-            numeroCuenta: null,
-            cbu: null,
-            aliasCBU: null
+            cliente: null,
+            cuentaBancaria: null
           }
           cuentasBancarias.push(formulario);
         }
@@ -264,12 +258,21 @@ export class ClienteComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
-        elemento.id = resultado.id;
-        elemento.version = resultado.version;
-        elemento.sucursalBanco = resultado.sucursalBanco;
-        elemento.numeroCuenta = resultado.numeroCuenta;
-        elemento.cbu = resultado.cbu;
-        elemento.aliasCBU = resultado.aliasCBU;
+        let formulario = {
+          id: null,
+          version: null,
+          sucursalBanco: null,
+          numeroCuenta: null,
+          cbu: null,
+          aliasCBU: null
+        }
+        elemento.cuentaBancaria = formulario;
+        elemento.cuentaBancaria.id = resultado.id;
+        elemento.cuentaBancaria.version = resultado.version;
+        elemento.cuentaBancaria.sucursalBanco = resultado.sucursalBanco;
+        elemento.cuentaBancaria.numeroCuenta = resultado.numeroCuenta;
+        elemento.cuentaBancaria.cbu = resultado.cbu;
+        elemento.cuentaBancaria.aliasCBU = resultado.aliasCBU;
       }
     });
   }
@@ -344,6 +347,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('creditoLimite').setValue(elemento.creditoLimite ? this.appService.establecerDecimales(elemento.creditoLimite, 2) : null);
     this.formulario.get('descuentoFlete').setValue(elemento.descuentoFlete ? this.appService.desenmascararPorcentaje(elemento.descuentoFlete.toString(), 2) : null);
     this.formulario.get('descuentoSubtotal').setValue(elemento.descuentoSubtotal ? this.appService.establecerDecimales(elemento.descuentoSubtotal, 2) : null);
+    this.cuentasBancarias = new MatTableDataSource(elemento.clienteCuentasBancarias);
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto() {
@@ -357,6 +361,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('creditoLimite').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('descuentoFlete').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('descuentoSubtotal').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.crearCuentasBancarias();
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -366,6 +371,7 @@ export class ClienteComponent implements OnInit {
     this.resultadosOrdenesVentas = [];
     this.resultadosCuentasGrupos = [];
     this.resultadosCompaniasSeguros = [];
+    this.cuentasBancarias = new MatTableDataSource([]);
   }
   //Obtiene la lista de sucursales
   private listarSucursales(): void {
@@ -596,8 +602,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.formulario.get('cuentasBancarias').setValue(this.cuentasBancarias.data);
-    console.log(this.formulario.value);
+    this.formulario.get('clienteCuentasBancarias').setValue(this.cuentasBancarias.data);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -624,7 +629,6 @@ export class ClienteComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

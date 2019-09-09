@@ -5,14 +5,13 @@
                 <div class="col-md-6">
                     <div class="form-group has-float-label">
                         <label for="idAcompaniante">Acompañante</label>
-                        <input id="idAcompaniante" type="text" class="form-control form-control-sm"  
-                        matInput [formControl]="formulario.get('acompaniante')" [matAutocomplete]="auto" autocomplete="off">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)" >
-                            <mat-option *ngFor="let itemAcompaniante of resultados" [value]="itemAcompaniante" >
+                        <input id="idAcompaniante" type="text" class="form-control form-control-sm" matInput
+                            [formControl]="formulario.get('acompaniante')" [matAutocomplete]="auto" autocomplete="off">
+                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
+                            <mat-option *ngFor="let itemAcompaniante of resultados" [value]="itemAcompaniante">
                                 {{itemAcompaniante.nombre}}
                             </mat-option>
                         </mat-autocomplete>
-
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -40,7 +39,7 @@
             <div class="row">
                 <div class="col-md-12 text-center">
                     <!-- <button mat-raised-button color="primary" [disabled]="!formulario.valid" [mat-dialog-close]="formulario.get('tramo').value">Aceptar</button> -->
-                    <button mat-raised-button  color="accent" [mat-dialog-close]="listaAcompaniantes">Cerrar</button>
+                    <button mat-raised-button color="accent" [mat-dialog-close]="listaAcompaniantes">Cerrar</button>
                 </div>
             </div>
         </form>

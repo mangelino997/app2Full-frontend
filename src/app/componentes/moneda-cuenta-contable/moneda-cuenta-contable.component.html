@@ -15,12 +15,11 @@
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-            <label for="idAutocompletado" class="tamanio-label">Buscar </label>
-              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-                autocomplete="off" type="text" matInput [formControl]="autocompletado"
-                [matAutocomplete]="auto" placeholder="">
+              <label for="idAutocompletado" class="tamanio-label">Buscar </label>
+              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
+                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" placeholder="">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
-                    (optionSelected)="establecerFormulario()">
+                (optionSelected)="establecerFormulario()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.moneda.nombre}} - {{item.moneda.simbolo}} - {{item.empresa.razonSocial}}
                 </mat-option>
@@ -35,7 +34,7 @@
               <mat-select class="form-control form-control-sm" id="idMoneda" formControlName="moneda"
                 [compareWith]="compareFn" (selectionChange)="cambioMonedaCuentaContable()">
                 <mat-option *ngFor="let moneda of listaMonedas" [value]="moneda">
-                  {{moneda.nombre}} 
+                  {{moneda.nombre}}
                 </mat-option>
               </mat-select>
             </div>
@@ -45,8 +44,7 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idEmpresa" class="labelEmpresa">Empresa</label>
-              <input id="idEmpresa" class="form-control form-control-sm" type="text"
-                [formControl]="empresa" readonly>
+              <input id="idEmpresa" class="form-control form-control-sm" type="text" [formControl]="empresa" readonly>
             </div>
           </div>
         </div>
@@ -60,7 +58,8 @@
               <label for="idCuentaContable" class="tamanio-label">Cuenta Contable *</label>
               <input id="idCuentaContable" class="form-control form-control-sm" type="text" matInput
                 formControlName="planCuenta" [matAutocomplete]="autoCuentaContable" autocomplete="off" readonly>
-              <mat-autocomplete #autoCuentaContable="matAutocomplete" [displayWith]="displayFp.bind(this)"></mat-autocomplete>
+              <mat-autocomplete #autoCuentaContable="matAutocomplete" [displayWith]="displayFp.bind(this)">
+              </mat-autocomplete>
             </div>
           </div>
         </div>
@@ -70,7 +69,7 @@
         </button>
         <div class="row" *ngIf="show">
           <div class="col text-center">
-            <app-progreso></app-progreso>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
       </form>
@@ -80,7 +79,7 @@
     <div class="col-md-8">
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <br>

@@ -83,7 +83,8 @@
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfDni.nombre')"
-                [disabled]="!formulario.get('pdfDni.nombre').value || indiceSeleccionado == 1" style="width: 40px;" matTooltip="Quitar">
+                [disabled]="!formulario.get('pdfDni.nombre').value || indiceSeleccionado == 1" style="width: 40px;"
+                matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
               <button class="btn-height" mat-raised-button color="primary" (click)="verDni()"
@@ -103,7 +104,8 @@
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfAltaTemprana.nombre')"
-                [disabled]="!formulario.get('pdfAltaTemprana.nombre').value ||indiceSeleccionado == 1" style="width: 60px;" matTooltip="Quitar">
+                [disabled]="!formulario.get('pdfAltaTemprana.nombre').value ||indiceSeleccionado == 1"
+                style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
               <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfAltaTemprana')"
@@ -171,18 +173,19 @@
               <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')"
                 #fileInputLicCond />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInputLicCond.click()"
-                [disabled]="!btnPdfLicConducir || indiceSeleccionado == 1"
-                matTooltip="Adjuntar Licencia de Conducir">
+                [disabled]="!btnPdfLicConducir || indiceSeleccionado == 1" matTooltip="Adjuntar Licencia de Conducir">
                 <i class="material-icons" *ngIf="!formulario.get('pdfLicConducir.nombre').value">cloud_upload</i>
                 <i class="material-icons" *ngIf="formulario.get('pdfLicConducir.nombre').value"
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLicConducir.nombre')"
-                [disabled]="!btnPdfLicConducir || !formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 1" style="width: 60px;" matTooltip="Quitar">
+                [disabled]="!btnPdfLicConducir || !formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 1"
+                style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
               <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLicConducir')"
-                [disabled]="!btnPdfLicConducir || !formulario.get('pdfLicConducir.nombre').value" style="width: 60px;" matTooltip="Ver">
+                [disabled]="!btnPdfLicConducir || !formulario.get('pdfLicConducir.nombre').value" style="width: 60px;"
+                matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
             </div>
@@ -206,11 +209,13 @@
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti.nombre')"
-                [disabled]="!btnPdflinti || !formulario.get('pdfLinti.nombre').value || indiceSeleccionado == 1" style="width: 60px;" matTooltip="Quitar">
+                [disabled]="!btnPdflinti || !formulario.get('pdfLinti.nombre').value || indiceSeleccionado == 1"
+                style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
               <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLinti')"
-                [disabled]="!btnPdflinti || !formulario.get('pdfLinti.nombre').value" style="width: 60px;" matTooltip="Ver">
+                [disabled]="!btnPdflinti || !formulario.get('pdfLinti.nombre').value" style="width: 60px;"
+                matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
             </div>
@@ -229,18 +234,19 @@
               <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')"
                 #fileInputLibSanidad />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInputLibSanidad.click()"
-                [disabled]="!btnPdfLibSanidad || indiceSeleccionado == 1"
-                matTooltip="Adjuntar Libreta de Sanidad">
+                [disabled]="!btnPdfLibSanidad || indiceSeleccionado == 1" matTooltip="Adjuntar Libreta de Sanidad">
                 <i class="material-icons" *ngIf="!formulario.get('pdfLibSanidad.nombre').value">cloud_upload</i>
                 <i class="material-icons" *ngIf="formulario.get('pdfLibSanidad.nombre').value"
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad.nombre')"
-                [disabled]="!btnPdfLibSanidad || !formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 1" style="width: 60px;" matTooltip="Quitar">
+                [disabled]="!btnPdfLibSanidad || !formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 1"
+                style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
               <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfLibSanidad')"
-                [disabled]="!btnPdfLibSanidad || !formulario.get('pdfLibSanidad.nombre').value" style="width: 60px;" matTooltip="Ver">
+                [disabled]="!btnPdfLibSanidad || !formulario.get('pdfLibSanidad.nombre').value" style="width: 60px;"
+                matTooltip="Ver">
                 <i class="material-icons">visibility</i>
               </button>
             </div>
@@ -254,7 +260,7 @@
             </button>
             <div class="row" *ngIf="show">
               <div class="col text-center">
-                <app-progreso></app-progreso>
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
               </div>
             </div>
           </div>
@@ -266,7 +272,7 @@
     <div class="col-md-12">
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <br>

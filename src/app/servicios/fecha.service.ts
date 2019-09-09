@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { AppService } from './app.service';
-import { Observable, Subscription, Subject } from 'rxjs';
-import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
@@ -14,7 +12,7 @@ export class FechaService {
   //Define el headers y token de autenticacion
   private options = null;
   //Constructor
-  constructor(private http: Http, private appService: AppService, private stompService: StompService) {
+  constructor(private http: Http, private appService: AppService) {
     //Establece la url base
     this.url = this.appService.getUrlBase() + this.ruta;
     //Establece los headers y el token

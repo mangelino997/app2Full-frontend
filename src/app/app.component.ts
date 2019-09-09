@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AppService } from './servicios/app.service';
 import { Router } from '@angular/router';
 import 'rxjs/Rx';
+import { MatDialog } from '@angular/material';
+import { ReporteService } from './servicios/reporte.service';
 
 @Component({
   selector: 'app-root',
@@ -15,12 +17,31 @@ export class AppComponent implements OnInit {
   public subopcion = null;
   public rol:number = null;
   public tema:string;
+  //Muestra o no botones de reportes
+  public mostrarBtnReportes:boolean = true;
+  //Define la lista de botones para dialogos de reportes
+  public datosDialogos:Array<any> = [];
   //Constructor
-  constructor(private appService: AppService, private router: Router) {
+  constructor(private appService: AppService, private router: Router, private dialog: MatDialog,
+    private reporteServicio: ReporteService) {
     //Se subscribe al servicio de lista de registros
     // this.appService.listaCompleta.subscribe(res => {
     //   this.obtenerMenu(this.getRol());
     // });
+    this.reporteServicio.obtenerDatosDialogo().subscribe(
+      res => {
+        let i = -1;
+        this.datosDialogos.forEach((elemento, indice, objecto) => {
+          if(elemento == res) {
+            i = indice;
+          }
+        });
+        if(i != -1) {
+          this.datosDialogos.splice(i, 1);
+        }
+        this.datosDialogos.push(res);
+      }
+    );
   }
   //Al inicializarse el componente
   ngOnInit(): void {
@@ -119,5 +140,12 @@ export class AppComponent implements OnInit {
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
     elemento.setValue((string + elemento.value).slice(cantidad));
+  }
+  //Abre el dialogo de reporte
+  public abrirDialogo(datos, indice): void {
+    if(indice != -1) {
+      this.datosDialogos.splice(indice, 1);
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }

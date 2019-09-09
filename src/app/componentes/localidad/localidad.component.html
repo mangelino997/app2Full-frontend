@@ -53,7 +53,7 @@
         </button>
         <div class="row" *ngIf="show">
           <div class="col text-center">
-            <app-progreso></app-progreso>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
       </form>
@@ -64,7 +64,7 @@
     <div class="col-md-8">
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <br>
@@ -116,7 +116,7 @@
         <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
       </table>
-      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+      <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
     </div>
     <div class="col-md-2">
       <div class="row">

@@ -4,12 +4,12 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { ProvinciaService } from '../../servicios/provincia.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
-import { ReporteDialogoComponent } from '../reporte-dialogo/reporte-dialogo.component';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-localidad',
@@ -57,7 +57,7 @@ export class LocalidadComponent implements OnInit {
   //Constructor
   constructor(private servicio: LocalidadService, private subopcionPestaniaService: SubopcionPestaniaService,
     private provinciaServicio: ProvinciaService, private appService: AppService, private toastr: ToastrService,
-    private loaderService: LoaderService, private dialog: MatDialog) {
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -340,47 +340,29 @@ export class LocalidadComponent implements OnInit {
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Prepara los datos para exportar
-  private prepararDatos(): Array<any> {
-    let lista = this.listaCompleta.data;
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-      let d = [];
-      d.push(elemento.id);
-      d.push(elemento.nombre);
-      d.push(elemento.codigoPostal);
-      d.push(elemento.provincia.nombre);
-      datos.push(d);
+        let d = [];
+        d.push(elemento.id);
+        d.push(elemento.nombre);
+        d.push(elemento.codigoPostal);
+        d.push(elemento.provincia.nombre);
+        datos.push(d);
     });
     return datos;
   }
-  //Borra las columnas ver y editar para reporte
-  private quitarColumnasReporte(): Array<any> {
-    let lista = Object.assign([], this.columnasSeleccionadas);
-    let indice = lista.indexOf('VER');
-    lista.splice(indice, 1);
-    indice = lista.indexOf('EDITAR');
-    lista.splice(indice, 1);
-    return lista;
-  }
   //Abre el dialogo de reporte
   public abrirReporte(): void {
-    let datos = this.prepararDatos();
-    let columnas = this.quitarColumnasReporte();
-    const dialogRef = this.dialog.open(ReporteDialogoComponent, {
-      width: '100%',
-      height: '100%',
-      maxWidth: '100%',
-      maxHeight: '100%',
-      data: {
-        nombre: 'Localidades',
-        empresa: this.appService.getEmpresa().razonSocial,
-        usuario: this.appService.getUsuario().nombre,
-        datos: datos,
-        columnas: columnas
-      }
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      
-    });
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Localidades',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }

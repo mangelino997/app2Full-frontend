@@ -7,7 +7,10 @@
     <button mat-mini-fab matTooltip="Descargar" (click)="descargar()" *ngIf="mostrar">
       <mat-icon>cloud_download</mat-icon>
     </button>
-    <button style="margin-left: 10px;" mat-mini-fab matTooltip="Cerrar" (click)="cerrar()" *ngIf="mostrar">
+    <button style="margin-left: 10px;" mat-mini-fab matTooltip="Minimizar" [mat-dialog-close]="true" *ngIf="mostrar">
+      <mat-icon>minimize</mat-icon>
+    </button>
+    <button style="margin-left: 10px;" mat-mini-fab matTooltip="Cerrar" [mat-dialog-close]="false" *ngIf="mostrar">
       <mat-icon>close</mat-icon>
     </button>
   </mat-toolbar>
@@ -24,12 +27,12 @@
             <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[1]}}</td>
           </ng-container>
           <ng-container matColumnDef="CODIGO POSTAL">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Código Postal</th>
-              <td mat-cell *matCellDef="let elemento">{{elemento[2]}}</td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Código Postal</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento[2]}}</td>
           </ng-container>
           <ng-container matColumnDef="PROVINCIA">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Provincia</th>
-              <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[3]}}</td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Provincia</th>
+            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[3]}}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

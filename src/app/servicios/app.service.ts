@@ -4,6 +4,7 @@ import { Observable, Subscription, Subject } from 'rxjs';
 import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 import createNumberMask from 'text-mask-addons/dist/createNumberMask';
+import { MatDialog } from '@angular/material';
 
 @Injectable()
 export class AppService {
@@ -40,7 +41,7 @@ export class AppService {
   //Define el rol del usuario actual
   public rol:any;
   //Constructor
-  constructor(private http: Http, private stompService: StompService) {
+  constructor(private http: Http, private stompService: StompService, private dialog: MatDialog) {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));

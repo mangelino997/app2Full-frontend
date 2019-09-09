@@ -35,9 +35,10 @@
                     <div class="col-md-6">
                       <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
                         <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
-                        <input id="idAutocompletado" class="form-control form-control-sm" type="text"
-                          matInput [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
-                          (blur)="verificarSeleccion(autocompletado)" placeholder="Buscar por N° Legajo, Nombre Completo o N° Documento">
+                        <input id="idAutocompletado" class="form-control form-control-sm" type="text" matInput
+                          [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+                          (blur)="verificarSeleccion(autocompletado)"
+                          placeholder="Buscar por N° Legajo, Nombre Completo o N° Documento">
                         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
                           (optionSelected)="cambioAutocompletado()">
                           <mat-option *ngFor="let item of resultados" [value]="item">
@@ -199,25 +200,26 @@
                           </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="row justify-content-start">
-                              <input style="display: none;" type="file" (change)="controlAdjunto($event)" #dniInput />
-                              <button class="btn-height" mat-raised-button color="primary" (click)="dniInput.click()"
-                                [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar DNI">
-                                <i class="material-icons" *ngIf="!formulario.get('pdfDni.nombre').value">cloud_upload</i>
-                                <i class="material-icons" *ngIf="formulario.get('pdfDni.nombre').value"
-                                  style="color: lightgreen">cloud_done</i>
-                              </button>
-                              <button class="btn-height" mat-raised-button color="warn"
-                                (click)="eliminarAdjunto('pdfDni')" [disabled]="!formulario.get('pdfDni.nombre').value ||
-                                indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
-                                <i class="material-icons">close</i>
-                              </button>
-                              <button class="btn-height" mat-raised-button color="primary" (click)="verDni()"
-                                [disabled]="!formulario.get('pdfDni.nombre').value" style="width: 40px;" matTooltip="Ver">
-                                <i class="material-icons">visibility</i>
-                              </button>
-                            </div>
+                          <div class="row justify-content-start">
+                            <input style="display: none;" type="file" (change)="controlAdjunto($event)" #dniInput />
+                            <button class="btn-height" mat-raised-button color="primary" (click)="dniInput.click()"
+                              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Adjuntar DNI">
+                              <i class="material-icons" *ngIf="!formulario.get('pdfDni.nombre').value">cloud_upload</i>
+                              <i class="material-icons" *ngIf="formulario.get('pdfDni.nombre').value"
+                                style="color: lightgreen">cloud_done</i>
+                            </button>
+                            <button class="btn-height" mat-raised-button color="warn"
+                              (click)="eliminarAdjunto('pdfDni')" [disabled]="!formulario.get('pdfDni.nombre').value ||
+                                indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;"
+                              matTooltip="Quitar">
+                              <i class="material-icons">close</i>
+                            </button>
+                            <button class="btn-height" mat-raised-button color="primary" (click)="verDni()"
+                              [disabled]="!formulario.get('pdfDni.nombre').value" style="width: 40px;" matTooltip="Ver">
+                              <i class="material-icons">visibility</i>
+                            </button>
                           </div>
+                        </div>
                       </div>
                       <div class="row">
                         <div class="col-md-4">
@@ -248,16 +250,18 @@
                       <div class="row">
                         <div class="col-md-12">
                           <div class="row justify-content-center">
-                            <input style="display: none;" type="file" (change)="readImageURL($event, 'foto')" #fotoInput />
+                            <input style="display: none;" type="file" (change)="readImageURL($event, 'foto')"
+                              #fotoInput />
                             <button class="btn-height" mat-raised-button color="primary" (click)="fotoInput.click()"
                               [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" matTooltip="Subir FOTO">
                               <i class="material-icons" *ngIf="determinarFotoCargada()">cloud_upload</i>
                               <i class="material-icons" *ngIf="!determinarFotoCargada()"
                                 style="color: lightgreen">cloud_done</i>
                             </button>
-                            <button class="btn-height" mat-raised-button color="warn"
-                              (click)="eliminarAdjunto('foto')" [disabled]="determinarFotoCargada() ||
-                              indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;" matTooltip="Quitar">
+                            <button class="btn-height" mat-raised-button color="warn" (click)="eliminarAdjunto('foto')"
+                              [disabled]="determinarFotoCargada() ||
+                              indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 40px;"
+                              matTooltip="Quitar">
                               <i class="material-icons">close</i>
                             </button>
                           </div>
@@ -309,8 +313,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idCategoria" class="tamanio-label">Categoría *</label>
-                        <mat-select class="form-control form-control-sm" formControlName="categoria"
-                          id="idCategoria" [compareWith]="compareFn">
+                        <mat-select class="form-control form-control-sm" formControlName="categoria" id="idCategoria"
+                          [compareWith]="compareFn">
                           <mat-option *ngFor="let itemCategoria of resultadosCategorias" [value]="itemCategoria">
                             {{itemCategoria.nombre}}
                           </mat-option>
@@ -420,8 +424,8 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idEstaActivo" class="tamanio-label">Estado *</label>
-                        <mat-select id="idEstaActivo" class="form-control form-control-sm"
-                          [compareWith]="compareFn" formControlName="estaActiva">
+                        <mat-select id="idEstaActivo" class="form-control form-control-sm" [compareWith]="compareFn"
+                          formControlName="estaActiva">
                           <mat-option [value]="true">Activa</mat-option>
                           <mat-option [value]="false">Suspendida</mat-option>
                         </mat-select>
@@ -564,35 +568,35 @@
                     </div>
                   </div>
                   <div class="row">
-                      <label for="labelAltaTemprana"  class="tamanio-label">Alta Temprana</label>
-                      </div>
-                      <div class="row">
+                    <label for="labelAltaTemprana" class="tamanio-label">Alta Temprana</label>
+                  </div>
+                  <div class="row">
                     <div class="col-md-5">
-                        <div class="row justify-content-start">
-                          <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfAltaTemprana')" #AltaTempranaInput />
-                          <button class="btn-height" mat-raised-button color="primary" (click)="AltaTempranaInput.click()"
-                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 "
-                            matTooltip="Adjuntar Alta Temprana"><i class="material-icons"
-                              *ngIf="!formulario.get('pdfAltaTemprana.nombre').value">
-                              cloud_upload</i><i class="material-icons"
-                              *ngIf="formulario.get('pdfAltaTemprana.nombre').value"
-                              style="color: lightgreen">cloud_done</i>
-                          </button>
-                          <button class="btn-height" mat-raised-button color="warn"
-                            (click)="eliminarAdjunto('pdfAltaTemprana')"
-                            [disabled]="!formulario.get('pdfAltaTemprana.nombre').value || indiceSeleccionado == 2 
+                      <div class="row justify-content-start">
+                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfAltaTemprana')"
+                          #AltaTempranaInput />
+                        <button class="btn-height" mat-raised-button color="primary" (click)="AltaTempranaInput.click()"
+                          [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 "
+                          matTooltip="Adjuntar Alta Temprana"><i class="material-icons"
+                            *ngIf="!formulario.get('pdfAltaTemprana.nombre').value">
+                            cloud_upload</i><i class="material-icons"
+                            *ngIf="formulario.get('pdfAltaTemprana.nombre').value"
+                            style="color: lightgreen">cloud_done</i>
+                        </button>
+                        <button class="btn-height" mat-raised-button color="warn"
+                          (click)="eliminarAdjunto('pdfAltaTemprana')" [disabled]="!formulario.get('pdfAltaTemprana.nombre').value || indiceSeleccionado == 2 
                             || indiceSeleccionado == 4 " style="width: 40px;" matTooltip="Quitar">
-                            <i class="material-icons">close</i>
-                          </button>
-                          <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfAltaTemprana')"
-                            [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 40px;"
-                            matTooltip="Ver">
-                            <i class="material-icons">visibility</i>
-                          </button>
-                        </div>
+                          <i class="material-icons">close</i>
+                        </button>
+                        <button class="btn-height" mat-raised-button color="primary" (click)="verPDF('pdfAltaTemprana')"
+                          [disabled]="!formulario.get('pdfAltaTemprana.nombre').value" style="width: 40px;"
+                          matTooltip="Ver">
+                          <i class="material-icons">visibility</i>
+                        </button>
                       </div>
-                      <br>
                     </div>
+                    <br>
+                  </div>
                 </div>
                 <div class="contenedor-top" *ngIf="opcionSeleccionada == 18">
                   <div class="row">
@@ -686,7 +690,8 @@
                     </div>
                     <div class="col-md-5">
                       <div class="row justify-content-start">
-                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')" #licConducirInput />
+                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')"
+                          #licConducirInput />
                         <button class="btn-height" mat-raised-button color="primary" (click)="licConducirInput.click()"
                           [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLicConducir"
                           matTooltip="Adjuntar Licencia de Conducir"><i class="material-icons"
@@ -696,8 +701,7 @@
                             style="color: lightgreen">cloud_done</i>
                         </button>
                         <button class="btn-height" mat-raised-button color="warn"
-                          (click)="eliminarAdjunto('pdfLicConducir')"
-                          [disabled]="!formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 2 
+                          (click)="eliminarAdjunto('pdfLicConducir')" [disabled]="!formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 2 
                           || indiceSeleccionado == 4 || !btnPdfLicConducir" style="width: 40px;" matTooltip="Quitar">
                           <i class="material-icons">close</i>
                         </button>
@@ -719,7 +723,8 @@
                     </div>
                     <div class="col-md-5">
                       <div class="row justify-content-start">
-                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLinti')" #lintiInput />
+                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLinti')"
+                          #lintiInput />
                         <button class="btn-height" mat-raised-button color="primary" (click)="lintiInput.click()"
                           [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdflinti"
                           matTooltip="Adjuntar LINTI">
@@ -749,7 +754,8 @@
                     </div>
                     <div class="col-md-5">
                       <div class="row justify-content-start">
-                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')" #libSanidadInput />
+                        <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')"
+                          #libSanidadInput />
                         <button class="btn-height" mat-raised-button color="primary" (click)="libSanidadInput.click()"
                           [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4 || !btnPdfLibSanidad"
                           matTooltip="Adjuntar Lib. de Sanidad"><i class="material-icons"
@@ -758,8 +764,8 @@
                             *ngIf="formulario.get('pdfLibSanidad.nombre').value"
                             style="color: lightgreen">cloud_done</i>
                         </button>
-                        <button class="btn-height" mat-raised-button color="warn" (click)="eliminarAdjunto('pdfLibSanidad')"
-                          [disabled]="!formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 2 ||
+                        <button class="btn-height" mat-raised-button color="warn"
+                          (click)="eliminarAdjunto('pdfLibSanidad')" [disabled]="!formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 2 ||
                            indiceSeleccionado == 4 || !btnPdfLibSanidad" style="width: 40px;" matTooltip="Quitar">
                           <i class="material-icons">close</i>
                         </button>
@@ -972,7 +978,7 @@
                     </button>
                     <div class="row" *ngIf="show">
                       <div class="col text-center">
-                        <app-progreso></app-progreso>
+                        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                       </div>
                     </div>
                   </div>
@@ -988,55 +994,56 @@
     <div class="col-md-12">
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <br>
       <div class="tabla">
-          <div class="tabla-ancho">
-            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-              <ng-container matColumnDef="id" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-              </ng-container>
-              <ng-container matColumnDef="nombre" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
-              </ng-container>
-              <ng-container matColumnDef="tipoDocumento" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.tipoDocumento.nombre}}</td>
-              </ng-container>
-              <ng-container matColumnDef="documento" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.numeroDocumento}}</td>
-              </ng-container>
-              <ng-container matColumnDef="telefonoMovil" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Móvil</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.telefonoMovil}}</td>
-              </ng-container>
-              <ng-container matColumnDef="domicilio" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.domicilio}}</td>
-              </ng-container>
-              <ng-container matColumnDef="localidad" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}}, {{elemento.localidad.provincia.nombre}}
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="ver" sticky>
-                <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-                    class="cursor-color">ver</span></td>
-              </ng-container>
-              <ng-container matColumnDef="mod" sticky>
-                <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-                    class="cursor-color">editar</span></td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-              <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-            </table>
+        <div class="tabla-ancho">
+          <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+            </ng-container>
+            <ng-container matColumnDef="nombre">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+            </ng-container>
+            <ng-container matColumnDef="tipoDocumento">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.tipoDocumento.nombre}}</td>
+            </ng-container>
+            <ng-container matColumnDef="documento">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.numeroDocumento}}</td>
+            </ng-container>
+            <ng-container matColumnDef="telefonoMovil">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Móvil</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.telefonoMovil}}</td>
+            </ng-container>
+            <ng-container matColumnDef="domicilio">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.domicilio}}</td>
+            </ng-container>
+            <ng-container matColumnDef="localidad">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}},
+                {{elemento.localidad.provincia.nombre}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="ver" sticky>
+              <th mat-header-cell *matHeaderCellDef>-</th>
+              <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
+                  class="cursor-color">ver</span></td>
+            </ng-container>
+            <ng-container matColumnDef="mod" sticky>
+              <th mat-header-cell *matHeaderCellDef>-</th>
+              <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
+                  class="cursor-color">editar</span></td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+          </table>
         </div>
       </div>
     </div>

@@ -15,7 +15,8 @@
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idAutocompletado" class="tamanio-label">Buscar por Nombre</label>
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
+            [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+            (blur)="verificarSeleccion(autocompletado)">
           <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
             (optionSelected)="cambioAutocompletado()">
             <mat-option *ngFor="let item of resultados" [value]="item">
@@ -35,8 +36,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idEsDeducibleImpGan" class="tamanio-label">Es Deducible Imp. Gan. *</label>
-          <mat-select id="idEsDeducibleImpGan" class="form-control form-control-sm"
-            formControlName="esDeducibleImpGan">
+          <mat-select id="idEsDeducibleImpGan" class="form-control form-control-sm" formControlName="esDeducibleImpGan">
             <mat-option [value]="false">No</mat-option>
             <mat-option [value]="true">Si</mat-option>
           </mat-select>
@@ -47,7 +47,7 @@
         </button>
         <div class="row" *ngIf="show">
           <div class="col text-center">
-            <app-progreso></app-progreso>
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
       </form>
@@ -57,7 +57,7 @@
     <div class="col-md-6">
       <div class="row" *ngIf="show">
         <div class="col text-center">
-          <app-progreso></app-progreso>
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
       <br>
