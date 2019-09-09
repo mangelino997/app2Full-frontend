@@ -18,21 +18,9 @@
     <div class="row justify-content-center">
       <div class="col-md-10">
         <table mat-table [dataSource]="lista" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="ID">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[0]}}</td>
-          </ng-container>
-          <ng-container matColumnDef="NOMBRE">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[1]}}</td>
-          </ng-container>
-          <ng-container matColumnDef="CODIGO POSTAL">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Código Postal</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento[2]}}</td>
-          </ng-container>
-          <ng-container matColumnDef="PROVINCIA">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Provincia</th>
-            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[3]}}</td>
+          <ng-container [matColumnDef]="columna" *ngFor="let columna of columnas ; let i = index">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columna}}</th>
+            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[columna.toLowerCase()]}}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnas;"></tr>

@@ -4,15 +4,19 @@ import { CommonModule } from '@angular/common';
 import { LocalidadRoutingModule } from './localidad-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatToolbarModule, MatDialogModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LocalidadComponent } from 'src/app/componentes/localidad/localidad.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { LocalidadService } from 'src/app/servicios/localidad.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { ProvinciaService } from 'src/app/servicios/provincia.service';
+import { ReporteDialogoComponent } from 'src/app/componentes/reporte-dialogo/reporte-dialogo.component';
 
 @NgModule({
   declarations: [
     LocalidadComponent,
+    //ReporteDialogoComponent
   ],
   imports: [
     CommonModule,
@@ -26,10 +30,17 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
+    TextMaskModule,
+    MatIconModule,
+    MatToolbarModule,
+    MatDialogModule,
+    MatButtonModule,
     TextMaskModule
   ],
   providers: [
-    LocalidadService
-  ]
+    LocalidadService,
+    SubopcionPestaniaService,
+    ProvinciaService
+  ],
 })
 export class LocalidadModule { }

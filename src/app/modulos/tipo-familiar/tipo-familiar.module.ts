@@ -8,6 +8,8 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoFamiliarComponent } from 'src/app/componentes/tipo-familiar/tipo-familiar.component';
 import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { TipoFamiliar } from 'src/app/modelos/tipo-familiar';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
     MatProgressBarModule
   ],
   providers: [
-    TipoFamiliarService
+    TipoFamiliarService,
+    SubopcionPestaniaService,
+    TipoFamiliar
   ]
 })
 export class TipoFamiliarModule { }
