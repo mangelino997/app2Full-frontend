@@ -1,5 +1,7 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Injectable } from '@angular/core';
 //Define la entidad de la base de datos.
+@Injectable()
 export class Cliente {
     //define un formulario FormGroup
     public formulario: FormGroup;

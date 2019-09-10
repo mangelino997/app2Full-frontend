@@ -4,11 +4,13 @@ import { CommonModule } from '@angular/common';
 import { ProvinciaRoutingModule } from './provincia-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProvinciaComponent } from 'src/app/componentes/provincia/provincia.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { PaisService } from 'src/app/servicios/pais.service';
 
 @NgModule({
   declarations: [
@@ -26,10 +28,13 @@ import { ProvinciaService } from 'src/app/servicios/provincia.service';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
+    MatButtonModule,
     TextMaskModule
   ],
   providers: [
-    ProvinciaService
+    ProvinciaService,
+    SubopcionPestaniaService,
+    PaisService
   ]
 })
 export class ProvinciaModule { }
