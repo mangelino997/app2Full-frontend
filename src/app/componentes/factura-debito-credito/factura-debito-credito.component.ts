@@ -32,7 +32,7 @@ import { CompraComprobanteVencimientoService } from 'src/app/servicios/compra-co
   styleUrls: ['./factura-debito-credito.component.css']
 })
 export class FacturaDebitoCreditoComponent implements OnInit {
-//Define la pestania activa
+  //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
   public indiceSeleccionado: number = null;
@@ -83,20 +83,20 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'producto', 'deposito', 'cantidad', 'precioUnitario', 'importeNetoGravado', 'alicuotaIva', 'IVA',
-   'importeNoGravado', 'importeExento', 'impuestoInterno', 'importeITC', 'cuentaContable', 'eliminar'];
+    'importeNoGravado', 'importeExento', 'impuestoInterno', 'importeITC', 'cuentaContable', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
-  constructor(private fechaService: FechaService, private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, 
+  constructor(private fechaService: FechaService, private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
     private servicio: CondicionCompraService, private modelo: FacturaDebitoCredito, private subopcionPestaniaService: SubopcionPestaniaService,
-    private tipoComprobanteService: TipoComprobanteService, private afipComprobanteService: AfipComprobanteService, 
+    private tipoComprobanteService: TipoComprobanteService, private afipComprobanteService: AfipComprobanteService,
     private proveedorService: ProveedorService, private compraComprobanteService: CompraComprobanteService, public dialog: MatDialog,
     private condicionCompraService: CondicionCompraService) {
-      //Obtiene la lista de pestanias
-      this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    //Obtiene la lista de pestanias
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -106,7 +106,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
           console.log(err);
         }
       );
-     }
+  }
 
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -136,36 +136,36 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     })
   }
   //Carga la Fecha Actual en el campo "Fecha Contable"
-  private obtenerFecha(){
+  private obtenerFecha() {
     this.fechaService.obtenerFecha().subscribe(
-      res=>{
+      res => {
         this.FECHA_ACTUAL.setValue(res.json());
         this.formulario.get('fechaEmision').setValue(res.json());
         this.formulario.get('fechaContable').setValue(res.json());
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la Fecha Actual");
       }
     )
   }
   //Carga la lista de tipos de comprobantes
-  private listarTipoComprobante(){
+  private listarTipoComprobante() {
     this.tipoComprobanteService.listar().subscribe(
-      res=>{
+      res => {
         this.tiposComprobantes = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de Tipos de Comprobantes");
       }
     )
   }
   //Carga la lista de tipos de condiciones de compra
-  private listarCondicionCompra(){
+  private listarCondicionCompra() {
     this.condicionCompraService.listar().subscribe(
-      res=>{
+      res => {
         this.condicionesCompra = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de Tipos de Condiciones de Compra");
       }
     )
@@ -215,7 +215,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(); 
+        this.agregar();
         break;
       case 3:
         break;
@@ -227,7 +227,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     }
   }
   //Carga la tabla
-  public listar(){
+  public listar() {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
@@ -245,7 +245,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   }
   //Metodo Agregar 
   public agregar() {
-    this.loaderService.show();    
+    this.loaderService.show();
     let empresa = this.appService.getEmpresa();
     let usuarioAlta = this.appService.getUsuario();
     let sucursal = usuarioAlta.sucursal;
@@ -277,7 +277,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.toastr.error(respuesta.mensaje);
   }
   //Establece los valores segun el proveedor seleccionado
-  public establecerValores(elemento){
+  public establecerValores(elemento) {
     let localidad = elemento.localidad.nombre + ',' + elemento.localidad.provincia.nombre
     this.domicilio.setValue(elemento.domicilio);
     this.localidad.setValue(localidad);
@@ -288,22 +288,22 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.condicionIVA.disable();
     this.tipoProveedor.disable();
     this.formulario.get('condicionCompra').setValue(elemento.condicionCompra);
-    if(elemento.condicionCompra.id == 1)
+    if (elemento.condicionCompra.id == 1)
       this.mostrarBotonVencimiento = true;
-      else
+    else
       this.mostrarBotonVencimiento = false;
-  } 
+  }
   //Controla el cambio en el campo "Codigo Afip"
-  public cambioCodigoAfip(){
+  public cambioCodigoAfip() {
     let codigoAfip = this.formulario.get('codigoAfip').value;
-    if(codigoAfip && codigoAfip.length == 3){
+    if (codigoAfip && codigoAfip.length == 3) {
       this.afipComprobanteService.obtenerPorCodigoAfip(codigoAfip).subscribe(
-        res=>{
+        res => {
           let respuesta = res.json();
           this.formulario.get('tipoComprobante').setValue(respuesta.tipoComprobante);
           this.formulario.get('letra').setValue(respuesta.letra);
         },
-        err=>{
+        err => {
           let error = err.json();
           this.formulario.get('codigoAfip').setValue(null);
           this.formulario.get('tipoComprobante').setValue(null);
@@ -312,13 +312,13 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         }
       )
     }
-    if(codigoAfip == null || codigoAfip == undefined){
+    if (codigoAfip == null || codigoAfip == undefined) {
       this.formulario.get('codigoAfip').setValue(null);
       this.formulario.get('tipoComprobante').setValue(null);
       this.formulario.get('letra').setValue(null);
       this.toastr.error("El campo Código Afip está vacío.");
     }
-    if(codigoAfip.length < 3){
+    if (codigoAfip.length < 3) {
       this.formulario.get('codigoAfip').setValue(null);
       this.formulario.get('tipoComprobante').setValue(null);
       this.formulario.get('letra').setValue(null);
@@ -326,39 +326,39 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     }
   }
   //Controla el cambio en el campo "Número"
-  public verificarComprobante(){
+  public verificarComprobante() {
     let idProveedor = this.formulario.value.proveedor.id;
     let codigoAfip = this.formulario.value.codigoAfip;
     let puntoVenta = this.formulario.value.puntoVenta;
     let numero = this.formulario.value.numero;
-    if(numero){
+    if (numero) {
       this.establecerCerosIzq(this.formulario.get('numero'), '0000000', -8);
-      if(idProveedor && codigoAfip && puntoVenta){
+      if (idProveedor && codigoAfip && puntoVenta) {
         this.compraComprobanteService.verificarUnicidadComprobante(idProveedor, codigoAfip, puntoVenta, numero).subscribe(
-          res=>{
+          res => {
             console.log(res.json());
             let respuesta = res.json();
           },
-          err=>{
+          err => {
             let error = err.json();
             this.toastr.error(error.mensaje);
           }
         )
-      }else{
+      } else {
         this.toastr.error("No se puede verificar unicidad del comprobante, campos vacíos en 'Proveedor', 'Codigo Afip', 'Punto Venta' o 'Número'.");
       }
     }
   }
   //Controla la 'Fecha Contable'
-  public controlarFechaContable(){
+  public controlarFechaContable() {
     let fechaEmision = this.formulario.value.fechaEmision;
     let fechaContable = this.formulario.value.fechaContable;
-    if(fechaEmision == null || fechaEmision == undefined){
+    if (fechaEmision == null || fechaEmision == undefined) {
       this.toastr.error("Debe ingresar una fecha de emisión.");
       setTimeout(function () {
         document.getElementById('idFechaEmision').focus();
       }, 20);
-    }else if(fechaContable < fechaEmision){
+    } else if (fechaContable < fechaEmision) {
       this.toastr.error("Fecha contable debe ser igual o mayor a la fecha de emisión.");
       this.formulario.get('fechaEmision').setValue(null);
       this.formulario.get('fechaContable').setValue(this.FECHA_ACTUAL.value);
@@ -368,12 +368,12 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     }
   }
   //Controla el cambio en el campo "Fecha de Emision"
-  public controlarFechaEmision(){
+  public controlarFechaEmision() {
     let fechaEmision = null;
     let fechaContable = null;
     fechaEmision = this.formulario.get('fechaEmision').value;
     fechaContable = this.formulario.get('fechaContable').value;
-    if(fechaEmision > fechaContable){
+    if (fechaEmision > fechaContable) {
       this.toastr.error("Fecha de emisión debe ser igual o menor a la fecha contable.");
       this.formulario.get('fechaEmision').setValue(null);
       setTimeout(function () {
@@ -382,45 +382,45 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     }
   }
   //Controla el cambio en el campo "Tipo de Comprobante"
-  public cambioTipoComprobante(){
+  public cambioTipoComprobante() {
     let tipoComprobante = null;
     let letra = null;
     tipoComprobante = this.formulario.get('tipoComprobante').value;
     letra = this.formulario.get('letra').value;
-    if(tipoComprobante && letra){
+    if (tipoComprobante && letra) {
       this.afipComprobanteService.obtenerCodigoAfip(tipoComprobante.id, letra).subscribe(
-        res=>{
+        res => {
           console.log(res.text());
           let respuesta = res.text();
-          if(respuesta != null){
+          if (respuesta != null) {
             this.formulario.get('codigoAfip').setValue(respuesta);
             this.cambioCodigoAfip();
-          }else{
+          } else {
             this.formulario.get('codigoAfip').setValue(null);
           }
         },
-        err=>{
+        err => {
           let error = err.json();
           this.toastr.error(error.mensaje);
         }
       )
     }
-    if(tipoComprobante == null || tipoComprobante == undefined || letra == null || letra == undefined){
+    if (tipoComprobante == null || tipoComprobante == undefined || letra == null || letra == undefined) {
       this.toastr.error("No se puede obtener el Código de Afip, campos vacíos en 'Tipo de Comprobante' o 'Letra'.");
     }
   }
   //Controla el cambio en el campo "Letra"
-  public cambioLetra(){
+  public cambioLetra() {
     let tipoComprobante = this.formulario.value.tipoComprobante;
     let letra = this.formulario.value.letra;
-    if(tipoComprobante && letra){
+    if (tipoComprobante && letra) {
       this.afipComprobanteService.obtenerCodigoAfip(tipoComprobante.id, letra).subscribe(
-        res=>{
+        res => {
           console.log(res, res.status);
           let respuesta = res.text();
-          if(respuesta){
+          if (respuesta) {
             this.formulario.get('codigoAfip').setValue(respuesta);
-          }else{
+          } else {
             this.formulario.get('codigoAfip').reset();
             this.formulario.get('letra').reset();
             setTimeout(function () {
@@ -429,7 +429,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
             this.toastr.error("Ingrese otro Código de Afip");
           }
         },
-        err=>{
+        err => {
           this.formulario.get('codigoAfip').reset();
           this.formulario.get('letra').reset();
           setTimeout(function () {
@@ -438,7 +438,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
           this.toastr.error("Ingrese otro Código de Afip");
         }
       )
-    }else{
+    } else {
       this.toastr.error("No se puede obtener el Código de Afip porque hay campos vacíos en 'Tipo de Comprobante' o 'Letra'.");
     }
   }
@@ -452,16 +452,15 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
       //Seteo la lista de Item en el formulario
       this.formulario.get('compraComprobanteItems').setValue(result);
       //Cargo los items a la tabla
-      if(this.listaCompleta.data.length > 0){
-        result.forEach(item =>{
+      if (this.listaCompleta.data.length > 0) {
+        result.forEach(item => {
           this.listaCompleta.data.push(item);
         });
         this.listaCompleta.sort = this.sort;
-      }else{
+      } else {
         this.listaCompleta = new MatTableDataSource(result);
         this.listaCompleta.sort = this.sort;
       }
@@ -479,10 +478,10 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
-      if(result){
+      if (result) {
         this.formulario.get('compraComprobantePercepciones').setValue(result);
         this.calcularImportesPercepciones(result);
-      }else{
+      } else {
         this.formulario.get('compraComprobantePercepciones').setValue([]);
         this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales('0.00', 2));
       }
@@ -500,33 +499,33 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(result);
-      if(result){
+      if (result) {
         this.formulario.get('compraComprobanteVencimientos').setValue(result);
-      }else{
+      } else {
         this.formulario.get('compraComprobanteVencimientos').setValue([]);
       }
     });
   }
   //Calcula el importe total de detalle percepciones
-  public calcularImportesPercepciones(listaPercepciones){
+  public calcularImportesPercepciones(listaPercepciones) {
     let importePercepciones = null;
     //Suma el importe de las percepciones
     listaPercepciones.forEach(
-      item=>{
+      item => {
         importePercepciones += Number(item.importe);
       }
     );
     //Setea el valor correspondiente en el formulario
-    if(importePercepciones > 0)
+    if (importePercepciones > 0)
       this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales(importePercepciones, 2));
-      else
+    else
       this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales('0.00', 2));
   }
   //Calcula los importes
-  public calcularImportes(){
+  public calcularImportes() {
     this.establecerImportesPorDefecto();
     this.listaCompleta.data.forEach(
-      item=>{
+      item => {
         //Obtiene los importes de cada item
         let itemImpNoGravado = Number(item.importeNoGravado);
         let itemImpExento = Number(item.importeExento);
@@ -540,32 +539,32 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         let impNetoGravado = Number(this.formulario.value.importeNetoGravado) + itemImpNetoGravado;
         let impIva = Number(this.formulario.value.importeIVA) + itemImpIva;
         //Setea el valor correspondiente en los importes del formulario
-        if(impNoGravado > 0)
+        if (impNoGravado > 0)
           this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales(impNoGravado, 2));
-          else
+        else
           this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
-        if(impExento > 0)
+        if (impExento > 0)
           this.formulario.get('importeExento').setValue(this.appService.establecerDecimales(impExento, 2));
-          else
+        else
           this.formulario.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
-        if(impInt > 0)
+        if (impInt > 0)
           this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales(impInt, 2));
-          else
+        else
           this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales('0.00', 2));
-        if(impNetoGravado > 0)
+        if (impNetoGravado > 0)
           this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(impNetoGravado, 2));
-          else
+        else
           this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
-        if(impIva > 0)
+        if (impIva > 0)
           this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales(impIva, 2));
-          else
+        else
           this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales('0.00', 2));
       }
     );
     this.calcularImporteTotal();
   }
   //Calcula el Importe Total
-  private calcularImporteTotal(){
+  private calcularImporteTotal() {
     let importePercepciones = Number(this.formulario.value.importeNoGravado);
     let importeNoGravado = Number(this.formulario.value.importeNoGravado);
     let importeExento = Number(this.formulario.value.importeExento);
@@ -574,20 +573,20 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     let IVA = Number(this.formulario.value.importeIVA);
 
     let importeTotal = importePercepciones + importeNoGravado + importeExento + importeImpInt + importeNetoGravado + IVA;
-    this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales(importeTotal,2));
+    this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales(importeTotal, 2));
 
   }
   //Elimina un item de la tabla
-  public activarEliminar(indice){
+  public activarEliminar(indice) {
     this.listaCompleta.data.splice(indice, 1);
     this.listaCompleta.sort = this.sort;
-    if(this.listaCompleta.data.length == 0){
+    if (this.listaCompleta.data.length == 0) {
       this.establecerImportesPorDefecto();
     }
     this.calcularImportes();
   }
   //Reestablece el formulario
-  private reestablecerFormulario(id){
+  private reestablecerFormulario(id) {
     this.formulario.reset();
     this.domicilio.reset();
     this.localidad.reset();
@@ -603,7 +602,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     }, 20);
   }
   //Inicializa valores por defecto
-  private establecerImportesPorDefecto(){
+  private establecerImportesPorDefecto() {
     this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales('0.00', 2));
@@ -648,16 +647,16 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;
-    if(valor) {
+    if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
       this.condicion = true;
-    }else{
+    } else {
       this.condicion = false;
     }
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
-    if(elemento.value) {
+    if (elemento.value) {
       elemento.setValue((string + elemento.value).slice(cantidad));
     }
   }
@@ -666,7 +665,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  } 
+  }
 }
 
 //Componente Agregar Item Dialogo
@@ -705,10 +704,10 @@ export class AgregarItemDialogo {
   //Constructor
   constructor(public dialogRef: MatDialogRef<AgregarItemDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: CompraComprobanteItem, private insumoProductoService: InsumoProductoService,
-    private appService: AppService, private depositoInsumoProductoService: DepositoInsumoProductoService, private depositoInsumoProducto: DepositoInsumoProductoService,
+    private appService: AppService, private depositoInsumoProducto: DepositoInsumoProductoService,
     private afipAlicuotaIvaService: AfipAlicuotaIvaService) {
-      dialogRef.disableClose = true;
-     }
+    dialogRef.disableClose = true;
+  }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -724,7 +723,7 @@ export class AgregarItemDialogo {
     this.listarDepositos();
     //Inicializa los valores por defecto
     this.reestablecerFormulario();
-    
+
     //Autocompletado InsumoProducto- Buscar por alias
     this.formulario.get('insumoProducto').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -734,47 +733,47 @@ export class AgregarItemDialogo {
       }
     })
   }
-  public listarDepositos(){
+  public listarDepositos() {
     this.depositoInsumoProducto.listar().subscribe(
-      res=>{
+      res => {
         this.tiposDepositos = res.json();
       },
-      err=>{
+      err => {
         console.log(err);
       }
     )
   }
-  private listarAfipAlicuotaIva(){
+  private listarAfipAlicuotaIva() {
     this.afipAlicuotaIvaService.listar().subscribe(
-      res=>{
+      res => {
         this.afipAlicuotasIva = res.json();
         this.establecerAfipAlicuotaIva();
       },
-      err=>{
+      err => {
         console.log(err);
       }
     );
   }
   //Inicializa el campo Afip Alicuota Iva
-  private establecerAfipAlicuotaIva(){
+  private establecerAfipAlicuotaIva() {
     this.afipAlicuotasIva.forEach(
-      item=>{
-        if(item.porDefecto == true)
+      item => {
+        if (item.porDefecto == true)
           this.formulario.get('alicuotaIva').setValue(item);
       }
     );
   }
   //Establece valores por el insumoProducto seleccionado
-  public establecerValores(){
+  public establecerValores() {
     let insumoProducto = null;
     insumoProducto = this.formulario.get('insumoProducto').value;
-    if(insumoProducto){
+    if (insumoProducto) {
       this.unidadMedida.setValue(insumoProducto.unidadMedida.nombre);
       this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(insumoProducto.itcPorLitro.toString(), 4));
     }
   }
   //Calcula el Importe
-  public calcularImporte(){
+  public calcularImporte() {
     let precioUnitario = null;
     let cantidad = null;
     let importe = null;
@@ -782,17 +781,17 @@ export class AgregarItemDialogo {
     this.establecerDecimales(this.formulario.get('cantidad'), 2);
     precioUnitario = this.formulario.get('precioUnitario').value;
     cantidad = this.formulario.get('cantidad').value;
-    if(precioUnitario && cantidad){
+    if (precioUnitario && cantidad) {
       importe = precioUnitario * cantidad;
       this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(importe, 2));
     }
-    if(precioUnitario == null || precioUnitario == undefined || cantidad == null || cantidad == undefined){
+    if (precioUnitario == null || precioUnitario == undefined || cantidad == null || cantidad == undefined) {
       this.toastr.error("Error al calcular el importe. Campo vacío en 'Precio Unitario' o en 'Cantidad'.");
     }
     this.calcularImporteIVA();
   }
   //Calcula el Importe ITC 
-  public calcularImporteITC(){
+  public calcularImporteITC() {
     console.log(this.formulario.get('itcPorLitro').value);
 
     let cantidad = null;
@@ -804,7 +803,7 @@ export class AgregarItemDialogo {
     itcPorLitro = Number(this.formulario.get('itcPorLitro').value);
     // this.establecerDecimales(this.formulario.get('importeITC'), 2);
     console.log(itcPorLitro);
-    if(itcPorLitro == 0 || itcPorLitro == '0.0000' || itcPorLitro == null || itcPorLitro == undefined ){
+    if (itcPorLitro == 0 || itcPorLitro == '0.0000' || itcPorLitro == null || itcPorLitro == undefined) {
       this.importeITC.setValue(this.appService.establecerDecimales('0.00', 2));
       this.netoITC.setValue(this.appService.establecerDecimales('0.00', 2));
       this.deducirDeNoGravado.setValue(null);
@@ -819,7 +818,7 @@ export class AgregarItemDialogo {
       this.deducirDeNoGravado.disable();
       this.importeNoGravado.disable();
       this.netoNoGravado.disable();
-    }else{
+    } else {
       this.importeITC.enable();
       this.netoITC.enable();
       this.deducirDeNoGravado.enable();
@@ -827,47 +826,47 @@ export class AgregarItemDialogo {
       this.netoNoGravado.enable();
 
 
-      importeITC = itcPorLitro*cantidad;
+      importeITC = itcPorLitro * cantidad;
       insumoNetoITC = Number(this.formulario.value.insumoProducto.itcNeto);
-      netoITC = (importeITC*insumoNetoITC)/100;
-      console.log(importeITC, insumoNetoITC ,netoITC);
+      netoITC = (importeITC * insumoNetoITC) / 100;
+      console.log(importeITC, insumoNetoITC, netoITC);
       this.importeITC.setValue(this.appService.establecerDecimales(importeITC, 2));
       this.formulario.get('importeITC').setValue(this.appService.establecerDecimales(importeITC, 2));
       this.netoITC.setValue(this.appService.establecerDecimales(netoITC, 2));
     }
   }
   //Maneja el cambio en el select "Deducir de No Gravado"
-  public cambioDeducirNoGravado(){
+  public cambioDeducirNoGravado() {
     console.log(this.deducirDeNoGravado.value);
-    if(this.deducirDeNoGravado.value){
+    if (this.deducirDeNoGravado.value) {
       this.importeNoGravado.enable();
-    }else{
+    } else {
       this.importeNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
       this.netoNoGravado.setValue(this.appService.establecerDecimales('0.00', 2));
       this.importeNoGravado.disable();
     }
   }
   //Calcula el Neto No Gravado
-  public calcularNetoNoGravado(){
+  public calcularNetoNoGravado() {
     this.establecerDecimales(this.importeNoGravado, 2);
     let netoNoGravado = null;
     netoNoGravado = this.importeNoGravado.value - this.netoITC.value;
     this.netoNoGravado.setValue(this.appService.establecerDecimales(netoNoGravado, 2));
   }
   //Calcula el Importe IVA
-  public calcularImporteIVA(){
+  public calcularImporteIVA() {
     let importeGravado = null;
     let alicuotaIva = null;
     let importeIva = null;
     importeGravado = this.formulario.get('importeNetoGravado').value;
     alicuotaIva = this.formulario.get('alicuotaIva').value.alicuota;
-    if(importeGravado && alicuotaIva){
-      importeIva = (importeGravado*alicuotaIva)/100;
+    if (importeGravado && alicuotaIva) {
+      importeIva = (importeGravado * alicuotaIva) / 100;
       this.formulario.get('importeIva').setValue(this.appService.establecerDecimales(importeIva, 2));
     }
   }
   //Calcula el Subtotal del Item
-  public calcularSubtotal(){
+  public calcularSubtotal() {
     this.establecerDecimales(this.formulario.get('importeImpuestoInterno'), 2);
     let importeGravado = null;
     let importeIva = null;
@@ -885,40 +884,40 @@ export class AgregarItemDialogo {
     importeImpuestoInterno = Number(this.formulario.value.importeImpuestoInterno);
 
     subtotal = importeGravado + importeIva + importeItc + importeNoGravado + importeExento + importeImpuestoInterno;
-    console.log(importeGravado, importeIva , importeItc , importeNoGravado , importeExento , importeImpuestoInterno);
+    console.log(importeGravado, importeIva, importeItc, importeNoGravado, importeExento, importeImpuestoInterno);
     this.subtotal.setValue(this.appService.establecerDecimales(subtotal, 2));
 
   }
   //Agrega un item a la lista de items
-  public agregarItem(){
+  public agregarItem() {
     this.controlarCamposVacios();
     this.listaItems.push(this.formulario.value);
     this.toastr.success("Item agregado con éxito.");
     this.reestablecerFormulario();
   }
   //Controla campso vacios. Establece en cero los nulos
-  private controlarCamposVacios(){
-    if(!this.formulario.value.cantidad || this.formulario.value.cantidad==undefined)
+  private controlarCamposVacios() {
+    if (!this.formulario.value.cantidad || this.formulario.value.cantidad == undefined)
       this.formulario.get('cantidad').setValue(this.appService.establecerDecimales('0.00', 2));
-    if(!this.formulario.value.precioUnitario || this.formulario.value.precioUnitario==undefined)
+    if (!this.formulario.value.precioUnitario || this.formulario.value.precioUnitario == undefined)
       this.formulario.get('precioUnitario').setValue(this.appService.establecerDecimales('0.00', 2));
-    if(!this.formulario.value.importeNetoGravado || this.formulario.value.importeNetoGravado==undefined)
+    if (!this.formulario.value.importeNetoGravado || this.formulario.value.importeNetoGravado == undefined)
       this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
-    if(!this.formulario.value.importeNoGravado || this.formulario.value.importeNoGravado==undefined)
+    if (!this.formulario.value.importeNoGravado || this.formulario.value.importeNoGravado == undefined)
       this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
-    if(!this.formulario.value.importeExento || this.formulario.value.importeExento==undefined)
+    if (!this.formulario.value.importeExento || this.formulario.value.importeExento == undefined)
       this.formulario.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
-    if(!this.formulario.value.importeImpuestoInterno || this.formulario.value.importeImpuestoInterno==undefined)
+    if (!this.formulario.value.importeImpuestoInterno || this.formulario.value.importeImpuestoInterno == undefined)
       this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales('0.00', 2));
-    if(!this.formulario.value.importeITC || this.formulario.value.importeITC==undefined)
+    if (!this.formulario.value.importeITC || this.formulario.value.importeITC == undefined)
       this.formulario.get('importeITC').setValue(this.appService.establecerDecimales('0.00', 2));
-    if(!this.formulario.value.importeIva || this.formulario.value.importeIva==undefined)
+    if (!this.formulario.value.importeIva || this.formulario.value.importeIva == undefined)
       this.formulario.get('importeIva').setValue(this.appService.establecerDecimales('0.00', 2));
-    if(!this.formulario.value.afipAlicuotaIva || this.formulario.value.afipAlicuotaIva==undefined)
+    if (!this.formulario.value.afipAlicuotaIva || this.formulario.value.afipAlicuotaIva == undefined)
       this.formulario.get('afipAlicuotaIva').setValue(this.data.proveedor.afipCondicionIva);
   }
   //Reestablece el Formulario y los FormControls
-  private reestablecerFormulario(){
+  private reestablecerFormulario() {
     this.formulario.reset();
     this.importeITC.reset();
     this.netoITC.reset();
@@ -938,10 +937,10 @@ export class AgregarItemDialogo {
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
-   private compararFn(a, b) {
-     if (a != null && b != null) {
-       return a.id === b.id;
-     }
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -956,25 +955,25 @@ export class AgregarItemDialogo {
     return this.appService.mascararEnterosConDecimales(limit);
   }
   //Mascara para cuatro decimales
-  public mascararCuatroDecimales(limit){
+  public mascararCuatroDecimales(limit) {
     return this.appService.mascararEnterosCon4Decimales(limit);
   }
-   //Obtiene la mascara de importe
-   public mascararImporte(intLimite) {
-     return this.appService.mascararImporte(intLimite, 2);
-   }
-   //Obtiene la mascara de enteros
-   public mascararEnteros(intLimite) {
-     return this.appService.mascararEnteros(intLimite);
-   }
-   //Establece los decimales
-   public establecerDecimales(formulario, cantidad): void {
-     let valor = formulario.value;
-     if(valor) {
-       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
-     }else{
-     }
-   }
+  //Obtiene la mascara de importe
+  public mascararImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite, 2);
+  }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
+    return this.appService.mascararEnteros(intLimite);
+  }
+  //Establece los decimales
+  public establecerDecimales(formulario, cantidad): void {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    } else {
+    }
+  }
   onNoClick(): void {
     this.dialogRef.close();
   }
@@ -1024,10 +1023,10 @@ export class DetallePercepcionesDialogo {
   //Constructor
   constructor(public dialogRef: MatDialogRef<DetallePercepcionesDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: CompraComprobantePercepcion, private modeloPorJurisdiccion: CompraComprobantePercepcionJurisdiccion,
-    private insumoProductoService: InsumoProductoService, private appService: AppService, private tipoPercepcionService: TipoPercepcionService,
+    private appService: AppService, private tipoPercepcionService: TipoPercepcionService,
     private fechaService: FechaService, private mesService: MesService, private provinciaService: ProvinciaService) {
-      dialogRef.disableClose = true;
-     }
+    dialogRef.disableClose = true;
+  }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -1041,7 +1040,7 @@ export class DetallePercepcionesDialogo {
     this.formularioPorJurisdiccion = this.modeloPorJurisdiccion.formulario;
     //Establece la lista de percepciones
     console.log([this.data.detallePercepcion]);
-    if(this.data.detallePercepcion){
+    if (this.data.detallePercepcion) {
       this.listaCompleta = new MatTableDataSource(this.data.detallePercepcion);
       this.listaCompleta.sort = this.sort;
     }
@@ -1057,110 +1056,110 @@ export class DetallePercepcionesDialogo {
     this.reestablecerFormularioGeneral();
   }
   //Carga la lista de tipos de percepciones
-  public listarPercepciones(){
+  public listarPercepciones() {
     this.tipoPercepcionService.listar().subscribe(
-      res=>{
+      res => {
         this.tiposPercepciones = res.json();
       },
-      err=>{
+      err => {
         console.log(err);
       }
     )
   }
   //Carga la lista de anios
-  private listarAniosMasMenosUno(){
+  private listarAniosMasMenosUno() {
     this.fechaService.listarAniosMasMenosUno().subscribe(
-      res=>{
+      res => {
         this.anios = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de años");
       }
     )
   }
   //Carga la lista de meses
-  private listarMeses(){
+  private listarMeses() {
     this.mesService.listar().subscribe(
-      res=>{
+      res => {
         this.meses = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de meses");
       }
     )
   }
   //Carga la lista de provincias
-  private listarProvincias(){
+  private listarProvincias() {
     this.provinciaService.listar().subscribe(
-      res=>{
+      res => {
         this.provincias = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de provincias");
       }
     )
   }
   //Controla el cambio en el campo de selecicon Tipo de Percepción
-  public cambioTipoPercepcion(){
+  public cambioTipoPercepcion() {
     let elemento = this.formulario.get('tipoPercepcion').value;
-    if(elemento.detallePorJurisdiccion){
+    if (elemento.detallePorJurisdiccion) {
       this.mostrarCamposPorJurisdiccion = true;
-    }else{
+    } else {
       this.mostrarCamposPorJurisdiccion = false;
     }
   }
   //Agrega una precepcion a la primera tabla (percepcion por jurisdiccion)
-  public agregarPercepcionPorJurisdiccion(){
-    if(this.listaCompletaPorJurisdiccion.data.length == 0){
+  public agregarPercepcionPorJurisdiccion() {
+    if (this.listaCompletaPorJurisdiccion.data.length == 0) {
       this.listaCompletaPorJurisdiccion = new MatTableDataSource([this.formularioPorJurisdiccion.value]);
       this.listaCompletaPorJurisdiccion.sort = this.sort;
       this.toastr.success("Percepción por jurisdicción agregada con éxito.");
       this.reestablecerFormularioPorJurisdiccion();
-    }else{
+    } else {
       //Controla unicidad de la provincia en la tabla
       let indice = null;
       indice = this.listaCompletaPorJurisdiccion.data.findIndex(
         item => item.provincia.id === this.formularioPorJurisdiccion.value.provincia.id);
-        if(indice >= 0){ //La provincia ya fue cargada anteriormente
-          this.toastr.error("La provincia seleccionada ya fue agregada a la tabla.");
-          this.formularioPorJurisdiccion.get('provincia').reset();
-          setTimeout(function () {
-            document.getElementById('idProvincia').focus();
-          }, 20);
-        }else{ //La provincia no se encuentra en la tabla (devuelve -1)
-          this.listaCompletaPorJurisdiccion.data.push(this.formularioPorJurisdiccion.value);
-          this.listaCompletaPorJurisdiccion.sort = this.sort;
-          this.toastr.success("Percepción por jurisdicción agregada con éxito.");
-          this.reestablecerFormularioPorJurisdiccion();
-        }
+      if (indice >= 0) { //La provincia ya fue cargada anteriormente
+        this.toastr.error("La provincia seleccionada ya fue agregada a la tabla.");
+        this.formularioPorJurisdiccion.get('provincia').reset();
+        setTimeout(function () {
+          document.getElementById('idProvincia').focus();
+        }, 20);
+      } else { //La provincia no se encuentra en la tabla (devuelve -1)
+        this.listaCompletaPorJurisdiccion.data.push(this.formularioPorJurisdiccion.value);
+        this.listaCompletaPorJurisdiccion.sort = this.sort;
+        this.toastr.success("Percepción por jurisdicción agregada con éxito.");
+        this.reestablecerFormularioPorJurisdiccion();
+      }
     }
   }
   //Controla antes de Agregar Percepcion
-  public controlarAgregarPercepcion(){
-    if(this.mostrarCamposPorJurisdiccion){ //Controla que los importes coincidan cuando es por jurisdiccion
+  public controlarAgregarPercepcion() {
+    if (this.mostrarCamposPorJurisdiccion) { //Controla que los importes coincidan cuando es por jurisdiccion
       let importe = null;
       this.listaCompletaPorJurisdiccion.data.forEach(
         item => {
           importe += Number(item.importe);
         }
       );
-      if(importe == Number(this.formulario.value.importe)){ //Controla igualdad de importes
+      if (importe == Number(this.formulario.value.importe)) { //Controla igualdad de importes
         this.agregarPercepcion();
-      }else{
+      } else {
         this.toastr.error("La suma de importes por jurisdicción es diferente al importe de cabecera.");
       }
     }
-    if(!this.mostrarCamposPorJurisdiccion){
+    if (!this.mostrarCamposPorJurisdiccion) {
       this.agregarPercepcion();
     }
   }
   //Agrega una percepcion a la segunda tabla
-  private agregarPercepcion(){
+  private agregarPercepcion() {
     this.formulario.get('compraCptePercepcionJurisdicciones').setValue(this.listaCompletaPorJurisdiccion.data);
-    if(this.listaCompleta.data.length == 0){
+    if (this.listaCompleta.data.length == 0) {
       this.listaCompleta = new MatTableDataSource([this.formulario.value]);
       this.listaCompleta.sort = this.sort;
-    }else{
+    } else {
       this.listaCompleta.data.push(this.formulario.value);
       this.listaCompleta.sort = this.sort;
     }
@@ -1168,24 +1167,24 @@ export class DetallePercepcionesDialogo {
     this.reestablecerFormularioGeneral();
   }
   //Elimina un item de la primera tabla
-  public activarEliminarPorJurisdiccion(indice){
+  public activarEliminarPorJurisdiccion(indice) {
     this.listaCompletaPorJurisdiccion.data.splice(indice, 1);
     this.listaCompletaPorJurisdiccion.sort = this.sort;
   }
   //Elimina un item de segunda la tabla
-  public activarEliminarPercepcion(indice){
+  public activarEliminarPercepcion(indice) {
     this.listaCompleta.data.splice(indice, 1);
     this.listaCompleta.sort = this.sort;
   }
   //Reestablece el Formulario general
-  private reestablecerFormularioPorJurisdiccion(){
+  private reestablecerFormularioPorJurisdiccion() {
     this.formularioPorJurisdiccion.reset();
     setTimeout(function () {
       document.getElementById('idProvincia').focus();
     }, 20);
   }
   //Reestablece el Formulario percepciones por jurisdiccion
-  private reestablecerFormularioGeneral(){
+  private reestablecerFormularioGeneral() {
     this.formulario.reset();
     this.listaCompletaPorJurisdiccion = new MatTableDataSource([]);
     this.listaCompletaPorJurisdiccion.sort = this.sort;
@@ -1195,10 +1194,10 @@ export class DetallePercepcionesDialogo {
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
-   private compararFn(a, b) {
-     if (a != null && b != null) {
-       return a.id === b.id;
-     }
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -1213,30 +1212,30 @@ export class DetallePercepcionesDialogo {
     return this.appService.mascararEnterosConDecimales(limit);
   }
   //Mascara para cuatro decimales
-  public mascararCuatroDecimales(limit){
+  public mascararCuatroDecimales(limit) {
     return this.appService.mascararEnterosCon4Decimales(limit);
   }
-   //Obtiene la mascara de importe
-   public mascararImporte(intLimite) {
-     return this.appService.mascararImporte(intLimite, 2);
-   }
-   //Obtiene la mascara de enteros
-   public mascararEnteros(intLimite) {
-     return this.appService.mascararEnteros(intLimite);
-   }
-   //Establece los decimales
-   public establecerDecimales(formulario, cantidad): void {
-     let valor = formulario.value;
-     if(valor) {
-       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
-     }else{
-     }
-   }
+  //Obtiene la mascara de importe
+  public mascararImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite, 2);
+  }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
+    return this.appService.mascararEnteros(intLimite);
+  }
+  //Establece los decimales
+  public establecerDecimales(formulario, cantidad): void {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    } else {
+    }
+  }
   closeDialog(opcion) {
-    if(opcion == 'aceptar'){
+    if (opcion == 'aceptar') {
       this.dialogRef.close(this.listaCompleta.data);
     }
-    if(opcion == 'cerrar'){
+    if (opcion == 'cerrar') {
       this.dialogRef.close(null);
     }
   }
@@ -1287,10 +1286,10 @@ export class DetalleVencimientosDialogo {
   //Constructor
   constructor(public dialogRef: MatDialogRef<DetallePercepcionesDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: CompraComprobanteVencimiento, private modeloPorJurisdiccion: CompraComprobantePercepcionJurisdiccion,
-    private condicionCompraService: CondicionCompraService, private appService: AppService, private provinciaService: ProvinciaService,
-    private compraCbteVencimientoService:  CompraComprobanteVencimientoService) {
-      dialogRef.disableClose = true;
-     }
+    private condicionCompraService: CondicionCompraService, private appService: AppService, 
+    private compraCbteVencimientoService: CompraComprobanteVencimientoService) {
+    dialogRef.disableClose = true;
+  }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -1314,18 +1313,18 @@ export class DetalleVencimientosDialogo {
     this.establecerPorDefecto();
   }
   //Carga la lista de condiciones de compra
-  public listarCondicionesCompra(){
+  public listarCondicionesCompra() {
     this.condicionCompraService.listar().subscribe(
-      res=>{
+      res => {
         this.condicionesCompra = res.json();
       },
-      err=>{
+      err => {
         console.log(err);
       }
     )
   }
   //Establece valores por defecto
-  private establecerPorDefecto(){
+  private establecerPorDefecto() {
     this.importeTotalTabla = null;
     this.totalComprobante.reset();
     this.condicionCompra.reset();
@@ -1336,19 +1335,19 @@ export class DetalleVencimientosDialogo {
     this.cantidadCuotas.setValue(this.data.proveedor.condicionCompra.cuotas);
     this.condicionCompra.setValue(this.data.proveedor.condicionCompra);
     this.cantidadCuotas.setValue(this.data.proveedor.condicionCompra.cuotas);
-    if(Number(this.data.importeTotal) > 0)
-      this.totalComprobante.setValue(this.appService.establecerDecimales(this.data.importeTotal,2));
-      else
-      this.totalComprobante.setValue(this.appService.establecerDecimales('0.00',2));
+    if (Number(this.data.importeTotal) > 0)
+      this.totalComprobante.setValue(this.appService.establecerDecimales(this.data.importeTotal, 2));
+    else
+      this.totalComprobante.setValue(this.appService.establecerDecimales('0.00', 2));
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
-   private compararFn(a, b) {
-     if (a != null && b != null) {
-       return a.id === b.id;
-     }
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
   }
   //Formatea el valor del autocompletado
   public displayFn(elemento) {
@@ -1359,28 +1358,28 @@ export class DetalleVencimientosDialogo {
     }
   }
   //Confirma y genera tabla de vencimientos
-  public confirmar(){
+  public confirmar() {
     this.loaderService.show();
     let cantidadCuotas = this.cantidadCuotas.value;
     let totalImporte = this.totalComprobante.value;
     let idCondicionCompra = this.condicionCompra.value.id;
-    console.log(cantidadCuotas,totalImporte,idCondicionCompra );
-    this.compraCbteVencimientoService.generarTablaVencimientos(cantidadCuotas,totalImporte,idCondicionCompra).subscribe(
-      res=>{
+    console.log(cantidadCuotas, totalImporte, idCondicionCompra);
+    this.compraCbteVencimientoService.generarTablaVencimientos(cantidadCuotas, totalImporte, idCondicionCompra).subscribe(
+      res => {
         console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.calcularImporteTabla();
         this.loaderService.hide();
       },
-      err=>{
+      err => {
         this.toastr.error(err.mensaje);
         this.loaderService.hide();
       }
     );
   }
   //Actualiza un registro de la tabla
-  public actualizar(){
+  public actualizar() {
     this.listaCompleta.data[this.idMod] = this.formulario.value;
     this.listaCompleta.sort = this.sort;
     this.calcularImporteTabla();
@@ -1389,43 +1388,43 @@ export class DetalleVencimientosDialogo {
     this.idMod = null;
   }
   //Limpia los campos del formulario - cancela el actualizar
-  public cancelar(){
+  public cancelar() {
     this.formulario.reset();
     this.numeroCuota.setValue(null);
     this.idMod = null;
   }
   //Completa los campos del formulario con los datos del registro a modificar
-  public activarActualizar(elemento, indice){
+  public activarActualizar(elemento, indice) {
     this.formulario.setValue(elemento);
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
     this.numeroCuota.setValue(indice + 1);
-    this.idMod= indice;
+    this.idMod = indice;
   }
   //Activar Eliminar
-  public activarEliminar(indice){
+  public activarEliminar(indice) {
     this.listaCompleta.data.splice(indice, 1);
     this.listaCompleta.sort = this.sort;
     this.calcularImporteTabla();
   }
   //Calcula el importe total de la tabla
-  private calcularImporteTabla(){
+  private calcularImporteTabla() {
     this.importeTotalTabla = 0;
     this.listaCompleta.data.forEach(
-      item=>{
+      item => {
         this.importeTotalTabla += Number(item.importe);
       }
     );
     this.calcularDiferencia();
   }
   //Calcula la diferencia entre el "totalComprobante" y el "importeTotalTabla"
-  private calcularDiferencia(){
+  private calcularDiferencia() {
     let diferencia = null;
     diferencia = Number(this.totalComprobante.value) - this.importeTotalTabla;
     console.log(this.importeTotalTabla);
     this.diferencia.setValue(this.appService.establecerDecimales(diferencia.toString(), 2));
-    if(diferencia == 0)
+    if (diferencia == 0)
       this.btnAceptar = true;
-      else
+    else
       this.btnAceptar = false;
   }
   //Mascara decimales
@@ -1433,34 +1432,34 @@ export class DetalleVencimientosDialogo {
     return this.appService.mascararEnterosConDecimales(limit);
   }
   //Mascara para cuatro decimales
-  public mascararCuatroDecimales(limit){
+  public mascararCuatroDecimales(limit) {
     return this.appService.mascararEnterosCon4Decimales(limit);
   }
-   //Obtiene la mascara de importe
-   public mascararImporte(intLimite) {
-     return this.appService.mascararImporte(intLimite, 2);
-   }
-   //Obtiene la mascara de enteros
-   public mascararEnteros(intLimite) {
-     return this.appService.mascararEnteros(intLimite);
-   }
-   //Establece los decimales
-   public establecerDecimales(formulario, cantidad): void {
-     let valor = formulario.value;
-     if(valor) {
-       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
-     }else{
-     }
-   }
+  //Obtiene la mascara de importe
+  public mascararImporte(intLimite) {
+    return this.appService.mascararImporte(intLimite, 2);
+  }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
+    return this.appService.mascararEnteros(intLimite);
+  }
+  //Establece los decimales
+  public establecerDecimales(formulario, cantidad): void {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+    } else {
+    }
+  }
   closeDialog(opcion) {
-    if(opcion == 'aceptar'){
+    if (opcion == 'aceptar') {
       console.log(this.btnAceptar);
-      if(this.btnAceptar)
-      this.dialogRef.close(this.listaCompleta.data);
+      if (this.btnAceptar)
+        this.dialogRef.close(this.listaCompleta.data);
       else
         this.toastr.warning("Campo Diferencia debe ser cero.");
     }
-    if(opcion == 'cerrar'){
+    if (opcion == 'cerrar') {
       this.dialogRef.close(null);
     }
   }

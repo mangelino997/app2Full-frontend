@@ -1,4 +1,4 @@
-<div class="row justify-content-center contenedor">
+<div class="row justify-content-center padd-20">
   <h5>Lista de Precios - <b>{{tipoTarifa=='porEscala'? 'Por Escala': 'Por Tramo'}}</b> - Tarifa:
     <b>{{ordenVentaTarifa.tipoTarifa.nombre}}</b></h5>
   <div class="col-md-12 text-center">
@@ -332,7 +332,7 @@
     </div>
     <div class="row" *ngIf="show">
       <div class="col text-center">
-        <app-progreso></app-progreso>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
     </div>
   </div>

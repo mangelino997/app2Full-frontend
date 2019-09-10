@@ -5,7 +5,6 @@ import { SucursalService } from '../../servicios/sucursal.service';
 import { EmpresaService } from '../../servicios/empresa.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-// import { MatAutocompleteTrigger } from '@angular/material';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { PuntoVenta } from 'src/app/modelos/puntoVenta';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
