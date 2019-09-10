@@ -53,10 +53,13 @@ export class PersonalAdelantoService {
     return this.http.get(this.url + '/listarLotes/' + fechaDesde + '/' + fechaHasta + '/' + idEmpresa, this.options);
   }
   //Obtiene la lista de registros por filtros
-  public listarPorFiltros(idEmpresa, idSucursal, fechaDesde, fechaHasta, adelanto, estado, alias){
-    return this.http.get(this.url + '/listarPorFiltros/'+idEmpresa+'/'+idSucursal+'/'+fechaDesde+'/'+fechaHasta+'/'+adelanto+'/'+estado+
-    '/'+alias , this.options);
+  public listarPorFiltros(elemento){
+    return this.http.post(this.url + '/listarPorFiltros', elemento , this.options);
   }
+  // public listarPorFiltros(idEmpresa, idSucursal, fechaDesde, fechaHasta, adelanto, estado, alias){
+  //   return this.http.get(this.url + '/listarPorFiltros/'+idEmpresa+'/'+idSucursal+'/'+fechaDesde+'/'+fechaHasta+'/'+adelanto+'/'+estado+
+  //   '/'+alias , this.options);
+  // }
   //Obtiene la lista de registros
   public listarCuotas(elemento) {
     return this.http.post(this.url + '/listarCuotas', elemento, this.options);

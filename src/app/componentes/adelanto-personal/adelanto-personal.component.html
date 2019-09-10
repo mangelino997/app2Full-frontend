@@ -192,9 +192,9 @@
                   <label id="labelEstado" for="idEstado" class="descripcion-label">Estado *</label>
                   <mat-select id="idEstado" class="form-control form-control-sm" [formControl]="estado"
                     [compareWith]="compareFn">
-                    <mat-option [value]="0">TODOS</mat-option>
-                    <mat-option [value]="1">PENDIENTES</mat-option>
-                    <mat-option [value]="2">EN LIQUIDACIÓN</mat-option>
+                    <mat-option [value]="2">TODOS</mat-option>
+                    <mat-option [value]="0">PENDIENTES</mat-option>
+                    <mat-option [value]="1">EN LIQUIDACIÓN</mat-option>
                   </mat-select>
                 </div>
               </div>
@@ -238,8 +238,15 @@
             </div>
             <div class="col-md-3" *ngIf="indiceSeleccionado == 4">
               <div class="form-group has-float-label">
-                  <label id="labelObservaciones" for="idObservaciones" class="tamanio-label">Observaciones *</label>
-                  <input id="idObservaciones" type="date" formControlName="observaciones" 
+                  <label id="labelLote" for="idLote" class="tamanio-label">Lote </label>
+                  <input id="idLote" type="text" [formControl]="lote" readonly
+                    class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-3" *ngIf="indiceSeleccionado == 4">
+              <div class="form-group has-float-label">
+                  <label id="labelObservaciones" for="idObservaciones" class="tamanio-label">Observaciones </label>
+                  <input id="idObservaciones" type="text" formControlName="observaciones" 
                     class="form-control form-control-sm">
               </div>
             </div>

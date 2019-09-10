@@ -30,6 +30,8 @@ export class AdelantoLoteComponent implements OnInit {
   public activeLink:any = null;
   //Define el indice seleccionado de pestania
   public indiceSeleccionado:number = null;
+  //Define el indice seleccionado para anular en Eliminar
+  public indiceElemento: number = null;
   //Define la pestania actual seleccionada
   public pestaniaActual:string = null;
   //Define si mostrar el autocompletado
@@ -56,8 +58,8 @@ export class AdelantoLoteComponent implements OnInit {
   public fechaDesde: FormControl = new FormControl();
   //Define a fechaHasta como un formControl
   public fechaHasta: FormControl = new FormControl();
-  //Define a numeroLote como un number
-  public numeroLote: number = null;
+  //Define a numeroLote como un formControl
+  public numeroLote: FormControl = new FormControl();
   //Define a observacion como un formControl
   public observacion: FormControl = new FormControl('', Validators.required);
   //Define la lista completa de registros
@@ -241,14 +243,14 @@ export class AdelantoLoteComponent implements OnInit {
     let usuario = this.appService.getUsuario();
     this.formulario.get('usuarioMod').setValue(usuario);
     this.formulario.get('observacionesAnulado').setValue(this.observacion.value);
-    this.formulario.get('numeroLote').setValue(this.numeroLote);
-
+    this.formulario.get('numeroLote').setValue(this.numeroLote.value);
     console.log(this.formulario.value);
     this.servicio.anularLote(this.formulario.value).subscribe(
       res=>{
         console.log(res.json());
         let respuesta = res.json();
         this.toastr.success(respuesta.mensaje);
+        this.observacion.reset();
         this.buscar();
         this.loaderService.hide();
       },
@@ -261,8 +263,10 @@ export class AdelantoLoteComponent implements OnInit {
     )
   }
   //Controla el Anular
-  public activarAnular(numeroLote){
-    this.numeroLote = numeroLote;
+  public activarAnular(numeroLote, indice){
+    this.numeroLote.setValue(numeroLote);
+    this.indiceElemento = indice;
+    console.log(numeroLote, this.indiceElemento);
     setTimeout(function () {
       document.getElementById('idObervaciones').focus();
     }, 20);
@@ -293,7 +297,8 @@ export class AdelantoLoteComponent implements OnInit {
   private reestablecerFormulario(id){
     this.formulario.reset();
     this.observacion.reset();
-    this.numeroLote = null;
+    this.numeroLote.setValue(null);
+    this.indiceElemento = null,
     this.fechaDesde.reset();
     this.fechaHasta.reset();
     this.listaCompleta = new MatTableDataSource([]);

@@ -19,18 +19,14 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label id="labelNumeroViaje" for="idNumeroViaje" class="tamanio-label">N° Viaje</label>
-                <input *ngIf="!formulario.value.viaje" id="idNumeroViaje" type="text" [formControl]="formulario.value.viaje" 
-                readonly class="form-control form-control-sm">
-                <input *ngIf="formulario.value.viaje" id="idNumeroViaje" type="text" [formControl]="formulario.value.viaje.id" 
+                <input *ngIf="!formulario.value.viaje" id="idNumeroViaje" type="text" [formControl]="viaje" 
                 readonly class="form-control form-control-sm">
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label id="labelNumeroReparto" for="idNumeroReparto" class="tamanio-label">N° Reparto</label>
-                <input *ngIf="!formulario.value.reparto" id="idNumeroReparto" type="text" [formControl]="formulario.value.reparto"  
-                readonly class="form-control form-control-sm">
-                <input *ngIf="formulario.value.reparto" id="idNumeroReparto" type="text" [formControl]="formulario.value.reparto.id"  
+                <input *ngIf="!formulario.value.reparto" id="idNumeroReparto" type="text" [formControl]="reparto"  
                 readonly class="form-control form-control-sm">
               </div>
             </div>
@@ -39,7 +35,7 @@
             <div class="col-md-4">
               <div class="form-group has-float-label">
                 <label id="labelObservacionesAnulado" for="idObservacionesAnulado" class="tamanio-label">Observaciones Anulado</label>
-                <input id="idObservacionesAnulado" type="text" formControlName="observacionesAnulado" readonly class="form-control form-control-sm">
+                <input id="idObservacionesAnulado" type="text" [formControl]="observacionAnulado" readonly class="form-control form-control-sm">
               </div>
             </div>
             <div class="col-md-4">

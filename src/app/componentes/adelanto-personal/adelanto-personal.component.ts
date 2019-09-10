@@ -69,6 +69,7 @@ export class AdelantoPersonalComponent implements OnInit {
   public personal: FormControl = new FormControl();
   public estado: FormControl = new FormControl();
   public alias: FormControl = new FormControl();
+  public lote: FormControl = new FormControl();
   //Define la fecha actual
   public FECHA_ACTUAL: FormControl = new FormControl();
   //Define la lista completa de registros
@@ -218,6 +219,7 @@ export class AdelantoPersonalComponent implements OnInit {
 
   //Carga la tabla con los registros
   public listarPorFiltros(){
+    this.loaderService.show();
     let empresa = null;
     let usuario = null;
     let idSucursal = null;
@@ -237,28 +239,40 @@ export class AdelantoPersonalComponent implements OnInit {
     adelanto = this.adelanto.value;
     estado = this.estado.value;
     alias = this.alias.value;
-
-    if(estado == 0)
-      estado = null;
     if(alias != undefined || alias != null)
       alias = this.alias.value.alias;
       else
       alias = ""; 
+    //Genero el objeto
+    let obj={
+      idEmpresa: empresa.id, 
+      idSucursal: idSucursal, 
+      fechaDesde: fechaDesde, 
+      fechaHasta: fechaHasta,
+      adelanto: adelanto, 
+      alias: alias, 
+      estado: estado
+    }
     //Consulta
-    this.servicio.listarPorFiltros(empresa.id, idSucursal, fechaDesde, fechaHasta, adelanto, estado, alias).subscribe(
+    this.servicio.listarPorFiltros(obj ).subscribe(
       res=>{
         console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err=>{
-        console.log(err);
+        let error= err.json();
+        console.log(error.message);
+        this.toastr.error(error.message);
+        this.loaderService.hide();
       }
     )
   }
   //Agrega un registro
   private agregar(){
     this.loaderService.show();
+    let usuarioAlta = this.appService.getUsuario();
     if(this.btnPrestamoModal){
       this.servicio.agregarPrestamo(this.listaPrestamos).subscribe(
         res=>{
@@ -275,12 +289,13 @@ export class AdelantoPersonalComponent implements OnInit {
         },
         err=>{
           let error = err.json();
-          this.toastr.error(error.mensaje);
+          this.toastr.error(error.message);
           this.loaderService.hide();
         }
       )
     }else{
       console.log(this.formulario.value);
+      this.formulario.get('usuarioAlta').setValue(usuarioAlta);
       this.servicio.agregar(this.formulario.value).subscribe(
         res=>{
           console.log(res.json);
@@ -294,7 +309,7 @@ export class AdelantoPersonalComponent implements OnInit {
         },
         err=>{
           let error = err.json();
-          this.toastr.error(error.mensaje);
+          this.toastr.error(error.message);
           this.loaderService.hide();
         }
       )
@@ -324,11 +339,13 @@ export class AdelantoPersonalComponent implements OnInit {
   //Elimina un registro
   private eliminar(){
     this.loaderService.show();
+    this.formulario.get('estaAnulado').setValue(true);
     console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res=>{
         console.log(res.json);
         this.reestablecerFormulario(undefined);
+        this.listarPorFiltros();
         this.toastr.success("Registro actualizado con éxito.");
         setTimeout(function () {
           document.getElementById("idAutocompletado").focus();
@@ -367,6 +384,7 @@ export class AdelantoPersonalComponent implements OnInit {
   private obtenerBasicoCategoria(idCategoria){
     this.basicoCategoriaService.obtenerPorCategoria(idCategoria).subscribe(
       res=>{
+        console.log(res.json());
         let respuesta = res.json();
         this.basicoCategoria.setValue(this.appService.establecerDecimales(respuesta.basico, 2));
         this.calcularImporteDisponible();
@@ -412,6 +430,7 @@ export class AdelantoPersonalComponent implements OnInit {
     this.estado.reset();
     this.personal.reset();
     this.alias.reset();
+    this.lote.setValue(null);
     //Vacía las listas
     this.listaPrestamos = [];
     this.resultados = [];
@@ -541,6 +560,7 @@ export class AdelantoPersonalComponent implements OnInit {
   public activarAnular(elemento){
     console.log(elemento);
     this.formulario.patchValue(elemento);
+    this.lote.setValue(elemento.numeroLote);
   }
   //Actualiza un registro de la tabla
   public activarActualizar(elemento){
@@ -735,7 +755,6 @@ export class PrestamoDialogo {
   //Completa los campos del formulario con los datos del registro a modificar
   public activarActualizar(elemento, indice){
     this.formulario.get('cuota').setValue(elemento.cuota);
-    // this.formulario.get('fechaVto').setValue(this.datePipe.transform(elemento.fechaVto, "yyyy-MM-dd"));
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
     this.numeroCuota.setValue(elemento.cuota);
     this.idMod= indice;
@@ -802,16 +821,22 @@ export class PrestamoDialogo {
 export class DetalleAdelantoDialogo {
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
+  //Define el Viaje como un formControl
+  public viaje:FormControl = new FormControl();
+  //Define el Reparto como un formControl
+  public reparto:FormControl = new FormControl();
   //Define la Fecha Liquidacion como un formControl
   public fechaLiquidacion:FormControl = new FormControl();
   //Define la N° Liquidacion como un formControl
   public numeroLiquidacion:FormControl = new FormControl();
   //Define el usuario anulacion como un formControl
   public usuarioAnulacion:FormControl = new FormControl();
+  //Define el observacion anulado como un formControl
+  public observacionAnulado:FormControl = new FormControl();
   //Define el usuario mod de cuotas como un formControl
   public usuarioMod:FormControl = new FormControl();
   //Constructor
-  constructor(public dialogRef: MatDialogRef<PrestamoDialogo>, @Inject(MAT_DIALOG_DATA) public data, private appService: AppService, 
+  constructor(public dialogRef: MatDialogRef<DetalleAdelantoDialogo>, @Inject(MAT_DIALOG_DATA) public data, private appService: AppService, 
   private loaderService: LoaderService, private modelo: PersonalAdelanto) {
     dialogRef.disableClose = true;
    }
@@ -824,13 +849,27 @@ export class DetalleAdelantoDialogo {
   }
   //Reestablece los campos del formulario
   private reestablecerFormulario(){
+    let elemento = this.data.personalAdelanto;
     this.formulario.reset();
+    this.observacionAnulado.setValue(elemento.observacionesAnulado);
     this.fechaLiquidacion.setValue(null);
     this.numeroLiquidacion.setValue(null);
-    this.usuarioAnulacion.reset();
-    this.usuarioAnulacion.reset();
-    console.log(this.data.personalAdelanto);
-    this.formulario.patchValue(this.data.personalAdelanto);
+    if(elemento.reparto)
+      this.reparto.setValue(elemento.reparto.id);
+      else
+      this.reparto.setValue(null);
+    if(elemento.viaje)
+      this.viaje.setValue(elemento.viaje.id);
+      else
+      this.viaje.setValue(null);
+    if(elemento.usuarioAnulado)
+      this.usuarioAnulacion.reset(elemento.usuarioAnulado.alias);
+      else
+      this.usuarioAnulacion.reset(null);
+    if(elemento.usuarioMod)
+      this.usuarioMod.setValue(elemento.usuarioMod.alias);
+      else
+      this.usuarioMod.setValue(null);
   }
   
   //Obtiene la mascara de importe
