@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoCuentaContableComponent } from 'src/app/componentes/tipo-cuenta-contable/tipo-cuenta-contable.component';
 import { TipoCuentaContableService } from 'src/app/servicios/tipo-cuenta-contable.service';
 import { TipoCuentaContable } from 'src/app/modelos/tipo-cuenta-contable';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { TipoCuentaContable } from 'src/app/modelos/tipo-cuenta-contable';
     MatProgressBarModule
   ],
   providers: [
+    SubopcionPestaniaService,
     TipoCuentaContableService,
     TipoCuentaContable
   ]

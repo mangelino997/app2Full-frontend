@@ -311,8 +311,7 @@ export class TipoRetencionComponent implements OnInit {
     lista.forEach(elemento => {
         let f = {
           id: elemento.id,
-          nombre: elemento.nombre,
-          detalleporjurisdiccion: elemento.detallePorJurisdiccion ? 'Si' : 'No'
+          nombre: elemento.nombre
         }
         datos.push(f);
     });
@@ -323,7 +322,7 @@ export class TipoRetencionComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Percepciones',
+      nombre: 'Retenciones',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,

@@ -8,6 +8,7 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UnidadMedidaComponent } from 'src/app/componentes/unidad-medida/unidad-medida.component';
 import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
     MatProgressBarModule
   ],
   providers: [
+    SubopcionPestaniaService,
     UnidadMedidaService
   ]
 })

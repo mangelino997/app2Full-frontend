@@ -8,6 +8,8 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgendaTelefonicaComponent } from 'src/app/componentes/agenda-telefonica/agenda-telefonica.component';
 import { AgendaTelefonicaService } from 'src/app/servicios/agenda-telefonica.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { LocalidadService } from 'src/app/servicios/localidad.service';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { AgendaTelefonicaService } from 'src/app/servicios/agenda-telefonica.ser
     MatProgressBarModule
   ],
   providers: [
-    AgendaTelefonicaService
+    SubopcionPestaniaService,
+    AgendaTelefonicaService,
+    LocalidadService
   ]
 })
 export class AgendaTelefonicaModule { }
