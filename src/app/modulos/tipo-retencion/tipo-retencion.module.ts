@@ -7,6 +7,9 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
   MatSelectModule, MatProgressBarModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoRetencionComponent } from 'src/app/componentes/tipo-retencion/tipo-retencion.component';
+import { TipoRetencionService } from 'src/app/servicios/tipo-retencion.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { TipoRetencion } from 'src/app/modelos/tipoRetencion';
 
 @NgModule({
   declarations: [
@@ -24,6 +27,11 @@ import { TipoRetencionComponent } from 'src/app/componentes/tipo-retencion/tipo-
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule
+  ],
+  providers: [
+    TipoRetencionService,
+    SubopcionPestaniaService,
+    TipoRetencion
   ]
 })
 export class TipoRetencionModule { }

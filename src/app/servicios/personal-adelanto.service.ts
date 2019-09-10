@@ -48,6 +48,10 @@ export class PersonalAdelantoService {
   public listar(){
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros por Lote
+  public listarLotes(fechaDesde, fechaHasta, idEmpresa){
+    return this.http.get(this.url + '/listarLotes/' + fechaDesde + '/' + fechaHasta + '/' + idEmpresa, this.options);
+  }
   //Obtiene la lista de registros por filtros
   public listarPorFiltros(idEmpresa, idSucursal, fechaDesde, fechaHasta, adelanto, estado, alias){
     return this.http.get(this.url + '/listarPorFiltros/'+idEmpresa+'/'+idSucursal+'/'+fechaDesde+'/'+fechaHasta+'/'+adelanto+'/'+estado+
@@ -66,13 +70,16 @@ export class PersonalAdelantoService {
     return this.http.post(this.url + '/agregarPrestamo', elemento, this.options);
   }
   //Agrega un registro (Lote)
-  public agregarLote(idEmpresa, idSucursal, idCategoria, idUsuarioAlta, observaciones, importe) {
-    return this.http.post(this.url + '/agregarLote/' + idEmpresa + '/' + idSucursal + '/' + idCategoria + '/' + idUsuarioAlta + '/' 
-    + observaciones + '/' + importe, this.options);
+  public agregarLote(elemento) {
+    return this.http.post(this.url + '/agregarLote', elemento, this.options);
   }
   //Actualiza un registro
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
+  }
+  //Actualiza un registro
+  public anularLote(elemento) {
+    return this.http.put(this.url + '/anularLote', elemento, this.options);
   }
   //Elimina un registro
   public eliminar(id) {

@@ -7,6 +7,9 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
   MatSelectModule, MatProgressBarModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoPercepcionComponent } from 'src/app/componentes/tipo-percepcion/tipo-percepcion.component';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { TipoPercepcionService } from 'src/app/servicios/tipo-percepcion.service';
+import { TipoPercepcion } from 'src/app/modelos/tipoPercepcion';
 
 @NgModule({
   declarations: [
@@ -24,6 +27,11 @@ import { TipoPercepcionComponent } from 'src/app/componentes/tipo-percepcion/tip
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule
+  ],
+  providers: [
+    SubopcionPestaniaService,
+    TipoPercepcionService,
+    TipoPercepcion
   ]
 })
 export class TipoPercepcionModule { }

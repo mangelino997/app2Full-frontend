@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -44,18 +44,28 @@ export class AdelantoLoteComponent implements OnInit {
   public opciones:Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario:FormGroup;
+  //Define a empresa como un formControl
+  public empresa: FormControl = new FormControl();
   //Define a topeMax como un formControl
   public topeMax: FormControl = new FormControl();
   //Define a categoria como un formControl
   public categoria: FormControl = new FormControl();
   //Define a basicoCategoria como un formControl
   public basicoCategoria: FormControl = new FormControl();
+  //Define a fechaDesde como un formControl
+  public fechaDesde: FormControl = new FormControl();
+  //Define a fechaHasta como un formControl
+  public fechaHasta: FormControl = new FormControl();
+  //Define a numeroLote como un number
+  public numeroLote: number = null;
+  //Define a observacion como un formControl
+  public observacion: FormControl = new FormControl('', Validators.required);
   //Define la lista completa de registros
   public listaCompleta=new MatTableDataSource([]);
   //Define la opcion seleccionada
   public opcionSeleccionada:number = null;
    //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'razonSocial', 'tipoDocumento', 'numeroDocumento', 'telefono', 'domicilio', 'localidad', 'ver', 'mod'];
+  public columnas:string[] = ['empresa', 'fechaEmision', 'lote', 'importeAdelanto', 'totalLegajos', 'importeTotal', 'anular'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -92,13 +102,14 @@ export class AdelantoLoteComponent implements OnInit {
     this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    
     //Reestablece el formulario
     this.reestablecerFormulario(undefined);
     //Obtiene la lista de Sucursales
     this.listarSucursales();
     //Obtiene la lista de Categorias
     this.listarCategorias();
+    //Establece la empresa
+    this.empresa.setValue(this.appService.getEmpresa());
   }
   //Carga la lista de sucursales
   private listarSucursales(){
@@ -145,7 +156,7 @@ export class AdelantoLoteComponent implements OnInit {
         this.establecerValoresPestania(nombre, false, false, true, 'idSucursal');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idSucursal');
+        this.establecerValoresPestania(nombre, true, true, true, 'idFechaDesde');
         break;
       default:
         break;
@@ -158,7 +169,6 @@ export class AdelantoLoteComponent implements OnInit {
         this.agregar();
         break;
       case 4:
-        this.eliminar();
         break;
       default:
         break;
@@ -166,7 +176,7 @@ export class AdelantoLoteComponent implements OnInit {
   }
 
   //Agrega un registro
-  private agregar(){
+  public agregar(){
     this.loaderService.show();
     let empresa = null;
     let sucursal = null;
@@ -174,17 +184,23 @@ export class AdelantoLoteComponent implements OnInit {
     let importe = null;
     let observaciones = null;
     let usuario = null;
+    let elemento = {};
     empresa = this.appService.getEmpresa();
     usuario = this.appService.getUsuario();
     observaciones = this.formulario.value.observaciones;
     importe = this.formulario.value.importe;
-    categoria = this.formulario.value.categoria;
+    categoria = this.categoria.value;
     sucursal = usuario.sucursal;
-    
-    console.log(empresa.id, sucursal.id, categoria.id, observaciones, importe);
-    this.servicio.agregarLote(empresa.id, sucursal.id, categoria.id, usuario.id, observaciones, importe).subscribe(
+    elemento ={
+      idEmpresa: empresa.id,
+      idSucursal: sucursal.id,
+      idCategoria: categoria.id,
+      idUsuarioAlta: usuario.id,
+      observaciones: observaciones,
+      importe: importe
+    };
+    this.servicio.agregarLote(elemento).subscribe(
       res=>{
-        console.log(res.json());
         let respuesta = res.json();
         if(respuesta.length == 0){
           this.toastr.success("Registros agregados con éxito");
@@ -201,7 +217,6 @@ export class AdelantoLoteComponent implements OnInit {
              },
           });
           dialogRef.afterClosed().subscribe(result => {
-            console.log(result);
             if(result.length == 0){
               this.toastr.success("Se agregaron todos los registros correctamente.");
             }else{
@@ -220,19 +235,74 @@ export class AdelantoLoteComponent implements OnInit {
     )
   }
   //Elimina un registro
-  private eliminar(){
+  public anular(idElemento){
     this.loaderService.show();
-    let usuarioBaja = this.appService.getUsuario();
+    this.formulario.reset();
+    let usuario = this.appService.getUsuario();
+    this.formulario.get('usuarioMod').setValue(usuario);
+    this.formulario.get('observacionesAnulado').setValue(this.observacion.value);
+    this.formulario.get('numeroLote').setValue(this.numeroLote);
+
+    console.log(this.formulario.value);
+    this.servicio.anularLote(this.formulario.value).subscribe(
+      res=>{
+        console.log(res.json());
+        let respuesta = res.json();
+        this.toastr.success(respuesta.mensaje);
+        this.buscar();
+        this.loaderService.hide();
+      },
+      err=>{
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+
+    )
+  }
+  //Controla el Anular
+  public activarAnular(numeroLote){
+    this.numeroLote = numeroLote;
+    setTimeout(function () {
+      document.getElementById('idObervaciones').focus();
+    }, 20);
+  }
+  //Carga la tabla con registros
+  public buscar(){
+    this.loaderService.show();
+    let fechaDesde = null;
+    let fechaHasta = null;
+    let empresa = null;
+    fechaDesde = this.fechaDesde.value;
+    fechaHasta = this.fechaHasta.value;
+    empresa = this.appService.getEmpresa();
+    this.servicio.listarLotes(fechaDesde, fechaHasta, empresa.id).subscribe(
+      res=>{
+        console.log(res.json());
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
+      },
+      err=>{
+        this.toastr.error("Error al obtener la lista de registros");
+        this.loaderService.hide();
+      }
+    )
   }
   //Reestablece el formulario
   private reestablecerFormulario(id){
     this.formulario.reset();
+    this.observacion.reset();
+    this.numeroLote = null;
+    this.fechaDesde.reset();
+    this.fechaHasta.reset();
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
     this.topeMax.reset();
     this.basicoCategoria.reset();
     this.categoria.reset();
     this.fechaService.obtenerFecha().subscribe(
       res=>{
-        console.log(res.json());
         this.formulario.get('fechaEmision').setValue(res.json());
       },
       err=>{
@@ -264,7 +334,6 @@ export class AdelantoLoteComponent implements OnInit {
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(this.formulario.value.importe, 2));
     let importe = Number(this.formulario.get('importe').value);
     let topeMax = Number(this.topeMax.value);
-    console.log(importe, topeMax);
     if(categoria != 0){
       if(importe > topeMax){
         this.toastr.error("El importe no debe ser mayor al tope máximo.");

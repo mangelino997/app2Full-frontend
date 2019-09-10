@@ -9,11 +9,11 @@ import { MatDialog } from '@angular/material';
 @Injectable()
 export class AppService {
   //Deifne la URL origen
-  private URL_ORIGEN = 'http://localhost:4200'; //LOCAL: localhost// 192.168.0.123
+  private URL_ORIGEN = 'http://192.168.0.123:4200'; //LOCAL: localhost// 192.168.0.123
   // private URL_ORIGEN = 'https://rigar-draimo.appspot.com'; //RIGAR
   // private URL_ORIGEN = 'https://ute-draimo.appspot.com'; //UTE
   //Define la IP
-  private IP = 'http://localhost:8080'; //LOCAL
+  private IP = 'http://192.168.0.123:8080'; //LOCAL
   // private IP = 'https://rigarws-draimo.appspot.com'; //RIGAR
   // private IP = 'https://utews-draimo.appspot.com'; //UTE
   //Define la url base

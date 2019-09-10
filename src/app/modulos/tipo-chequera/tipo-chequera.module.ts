@@ -8,6 +8,8 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoChequeraComponent } from 'src/app/componentes/tipo-chequera/tipo-chequera.component';
 import { TipoChequeraService } from 'src/app/servicios/tipo-chequera.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { TipoChequera } from 'src/app/modelos/tipoChequera';
 
 @NgModule({
   declarations: [
@@ -27,7 +29,9 @@ import { TipoChequeraService } from 'src/app/servicios/tipo-chequera.service';
     MatProgressBarModule
   ],
   providers: [
-    TipoChequeraService
+    TipoChequeraService,
+    SubopcionPestaniaService,
+    TipoChequera
   ]
 })
 export class TipoChequeraModule { }

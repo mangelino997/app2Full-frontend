@@ -8,6 +8,7 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoComprobanteComponent } from 'src/app/componentes/tipo-comprobante/tipo-comprobante.component';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.servi
     MatProgressBarModule
   ],
   providers: [
-    TipoComprobanteService
+    TipoComprobanteService,
+    SubopcionPestaniaService
   ]
 })
 export class TipoComprobanteModule { }

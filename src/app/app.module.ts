@@ -25,12 +25,13 @@ import { UsuarioService } from './servicios/usuario.service';
 import { UsuarioEmpresaService } from './servicios/usuario-empresa.service';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 import { LoaderService } from './servicios/loader.service';
+import { ObservacionDialogComponent } from './componentes/observacion-dialog/observacion-dialog.component';
 import { ReporteDialogoComponent } from './componentes/reporte-dialogo/reporte-dialogo.component';
 import { FechaService } from './servicios/fecha.service';
 import { getDutchPaginatorIntl } from './dutch-paginator-intl';
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -45,6 +46,7 @@ const stompConfig: StompConfig = {
   declarations: [
     AppComponent,
     LoginComponent,
+    ObservacionDialogComponent,
     ReporteDialogoComponent
   ],
   imports: [

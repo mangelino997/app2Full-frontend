@@ -8,7 +8,7 @@
         </nav>
       </div>
     </div>
-    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 1">
       <div class="col-md-6 text-center">
         <h5>Adelanto Sueldos en Lote</h5>
         <form [formGroup]="formulario" class="contenedor">
@@ -88,36 +88,89 @@
         </form>
       </div>
     </div>
-    <!-- <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-      <div class="col-md-6">
-        <div class="row" *ngIf="show">
-          <div class="col text-center">
-            <app-progreso></app-progreso>
+
+    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 4">
+      <div class="col-md-8 text-center">
+        <h5>Anular Adelantos en Lote</h5>
+        <form [formGroup]="formulario" class="contenedor">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label id="labelFechaDesde" for="idFechaDesde" class="tamanio-label">Fecha de Desde *</label>
+                <input id="idFechaDesde" type="date" [formControl]="fechaDesde" 
+                  class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label id="labelFechaHasta" for="idFechaHasta" class="tamanio-label">Fecha Hasta *</label>
+                <input id="idFechaHasta" type="date" [formControl]="fechaHasta" 
+                  class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button id="idBoton" mat-raised-button color="primary" formnovalidate [disabled]="!fechaDesde || !fechaHasta" (click)="buscar()">
+                Buscar
+              </button>
+            </div>
           </div>
-        </div>
-        <br>
-        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="id" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-          </ng-container>
-          <ng-container matColumnDef="nombre" sticky>
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
-          </ng-container>
-          <ng-container matColumnDef="ver" sticky>
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-                class="cursor-color">ver</span></td>
-          </ng-container>
-          <ng-container matColumnDef="mod" sticky>
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-                class="cursor-color">editar</span></td>
-          </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-        </table>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label id="labelObervaciones for="idObervaciones class="tamanio-label">Obervaciones *</label>
+                <input id="idObervaciones" type="text" [formControl]="observacion" 
+                  class="form-control form-control-sm">
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button id="idBoton" mat-raised-button color="primary" formnovalidate [disabled]="!observacion.valid" (click)="anular()">
+                Anular
+              </button>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="empresa" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+                  <td mat-cell *matCellDef="let elemento">{{empresa.razonSocial}}</td>
+                </ng-container>
+                <ng-container matColumnDef="fechaEmision" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.fechaEmision | date: 'dd/MM/yyyy'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="lote" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Lote</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.numeroLote}}</td>
+                </ng-container>
+                <ng-container matColumnDef="importeAdelanto" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Adelanto</th>
+                  <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="totalLegajos" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Legajos</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.legajos}}</td>
+                </ng-container>
+                <ng-container matColumnDef="importeTotal" sticky>
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Total</th>
+                  <td mat-cell *matCellDef="let elemento">${{elemento.importeTotal | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="anular" sticky>
+                  <th mat-header-cell *matHeaderCellDef>-</th>
+                  <td mat-cell *matCellDef="let elemento">
+                    <span class="cursor-color-rojo" (click)="activarAnular(elemento.numeroLote)">X</span></td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+              </table>
+            </div>
+          </div>
+          <div class="row" *ngIf="show">
+            <div class="col text-center">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+          </div>
+        </form>
       </div>
-    </div> -->
+    </div>
   </div>
