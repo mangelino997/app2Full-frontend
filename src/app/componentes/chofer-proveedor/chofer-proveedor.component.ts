@@ -62,7 +62,7 @@ export class ChoferProveedorComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: ChoferProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private choferProveedor: ChoferProveedor, private appService: AppService, private toastr: ToastrService, private appServicio: AppService,
+    private choferProveedor: ChoferProveedor, private appService: AppService, private toastr: ToastrService, 
     private proveedorServicio: ProveedorService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private tipoDocumentoServicio: TipoDocumentoService,
     private loaderService: LoaderService) {
@@ -358,21 +358,21 @@ export class ChoferProveedorComponent implements OnInit {
     if(documento) {
       switch(tipoDocumento.id) {
         case 1:
-          let respuesta = this.appServicio.validarCUIT(documento.toString());
+          let respuesta = this.appService.validarCUIT(documento.toString());
           if(!respuesta) {
             let err = {codigo: 11010, mensaje: 'CUIT Incorrecto!'};
             this.lanzarError(err);
           }
           break;
         case 2:
-          let respuesta2 = this.appServicio.validarCUIT(documento.toString());
+          let respuesta2 = this.appService.validarCUIT(documento.toString());
           if(!respuesta2) {
             let err = {codigo: 11010, mensaje: 'CUIL Incorrecto!'};
             this.lanzarError(err);
           }
           break;
         case 8:
-          let respuesta8 = this.appServicio.validarDNI(documento.toString());
+          let respuesta8 = this.appService.validarDNI(documento.toString());
           if(!respuesta8) {
             let err = {codigo: 11010, mensaje: 'DNI Incorrecto!'};
             this.lanzarError(err);

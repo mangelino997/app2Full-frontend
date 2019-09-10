@@ -4,11 +4,15 @@ import { CommonModule } from '@angular/common';
 import { BasicoCategoriaRoutingModule } from './basico-categoria-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BasicoCategoriaComponent } from 'src/app/componentes/basico-categoria/basico-categoria.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { BasicoCategoria } from 'src/app/modelos/basicoCategoria';
+import { MesService } from 'src/app/servicios/mes.service';
+import { CategoriaService } from 'src/app/servicios/categoria.service';
 
 @NgModule({
   declarations: [
@@ -26,10 +30,15 @@ import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.servi
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
+    MatButtonModule,
     TextMaskModule
   ],
   providers: [
-    BasicoCategoriaService
+    BasicoCategoriaService,
+    SubopcionPestaniaService,
+    BasicoCategoria,
+    MesService,
+    CategoriaService
   ]
 })
 export class BasicoCategoriaModule { }

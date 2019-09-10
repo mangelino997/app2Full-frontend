@@ -68,7 +68,7 @@ const routes: Routes = [
     { path: 'reestablecertablastablausuarioempresa', loadChildren: './modulos/usuario-empresa/usuario-empresa.module#UsuarioEmpresaModule', canActivate: [GuardiaService] },
     { path: 'organizacionempresas', loadChildren: './modulos/empresa/empresa.module#EmpresaModule', canActivate: [GuardiaService] },
     { path: 'guiasdeserviciosremitosgs', loadChildren: './modulos/viaje-remito/viaje-remito.module#ViajeRemitoModule', canActivate: [GuardiaService] },
-    { path: 'guiasdeserviciosemisiongs', loadChildren: './modulos/viaje/viaje.module#ViajeModule', canActivate: [GuardiaService] },
+    { path: 'guiasdeserviciosemisiongs', loadChildren: () => import('./modulos/viaje/viaje.module').then(m => m.ViajeModule), canActivate: [GuardiaService] },
     { path: 'webservicesafipsolicitarcaeanticipado', loadChildren: './modulos/cae-anticipado/cae-anticipado.module#CaeAnticipadoModule', canActivate: [GuardiaService] },
     { path: 'webservicesafipconsultarestadodelservicio', loadChildren: './modulos/estado-servicio-afip/estado-servicio-afip.module#EstadoServicioAfipModule', canActivate: [GuardiaService] },
     { path: 'facturacionfacturas', loadChildren: './modulos/emitir-factura/emitir-factura.module#EmitirFacturaModule', canActivate: [GuardiaService] },

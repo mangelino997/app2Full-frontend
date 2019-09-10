@@ -176,7 +176,7 @@
             <mat-step [stepControl]="formularioViajeTramo">
                 <ng-template matStepLabel>Tramos</ng-template>
                 <form [formGroup]="formularioViajeTramo">
-                    <app-viaje-tramo (dataEvent)="recibirTramos($event)"></app-viaje-tramo>
+                    <app-viaje-tramo (dataEvent)="recibirTramos($event)" #child></app-viaje-tramo>
                 </form>
                 <br>
                 <div class="row justify-content-center">

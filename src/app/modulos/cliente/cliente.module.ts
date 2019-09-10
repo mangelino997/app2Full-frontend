@@ -29,12 +29,12 @@ import { Cliente } from 'src/app/modelos/cliente';
     MatProgressBarModule,
     MatSidenavModule,
     MatIconModule,
-    MatDividerModule,
+    MatDividerModule,,
     TextMaskModule
   ],
   providers: [
     ClienteService,
-    Cliente
+    Cliente,
   ]
 })
 export class ClienteModule { }

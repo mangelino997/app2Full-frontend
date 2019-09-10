@@ -6,7 +6,6 @@ import { SucursalService } from 'src/app/servicios/sucursal.service';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
-import { ViajeTramoService } from 'src/app/servicios/viaje-tramo.service';
 import { ViajeTramo } from 'src/app/modelos/viajeTramo';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { SelectionModel } from '@angular/cdk/collections';
@@ -40,7 +39,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(private viajeRemito: ViajeRemito, private ViajeTramo: ViajeTramo, private viajeRemitoServicio: ViajeRemitoService, private viajeTramoService: ViajeTramoService,
+  constructor(private viajeRemito: ViajeRemito, private ViajeTramo: ViajeTramo, private viajeRemitoServicio: ViajeRemitoService,
     private appService: AppService, private sucursalServicio: SucursalService, private loaderService: LoaderService,
     private toastr: ToastrService) { }
   //Al inicializarse el componente

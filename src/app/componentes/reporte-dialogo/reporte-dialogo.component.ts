@@ -59,6 +59,12 @@ export class ReporteDialogoComponent implements OnInit {
       }
     );
   }
+  //Borrar espacios en blanco
+  public eliminarEspaciosBlanco(elemento) {
+    elemento = elemento.replace(/\s/g,'');
+    elemento = elemento.toLowerCase();
+    return elemento;
+  }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
     return (string + elemento).slice(cantidad);
@@ -132,7 +138,15 @@ export class ReporteDialogoComponent implements OnInit {
   public descargar(): void {
     let columnas = this.data.columnas;
     let datos = this.data.datos;
-    this.exportar(columnas, datos);
+    let d = [];
+    datos.forEach(dato => {
+      let f = [];
+      columnas.forEach(columna => {
+        f.push(dato[columna.toLowerCase()]);
+      });
+      d.push(f);
+    });
+    this.exportar(columnas, d);
   }
   //Cierra el dialogo
   public cerrar(): void {
