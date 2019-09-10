@@ -14,7 +14,8 @@ import { LoginService } from './servicios/login.service';
 import { GuardiaService } from './servicios/guardia.service';
 
 //Modulos
-import { MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule, MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule } from '@angular/material';
+import { MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule, 
+  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl } from '@angular/material';
 import { ReporteService } from './servicios/reporte.service';
 import { HttpModule } from '@angular/http';
 
@@ -27,9 +28,10 @@ import { LoaderService } from './servicios/loader.service';
 import { ObservacionDialogComponent } from './componentes/observacion-dialog/observacion-dialog.component';
 import { ReporteDialogoComponent } from './componentes/reporte-dialogo/reporte-dialogo.component';
 import { FechaService } from './servicios/fecha.service';
+import { getDutchPaginatorIntl } from './dutch-paginator-intl';
 
 const stompConfig: StompConfig = {
-  url: 'ws://192.168.0.123:8080/jitws/socket',
+  url: 'ws://localhost:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE
@@ -87,6 +89,7 @@ const stompConfig: StompConfig = {
       provide: StompConfig,
       useValue: stompConfig
     },
+    { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
   ],
   bootstrap: [AppComponent],
   entryComponents: [

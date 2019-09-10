@@ -1,22 +1,25 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 import { ActualizacionPreciosRoutingModule } from './actualizacion-precios-routing.module';
-import { ActualizacionPreciosComponent } from 'src/app/componentes/actualizacion-precios/actualizacion-precios.component';
+import { ActualizacionPreciosComponent, ListaPreciosDialogo, ConfirmarDialogo } from 'src/app/componentes/actualizacion-precios/actualizacion-precios.component';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatCheckboxModule, MatPaginatorIntl } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatCheckboxModule, MatButtonModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
-import { getDutchPaginatorIntl } from 'src/app/dutch-paginator-intl';
-import { HttpModule } from '@angular/http';
-import { ToastrModule } from 'ngx-toastr';
-import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { ActualizacionPrecios } from 'src/app/modelos/actualizacionPrecios';
+import { ClienteService } from 'src/app/servicios/cliente.service';
+import { OrdenVentaTramoService } from 'src/app/servicios/orden-venta-tramo.service';
+import { OrdenVentaEscalaService } from 'src/app/servicios/orden-venta-escala.service';
+import { EmpresaService } from 'src/app/servicios/empresa.service';
+import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
 
 @NgModule({
   declarations: [
     ActualizacionPreciosComponent,
+    ListaPreciosDialogo,
+    ConfirmarDialogo
   ],
   imports: [
     CommonModule,
@@ -32,20 +35,21 @@ import { ActualizacionPrecios } from 'src/app/modelos/actualizacionPrecios';
     MatSelectModule,
     MatProgressBarModule,
     MatCheckboxModule,
-    TextMaskModule,
-    PdfViewerModule,
-    HttpModule,
-    ToastrModule.forRoot({
-      timeOut: 4000,
-      positionClass: 'toast-bottom-right',
-      preventDuplicates: true,
-    }),
-    ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
+    MatButtonModule,
+    MatDialogModule,
+    TextMaskModule
   ],
   providers: [
     ActualizacionPrecios,
-    DatePipe,
-    { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
+    ClienteService,
+    OrdenVentaTramoService,
+    OrdenVentaEscalaService,
+    EmpresaService,
+    OrdenVentaService
+  ],
+  entryComponents: [
+    ListaPreciosDialogo,
+    ConfirmarDialogo
   ]
 })
 export class ActualizacionPreciosModule { }

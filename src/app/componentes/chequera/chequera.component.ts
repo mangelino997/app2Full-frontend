@@ -11,7 +11,6 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
 import { LoaderState } from 'src/app/modelos/loader';
-import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-chequera',
@@ -64,9 +63,9 @@ export class ChequeraComponent implements OnInit {
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(private chquera: Chequera, private servicio: ChequeraService, private tipoChequeraService: TipoChequeraService, 
+  constructor(private chequera: Chequera, private servicio: ChequeraService, private tipoChequeraService: TipoChequeraService, 
     private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService, 
-    private loaderService: LoaderService, private cuentaBancariaService: CuentaBancariaService, private appComponent: AppComponent) {
+    private loaderService: LoaderService, private cuentaBancariaService: CuentaBancariaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -88,7 +87,7 @@ export class ChequeraComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = this.chquera.formulario;
+    this.formulario = this.chequera.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la empresa por defecto
@@ -106,7 +105,7 @@ export class ChequeraComponent implements OnInit {
   }
   //Establece la empresa por defecto
   private establecerEmpresa(){
-    this.empresa = this.appComponent.getEmpresa();
+    this.empresa = this.appService.getEmpresa();
     this.empresaDatos.setValue(this.empresa.razonSocial);
   }
   //Obtiene la lista de Cuentas Bancarias
@@ -119,7 +118,7 @@ export class ChequeraComponent implements OnInit {
     )
   }
   private listarCuentasBancariasConsultas(){
-    this.empresa = this.appComponent.getEmpresa();
+    this.empresa = this.appService.getEmpresa();
     this.servicio.listarPorEmpresa(this.empresa.id).subscribe(
       res=>{
         console.log(res.json());
@@ -128,7 +127,7 @@ export class ChequeraComponent implements OnInit {
     )
   }
   private listarCuentasConChequerasConsultas(){
-    this.empresa = this.appComponent.getEmpresa();
+    this.empresa = this.appService.getEmpresa();
     this.cuentaBancariaService.listarConChequerasPorEmpresa(this.empresa.id).subscribe(
       res=>{
         console.log(res.json());
@@ -257,7 +256,7 @@ export class ChequeraComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    let usuario= this.appComponent.getUsuario();
+    let usuario= this.appService.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
     // this.formulario.get('empresa').setValue(this.empresa.value);
     console.log(this.formulario.value);

@@ -50,10 +50,10 @@ export class CategoriaComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: CategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService, private appServicio: AppService, 
+    private toastr: ToastrService, private appServicio: AppService, 
     private categoria: Categoria, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
     .subscribe(
       res => {
         this.pestanias = res.json();

@@ -85,7 +85,7 @@ export class ViajeTramoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['eliminar', 'editar', 'id', 'fecha', 'tramo', 'km', 'empresa', 'tipoCarga', 'tipoViaje', 'tarifa', 'destinatario', 'unidadNegocio', 'obs'];
+  public columnas: string[] = ['id', 'fecha', 'tramo', 'km', 'empresa', 'tipoCarga', 'tipoViaje', 'tarifa', 'destinatario', 'unidadNegocio', 'obs', 'editar'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
