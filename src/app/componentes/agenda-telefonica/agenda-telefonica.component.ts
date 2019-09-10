@@ -357,7 +357,7 @@ export class AgendaTelefonicaComponent implements OnInit {
           telefonofijo: elemento.telefonoFijo,
           telefonomovil: elemento.telefonoMovil,
           correoelectronico: elemento.correoelectronico,
-          localidad: elemento.localidad.nombre,
+          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
         }
         datos.push(f);
     });
