@@ -4,15 +4,17 @@ import { CommonModule } from '@angular/common';
 import { MonedaRoutingModule } from './moneda-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MonedaComponent } from 'src/app/componentes/moneda/moneda.component';
+import { MonedaComponent, CambiarMonedaPrincipalDialogo } from 'src/app/componentes/moneda/moneda.component';
 import { MonedaService } from 'src/app/servicios/moneda.service';
 import { Moneda } from 'src/app/modelos/moneda';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
     MonedaComponent,
+    CambiarMonedaPrincipalDialogo
   ],
   imports: [
     CommonModule,
@@ -25,11 +27,18 @@ import { Moneda } from 'src/app/modelos/moneda';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatDividerModule
   ],
   providers: [
     MonedaService,
-    Moneda
+    Moneda,
+    SubopcionPestaniaService
+  ],
+  entryComponents: [
+    CambiarMonedaPrincipalDialogo
   ]
 })
 export class MonedaModule { }

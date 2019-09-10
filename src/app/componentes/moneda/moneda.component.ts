@@ -64,7 +64,6 @@ export class MonedaComponent implements OnInit {
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
-          console.log(res.json());
         },
         err => {
           console.log(err);
