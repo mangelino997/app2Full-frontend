@@ -119,8 +119,8 @@ export class PersonalComponent implements OnInit {
   public btnPdfLibSanidad: boolean = null;
   public btnPdflinti: boolean = null;
   //Constructor
-  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, private personal: Personal,
-    private appService: AppService, private appServicio: AppService, private toastr: ToastrService,
+  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, 
+    private appServicio: AppService, private toastr: ToastrService, private personal: Personal,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private sexoServicio: SexoService, private loaderService: LoaderService,
     private estadoCivilServicio: EstadoCivilService, private tipoDocumentoServicio: TipoDocumentoService,
@@ -138,7 +138,7 @@ export class PersonalComponent implements OnInit {
       });
     this.loaderService.show();
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -149,7 +149,7 @@ export class PersonalComponent implements OnInit {
         }
       );
     //Obtiene la lista de opciones por rol y subopcion
-    this.rolOpcionServicio.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    this.rolOpcionServicio.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
       .subscribe(
         res => {
           this.opciones = res.json();
@@ -162,7 +162,7 @@ export class PersonalComponent implements OnInit {
       );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      let empresa = this.appService.getEmpresa();
+      let empresa = this.appServicio.getEmpresa();
       if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
           this.resultados = response;
@@ -706,8 +706,8 @@ export class PersonalComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+    this.formulario.get('usuarioAlta').setValue(this.appServicio.getUsuario());
+    this.formulario.get('empresa').setValue(this.appServicio.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
     this.servicio.agregar(this.formulario.value).then(
@@ -741,8 +741,8 @@ export class PersonalComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-    this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+    this.formulario.get('usuarioMod').setValue(this.appServicio.getUsuario());
+    this.formulario.get('empresa').setValue(this.appServicio.getEmpresa());
     this.formulario.get('esJubilado').setValue(false);
     this.formulario.get('esMensualizado').setValue(true);
     this.servicio.actualizar(this.formulario.value).then(

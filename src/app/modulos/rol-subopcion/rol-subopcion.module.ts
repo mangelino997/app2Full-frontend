@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RolSubopcionRoutingModule } from './rol-subopcion-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatSidenavModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatSidenavModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RolSubopcionComponent } from 'src/app/componentes/rol-subopcion/rol-subopcion.component';
 import { RolSubopcionService } from 'src/app/servicios/rol-subopcion.service';
@@ -25,7 +25,8 @@ import { RolSubopcionService } from 'src/app/servicios/rol-subopcion.service';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatButtonModule
   ],
   providers: [
     RolSubopcionService

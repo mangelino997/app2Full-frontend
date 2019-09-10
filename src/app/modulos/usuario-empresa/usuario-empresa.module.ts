@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UsuarioEmpresaRoutingModule } from './usuario-empresa-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UsuarioEmpresaComponent } from 'src/app/componentes/usuario-empresa/usuario-empresa.component';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
@@ -25,7 +25,8 @@ import { UsuarioEmpresa } from 'src/app/modelos/usuarioEmpresa';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
     UsuarioEmpresaService,

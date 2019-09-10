@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { SubopcionPestaniaRoutingModule } from './subopcion-pestania-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SubopcionPestaniaComponent } from 'src/app/componentes/subopcion-pestania/subopcion-pestania.component';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -24,7 +24,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
     SubopcionPestaniaService
