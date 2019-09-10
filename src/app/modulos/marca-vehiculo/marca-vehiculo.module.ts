@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { MarcaVehiculoRoutingModule } from './marca-vehiculo-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MarcaVehiculoComponent } from 'src/app/componentes/marca-vehiculo/marca-vehiculo.component';
 import { MarcaVehiculoService } from 'src/app/servicios/marca-vehiculo.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +25,12 @@ import { MarcaVehiculoService } from 'src/app/servicios/marca-vehiculo.service';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    MarcaVehiculoService
+    MarcaVehiculoService,
+    SubopcionPestaniaService
   ]
 })
 export class MarcaVehiculoModule { }
