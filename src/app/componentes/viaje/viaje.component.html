@@ -1,5 +1,5 @@
 <div *ngIf="!render" class="row justify-content-center">
-    <mat-spinner></mat-spinner>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
 <div *ngIf="render" id="viaje" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
     <div class="row">

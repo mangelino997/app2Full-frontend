@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from './servicios/app.service';
-import { Router } from '@angular/router';
+import { Router, RouteConfigLoadStart, RouteConfigLoadEnd } from '@angular/router';
 import 'rxjs/Rx';
-import { MatDialog } from '@angular/material';
 import { ReporteService } from './servicios/reporte.service';
 
 @Component({
@@ -21,8 +20,10 @@ export class AppComponent implements OnInit {
   public mostrarBtnReportes:boolean = true;
   //Define la lista de botones para dialogos de reportes
   public datosDialogos:Array<any> = [];
+  //Define barra de progreso de carga de modulos
+  public loadingRouteConfig: boolean;
   //Constructor
-  constructor(private appService: AppService, private router: Router, private dialog: MatDialog,
+  constructor(private appService: AppService, private router: Router, 
     private reporteServicio: ReporteService) {
     //Se subscribe al servicio de lista de registros
     // this.appService.listaCompleta.subscribe(res => {
@@ -45,6 +46,13 @@ export class AppComponent implements OnInit {
   }
   //Al inicializarse el componente
   ngOnInit(): void {
+    this.router.events.subscribe(event => {
+      if (event instanceof RouteConfigLoadStart) {
+          this.loadingRouteConfig = true;
+      } else if (event instanceof RouteConfigLoadEnd) {
+          this.loadingRouteConfig = false;
+      }
+    });
     this.router.navigate(['login'], { replaceUrl: true });
   }
   public setVisible(valor) {

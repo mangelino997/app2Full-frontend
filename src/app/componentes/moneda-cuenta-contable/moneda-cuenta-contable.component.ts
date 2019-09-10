@@ -3,14 +3,12 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { FormGroup, FormControl } from '@angular/forms';
 import { MonedaCuentaContable } from 'src/app/modelos/moneda-cuenta-contable';
 import { MonedaCuentaContableService } from 'src/app/servicios/moneda-cuenta-contable.service';
-import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
-import { MatSort, MatTableDataSource, MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatTreeFlattener, MatTreeFlatDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
-import { FlatTreeControl } from '@angular/cdk/tree';
 import { ToastrService } from 'ngx-toastr';
 import { PlanCuentaDialogo } from '../plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 

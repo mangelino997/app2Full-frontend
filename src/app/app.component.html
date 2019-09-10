@@ -45,6 +45,7 @@
       </mat-menu>
     </div>
   </mat-toolbar>
+  <mat-progress-bar *ngIf="loadingRouteConfig" mode="indeterminate"></mat-progress-bar>
   <router-outlet></router-outlet>
   <footer class="footer" *ngIf="visible">
     <div class="row" *ngIf="mostrarBtnReportes">

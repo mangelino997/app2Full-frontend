@@ -4,10 +4,12 @@ import { CommonModule } from '@angular/common';
 import { DepositoInsumoProductoRoutingModule } from './deposito-insumo-producto-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DepositoInsumoProductoComponent } from 'src/app/componentes/deposito-insumo-producto/deposito-insumo-producto.component';
 import { DepositoInsumoProductoService } from 'src/app/servicios/deposito-insumo-producto.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { DepositoInsumoProducto } from 'src/app/modelos/depositoInsumoProducto';
 
 @NgModule({
   declarations: [
@@ -24,10 +26,13 @@ import { DepositoInsumoProductoService } from 'src/app/servicios/deposito-insumo
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    DepositoInsumoProductoService
+    DepositoInsumoProductoService,
+    SubopcionPestaniaService,
+    DepositoInsumoProducto
   ]
 })
 export class DepositoInsumoProductoModule { }
