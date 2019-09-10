@@ -4,10 +4,13 @@ import { CommonModule } from '@angular/common';
 import { ContactoProveedorRoutingModule } from './contacto-proveedor-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContactoProveedorComponent } from 'src/app/componentes/contacto-proveedor/contacto-proveedor.component';
 import { ContactoProveedorService } from 'src/app/servicios/contacto-proveedor.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { ProveedorService } from 'src/app/servicios/proveedor.service';
+import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +27,14 @@ import { ContactoProveedorService } from 'src/app/servicios/contacto-proveedor.s
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    ContactoProveedorService
+    ContactoProveedorService,
+    SubopcionPestaniaService,
+    ProveedorService,
+    TipoContactoService
   ]
 })
 export class ContactoProveedorModule { }

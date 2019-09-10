@@ -58,7 +58,7 @@ export class SucursalClienteComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: SucursalClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private appServicio: AppService, private toastr: ToastrService,
+    private appService: AppService, private toastr: ToastrService,
     private clienteServicio: ClienteService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion

@@ -4,10 +4,12 @@ import { CommonModule } from '@angular/common';
 import { CobradorRoutingModule } from './cobrador-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatDialogModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CobradorComponent } from 'src/app/componentes/cobrador/cobrador.component';
 import { CobradorService } from 'src/app/servicios/cobrador.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { Cobrador } from 'src/app/modelos/cobrador';
 
 @NgModule({
   declarations: [
@@ -24,10 +26,15 @@ import { CobradorService } from 'src/app/servicios/cobrador.service';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatDialogModule,
+    MatButtonModule
   ],
   providers: [
-    CobradorService
+    CobradorService,
+    SubopcionPestaniaService,
+    CobradorService,
+    Cobrador
   ]
 })
 export class CobradorModule { }

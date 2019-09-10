@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { PaisRoutingModule } from './pais-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PaisComponent } from 'src/app/componentes/pais/pais.component';
 import { PaisService } from 'src/app/servicios/pais.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +25,12 @@ import { PaisService } from 'src/app/servicios/pais.service';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    PaisService
+    PaisService,
+    SubopcionPestaniaService
   ]
 })
 export class PaisModule { }
