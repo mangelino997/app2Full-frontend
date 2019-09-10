@@ -14,7 +14,8 @@ import { LoginService } from './servicios/login.service';
 import { GuardiaService } from './servicios/guardia.service';
 
 //Modulos
-import { MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule, MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule } from '@angular/material';
+import { MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule, 
+  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule } from '@angular/material';
 import { ReporteService } from './servicios/reporte.service';
 import { HttpModule } from '@angular/http';
 
@@ -27,6 +28,7 @@ import { LoaderService } from './servicios/loader.service';
 import { ObservacionDialogComponent } from './componentes/observacion-dialog/observacion-dialog.component';
 import { ReporteDialogoComponent } from './componentes/reporte-dialogo/reporte-dialogo.component';
 import { FechaService } from './servicios/fecha.service';
+import { getDutchPaginatorIntl } from './dutch-paginator-intl';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -64,6 +66,7 @@ const stompConfig: StompConfig = {
     MatDialogModule,
     MatTableModule,
     MatButtonModule,
+    MatProgressBarModule,
     ToastrModule.forRoot({
       timeOut: 4000,
       positionClass: 'toast-bottom-right',
@@ -87,6 +90,7 @@ const stompConfig: StompConfig = {
       provide: StompConfig,
       useValue: stompConfig
     },
+    { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
   ],
   bootstrap: [AppComponent],
   entryComponents: [

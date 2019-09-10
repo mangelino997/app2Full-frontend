@@ -70,7 +70,7 @@ export class VehiculoProveedorComponent implements OnInit {
   constructor(private servicio: VehiculoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
-    private localidadServicio: LocalidadService, private proveedorServicio: ProveedorService,
+    private proveedorServicio: ProveedorService,
     private companiaSeguroServicio: CompaniaSeguroService, private choferProveedorServicio: ChoferProveedorService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService, private appService: AppService) {
     //Obtiene la lista de pestania por rol y subopcion

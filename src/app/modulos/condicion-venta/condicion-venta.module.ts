@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { CondicionVentaRoutingModule } from './condicion-venta-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CondicionVentaComponent } from 'src/app/componentes/condicion-venta/condicion-venta.component';
 import { CondicionVentaService } from 'src/app/servicios/condicion-venta.service';
 import { CondicionVenta } from 'src/app/modelos/condicion-venta';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -25,11 +26,13 @@ import { CondicionVenta } from 'src/app/modelos/condicion-venta';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
     CondicionVentaService,
-    CondicionVenta
+    CondicionVenta,
+    SubopcionPestaniaService
   ]
 })
 export class CondicionVentaModule { }

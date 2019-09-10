@@ -1,6 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { AppComponent } from '../../app.component';
-import { ToastrService } from 'ngx-toastr';
 import { FormGroup } from '@angular/forms';
 import { AppService } from 'src/app/servicios/app.service';
 
@@ -17,7 +15,7 @@ export class CaeAnticipadoComponent implements OnInit {
   //Define el formulario
   public formulario:FormGroup;
   //Constructor
-  constructor(private appComponent: AppComponent, private toastr: ToastrService, private appService: AppService) {
+  constructor(private appService: AppService) {
     //Establece la pestania activa por defecto
     this.pestaniaActiva = 1;
     //Establece el indice activo por defecto

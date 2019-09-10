@@ -10,7 +10,8 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-venta-concepto',
@@ -53,14 +54,17 @@ export class VentaConceptoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'tipoComprobante', 'estaHabilitado', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'TIPO COMPROBANTE', 'ESTA HABILITADO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: VentaItemConceptoService, private ventaConcepto: VentaConcepto, private appService: AppService,
     private loaderService: LoaderService, private subopcionPestaniaService: SubopcionPestaniaService,
     private tipoComprobanteServicio: TipoComprobanteService, private conceptosAfipServicio: AfipConceptoService,
-    private toastr: ToastrService) {
+    private toastr: ToastrService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -104,6 +108,7 @@ export class VentaConceptoComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -317,5 +322,32 @@ export class VentaConceptoComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
+  }
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          tipocomprobante: elemento.tipoComprobante ? 'Si' : 'No',
+          estahabilitado: elemento.estaHabilitado ? 'Si' : 'No'
+        }
+        datos.push(f);
+    });
+    console.log(datos);
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'VentasConceptos',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }

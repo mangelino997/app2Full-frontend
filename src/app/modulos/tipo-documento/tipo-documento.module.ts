@@ -8,6 +8,7 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoDocumentoComponent } from 'src/app/componentes/tipo-documento/tipo-documento.component';
 import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
     MatProgressBarModule
   ],
   providers: [
+    SubopcionPestaniaService,
     TipoDocumentoService
   ]
 })

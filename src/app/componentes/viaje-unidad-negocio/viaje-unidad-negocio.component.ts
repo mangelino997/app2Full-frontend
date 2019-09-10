@@ -50,9 +50,8 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   public columnas: string[] = ['id', 'nombre', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
-
   //Constructor
-  constructor(private servicio: ViajeUnidadNegocioService, private ventaConcepto: ViajeUnidadNegocio, private appService: AppService,
+  constructor(private servicio: ViajeUnidadNegocioService, private viajeUnidadNegocio: ViajeUnidadNegocio, private appService: AppService,
     private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -77,7 +76,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
         this.show = state.show;
       });
     //Define el formulario y validaciones
-    this.formulario = this.ventaConcepto.formulario;
+    this.formulario = this.viajeUnidadNegocio.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista completa de registros
@@ -209,7 +208,7 @@ export class ViajeUnidadNegocioComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }

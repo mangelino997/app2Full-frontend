@@ -1,5 +1,5 @@
 <div *ngIf="!render" class="row justify-content-center">
-    <mat-spinner></mat-spinner>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
 <div *ngIf="render" id="viaje" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
     <div class="row">
@@ -176,7 +176,7 @@
             <mat-step [stepControl]="formularioViajeTramo">
                 <ng-template matStepLabel>Tramos</ng-template>
                 <form [formGroup]="formularioViajeTramo">
-                    <app-viaje-tramo (dataEvent)="recibirTramos($event)"></app-viaje-tramo>
+                    <app-viaje-tramo (dataEvent)="recibirTramos($event)" #child></app-viaje-tramo>
                 </form>
                 <br>
                 <div class="row justify-content-center">

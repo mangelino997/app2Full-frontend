@@ -4,10 +4,12 @@ import { CommonModule } from '@angular/common';
 import { AgendaTelefonicaRoutingModule } from './agenda-telefonica-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgendaTelefonicaComponent } from 'src/app/componentes/agenda-telefonica/agenda-telefonica.component';
 import { AgendaTelefonicaService } from 'src/app/servicios/agenda-telefonica.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { LocalidadService } from 'src/app/servicios/localidad.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +26,15 @@ import { AgendaTelefonicaService } from 'src/app/servicios/agenda-telefonica.ser
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    AgendaTelefonicaService
+    SubopcionPestaniaService,
+    AgendaTelefonicaService,
+    AgendaTelefonicaService,
+    SubopcionPestaniaService,
+    LocalidadService
   ]
 })
 export class AgendaTelefonicaModule { }

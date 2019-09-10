@@ -20,7 +20,7 @@ import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Cliente } from 'src/app/modelos/cliente';
-import { MatSort, MatTableDataSource, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
@@ -28,6 +28,7 @@ import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { CuentaBancariaDialogoComponent } from '../cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-cliente',
@@ -96,11 +97,14 @@ export class ClienteComponent implements OnInit {
   //Define la lista de cuentas bancarias
   public cuentasBancarias = new MatTableDataSource([]);
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'razonSocial', 'tipoDocumento', 'numeroDocumento', 'telefono', 'domicilio', 'localidad', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'RAZON SOCIAL', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define las columnas de la tabla cuenta bancaria
   public columnasCuentaBancaria: string[] = ['eliminar', 'empresa', 'cuentaBancaria', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -118,7 +122,8 @@ export class ClienteComponent implements OnInit {
     private sucursalServicio: SucursalService, private situacionClienteServicio: SituacionClienteService,
     private companiaSeguroServicio: CompaniaSeguroService, public dialog: MatDialog,
     private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente,
-    private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService) {
+    private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService,
+    private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
@@ -588,6 +593,7 @@ export class ClienteComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -935,6 +941,36 @@ export class ClienteComponent implements OnInit {
         this.seleccionarOpcion(1, 0);
       }
     }
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          razonsocial: elemento.razonSocial,
+          tipodocumento: elemento.tipoDocumento.nombre,
+          numerodocumento: elemento.numeroDocumento,
+          telefono: elemento.telefono,
+          domicilio: elemento.domicilio,
+          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Clientes',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }
 //

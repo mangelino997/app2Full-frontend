@@ -144,29 +144,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="tabla">
-            <div class="tabla-ancho">
-                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                    <ng-container matColumnDef="eliminar">
-                        <th mat-header-cell *matHeaderCellDef>-</th>
-                        <td mat-cell *matCellDef="let elemento; let i = index">
-                            <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura"
-                                (click)="eliminarTramo(elemento)" matTooltip="Eliminar" matTooltipPosition="above">
-                                <mat-icon>close</mat-icon>
-                            </button>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="editar">
-                        <th mat-header-cell *matHeaderCellDef>-</th>
-                        <td mat-cell *matCellDef="let elemento; let i = index">
-                            <button mat-icon-button class="mat-icon-button-table"
-                                *ngIf="!soloLectura && !elemento.estaAnulado" (click)="modTramo(i, elemento)"
-                                matTooltip="Editar" matTooltipPosition="above">
-                                <mat-icon>edit</mat-icon>
-                            </button>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="id">
+        <div class="tabla mat-elevation-z1">
+            <!-- <div class="tabla-ancho"> -->
+                <table mat-table [dataSource]="listaCompleta" matSort>
+                    <ng-container matColumnDef="id" sticky>
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
                         <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.numeroOrden}}</td>
                     </ng-container>
@@ -221,10 +202,24 @@
                                 (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
                         </td>
                     </ng-container>
+                    <ng-container matColumnDef="editar" stickyEnd>
+                        <th mat-header-cell *matHeaderCellDef>-</th>
+                        <td mat-cell *matCellDef="let elemento; let i = index">
+                            <button mat-icon-button class="mat-icon-button-table"
+                                *ngIf="!soloLectura && !elemento.estaAnulado" (click)="modTramo(i, elemento)"
+                                matTooltip="Editar" matTooltipPosition="above">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button class="mat-icon-button-table margin-left-3" *ngIf="!soloLectura"
+                                (click)="eliminarTramo(elemento)" matTooltip="Eliminar" matTooltipPosition="above">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </td>
+                    </ng-container>
                     <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                     <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
                 </table>
-            </div>
+            <!-- </div> -->
         </div>
     </div>
 </form>

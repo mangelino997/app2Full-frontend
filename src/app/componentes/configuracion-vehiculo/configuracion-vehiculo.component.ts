@@ -3,7 +3,6 @@ import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehi
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
 import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource } from '@angular/material';

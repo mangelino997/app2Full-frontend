@@ -8,6 +8,7 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoTarifaComponent } from 'src/app/componentes/tipo-tarifa/tipo-tarifa.component';
 import { TipoTarifaService } from 'src/app/servicios/tipo-tarifa.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { TipoTarifaService } from 'src/app/servicios/tipo-tarifa.service';
     MatProgressBarModule
   ],
   providers: [
+    SubopcionPestaniaService,
     TipoTarifaService
   ]
 })

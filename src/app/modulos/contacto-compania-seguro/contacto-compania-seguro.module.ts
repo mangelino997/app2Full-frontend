@@ -4,10 +4,13 @@ import { CommonModule } from '@angular/common';
 import { ContactoCompaniaSeguroRoutingModule } from './contacto-compania-seguro-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContactoCompaniaSeguroComponent } from 'src/app/componentes/contacto-compania-seguro/contacto-compania-seguro.component';
 import { ContactoCompaniaSeguroService } from 'src/app/servicios/contacto-compania-seguro.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service';
+import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +27,14 @@ import { ContactoCompaniaSeguroService } from 'src/app/servicios/contacto-compan
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    ContactoCompaniaSeguroService
+    ContactoCompaniaSeguroService,
+    SubopcionPestaniaService,
+    CompaniaSeguroService,
+    TipoContactoService
   ]
 })
 export class ContactoCompaniaSeguroModule { }

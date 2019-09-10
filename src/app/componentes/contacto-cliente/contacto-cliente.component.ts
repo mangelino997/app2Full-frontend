@@ -6,10 +6,11 @@ import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-contacto-cliente',
@@ -48,9 +49,12 @@ export class ContactoClienteComponent implements OnInit {
   //Define la lista de resultados de busqueda sucursales clientes
   public resultadosClientes: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'tipoContacto', 'nombreContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'TIPO CONTACTO', 'NOMBRE CONTACTO', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'CORREO ELECTRONICO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -59,7 +63,7 @@ export class ContactoClienteComponent implements OnInit {
   constructor(private servicio: ContactoClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private appService: AppService,
     private clienteServicio: ClienteService, private tipoContactoServicio: TipoContactoService,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -205,6 +209,7 @@ export class ContactoClienteComponent implements OnInit {
     this.servicio.listarPorCliente(elemento.id).subscribe(res => {
       if(this.indiceSeleccionado == 5) {
         this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.paginator = this.paginator;
         this.listaCompleta.sort = this.sort;
       } else {
         this.contactos = res.json();
@@ -340,4 +345,34 @@ export class ContactoClienteComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          domicilio: elemento.domicilio,
+          telefonofijo: elemento.telefonoFijo,
+          telefonomovil: elemento.telefonoMovil,
+          correoelectronico: elemento.correoelectronico,
+          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'AgendasTelefonicas',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }
