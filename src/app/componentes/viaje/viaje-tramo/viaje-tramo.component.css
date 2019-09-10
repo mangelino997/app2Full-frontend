@@ -28,12 +28,14 @@
 table {
     width: 1920px;
 }
-th.mat-column-position, td.mat-column-position {
-    padding-left: 8px;
-}
 .mat-table-sticky:first-child {
     border-right: 1px solid #e0e0e0;
 }
 .mat-table-sticky:last-child {
     border-left: 1px solid #e0e0e0;
+}
+.mat-column-editar {
+    min-width: 20px !important;
+    width: 90px !important;
+    padding-right: 0px !important;
 }

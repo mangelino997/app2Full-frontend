@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ViajeComponent } from 'src/app/componentes/viaje/viaje.component';
-import { ViajeTramoComponent } from 'src/app/componentes/viaje/viaje-tramo/viaje-tramo.component';
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatProgressSpinnerModule, MatCardModule, MatStepperModule, MatIconModule, MatCheckboxModule, MatButtonModule } from '@angular/material';
+import { ViajeTramoComponent, DadorDestinatarioDialogo } from 'src/app/componentes/viaje/viaje-tramo/viaje-tramo.component';
+import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatProgressSpinnerModule, MatCardModule, MatStepperModule, MatIconModule, MatCheckboxModule, MatButtonModule, MatTooltipModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
 import { CommonModule } from '@angular/common';
@@ -43,6 +43,11 @@ import { ViajeTipoService } from 'src/app/servicios/viaje-tipo.service';
 import { ViajeTarifaService } from 'src/app/servicios/viaje-tarifa.service';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { ViajeRemito } from 'src/app/modelos/viajeRemito';
+import { ViajeTramoCliente } from 'src/app/modelos/viajeTramoCliente';
+import { ViajeTramoClienteService } from 'src/app/servicios/viaje-tramo-cliente.service';
+import { ClienteService } from 'src/app/servicios/cliente.service';
+import { ObservacionesDialogo } from 'src/app/componentes/viaje/observaciones-dialogo.component';
+import { AnularDialogo } from 'src/app/componentes/viaje/anular-dialogo.component';
 
 const routes: Routes = [
   {path: '', component: ViajeComponent}
@@ -57,7 +62,10 @@ const routes: Routes = [
     ViajeInsumoComponent,
     ViajeRemitoGSComponent,
     ViajeGastoComponent,
-    ViajePeajeComponent
+    ViajePeajeComponent,
+    DadorDestinatarioDialogo,
+    ObservacionesDialogo,
+    AnularDialogo
   ],
   imports: [
     CommonModule,
@@ -77,6 +85,8 @@ const routes: Routes = [
     MatIconModule,
     MatCheckboxModule,
     MatButtonModule,
+    MatTooltipModule,
+    MatDialogModule,
     RouterModule.forChild(routes)
   ],
   providers: [
@@ -96,6 +106,7 @@ const routes: Routes = [
     ProveedorService,
     Viaje,
     ViajeTramo,
+    ViajeTramoCliente,
     ViajeCombustible,
     ViajeEfectivo,
     ViajeInsumo,
@@ -110,7 +121,14 @@ const routes: Routes = [
     ViajeRemitoService,
     ViajeTipoCargaService,
     ViajeTipoService,
-    ViajeTarifaService
+    ViajeTarifaService,
+    ViajeTramoClienteService,
+    ClienteService
+  ],
+  entryComponents: [
+    DadorDestinatarioDialogo,
+    ObservacionesDialogo,
+    AnularDialogo
   ],
   exports: [RouterModule]
 })
