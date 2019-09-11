@@ -8,7 +8,6 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { ToastrService } from 'ngx-toastr';
 import { AppComponent } from 'src/app/app.component';
 import { AppService } from 'src/app/servicios/app.service';
-import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubopcionService } from 'src/app/servicios/subopcion.service';
@@ -83,7 +82,7 @@ export class SoporteComponent implements OnInit {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(private servicio: SoporteService, private modelo: Soporte, private loaderService: LoaderService, private toastr: ToastrService,
-    private appComponent: AppComponent, private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService,
+    private appComponent: AppComponent, private appService: AppService,
     private empresaService: EmpresaService, private moduloService: ModuloService, private subopcionService: SubopcionService,
     private submoduloService: SubmoduloService, private bugServicio: BugImagenService, public dialog: MatDialog) {
     //Defiene autocompletado
@@ -373,12 +372,12 @@ export class SoporteComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-      this.obtenerPorId(elemento.id);
+    this.obtenerPorId(elemento.id);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-      this.obtenerPorId(elemento.id);
+    this.obtenerPorId(elemento.id);
   }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerBug(elemento): void {

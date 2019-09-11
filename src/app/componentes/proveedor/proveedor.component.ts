@@ -17,9 +17,10 @@ import { Proveedor } from 'src/app/modelos/proveedor';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
-import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { PlanCuentaDialogo } from '../plan-cuenta-dialogo/plan-cuenta-dialogo.component';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-proveedor',
@@ -78,11 +79,14 @@ export class ProveedorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'razonSocial', 'tipoDocumento', 'numeroDocumento', 'telefono', 'domicilio', 'localidad', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'RAZON SOCIAL', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define las columnas de la tabla
   public columnasPlanCuenta: string[] = ['empresa', 'cuentaContable', 'planCuenta', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService,
@@ -91,7 +95,8 @@ export class ProveedorComponent implements OnInit {
     private tipoDocumentoServicio: TipoDocumentoService, private tipoProveedorServicio: TipoProveedorService,
     private condicionCompraServicio: CondicionCompraService, private bancoServicio: BancoService,
     private tipoCuentaBancariaServicio: TipoCuentaBancariaService, private proveedorModelo: Proveedor,
-    private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService, private dialog: MatDialog) {
+    private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService, private dialog: MatDialog,
+    private reporteServicio: ReporteService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -434,6 +439,7 @@ export class ProveedorComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -661,4 +667,34 @@ export class ProveedorComponent implements OnInit {
   public mascararEnteros(limit) {
     return this.appService.mascararEnteros(limit);
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          razonsocial: elemento.razonSocial,
+          tipodocumento: elemento.tipoDocumento.nombre,
+          numerodocumento: elemento.numeroDocumento,
+          telefono: elemento.telefono,
+          domicilio: elemento.domicilio,
+          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Proveedores',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

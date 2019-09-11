@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSort, MatTableDataSource, MatDialog, throwMatDialogContentAlreadyAttachedError } from '@angular/material';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PersonalService } from 'src/app/servicios/personal.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -8,10 +8,8 @@ import { AppService } from 'src/app/servicios/app.service';
 import { Personal } from 'src/app/modelos/personal';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
-import { AppComponent } from 'src/app/app.component';
 import { LoaderState } from 'src/app/modelos/loader';
 import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
-import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
 
@@ -21,7 +19,6 @@ import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialo
   styleUrls: ['./vencimientos-choferes.component.css']
 })
 export class VencimientosChoferesComponent implements OnInit {
-
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -84,10 +81,9 @@ export class VencimientosChoferesComponent implements OnInit {
   public btnPdfAltaTemprana: boolean = null;
   public listaChoferes: Array<any> = [];
   //Constructor
-  constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, public dialog: MatDialog,
-    private appService: AppService, private personal: Personal, private toastr: ToastrService, private pdfService: PdfService,
-    private loaderService: LoaderService, private appComponent: AppComponent, private tipoDocumentoServicio: TipoDocumentoService) {
-
+  constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, 
+    public dialog: MatDialog, private appService: AppService, private personal: Personal, private toastr: ToastrService, 
+    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {

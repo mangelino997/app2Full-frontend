@@ -12,13 +12,10 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { PersonalFamiliar } from 'src/app/modelos/personal-familiar';
-import { RolOpcionService } from 'src/app/servicios/rol-opcion.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { MesService } from 'src/app/servicios/mes.service';
-import { TipoFamiliar } from 'src/app/modelos/tipo-familiar';
 import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
 import { PersonalFamiliarService } from 'src/app/servicios/personal-familiar.service';
-import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-personal-familiar',
@@ -65,10 +62,8 @@ export class PersonalFamiliarComponent implements OnInit {
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
   public autocompletadoListar: FormControl = new FormControl();
-
   //Define el Familiar seleccionado control para las busquedas
   public familiar: FormControl = new FormControl();
-  
   //Define el form control para las busquedas
   public autocompletadopersonal: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
@@ -78,7 +73,7 @@ export class PersonalFamiliarComponent implements OnInit {
   //Define la lista de resultados de busqueda de localidades
   public resultadosLocalidades: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['legajo','familiar', 'apellido', 'nombre', 'fechaNacimiento', 'cuil', 'lugarNacimiento', 'nacionalidad', 'sexo', 'ver', 'mod'];
+  public columnas: string[] = ['legajo', 'familiar', 'apellido', 'nombre', 'fechaNacimiento', 'cuil', 'lugarNacimiento', 'nacionalidad', 'sexo', 'ver', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la lista de personales
@@ -90,11 +85,12 @@ export class PersonalFamiliarComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: PersonalFamiliarService,private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private personalFamiliar: PersonalFamiliar, private appService: AppService, private appServicio: AppService, 
-    private toastr: ToastrService,private localidadServicio: LocalidadService, private sexoServicio: SexoService, 
-    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, private appComponent: AppComponent, 
-     private anio: FechaService, private mes: MesService, private tipoFamiliar: TipoFamiliarService) {
+  constructor(private servicio: PersonalFamiliarService, private personalServicio: PersonalService, 
+    private subopcionPestaniaService: SubopcionPestaniaService,
+    private personalFamiliar: PersonalFamiliar, private appServicio: AppService,
+    private toastr: ToastrService, private localidadServicio: LocalidadService, private sexoServicio: SexoService,
+    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, 
+    private anio: FechaService, private mes: MesService, private tipoFamiliar: TipoFamiliarService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -102,7 +98,7 @@ export class PersonalFamiliarComponent implements OnInit {
       });
     this.loaderService.show();
     //Obtiene la lista de pestania por rol y subopcion
-    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
@@ -113,12 +109,11 @@ export class PersonalFamiliarComponent implements OnInit {
           console.log(err);
         }
       );
-    let empresa = this.appComponent.getEmpresa();
+    let empresa = this.appServicio.getEmpresa();
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.personalServicio.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
-          console.log(response);
           this.resultados = response;
         })
       }
@@ -134,7 +129,7 @@ export class PersonalFamiliarComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
-    let empresa = this.appComponent.getEmpresa();
+    let empresa = this.appServicio.getEmpresa();
     //Define los campos para validaciones
     this.formulario = this.personalFamiliar.formulario;
     //Autocompletado Localidad Nacimiento - Buscar por nombre
@@ -391,11 +386,11 @@ export class PersonalFamiliarComponent implements OnInit {
         setTimeout(function () {
           document.getElementById('idApellido').focus();
         }, 20);
-        this.toastr.success(respuesta.mensaje);  
+        this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
       err => {
-        let error= err;
+        let error = err;
         document.getElementById("idApellido").focus();
         this.toastr.error(error.mensaje);
       }
@@ -417,8 +412,8 @@ export class PersonalFamiliarComponent implements OnInit {
         }
       },
       err => {
-        let error= err;
-        if(error.codigo == 11007){
+        let error = err;
+        if (error.codigo == 11007) {
           this.toastr.error(error.mensaje);
           setTimeout(function () {
             document.getElementById("labelCuil").classList.add('label-error');
@@ -426,7 +421,7 @@ export class PersonalFamiliarComponent implements OnInit {
             document.getElementById("idCuil").focus();
           }, 20);
         }
-        if(error.codigo == 11012){
+        if (error.codigo == 11012) {
           this.toastr.error(error.mensaje);
           setTimeout(function () {
             document.getElementById("labelCuil").classList.add('label-error');
@@ -443,22 +438,22 @@ export class PersonalFamiliarComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-    if(this.indiceSeleccionado == 2 || this.indiceSeleccionado==3 || this.indiceSeleccionado == 4){
+    if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 3 || this.indiceSeleccionado == 4) {
       this.obtenerFamiliaresPersonal();
     }
   }
   //Obtiene una lista de familiares del Personal seleccionado
-  private obtenerFamiliaresPersonal(){
+  private obtenerFamiliaresPersonal() {
     this.loaderService.show();
     this.servicio.listarPorPersonal(this.formulario.get('personal').value.id).subscribe(
-      res=>{
+      res => {
         this.personasFamiliares = res.json();
         this.loaderService.hide();
       },
-      err=>{
+      err => {
         this.toastr.warning("El Personal seleccionado no tiene ningún Familiar asociado.");
         this.loaderService.hide();
       }
@@ -531,7 +526,6 @@ export class PersonalFamiliarComponent implements OnInit {
   //Valida el CUIL
   public validarCUIL(): void {
     let cuil = this.formulario.get('cuil').value;
-    console.log(cuil);
     //Primero valida que la cantidad de numeros sean validos
     if (cuil) {
       let respuesta = this.appServicio.validarCUIT(cuil + '');

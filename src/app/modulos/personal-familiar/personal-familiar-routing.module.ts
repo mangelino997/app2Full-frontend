@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PersonalFamiliar } from 'src/app/modelos/personal-familiar';
+import { PersonalFamiliarComponent } from 'src/app/componentes/personal-familiar/personal-familiar.component';
 
 const routes: Routes = [
-  {path: '', component: PersonalFamiliar}
+  {path: '', component: PersonalFamiliarComponent}
 ];
 
 @NgModule({

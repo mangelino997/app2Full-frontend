@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { VentaTipoRoutingModule } from './venta-tipo-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VentaTipoComponent } from 'src/app/componentes/venta-tipo/venta-tipo.component';
 
@@ -23,7 +23,8 @@ import { VentaTipoComponent } from 'src/app/componentes/venta-tipo/venta-tipo.co
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ]
 })
 export class VentaTipoModule { }

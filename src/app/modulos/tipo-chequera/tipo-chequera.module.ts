@@ -4,12 +4,13 @@ import { CommonModule } from '@angular/common';
 import { TipoChequeraRoutingModule } from './tipo-chequera-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoChequeraComponent } from 'src/app/componentes/tipo-chequera/tipo-chequera.component';
 import { TipoChequeraService } from 'src/app/servicios/tipo-chequera.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { TipoChequera } from 'src/app/modelos/tipoChequera';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @NgModule({
   declarations: [
@@ -26,12 +27,14 @@ import { TipoChequera } from 'src/app/modelos/tipoChequera';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
     TipoChequeraService,
     SubopcionPestaniaService,
-    TipoChequera
+    TipoChequera,
+    ReporteService
   ]
 })
 export class TipoChequeraModule { }

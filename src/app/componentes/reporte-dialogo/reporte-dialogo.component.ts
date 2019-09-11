@@ -42,8 +42,6 @@ export class ReporteDialogoComponent implements OnInit {
     this.lista.sort = this.sort;
     //Establece las columnas
     this.columnas = this.data.columnas;
-    console.log(this.lista);
-    console.log(this.columnas);
     //Obtiene la fecha actual
     this.obtenerFecha();
   }
@@ -134,7 +132,7 @@ export class ReporteDialogoComponent implements OnInit {
     if (typeof pdf.putTotalPages === 'function') {
       pdf.putTotalPages(totalPagesExp);
     }
-    pdf.save();
+    pdf.save(this.nombre);
   }
   //Descarga el pdf
   public descargar(): void {

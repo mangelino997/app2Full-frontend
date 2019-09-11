@@ -352,12 +352,11 @@ export class ContactoClienteComponent implements OnInit {
     lista.forEach(elemento => {
         let f = {
           id: elemento.id,
-          nombre: elemento.nombre,
-          domicilio: elemento.domicilio,
+          tipocontacto: elemento.tipoContacto.nombre,
+          nombrecontacto: elemento.nombre,
           telefonofijo: elemento.telefonoFijo,
           telefonomovil: elemento.telefonoMovil,
-          correoelectronico: elemento.correoelectronico,
-          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
+          correoelectronico: elemento.correoelectronico
         }
         datos.push(f);
     });
@@ -367,7 +366,7 @@ export class ContactoClienteComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'AgendasTelefonicas',
+      nombre: 'Contactos Clientes',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,

@@ -27,6 +27,14 @@ export class ReporteService {
         if(indice != -1) {
             lista.splice(indice, 1);
         }
+        indice = lista.indexOf('PDF');
+        if(indice != -1) {
+            lista.splice(indice, 1);
+        }
+        indice = lista.indexOf('ELIMINAR');
+        if(indice != -1) {
+            lista.splice(indice, 1);
+        }
         return lista;
     }
     public abrirDialogo(datos) {

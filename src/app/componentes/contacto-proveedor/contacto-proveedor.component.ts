@@ -6,10 +6,11 @@ import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-contacto-proveedor',
@@ -48,9 +49,12 @@ export class ContactoProveedorComponent implements OnInit {
   //Define la lista de resultados de busqueda de sucursales bancos
   public resultadosProveedores: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'tipoContacto', 'nombreContacto', 'telefonoFijo', 'telefonoMovil', 'correoElectronico', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'TIPO CONTACTO', 'NOMBRE CONTACTO', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'CORREO ELECTRONICO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -58,7 +62,7 @@ export class ContactoProveedorComponent implements OnInit {
   //Constructor
   constructor(private servicio: ContactoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appServicio: AppService, private toastr: ToastrService, private loaderService: LoaderService,
-    private proveedorServicio: ProveedorService, private tipoContactoServicio: TipoContactoService) {
+    private proveedorServicio: ProveedorService, private tipoContactoServicio: TipoContactoService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
       .subscribe(
@@ -221,6 +225,7 @@ export class ContactoProveedorComponent implements OnInit {
         res => {
           this.contactos = res.json();
           this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.paginator = this.paginator;
           if(this.indiceSeleccionado==5)
             this.listaCompleta.sort = this.sort;
           else
@@ -387,4 +392,33 @@ export class ContactoProveedorComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          tipocontacto: elemento.tipoContacto.nombre,
+          nombrecontacto: elemento.nombre,
+          telefonofijo: elemento.telefonoFijo,
+          telefonomovil: elemento.telefonoMovil,
+          correoelectronico: elemento.correoelectronico
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Contactos Proveedores',
+      empresa: this.appServicio.getEmpresa().razonSocial,
+      usuario: this.appServicio.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

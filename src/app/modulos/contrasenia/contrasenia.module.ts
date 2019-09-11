@@ -4,9 +4,11 @@ import { CommonModule } from '@angular/common';
 import { ContraseniaRoutingModule } from './contrasenia-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContraseniaComponent } from 'src/app/componentes/contrasenia/contrasenia.component';
+import { UsuarioService } from 'src/app/servicios/usuario.service';
+import { Usuario } from 'src/app/modelos/usuario';
 
 @NgModule({
   declarations: [
@@ -23,7 +25,12 @@ import { ContraseniaComponent } from 'src/app/componentes/contrasenia/contraseni
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
+  ],
+  providers: [
+    UsuarioService,
+    Usuario
   ]
 })
 export class ContraseniaModule { }
