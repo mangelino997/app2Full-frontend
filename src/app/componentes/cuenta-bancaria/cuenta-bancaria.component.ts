@@ -384,7 +384,23 @@ export class CuentaBancariaComponent implements OnInit {
     }else{
       this.cambioCampo('idCBU', 'idCBU');
     }
-    
+  }
+   //Valida el Alias del CBU
+   public validarAliasCBU(){
+    let aliasCbu = this.formulario.value.aliasCBU;
+    if(aliasCbu){
+      let respuesta = this.appService.validarAliasCBU(aliasCbu);
+      if(!respuesta) {
+        let err = {codigo: 11010, mensaje: 'AliasCBU Incorrecto. Mínimo 6 carácteres, máximo 20 carácteres.'};
+        document.getElementById("idAliasCBU").classList.add('label-error');
+        document.getElementById("idAliasCBU").classList.add('is-invalid');
+        this.toastr.error(err.mensaje);
+      }else{
+        this.cambioCampo('idAliasCBU', 'idAliasCBU');
+      }
+    }else{
+      this.cambioCampo('idAliasCBU', 'idAliasCBU');
+    }
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

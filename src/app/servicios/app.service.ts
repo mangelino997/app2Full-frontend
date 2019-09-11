@@ -182,12 +182,19 @@ export class AppService {
     }
     return true;
   }
-  //Valida el dni
-  public validarCBU(dni) {
-    if (dni.length != 22) {
+  //Valida el CBU
+  public validarCBU(cbu) {
+    if (cbu.length != 22) {
       return false
     }
     return true;
+  }
+  //Valida el Alias del CBU
+  public validarAliasCBU(cbu) {
+    if (cbu.length >= 6 && cbu.length <= 20) {
+      return true;
+    }
+    return false;
   }
   //Valida campo alfanumerico
   public validarMotorChasis(elemento, limit) {

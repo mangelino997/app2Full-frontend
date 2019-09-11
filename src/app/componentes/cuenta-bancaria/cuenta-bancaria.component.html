@@ -109,14 +109,14 @@
               <label for="idCBU" class="tamanio-label">CBU *</label>
               <input id="idCBU" type="text" formControlName="cbu" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura" [textMask]="mascararEnteros(22)"
-                (blur)="validarCBU()">
+                (blur)="validarCBU()" >
             </div>
           </div>
           <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idAliasCBU" class="tamanio-label">Alias CBU</label>
-              <input id="idAliasCBU" type="text" formControlName="aliasCBU" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+              <input id="idAliasCBU" type="text" formControlName="aliasCBU" autocomplete="off" minlength="6" maxlength="20"
+                class="form-control form-control-sm" [readonly]="soloLectura" (blur)="validarAliasCBU()">
             </div>
           </div>
         </div>
