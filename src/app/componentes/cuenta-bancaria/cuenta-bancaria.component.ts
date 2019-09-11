@@ -9,7 +9,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { LoaderState } from 'src/app/modelos/loader';
 import { CuentaBancaria } from 'src/app/modelos/cuentaBancaria';
 import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
-import { AppComponent } from 'src/app/app.component';
 import { BancoService } from 'src/app/servicios/banco.service';
 import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
 import { TipoCuentaBancariaService } from 'src/app/servicios/tipo-cuenta-bancaria.service';
@@ -74,8 +73,8 @@ export class CuentaBancariaComponent implements OnInit {
   //Constructor
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private loaderService: LoaderService, 
     private cuentaBancaria: CuentaBancaria, private servicio: CuentaBancariaService, 
-    private appComponent: AppComponent, private bancoService: BancoService, private sucursalService:SucursalBancoService, 
-    private tipoCuentaBancariaService: TipoCuentaBancariaService,private monedaService:MonedaService, private toastr: ToastrService) {
+    private bancoService: BancoService, private sucursalService: SucursalBancoService, 
+    private tipoCuentaBancariaService: TipoCuentaBancariaService, private monedaService:MonedaService, private toastr: ToastrService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -120,7 +119,7 @@ export class CuentaBancariaComponent implements OnInit {
   }
   //Inicializa valores por defecto
   private inicializarValores(){
-    let empresa= this.appComponent.getEmpresa();
+    let empresa= this.appService.getEmpresa();
     this.empresa.setValue(empresa);
     this.formulario.get('empresa').setValue(empresa['razonSocial']);
     this.formulario.get('estaActiva').setValue(true);
@@ -228,7 +227,7 @@ export class CuentaBancariaComponent implements OnInit {
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
-    this.servicio.listarPorEmpresa(this.appComponent.getEmpresa().id).subscribe(
+    this.servicio.listarPorEmpresa(this.appService.getEmpresa().id).subscribe(
       res => {
         this.cuentasBancarias = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());
@@ -245,7 +244,7 @@ export class CuentaBancariaComponent implements OnInit {
     this.formulario.patchValue(this.cuentaBan.value);
     this.formulario.value.banco = this.cuentaBan.value.sucursalBanco.banco; //Setea el banco
     this.formulario.get('banco').setValue(this.cuentaBan.value.sucursalBanco.banco);//Setea el banco
-    let empresa= this.appComponent.getEmpresa();
+    let empresa= this.appService.getEmpresa();
     this.empresa.setValue(empresa);
     this.formulario.get('empresa').setValue(empresa['razonSocial']);
     this.establecerSucursal(this.cuentaBan.value.sucursalBanco.banco.id, this.cuentaBan.value.sucursalBanco ); //Obtiene la lista de sucursales para que pueda hacer la comparacion
@@ -281,7 +280,7 @@ export class CuentaBancariaComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    let usuario = this.appComponent.getUsuario();
+    let usuario = this.appService.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
     this.formulario.get('empresa').setValue(this.empresa.value);
     this.servicio.agregar(this.formulario.value).subscribe(
@@ -384,7 +383,23 @@ export class CuentaBancariaComponent implements OnInit {
     }else{
       this.cambioCampo('idCBU', 'idCBU');
     }
-    
+  }
+   //Valida el Alias del CBU
+   public validarAliasCBU(){
+    let aliasCbu = this.formulario.value.aliasCBU;
+    if(aliasCbu){
+      let respuesta = this.appService.validarAliasCBU(aliasCbu);
+      if(!respuesta) {
+        let err = {codigo: 11010, mensaje: 'AliasCBU Incorrecto. Mínimo 6 carácteres, máximo 20 carácteres.'};
+        document.getElementById("idAliasCBU").classList.add('label-error');
+        document.getElementById("idAliasCBU").classList.add('is-invalid');
+        this.toastr.error(err.mensaje);
+      }else{
+        this.cambioCampo('idAliasCBU', 'idAliasCBU');
+      }
+    }else{
+      this.cambioCampo('idAliasCBU', 'idAliasCBU');
+    }
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

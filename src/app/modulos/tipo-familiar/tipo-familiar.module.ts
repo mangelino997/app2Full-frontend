@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoFamiliarRoutingModule } from './tipo-familiar-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoFamiliarComponent } from 'src/app/componentes/tipo-familiar/tipo-familiar.component';
 import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
@@ -26,7 +26,8 @@ import { TipoFamiliar } from 'src/app/modelos/tipo-familiar';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
     TipoFamiliarService,

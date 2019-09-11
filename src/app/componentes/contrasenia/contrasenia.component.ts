@@ -16,13 +16,13 @@ import { Router } from '@angular/router';
 })
 export class ContraseniaComponent implements OnInit {
   //Define el formulario
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define los datos del usuario del autocompletado
-  public user:any;
+  public user: any;
   //Define el autocompletado para las busquedas
   public autocompletado: FormControl = new FormControl('', Validators.required);
   //Define el estado del autocompletado
-  public estadoAutocompletado:boolean = true;
+  public estadoAutocompletado: boolean = true;
   //Define la lista de resultados del autocompletado
   public resultados: Array<any> = [];
   //Define campo de control de repetir contraseña
@@ -32,12 +32,12 @@ export class ContraseniaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define el estado de contraseña y repetir contraseña
-  public estadoContrasenia:boolean = false;
+  public estadoContrasenia: boolean = false;
   //Constructor
   constructor(private servicio: UsuarioService, private usuario: Usuario, private toastr: ToastrService,
     private loaderService: LoaderService, private appService: AppService,
     private router: Router) {
-       //Autocompletado - Buscar por nombre
+    //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
@@ -45,7 +45,7 @@ export class ContraseniaComponent implements OnInit {
         })
       }
     });
-     }
+  }
   //Al inicializar el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -59,21 +59,21 @@ export class ContraseniaComponent implements OnInit {
     //Establece el usuario actual
     let usuario = this.appService.getUsuario();
     this.user = usuario;
-    if(usuario.rol.id > 2) {
+    if (usuario.rol.id > 2) {
       this.formulario.patchValue(usuario);
       this.formulario.get('password').reset();
       this.autocompletado.setValue(usuario);
       this.estadoAutocompletado = true;
-      setTimeout(function() {
+      setTimeout(function () {
         document.getElementById('idPassword').focus();
       }, 20);
     } else {
       this.estadoAutocompletado = false;
-      setTimeout(function() {
+      setTimeout(function () {
         document.getElementById('idAutocompletado').focus();
       }, 20);
     }
-   
+
   }
   //Establece el formulario al seleccionar un elemento de autocompletado
   public establecerFormulario(): void {
@@ -88,7 +88,7 @@ export class ContraseniaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          if(this.user.rol.id > 2) {
+          if (this.user.rol.id > 2) {
             localStorage.removeItem('token');
             this.router.navigate(['login'], { replaceUrl: true });
           } else {
@@ -110,7 +110,7 @@ export class ContraseniaComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -118,8 +118,8 @@ export class ContraseniaComponent implements OnInit {
   public cambioRepetirContrasenia(): void {
     let contrasenia = this.formulario.get('password').value;
     let contraseniaRepetida = this.passwordRepeat.value;
-    if(contrasenia && contraseniaRepetida) {
-      if(contrasenia == contraseniaRepetida) {
+    if (contrasenia && contraseniaRepetida) {
+      if (contrasenia == contraseniaRepetida) {
         this.estadoContrasenia = true;
       } else {
         this.estadoContrasenia = false;
@@ -132,8 +132,8 @@ export class ContraseniaComponent implements OnInit {
   public verificarContrasenia(): void {
     let contrasenia = this.formulario.get('password').value;
     let contraseniaRepetida = this.passwordRepeat.value;
-    if(contrasenia && contraseniaRepetida) {
-      if(contrasenia != contraseniaRepetida) {
+    if (contrasenia && contraseniaRepetida) {
+      if (contrasenia != contraseniaRepetida) {
         this.estadoContrasenia = false;
         document.getElementById('labelPasswordRepeat').classList.add('label-error');
         document.getElementById('idPasswordRepeat').classList.add('is-invalid');

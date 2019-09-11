@@ -1,12 +1,8 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { ToastrService } from 'ngx-toastr';
-import { AppComponent } from '../../app.component';
-import { FormGroup, FormControl, FormBuilder, Validators, FormArray } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { AppService } from '../../servicios/app.service';
-import { OrdenVenta } from 'src/app/modelos/ordenVenta';
-import { OrdenVentaEscala } from 'src/app/modelos/ordenVentaEscala';
-import { OrdenVentaTramo } from 'src/app/modelos/ordenVentaTramo';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { OrdenRecoleccion } from 'src/app/modelos/ordenRecoleccion';
 import { ClienteService } from 'src/app/servicios/cliente.service';
@@ -14,18 +10,11 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { BarrioService } from 'src/app/servicios/barrio.service';
 import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
-import { Router } from '@angular/router';
-import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
-import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
-import { CobradorService } from 'src/app/servicios/cobrador.service';
-import { ZonaService } from 'src/app/servicios/zona.service';
-import { RubroService } from 'src/app/servicios/rubro.service';
+import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
 import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.component';
 import { Subscription } from 'rxjs';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
-
 
 @Component({
   selector: 'app-orden-recoleccion',
@@ -34,47 +23,47 @@ import { LoaderState } from 'src/app/modelos/loader';
 })
 export class OrdenRecoleccionComponent implements OnInit {
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si los campos de seleccion son de solo lectura
-  public selectSoloLectura:boolean = false;
+  public selectSoloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define si muestra los datos (localidad-barrio-provincia) del cliente
-  public mostrarCliente:boolean=false;
+  public mostrarCliente: boolean = false;
   //Define una lista
   public lista = null;
   //Define la lista para las Escalas agregadas
-  public listaDeEscalas:Array<any> = [];
+  public listaDeEscalas: Array<any> = [];
   //Define la lista para los tramos agregados
-  public listaDeTramos:Array<any> = [];
+  public listaDeTramos: Array<any> = [];
   //Define la lista de pestanias
   public pestanias = null;
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define un formulario para la pestaña Listar
-  public formularioListar:FormGroup;
+  public formularioListar: FormGroup;
   //Define el siguiente id
-  public siguienteId:number = null;
+  public siguienteId: number = null;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el form control para el remitente
-  public cliente:FormControl = new FormControl();
-  public domicilioBarrio:FormControl = new FormControl();
-  public localidadProvincia:FormControl = new FormControl();
+  public cliente: FormControl = new FormControl();
+  public domicilioBarrio: FormControl = new FormControl();
+  public localidadProvincia: FormControl = new FormControl();
   public fechaEmisionFormatoNuevo: FormControl = new FormControl();
   public fechaEmisionFormatoOrig: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados = [];
   //Define el form control para las busquedas cliente
-  public buscarCliente:FormControl = new FormControl();
+  public buscarCliente: FormControl = new FormControl();
   //Define la lista de resultados de busqueda cliente
   public resultadosClientes = [];
   //Define la lista de resultados de busqueda localidad
@@ -82,7 +71,7 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Define la lista de resultados de sucursales
   public resultadosSucursales = [];
   //Define el autocompletado para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda barrio
   public resultadosBarrios = [];
   //Define las columnas de la tabla
@@ -94,22 +83,22 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   constructor(
-    private ordenRecoleccion: OrdenRecoleccion, private subopcionPestaniaService: SubopcionPestaniaService, 
+    private ordenRecoleccion: OrdenRecoleccion, private subopcionPestaniaService: SubopcionPestaniaService,
     private fechaServicio: FechaService, private localidadService: LocalidadService, private clienteService: ClienteService, private toastr: ToastrService,
-    private barrioService: BarrioService, private appService: AppService, private servicio: OrdenRecoleccionService, 
-    private sucursalService: SucursalService,  public dialog: MatDialog, public clienteServicio: ClienteService, private loaderService: LoaderService) {
+    private barrioService: BarrioService, private appService: AppService, private servicio: OrdenRecoleccionService,
+    private sucursalService: SucursalService, public dialog: MatDialog, public clienteServicio: ClienteService, private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-      }
-    );
-    
-   }
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+        }
+      );
+
+  }
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -133,7 +122,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.listarSucursales();
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorAlias(data).subscribe(res => {
           this.formulario.patchValue(res.json());
         })
@@ -141,7 +130,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     })
     //Autcompletado - Buscar por Remitente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
           this.resultadosClientes = res;
         })
@@ -149,7 +138,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     });
     //Autcompletado - Buscar por Localidad
     this.formulario.get('localidad').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.localidadService.listarPorNombre(data).subscribe(res => {
           this.resultadosLocalidades = res;
         })
@@ -157,7 +146,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     });
     //Autcompletado - Buscar por Barrio
     this.formulario.get('barrio').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.barrioService.listarPorNombre(data).subscribe(res => {
           this.resultadosBarrios = res;
         })
@@ -169,9 +158,8 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;    
+        this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
@@ -193,31 +181,31 @@ export class OrdenRecoleccionComponent implements OnInit {
     );
   }
   //Controla el cambio del autocompletado para el Remitente
-  public cambioRemitente(){
-    let cliente= this.formulario.get('cliente').value;
+  public cambioRemitente() {
+    let cliente = this.formulario.get('cliente').value;
     let domicilio = null;
     let barrio = null;
     let provincia = null;
     let localidad = null;
-    let domicilioYBarrio= null;
-    let localidadYProvincia= null;
-    if(cliente.domicilio)
-      domicilio =cliente.domicilio;
-    if(cliente.barrio)
+    let domicilioYBarrio = null;
+    let localidadYProvincia = null;
+    if (cliente.domicilio)
+      domicilio = cliente.domicilio;
+    if (cliente.barrio)
       barrio = cliente.barrio;
-    if(cliente.localidad)
+    if (cliente.localidad)
       localidad = cliente.localidad;
-    if(cliente.localidad.provincia)
-      provincia = cliente.localidad.provincia.nombre;    
-    if(barrio)
-      domicilioYBarrio= domicilio + ' - ' + barrio['nombre'];
-      else
-      domicilioYBarrio= domicilio + ' - ';
-    if(localidad)
-      localidadYProvincia= localidad['nombre'] + ' - ' + provincia;
-      else
-      localidadYProvincia= provincia;
-    this.mostrarCliente=true;
+    if (cliente.localidad.provincia)
+      provincia = cliente.localidad.provincia.nombre;
+    if (barrio)
+      domicilioYBarrio = domicilio + ' - ' + barrio['nombre'];
+    else
+      domicilioYBarrio = domicilio + ' - ';
+    if (localidad)
+      localidadYProvincia = localidad['nombre'] + ' - ' + provincia;
+    else
+      localidadYProvincia = provincia;
+    this.mostrarCliente = true;
     this.domicilioBarrio.setValue(domicilioYBarrio);
     this.localidadProvincia.setValue(localidadYProvincia);
     this.formulario.get('localidad').setValue(localidad);
@@ -230,7 +218,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    if(selectSoloLectura==true){
+    if (selectSoloLectura == true) {
       this.formulario.get('entregarEnDomicilio').disable();
       this.formulario.get('pagoEnOrigen').disable();
       this.formulario.get('sucursalDestino').disable();
@@ -238,10 +226,10 @@ export class OrdenRecoleccionComponent implements OnInit {
       this.formulario.get('localidad').disable();
       this.formulario.get('barrio').disable();
       this.formulario.get('cliente').disable();
-      setTimeout(function() {
-        document.getElementById('btnAgregar').setAttribute("disabled","disabled");
+      setTimeout(function () {
+        document.getElementById('btnAgregar').setAttribute("disabled", "disabled");
       }, 20);
-    }else{
+    } else {
       this.formulario.get('entregarEnDomicilio').enable();
       this.formulario.get('pagoEnOrigen').enable();
       this.formulario.get('sucursalDestino').enable();
@@ -249,7 +237,7 @@ export class OrdenRecoleccionComponent implements OnInit {
       this.formulario.get('localidad').enable();
       this.formulario.get('barrio').enable();
       this.formulario.get('cliente').enable();
-      setTimeout(function() {
+      setTimeout(function () {
         document.getElementById('btnAgregar').removeAttribute("disabled");
       }, 20);
     }
@@ -263,7 +251,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.listar();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
+    if (opcion == 0) {
       this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
@@ -306,14 +294,13 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
-    this.formulario.get('tipoComprobante').setValue({ id: 3});
-    console.log(this.formulario.value);
+    this.formulario.get('tipoComprobante').setValue({ id: 3 });
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 201) {
+        if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idCliente').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -337,9 +324,9 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function() {
+          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
@@ -348,7 +335,7 @@ export class OrdenRecoleccionComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if(respuesta.codigo == 11002) {
+        if (respuesta.codigo == 11002) {
           document.getElementById("idCliente").focus();
           this.toastr.error(respuesta.mensaje);
           this.loaderService.hide();
@@ -378,33 +365,32 @@ export class OrdenRecoleccionComponent implements OnInit {
     });
   }
   //Comprueba que la fecha de Recolección sea igual o mayor a la fecha actual 
-  public verificarFecha(){
-    if(this.formulario.get('fecha').value < this.fechaEmisionFormatoOrig.value){
+  public verificarFecha() {
+    if (this.formulario.get('fecha').value < this.fechaEmisionFormatoOrig.value) {
       this.formulario.get('fecha').reset();
       this.toastr.error("La Fecha de recolección no puede ser menor a la fecha actual");
-      setTimeout(function() {
+      setTimeout(function () {
         document.getElementById('idFecha').focus();
       }, 20);
     }
   }
   //Verifica que el formato de las horas sea el correcto
-  public verificarHora(){
+  public verificarHora() {
     let horaDesde = this.formulario.get('horaDesde').value;
     let horaHasta = this.formulario.get('horaHasta').value;
     let splitHoraDesde = horaDesde.split(":");
     let splitHoraHasta = horaHasta.split(":");
-    console.log(splitHoraDesde, splitHoraHasta);
     //Si el array del horario es vacio significa que en el front no es correcto (--:00 || 00:-- || --:--)
-    if(splitHoraDesde[0] == ""){
+    if (splitHoraDesde[0] == "") {
       this.toastr.error("El formato del horario no es el adecuado. No puede haber '--'");
-      setTimeout(function() {
+      setTimeout(function () {
         document.getElementById('idHoraDesde').focus();
       }, 20);
       return false;
     }
-    else if(splitHoraHasta[0]== ""){
+    else if (splitHoraHasta[0] == "") {
       this.toastr.error("El formato del horario no es el adecuado. No puede haber '--'");
-      setTimeout(function() {
+      setTimeout(function () {
         document.getElementById('idHoraHasta').focus();
       }, 20);
       return false
@@ -414,12 +400,12 @@ export class OrdenRecoleccionComponent implements OnInit {
     }
   }
   //Valida que la Hora Hasta no sea menor a Hora Desde
-  public validarHoraHastaDesde(){
-    if(!this.formulario.value.horaDesde){
+  public validarHoraHastaDesde() {
+    if (!this.formulario.value.horaDesde) {
       this.toastr.error("Debe ingresar una Hora Desde");
       document.getElementById('idHoraDesde').focus();
-    }else{
-      if(this.formulario.value.horaHasta<this.formulario.value.horaDesde){
+    } else {
+      if (this.formulario.value.horaHasta < this.formulario.value.horaDesde) {
         this.toastr.error("Hora Hasta no puede ser menor a Hora Desde");
         document.getElementById('idHoraHasta').focus();
       }
@@ -432,14 +418,14 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;
-    if(valor) {
+    if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
   //Establece los enteros
   public establecerEnteros(formulario): void {
     let valor = formulario.value;
-    if(valor) {
+    if (valor) {
       formulario.setValue(this.appService.establecerEnteros(valor));
     }
   }
@@ -447,27 +433,26 @@ export class OrdenRecoleccionComponent implements OnInit {
   public mascararEnterosConDecimales(intLimite) {
     return this.appService.mascararEnterosConDecimales(intLimite);
   }
-   //Obtiene la mascara de enteros
-   public mascararEnteros(intLimite) {
+  //Obtiene la mascara de enteros
+  public mascararEnteros(intLimite) {
     return this.appService.mascararEnteros(intLimite);
   }
   //Obtiene la mascara de enteros con separador de miles
   public mascararEnterosSinDecimales(intLimite) {
     return this.appService.mascararEnterosSinDecimales(intLimite);
   }
-  
   //Reestablece el formulario
-  public reestablecerFormulario(id){
-    this.resultadosClientes=[];
-    this.mostrarCliente=false;
+  public reestablecerFormulario(id) {
+    this.resultadosClientes = [];
+    this.mostrarCliente = false;
     this.autocompletado.setValue(undefined);
     this.formulario.reset();
     this.domicilioBarrio.setValue(null);
     this.localidadProvincia.setValue(null);
     //Setea la fecha actual en los campos correspondientes
-    this.fechaServicio.obtenerFecha().subscribe(res=>{
-      let respuesta= res.json();
-      let anio =respuesta.split('-');
+    this.fechaServicio.obtenerFecha().subscribe(res => {
+      let respuesta = res.json();
+      let anio = respuesta.split('-');
       this.fechaEmisionFormatoOrig.setValue(respuesta);
       this.fechaEmisionFormatoNuevo.setValue(anio[2] + '-' + anio[1] + '-' + anio[0]);
       this.formulario.get('fecha').setValue(respuesta);
@@ -475,18 +460,18 @@ export class OrdenRecoleccionComponent implements OnInit {
       this.formulario.get('horaDesde').setValue('00:00');
       this.formulario.get('horaHasta').setValue('00:00');
     });
-    
+
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
@@ -494,7 +479,7 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado a
   public displayFn(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre : elemento;
     } else {
       return elemento;
@@ -502,7 +487,7 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.nombre ? elemento.nombre + ', ' + elemento.provincia.nombre
         + ', ' + elemento.provincia.pais.nombre : elemento;
     } else {
@@ -511,7 +496,7 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Define como se muestra los datos en el autcompletado c
   public displayFc(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento ? elemento.domicilio + ' - ' + elemento.barrio : elemento;
     } else {
       return '';
@@ -522,9 +507,8 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-    console.log(this.formulario.value);
-    let domicilioYBarrio= this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
-    let localidadYProvincia= this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
+    let domicilioYBarrio = this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
+    let localidadYProvincia = this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
     this.domicilioBarrio.setValue(domicilioYBarrio);
     this.localidadProvincia.setValue(localidadYProvincia);
   }
@@ -533,17 +517,17 @@ export class OrdenRecoleccionComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-    let domicilioYBarrio= this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
-    let localidadYProvincia= this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
+    let domicilioYBarrio = this.formulario.get('cliente').value.domicilio + ' - ' + this.formulario.get('cliente').value.barrio.nombre;
+    let localidadYProvincia = this.formulario.get('cliente').value.localidad.nombre + ' - ' + this.formulario.get('cliente').value.localidad.provincia.nombre;
     this.domicilioBarrio.setValue(domicilioYBarrio);
     this.localidadProvincia.setValue(localidadYProvincia);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    if(keycode == 113) {
-      if(indice < this.pestanias.length) {
-        this.seleccionarPestania(indice+1, this.pestanias[indice].nombre, 0);
+    if (keycode == 113) {
+      if (indice < this.pestanias.length) {
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
       } else {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
@@ -554,5 +538,5 @@ export class OrdenRecoleccionComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
 }

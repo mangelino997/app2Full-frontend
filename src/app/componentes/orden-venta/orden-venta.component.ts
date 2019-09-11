@@ -138,7 +138,7 @@ export class OrdenVentaComponent implements OnInit {
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private clienteServicio: ClienteService, private fechaService: FechaService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService, public dialog: MatDialog,
-    private appService: AppService, private ordenVenta: OrdenVenta,
+    private appService: AppService, private ordenVenta: OrdenVenta, 
     private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo,
     private loaderService: LoaderService, private ordenVentaTarifa: OrdenVentaTarifa, private ordenVentaTarifaService: OrdenVentaTarifaService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -538,6 +538,7 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioTarifa.get('ordenVenta').setValue({ id: this.ORDEN_VTA_CABECERA });
       this.ordenVentaTarifaService.agregar(this.formularioTarifa.value).subscribe(
         res => {
+          console.log(res);
           if (res.status == 201) {
             this.formularioTarifa.reset();
             this.listarTarifasOrdenVenta();
@@ -548,9 +549,13 @@ export class OrdenVentaComponent implements OnInit {
         },
         err => {
           let error = err.json();
+          if(error.codigo == 11025) {
+            this.toastr.error(MensajeExcepcion.DD_ORDENVENTATARIFA_TIPOTARIFA);
+          } else {
+            this.toastr.error(error.mensaje);
+          }
           this.formularioTarifa.get('tipoTarifa').reset();
           document.getElementById('idTipoTarifa').focus();
-          this.toastr.error(error.mensaje);
           this.loaderService.hide();
         }
       )

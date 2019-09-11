@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { DeduccionPersonalComponent } from 'src/app/componentes/deduccion-personal/deduccion-personal.component';
+import { DeduccionGeneralComponent } from 'src/app/componentes/deduccion-general/deduccion-general.component';
 
 const routes: Routes = [
-  {path: '', component: DeduccionPersonalComponent}
+  {path: '', component: DeduccionGeneralComponent}
 ];
 
 @NgModule({

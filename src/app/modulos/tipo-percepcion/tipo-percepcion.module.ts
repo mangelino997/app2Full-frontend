@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoPercepcionRoutingModule } from './tipo-percepcion-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoPercepcionComponent } from 'src/app/componentes/tipo-percepcion/tipo-percepcion.component';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -26,7 +26,8 @@ import { TipoPercepcion } from 'src/app/modelos/tipoPercepcion';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
     SubopcionPestaniaService,
