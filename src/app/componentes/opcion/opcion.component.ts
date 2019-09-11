@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { OpcionService } from '../../servicios/opcion.service';
 import { SubopcionService } from '../../servicios/subopcion.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';

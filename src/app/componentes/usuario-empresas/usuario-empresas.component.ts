@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
-import { UsuarioEmpresa } from 'src/app/modelos/usuarioEmpresa';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -31,8 +30,8 @@ export class UsuarioEmpresasComponent implements OnInit {
  //Define la subscripcion a loader.service
  private subscription: Subscription;
   //Constructor
-  constructor(private usuarioEmpresaServicio: UsuarioEmpresaService, private usuarioEmpresaModelo: UsuarioEmpresa,
-    private usuarioServicio: UsuarioService, private fb: FormBuilder, private toastr: ToastrService, private loaderService: LoaderService) { }
+  constructor(private usuarioEmpresaServicio: UsuarioEmpresaService, private usuarioServicio: UsuarioService, 
+    private fb: FormBuilder, private toastr: ToastrService, private loaderService: LoaderService) { }
   ngOnInit() {
    //Establece la subscripcion a loader
    this.subscription = this.loaderService.loaderState

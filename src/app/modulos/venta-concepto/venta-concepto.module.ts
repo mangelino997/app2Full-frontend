@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { VentaConceptoRoutingModule } from './venta-concepto-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { VentaConceptoComponent } from 'src/app/componentes/venta-concepto/venta-concepto.component';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -28,7 +28,8 @@ import { AfipConceptoService } from 'src/app/servicios/afip-concepto.service';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
     SubopcionPestaniaService,

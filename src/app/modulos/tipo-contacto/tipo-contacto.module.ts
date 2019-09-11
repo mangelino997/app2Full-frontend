@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoContactoRoutingModule } from './tipo-contacto-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoContactoComponent } from 'src/app/componentes/tipo-contacto/tipo-contacto.component';
 import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
@@ -25,7 +25,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
     TipoContactoService,

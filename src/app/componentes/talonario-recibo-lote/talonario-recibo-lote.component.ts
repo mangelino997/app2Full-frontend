@@ -2,14 +2,12 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { TalonarioReciboService } from 'src/app/servicios/talonario-recibo.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { TalonarioReciboLoteService } from 'src/app/servicios/talonario-recibo-lote.service';
 import { TalonarioReciboLote } from 'src/app/modelos/talonarioReciboLote';
-import { AppComponent } from 'src/app/app.component';
 import { LoaderState } from 'src/app/modelos/loader';
 
 @Component({
@@ -18,7 +16,6 @@ import { LoaderState } from 'src/app/modelos/loader';
   styleUrls: ['./talonario-recibo-lote.component.css']
 })
 export class TalonarioReciboLoteComponent implements OnInit {
-
   //Define los datos de la Empresa como un formControl
   public empresa: FormControl = new FormControl();
   //Define a Letra como un formControl
@@ -48,7 +45,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
   //Define los resultados de autocompletado localidad
   public resultadosLocalidades: Array<any> = [];
   //Define la lista para Talonarios Recibos Lote
-  public listaTalRecLote: Array<any>= [];
+  public listaTalRecLote: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -58,9 +55,9 @@ export class TalonarioReciboLoteComponent implements OnInit {
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
-  constructor(private servicio: TalonarioReciboLoteService, private subopcionPestaniaService: SubopcionPestaniaService, private appComponent: AppComponent,
-    private talonarioReciboLoteService: TalonarioReciboLoteService, private appService: AppService, private modelo: TalonarioReciboLote,
-    private toastr: ToastrService, private loaderService: LoaderService) {
+  constructor(private servicio: TalonarioReciboLoteService, private subopcionPestaniaService: SubopcionPestaniaService, 
+    private appService: AppService, private modelo: TalonarioReciboLote, private toastr: ToastrService, 
+    private loaderService: LoaderService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -95,7 +92,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
     //this.autoLocalidad.setValue(elemento.localidad);
   }
   //iniciliza los campos
-  private inicializarCampos(){
+  private inicializarCampos() {
     this.loaderService.show();
     let empresa = this.appService.getEmpresa();
     this.empresa.setValue(empresa.razonSocial);
@@ -105,10 +102,10 @@ export class TalonarioReciboLoteComponent implements OnInit {
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
-    if(elemento.value) {
+    if (elemento.value) {
       elemento.setValue((string + elemento.value).slice(cantidad));
     }
-    if(elemento>=0){
+    if (elemento >= 0) {
       return elemento = (string + elemento).slice(cantidad);
     }
   }
@@ -160,14 +157,13 @@ export class TalonarioReciboLoteComponent implements OnInit {
     }
   }
   //Completa el Buscador 
-  private listarTalonariosRecLotes(){
-    let empresa = this.appComponent.getEmpresa();
+  private listarTalonariosRecLotes() {
+    let empresa = this.appService.getEmpresa();
     this.servicio.listarPorEmpresa(empresa.id).subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.resultados = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de Talonarios Recibos Lotes");
       }
     )
@@ -219,7 +215,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    let usuario= this.appComponent.getUsuario();
+    let usuario = this.appService.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
     this.formulario.get('letra').setValue(this.letra.value);
     this.formulario.get('loteEntregado').setValue(false);
@@ -287,19 +283,19 @@ export class TalonarioReciboLoteComponent implements OnInit {
   }
   //Valida longitud
   public validarLongitud(elemento, intLimite) {
-    switch(elemento){
+    switch (elemento) {
       case 'desde':
-        this.establecerCerosIzq(this.formulario.get('desde'), '0000000', -8);  
-        if(this.formulario.value.desde!=null)
+        this.establecerCerosIzq(this.formulario.get('desde'), '0000000', -8);
+        if (this.formulario.value.desde != null)
           return this.appService.validarLongitud(intLimite, this.formulario.value.desde);
 
       case 'hasta':
-        if(!this.formulario.value.desde){
+        if (!this.formulario.value.desde) {
           setTimeout(function () {
             document.getElementById('idDesde').focus();
           }, 20);
           this.toastr.error("El campo Desde es requerido");
-        }else{
+        } else {
           this.validarMayor();
         }
       default:
@@ -307,11 +303,11 @@ export class TalonarioReciboLoteComponent implements OnInit {
     }
   }
   //Valida que el campo Hasta sea mayor al campo Desde
-  private validarMayor(){
-    if(this.formulario.value.desde <= this.formulario.value.hasta && this.formulario.value.hasta!=null){
-    this.establecerCerosIzq(this.formulario.get('hasta'), '0000000', -8);
+  private validarMayor() {
+    if (this.formulario.value.desde <= this.formulario.value.hasta && this.formulario.value.hasta != null) {
+      this.establecerCerosIzq(this.formulario.get('hasta'), '0000000', -8);
       return this.appService.validarLongitud(8, this.formulario.value.hasta);
-    }else{
+    } else {
       this.formulario.get('desde').setValue(null);
       this.formulario.get('hasta').setValue(null);
       setTimeout(function () {
@@ -344,7 +340,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
     }
   }
   //Maneja el cambio en Buscador
-  public cambioTalRecLote(){
+  public cambioTalRecLote() {
     let elemento = this.autocompletado.value;
     this.establecerElemento(elemento);
   }
@@ -359,7 +355,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
     this.establecerElemento(elemento);
   }
   //Establece el elemento en el formulario
-  private establecerElemento(elemento){
+  private establecerElemento(elemento) {
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
     this.empresa.setValue(elemento.empresa.razonSocial);
@@ -382,6 +378,5 @@ export class TalonarioReciboLoteComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  } 
-
+  }
 }

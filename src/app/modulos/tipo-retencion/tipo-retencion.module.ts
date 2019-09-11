@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoRetencionRoutingModule } from './tipo-retencion-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoRetencionComponent } from 'src/app/componentes/tipo-retencion/tipo-retencion.component';
 import { TipoRetencionService } from 'src/app/servicios/tipo-retencion.service';
@@ -26,7 +26,8 @@ import { TipoRetencion } from 'src/app/modelos/tipoRetencion';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
     TipoRetencionService,
