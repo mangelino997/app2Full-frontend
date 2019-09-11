@@ -10,7 +10,9 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
+import { ReporteService } from 'src/app/servicios/reporte.service';
+import { element } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-sucursal-cliente',
@@ -53,14 +55,17 @@ export class SucursalClienteComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'cliente', 'nombre', 'domicilio', 'barrio', 'localidad', 'telefonoFijo', 'telefonoMovil', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'CLIENTE', 'NOMBRE', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: SucursalClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService,
     private clienteServicio: ClienteService, private barrioServicio: BarrioService,
-    private localidadServicio: LocalidadService, private loaderService: LoaderService) {
+    private localidadServicio: LocalidadService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -215,6 +220,7 @@ export class SucursalClienteComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -231,7 +237,9 @@ export class SucursalClienteComponent implements OnInit {
       this.servicio.listarPorCliente(elemento.id).subscribe(
         res => {
           if(this.indiceSeleccionado == 5) {
-            this.listaCompleta = res.json();
+            this.listaCompleta = new MatTableDataSource(res.json());
+            this.listaCompleta.paginator = this.paginator;
+            this.listaCompleta.sort = this.sort;
           } else {
             this.sucursales = res.json();
           }
@@ -410,4 +418,36 @@ export class SucursalClienteComponent implements OnInit {
       }
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    console.log(lista);
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          cliente: elemento.cliente.razonSocial,
+          nombre: elemento.nombre,
+          domicilio: elemento.domicilio,
+          barrio: elemento.barrio.nombre,
+          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre,
+          telefonofijo: elemento.telefonoFijo,
+          telefonomovil: elemento.telefonoMovil
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Sucursales Clientes',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

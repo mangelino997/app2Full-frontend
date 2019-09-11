@@ -31,7 +31,7 @@ import { FechaService } from './servicios/fecha.service';
 import { getDutchPaginatorIntl } from './dutch-paginator-intl';
 
 const stompConfig: StompConfig = {
-  url: 'ws://localhost:8080/jitws/socket',
+  url: 'ws://192.168.0.123:8080/jitws/socket',
   // url: 'ws://gestionws.appspot.com:8080/jitws/socket', //LOCAL
   // url: 'ws://rigarws-draimo.appspot.com:8080/jitws/socket', //RIGAR
   // url: 'ws://utews-draimo.appspot.com:8080/jitws/socket', //UTE

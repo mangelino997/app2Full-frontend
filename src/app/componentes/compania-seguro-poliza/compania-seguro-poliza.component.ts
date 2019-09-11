@@ -6,7 +6,7 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CompaniaSeguroPoliza } from 'src/app/modelos/companiaSeguroPoliza';
-import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
@@ -15,6 +15,7 @@ import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { element } from '@angular/core/src/render3';
 import { FechaService} from 'src/app/servicios/fecha.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-compania-seguro-poliza',
@@ -53,9 +54,12 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'empresa', 'numeroPoliza', 'vtoPoliza', 'pdf', 'ver', 'mod', 'eliminar'];
+  public columnas:string[] = ['ID', 'EMPRESA', 'NUMERO POLIZA', 'VTO POLIZA', 'PDF', 'VER', 'EDITAR', 'ELIMINAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -73,7 +77,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     private companiaSeguroServicio: CompaniaSeguroService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaModelo: CompaniaSeguroPoliza, private loaderService: LoaderService,
     private fechaService: FechaService,
-    private pdfServicio: PdfService, public dialog: MatDialog) {
+    private pdfServicio: PdfService, public dialog: MatDialog,
+    private reporteServicio: ReporteService) {
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
@@ -291,6 +296,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -532,4 +538,31 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          empresa: elemento.empresa.razonSocial,
+          numeropoliza: elemento.numeroPoliza,
+          vtopoliza: elemento.vtoPoliza,
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Companias Seguros Polizas',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }
