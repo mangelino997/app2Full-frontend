@@ -15,11 +15,14 @@ export class MensajeExcepcion {
     * DATO DUPLICADO 
     */
 
-    //Defiene codigo de orden venta tarifa y escala
+    //Defiene mensaje de orden venta tarifa y escala
     public static DD_ORDENVENTATARIFA_ESCALA = "Valor de escala existente";
 
-    //Define código de orden venta tarifa y tramo
+    //Define mensaje de orden venta tarifa y tramo
     public static DD_ORDENVENTATARIFA_TRAMO = "Tramo existente";
+
+    //Define mensaje de tarifa
+    public static DD_ORDENVENTATARIFA_TIPOTARIFA = "Tarifa existente en tabla";
 
     /*
     * FIN DATO DUPLICADO

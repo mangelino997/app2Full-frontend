@@ -215,8 +215,6 @@ export class ClienteComponent implements OnInit {
     this.listarCondicionesVentas();
     //Obtiene la lista de sucursales
     this.listarSucursales();
-    //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
     //Obtiene la lista de cobradores
     this.listarCobradores();
     //Obtiene la lista de vendedores
@@ -366,6 +364,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('creditoLimite').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('descuentoFlete').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('descuentoSubtotal').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('esReceptorFCE').setValue(false);
     this.crearCuentasBancarias();
   }
   //Vacia la lista de resultados de autocompletados
@@ -663,6 +662,12 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.vaciarListas();
+    this.establecerSituacionCliente();
+    this.establecerCondicionVenta();
+    this.establecerCobrador();
+    this.establecerVendedor();
+    this.establecerZona();
+    this.establecerRubro();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -744,7 +749,6 @@ export class ClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);

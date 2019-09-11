@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ClienteRoutingModule } from './cliente-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatSidenavModule, MatDividerModule, MatIconModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatSidenavModule, MatDividerModule, MatIconModule, MatButtonModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClienteComponent } from 'src/app/componentes/cliente/cliente.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -26,10 +26,13 @@ import { SituacionClienteService } from 'src/app/servicios/situacion-cliente.ser
 import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service';
 import { CondicionVentaService } from 'src/app/servicios/condicion-venta.service';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
+import { CuentaBancariaDialogoComponent } from 'src/app/componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
+import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
 
 @NgModule({
   declarations: [
-    ClienteComponent
+    ClienteComponent,
+    CuentaBancariaDialogoComponent
   ],
   imports: [
     CommonModule,
@@ -47,6 +50,7 @@ import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service
     MatIconModule,
     MatDividerModule,
     MatButtonModule,
+    MatDialogModule,
     TextMaskModule
   ],
   providers: [
@@ -69,7 +73,11 @@ import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service
     SituacionClienteService,
     CompaniaSeguroService,
     CondicionVentaService,
-    UsuarioEmpresaService
+    UsuarioEmpresaService,
+    CuentaBancariaService
+  ],
+  entryComponents: [
+    CuentaBancariaDialogoComponent
   ]
 })
 export class ClienteModule { }
