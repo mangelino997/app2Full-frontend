@@ -75,36 +75,38 @@
                     </div>
                     <br>
                     <div class="row">
-                        <div class="col-md-12">
-                            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                                <ng-container matColumnDef="numeroCuota">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuota</th>
-                                    <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="fechaVencimiento">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Vencimiento</th>
-                                    <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.fecha}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="importe">
-                                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                                    <td mat-cell *matCellDef="let elemento; let i=index">
-                                        ${{elemento.importe | number: '1.2-2'}}</td>
-                                </ng-container>
-                                <ng-container matColumnDef="mod">
-                                    <th mat-header-cell *matHeaderCellDef>-</th>
-                                    <td mat-cell *matCellDef="let elemento; let i=index">
-                                        <span class="cursor-color" (click)="activarActualizar(elemento, i)">Mod</span>
-                                    </td>
-                                </ng-container>
-                                <ng-container matColumnDef="eliminar">
-                                    <th mat-header-cell *matHeaderCellDef>-</th>
-                                    <td mat-cell *matCellDef="let elemento; let i=index">
-                                        <span class="cursor-color-rojo" (click)="activarEliminar(i)">Quitar</span>
-                                    </td>
-                                </ng-container>
-                                <tr mat-header-row *matHeaderRowDef="columnasPercepcion"></tr>
-                                <tr mat-row *matRowDef="let row; columns: columnasPercepcion;"></tr>
-                            </table>
+                        <div class="tabla">
+                            <div class="tabla-ancho">
+                                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                                    <ng-container matColumnDef="numeroCuota">
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuota</th>
+                                        <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="fechaVencimiento">
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Vencimiento</th>
+                                        <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.fecha}}</td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="importe">
+                                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                                        <td mat-cell *matCellDef="let elemento; let i=index">
+                                            ${{elemento.importe | number: '1.2-2'}}</td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="mod">
+                                        <th mat-header-cell *matHeaderCellDef>-</th>
+                                        <td mat-cell *matCellDef="let elemento; let i=index">
+                                            <span class="cursor-color" (click)="activarActualizar(elemento, i)">Mod</span>
+                                        </td>
+                                    </ng-container>
+                                    <ng-container matColumnDef="eliminar">
+                                        <th mat-header-cell *matHeaderCellDef>-</th>
+                                        <td mat-cell *matCellDef="let elemento; let i=index">
+                                            <span class="cursor-color-rojo" (click)="activarEliminar(i)">Quitar</span>
+                                        </td>
+                                    </ng-container>
+                                    <tr mat-header-row *matHeaderRowDef="columnasPercepcion"></tr>
+                                    <tr mat-row *matRowDef="let row; columns: columnasPercepcion;"></tr>
+                                </table>
+                            </div>
                         </div>
                     </div>
                     <br>

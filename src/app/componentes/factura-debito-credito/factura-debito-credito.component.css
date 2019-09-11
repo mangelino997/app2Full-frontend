@@ -20,3 +20,11 @@ legend.scheduler-border {
 .tabla-ancho {
     width: 1920px !important;
 }
+.tabla-vencimientos {
+    width: 100%;
+    height: 250px !important;
+    overflow: auto !important;
+}
+.tabla-vencimientos-ancho {
+    width: 1280px !important;
+}

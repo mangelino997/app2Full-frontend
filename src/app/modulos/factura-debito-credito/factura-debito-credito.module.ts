@@ -25,6 +25,7 @@ import { TipoPercepcionService } from 'src/app/servicios/tipo-percepcion.service
 import { MesService } from 'src/app/servicios/mes.service';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
 import { CompraComprobanteVencimientoService } from 'src/app/servicios/compra-comprobante-vencimiento.service';
+import { CompraComprobanteVencimiento } from 'src/app/modelos/compra-comprobante-vencimiento';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { CompraComprobanteVencimientoService } from 'src/app/servicios/compra-co
     MatButtonModule,
     MatDialogModule,
     MatDividerModule,
-    TextMaskModule
+    TextMaskModule,
+    
   ],
   providers: [
     CondicionCompraService,
@@ -67,7 +69,8 @@ import { CompraComprobanteVencimientoService } from 'src/app/servicios/compra-co
     TipoPercepcionService,
     MesService,
     ProvinciaService,
-    CompraComprobanteVencimientoService
+    CompraComprobanteVencimientoService,
+    CompraComprobanteVencimiento
   ],
   entryComponents: [
     AgregarItemDialogo,

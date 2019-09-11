@@ -38,16 +38,18 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
   public pestaniaActual: string = null;
-  //Define si mostrar el autocompletado
+  //Define si muestra el autocompletado
   public mostrarAutocompletado: boolean = null;
   //Define una de las condiciones para el boton de la pestaña (cuando "importe"/"deduccionGeneral" no es nulos)
   public condicion: boolean = false;
   //Define si el campo es de solo lectura
   public soloLectura: boolean = false;
-  //Define si mostrar el boton
+  //Define si muestra el boton
   public mostrarBoton: boolean = null;
-  //Define si mostrar el boton de vencimientos
+  //Define si muestra el boton de vencimientos
   public mostrarBotonVencimiento: boolean = null;
+  //Define si muestra el boton agregar item
+  public btnAgregarItem: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -252,6 +254,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.formulario.get('empresa').setValue(empresa);
     this.formulario.get('sucursal').setValue(sucursal);
     this.formulario.get('usuarioAlta').setValue(usuarioAlta);
+    this.controlaCamposVacios();
     console.log(this.formulario.value);
     this.compraComprobanteService.agregar(this.formulario.value).subscribe(
       res => {
@@ -266,6 +269,20 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       }
     );
   }
+  //Controla los campos que estan en nulos
+  private controlaCamposVacios(){
+    console.log(this.formulario.value.importePercepcion , this.formulario.value.importeSaldo);
+    if(this.formulario.value.importePercepcion == null || this.formulario.value.importePercepcion == undefined)
+      this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(this.formulario.value.importeSaldo == null || this.formulario.value.importeSaldo == undefined)
+      this.formulario.get('importeSaldo').setValue(this.appService.establecerDecimales('0.00', 2));
+    if(this.formulario.value.compraComprobantePercepciones == null || this.formulario.value.compraComprobantePercepciones == undefined)
+      this.formulario.get('compraComprobantePercepciones').setValue([]);
+    if(this.formulario.value.compraComprobanteVencimientos == null || this.formulario.value.compraComprobanteVencimientos == undefined)
+      this.formulario.get('compraComprobanteVencimientos').setValue([]);
+    if(this.formulario.value.compraComprobanteItems == null || this.formulario.value.compraComprobanteItems == undefined)
+      this.formulario.get('compraComprobanteItems').setValue([]);
+  }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err.json();
@@ -276,6 +293,17 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     }
     this.toastr.error(respuesta.mensaje);
   }
+  //Controla el campo proveedor
+  public controlAutoVacio(){
+    let elemento = this.formulario.value.proveedor;
+    if(elemento == null || elemento == undefined || elemento == ''){
+      this.btnAgregarItem = false;
+      this.domicilio.reset();
+      this.localidad.reset();
+      this.condicionIVA.reset();
+      this.tipoProveedor.reset();
+    }
+  }
   //Establece los valores segun el proveedor seleccionado
   public establecerValores(elemento) {
     let localidad = elemento.localidad.nombre + ',' + elemento.localidad.provincia.nombre
@@ -283,10 +311,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.localidad.setValue(localidad);
     this.condicionIVA.setValue(elemento.afipCondicionIva.nombre);
     this.tipoProveedor.setValue(elemento.tipoProveedor.nombre);
-    this.domicilio.disable();
-    this.localidad.disable();
-    this.condicionIVA.disable();
-    this.tipoProveedor.disable();
+    this.btnAgregarItem = true;
     this.formulario.get('condicionCompra').setValue(elemento.condicionCompra);
     if (elemento.condicionCompra.id == 1)
       this.mostrarBotonVencimiento = true;
@@ -448,7 +473,8 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       width: '95%',
       maxWidth: '100vw',
       data: {
-        proveedor: this.formulario.value.proveedor
+        proveedor: this.formulario.value.proveedor,
+        cantidadItem: this.listaCompleta.data.length
       },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -494,7 +520,8 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       maxWidth: '100vw',
       data: {
         proveedor: this.formulario.value.proveedor,
-        importeTotal: this.formulario.value.importeTotal
+        importeTotal: this.formulario.value.importeTotal,
+        condicionCompra: this.formulario.value.condicionCompra
       },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -592,6 +619,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.localidad.reset();
     this.condicionIVA.reset();
     this.tipoProveedor.reset();
+    this.btnAgregarItem = false;
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
     this.resultados = [];
@@ -767,7 +795,10 @@ export class AgregarItemDialogo {
   public establecerValores() {
     let insumoProducto = null;
     insumoProducto = this.formulario.get('insumoProducto').value;
-    if (insumoProducto) {
+    if(insumoProducto == '' || insumoProducto == null || insumoProducto == undefined) {
+      this.unidadMedida.reset();
+      this.reestablecerFormulario();
+    }else{
       this.unidadMedida.setValue(insumoProducto.unidadMedida.nombre);
       this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(insumoProducto.itcPorLitro.toString(), 4));
     }
@@ -781,28 +812,25 @@ export class AgregarItemDialogo {
     this.establecerDecimales(this.formulario.get('cantidad'), 2);
     precioUnitario = this.formulario.get('precioUnitario').value;
     cantidad = this.formulario.get('cantidad').value;
-    if (precioUnitario && cantidad) {
+    if(precioUnitario && cantidad) {
       importe = precioUnitario * cantidad;
       this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(importe, 2));
     }
-    if (precioUnitario == null || precioUnitario == undefined || cantidad == null || cantidad == undefined) {
+    if (precioUnitario == null || precioUnitario == '' || cantidad == null || cantidad == '') {
       this.toastr.error("Error al calcular el importe. Campo vacío en 'Precio Unitario' o en 'Cantidad'.");
     }
     this.calcularImporteIVA();
   }
   //Calcula el Importe ITC 
   public calcularImporteITC() {
-    console.log(this.formulario.get('itcPorLitro').value);
-
     let cantidad = null;
     let itcPorLitro = null;
     let importeITC = null;
     let netoITC = null;
     let insumoNetoITC = null;
+    this.establecerDecimales(this.formulario.get('itcPorLitro'), 4);
     cantidad = Number(this.formulario.get('cantidad').value);
     itcPorLitro = Number(this.formulario.get('itcPorLitro').value);
-    // this.establecerDecimales(this.formulario.get('importeITC'), 2);
-    console.log(itcPorLitro);
     if (itcPorLitro == 0 || itcPorLitro == '0.0000' || itcPorLitro == null || itcPorLitro == undefined) {
       this.importeITC.setValue(this.appService.establecerDecimales('0.00', 2));
       this.netoITC.setValue(this.appService.establecerDecimales('0.00', 2));
@@ -825,19 +853,31 @@ export class AgregarItemDialogo {
       this.importeNoGravado.enable();
       this.netoNoGravado.enable();
 
-
       importeITC = itcPorLitro * cantidad;
       insumoNetoITC = Number(this.formulario.value.insumoProducto.itcNeto);
       netoITC = (importeITC * insumoNetoITC) / 100;
-      console.log(importeITC, insumoNetoITC, netoITC);
       this.importeITC.setValue(this.appService.establecerDecimales(importeITC, 2));
       this.formulario.get('importeITC').setValue(this.appService.establecerDecimales(importeITC, 2));
       this.netoITC.setValue(this.appService.establecerDecimales(netoITC, 2));
     }
   }
+  //Controla el cambio en el campo Importe ITC
+  public cambioImporteITC(){
+    let importeITC = null;
+    let netoITC = null;
+    let insumoNetoITC = null;
+    this.establecerDecimales(this.formulario.get('importeITC'), 2);
+    importeITC = this.formulario.get('importeITC').value;
+    if(importeITC == '' || importeITC == '0.00' || importeITC == null){
+      this.netoITC.setValue(this.appService.establecerDecimales('0.00', 2));
+    }else{
+      insumoNetoITC = Number(this.formulario.value.insumoProducto.itcNeto);
+      netoITC = (importeITC * insumoNetoITC) / 100;
+      this.netoITC.setValue(this.appService.establecerDecimales(netoITC, 2));
+    }
+  }
   //Maneja el cambio en el select "Deducir de No Gravado"
   public cambioDeducirNoGravado() {
-    console.log(this.deducirDeNoGravado.value);
     if (this.deducirDeNoGravado.value) {
       this.importeNoGravado.enable();
     } else {
@@ -930,7 +970,6 @@ export class AgregarItemDialogo {
     this.condicionIva.setValue(this.data.proveedor.afipCondicionIva.nombre);
     this.deducirDeNoGravado.setValue(null);
     this.subtotal.setValue(this.appService.establecerDecimales('0.00', 2));
-    //Establece foco
     setTimeout(function () {
       document.getElementById('idInsumoProducto').focus();
     }, 20);
@@ -1235,7 +1274,7 @@ export class DetallePercepcionesDialogo {
     if (opcion == 'aceptar') {
       this.dialogRef.close(this.listaCompleta.data);
     }
-    if (opcion == 'cerrar') {
+    if (opcion == 'cancelar') {
       this.dialogRef.close(null);
     }
   }
@@ -1303,10 +1342,6 @@ export class DetalleVencimientosDialogo {
     this.formularioPorJurisdiccion = this.modeloPorJurisdiccion.formulario;
     //Establece la lista de vencimientos
     console.log(this.data.compraComprobanteVencimientos);
-    // if(this.data.compraComprobanteVencimientos){
-    //   this.listaCompleta = new MatTableDataSource(this.data.compraComprobanteVencimientos);
-    //   this.listaCompleta.sort = this.sort;
-    // }
     //Obtiene la lista de recepciones
     this.listarCondicionesCompra();
     //Inicializa valores por defecto
@@ -1333,7 +1368,7 @@ export class DetalleVencimientosDialogo {
     this.btnAceptar = false;
 
     this.cantidadCuotas.setValue(this.data.proveedor.condicionCompra.cuotas);
-    this.condicionCompra.setValue(this.data.proveedor.condicionCompra);
+    this.condicionCompra.setValue(this.data.condicionCompra);
     this.cantidadCuotas.setValue(this.data.proveedor.condicionCompra.cuotas);
     if (Number(this.data.importeTotal) > 0)
       this.totalComprobante.setValue(this.appService.establecerDecimales(this.data.importeTotal, 2));

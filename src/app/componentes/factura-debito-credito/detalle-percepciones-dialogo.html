@@ -137,7 +137,11 @@
                     </div>
                     <div class="" style="padding-top: 15px;"></div>
                     <div class="row">
-                        <div class="col-md-1">
+                        <div class="col-md-1" *ngIf="listaCompletaPorJurisdiccion.data.length == 0">
+                            <button id="idBoton" mat-raised-button color="primary" [disabled]="!this.formulario.valid"
+                                (click)="agregarPercepcion()">Agregar</button>
+                        </div>
+                        <div class="col-md-1" *ngIf="listaCompletaPorJurisdiccion.data.length >0">
                             <button id="idBoton" mat-raised-button color="primary"
                                 (click)="controlarAgregarPercepcion()">Agregar</button>
                         </div>
@@ -185,7 +189,7 @@
                 <button id="idBoton" mat-raised-button color="primary" *ngIf="!show"
                     (click)="closeDialog('aceptar')">Aceptar</button>
                 <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show"
-                    (click)="closeDialog('cerrar')">Cerrar</button>
+                    (click)="closeDialog('cancelar')">Cancelar</button>
             </div>
         </div>
         <div class="row" *ngIf="show">
