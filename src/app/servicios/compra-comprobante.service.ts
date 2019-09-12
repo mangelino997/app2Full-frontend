@@ -50,6 +50,11 @@ export class CompraComprobanteService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de registros
+  public listarPorFiltros(idEmpresa, idProveedor, tipoFecha, fechaDesde, fechaHasta, tipoComprobante) {
+    return this.http.get(this.url + '/listarPorFiltros/' + idEmpresa + '/' + idProveedor + '/' + tipoFecha + '/' + fechaDesde + '/' +
+    fechaHasta + '/' + tipoComprobante , this.options);
+  }
   //Verifica Unicidad en el Comprobante
   public verificarUnicidadComprobante(idProveedor, codigoAfip, puntoVenta, numero) {
     return this.http.get(this.url + '/verificarUnicidadComprobante/' + idProveedor + '/' + codigoAfip + '/' + puntoVenta + '/' + numero, this.options);

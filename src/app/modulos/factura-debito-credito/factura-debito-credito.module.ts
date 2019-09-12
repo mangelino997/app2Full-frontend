@@ -6,7 +6,7 @@ import { FacturaDebitoCreditoRoutingModule } from './factura-debito-credito-rout
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { FacturaDebitoCreditoComponent, AgregarItemDialogo, DetallePercepcionesDialogo, DetalleVencimientosDialogo } from 'src/app/componentes/factura-debito-credito/factura-debito-credito.component';
+import { FacturaDebitoCreditoComponent, AgregarItemDialogo, DetallePercepcionesDialogo, DetalleVencimientosDialogo, DetalleCompraComprobantesDialogo } from 'src/app/componentes/factura-debito-credito/factura-debito-credito.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { CondicionCompraService } from 'src/app/servicios/condicion-compra.service';
 import { FacturaDebitoCredito } from 'src/app/modelos/facturaDebitoCredito';
@@ -32,7 +32,9 @@ import { CompraComprobanteVencimiento } from 'src/app/modelos/compra-comprobante
     FacturaDebitoCreditoComponent,
     AgregarItemDialogo,
     DetallePercepcionesDialogo,
-    DetalleVencimientosDialogo
+    DetalleVencimientosDialogo,
+    DetalleCompraComprobantesDialogo
+
   ],
   imports: [
     CommonModule,
@@ -75,7 +77,8 @@ import { CompraComprobanteVencimiento } from 'src/app/modelos/compra-comprobante
   entryComponents: [
     AgregarItemDialogo,
     DetallePercepcionesDialogo,
-    DetalleVencimientosDialogo
+    DetalleVencimientosDialogo,
+    DetalleCompraComprobantesDialogo
   ]
 })
 export class FacturaDebitoCreditoModule { }
