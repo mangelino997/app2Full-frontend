@@ -7,6 +7,14 @@ export class MensajeExcepcion {
 
     public static ERROR_INTERNO_SERVIDOR = "Error interno en el servidor";
 
+    public static AGREGADO = "Registro agregado con éxito";
+
+    public static ACTUALIZADO = "Registro actualizado con éxito";
+
+    public static ELIMINADO = "Registro eliminado con éxito";
+
+    public static NO_ELIMINADO = "No se pudo eliminar el registro";
+
     /*
     * FIN ERRORES GENERALES
     */

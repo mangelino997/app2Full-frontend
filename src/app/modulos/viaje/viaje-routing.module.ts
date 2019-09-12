@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ViajeComponent } from 'src/app/componentes/viaje/viaje.component';
-import { ViajeTramoComponent, DadorDestinatarioDialogo } from 'src/app/componentes/viaje/viaje-tramo/viaje-tramo.component';
+import { ViajeTramoComponent, DadorDestinatarioDialogo, DadorDestTablaDialogo } from 'src/app/componentes/viaje/viaje-tramo/viaje-tramo.component';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatProgressSpinnerModule, MatCardModule, MatStepperModule, MatIconModule, MatCheckboxModule, MatButtonModule, MatTooltipModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -48,6 +48,8 @@ import { ViajeTramoClienteService } from 'src/app/servicios/viaje-tramo-cliente.
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { ObservacionesDialogo } from 'src/app/componentes/viaje/observaciones-dialogo.component';
 import { AnularDialogo } from 'src/app/componentes/viaje/anular-dialogo.component';
+import { NormalizarDialogo } from 'src/app/componentes/viaje/normalizar-dialogo.component';
+import { ConfirmarDialogoComponent } from 'src/app/componentes/confirmar-dialogo/confirmar-dialogo.component';
 
 const routes: Routes = [
   {path: '', component: ViajeComponent}
@@ -65,7 +67,10 @@ const routes: Routes = [
     ViajePeajeComponent,
     DadorDestinatarioDialogo,
     ObservacionesDialogo,
-    AnularDialogo
+    AnularDialogo,
+    NormalizarDialogo,
+    ConfirmarDialogoComponent,
+    DadorDestTablaDialogo
   ],
   imports: [
     CommonModule,
@@ -128,7 +133,10 @@ const routes: Routes = [
   entryComponents: [
     DadorDestinatarioDialogo,
     ObservacionesDialogo,
-    AnularDialogo
+    AnularDialogo,
+    NormalizarDialogo,
+    ConfirmarDialogoComponent,
+    DadorDestTablaDialogo
   ],
   exports: [RouterModule]
 })

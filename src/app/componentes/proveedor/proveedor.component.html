@@ -244,7 +244,7 @@
                   </div>
                   <div class="row">
                     <div class="col-md-8">
-                      <h6>Asignar Plan de Cuenta a Empresas</h6>
+                      <h6>Asignar Cuenta Contable</h6>
                       <table mat-table [dataSource]="planesCuentas" matSort class="mat-elevation-z1">
                         <ng-container matColumnDef="empresa">
                           <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
@@ -326,7 +326,7 @@
                     </div>
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
-                        <label for="idNumeroCBU" class="tamanio-label">N° de CBU</label>
+                        <label for="idNumeroCBU" class="tamanio-label">N° de CBU/CVU</label>
                         <input id="idNumeroCBU" type="text" formControlName="numeroCBU" autocomplete="off"
                           class="form-control form-control-sm number-right" [textMask]="mascararEnteros(22)"
                           [readonly]="soloLectura">

@@ -121,11 +121,11 @@
         <div class="col-md-6">
             <div class="inline">
                 <button class="margin-left-3" mat-raised-button (click)="verDadorDestinatarioDialogo()"
-                    [disabled]="soloLecturaDadorDestinatario">
+                    [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
                     Dador-Destinatario
                 </button>
-                <button class="margin-left-3" mat-raised-button
-                    (click)="abrirObservacionesDialogo()">Observaciones</button>
+                <button class="margin-left-3" mat-raised-button (click)="abrirObservacionesDialogo()" 
+                    [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">Observaciones</button>
                 <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarTramo()"
                     [disabled]="!formularioViajeTramo.valid"
                     *ngIf="btnTramo && !soloLectura && listaTramos.length > 0 && !show">Agregar Tramo
