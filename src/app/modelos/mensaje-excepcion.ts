@@ -13,6 +13,8 @@ export class MensajeExcepcion {
 
     public static ELIMINADO = "Registro eliminado con éxito";
 
+    public static NO_ELIMINADO = "No se pudo eliminar el registro";
+
     /*
     * FIN ERRORES GENERALES
     */
