@@ -181,7 +181,7 @@
                 <br>
                 <div class="row justify-content-center">
                     <button mat-raised-button color="primary" (click)="finalizar()"
-                        [disabled]="estadoFormulario">Agregar</button>
+                        [disabled]="estadoFormulario" *ngIf="indiceSeleccionado != 2">{{pestaniaActual}}</button>
                 </div>
                 <br>
             </mat-step>
