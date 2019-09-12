@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ClienteRoutingModule } from './cliente-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatSidenavModule, MatDividerModule, MatIconModule, MatButtonModule, MatDialogModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatSidenavModule, MatDividerModule, MatIconModule, MatButtonModule, MatDialogModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClienteComponent } from 'src/app/componentes/cliente/cliente.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -51,6 +51,7 @@ import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service
     MatDividerModule,
     MatButtonModule,
     MatDialogModule,
+    MatTooltipModule,
     TextMaskModule
   ],
   providers: [
