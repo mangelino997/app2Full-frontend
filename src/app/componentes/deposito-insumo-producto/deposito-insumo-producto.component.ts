@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
@@ -9,6 +9,7 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { DepositoInsumoProductoService } from 'src/app/servicios/deposito-insumo-producto.service';
 import { DepositoInsumoProducto } from 'src/app/modelos/depositoInsumoProducto';
 import { LoaderState } from 'src/app/modelos/loader';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-deposito-insumo-producto',
@@ -43,12 +44,16 @@ public show = false;
 //Define la subscripcion a loader.service
 private subscription: Subscription;
 //Define las columnas de la tabla
-public columnas: string[] = ['id', 'nombre', 'esPropio', 'ver', 'mod'];
+public columnas:string[] = ['ID', 'NOMBRE', 'ES PROPIO', 'VER', 'EDITAR'];
+public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
 //Define la matSort
 @ViewChild(MatSort) sort: MatSort;
+//Define la paginacion
+@ViewChild(MatPaginator) paginator: MatPaginator;
 //Constructor
 constructor(private servicio: DepositoInsumoProductoService, private subopcionPestaniaService: SubopcionPestaniaService,
-  private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private modelo: DepositoInsumoProducto) {
+  private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private modelo: DepositoInsumoProducto,
+  private reporteServicio: ReporteService) {
   //Obtiene la lista de pestania por rol y subopcion
   this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
@@ -164,6 +169,7 @@ private listar() {
     res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
+      this.listaCompleta.paginator = this.paginator;
       this.loaderService.hide();
     },
     err => {
@@ -287,4 +293,31 @@ public manejarEvento(keycode) {
     }
   }
 }
+//Prepara los datos para exportar
+private prepararDatos(listaCompleta): Array<any> {
+  let lista = listaCompleta;
+  let datos = [];
+  lista.forEach(elemento => {
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        espropio: elemento.esPropio ? 'Si' : 'No'
+      }
+      datos.push(f);
+      ['ID', 'NOMBRE', 'ES PROPIO', 'VER', 'EDITAR']
+  });
+  return datos;
+}
+//Abre el dialogo de reporte
+public abrirReporte(): void {
+  let lista = this.prepararDatos(this.listaCompleta.data);
+  let datos = {
+    nombre: 'Depositos Insumos Productos',
+    empresa: this.appService.getEmpresa().razonSocial,
+    usuario: this.appService.getUsuario().nombre,
+    datos: lista,
+    columnas: this.columnasSeleccionadas
+  }
+  this.reporteServicio.abrirDialogo(datos);
+} 
 }

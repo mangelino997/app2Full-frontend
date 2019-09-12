@@ -11,7 +11,8 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-producto',
@@ -58,14 +59,17 @@ export class ProductoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'marca', 'modelo', 'rubro', 'esAsignable', 'esSerializable', 'esCritico', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'MARCA', 'MODELO', 'RUBRO', 'ES ASIGNABLE', 'ES SERIALIZABLE', 'ES CRITICO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private appService: AppService, private producto: Producto, private servicio: ProductoService,
     private subopcionPestaniaService: SubopcionPestaniaService, private rubrosServicio: RubroProductoService,
     private unidadMedidaServicio: UnidadMedidaService, private marcaServicio: MarcaProductoService, private toastr: ToastrService,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(res => {
@@ -124,6 +128,7 @@ export class ProductoComponent implements OnInit {
         console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -389,4 +394,35 @@ export class ProductoComponent implements OnInit {
       formulario.setValue(this.appService.establecerDecimales(formulario.value, cantidad));
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          marca: elemento.marcaProducto.nombre,
+          modelo: elemento.modelo,
+          rubro: elemento.rubroProducto.nombre,
+          esasignable: elemento.esAsignable ? 'Si' : 'No',
+          esserializable: elemento.esSerializable ? 'Si' : 'No',
+          escritico: elemento.esCritico ? 'Si' : 'No'
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Insumos/Productos',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }
