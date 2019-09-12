@@ -8,11 +8,12 @@ import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ChoferProveedor } from 'src/app/modelos/choferProveedor';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-chofer-proveedor',
@@ -57,15 +58,18 @@ export class ChoferProveedorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'proveedor', 'tipoDocumento', 'numeroDocumento', 'localidad', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'PROVEEDOR', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'LOCALIDAD', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ChoferProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private choferProveedor: ChoferProveedor, private appService: AppService, private toastr: ToastrService, 
     private proveedorServicio: ProveedorService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private tipoDocumentoServicio: TipoDocumentoService,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
@@ -252,6 +256,7 @@ export class ChoferProveedorComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
       },
       err => {
         console.log(err);
@@ -450,4 +455,34 @@ export class ChoferProveedorComponent implements OnInit {
       }
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(resultados): Array<any> {
+    let lista = resultados;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          proveedor: elemento.proveedor.razonSocial,
+          tipodocumento: elemento.tipoDocumento.nombre,
+          numerodocumento: elemento.numeroDocumento,
+          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.resultados.data);
+    let datos = {
+      nombre: 'Choferes Proveedores',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    console.log(lista);
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

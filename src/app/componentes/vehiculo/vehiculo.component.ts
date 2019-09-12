@@ -15,10 +15,11 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
-import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
 import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service';
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-vehiculo',
@@ -91,10 +92,13 @@ export class VehiculoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'tipoVehiculo', 'dominio', 'marcaVehiculo', 'configuracion', 'compañiaSeguro', 'poliza', 'pdfTitulo', 
-                              'pdfCedulaIdent', 'pdfVtoRuta', 'pdfInspTecnica', 'pdfVtoSenasa', 'pdfHabBromat', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'TIPO VEHICULO', 'DOMINIO', 'MARCA VEHICULO', 'CONFIGURACION', 'COMPAÑIA SEGURO', 'POLIZA', 'PDF TITULO', 
+                              'PDF CEDULA IDENT', 'PDF VTO RUTA', 'PDF INSP TECNICA', 'PDF VTO SENASA', 'PDF HAB BROMAT', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: VehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService,
@@ -102,7 +106,7 @@ export class VehiculoComponent implements OnInit {
     private localidadServicio: LocalidadService, private empresaServicio: EmpresaService,
     private companiaSeguroPolizaServicio: CompaniaSeguroPolizaService, private companiaSeguroService: CompaniaSeguroService,
     private configuracionVehiculoServicio: ConfiguracionVehiculoService, private pdfServicio: PdfService,  public dialog: MatDialog,
-    private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService) {
+    private personalServicio: PersonalService, private vehiculoModelo: Vehiculo, private appService: AppService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -418,6 +422,7 @@ export class VehiculoComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -718,4 +723,42 @@ public readURL(event, campo): void {
   public mascararNumero(limit) {
     return this.appService.mascararEnteros(limit);
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    console.log("hola");
+    console.log(listaCompleta);
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          tipovehiculo: elemento.configuracionVehiculo.tipoVehiculo.nombre,
+          dominio: elemento.dominio,
+          marcavehiculo: elemento.configuracionVehiculo.marcaVehiculo.nombre,
+          configuracion: elemento.configuracionVehiculo.descripcion,
+          compañiaseguro: elemento.companiaSeguroPoliza.companiaSeguro.nombre,
+          poliza: elemento.companiaSeguroPoliza.numeroPoliza,
+          pdftitulo: elemento.pdfTitulo ? elemento.pdfTitulo.nombre : '',
+          pdfcedulaident: elemento.pdfCedulaIdent ? elemento.pdfCedulaIdent.nombre : '',
+          pdfvtoruta: elemento.pdfVtoRuta ? elemento.pdfVtoRuta.nombre : '',
+          pdfinsptecnica: elemento.pdfVtoInspTecnica ? elemento.pdfVtoInspTecnica.nombre : '',
+          pdfvtosenasa: elemento.pdfVtoSenasa ? elemento.pdfVtoSenasa.nombre : '',
+          pdfhabbromat: elemento.pdfHabBromat ? elemento.pdfHabBromat.nombre : ''
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Vehiculos',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

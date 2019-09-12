@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AgendaTelefonicaService } from '../../servicios/agenda-telefonica.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { LocalidadService } from '../../servicios/localidad.service';
-import { AppComponent } from '../../app.component';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
@@ -11,6 +10,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { AppService } from 'src/app/servicios/app.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-agendatelefonica',
@@ -274,7 +274,25 @@ export class AgendaTelefonicaComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    let id = this.formulario.value.id;
+    this.servicio.eliminar(id).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.reestablecerFormulario(undefined);
+        setTimeout(function () {
+          document.getElementById('idAutocompletado').focus();
+        }, 20);
+        if(respuesta.codigo == 200) {
+          this.toastr.success(MensajeExcepcion.ELIMINADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        this.loaderService.hide();
+      }
+    );
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {

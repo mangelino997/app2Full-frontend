@@ -5,12 +5,13 @@ import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
 import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { configuracionVehiculo } from 'src/app/modelos/configuracionVehiculo';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-configuracion-vehiculo',
@@ -44,10 +45,13 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public tiposVehiculos: Array<any> = [];
   //Define la lista de marcas de vehiculos
   public marcasVehiculos: Array<any> = [];
-  //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'tipoVehiculo', 'marcaVehiculo', 'modelo', 'cantidadEjes', 'capacidadCarga', 'ver', 'mod'];
+   //Define las columnas de la tabla
+   public columnas: string[] = ['ID', 'TIPO VEHICULO', 'MARCA VEHICULO', 'MODELO', 'CANTIDAD EJES', 'CAPACIDAD CARGA', 'VER', 'EDITAR'];
+   public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -58,7 +62,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   constructor(private servicio: ConfiguracionVehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private appService: AppService,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
-    private loaderService: LoaderService, private configuracionVehiculo: configuracionVehiculo) {
+    private loaderService: LoaderService, private configuracionVehiculo: configuracionVehiculo, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -210,6 +214,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -381,4 +386,33 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       }
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          tipovehiculo: elemento.tipoVehiculo.nombre,
+          marcavehiculo: elemento.marcaVehiculo.nombre,
+          modelo: elemento.modelo,
+          cantidadejes: elemento.cantidadEjes,
+          capacidadcarga: elemento.capacidadCarga
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Configuraciones Vehiculos',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

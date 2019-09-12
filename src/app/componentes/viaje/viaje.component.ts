@@ -22,6 +22,7 @@ import { Viaje } from 'src/app/modelos/viaje';
 import { ViajeService } from 'src/app/servicios/viaje.service';
 import { VehiculoProveedorService } from 'src/app/servicios/vehiculo-proveedor.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-viaje',
@@ -150,10 +151,6 @@ export class ViajeComponent implements OnInit {
     this.seleccionarOpcion(22, 0);
     //Obtiene la lista de sucursales
     this.listarSucursales();
-    //Reestablece el formulario
-    this.reestablecerFormulario();
-    //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Vehiculo - Buscar por alias
@@ -211,6 +208,14 @@ export class ViajeComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario() {
     this.formularioViaje.reset();
+    this.formularioViajeTramo.reset();
+    this.formularioViajeCombustible.reset();
+    this.formularioViajeEfectivo.reset();
+    this.formularioViajeInsumo.reset();
+    this.formularioViajeRemito.reset();
+    this.formularioViajeGasto.reset();
+    this.formularioViajePeaje.reset();
+    this.estadoFormulario = true;
   }
   //Establece el formulario y listas al seleccionar un elemento del autocompletado
   public cambioAutocompletado(): void {
@@ -311,10 +316,9 @@ export class ViajeComponent implements OnInit {
       this.viajeInsumoComponente.reestablecerFormulario();
       this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
-    // if(this.viajeRemitoGSComponente){
-    //   this.viajeRemitoGSComponente.reestablecerFormulario();
-    //   // this.viajeRemitoGSComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
-    // }
+    if(this.viajeRemitoGSComponente){
+      this.viajeRemitoGSComponente.reestablecerFormularioGS(this.indiceSeleccionado);
+    }
     if (this.viajeGastoComponente) {
       this.viajeGastoComponente.reestablecerFormulario();
       this.viajeGastoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
@@ -505,7 +509,17 @@ export class ViajeComponent implements OnInit {
     } else {
       document.getElementById('idAutocompletado').focus();
     }
-    this.toastr.success('Registro agregado con éxito');
+    switch(this.indiceSeleccionado) {
+      case 1:
+        this.toastr.success(MensajeExcepcion.AGREGADO);
+        break;
+      case 3:
+        this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+        break;
+      case 4:
+        this.toastr.success(MensajeExcepcion.ELIMINADO);
+        break;
+    }
   }
   //Verifica el estado del formulario
   public obtenerEstadoFormulario(formulario, estado) {

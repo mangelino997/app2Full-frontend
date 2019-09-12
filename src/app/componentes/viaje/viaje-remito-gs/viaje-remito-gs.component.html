@@ -94,8 +94,12 @@
     </div>
   </div>
   <div class="row">
-    <button mat-raised-button color="primary" (click)="asignarRemitos()" *ngIf="!tipoRemitos">Asignar</button>
-    <button mat-raised-button color="primary" (click)="quitarRemitos()" *ngIf="tipoRemitos">Quitar</button>
+    <div *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
+      <button mat-raised-button color="primary" (click)="asignarRemitos()" *ngIf="!tipoRemitos" 
+        [disabled]="listaCompleta.data.length == 0">Asignar</button>
+      <button mat-raised-button color="primary" (click)="quitarRemitos()" *ngIf="tipoRemitos" 
+        [disabled]="listaCompleta.data.length == 0">Quitar</button>
+    </div>
     <span class="spacer"></span>
     <button mat-raised-button [color]="tipoRemitos ? 'accent' : 'primary'" (click)="verPendientes()">Pendientes</button>
     <button class="margin-left-3" mat-raised-button [color]="tipoRemitos ? 'primary' : 'accent'" (click)="verAsignados()">Asignados</button>

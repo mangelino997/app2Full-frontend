@@ -12,7 +12,6 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
-import { element } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-sucursal-cliente',
@@ -99,6 +98,7 @@ export class SucursalClienteComponent implements OnInit {
     //Autocompletado - Buscar por alias cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
+        // this.cambioAutocompletado();
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClientes = response;
         })
@@ -129,6 +129,20 @@ export class SucursalClienteComponent implements OnInit {
       });
     //Obtiene la lista completa de registros
     // this.listar();
+  }
+  //Al cambiar el campo autocompletado, borra formulario y lista
+  public cambioAutocompletado(elemento): void {
+    if(this.indiceSeleccionado != 1 && typeof elemento == 'string') {
+      this.formulario.get('id').reset();
+      this.formulario.get('nombre').reset();
+      this.formulario.get('domicilio').reset();
+      this.formulario.get('barrio').reset();
+      this.formulario.get('localidad').reset();
+      this.formulario.get('telefonoFijo').reset();
+      this.formulario.get('telefonoMovil').reset();
+      this.autocompletado.reset();
+      this.sucursales = [];
+    }
   }
   //Establece el formulario
   public establecerFormulario(): void {

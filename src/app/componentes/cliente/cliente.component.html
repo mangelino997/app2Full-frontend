@@ -36,9 +36,8 @@
                     <div class="col-md-6">
                       <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
                         <label for="idAutocompletado" class="tamanio-label">Buscar Cliente</label>
-                        <input id="idAutocompletado" class="form-control form-control-sm"
-                          autocomplete="off" type="text" matInput [formControl]="autocompletado"
-                          [matAutocomplete]="auto"
+                        <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off" type="text"
+                          matInput [formControl]="autocompletado" [matAutocomplete]="auto"
                           placeholder="Buscar por id, razón social, nombre de fantasía o número de documento">
                         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)"
                           (optionSelected)="establecerFormulario()">
@@ -114,7 +113,7 @@
                     <div class="col-md-3">
                       <div class="form-group has-float-label">
                         <label for="idLocalidad" class="tamanio-label">Localidad *</label>
-                        <input id="idLocalidad" class="form-control form-control-sm" type="text" 
+                        <input id="idLocalidad" class="form-control form-control-sm" type="text"
                           [formControl]="formulario.get('localidad')" [matAutocomplete]="autoLocalidad"
                           autocomplete="off" [readonly]="soloLectura"
                           (blur)="verificarSeleccion(formulario.get('localidad'))">
@@ -465,7 +464,8 @@
                           <ng-container matColumnDef="banco">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
                             <td mat-cell *matCellDef="let elemento">
-                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.banco.nombre : null}}</td>
+                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.banco.nombre : null}}
+                            </td>
                           </ng-container>
                           <ng-container matColumnDef="sucursal">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
@@ -522,75 +522,81 @@
     </mat-sidenav-container>
   </div>
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-    <div class="col-md-10">
+    <div class="col-md-12">
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
-      <br>
-      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-        </ng-container>
-        <ng-container matColumnDef="RAZON SOCIAL">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.razonSocial? elemento.razonSocial : '--'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="TIPO DOCUMENTO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
-          <td mat-cell *matCellDef="let elemento">
-            {{elemento.tipoDocumento.nombre? elemento.tipoDocumento.nombre : '--'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="NUMERO DOCUMENTO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.numeroDocumento? elemento.numeroDocumento : '--'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="TELEFONO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.telefono? elemento.telefono : '--'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="DOMICILIO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.domicilio? elemento.domicilio: '--'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="LOCALIDAD">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}}, {{elemento.localidad.provincia.nombre}}
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="VER">
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-              class="cursor-color">ver</span></td>
-        </ng-container>
-        <ng-container matColumnDef="EDITAR">
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-              class="cursor-color">editar</span></td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
-      </table>
-      <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
-    </div>
-    <div class="col-md-2">
-        <div class="row">
-          <div class="col">
-            <div class="form-group has-float-label">
-              <label for="idColumnas" class="tamanio-label">Columnas</label>
-              <mat-select class="form-control form-control-sm" [(ngModel)]="columnasSeleccionadas" multiple>
-                <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
-                  {{itemColumna}}
-                </mat-option>
-              </mat-select>
-            </div>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label for="idColumnas" class="tamanio-label">Columnas</label>
+            <mat-select class="form-control form-control-sm" [(ngModel)]="columnasSeleccionadas" multiple>
+              <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
+                {{itemColumna}}
+              </mat-option>
+            </mat-select>
           </div>
         </div>
-        <div class="row justify-content-end">
-          <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
+        <div class="col-md-8"></div>
+        <div class="col-md-1">
+          <button class="button-full-width" mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
         </div>
       </div>
+      <div class="row">
+        <div class="tabla mat-elevation-z1">
+          <table mat-table [dataSource]="listaCompleta" matSort>
+            <ng-container matColumnDef="ID" sticky>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+            </ng-container>
+            <ng-container matColumnDef="RAZON SOCIAL" sticky>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.razonSocial? elemento.razonSocial : '--'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="TIPO DOCUMENTO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
+              <td mat-cell *matCellDef="let elemento">
+                {{elemento.tipoDocumento.nombre? elemento.tipoDocumento.nombre : '--'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="NUMERO DOCUMENTO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.numeroDocumento? elemento.numeroDocumento : '--'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="TELEFONO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.telefono? elemento.telefono : '--'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="DOMICILIO">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.domicilio? elemento.domicilio: '--'}}</td>
+            </ng-container>
+            <ng-container matColumnDef="LOCALIDAD">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
+              <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}},
+                {{elemento.localidad.provincia.nombre}}
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="EDITAR" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let elemento">
+                <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+                  matTooltip="Consultar" matTooltipPosition="above">
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button class="mat-icon-button-table margin-left-3" *ngIf="!soloLectura"
+                  (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
+          </table>
+        </div>
+        <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
   </div>
 </div>
