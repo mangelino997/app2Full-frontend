@@ -494,8 +494,8 @@ export class ViajeComponent implements OnInit {
   }
   //Finaliza un viaje
   public finalizar(): void {
+    this.reestablecerFormulario();
     this.autocompletado.reset();
-    this.formularioViaje.reset();
     this.obtenerSiguienteId();
     this.establecerValoresPorDefecto();
     this.viajeTramoComponente.finalizar();
