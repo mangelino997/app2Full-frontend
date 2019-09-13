@@ -302,7 +302,7 @@ export class UnidadMedidaComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'UnidadesMedidas',
+      nombre: 'Unidades Medidas',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,

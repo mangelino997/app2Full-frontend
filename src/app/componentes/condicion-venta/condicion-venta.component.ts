@@ -4,11 +4,12 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { CondicionVentaService } from 'src/app/servicios/condicion-venta.service';
 import { CondicionVenta } from 'src/app/modelos/condicion-venta';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-condicion-venta',
@@ -45,9 +46,12 @@ export class CondicionVentaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'esContado', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ES CONTADO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -55,7 +59,7 @@ export class CondicionVentaComponent implements OnInit {
   //Constructor
   constructor(private appService: AppService, private condicionVenta: CondicionVenta, 
     private servicio: CondicionVentaService, private subopcionPestaniaService: SubopcionPestaniaService, 
-    private toastr: ToastrService, private loaderService: LoaderService) {
+    private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -95,6 +99,7 @@ export class CondicionVentaComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -304,4 +309,30 @@ export class CondicionVentaComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          escontado: elemento.esContado ? 'Si' : 'No'
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Condiciones Venta',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

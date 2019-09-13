@@ -301,7 +301,7 @@ export class TipoCuentaBancariaComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Bancarias',
+      nombre: 'Tipos Cuentas Bancarias',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,

@@ -4,11 +4,12 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MonedaService } from 'src/app/servicios/moneda.service';
 import { Moneda } from 'src/app/modelos/moneda';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-moneda',
@@ -47,9 +48,12 @@ export class MonedaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'estaActivo', 'monedaPrincipal', 'codigoAfip', 'simbolo', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ESTA ACTIVO', 'MONEDA PRINCIPAL', 'CODIGO AFIP', 'SIMBOLO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -57,7 +61,7 @@ export class MonedaComponent implements OnInit {
   //Constructor
   constructor(private moneda: Moneda, private monedaServicio: MonedaService,
     private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService,
-    private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService) {
+    private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -188,6 +192,7 @@ export class MonedaComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -353,6 +358,35 @@ export class MonedaComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
+  } 
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          estaactivo: elemento.estaActivo ? 'Si' : 'No',
+          monedaprincipal: elemento.porDefecto ? 'Si' : 'No',
+          codigoafip: elemento.codigoAfip,
+          simbolo: elemento.simbolo
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Monedas',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   } 
 }
 //Componente Cambiar Moneda Principal Dialogo
