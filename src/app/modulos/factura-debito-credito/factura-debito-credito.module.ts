@@ -72,7 +72,7 @@ import { CompraComprobanteVencimiento } from 'src/app/modelos/compra-comprobante
     MesService,
     ProvinciaService,
     CompraComprobanteVencimientoService,
-    CompraComprobanteVencimiento
+    CompraComprobanteVencimiento,
   ],
   entryComponents: [
     AgregarItemDialogo,

@@ -9,22 +9,31 @@ export class RepartoEntrante {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            empresa: new FormControl(),
+            empresaEmision: new FormControl(),
             sucursal: new FormControl(),
+            tipoComprobante: new FormControl(),
             fechaRegistracion: new FormControl(),
+            fechaSalida: new FormControl(),
+            horaSalida: new FormControl('', Validators.required),
+            vehiculo: new FormControl(),
+            vehiculoRemolque: new FormControl(),
             personal: new FormControl(),
+            zona: new FormControl(),
+            observaciones: new FormControl(),
             usuarioAlta: new FormControl(),
-            tipoViaje: new FormControl(),
+            estaCerrada: new FormControl(),
             fechaRegreso: new FormControl('', Validators.required),
             horaRegreso: new FormControl('', Validators.required),
+            vehiculoProveedor: new FormControl(),
+            vehiculoRemolqueProveedor: new FormControl(),
+
             tipoItem: new FormControl(),
             estado: new FormControl(),
             situacion: new FormControl(),
             cobranza: new FormControl(),
             contado: new FormControl(),
             cobranzaContraReembolso: new FormControl('', Validators.required),
-            observaciones: new FormControl(),
-            tipoComprobante: new FormControl('', Validators.required)
+            // tipoComprobante: new FormControl('', Validators.required)
 
         });
     }

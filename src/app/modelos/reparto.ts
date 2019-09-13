@@ -3,41 +3,34 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class Reparto {
     //define un formulario FormGroup
     public formulario: FormGroup;
-    public formularioComprobante: FormGroup;
     //constructor
     constructor() {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            empresa: new FormControl(),
-            sucursal: new FormControl(),
+            empresaEmision: new FormControl(),
+            sucursal: new FormControl('', Validators.required),
+            tipoComprobante: new FormControl('', Validators.required),
             fechaRegistracion: new FormControl(),
+            fechaSalida: new FormControl(),
+            horaSalida: new FormControl(),
+            vehiculo: new FormControl(),
+            vehiculoRemolque: new FormControl('', Validators.required),
             personal: new FormControl(),
+            zona: new FormControl('', Validators.required),
+            observaciones: new FormControl(),
             usuarioAlta: new FormControl(),
             estaCerrada: new FormControl(),
-            tipoViaje: new FormControl(),
-            zona: new FormControl('', Validators.required),
-            vehiculo: new FormControl('', Validators.required),
-            remolque: new FormControl('', Validators.required),
-            chofer: new FormControl('', Validators.required),
+            fechaRegreso: new FormControl(),
+            horaRegreso: new FormControl(),
+            vehiculoProveedor: new FormControl('', Validators.required),
+            vehiculoRemolqueProveedor: new FormControl('', Validators.required),
+            choferProveedor: new FormControl('', Validators.required),
+            proveedor: new FormControl(),
+            afipCondicionIvaProveedor: new FormControl(),
+            usuarioMod: new FormControl(),
             acompaniantes: new FormControl(),
-            fechaSalida: new FormControl('', Validators.required),
-            horaSalida: new FormControl('', Validators.required),
-            observaciones: new FormControl(),
-            tipoItem: new FormControl(),
-            tipoDocumento: new FormControl(),
-            vehiculoProveedor: new FormControl(),
-            choferProveedor: new FormControl(),
-            numeroDocumento: new FormControl(),
-            tipoComprobante: new FormControl('', Validators.required)
-
         });
-        this.formularioComprobante = new FormGroup({
-            tipoComprobante: new FormControl('', Validators.required),
-            puntoVenta: new FormControl(),
-            letra: new FormControl(),
-            numeroComprobante: new FormControl('', Validators.required)
-        })
     }
 }

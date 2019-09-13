@@ -63,37 +63,18 @@ export class RepartoEntranteComponent implements OnInit {
   public bandera:boolean=false;
   
   constructor(
-    private repartoEntrante: RepartoEntrante, private toastr: ToastrService, private appService: AppService,
-    private appComponent: AppComponent, private personalServie: PersonalService, public dialog: MatDialog, 
+    private modelo: RepartoEntrante, private toastr: ToastrService, private appService: AppService,
+    private appComponent: AppComponent, public dialog: MatDialog, 
     private repartoPropioService: RepartoPropioService, private repartoTerceroService: RepartoTerceroService, private retiroDepositoService: RetiroDepositoService,
     private fechaService: FechaService, private repartoPropioComp: RepartoPropioComprobanteService, private repartoTerceroComp: RepartoTerceroComprobanteService,
-    private retiroDepositoComp: RetiroDepositoComprobanteService, private tipoComp: TipoComprobanteService, private ventaComprobante: VentaComprobanteService
+    private retiroDepositoComp: RetiroDepositoComprobanteService
   ) {
-    //Se subscribe al servicio de lista de registros de la Primera Tabla
-    this.repartoPropioService.listaCompleta.subscribe(res => {
-      this.planillasPendientesPropio = res;
-    });
-    this.repartoTerceroService.listaCompleta.subscribe(res => {
-      this.planillasPendientesTercero = res;
-    });
-    this.retiroDepositoService.listaCompleta.subscribe(res => {
-      this.planillasPendientesDeposito = res;
-    });
-    //Se subscribe al servicio de lista de registros de la Segunda Tabla
-    this.repartoPropioComp.listaCompleta.subscribe(res => {
-      this.comprobantesPropio = res;
-    });
-    this.repartoTerceroComp.listaCompleta.subscribe(res => {
-      this.comprobantesTercero = res;
-    });
-    this.retiroDepositoComp.listaCompleta.subscribe(res => {
-      this.comprobantesDeposito = res;
-    });
+    
    }
 
   ngOnInit() {
     //Define el formulario y validaciones
-    this.formulario = this.repartoEntrante.formulario;
+    this.formulario = this.modelo.formulario;
     //Reestablece los valores
     this.reestablecerFormulario(undefined);
     //Establece los valores por defecto
@@ -130,7 +111,7 @@ export class RepartoEntranteComponent implements OnInit {
       this.formatearHora(hora);
     });
     this.tipoViaje.setValue(1);
-    this.cambioTipoViaje();
+    // this.cambioTipoViaje();
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
@@ -144,218 +125,218 @@ export class RepartoEntranteComponent implements OnInit {
     this.formulario.get('horaRegreso').setValue(horaFormateada);
   }
   //Controla el cambio en Tipo de Viaje
-  public cambioTipoViaje(){
-    this.listarPrimerTabla();
-    if(this.tipoViaje.value==3){
-      this.formulario.get('fechaRegreso').disable();
-      this.formulario.get('horaRegreso').disable();
-    }else{
-      this.formulario.get('fechaRegreso').enable();
-      this.formulario.get('horaRegreso').enable();
-    }
-  }
-  //Obtiene la lista de planillas correspondiente
-  public listarPrimerTabla(){
-    switch(this.tipoViaje.value){
-      case 1:
-        this.repartoPropioService.listarPorEstaCerrada(false).subscribe(
-          res=>{
-            console.log(res.json());
-            this.planillasPendientesTercero = [];
-            this.planillasPendientesDeposito = [];
-            this.planillasPendientesPropio = res.json();
-          },
-          err=>{
-            let error = err.json();
-            this.toastr.error(error.mensaje);
-          }
-        )
-        break;
+  // public cambioTipoViaje(){
+  //   this.listarPrimerTabla();
+  //   if(this.tipoViaje.value==3){
+  //     this.formulario.get('fechaRegreso').disable();
+  //     this.formulario.get('horaRegreso').disable();
+  //   }else{
+  //     this.formulario.get('fechaRegreso').enable();
+  //     this.formulario.get('horaRegreso').enable();
+  //   }
+  // }
+  // //Obtiene la lista de planillas correspondiente
+  // public listarPrimerTabla(){
+  //   switch(this.tipoViaje.value){
+  //     case 1:
+  //       this.repartoPropioService.listarPorEstaCerrada(false).subscribe(
+  //         res=>{
+  //           console.log(res.json());
+  //           this.planillasPendientesTercero = [];
+  //           this.planillasPendientesDeposito = [];
+  //           this.planillasPendientesPropio = res.json();
+  //         },
+  //         err=>{
+  //           let error = err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       )
+  //       break;
       
-      case 2:
-        this.repartoTerceroService.listarPorEstaCerrada(false).subscribe(
-          res=>{
-            console.log(res.json());
-            this.planillasPendientesPropio = [];
-            this.planillasPendientesDeposito = [];
-            this.planillasPendientesTercero = res.json();
-          },
-          err=>{
-            let error = err.json();
-            this.toastr.error(error.mensaje);
-          }
-        )
-        break;
+  //     case 2:
+  //       this.repartoTerceroService.listarPorEstaCerrada(false).subscribe(
+  //         res=>{
+  //           console.log(res.json());
+  //           this.planillasPendientesPropio = [];
+  //           this.planillasPendientesDeposito = [];
+  //           this.planillasPendientesTercero = res.json();
+  //         },
+  //         err=>{
+  //           let error = err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       )
+  //       break;
 
-      case 3:
-        this.retiroDepositoService.listarPorEstaCerrada(false).subscribe(
-          res=>{
-            console.log(res.json());
-            this.planillasPendientesPropio = [];
-            this.planillasPendientesTercero = [];
-            this.planillasPendientesDeposito = res.json();
-          },
-          err=>{
-            let error = err.json();
-            this.toastr.error(error.mensaje);
-          }
-        )
-        break;
-    }
-  }
-  //Controla el cambio de Planillas en la primer tabla
-  public cambioPlanilla(id){
-    let fila='fila'+id;
-    let filaSeleccionada=document.getElementsByClassName('planilla-seleccionada');
-    for(let i=0; i< filaSeleccionada.length; i++){
-      filaSeleccionada[i].className="planilla-no-seleccionada";
-    }
-    document.getElementById(fila).className="planilla-seleccionada";
-    this.listarSegundaTabla(id);
-  }
-  //Lista la segunda tabla segun la planilla seleccionada y el tipo de Viaje
-  private listarSegundaTabla(id){
-    switch(this.tipoViaje.value){
-      case 1:
-        for(let i=0; i< this.planillasPendientesPropio.length;i++){
-          if(id==i){
-            console.log(this.planillasPendientesPropio[i].id);
-            this.idPlanillaSeleciconada = this.planillasPendientesPropio[i].id;
-            this.repartoPropioComp.listarComprobantes(this.planillasPendientesPropio[i].id).subscribe(
-              res=>{
-                console.log(res.json());
-                this.comprobantesPropio = res.json();
-                this.comprobantesTercero = [];
-                this.comprobantesDeposito = [];
-              },
-              err=>{
-                let error= err.json();
-                this.toastr.error(error.mensaje);
-              }
-            );
-          }
-        }
-        break;
+  //     case 3:
+  //       this.retiroDepositoService.listarPorEstaCerrada(false).subscribe(
+  //         res=>{
+  //           console.log(res.json());
+  //           this.planillasPendientesPropio = [];
+  //           this.planillasPendientesTercero = [];
+  //           this.planillasPendientesDeposito = res.json();
+  //         },
+  //         err=>{
+  //           let error = err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       )
+  //       break;
+  //   }
+  // }
+  // //Controla el cambio de Planillas en la primer tabla
+  // public cambioPlanilla(id){
+  //   let fila='fila'+id;
+  //   let filaSeleccionada=document.getElementsByClassName('planilla-seleccionada');
+  //   for(let i=0; i< filaSeleccionada.length; i++){
+  //     filaSeleccionada[i].className="planilla-no-seleccionada";
+  //   }
+  //   document.getElementById(fila).className="planilla-seleccionada";
+  //   this.listarSegundaTabla(id);
+  // }
+  // //Lista la segunda tabla segun la planilla seleccionada y el tipo de Viaje
+  // private listarSegundaTabla(id){
+  //   switch(this.tipoViaje.value){
+  //     case 1:
+  //       for(let i=0; i< this.planillasPendientesPropio.length;i++){
+  //         if(id==i){
+  //           console.log(this.planillasPendientesPropio[i].id);
+  //           this.idPlanillaSeleciconada = this.planillasPendientesPropio[i].id;
+  //           this.repartoPropioComp.listarComprobantes(this.planillasPendientesPropio[i].id).subscribe(
+  //             res=>{
+  //               console.log(res.json());
+  //               this.comprobantesPropio = res.json();
+  //               this.comprobantesTercero = [];
+  //               this.comprobantesDeposito = [];
+  //             },
+  //             err=>{
+  //               let error= err.json();
+  //               this.toastr.error(error.mensaje);
+  //             }
+  //           );
+  //         }
+  //       }
+  //       break;
       
-      case 2:
-        this.repartoTerceroComp.listarComprobantes(id).subscribe(
-          res=>{
-            this.comprobantesPropio = [];
-            this.comprobantesTercero = res.json();
-            this.comprobantesDeposito = [];          
-          },
-          err=>{
-            let error= err.json();
-            this.toastr.error(error.mensaje);
-          }
-        );
-        break;
+  //     case 2:
+  //       this.repartoTerceroComp.listarComprobantes(id).subscribe(
+  //         res=>{
+  //           this.comprobantesPropio = [];
+  //           this.comprobantesTercero = res.json();
+  //           this.comprobantesDeposito = [];          
+  //         },
+  //         err=>{
+  //           let error= err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       );
+  //       break;
       
-      case 3:
-        this.retiroDepositoComp.listarComprobantes(id).subscribe(
-          res=>{
-            this.comprobantesPropio = [];
-            this.comprobantesTercero = [];
-            this.comprobantesDeposito = res.json();          
-          },
-          err=>{
-            let error= err.json();
-            this.toastr.error(error.mensaje);
-          }
-        );
-        break;
-    }
-  }
-  //Quitar - Cerrar Reparto
-  public cerrarReparto(idReparto){
-    switch(this.tipoViaje.value){
-      case 1:
-        this.repartoPropioService.cerrarReparto(idReparto).subscribe(
-        res=>{
-            let respuesta= res.json();
-            this.toastr.success(respuesta.mensaje);
-            this.comprobantesPropio = [];
-            },
-            err=>{
-              let error= err.json();
-              this.toastr.error(error.mensaje);
-            }
-          );
-        break;
+  //     case 3:
+  //       this.retiroDepositoComp.listarComprobantes(id).subscribe(
+  //         res=>{
+  //           this.comprobantesPropio = [];
+  //           this.comprobantesTercero = [];
+  //           this.comprobantesDeposito = res.json();          
+  //         },
+  //         err=>{
+  //           let error= err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       );
+  //       break;
+  //   }
+  // }
+  // //Quitar - Cerrar Reparto
+  // public cerrarReparto(idReparto){
+  //   switch(this.tipoViaje.value){
+  //     case 1:
+  //       this.repartoPropioService.cerrarReparto(idReparto).subscribe(
+  //       res=>{
+  //           let respuesta= res.json();
+  //           this.toastr.success(respuesta.mensaje);
+  //           this.comprobantesPropio = [];
+  //           },
+  //           err=>{
+  //             let error= err.json();
+  //             this.toastr.error(error.mensaje);
+  //           }
+  //         );
+  //       break;
       
-      case 2:
-        this.repartoTerceroService.cerrarReparto(idReparto).subscribe(
-          res=>{
-            let respuesta= res.json();
-            this.toastr.success(respuesta.mensaje);
-            this.comprobantesTercero = [];          
-          },
-          err=>{
-            let error= err.json();
-            this.toastr.error(error.mensaje);
-          }
-        );
-        break;
+  //     case 2:
+  //       this.repartoTerceroService.cerrarReparto(idReparto).subscribe(
+  //         res=>{
+  //           let respuesta= res.json();
+  //           this.toastr.success(respuesta.mensaje);
+  //           this.comprobantesTercero = [];          
+  //         },
+  //         err=>{
+  //           let error= err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       );
+  //       break;
       
-      case 3:
-        this.retiroDepositoService.cerrarReparto(idReparto).subscribe(
-          res=>{
-            let respuesta= res.json();
-            this.toastr.success(respuesta.mensaje); 
-            this.comprobantesDeposito = [];       
-          },
-          err=>{
-            let error= err.json();
-            this.toastr.error(error.mensaje);
-          }
-        );
-        break;
-    }
-  } 
-  //Quita un comprobante de la segunda tabla
-  public quitarComprobante(tipoViaje, idComprobante){
-    switch(tipoViaje){
-      case 'propio':
-        this.repartoPropioComp.quitarComprobantes(idComprobante).subscribe(
-          res=>{
-            let respuesta= res.json();
-            this.toastr.success(respuesta.mensaje);
-          },
-          err=>{
-            let error= err.json();
-            this.toastr.error(error.mensaje);
-          }
-        );
-        break;
+  //     case 3:
+  //       this.retiroDepositoService.cerrarReparto(idReparto).subscribe(
+  //         res=>{
+  //           let respuesta= res.json();
+  //           this.toastr.success(respuesta.mensaje); 
+  //           this.comprobantesDeposito = [];       
+  //         },
+  //         err=>{
+  //           let error= err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       );
+  //       break;
+  //   }
+  // } 
+  // //Quita un comprobante de la segunda tabla
+  // public quitarComprobante(tipoViaje, idComprobante){
+  //   switch(tipoViaje){
+  //     case 'propio':
+  //       this.repartoPropioComp.quitarComprobantes(idComprobante).subscribe(
+  //         res=>{
+  //           let respuesta= res.json();
+  //           this.toastr.success(respuesta.mensaje);
+  //         },
+  //         err=>{
+  //           let error= err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       );
+  //       break;
 
-      case 'tercero':
-        this.repartoTerceroComp.quitarComprobantes(idComprobante).subscribe(
-          res=>{
-            let respuesta= res.json();
-            this.toastr.success(respuesta.mensaje);
-          },
-          err=>{
-            let error= err.json();
-            this.toastr.error(error.mensaje);
-          }
-        );
-        break;
+  //     case 'tercero':
+  //       this.repartoTerceroComp.quitarComprobantes(idComprobante).subscribe(
+  //         res=>{
+  //           let respuesta= res.json();
+  //           this.toastr.success(respuesta.mensaje);
+  //         },
+  //         err=>{
+  //           let error= err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       );
+  //       break;
 
-      case 'retiro':
-        this.retiroDepositoComp.quitarComprobantes(idComprobante).subscribe(
-          res=>{
-            let respuesta= res.json();
-            this.toastr.success(respuesta.mensaje);
-          },
-          err=>{
-            let error= err.json();
-            this.toastr.error(error.mensaje);
-          }
-        );
-        break;
+  //     case 'retiro':
+  //       this.retiroDepositoComp.quitarComprobantes(idComprobante).subscribe(
+  //         res=>{
+  //           let respuesta= res.json();
+  //           this.toastr.success(respuesta.mensaje);
+  //         },
+  //         err=>{
+  //           let error= err.json();
+  //           this.toastr.error(error.mensaje);
+  //         }
+  //       );
+  //       break;
 
-    }
-  }
+  //   }
+  // }
 }
 
 

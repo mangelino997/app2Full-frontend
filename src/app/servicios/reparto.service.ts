@@ -6,23 +6,25 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class ChoferProveedorService {
+export class RepartoService {
   //Define la ruta al servicio web
-  private ruta:string = "/choferproveedor";
+  private ruta:string = "/reparto";
   //Define la url base
   private url:string = null;
   //Define la url para subcripcion a socket
   private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
-  //Define la lista obtenida por alias
-  private listaPorAlias = null;
+  //Define la lista obtenida por nombre
+  private listaPorNombre = null;
   //Define la subcripcion
   private subcripcion: Subscription;
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
   public listaCompleta:Subject<any> = new Subject<any>();
+  //Define la lista completa para la segunda tabla (comprobantes)
+  public listaCompletaComp:Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -37,42 +39,33 @@ export class ChoferProveedorService {
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
+    //Subcribe al usuario a la lista completa de Planillas
+    this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/listarComprobantes');
+    this.subcripcion = this.mensaje.subscribe(this.subscribirseComp);
   }
   //Resfresca la lista completa si hay cambios
   public subscribirse = (m: Message) => {
     this.listaCompleta.next(JSON.parse(m.body));
   }
+  //Resfresca la lista completa si hay cambios
+  public subscribirseComp = (m: Message) => {
+    this.listaCompletaComp.next(JSON.parse(m.body));
+  }
   //Obtiene el siguiente id
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
+  //Obtiene lista si esta Cerrada = 0
+  public listarPorEstaCerrada(valor) {
+    return this.http.get(this.url + '/listarPorEstaCerrada/' + valor, this.options);
+  }
+  //Obtiene la lista de registros
+  public listarPorFiltros(idEmpresa, tipoViaje, fechaDesde, fechaHasta, idChofer, estaCerrada) {
+    return this.http.get(this.url + '/listarPorFiltros/' +idEmpresa+ '/' +tipoViaje+ '/' +fechaDesde+ '/' +fechaHasta+ '/' +idChofer+ '/' +estaCerrada, this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
-  }
-  //Obtiene un listado por alias
-  public listarPorAlias(alias) {
-    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
-  }
-  //Obtiene un listado por alias
-  public listarActivosPorAlias(alias) {
-    return this.http.get(this.url + '/listarActivosPorAlias/' + alias, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
-  }
-  //Obtiene una lista por id proveedor
-  public listarPorProveedor(id) {
-    return this.http.get(this.url + '/listarPorProveedor/' + id, this.options);
-  }
-  //Obtiene una lista por id proveedor
-  public listarPorAliasYProveedor(alias, idProveedor) {
-    return this.http.get(this.url + '/listarPorAliasYProveedor/' + alias + '/' + idProveedor, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
@@ -81,6 +74,10 @@ export class ChoferProveedorService {
   //Actualiza un registro
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
+  }
+  //Actualiza un registro
+  public cerrarReparto(valor) {
+    return this.http.put(this.url + '/cerrarReparto/' + valor, this.options);
   }
   //Elimina un registro
   public eliminar(id) {
