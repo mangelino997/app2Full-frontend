@@ -6,6 +6,9 @@
 .tabla-ancho-cb {
     width: 1300px !important;
 }
+.tabla-ancho {
+    width: 1900px !important;
+}
 mat-sidenav.top1 {
     top: 249px !important;
 }

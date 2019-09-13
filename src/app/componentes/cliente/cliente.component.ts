@@ -977,7 +977,6 @@ export class ClienteComponent implements OnInit {
   selector: 'lista-precios-dialogo',
   templateUrl: './lista-precios-dialog.html',
   styleUrls: ['./cliente.component.css']
-
 })
 export class ListasDePreciosDialog {
   //Define la pestaña en la que se encuentra el usuario
