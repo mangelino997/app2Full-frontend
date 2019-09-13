@@ -262,26 +262,24 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         console.log(result);
         if (result) {
+          this.btnAgregarItem = true;
           this.formulario.setValue(result);
-          //Define las variables
-          let importeNetoGravado = null;
-          let importeIVA = null;
-          let importeNoGravado = null;
-          let importeExento = null;
-          let importeImpuestoInterno = null;
-          let importePercepcion = null;
-          let importeTotal = null;
-          let importeSaldo = null;
-          //Establezco los valores
-          importeNetoGravado = result.importeNetoGravado;
-          importeIVA = result.importeIVA;
-          importeNoGravado = result.importeNoGravado;
-          importeExento = result.importeExento;
-          importeImpuestoInterno = result.importeImpuestoInterno;
-          importePercepcion = result.importePercepcion;
-          importeTotal = result.importeTotal;
-          importeSaldo = result.importeSaldo;
-          //Controla
+          //Establece el proveedor
+          this.formularioListar.get('nombre').setValue(result.proveedor.alias);
+          this.establecerValores(result.proveedor);
+          //Establece las tablas
+          this.listaCompleta = new MatTableDataSource(result.compraComprobanteItems);
+          this.listaCompleta.sort = this.sort;
+          //Establezco los importess
+          let importeNetoGravado = result.importeNetoGravado;
+          let importeIVA = result.importeIVA;
+          let importeNoGravado = result.importeNoGravado;
+          let importeExento = result.importeExento;
+          let importeImpuestoInterno = result.importeImpuestoInterno;
+          let importePercepcion = result.importePercepcion;
+          let importeTotal = result.importeTotal;
+          let importeSaldo = result.importeSaldo;
+          //Controla los importes
           if(importeNetoGravado != 0)
             this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(result.importeNetoGravado, 2));
             else
@@ -290,15 +288,34 @@ export class FacturaDebitoCreditoComponent implements OnInit {
             this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales(result.importeIVA, 2));
             else
             this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales('0.00', 2));
+          if(importeNoGravado != 0)
+            this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales(result.importeNoGravado, 2));
+            else
+            this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
+          if(importeExento != 0)
+            this.formulario.get('importeExento').setValue(this.appService.establecerDecimales(result.importeExento, 2));
+            else
+            this.formulario.get('importeExento').setValue(this.appService.establecerDecimales('0.00', 2));
+          if(importeImpuestoInterno != 0)
+            this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales(result.importeImpuestoInterno, 2));
+            else
+            this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales('0.00', 2));
+          if(importePercepcion != 0)
+            this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales(result.importePercepcion, 2));
+            else
+            this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales('0.00', 2));
+          if(importeTotal != 0)
+            this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales(result.importeTotal, 2));
+            else
+            this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales('0.00', 2));
+          if(importeSaldo != 0)
+            this.formulario.get('importeSaldo').setValue(this.appService.establecerDecimales(result.importeSaldo, 2));
+            else
+            this.formulario.get('importeSaldo').setValue(this.appService.establecerDecimales('0.00', 2));
 
-          this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales(result.importeIVA, 2));
-          this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales(result.importeNoGravado, 2));
-          this.formulario.get('importeExento').setValue(this.appService.establecerDecimales(result.importeExento, 2));
-          this.formulario.get('importeImpuestoInterno').setValue(this.appService.establecerDecimales(result.importeImpuestoInterno, 2));
-          this.formulario.get('importePercepcion').setValue(this.appService.establecerDecimales(result.importePercepcion, 2));
-          this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales(result.importeTotal, 2));
-          this.formulario.get('importeSaldo').setValue(this.appService.establecerDecimales(result.importeSaldo, 2));
+          console.log(this.formulario.value);
         } else {
+          this.btnAgregarItem = false;
           this.toastr.warning("No seleccionó ninguna compra comprobante de la lista.");
         }
       });
@@ -617,6 +634,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   }
   //Abre modal para agregar detalle de percepciones
   public detallePercepcionDialogo() {
+    console.log(this.formulario.value.compraComprobantePercepciones);
     const dialogRef = this.dialog.open(DetallePercepcionesDialogo, {
       width: '95%',
       maxWidth: '100vw',
@@ -637,13 +655,15 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   }
   //Abre modal para agregar los vencimientos
   public detalleVencimientosDialogo() {
+    console.log(this.formulario.value.compraComprobanteVencimientos);
     const dialogRef = this.dialog.open(DetalleVencimientosDialogo, {
       width: '95%',
       maxWidth: '100vw',
       data: {
         proveedor: this.formulario.value.proveedor,
         importeTotal: this.formulario.value.importeTotal,
-        condicionCompra: this.formulario.value.condicionCompra
+        condicionCompra: this.formulario.value.condicionCompra,
+        detalleVencimientos: this.formulario.value.compraComprobanteVencimientos
       },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -1499,7 +1519,6 @@ export class DetalleVencimientosDialogo {
     this.cantidadCuotas.reset();
     this.diferencia.reset();
     this.btnAceptar = false;
-
     this.cantidadCuotas.setValue(this.data.proveedor.condicionCompra.cuotas);
     this.condicionCompra.setValue(this.data.condicionCompra);
     this.cantidadCuotas.setValue(this.data.proveedor.condicionCompra.cuotas);
@@ -1507,8 +1526,15 @@ export class DetalleVencimientosDialogo {
       this.totalComprobante.setValue(this.appService.establecerDecimales(this.data.importeTotal, 2));
     else
       this.totalComprobante.setValue(this.appService.establecerDecimales('0.00', 2));
-    this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
+      console.log(this.data.detalleVencimientos);
+    if(this.data.detalleVencimientos){
+      this.listaCompleta = new MatTableDataSource(this.data.detalleVencimientos);
+      this.listaCompleta.sort = this.sort;
+      this.calcularImporteTabla();
+    }else{
+      this.listaCompleta = new MatTableDataSource([]);
+      this.listaCompleta.sort = this.sort;
+    }
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
@@ -1627,7 +1653,7 @@ export class DetalleVencimientosDialogo {
       else
         this.toastr.warning("Campo Diferencia debe ser cero.");
     }
-    if (opcion == 'cerrar') {
+    if (opcion == 'cancelar') {
       this.dialogRef.close(null);
     }
   }
@@ -1645,7 +1671,7 @@ export class DetalleCompraComprobantesDialogo {
   //Define la lista completa de registros para la tabla
   public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla para la pestaña Listar
-  public columnas: string[] = ['empresa', 'sucursal', 'proveedor', 'tipoCpte', 'puntoVenta', 'letra', 'numero', 'fechaEmision',
+  public columnas: string[] = ['id', 'empresa', 'sucursal', 'proveedor', 'tipoCpte', 'puntoVenta', 'letra', 'numero', 'fechaEmision',
     'fechaContable', 'fechaRegistracion', 'importe', 'saldo', 'elige'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;

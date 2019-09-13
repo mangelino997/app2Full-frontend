@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
 import { InsumoProducto } from 'src/app/modelos/insumoProducto';
@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
 import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
 import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-costos-insumos-producto',
@@ -54,9 +55,12 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['codigo', 'nombre', 'rubro', 'marca', 'unidadMedida', 'modelo', 'precioUnitarioViaje', 'precioUnitarioVenta', 'ITCPorLitro', 'ITCNeto', 'ver', 'mod'];
+  public columnas: string[] = ['CODIGO', 'NOMBRE', 'RUBRO', 'MARCA', 'UNIDAD MEDIDA', 'MODELO', 'PRECIO UNITARIO VIAJE', 'PRECIO UNITARIO VENTA', 'ITC POR LITRO', 'ITC NETO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define la lista de personales
   public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso
@@ -67,7 +71,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   constructor(private servicio: InsumoProductoService, private insumoProducto: InsumoProducto, private loaderService: LoaderService,
     private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService,
     private rubroProductoServicio: RubroProductoService, private marcaProductoServicio: MarcaProductoService,
-    private unidadMedidaServicio: UnidadMedidaService) {
+    private unidadMedidaServicio: UnidadMedidaService, private reporteServicio: ReporteService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -135,6 +139,7 @@ export class CostosInsumosProductoComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -304,4 +309,37 @@ export class CostosInsumosProductoComponent implements OnInit {
       }
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          codigo: elemento.id,
+          nombre: elemento.nombre,
+          rubro: elemento.rubroProducto.nombre,
+          marca: elemento.marcaProducto.nombre,
+          unidadmedida: elemento.unidadMedida.nombre,
+          modelo: elemento.modelo,
+          preciounitarioviaje: '$' + elemento.precioUnitarioViaje,
+          preciounitarioventa: '$' + elemento.precioUnitarioVenta,
+          itcporlitro: elemento.itcPorLitro,
+          itcneto: '%' + elemento.itcNeto
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Costos Insumos Productos',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

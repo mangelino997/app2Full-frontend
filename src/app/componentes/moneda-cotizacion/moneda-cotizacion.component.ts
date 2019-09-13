@@ -5,11 +5,12 @@ import { MonedaCotizacion } from 'src/app/modelos/moneda-cotizacion';
 import { MonedaCotizacionService } from 'src/app/servicios/moneda-cotizacion.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-moneda-cotizacion',
@@ -45,6 +46,9 @@ export class MonedaCotizacionComponent implements OnInit {
   public listaMonedaCotizacion = new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
+  //Define las columnas seleccionadas
+
+  public elegirColumna: FormControl = new FormControl();
   //Define el id que se muestra en el campo Codigo
   public id: FormControl = new FormControl();
   //Define empresa para las busquedas
@@ -56,16 +60,20 @@ export class MonedaCotizacionComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['moneda', 'fecha', 'valor', 'ver', 'mod'];
+  public columnas: string[] = ['MONEDA', 'FECHA', 'VALOR', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
   constructor(private appService: AppService, private monedaCotizacion: MonedaCotizacion, private monedaCotizacionServicio: MonedaCotizacionService,
-    private monedaServicio: MonedaService, private toastr: ToastrService, private fechaServicio: FechaService, private loaderService: LoaderService) {
+    private monedaServicio: MonedaService, private toastr: ToastrService, private fechaServicio: FechaService, private loaderService: LoaderService,
+    private reporteServicio: ReporteService) {
     //Actualiza en tiempo real la tabla
     this.monedaCotizacionServicio.listaCompleta.subscribe(res => {
       this.listaMonedaCotizacion = res;
@@ -243,4 +251,30 @@ export class MonedaCotizacionComponent implements OnInit {
       return elemento;
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaMonedaCotizacion): Array<any> {
+    let lista = listaMonedaCotizacion;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          moneda: elemento.moneda.nombre,
+          fecha: elemento.fecha,
+          valor: '$' + this.returnDecimales(elemento.valor, 2)
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaMonedaCotizacion.data);
+    let datos = {
+      nombre: 'Cotizaciones Monedas',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

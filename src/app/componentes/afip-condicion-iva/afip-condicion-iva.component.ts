@@ -4,11 +4,12 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AfipCondicionIvaService } from 'src/app/servicios/afip-condicion-iva.service';
 import { AfipCondicionIva } from 'src/app/modelos/afipCondicionIva';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-afip-condicion-iva',
@@ -45,16 +46,20 @@ export class AfipCondicionIvaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'abreviatura', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: AfipCondicionIvaService, private afipCondicionIva: AfipCondicionIva, private loaderService: LoaderService,
-    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService) {
+    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService, 
+    private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(res => {
@@ -91,6 +96,7 @@ export class AfipCondicionIvaComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -274,4 +280,30 @@ export class AfipCondicionIvaComponent implements OnInit {
       valor.setValue(null);
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          abreviatura: elemento.abreviatura
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Condiciones IVA',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

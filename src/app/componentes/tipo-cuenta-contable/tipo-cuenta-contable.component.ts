@@ -300,7 +300,7 @@ export class TipoCuentaContableComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'cuentasContables',
+      nombre: 'Cuentas Contables',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
