@@ -100,7 +100,7 @@ export class ClienteComponent implements OnInit {
   public columnas: string[] = ['ID', 'RAZON SOCIAL', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define las columnas de la tabla cuenta bancaria
-  public columnasCuentaBancaria: string[] = ['eliminar', 'empresa', 'cuentaBancaria', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu'];
+  public columnasCuentaBancaria: string[] = ['empresa', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu', 'cuentaBancaria'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -277,6 +277,10 @@ export class ClienteComponent implements OnInit {
         elemento.cuentaBancaria.aliasCBU = resultado.aliasCBU;
       }
     });
+  }
+  //Elimina la cuenta bancaria
+  public eliminarCuentaBancaria(elemento): void {
+    elemento.cuentaBancaria = null;
   }
   //Obtiene el listado de cobradores
   private listarCobradores() {
@@ -594,7 +598,6 @@ export class ClienteComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -805,7 +808,6 @@ export class ClienteComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      console.log(resultado);
       if (resultado) {
         this.formulario.get('clienteOrdenesVentas').setValue(resultado);
         this.controlListaPrecios(resultado);
@@ -855,7 +857,6 @@ export class ClienteComponent implements OnInit {
   }
   //Establece los decimales de porcentaje
   public desenmascararPorcentaje(formulario, cantidad): void {
-
     formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
   }
   //Funcion para comparar y mostrar elemento de campo select
@@ -971,7 +972,6 @@ export class ClienteComponent implements OnInit {
     this.reporteServicio.abrirDialogo(datos);
   }
 }
-//
 //Componente 
 @Component({
   selector: 'lista-precios-dialogo',
@@ -1057,7 +1057,6 @@ export class ListasDePreciosDialog {
     this.indiceSeleccionado = this.data.indiceSeleccionado;
     //Establece el idCliente
     this.idCliente = this.data.cliente;
-    console.log(this.indiceSeleccionado, this.idCliente);
     //Establecer empresa
     this.establecerEmpresa();
     //Autocompletado - Buscar por nombre cliente
@@ -1092,7 +1091,6 @@ export class ListasDePreciosDialog {
         this.formulario.get('cliente').setValue(null);
         this.ordenVentaService.listarPorEmpresa(this.formulario.get('empresa').value.id).subscribe(
           res => {
-            console.log(res.json());
             this.ordenesVentas = res.json();
             if (this.ordenesVentas.length == 0) {
               this.toastr.warning("Órdenes de venta inexistente");
@@ -1100,7 +1098,6 @@ export class ListasDePreciosDialog {
             this.loaderService.hide();
           },
           err => {
-            let error = err.mensaje;
             this.toastr.error("Error al obtener la lista por empresa");
             this.loaderService.hide();
           }
@@ -1110,7 +1107,6 @@ export class ListasDePreciosDialog {
         this.formulario.get('empresa').setValue({ id: null });
         this.ordenVentaService.listarPorCliente(this.formulario.get('cliente').value.id).subscribe(
           res => {
-            console.log(res.json());
             this.ordenesVentas = res.json();
             if (this.ordenesVentas.length == 0) {
               this.toastr.warning("Órdenes de venta inexistente");
@@ -1118,7 +1114,6 @@ export class ListasDePreciosDialog {
             this.loaderService.hide();
           },
           err => {
-            let error = err.mensaje;
             this.toastr.error("Error al obtener la lista por cliente");
             this.loaderService.hide();
           }
@@ -1142,10 +1137,8 @@ export class ListasDePreciosDialog {
   }
   //Obtiene una lista de Tarifas por Orden Venta
   private listarTarifasPorOV() {
-    console.log(this.formulario.value.ordenVenta.id);
     this.ovTarifaService.listarPorOrdenVenta(this.formulario.value.ordenVenta.id).subscribe(
       res => {
-        console.log(res.json());
         this.tarifas = res.json();
       },
       err => {
@@ -1155,17 +1148,13 @@ export class ListasDePreciosDialog {
   }
   //Abre modal para cambiar Orden de Venta por defecto
   private cambiarPorDefecto(item, formulario) {
-    console.log(item);
     const dialogRef = this.dialog.open(CambiarOVporDefectoDialogo, {
       width: '750px',
       data: {},
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
       if (result == true && this.indiceSeleccionado == 1) {
         item.esOrdenVentaPorDefecto = false;
-        let indice = this.listaPrecios.indexOf(item);
-        console.log(this.listaPrecios);
         this.limpiarCampos(null);
         this.listar();
         this.loaderService.hide();
@@ -1184,11 +1173,9 @@ export class ListasDePreciosDialog {
   }
   //Controla si ya existe alguna Orden de venta por defecto asignada al mismo Cliente
   private controlarOVPorDefecto(formulario) {
-    console.log(this.listaPrecios, formulario.value);
     if (this.listaPrecios.length > 0) {
       this.listaPrecios.forEach(item => {
         if (item.esOrdenVentaPorDefecto == true) {
-          console.log(this.listaPrecios);
           this.cambiarPorDefecto(item, formulario);
         }
         else {
@@ -1232,7 +1219,6 @@ export class ListasDePreciosDialog {
     if (this.indiceSeleccionado == 3) {
       this.formulario.get('usuarioAlta').setValue(usuario);
       this.formulario.get('cliente').setValue({ id: this.idCliente });
-      // this.formulario.get('ordenVentaTarifaPorDefecto').setValue();
       if (this.formulario.value.esOrdenVentaPorDefecto == true) {
         this.controlarOVPorDefecto(this.formulario);
       }
@@ -1241,7 +1227,6 @@ export class ListasDePreciosDialog {
       }
     }
     if (this.indiceSeleccionado != 3) { //Controlo desde el front que SOLO UNA  lista de precio sea porDefecto=true (OV) 
-      // this.formulario.value.tipoTarifaPorDefecto = {id: null};
       if (this.formulario.value.esOrdenVentaPorDefecto == true) {
         this.controlarOVPorDefecto(this.formulario);
       }
@@ -1260,7 +1245,6 @@ export class ListasDePreciosDialog {
     if (this.indiceSeleccionado == 3) {
       this.formulario.get('usuarioMod').setValue(usuario);
       this.formulario.get('cliente').setValue({ id: this.idCliente });
-      // this.formulario.get('ordenVentaTarifaPorDefecto').setValue({id: null});
       this.clienteOrdenVtaService.actualizar(this.formulario.value).subscribe(
         res => {
           this.formulario.reset();
@@ -1325,7 +1309,6 @@ export class ListasDePreciosDialog {
           this.toastr.success("Registro eliminado con éxito");
           this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
             res => {
-              console.log(res.json());
               this.listaPrecios = res.json();
               this.listar();
             },

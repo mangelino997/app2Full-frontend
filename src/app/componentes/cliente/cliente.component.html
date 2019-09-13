@@ -431,66 +431,60 @@
                   </div>
                   <h6>Cliente - Cuenta Bancaria</h6>
                   <div class="row">
-                    <div class="tabla-cb">
-                      <div class="tabla-ancho-cb">
-                        <table mat-table [dataSource]="cuentasBancarias" matSort class="mat-elevation-z1">
-                          <ng-container matColumnDef="eliminar">
-                            <th mat-header-cell *matHeaderCellDef>-</th>
-                            <td mat-cell *matCellDef="let elemento;">
-                              <button mat-icon-button class="mat-icon-button-table"
-                                (click)="eliminarCuentaBancaria(elemento)"
-                                *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" matTooltip="Eliminar"
-                                matTooltipPosition="above">
-                                <mat-icon>delete</mat-icon>
-                              </button>
-                            </td>
-                          </ng-container>
-                          <ng-container matColumnDef="empresa">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
-                            <td mat-cell *matCellDef="let elemento">
-                              {{elemento.empresa ? elemento.empresa.razonSocial : null}}</td>
-                          </ng-container>
-                          <ng-container matColumnDef="cuentaBancaria">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Bancaria</th>
-                            <td mat-cell *matCellDef="let elemento">
-                              <button mat-icon-button class="mat-icon-button-table"
-                                (click)="seleccionarCuentaBancaria(elemento)"
-                                *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3"
-                                matTooltip="Seleccionar Cuenta Bancaria" matTooltipPosition="above">
-                                <mat-icon>account_balance</mat-icon>
-                              </button>
-                            </td>
-                          </ng-container>
-                          <ng-container matColumnDef="banco">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
-                            <td mat-cell *matCellDef="let elemento">
-                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.banco.nombre : null}}
-                            </td>
-                          </ng-container>
-                          <ng-container matColumnDef="sucursal">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-                            <td mat-cell *matCellDef="let elemento">
-                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.nombre : null}}</td>
-                          </ng-container>
-                          <ng-container matColumnDef="numCuenta">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuenta</th>
-                            <td mat-cell *matCellDef="let elemento">
-                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.numeroCuenta : null}}</td>
-                          </ng-container>
-                          <ng-container matColumnDef="cbu">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
-                            <td mat-cell *matCellDef="let elemento">
-                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.cbu : null}}</td>
-                          </ng-container>
-                          <ng-container matColumnDef="aliasCbu">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
-                            <td mat-cell *matCellDef="let elemento">
-                              {{elemento.cuentaBancaria ? elemento.cuentaBancaria.aliasCBU : null}}</td>
-                          </ng-container>
-                          <tr mat-header-row *matHeaderRowDef="columnasCuentaBancaria"></tr>
-                          <tr mat-row *matRowDef="let row; columns: columnasCuentaBancaria;"></tr>
-                        </table>
-                      </div>
+                    <div class="tabla">
+                      <table mat-table [dataSource]="cuentasBancarias" matSort class="table-width-cb mat-elevation-z1">
+                        <ng-container matColumnDef="empresa" sticky>
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
+                          <td mat-cell *matCellDef="let elemento">
+                            {{elemento.empresa ? elemento.empresa.razonSocial : null}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="banco">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
+                          <td mat-cell *matCellDef="let elemento">
+                            {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.banco.nombre : null}}
+                          </td>
+                        </ng-container>
+                        <ng-container matColumnDef="sucursal">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+                          <td mat-cell *matCellDef="let elemento">
+                            {{elemento.cuentaBancaria ? elemento.cuentaBancaria.sucursalBanco.nombre : null}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="numCuenta">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuenta</th>
+                          <td mat-cell *matCellDef="let elemento">
+                            {{elemento.cuentaBancaria ? elemento.cuentaBancaria.numeroCuenta : null}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="cbu">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
+                          <td mat-cell *matCellDef="let elemento">
+                            {{elemento.cuentaBancaria ? elemento.cuentaBancaria.cbu : null}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="aliasCbu">
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
+                          <td mat-cell *matCellDef="let elemento">
+                            {{elemento.cuentaBancaria ? elemento.cuentaBancaria.aliasCBU : null}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="cuentaBancaria" stickyEnd>
+                          <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Bancaria</th>
+                          <td mat-cell *matCellDef="let elemento">
+                            <button mat-icon-button class="mat-icon-button-table"
+                              (click)="seleccionarCuentaBancaria(elemento)"
+                              *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3"
+                              [disabled]="!formulario.get('esReceptorFCE').value"
+                              matTooltip="Seleccionar Cuenta Bancaria" matTooltipPosition="above">
+                              <mat-icon>account_balance</mat-icon>
+                            </button>
+                            <button mat-icon-button class="mat-icon-button-table"
+                              (click)="eliminarCuentaBancaria(elemento)" style="margin-left: 20px;"
+                              *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" matTooltip="Eliminar"
+                              matTooltipPosition="above">
+                              <mat-icon>delete</mat-icon>
+                            </button>
+                          </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnasCuentaBancaria"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasCuentaBancaria;"></tr>
+                      </table>
                     </div>
                   </div>
                 </div>
@@ -545,8 +539,8 @@
         </div>
       </div>
       <div class="row">
-        <div class="tabla mat-elevation-z1">
-          <table mat-table [dataSource]="listaCompleta" matSort>
+        <div class="tabla">
+          <table mat-table [dataSource]="listaCompleta" matSort class="table-width-list mat-elevation-z1">
             <ng-container matColumnDef="ID" sticky>
               <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>

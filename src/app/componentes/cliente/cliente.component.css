@@ -1,13 +1,7 @@
-.tabla-cb {
+.tabla {
     width: 100% !important;
     height: 100% !important;
     overflow: auto !important;
-}
-.tabla-ancho-cb {
-    width: 1300px !important;
-}
-.tabla-ancho {
-    width: 1900px !important;
 }
 mat-sidenav.top1 {
     top: 249px !important;
@@ -15,12 +9,11 @@ mat-sidenav.top1 {
 mat-sidenav.top2 {
     top: 293px !important;
 }
-.tabla {
+.table-width-list {
     width: 1900px;
-    overflow: auto;
 }
-table {
-    width: 1900px;
+.table-width-cb {
+    width: 1400px;
 }
 .mat-table-sticky:first-child {
     border-right: 1px solid #e0e0e0;
@@ -35,5 +28,15 @@ table {
 .mat-column-EDITAR {
     min-width: 20px !important;
     width: 90px !important;
+    padding-right: 0px !important;
+}
+.mat-column-empresa {
+    min-width: 20px !important;
+    width: 300px !important;
+    padding-right: 0px !important;
+}
+.mat-column-cuentaBancaria {
+    min-width: 20px !important;
+    width: 140px !important;
     padding-right: 0px !important;
 }
