@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { RolSubopcionService } from 'src/app/servicios/rol-subopcion.service';
 import { ToastrService } from 'ngx-toastr';
 
@@ -20,25 +20,25 @@ export class RolSubopcionComponent implements OnInit {
     });
   }
 }
-
+//Dialogo RolSubopcioin
 @Component({
   selector: 'rol-subopcion-dialog',
   templateUrl: 'rol-subopcion-dialog.html',
 })
 export class RolSubopcionDialog {
   //Define la barra de progreso indeterminada
-  public progresoActivo:boolean = false;
+  public progresoActivo: boolean = false;
   //Constructor
   constructor(public dialogRef: MatDialogRef<RolSubopcionDialog>,
     private rolSubopcionServicio: RolSubopcionService,
-    private toastr: ToastrService) {}
+    private toastr: ToastrService) { }
   //Reestablece la tabla al hacer click en aceptar
   aceptar(): void {
     this.progresoActivo = true;
     this.rolSubopcionServicio.reestablecerTablaDesdeCero().subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.progresoActivo = false;
           this.dialogRef.close();
           this.toastr.success(respuesta.mensaje);

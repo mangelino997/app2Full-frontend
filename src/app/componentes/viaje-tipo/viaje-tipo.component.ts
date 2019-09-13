@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ViajeTipoService } from 'src/app/servicios/viaje-tipo.service';
 import { FormGroup, FormControl } from '@angular/forms';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { AppService } from 'src/app/servicios/app.service';
@@ -9,6 +9,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { ToastrService } from 'ngx-toastr';
 import { ViajeTipo } from 'src/app/modelos/viajeTipo';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-viaje-tipo',
@@ -43,12 +44,16 @@ export class ViajeTipoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'abreviatura', 'costoPorKmPropio', 'costoPorKmTercero', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'COSTO POR KM PROPIO', 'COSTO POR KM TERCERO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private viajeTipoServicio: ViajeTipoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private loaderService: LoaderService, private toastr: ToastrService, private viajeTipo: ViajeTipo) {
+    private appService: AppService, private loaderService: LoaderService, private toastr: ToastrService, private viajeTipo: ViajeTipo,
+    private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -161,6 +166,7 @@ export class ViajeTipoComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -299,4 +305,32 @@ export class ViajeTipoComponent implements OnInit {
   public mascararImporte(intLimite, intDecimal) {
     return this.appService.mascararImporte(intLimite, intDecimal);
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          abreviatura: elemento.abreviatura,
+          costoporkmpropio: elemento.costoPorKmPropio,
+          costoporkmtercero: elemento.costoPorKmTercero
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Costos de Viajes',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

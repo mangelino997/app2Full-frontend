@@ -6,7 +6,7 @@ import { ClienteRoutingModule } from './cliente-routing.module';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatSidenavModule, MatDividerModule, MatIconModule, MatButtonModule, MatDialogModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ClienteComponent } from 'src/app/componentes/cliente/cliente.component';
+import { ClienteComponent, ListasDePreciosDialog, CambiarOVporDefectoDialogo } from 'src/app/componentes/cliente/cliente.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { Cliente } from 'src/app/modelos/cliente';
@@ -28,11 +28,16 @@ import { CondicionVentaService } from 'src/app/servicios/condicion-venta.service
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { CuentaBancariaDialogoComponent } from 'src/app/componentes/cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
+import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
+import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
+import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 
 @NgModule({
   declarations: [
     ClienteComponent,
-    CuentaBancariaDialogoComponent
+    CuentaBancariaDialogoComponent,
+    ListasDePreciosDialog,
+    CambiarOVporDefectoDialogo
   ],
   imports: [
     CommonModule,
@@ -75,10 +80,15 @@ import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service
     CompaniaSeguroService,
     CondicionVentaService,
     UsuarioEmpresaService,
-    CuentaBancariaService
+    CuentaBancariaService,
+    OrdenVentaService,
+    ClienteOrdenVentaService,
+    OrdenVentaTarifaService
   ],
   entryComponents: [
-    CuentaBancariaDialogoComponent
+    CuentaBancariaDialogoComponent,
+    ListasDePreciosDialog,
+    CambiarOVporDefectoDialogo
   ]
 })
 export class ClienteModule { }

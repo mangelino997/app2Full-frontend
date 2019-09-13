@@ -17,11 +17,11 @@ export class RolOpcionComponent implements OnInit {
   //Abre el dialogo
   openDialog(): void {
     const dialogRef = this.dialog.open(RolOpcionDialog, {
-      width: '300px'
+      width: '400px'
     });
   }
 }
-
+//Dialogo RolOpcion
 @Component({
   selector: 'rol-opcion-dialog',
   templateUrl: 'rol-opcion-dialog.html',

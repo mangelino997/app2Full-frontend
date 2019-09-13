@@ -4,13 +4,14 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { MonedaCuentaContable } from 'src/app/modelos/moneda-cuenta-contable';
 import { MonedaCuentaContableService } from 'src/app/servicios/moneda-cuenta-contable.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
-import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { PlanCuentaDialogo } from '../plan-cuenta-dialogo/plan-cuenta-dialogo.component';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 export class Arbol {
   id: number;
@@ -85,9 +86,12 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Defien la  empresa del Login
   public empresa: FormControl = new FormControl();
   //Define las columnas de la tabla
-  public columnas: string[] = ['moneda', 'empresa', 'cuentaContable', 'ver', 'mod'];
+  public columnas: string[] = ['MONEDA', 'EMPRESA', 'CUENTA CONTABLE', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -96,7 +100,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   constructor(private monedaCuentaContableServicio: MonedaCuentaContableService, private monedaCuentaContable: MonedaCuentaContable,
     private subopcionPestaniaService: SubopcionPestaniaService, private monedaServicio: MonedaService,
     private loaderService: LoaderService, private appService: AppService,
-    public dialog: MatDialog, private toastr: ToastrService) {
+    public dialog: MatDialog, private toastr: ToastrService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -144,6 +148,7 @@ export class MonedaCuentaContableComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -394,4 +399,30 @@ export class MonedaCuentaContableComponent implements OnInit {
       }
     });
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          moneda: elemento.moneda.nombre,
+          empresa: elemento.empresa.razonSocial,
+          cuentacontable: elemento.planCuenta.nombre
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Monedas Cuentas Contables',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }
