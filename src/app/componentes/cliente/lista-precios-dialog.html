@@ -8,8 +8,7 @@
           <div class="form-group has-float-label">
             <label for="idTipoOrdenVenta" class="tamanio-label">Tipo *</label>
             <mat-select id="idTipoOrdenVenta" formControlName="tipoOrdenVenta" class="form-control form-control-sm"
-              (selectionChange)="establecerTipo()" required>
-              <!--[compareWith]="compareT"-->
+              (selectionChange)="establecerTipo()">
               <mat-option [value]="false">Por Empresa</mat-option>
               <mat-option [value]="true">Por Cliente</mat-option>
             </mat-select>
@@ -21,7 +20,7 @@
             <input id="idEmpresa" type="text" [formControl]="empresa" class="form-control form-control-sm" readonly>
           </div>
         </div>
-        <div class="col-md-4" *ngIf="formulario.get('tipoOrdenVenta').value == true">
+        <div class="col-md-4" *ngIf="formulario.get('tipoOrdenVenta').value">
           <div class="form-group has-float-label">
             <label for="idCliente" class="tamanio-label">Cliente *</label>
             <input id="idCliente" class="form-control form-control-sm" type="text" matInput [readOnly]="soloLectura"
@@ -45,8 +44,6 @@
               (selectionChange)="cambioOrdenVenta()">
               <mat-option *ngFor="let orden of ordenesVentas" [value]="orden">
                 {{orden.nombre}}
-                <!-- {{orden.cliente ? orden.cliente.razonSocial : orden.empresa.razonSocial}} -
-                          {{orden.vendedor.nombre}} - {{orden.activaDesde}} -->
               </mat-option>
             </mat-select>
           </div>
@@ -148,10 +145,6 @@
           </table>
         </div>
       </div>
-      <!-- <div class="tabla">
-        <div class="tabla-ancho"> -->
-      <!-- </div>
-      </div> -->
       <br>
       <div class="row">
         <div class="col-md-12 text-center">

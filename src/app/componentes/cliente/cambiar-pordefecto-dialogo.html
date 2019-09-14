@@ -1,10 +1,9 @@
 <div class="row justify-content-center padd-20">
     <div class="col-md-6 text-center">
-        <h5>Existe una Orden de Venta por defecto! </h5>
-        <mat-divider></mat-divider>
-        <h5>La nueva Orden de Venta pasará a ser por defecto. Estas seguro? </h5>
-        <button id="idBoton" mat-raised-button color="primary" (click)="dialogRef.close(true)" >Si</button>
-        <button id="idBoton" mat-raised-button color="secondary" (click)="dialogRef.close(false)" >No</button>
-        <!-- <button id="idBoton" mat-raised-button color="secondary" (click)="dialogRef.close()">Cancelar</button> -->
+        <h5>Existe una Orden de Venta por defecto!</h5>
+        <hr>
+        <h5>La nueva Orden de Venta pasará a ser por defecto. Está seguro?</h5>
+        <button id="idBoton" mat-raised-button [mat-dialog-close]="false">No</button>
+        <button id="idBoton" mat-raised-button color="primary" [mat-dialog-close]="true">Si</button>
     </div>
 </div>
