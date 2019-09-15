@@ -3,6 +3,11 @@
     height: 100% !important;
     overflow: auto !important;
 }
+.tabla-lp {
+    width: 100% !important;
+    height: 300px !important;
+    overflow: auto !important;
+}
 mat-sidenav.top1 {
     top: 249px !important;
 }
@@ -13,6 +18,9 @@ mat-sidenav.top2 {
     width: 1900px;
 }
 .table-width-cb {
+    width: 1400px;
+}
+.table-width-lp {
     width: 1400px;
 }
 .mat-table-sticky:first-child {
