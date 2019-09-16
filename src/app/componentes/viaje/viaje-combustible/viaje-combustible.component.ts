@@ -1,5 +1,5 @@
 import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
@@ -24,6 +24,11 @@ export class ViajeCombustibleComponent implements OnInit {
   @Output() dataEvent = new EventEmitter();
   //Define un formulario viaje  combustible para validaciones de campos
   public formularioViajeCombustible: FormGroup;
+  //Define los formControls
+  public totalCombustible: FormControl = new FormControl();
+  public totalAceite: FormControl = new FormControl();
+  public totalUrea: FormControl = new FormControl();
+  public importe: FormControl = new FormControl();
   //Define la lista de resultados proveedores de busqueda
   public resultadosProveedores: Array<any> = [];
   //Define la lista de insumos
@@ -120,9 +125,9 @@ export class ViajeCombustibleComponent implements OnInit {
       this.formularioViajeCombustible.get('fecha').setValue(res.json());
     })
     if (opcion == 1) {
-      this.formularioViajeCombustible.get('totalCombustible').setValue(this.appService.setDecimales('0', 2));
-      this.formularioViajeCombustible.get('totalAceite').setValue(this.appService.setDecimales('0', 2));
-      this.formularioViajeCombustible.get('totalUrea').setValue(this.appService.setDecimales('0', 2));
+      this.totalCombustible.setValue(this.appService.setDecimales('0.00', 2));
+      this.totalAceite.setValue(this.appService.setDecimales('0.00', 2));
+      this.totalUrea.setValue(this.appService.setDecimales('0.00', 2));
     }
   }
   //Obtiene el listado de insumos
@@ -154,16 +159,16 @@ export class ViajeCombustibleComponent implements OnInit {
       formulario.get('cantidad').setValue('0');
     if (!formulario.value.precioUnitario)
       formulario.get('precioUnitario').setValue(this.appService.setDecimales('0', 2));
-    if (!formulario.value.importe)
-      formulario.get('importe').setValue(this.appService.setDecimales('0', 2));
+    if (!this.importe.value)
+      this.importe.setValue(this.appService.setDecimales('0', 2));
     this.establecerDecimales(formulario.get('precioUnitario'), 2);
     this.establecerDecimales(formulario.get('cantidad'), 2);
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
     if (cantidad != null && precioUnitario != null) {
       let importe = cantidad * precioUnitario;
-      formulario.get('importe').setValue(importe);
-      this.establecerCeros(formulario.get('importe'));
+      this.importe.setValue(importe);
+      this.establecerCeros(this.importe.value);
     }
   }
   //Establece el precio unitario
@@ -321,15 +326,19 @@ export class ViajeCombustibleComponent implements OnInit {
         }
       })
     }
-    this.formularioViajeCombustible.get('totalCombustible').setValue(totalCombustible.toFixed(2));
-    this.formularioViajeCombustible.get('totalAceite').setValue(totalAceite.toFixed(2));
-    this.formularioViajeCombustible.get('totalUrea').setValue(totalUrea.toFixed(2));
+    this.totalCombustible.setValue(totalCombustible.toFixed(2));
+    this.totalAceite.setValue(totalAceite.toFixed(2));
+    this.totalUrea.setValue(totalUrea.toFixed(2));
   }
   //Limpia el formulario
   public cancelar() {
     this.reestablecerFormulario();
     this.formularioViajeCombustible.reset();
     this.formularioViajeCombustible.get('viaje').setValue(this.viaje);
+    this.totalCombustible.setValue(null);
+    this.totalAceite.setValue(null);
+    this.totalUrea.setValue(null);
+    this.importe.setValue(null);
     this.listar();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
@@ -337,6 +346,10 @@ export class ViajeCombustibleComponent implements OnInit {
   //Finalizar
   public finalizar() {
     this.formularioViajeCombustible.reset();
+    this.totalCombustible.setValue(null);
+    this.totalAceite.setValue(null);
+    this.totalUrea.setValue(null);
+    this.importe.setValue(null)
     this.indiceCombustible = null;
     this.btnCombustible = true;
     this.establecerValoresPorDefecto(0);
