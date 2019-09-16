@@ -59,6 +59,10 @@ export class RepartoService {
   public listarPorEstaCerrada(valor) {
     return this.http.get(this.url + '/listarPorEstaCerrada/' + valor, this.options);
   }
+  //Obtiene lista si esta cerrada y empresa
+  public listarPorEstaCerradaYEmpresa(estado, idEmpresa) {
+    return this.http.get(this.url + '/listarPorEstaCerradaYEmpresa/' + estado + '/' + idEmpresa, this.options);
+  }
   //Obtiene la lista de registros
   public listarPorFiltros(idEmpresa, tipoViaje, fechaDesde, fechaHasta, idChofer, estaCerrada) {
     return this.http.get(this.url + '/listarPorFiltros/' +idEmpresa+ '/' +tipoViaje+ '/' +fechaDesde+ '/' +fechaHasta+ '/' +idChofer+ '/' +estaCerrada, this.options);

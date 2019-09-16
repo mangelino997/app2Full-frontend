@@ -1,45 +1,44 @@
-<div class="row">
+<div class="row padd-20" >
     <div class="col-md-12">
         <form [formGroup]="formulario">
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="form-group has-float-label">
-                        <label for="idAcompaniante">Acompañante</label>
-                        <input id="idAcompaniante" type="text" class="form-control form-control-sm" matInput
-                            [formControl]="formulario.get('acompaniante')" [matAutocomplete]="auto" autocomplete="off">
-                        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayF.bind(this)">
-                            <mat-option *ngFor="let itemAcompaniante of resultados" [value]="itemAcompaniante">
-                                {{itemAcompaniante.nombre}}
+                        <label for="idAcompaniante" class="tamanio-label">Acompañante *</label>
+                        <mat-select id="idAcompaniante" class="form-control form-control-sm"
+                            formControlName="personal" [compareWith]="compareFn">
+                            <mat-option *ngFor="let item of resultadosAcompaniante" [value]="item">
+                                {{item.alias}}
                             </mat-option>
-                        </mat-autocomplete>
+                        </mat-select>
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <button mat-raised-button color="primary" (click)="agregarAcompaniante()">Agregar</button>
+                    <button mat-raised-button color="primary" (click)="agregar()">Agregar</button>
                 </div>
             </div>
             <div class="row justify-content-center">
                 <div class="col-md-10">
-                    <table class="table table-bordered table-striped table-sm table-condensed">
-                        <thead>
-                            <tr>
-                                <th class="text-center" style="width: 50px" scope="col">Acompañante</th>
-                                <th class="text-center" style="width: 30px" scope="col">-</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let acompaniante of listaAcompaniantes; let i= index">
-                                <td align="center">{{acompaniante.nombre}}</td>
-                                <td align="center" class="cursor-color" (click)="quitarAcompaniante(i)">Quitar</td>
-                            </tr>
-                        </tbody>
+                    <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                        <ng-container matColumnDef="acompaniante">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Acompañante</th>
+                            <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.personal.alias}}</td>
+                        </ng-container>
+                        <ng-container matColumnDef="quitar">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>-</th>
+                            <td mat-cell *matCellDef="let elemento; let i=index">
+                                <span class="cursor-color-rojo" (click)="quitarAcompaniante(i)">x</span>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
                     </table>
                 </div>
             </div>
+            <br>
             <div class="row">
                 <div class="col-md-12 text-center">
-                    <!-- <button mat-raised-button color="primary" [disabled]="!formulario.valid" [mat-dialog-close]="formulario.get('tramo').value">Aceptar</button> -->
-                    <button mat-raised-button color="accent" [mat-dialog-close]="listaAcompaniantes">Cerrar</button>
+                    <button mat-raised-button color="accent" [mat-dialog-close]="listaCompleta.data">Cerrar</button>
                 </div>
             </div>
         </form>

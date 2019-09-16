@@ -187,9 +187,7 @@ export class PersonalComponent implements OnInit {
       if (data && typeof data == 'string' && data.length > 2) {
         this.localidadServicio.listarPorNombre(data).subscribe(response => {
           this.resultadosLocalidades = response;
-        });
-      } else {
-        this.resultadosLocalidades = [];
+        })
       }
     })
     //Autocompletado Localidad Nacimiento - Buscar por nombre

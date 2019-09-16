@@ -39,7 +39,7 @@
               <label for="idNombreProveedor" class="tamanio-label">Nombre *</label>
               <input id="idNombreProveedor" class="form-control form-control-sm" type="text" matInput
                 (blur)="controlAutoVacio()" [formControl]="formularioListar.get('nombre')" [matAutocomplete]="auto"
-                autocomplete="off" [readOnly]="formularioListar.get('proveedor').value == 0">
+                autocomplete="off" [readOnly]="formularioListar.get('proveedor').value == 0" (blur)="verificarSeleccion(formularioListar.get('nombre'))">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="establecerValores(item)">

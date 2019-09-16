@@ -11,15 +11,11 @@ import { PersonalService } from 'src/app/servicios/personal.service';
 import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { RepartoPropioService } from 'src/app/servicios/reparto-propio.service';
-import { RepartoTerceroService } from 'src/app/servicios/reparto-tercero.service';
-import { RetiroDepositoService } from 'src/app/servicios/retiro-deposito.service';
-import { RepartoPropioComprobanteService } from 'src/app/servicios/reparto-propio-comprobante.service';
-import { RepartoTerceroComprobanteService } from 'src/app/servicios/reparto-tercero-comprobante.service';
-import { RetiroDepositoComprobanteService } from 'src/app/servicios/retiro-deposito-comprobante.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
 import { Subscription } from 'rxjs';
+import { RepartoPersonal } from 'src/app/modelos/repartoPersonal';
+import { LoaderService } from 'src/app/servicios/loader.service';
 
 @Component({
   selector: 'app-reparto',
@@ -28,17 +24,19 @@ import { Subscription } from 'rxjs';
 })
 export class RepartoComponent implements OnInit {
   //Define el formulario General
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define el formulario Comrpobante
-  public formularioComprobante:FormGroup;
+  public formularioComprobante: FormGroup;
+  //Define el numero reparto como un formControl
+  public id: FormControl = new FormControl();
   //Define como un formControl
-  public usuario:FormControl = new FormControl();
+  public usuario: FormControl = new FormControl();
   //Define como un formControl
-  public sucursal:FormControl = new FormControl();
+  public sucursal: FormControl = new FormControl();
   //Define como un formControl
-  public tipoViaje:FormControl = new FormControl();
+  public tipoViaje: FormControl = new FormControl();
   //Define como un formControl
-  public tipoRemolque:FormControl = new FormControl();
+  public tipoRemolque: FormControl = new FormControl();
   //Define la lista de resultados para vehiculo o vehiculoProveedor
   public resultadosVehiculo = [];
   //Define la lista de resultados para remolque
@@ -71,86 +69,84 @@ export class RepartoComponent implements OnInit {
   //Constructor
   constructor(private modelo: Reparto, private zonaService: ZonaService, private toastr: ToastrService, private appService: AppService,
     private appComponent: AppComponent, private vehiculoService: VehiculoService, private vehiculoProveedorService: VehiculoProveedorService,
-    private personalServie: PersonalService, private choferProveedorService: ChoferProveedorService, public dialog: MatDialog, 
-    private servicio: RepartoService, private fechaService: FechaService) {
-     }
+    private personalServie: PersonalService, private choferProveedorService: ChoferProveedorService, public dialog: MatDialog,
+    private servicio: RepartoService, private fechaService: FechaService, private loaderService: LoaderService) {
+  }
 
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.modelo.formulario;
     // this.formularioComprobante = this.modelo.formularioComprobante;
-    //Establece el N° de reparto
-    this.obtenerSiguienteId();
     //Reestablece los valores
     this.reestablecerFormulario(undefined);
+    //Establece el N° de reparto
+    this.obtenerSiguienteId();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
     //Obtiene un listado de Zonas
     this.listarZonas();
+    //Obtiene la lista de repartos agregados
+    this.listarRepartos();
     //Autocompletado vehiculo- Buscar por alias
-    let empresa = this.appService.getEmpresa();
+    var empresa = this.appService.getEmpresa();
     this.formulario.get('vehiculo').valueChanges.subscribe(data => {
-      console.log(this.tipoViaje.value);
-      let tipoViaje = this.tipoViaje.value;
-      if(tipoViaje == 1){
-        if (typeof data == 'string' && data.length > 2) {
-          this.vehiculoService.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
-            this.resultadosVehiculo = response;
-          })
-        }
+      if (typeof data == 'string' && data.length > 2) {
+        this.vehiculoService.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
+          this.resultadosVehiculo = response;
+        })
       }
-      if(tipoViaje == 2){
-        if (typeof data == 'string' && data.length > 2) {
-          this.vehiculoProveedorService.listarPorAlias(data).subscribe(response => {
-            this.resultadosVehiculo = response;
-          })
-        }
+    })
+    //Autocompletado vehiculo proveedor- Buscar por alias
+    var empresa = this.appService.getEmpresa();
+    this.formulario.get('vehiculoProveedor').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.vehiculoProveedorService.listarPorAlias(data).subscribe(response => {
+          this.resultadosVehiculo = response;
+        })
       }
     })
     //Autocompletado vehiculo remolque- Buscar por alias
     this.formulario.get('vehiculoRemolque').valueChanges.subscribe(data => {
-      console.log(this.tipoViaje.value);
-      let tipoViaje = this.tipoViaje.value;
-      if(tipoViaje == 1){
-        if (typeof data == 'string' && data.length > 2) {
-          this.vehiculoService.listarPorAliasYEmpresaFiltroRemolque(data, empresa.id).subscribe(response => {
-            this.resultadosRemolque = response;
-          })
-        }
-      }
-      if(tipoViaje == 2){
-        if (typeof data == 'string' && data.length > 2) {
-          this.vehiculoProveedorService.listarPorAliasFiltroRemolque(data).subscribe(response => {
-            this.resultadosRemolque = response;
-          })
-        }
+      if (typeof data == 'string' && data.length > 2) {
+        this.vehiculoService.listarPorAliasYEmpresaFiltroRemolque(data, empresa.id).subscribe(response => {
+          this.resultadosRemolque = response;
+        })
       }
     })
-    //Autocompletado vehiculo remolque- Buscar por alias
-    this.formulario.get('choferProveedor').valueChanges.subscribe(data => {
-      console.log(this.tipoViaje.value);
-      let tipoViaje = this.tipoViaje.value;
-      if(tipoViaje == 1){
-        if (typeof data == 'string' && data.length > 2) {
-          this.personalServie.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
-            this.resultadosChofer = response;
-          })
-        }
+    //Autocompletado vehiculo remolque proveedor- Buscar por alias
+    this.formulario.get('vehiculoRemolqueProveedor').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.vehiculoProveedorService.listarPorAliasFiltroRemolque(data).subscribe(response => {
+          this.resultadosRemolque = response;
+        })
       }
-      if(tipoViaje == 2){
-        if (typeof data == 'string' && data.length > 2) {
-          this.choferProveedorService.listarActivosPorAlias(data).subscribe(response => {
-            this.resultadosChofer = response;
-          })
-        }
+    })
+    //Autocompletado chofer- Buscar por alias
+    this.formulario.get('personal').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.personalServie.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
+          console.log(response);
+          this.resultadosChofer = response;
+        })
+      }
+    })
+    //Autocompletado chofer proveedor - Buscar por alias
+    this.formulario.get('choferProveedor').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.choferProveedorService.listarActivosPorAlias(data).subscribe(response => {
+          this.resultadosChofer = response;
+        })
       }
     })
   }
+  public ver(){
+    console.log(this.formulario);
+  }
   //Establece el N° de reparto
-  private obtenerSiguienteId(){
+  private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.formulario.get('id').setValue(res.json());
+        this.id.setValue(res.json());
       },
       err => {
         console.log(err);
@@ -158,25 +154,31 @@ export class RepartoComponent implements OnInit {
     );
   }
   //Obtiene la lista de zonas
-  private listarZonas(){
-    this.zonaService.listarOrdenado('nombre').subscribe(
-      res=>{
+  private listarZonas() {
+    this.zonaService.listar().subscribe(
+      res => {
         this.resultadosZona = res.json();
         console.log(res.json());
       },
-      err=>{
+      err => {
         this.toastr.error('Error al obtener listado de Zonas');
       }
     );
   }
   //Controla el cambio en el select Tipo de Viaje
-  public cambioTipoViaje(){
-    this.formulario.get('vehiculo').setValue(null);
+  public cambioTipoViaje() {
+    this.formulario.get('vehiculo').reset();
+    this.formulario.get('personal').reset();
+    this.formulario.get('vehiculoProveedor').reset();
+    this.formulario.get('choferProveedor').reset();
+    this.resultadosVehiculo = [];
+    this.resultadosChofer = [];
   }
   //Controla el cambio en el select Tipo de Remolque
-  public cambioTipoRemolque(){
-    this.formulario.get('vehiculoRemolque').setValue(null);
-
+  public cambioTipoRemolque() {
+    this.formulario.get('vehiculoRemolque').reset();
+    this.formulario.get('vehiculoRemolqueProveedor').reset();
+    this.resultadosRemolque = [];
   }
   //Abre el dialogo para seleccionar un Tramo
   public abrirAcompaniante(): void {
@@ -185,32 +187,80 @@ export class RepartoComponent implements OnInit {
       width: '1200px'
     });
     dialogRef.afterClosed().subscribe(resultado => {
-     console.log(resultado);
-    //  this.listaAcompaniantes = resultado;
+      console.log(resultado);
+      if (resultado.length > 0)
+        this.formulario.get('acompaniantes').setValue(resultado);
+      else
+        this.formulario.get('acompaniantes').setValue([]);
     });
+  }
+  //Agrega un reparto a la tabla
+  public agregar() {
+    this.loaderService.show();
+    console.log(this.formulario.value);
+    this.formulario.get('fechaRegistracion').setValue(null);
+    if(!this.formulario.get('acompaniantes').value)
+      this.formulario.get('acompaniantes').setValue([]);
+    this.servicio.agregar(this.formulario.value).subscribe(
+      res => {
+        console.log(res.json);
+        let respuesta = res.json();
+        if (res.status == 201) {
+          setTimeout(function () {
+            document.getElementById('idTipoViaje').focus();
+          }, 20);
+          this.toastr.success("Registro agregado con éxito.");
+          this.reestablecerFormulario(respuesta.id);
+          this.listarRepartos();
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.message);
+        this.loaderService.hide();
+      }
+    )
+  }
+  //Carga la tabla con la lista de repartos agregados
+  private listarRepartos() {
+    let empresa = this.appComponent.getEmpresa();
+    this.servicio.listarPorEstaCerradaYEmpresa(false, empresa.id).subscribe(
+      res => {
+        console.log(res.json());
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+      }
+    )
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
-    this.usuario.setValue(this.appComponent.getUsuario().alias);
+    this.usuario.setValue(this.appComponent.getUsuario().nombre);
     this.sucursal.setValue(this.appComponent.getUsuario().sucursal.nombre);
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('empresaEmision').setValue(this.appComponent.getEmpresa());
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    this.fechaService.obtenerFecha().subscribe(res=>{
+    this.tipoViaje.setValue(true);
+    this.tipoRemolque.setValue(true);
+    this.fechaService.obtenerFecha().subscribe(res => {
       this.formulario.get('fechaRegistracion').setValue(res.json());
     });
   }
-  
+
   //Reestablece el formulario completo
-  public reestablecerFormulario(id){
+  public reestablecerFormulario(id) {
     this.resultadosChofer = [];
     this.resultadosRemolque = [];
     this.resultadosVehiculo = [];
     this.resultadosZona = [];
-    this.formulario.reset(); 
+    this.formulario.reset();
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
-    setTimeout(function() {
+    this.establecerValoresPorDefecto();
+    console.log(id);
+    if (id != undefined || id != null)
+      this.id.setValue(id);
+    setTimeout(function () {
       document.getElementById('idTipoViaje').focus();
     }, 20);
   }
@@ -242,9 +292,6 @@ export class RepartoComponent implements OnInit {
     let valor = formulario.value;
     if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
-      // this.condicion = true;
-    } else {
-      // this.condicion = false;
     }
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
@@ -264,73 +311,97 @@ export class RepartoComponent implements OnInit {
   selector: 'acompaniante-dialogo',
   templateUrl: 'acompaniante-dialogo.html',
 })
-export class AcompanianteDialogo{
-  //Define la empresa 
-  public empresa: string;
-  //Define los resultados para el autocompletado 
-  public resultados = [];
-  //Define la lista de Acompañantes
-  public listaAcompaniantes = [];
+export class AcompanianteDialogo {
+  //Define la lista del mat-select para acompaniantes 
+  public resultadosAcompaniante: Array<any> = [];
+  //Define la lista de Acompañantes que se agregan
+  public listaAcompaniantes: Array<any> = [];
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
-  //Define una bandera para el control
-  public bandera:boolean=false;
-  constructor(private personalService: PersonalService, public dialogRef: MatDialogRef<AcompanianteDialogo>, @Inject(MAT_DIALOG_DATA) public data) {}
-   ngOnInit() {
-     this.formulario = new FormGroup({
-      acompaniante: new FormControl()
-     });  
-    //Autcompletado - Buscar por vehiculo segun tipo de viaje
-    this.formulario.get('acompaniante').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
-        this.personalService.listarAcompaniantesPorAlias(data).subscribe(res => {
-          this.resultados = res;
-        })
-      }    
-    });   
-   }
-   //Agrega Acompañantes a una lista
-   public agregarAcompaniante(){
-     for(let i=0; i<this.listaAcompaniantes.length; i++){
-      if(this.formulario.get('acompaniante').value.id==this.listaAcompaniantes[i].id){
-        this.bandera=true;
-      }else{
-        this.bandera=false;
-     }
+  public formulario: FormGroup;
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define las columnas de la tabla general
+  public columnas: string[] = ['acompaniante', 'quitar'];
+  //Define la matSort
+  @ViewChild(MatSort) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
+  //Constructor
+  constructor(private personalService: PersonalService, public dialogRef: MatDialogRef<AcompanianteDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private appService: AppService, private modelo: RepartoPersonal, private toastr: ToastrService) {
+    dialogRef.disableClose = true;
+  }
+  ngOnInit() {
+    //Declara el formulario y las variables 
+    this.formulario = this.modelo.formulario;
+    //Inicializa la lista completa para la tabla
+    this.listaCompleta = new MatTableDataSource([]);
+    this.listaCompleta.sort = this.sort;
+    //Obtiene la lista de acompaniantes
+    this.listarAcompaniantes();
+  }
+  //Carga la lista de acompaniantes
+  private listarAcompaniantes() {
+    let empresa = this.appService.getEmpresa();
+    this.personalService.listarAcompaniantesPorEmpresa(empresa.id).subscribe(
+      res => {
+        this.resultadosAcompaniante = res.json();
+        console.log(res.json());
+      },
+      err => {
+        console.log("Error al obtener la lista de acompaniantes por empresa.");
+      }
+    )
+  }
+  //Agrega Acompañantes a una lista
+  public agregar() {
+    if (this.listaCompleta.data.length > 0) {
+      for (let i = 0; i < this.listaCompleta.data.length; i++) {
+        if (this.formulario.get('personal').value.id == this.listaCompleta.data[i].personal.id) {
+          this.formulario.reset();
+          this.toastr.error("El acompañante seleccionado ya fue agregado a la lista.");
+          setTimeout(function () {
+            document.getElementById('idAcompaniante').focus();
+          }, 20);
+        } else {
+          this.agregarAcompaniante();
+        }
+      }
+    } else {
+      this.agregarAcompaniante();
     }
-     if(this.bandera==true){
-      this.formulario.get('acompaniante').reset();
-        this.resultados = [];
-        setTimeout(function() {
-          document.getElementById('idAcompaniante').focus();
-        }, 20);
-      this.bandera=false;
-     }else{
-      this.listaAcompaniantes.push(this.formulario.get('acompaniante').value);
-      this.formulario.get('acompaniante').reset();
-      this.resultados = [];
-      setTimeout(function() {
-        document.getElementById('idAcompaniante').focus();
-      }, 20);      
-     }
-   }
-   //Quita un acompaniante de la lista
-   public quitarAcompaniante(indice){
-    this.listaAcompaniantes.splice(indice, 1);
-    setTimeout(function() {
+  }
+  //Agrega un acompañante a la lista
+  private agregarAcompaniante() {
+    this.listaCompleta.data.push(this.formulario.value);
+    this.listaCompleta.sort = this.sort;
+    this.toastr.success("Acompañante agregado a la lista.");
+    this.formulario.reset();
+    setTimeout(function () {
       document.getElementById('idAcompaniante').focus();
     }, 20);
-   }
+  }
+  //Quita un acompaniante de la lista
+  public quitarAcompaniante(indice) {
+    this.listaCompleta.data.splice(indice, 1);
+    this.listaCompleta.sort = this.sort;
+    this.toastr.success("Acompañante quitado de la lista.");
+    setTimeout(function () {
+      document.getElementById('idAcompaniante').focus();
+    }, 20);
+  }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
-    if(a != null && b != null) {
+    if (a != null && b != null) {
       return a.id === b.id;
     }
   }
   //Define como se muestra los datos en el autcompletado a
   public displayF(elemento) {
-    if(elemento != undefined) {
+    if (elemento != undefined) {
       return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;

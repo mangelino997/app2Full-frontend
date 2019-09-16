@@ -58,6 +58,10 @@ export class PersonalService {
   public listarChoferesCortaDistanciaPorAlias(nombre) {
     return this.http.get(this.url + '/listarChoferesCortaDistanciaPorAlias/' + nombre, this.options);
   }
+  //Obtiene la lista de choferes de larga distancia por alias
+  public listarChoferesLargaDistanciaPorAlias(nombre) {
+    return this.http.get(this.url + '/listarChoferesLargaDistanciaPorAlias/' + nombre, this.options);
+  }
   //Obtiene la lista de choferes por empresa
   // public listarChoferesPorEmpresa(empresa) {
   //   return this.http.get(this.url + '/listarChoferesPorEmpresa/' + empresa, this.options).map(res => {
@@ -66,13 +70,15 @@ export class PersonalService {
   //     })
   //   });
   // }
+  //Obtiene la lista de choferes por empresa
   public listarChoferesPorEmpresa(idEmpresa) {
     return this.http.get(this.url + '/listarChoferesPorEmpresa/' + idEmpresa, this.options);
   }
-  //Obtiene la lista de choferes de larga distancia por alias
-  public listarChoferesLargaDistanciaPorAlias(nombre) {
-    return this.http.get(this.url + '/listarChoferesLargaDistanciaPorAlias/' + nombre, this.options);
+  //Obtiene la lista de acompaniantes de larga distancia por alias
+  public listarAcompaniantesPorEmpresa(idEmpresa) {
+    return this.http.get(this.url + '/listarAcompaniantesPorEmpresa/' + idEmpresa, this.options);
   }
+  
   //Obtiene un listado por alias
   public listarPorAlias(alias) {
     return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {

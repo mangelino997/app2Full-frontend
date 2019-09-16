@@ -6,7 +6,7 @@ import { RepartoSalienteRoutingModule } from './reparto-saliente-routing.module'
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RepartoComponent } from 'src/app/componentes/reparto-saliente/reparto.component';
+import { RepartoComponent, AcompanianteDialogo } from 'src/app/componentes/reparto-saliente/reparto.component';
 import { Reparto } from 'src/app/modelos/reparto';
 import { TextMaskModule } from 'angular2-text-mask';
 import { VehiculoService } from 'src/app/servicios/vehiculo.service';
@@ -27,10 +27,13 @@ import { ViajeEfectivo } from 'src/app/modelos/viajeEfectivo';
 import { ZonaService } from 'src/app/servicios/zona.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
+import { OrdenCombustibleComponent } from 'src/app/componentes/orden-combustible/orden-combustible.component';
 
 @NgModule({
   declarations: [
     RepartoComponent,
+    AcompanianteDialogo,
+    OrdenCombustibleComponent
   ],
   imports: [
     CommonModule,
@@ -68,7 +71,8 @@ import { LoaderService } from 'src/app/servicios/loader.service';
     TipoComprobanteService,
   ],
   entryComponents: [
-    
+    AcompanianteDialogo,
+    OrdenCombustibleComponent,
   ]
 })
 export class RepartoSalienteModule { }

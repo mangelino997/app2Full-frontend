@@ -29,6 +29,7 @@ import { ObservacionDialogComponent } from './componentes/observacion-dialog/obs
 import { ReporteDialogoComponent } from './componentes/reporte-dialogo/reporte-dialogo.component';
 import { FechaService } from './servicios/fecha.service';
 import { getDutchPaginatorIntl } from './dutch-paginator-intl';
+import { OrdenCombustibleComponent } from './componentes/orden-combustible/orden-combustible.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -47,7 +48,8 @@ const stompConfig: StompConfig = {
     AppComponent,
     LoginComponent,
     ObservacionDialogComponent,
-    ReporteDialogoComponent
+    ReporteDialogoComponent,
+    OrdenCombustibleComponent
   ],
   imports: [
     FormsModule,
