@@ -339,6 +339,7 @@ export class LocalidadComponent implements OnInit {
   public vaciarLista(): void {
     this.listaCompleta = new MatTableDataSource([]);
   }
+
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;

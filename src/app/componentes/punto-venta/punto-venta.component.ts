@@ -8,11 +8,12 @@ import { ToastrService } from 'ngx-toastr';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { PuntoVenta } from 'src/app/modelos/puntoVenta';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-punto-venta',
@@ -60,10 +61,13 @@ export class PuntoVentaComponent implements OnInit {
   //Define el tipo de comprobante
   public tipoComprobante: FormControl = new FormControl('', Validators.required);
   //Define las columnas de la tabla
-  public columnas: string[] = ['sucursal', 'empresa', 'puntoVenta', 'fe', 'feLinea',
-    'cae', 'cuentaOrden', 'numero', 'copia', 'imprime', 'habilitada', 'defecto', 'ver', 'mod'];
+  public columnas: string[] = ['SUCURSAL', 'EMPRESA', 'PUNTO VENTA', 'FE', 'FE LINEA',
+    'CAE', 'CUENTA ORDEN', 'NUMERO', 'COPIA', 'IMPRIME', 'HABILITADA', 'DEFECTO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -73,7 +77,7 @@ export class PuntoVentaComponent implements OnInit {
     private toastr: ToastrService, private puntoVenta: PuntoVenta,
     private sucursalServicio: SucursalService, private empresaServicio: EmpresaService,
     private afipComprobanteService: AfipComprobanteService, private tipoComprobanteService: TipoComprobanteService,
-    private appService: AppService, private loaderService: LoaderService) {
+    private appService: AppService, private loaderService: LoaderService,  private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -317,6 +321,7 @@ export class PuntoVentaComponent implements OnInit {
     this.servicio.listarPorSucursalYEmpresaLetra(sucursal.value.id, empresa.value.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
+      this.listaCompleta.paginator = this.paginator;
       this.loaderService.hide();
     });
   }
@@ -464,4 +469,39 @@ export class PuntoVentaComponent implements OnInit {
       }
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          sucursal: elemento.sucursal.nombre,
+          empresa: elemento.empresa.razonSocial,
+          puntoventa: this.displayFb(elemento),
+          fe: elemento.fe ? 'Si' : 'No',
+          felinea: elemento.feEnLinea ? 'Si' : 'No',
+          cae: elemento.feCAEA ? 'Si' : 'No',
+          cuentaorden: elemento.esCuentaOrden ? 'Si' : 'No',
+          numero: elemento.ultimoNumero,
+          copia: elemento.copias,
+          imprime: elemento.imprime ? 'Si' : 'No',
+          habilitada: elemento.estaHabilitado ? 'Si' : 'No',
+          defecto: elemento.porDefecto ? 'Si' : 'No'
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Puntos de Ventas',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

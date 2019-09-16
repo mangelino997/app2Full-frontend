@@ -19,10 +19,11 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { OrdenVentaTarifa } from 'src/app/modelos/ordenVentaTarifa';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
-import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSort, MatTableDataSource } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog, MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialogo.component';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-orden-venta',
@@ -74,6 +75,8 @@ export class OrdenVentaComponent implements OnInit {
   public cliente: FormControl = new FormControl();
   //Define tipoOrdenVenta como FormControl
   public tipoOrdenVenta: FormControl = new FormControl('', Validators.required);
+  //
+  public columnasMostradas: FormControl = new FormControl();
   //Define la opcion (SELECT) Tipo Tarifa como un FormControl
   public tipoTarifa: FormControl = new FormControl();
   //Define la lista de tarifas para el Tipo Tarifa
@@ -131,16 +134,20 @@ export class OrdenVentaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'tarifa', 'escala', 'porPorcentaje', 'ver', 'eliminar'];
   //Define las columnas de la tabla para la pestaña LISTAR
-  public columnasListar: string[] = ['eliminar', 'mod', 'id', 'descripcion', 'vendedor', 'seguro', 'cr', 'esContado'];
+  public columnasListar: string[] = ['ELIMINAR', 'EDITAR', 'ID', 'DESCRIPCION', 'VENDEDOR', 'SEGURO', 'CR', 'ES CONTADO'];
+  public columnasSeleccionadas:string[] = this.columnasListar.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private clienteServicio: ClienteService, private fechaService: FechaService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService, public dialog: MatDialog,
     private appService: AppService, private ordenVenta: OrdenVenta, 
     private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo,
-    private loaderService: LoaderService, private ordenVentaTarifa: OrdenVentaTarifa, private ordenVentaTarifaService: OrdenVentaTarifaService) {
+    private loaderService: LoaderService, private ordenVentaTarifa: OrdenVentaTarifa, private ordenVentaTarifaService: OrdenVentaTarifaService,
+    private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -704,6 +711,7 @@ export class OrdenVentaComponent implements OnInit {
         res => {
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
+          this.listaCompleta.paginator = this.paginator;
         },
         err => {
           let error = err.json();
@@ -890,6 +898,39 @@ export class OrdenVentaComponent implements OnInit {
     let estaActiva = this.formulario.get('estaActiva').value;
     return estaActiva ? this.indiceSeleccionado == 1 || this.indiceSeleccionado == 3 : false;
   }
+  //Retorna el numero a x decimales
+  public returnDecimales(valor: number, cantidad: number) {
+    return this.appService.establecerDecimales(valor, cantidad);
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaOrdenVenta): Array<any> {
+    let lista = listaOrdenVenta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          descripcion: elemento.nombre,
+          vendedor: elemento.vendedor.nombre,
+          seguro: this.returnDecimales(elemento.seguro, 2) + '%',
+          cr: this.returnDecimales(elemento.comisionCR, 2) + '%',
+          escontado: elemento.esContado ? 'Si' : 'No'
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaOrdenVenta.data);
+    let datos = {
+      nombre: 'Ordenes de Venta',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }
 //Componente: dialogo para ver tarifa de Orden Venta
 @Component({
