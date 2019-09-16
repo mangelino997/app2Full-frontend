@@ -4,11 +4,12 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { Categoria } from 'src/app/modelos/categoria';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-categoria',
@@ -45,13 +46,16 @@ export class CategoriaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['id', 'nombre', 'adicionalVacaciones', 'topeAdelantos', 'díasLaborables', 'horasLaborables', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'ADICIONAL VACACIONES', 'TOPE ADELANTOS', 'DIAS LABORABLES', 'HORAS LABORABLES', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: CategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private appServicio: AppService, 
-    private categoria: Categoria, private loaderService: LoaderService) {
+    private categoria: Categoria, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appServicio.getRol().id, this.appServicio.getSubopcion())
     .subscribe(
@@ -205,6 +209,7 @@ export class CategoriaComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -326,4 +331,37 @@ export class CategoriaComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+  //Retorna el numero a x decimales
+  public returnDecimales(valor: number, cantidad: number) {
+    return this.appServicio.establecerDecimales(valor, cantidad);
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          adicionalvacaciones: this.returnDecimales(elemento.adicionalBasicoVacaciones, 2) + '%',
+          topeadelantos: this.returnDecimales(elemento.topeBasicoAdelantos, 2) + '%',
+          diaslaborables: elemento.diasLaborables,
+          horaslaborables: elemento.horasLaborables
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Categorias',
+      empresa: this.appServicio.getEmpresa().razonSocial,
+      usuario: this.appServicio.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

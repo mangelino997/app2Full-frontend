@@ -3,10 +3,11 @@ import { EscalaTarifaService } from '../../servicios/escala-tarifa.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-escala-tarifa',
@@ -18,17 +19,21 @@ export class EscalaTarifaComponent implements OnInit {
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
+  public columnasMostradas: FormControl = new FormControl();
   //Define las columnas de la tabla
-  public columnas: string[] = ['hasta', 'valor', 'eliminar'];
+  public columnas: string[] = ['HASTA', 'VALOR', 'ELIMINAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: EscalaTarifaService, private loaderService: LoaderService,
-    private toastr: ToastrService, private appServicio: AppService) {
+  constructor(private appService: AppService, private servicio: EscalaTarifaService, private loaderService: LoaderService,
+    private toastr: ToastrService, private appServicio: AppService, private reporteServicio: ReporteService) {
     //Se subscribe al servicio de lista de registros
     // this.servicio.listaCompleta.subscribe(res => {
     //   this.listaCompleta = res;
@@ -62,6 +67,7 @@ export class EscalaTarifaComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -122,6 +128,10 @@ export class EscalaTarifaComponent implements OnInit {
       }
     )
   }
+  //Retorna el numero a x decimales
+  public returnDecimales(valor: number, cantidad: number) {
+    return this.appService.establecerDecimales(valor, cantidad);
+  }
   //Reestablece el formulario
   private reestablecerFormulario() {
     this.formulario.reset();
@@ -145,4 +155,29 @@ export class EscalaTarifaComponent implements OnInit {
     valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
     this.formulario.get('descripcion').setValue('Hasta ' + valor.target.value);
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          hasta: 'Hasta',
+          valor: this.returnDecimales(elemento.valor, 2)
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Escalas de Tarifas',
+      empresa: this.appServicio.getEmpresa().razonSocial,
+      usuario: this.appServicio.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }
