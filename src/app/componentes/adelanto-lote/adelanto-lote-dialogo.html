@@ -1,11 +1,11 @@
-<div id="" class="container-fluid" >
+<div id="" class="container-fluid padd-20" >
     <div class="row justify-content-center contenedor" >
       <div class="col-md-6 text-center">
         <h5>Adelanto Sueldos en Lote</h5>
       </div>
     </div>
     <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="numeroLegajo" sticky>
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Legajo</th>
@@ -24,6 +24,7 @@
             </table>
         </div>
     </div>
+    <br>
     <div class="row">
         <div class="col text-center">
           <button id="idBoton" mat-raised-button color="secondary" [mat-dialog-close]="" 
