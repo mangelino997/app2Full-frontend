@@ -29,27 +29,27 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define el resultado
   public resultados: Array<any> = [];
   //Define la pestania activa
-  public activeLink:any = null;
+  public activeLink: any = null;
   //Define el indice seleccionado de pestania
-  public indiceSeleccionado:number = null;
+  public indiceSeleccionado: number = null;
   //Define la pestania actual seleccionada
-  public pestaniaActual:string = null;
+  public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
-  public mostrarAutocompletado:boolean = null;
+  public mostrarAutocompletado: boolean = null;
   //Define si habilita el boton de abrir modal prestamo
   public btnPrestamoModal: boolean = null;
   //Define si el campo es de solo lectura
-  public soloLectura:boolean = false;
+  public soloLectura: boolean = false;
   //Define si mostrar el boton
-  public mostrarBoton:boolean = null;
+  public mostrarBoton: boolean = null;
   //Define la lista de pestanias
-  public pestanias:Array<any> = [];
+  public pestanias: Array<any> = [];
   //Define la lista de opciones
-  public opciones:Array<any> = [];
+  public opciones: Array<any> = [];
   //Define la lista de prestamos
-  public listaPrestamos:Array<any> = [];
+  public listaPrestamos: Array<any> = [];
   //Define un formulario para validaciones de campos de la primera Pestaña
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define los formControl de la vista
@@ -61,24 +61,21 @@ export class AdelantoPersonalComponent implements OnInit {
   public basicoCategoria: FormControl = new FormControl();
   public topeAdelanto: FormControl = new FormControl();
   public importeDisponible: FormControl = new FormControl();
-  //Define los formControl para las pestañas con Listar (Consultar, Actualizar, Eliminar, Listar)
-  public sucursal: FormControl = new FormControl();
-  public fechaEmisionDesde: FormControl = new FormControl();
-  public fechaEmisionHasta: FormControl = new FormControl();
-  public adelanto: FormControl = new FormControl();
-  public personal: FormControl = new FormControl();
-  public estado: FormControl = new FormControl();
-  public alias: FormControl = new FormControl();
+  //Define el formulairo para las pestañas que tienen habilitado el btn "buscar" (Consultar, Actualizar, Eliminar, Listar)
+  public formularioListar: FormGroup;
+  //Define el numero del lote como un formControl
   public lote: FormControl = new FormControl();
   //Define la fecha actual
   public FECHA_ACTUAL: FormControl = new FormControl();
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
-  public opcionSeleccionada:number = null;
-   //Define las columnas de la tabla
-  public columnas:string[] = ['sucursal', 'tipoCpte', 'numAdelanto', 'anulado', 'fechaEmision', 'fechaVto', 'personal',
-  'importe', 'observaciones', 'usuario', 'cuota', 'totalCuotas', 'numeroLote', 'anular', 'mod', 'ver'];
+  public opcionSeleccionada: number = null;
+  //Define el id del registro a modificar
+  public idMod: number = null;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['sucursal', 'tipoCpte', 'numAdelanto', 'anulado', 'fechaEmision', 'fechaVto', 'personal',
+    'importe', 'observaciones', 'usuario', 'cuota', 'totalCuotas', 'numeroLote', 'anular', 'mod', 'ver'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -86,43 +83,31 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Defiene el render
-  public render:boolean = false;
+  public render: boolean = false;
   //Constructor
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: PersonalAdelanto, private servicio: PersonalAdelantoService, public dialog: MatDialog,
     private personalService: PersonalService, private basicoCategoriaService: BasicoCategoriaService, private fechaService: FechaService,
     private sucursalService: SucursalService) {
-      //Obtiene la lista de pestania por rol y subopcion
-      this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+    //Obtiene la lista de pestania por rol y subopcion
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-      //Autocompletado
-      this.autocompletado.valueChanges.subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.personalService.listarPorAlias(data).subscribe(res => {
-            this.resultados = res;
-          })
-        }
-      });
-      //Alias - Buscar por alias, empresa y sucursal
-      let empresa = this.appService.getEmpresa();
-      let usuario = this.appService.getUsuario();
-      this.alias.valueChanges.subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.personalService.listarActivosPorAliasEmpresaYSucursal(data, empresa.id, usuario.sucursal.id).subscribe(res => {
-            this.resultados = res;
-          })
-        }
-      })
-     }
-
+    //Autocompletado
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.personalService.listarPorAlias(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    });
+  }
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -131,36 +116,53 @@ export class AdelantoPersonalComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
+    //Define los campos para las validaciones del segundo formulario
+    this.formularioListar = new FormGroup({
+      sucursal: new FormControl('', Validators.required),
+      fechaEmisionDesde: new FormControl('', Validators.required),
+      fechaEmisionHasta: new FormControl('', Validators.required),
+      adelanto: new FormControl('', Validators.required),
+      personal: new FormControl('', Validators.required),
+      estado: new FormControl('', Validators.required),
+      alias: new FormControl(),
+    });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Reestablece el formulario
     this.reestablecerFormulario(undefined);
     //Obtiene la lista de Sucursal Emision
     this.listarSucursalesEmision();
-    
+    //Alias - Buscar por alias, empresa y sucursal
+    let empresa = this.appService.getEmpresa();
+    let usuario = this.appService.getUsuario();
+    this.formularioListar.get('alias').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.personalService.listarActivosPorAliasEmpresaYSucursal(data, empresa.id, usuario.sucursal.id).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    })
   }
   //Carga la lista de Sucursales de Emision
-  private listarSucursalesEmision(){
+  private listarSucursalesEmision() {
     this.sucursalService.listar().subscribe(
-      res=>{
+      res => {
         this.sucursales = res.json();
       },
-      err=>{
-        console.log(err);
+      err => {
       }
     )
   }
   //Obtiene la fecha actual
-  private obtenerFechaActual(){
+  private obtenerFechaActual() {
     this.fechaService.obtenerFecha().subscribe(
-      res=>{
+      res => {
         this.FECHA_ACTUAL.setValue(res.json());
         this.formulario.get('fechaEmision').setValue(res.json());
-        this.fechaEmisionDesde.setValue(res.json());
-        this.fechaEmisionHasta.setValue(res.json());
+        this.formularioListar.get('fechaEmisionDesde').setValue(res.json());
+        this.formularioListar.get('fechaEmisionHasta').setValue(res.json());
       },
-      err=>{
-        console.log(err);
+      err => {
       }
     )
   }
@@ -179,8 +181,7 @@ export class AdelantoPersonalComponent implements OnInit {
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if(opcion == 0) {
-      this.resultados = [];
+    if (opcion == 0) {
     }
     switch (id) {
       case 1:
@@ -218,87 +219,74 @@ export class AdelantoPersonalComponent implements OnInit {
   }
 
   //Carga la tabla con los registros
-  public listarPorFiltros(){
+  public listarPorFiltros() {
     this.loaderService.show();
-    let empresa = null;
-    let usuario = null;
-    let idSucursal = null;
-    let fechaDesde = null;
-    let fechaHasta = null;
-    let adelanto = null;
-    let estado = null;
-    let alias = null;
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
     //Setea valores
-    empresa = this.appService.getEmpresa();
-    usuario = this.appService.getUsuario();
-    idSucursal = usuario.sucursal.id;
-    fechaDesde = this.fechaEmisionDesde.value;
-    fechaHasta = this.fechaEmisionHasta.value;
-    adelanto = this.adelanto.value;
-    estado = this.estado.value;
-    alias = this.alias.value;
-    if(alias != undefined || alias != null)
-      alias = this.alias.value.alias;
-      else
-      alias = ""; 
+    let empresa = this.appService.getEmpresa();
+    let usuario = this.appService.getUsuario();
+    let idSucursal = usuario.sucursal.id;
+    let fechaDesde = this.formularioListar.get('fechaEmisionDesde').value;
+    let fechaHasta = this.formularioListar.get('fechaEmisionHasta').value;
+    let adelanto = this.formularioListar.get('adelanto').value;
+    let estado = this.formularioListar.get('estado').value;
+    let alias = this.formularioListar.get('alias').value;
+    if (alias != undefined || alias != null)
+      alias = this.formularioListar.value.alias;
+    else
+      alias = "";
     //Genero el objeto
-    let obj={
-      idEmpresa: empresa.id, 
-      idSucursal: idSucursal, 
-      fechaDesde: fechaDesde, 
+    let obj = {
+      idEmpresa: empresa.id,
+      idSucursal: idSucursal,
+      fechaDesde: fechaDesde,
       fechaHasta: fechaHasta,
-      adelanto: adelanto, 
-      alias: alias, 
+      adelanto: adelanto,
+      alias: alias,
       estado: estado
     }
     //Consulta
-    this.servicio.listarPorFiltros(obj ).subscribe(
-      res=>{
-        console.log(res.json());
+    this.servicio.listarPorFiltros(obj).subscribe(
+      res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
-      err=>{
-        let error= err.json();
-        console.log(error.message);
-        this.toastr.error(error.message);
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     )
   }
   //Agrega un registro
-  private agregar(){
+  private agregar() {
     this.loaderService.show();
     let usuarioAlta = this.appService.getUsuario();
-    if(this.btnPrestamoModal){
+    if (this.btnPrestamoModal) {
       this.servicio.agregarPrestamo(this.listaPrestamos).subscribe(
-        res=>{
-          console.log(res);
+        res => {
           let respuesta = res.json();
-          if(res.status == 201){
+          if (res.status == 201) {
             this.reestablecerFormulario(respuesta.id);
             this.toastr.success("Registro agregado con éxito.");
             setTimeout(function () {
-                document.getElementById("idAutocompletado").focus();
+              document.getElementById("idAutocompletado").focus();
             }, 20);
           }
           this.loaderService.hide();
         },
-        err=>{
+        err => {
           let error = err.json();
-          this.toastr.error(error.message);
+          this.toastr.error(error.mensaje);
           this.loaderService.hide();
         }
       )
-    }else{
-      console.log(this.formulario.value);
+    } else {
       this.formulario.get('usuarioAlta').setValue(usuarioAlta);
       this.servicio.agregar(this.formulario.value).subscribe(
-        res=>{
-          console.log(res.json);
+        res => {
           let respuesta = res.json();
           this.reestablecerFormulario(respuesta.id);
           this.toastr.success("Registro agregado con éxito.");
@@ -307,29 +295,28 @@ export class AdelantoPersonalComponent implements OnInit {
           }, 20);
           this.loaderService.hide();
         },
-        err=>{
+        err => {
           let error = err.json();
-          this.toastr.error(error.message);
+          this.toastr.error(error.mensaje);
           this.loaderService.hide();
         }
       )
     }
   }
   //Actualiza un registro
-  private actualizar(){
+  private actualizar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.listarPorFiltros();
+        this.idMod = null;
         this.toastr.success("Registro actualizado con éxito.");
         setTimeout(function () {
           document.getElementById("idAutocompletado").focus();
         }, 20);
         this.loaderService.hide();
       },
-      err=>{
+      err => {
         let error = err.json();
         this.toastr.error(error.mensaje);
         this.loaderService.hide();
@@ -337,14 +324,11 @@ export class AdelantoPersonalComponent implements OnInit {
     )
   }
   //Elimina un registro
-  private eliminar(){
+  private eliminar() {
     this.loaderService.show();
     this.formulario.get('estaAnulado').setValue(true);
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
-      res=>{
-        console.log(res.json);
-        this.reestablecerFormulario(undefined);
+      res => {
         this.listarPorFiltros();
         this.toastr.success("Registro actualizado con éxito.");
         setTimeout(function () {
@@ -352,7 +336,7 @@ export class AdelantoPersonalComponent implements OnInit {
         }, 20);
         this.loaderService.hide();
       },
-      err=>{
+      err => {
         let error = err.json();
         this.toastr.error(error.mensaje);
         this.loaderService.hide();
@@ -371,45 +355,40 @@ export class AdelantoPersonalComponent implements OnInit {
     let recibePrestamo = elemento.recibePrestamo;
     this.btnPrestamoModal = null;
     this.listaPrestamos = [];
-    console.log(elemento, recibePrestamo);
-    if(recibePrestamo){
+    if (recibePrestamo) {
       this.formulario.get('importe').disable();
       this.btnPrestamoModal = true;
-    }else{
+    } else {
       this.formulario.get('importe').enable();
       this.btnPrestamoModal = false;
+      this.toastr.warning("El personal no está habilitado para recibir préstamos.");
     }
   }
   //Obtiene el valor de basico categoria
-  private obtenerBasicoCategoria(idCategoria){
+  private obtenerBasicoCategoria(idCategoria) {
     this.basicoCategoriaService.obtenerPorCategoria(idCategoria).subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         let respuesta = res.json();
         this.basicoCategoria.setValue(this.appService.establecerDecimales(respuesta.basico, 2));
         this.calcularImporteDisponible();
       },
-      err=>{
+      err => {
         let error = err.json();
         this.toastr.error(error);
       }
     )
   }
   //Calcula el importe disponible
-  private calcularImporteDisponible(){
-    let elemento = null;
-    let topeBasicoAdelanto = null;
-    let basico = null;
-    let importeDisponible = null;
-    elemento = this.formulario.value.personal;
-    topeBasicoAdelanto = elemento.categoria.topeBasicoAdelantos;
-    basico = this.basicoCategoria.value;
-    importeDisponible = (topeBasicoAdelanto/100)*basico;
+  private calcularImporteDisponible() {
+    let elemento = this.formulario.value.personal;
+    let topeBasicoAdelanto = elemento.categoria.topeBasicoAdelantos;
+    let basico = this.basicoCategoria.value;
+    let importeDisponible = (topeBasicoAdelanto / 100) * basico;
     this.importeDisponible.setValue(this.appService.establecerDecimales(importeDisponible, 2));
     this.topeAdelanto.setValue(this.appService.establecerDecimales(topeBasicoAdelanto, 2));
   }
   //Reestablece el formulario
-  private reestablecerFormulario(id){
+  private reestablecerFormulario(id) {
     //Reestablece el formulario de la pestaña Agregar
     this.formulario.reset();
     this.legajo.setValue(id);
@@ -422,15 +401,9 @@ export class AdelantoPersonalComponent implements OnInit {
     this.topeAdelanto.reset();
     this.saldoActual.reset();
     this.importeDisponible.reset();
+    this.idMod = null;
     //Restablece los formControls del formulario listar
-    this.sucursal.reset();
-    this.fechaEmisionDesde.reset();
-    this.fechaEmisionHasta.reset();
-    this.adelanto.reset();
-    this.estado.reset();
-    this.personal.reset();
-    this.alias.reset();
-    this.lote.setValue(null);
+    this.formularioListar.reset();
     //Vacía las listas
     this.listaPrestamos = [];
     this.resultados = [];
@@ -443,21 +416,21 @@ export class AdelantoPersonalComponent implements OnInit {
     this.obtenerFechaActual();
     this.formulario.get('sucursal').setValue(sucursal);
     this.formulario.get('empresa').setValue(empresa);
-    if(this.indiceSeleccionado == 1){
+    if (this.indiceSeleccionado == 1) {
       this.formulario.get('usuarioAlta').setValue(usuario);
       this.formulario.get('observaciones').setValidators([]);
       this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
       this.formulario.get('fechaVto').setValidators([]);
       this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
     }
-    if(this.indiceSeleccionado == 3){
+    if (this.indiceSeleccionado == 3) {
       this.formulario.get('usuarioMod').setValue(usuario);
       this.formulario.get('observaciones').setValidators([]);
       this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
       this.formulario.get('fechaVto').setValidators(Validators.required);
       this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
     }
-    if(this.indiceSeleccionado == 4){
+    if (this.indiceSeleccionado == 4) {
       this.formulario.get('usuarioBaja').setValue(usuario);
       this.formulario.get('observaciones').setValidators(Validators.required);
       this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
@@ -469,57 +442,56 @@ export class AdelantoPersonalComponent implements OnInit {
 
   }
   //Controla el cmapo importe
-  public controlarImporte(){
+  public controlarImporte() {
     let importeDisponible = null;
     let importe = null;
     importeDisponible = Number(this.importeDisponible.value);
     importe = this.formulario.value.importe;
-    console.log(importe, importeDisponible);
-    if(importe!=null || importe!=undefined)
+    if (importe != null || importe != undefined)
       this.formulario.get('importe').setValue(this.appService.establecerDecimales(importe, 2));
-      else
+    else
       this.formulario.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
     importe = Number(this.appService.establecerDecimales(importe, 2));
     this.controlarImporteSuperior(importe, importeDisponible);
   }
   //Si recibePrestamo == false, controla que el "Importe" no supere al campo “Importe Disponible”  
-  private controlarImporteSuperior(importe, importeDisponible){
-    if(importe > importeDisponible){
+  private controlarImporteSuperior(importe, importeDisponible) {
+    if (importe > importeDisponible) {
       this.formulario.get('importe').reset();
       this.toastr.error("El valor no puede ser superior al campo 'Importe Disponible'.");
       setTimeout(function () {
         document.getElementById('idImporte').focus();
       }, 20);
-    }else{
+    } else {
       this.formulario.get('importe').setValue(this.appService.establecerDecimales(importe, 2));
     }
   }
   //Controla el cambio en el campo "Fecha Emision Desde"
-  public controlarFechaEmisionDesde(){
+  public controlarFechaEmisionDesde() {
     let fechaEmisionDesde = null;
     let fechaEmisionHasta = null;
-    fechaEmisionDesde = this.fechaEmisionDesde.value;
-    fechaEmisionHasta = this.fechaEmisionHasta.value;
-    if(fechaEmisionDesde > fechaEmisionHasta){
+    fechaEmisionDesde = this.formularioListar.get('fechaEmisionDesde').value;
+    fechaEmisionHasta = this.formularioListar.get('fechaEmisionHasta').value;
+    if (fechaEmisionDesde > fechaEmisionHasta) {
       this.toastr.error("Fecha Emisión Desde debe ser igual o menor a la Fecha Emisión Hasta.");
-      this.fechaEmisionDesde.setValue(null);
+      this.formularioListar.get('fechaEmisionDesde').setValue(null);
       setTimeout(function () {
         document.getElementById('idFechaEmisionDesde').focus();
       }, 20);
     }
   }
   //Controla el cambio en el campo "Fecha Emision Hasta"
-  public controlarFechaEmisionHasta(){
+  public controlarFechaEmisionHasta() {
     let fechaEmisionDesde = null;
     let fechaEmisionHasta = null;
-    fechaEmisionDesde = this.fechaEmisionDesde.value;
-    fechaEmisionHasta = this.fechaEmisionHasta.value;
-    if(fechaEmisionDesde == null || fechaEmisionDesde == undefined){
+    fechaEmisionDesde = this.formularioListar.get('fechaEmisionDesde').value;
+    fechaEmisionHasta = this.formularioListar.get('fechaEmisionHasta').value;
+    if (fechaEmisionDesde == null || fechaEmisionDesde == undefined) {
       this.toastr.error("Debe ingresar Fecha de Emisión Desde.");
       setTimeout(function () {
         document.getElementById('idFechaEmision').focus();
       }, 20);
-    }else if(fechaEmisionHasta < fechaEmisionDesde){
+    } else if (fechaEmisionHasta < fechaEmisionDesde) {
       this.toastr.error("Fecha Emision Hasta debe ser igual o mayor a Fecha de Emisión Desde.");
       this.formulario.get('idFechaEmisionDesde').setValue(null);
       this.formulario.get('idFechaEmisionHasta').setValue(this.FECHA_ACTUAL.value);
@@ -529,19 +501,17 @@ export class AdelantoPersonalComponent implements OnInit {
     }
   }
   //Controla el cambio en el select "Personal"
-  public cambioPersonal(){
-    let opcion = null;
-    opcion = this.personal.value;
-    console.log(opcion);
-    if(opcion){
-      this.alias.enable();
-      this.alias.setValidators(Validators.required);
-      this.alias.updateValueAndValidity();//Actualiza la validacion
-    }else{
-      this.alias.disable();
-      this.alias.setValidators([]);
-      this.alias.updateValueAndValidity();//Actualiza la validacion
-      this.alias.setValue(null);
+  public cambioPersonal() {
+    let opcion = this.formularioListar.get('personal').value;
+    if (opcion) {
+      this.formularioListar.get('alias').enable();
+      this.formularioListar.get('alias').setValidators(Validators.required);
+      this.formularioListar.get('alias').updateValueAndValidity();//Actualiza la validacion
+    } else {
+      this.formularioListar.get('alias').disable();
+      this.formularioListar.get('alias').setValidators([]);
+      this.formularioListar.get('alias').updateValueAndValidity();//Actualiza la validacion
+      this.formularioListar.get('alias').setValue(null);
     }
   }
   //Abre un dialogo para ver las observaciones
@@ -557,45 +527,44 @@ export class AdelantoPersonalComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Anula un registro de la tabla
-  public activarAnular(elemento){
-    console.log(elemento);
+  public activarAnular(elemento, indice) {
     this.formulario.patchValue(elemento);
     this.lote.setValue(elemento.numeroLote);
+    this.idMod = indice;
   }
   //Actualiza un registro de la tabla
-  public activarActualizar(elemento){
-    console.log(elemento);
+  public activarActualizar(elemento, indice) {
     this.formulario.patchValue(elemento);
+    this.idMod = indice;
   }
   //Abre un modal al consultar un registro de la tabla
-  public activarConsultar(elemento){
+  public activarConsultar(elemento) {
     const dialogRef = this.dialog.open(DetalleAdelantoDialogo, {
       width: '95%',
       maxWidth: '100vw',
-      data: { 
+      data: {
         personalAdelanto: elemento
-       },
+      },
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
       this.listaPrestamos = result;
     });
   }
   //Limpia los campos del formulario - cancela el actualizar
-  public cancelar(){
+  public cancelar() {
     this.formulario.reset();
+    this.idMod = null;
   }
   //Abre modal de prestamos
-  public abrirPrestamoModal(){
+  public abrirPrestamoModal() {
     const dialogRef = this.dialog.open(PrestamoDialogo, {
       width: '95%',
       maxWidth: '100vw',
-      data: { 
+      data: {
         personalAdelanto: this.formulario.value
-       },
+      },
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
       this.listaPrestamos = result;
     });
   }
@@ -606,7 +575,7 @@ export class AdelantoPersonalComponent implements OnInit {
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;
-    if(valor) {
+    if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
@@ -649,25 +618,26 @@ export class AdelantoPersonalComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
 }
 
 //Componente 
 @Component({
   selector: 'prestamo-dialogo',
   templateUrl: 'prestamo-dialogo.html',
+  styleUrls: ['./adelanto-personal.component.css']
 })
 export class PrestamoDialogo {
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define a personal adelanto como un formControl
-  public personalAdelanto:FormControl = new FormControl();
+  public personalAdelanto: FormControl = new FormControl();
   //Define el total del prestamo como un formControl
-  public totalPrestamo:FormControl = new FormControl();
+  public totalPrestamo: FormControl = new FormControl();
   //Define la cantidad de cuotas como un formControl
-  public totalCuotas:FormControl = new FormControl();
+  public totalCuotas: FormControl = new FormControl();
   //Define la Diferencia como un formControl
-  public diferencia:FormControl = new FormControl();
+  public diferencia: FormControl = new FormControl();
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define si habilita el boton Aceptar
@@ -675,9 +645,9 @@ export class PrestamoDialogo {
   //Define el campo N° de Cuota como FormControl
   public numeroCuota: FormControl = new FormControl();
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla
-  public columnas:string[] = ['numeroCuota', 'fechaVencimiento', 'importe', 'mod'];
+  public columnas: string[] = ['numeroCuota', 'fechaVencimiento', 'importe', 'mod'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define el mostrar del circulo de progreso
@@ -686,10 +656,10 @@ export class PrestamoDialogo {
   subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<PrestamoDialogo>, @Inject(MAT_DIALOG_DATA) public data, private appService: AppService,
-  private servicio: PersonalAdelantoService, private toastr: ToastrService, private loaderService: LoaderService,
-  private datePipe: DatePipe) {
+    private servicio: PersonalAdelantoService, private toastr: ToastrService, private loaderService: LoaderService,
+    private datePipe: DatePipe) {
     dialogRef.disableClose = true;
-   }
+  }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -707,7 +677,7 @@ export class PrestamoDialogo {
     this.reestablecerFormulario();
   }
   //Reestablece los campos del formulario
-  private reestablecerFormulario(){
+  private reestablecerFormulario() {
     this.formulario.reset();
     this.totalPrestamo.reset();
     this.totalCuotas.reset();
@@ -716,20 +686,18 @@ export class PrestamoDialogo {
     this.totalCuotas.setValue(this.personalAdelanto.value.personal.cuotasPrestamo);
   }
   //Realiza la accion confirmar
-  public confirmar(){
+  public confirmar() {
     this.loaderService.show();
     let totalPrestamo = Number(this.appService.establecerDecimales(this.totalPrestamo.value, 2));
     this.personalAdelanto.value.importe = totalPrestamo;
-    console.log(this.personalAdelanto.value);
     this.servicio.listarCuotas(this.personalAdelanto.value).subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.calcularImporteTotal();
         this.loaderService.hide();
       },
-      err=>{
+      err => {
         let error = err.json();
         this.toastr.error(error);
         this.loaderService.hide();
@@ -737,9 +705,9 @@ export class PrestamoDialogo {
     )
   }
   //Actualiza un registro de la tabla
-  public actualizar(){
+  public actualizar() {
     this.listaCompleta.data[this.idMod].importe = this.formulario.value.importe;
-    this.listaCompleta.data[this.idMod].fechaVto = this.formulario.value.importe;
+    this.listaCompleta.data[this.idMod].fechaVto = this.formulario.value.fechaVto;
     this.listaCompleta.sort = this.sort;
     this.calcularImporteTotal();
     this.formulario.reset();
@@ -747,23 +715,23 @@ export class PrestamoDialogo {
     this.idMod = null;
   }
   //Limpia los campos del formulario - cancela el actualizar
-  public cancelar(){
+  public cancelar() {
     this.formulario.reset();
     this.numeroCuota.setValue(null);
     this.idMod = null;
   }
   //Completa los campos del formulario con los datos del registro a modificar
-  public activarActualizar(elemento, indice){
-    this.formulario.get('cuota').setValue(elemento.cuota);
+  public activarActualizar(elemento, indice) {
+    this.formulario.patchValue(elemento);
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
     this.numeroCuota.setValue(elemento.cuota);
-    this.idMod= indice;
+    this.idMod = indice;
   }
   //Calcula el importe total 
-  private calcularImporteTotal(){
+  private calcularImporteTotal() {
     let totalImporte = 0;
     this.listaCompleta.data.forEach(
-      item=>{
+      item => {
         //Obtiene el importe de cada item
         let importe = Number(item.importe);
         //Suma los importes
@@ -773,16 +741,15 @@ export class PrestamoDialogo {
     this.calcularDiferencia(totalImporte);
   }
   //Calcula el campo diferencia
-  private calcularDiferencia(totalImporte){
+  private calcularDiferencia(totalImporte) {
     let diferencia = 0;
     let totalPrestamo = 0;
     totalPrestamo = Number(this.appService.establecerDecimales(this.totalPrestamo.value, 2));
     diferencia = totalPrestamo - totalImporte;
-    console.log(diferencia, Number(diferencia));
-    if(diferencia == 0){
+    if (diferencia == 0) {
       this.btnAceptar = true;
       this.diferencia.setValue(this.appService.establecerDecimales('0.00', 2));
-    }else{
+    } else {
       this.btnAceptar = false;
       this.diferencia.setValue(this.appService.establecerDecimales(diferencia, 2));
     }
@@ -794,23 +761,22 @@ export class PrestamoDialogo {
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;
-    if(valor) {
+    if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
   closeDialog(opcion) {
-    if(opcion == 'aceptar'){
-      console.log(this.btnAceptar);
-      if(this.btnAceptar)
-      this.dialogRef.close(this.listaCompleta.data);
+    if (opcion == 'aceptar') {
+      if (this.btnAceptar)
+        this.dialogRef.close(this.listaCompleta.data);
       else
         this.toastr.warning("Campo Diferencia debe ser cero.");
     }
-    if(opcion == 'cerrar'){
-      this.dialogRef.close(null);
+    if (opcion == 'cerrar') {
+      this.dialogRef.close([]);
     }
   }
-   
+
 }
 
 //Componente 
@@ -820,26 +786,26 @@ export class PrestamoDialogo {
 })
 export class DetalleAdelantoDialogo {
   //Define un formulario para validaciones de campos
-  public formulario:FormGroup;
+  public formulario: FormGroup;
   //Define el Viaje como un formControl
-  public viaje:FormControl = new FormControl();
+  public viaje: FormControl = new FormControl();
   //Define el Reparto como un formControl
-  public reparto:FormControl = new FormControl();
+  public reparto: FormControl = new FormControl();
   //Define la Fecha Liquidacion como un formControl
-  public fechaLiquidacion:FormControl = new FormControl();
+  public fechaLiquidacion: FormControl = new FormControl();
   //Define la N° Liquidacion como un formControl
-  public numeroLiquidacion:FormControl = new FormControl();
+  public numeroLiquidacion: FormControl = new FormControl();
   //Define el usuario anulacion como un formControl
-  public usuarioAnulacion:FormControl = new FormControl();
+  public usuarioAnulacion: FormControl = new FormControl();
   //Define el observacion anulado como un formControl
-  public observacionAnulado:FormControl = new FormControl();
+  public observacionAnulado: FormControl = new FormControl();
   //Define el usuario mod de cuotas como un formControl
-  public usuarioMod:FormControl = new FormControl();
+  public usuarioMod: FormControl = new FormControl();
   //Constructor
-  constructor(public dialogRef: MatDialogRef<DetalleAdelantoDialogo>, @Inject(MAT_DIALOG_DATA) public data, private appService: AppService, 
-  private loaderService: LoaderService, private modelo: PersonalAdelanto) {
+  constructor(public dialogRef: MatDialogRef<DetalleAdelantoDialogo>, @Inject(MAT_DIALOG_DATA) public data, private appService: AppService,
+    private loaderService: LoaderService, private modelo: PersonalAdelanto) {
     dialogRef.disableClose = true;
-   }
+  }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario y sus validaciones
@@ -848,30 +814,30 @@ export class DetalleAdelantoDialogo {
     this.reestablecerFormulario();
   }
   //Reestablece los campos del formulario
-  private reestablecerFormulario(){
+  private reestablecerFormulario() {
     let elemento = this.data.personalAdelanto;
     this.formulario.reset();
     this.observacionAnulado.setValue(elemento.observacionesAnulado);
     this.fechaLiquidacion.setValue(null);
     this.numeroLiquidacion.setValue(null);
-    if(elemento.reparto)
+    if (elemento.reparto)
       this.reparto.setValue(elemento.reparto.id);
-      else
+    else
       this.reparto.setValue(null);
-    if(elemento.viaje)
+    if (elemento.viaje)
       this.viaje.setValue(elemento.viaje.id);
-      else
+    else
       this.viaje.setValue(null);
-    if(elemento.usuarioAnulado)
+    if (elemento.usuarioAnulado)
       this.usuarioAnulacion.reset(elemento.usuarioAnulado.alias);
-      else
+    else
       this.usuarioAnulacion.reset(null);
-    if(elemento.usuarioMod)
+    if (elemento.usuarioMod)
       this.usuarioMod.setValue(elemento.usuarioMod.alias);
-      else
+    else
       this.usuarioMod.setValue(null);
   }
-  
+
   //Obtiene la mascara de importe
   public mascararImporte(intLimite) {
     return this.appService.mascararImporte(intLimite, 2);
@@ -879,7 +845,7 @@ export class DetalleAdelantoDialogo {
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;
-    if(valor) {
+    if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }

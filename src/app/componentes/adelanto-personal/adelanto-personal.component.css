@@ -6,3 +6,11 @@
 .tabla-ancho {
     width: 1890px !important;
 }
+.tabla-prestamo {
+    width: 100% !important;
+    height: 250px !important;
+    overflow: auto !important;
+}
+.tabla-ancho-prestamo {
+    width: 100% !important;
+}
