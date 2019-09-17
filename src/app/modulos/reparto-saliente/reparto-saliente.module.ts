@@ -15,8 +15,6 @@ import { PersonalService } from 'src/app/servicios/personal.service';
 import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
 import { RetiroDepositoService } from 'src/app/servicios/retiro-deposito.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { RepartoPropioComprobanteService } from 'src/app/servicios/reparto-propio-comprobante.service';
-import { RepartoTerceroComprobanteService } from 'src/app/servicios/reparto-tercero-comprobante.service';
 import { RetiroDepositoComprobanteService } from 'src/app/servicios/retiro-deposito-comprobante.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { RepartoComprobante } from 'src/app/modelos/repartoComprobante';
@@ -73,6 +71,7 @@ import { OrdenCombustibleComponent } from 'src/app/componentes/orden-combustible
   entryComponents: [
     AcompanianteDialogo,
     OrdenCombustibleComponent,
+    
   ]
 })
 export class RepartoSalienteModule { }

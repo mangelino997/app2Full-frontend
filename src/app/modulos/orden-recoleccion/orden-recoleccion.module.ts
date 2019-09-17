@@ -26,7 +26,8 @@ import { CobradorService } from 'src/app/servicios/cobrador.service';
 @NgModule({
   declarations: [
     OrdenRecoleccionComponent,
-    ClienteEventualComponent
+    ClienteEventualComponent,
+    
   ],
   imports: [
     CommonModule,
@@ -63,7 +64,8 @@ import { CobradorService } from 'src/app/servicios/cobrador.service';
     ClienteEventual
   ],
   entryComponents: [
-    ClienteEventualComponent
+    ClienteEventualComponent,
+    
   ]
 })
 export class OrdenRecoleccionModule { }

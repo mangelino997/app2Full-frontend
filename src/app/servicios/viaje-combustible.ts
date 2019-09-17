@@ -54,6 +54,10 @@ export class ViajeCombustibleService {
   public listarCombustibles(idViajePropio) {
     return this.http.get(this.url + '/listarCombustibles/' + idViajePropio, this.options);
   }
+  //Obtiene la lista de combustibles por reparto
+  public listarCombustiblesReparto(idReparto) {
+    return this.http.get(this.url + '/listarCombustiblesReparto/' + idReparto, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);

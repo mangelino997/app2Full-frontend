@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AdelantoLoteRoutingModule } from './adelanto-lote-routing.module';
-import { AdelantoLoteComponent } from 'src/app/componentes/adelanto-lote/adelanto-lote.component';
+import { AdelantoLoteComponent, AdelantoLoteDialogo } from 'src/app/componentes/adelanto-lote/adelanto-lote.component';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatDialog, MatButtonModule, MatDialogModule } from '@angular/material';
@@ -21,6 +21,7 @@ import { PersonalAdelanto } from 'src/app/modelos/personalAdelanto';
 @NgModule({
   declarations: [
     AdelantoLoteComponent,
+    AdelantoLoteDialogo
   ],
   imports: [
     CommonModule,
@@ -50,6 +51,9 @@ import { PersonalAdelanto } from 'src/app/modelos/personalAdelanto';
     PersonalAdelantoService,
     PersonalAdelanto
 
+  ],
+  entryComponents: [
+    AdelantoLoteDialogo
   ]
 })
 export class AdelantoLoteModule { }

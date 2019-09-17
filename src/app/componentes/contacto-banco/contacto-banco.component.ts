@@ -49,8 +49,8 @@ export class ContactoBancoComponent implements OnInit {
   //Define la lista de resultados de busqueda de sucursales bancos
   public resultadosSucursalesBancos: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'TIPO CONTACTO', 'NOMBRE CONTACTO', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'CORREO ELECTRONICO', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['ID', 'TIPO CONTACTO', 'NOMBRE CONTACTO', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'CORREO ELECTRONICO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -72,13 +72,8 @@ export class ContactoBancoComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -124,7 +119,6 @@ export class ContactoBancoComponent implements OnInit {
         this.tiposContactos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -215,25 +209,23 @@ export class ContactoBancoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
   //Obtiene la lista de contactos por sucursal banco
   public listarPorSucursalBanco(elemento) {
+    console.log(elemento);
     if (this.mostrarAutocompletado) {
       this.servicio.listarPorSucursalBanco(elemento.id).subscribe(
         res => {
-          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
-          if(this.indiceSeleccionado==5)
+          if (this.indiceSeleccionado == 5)
             this.listaCompleta.sort = this.sort,
-            this.listaCompleta.paginator = this.paginator;
+              this.listaCompleta.paginator = this.paginator;
           else
             this.contactos = res.json();
         },
         err => {
-          console.log(err);
         }
       )
     }
@@ -285,7 +277,24 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    this.servicio.agregar(this.formulario.value.id).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          setTimeout(function () {
+            document.getElementById('idSucursalBanco').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        this.lanzarError(err);
+        this.loaderService.hide();
+      }
+    );
   }
   //Reestablece el formulario
   private reestablecerFormulario() {
@@ -398,15 +407,15 @@ export class ContactoBancoComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          tipocontacto: elemento.tipoContacto.nombre,
-          nombrecontacto: elemento.nombre,
-          telefonofijo: elemento.telefonoFijo,
-          telefonomovil: elemento.telefonoMovil,
-          correoelectronico: elemento.correoelectronico
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        tipocontacto: elemento.tipoContacto.nombre,
+        nombrecontacto: elemento.nombre,
+        telefonofijo: elemento.telefonoFijo,
+        telefonomovil: elemento.telefonoMovil,
+        correoelectronico: elemento.correoelectronico
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -421,5 +430,5 @@ export class ContactoBancoComponent implements OnInit {
       columnas: this.columnasSeleccionadas
     }
     this.reporteServicio.abrirDialogo(datos);
-  }   
+  }
 }

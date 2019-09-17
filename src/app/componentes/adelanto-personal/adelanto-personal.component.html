@@ -1,265 +1,248 @@
 <div id="" class="container-fluid" (window:keydown)="manejarEvento($event.keyCode)">
-    <div class="row">
-      <div class="centrar">
-        <nav mat-tab-nav-bar>
-          <a mat-tab-link disabled>ADELANTOS SUELDOS</a>
-          <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-            (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
-        </nav>
-      </div>
+  <div class="row">
+    <div class="centrar">
+      <nav mat-tab-nav-bar>
+        <a mat-tab-link disabled>ADELANTOS SUELDOS</a>
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+      </nav>
     </div>
-    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 1">
-      <div class="col-md-10 text-center">
-        <h5>{{pestaniaActual}} Adelanto de Sueldos</h5>
-        <form [formGroup]="formulario" class="contenedor">
-          <div class="row">
-            <div class="col-md-10">
-              <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-                <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
-                <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-                  [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
-                <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="cambioAutocompletado(item)">
-                    {{item.nombreCompleto}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 1">
+    <div class="col-md-10 text-center">
+      <h5>{{pestaniaActual}} Adelanto de Sueldos</h5>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row">
+          <div class="col-md-10">
+            <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
+              <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
+              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+                (blur)="verificarSeleccion(autocompletado)">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let item of resultados" [value]="item"
+                  (onSelectionChange)="cambioAutocompletado(item)">
+                  {{item.nombreCompleto}}
+                </mat-option>
+              </mat-autocomplete>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelLegajo" for="idLegajo" class="tamanio-label">N° de Legajo *</label>
-                <input id="idLegajo" type="text" [formControl]="legajo" readonly
-                  class="form-control form-control-sm ">
-              </div>
-            </div>
-            <div class="col-md-5">
-              <div class="form-group has-float-label">
-                <label id="labelApellido" for="idApellido" class="tamanio-label">Apellido *</label>
-                <input id="idApellido" type="text" [formControl]="apellido" readonly 
-                  class="form-control form-control-sm ">
-              </div>
-            </div>
-            <div class="col-md-5">
-              <div class="form-group has-float-label">
-                <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
-                <input id="idNombre" type="text" [formControl]="nombre" readonly 
-                  class="form-control form-control-sm ">
-              </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelLegajo" for="idLegajo" class="tamanio-label">N° de Legajo *</label>
+              <input id="idLegajo" type="text" [formControl]="legajo" readonly class="form-control form-control-sm ">
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-7">
-                <div class="form-group has-float-label">
-                  <label id="labelCategoria" for="idCategoria" class="tamanio-label">Categoría *</label>
-                  <input id="idCategoria" type="text" [formControl]="categoria" readonly 
-                    class="form-control form-control-sm ">
-              </div>
-            </div>
-            <div class="col-md-5">
-                <div class="form-group has-float-label">
-                  <label id="labelBasicoCategoria" for="idBasicoCategoria" class="tamanio-label">Básico Categoría *</label>
-                  <input id="idBasicoCategoria" type="text" [formControl]="basicoCategoria" readonly [textMask]="mascararImporte(10)"
-                    class="form-control form-control-sm number-right">
-              </div>
+          <div class="col-md-5">
+            <div class="form-group has-float-label">
+              <label id="labelApellido" for="idApellido" class="tamanio-label">Apellido *</label>
+              <input id="idApellido" type="text" [formControl]="apellido" readonly
+                class="form-control form-control-sm ">
             </div>
           </div>
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group has-float-label">
-                  <label id="labelTopeAdelanto" for="idTopeAdelanto" class="descripcion-label">% Tope Adelanto *</label>
-                  <input id="idTopeAdelanto" type="text" [formControl]="topeAdelanto" readonly
-                   autocomplete="off" [textMask]="mascararPorcentaje()" class="form-control form-control-sm number-right" placeholder="00.00%">
-                </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-group has-float-label">
-                  <label id="labelSaldoActual" for="idSaldoActual" class="descripcion-label">Saldo Actual *</label>
-                  <input id="idSaldoActual" type="text" [formControl]="saldoActual" autocomplete="off"  readonly
-                  [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
-                </div>
-              </div>
-              <div class="col-md-5">
-                <div class="form-group has-float-label">
-                  <label id="labelImporteDisponible" for="idImporteDisponible" class="descripcion-label">Importe Disponible *</label>
-                  <input id="idImporteDisponible" type="text" [formControl]="importeDisponible" autocomplete="off"  readonly
-                  [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
-                </div>
-              </div>
+          <div class="col-md-5">
+            <div class="form-group has-float-label">
+              <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
+              <input id="idNombre" type="text" [formControl]="nombre" readonly class="form-control form-control-sm ">
             </div>
-            <div class="row">
-              <div class="col-md-2">
-                <div class="form-group has-float-label">
-                  <label id="labelFechaEmision" for="idFechaEmision" class="tamanio-label">Fecha de Emisión *</label>
-                  <input id="idFechaEmision" type="date" formControlName="fechaEmision" readonly
-                    class="form-control form-control-sm">
-                </div>
-              </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-7">
+            <div class="form-group has-float-label">
+              <label id="labelCategoria" for="idCategoria" class="tamanio-label">Categoría *</label>
+              <input id="idCategoria" type="text" [formControl]="categoria" readonly
+                class="form-control form-control-sm ">
             </div>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group has-float-label">
-                  <label id="labelObservacion" for="idObservacion" class="tamanio-label">Observaciones</label>
-                  <textarea id="idObservacion" type="text" formControlName="observaciones" maxlength="60" rows="3"
-                    class="form-control form-control-sm"></textarea>
-                </div>
-              </div>
+          </div>
+          <div class="col-md-5">
+            <div class="form-group has-float-label">
+              <label id="labelBasicoCategoria" for="idBasicoCategoria" class="tamanio-label">Básico Categoría *</label>
+              <input id="idBasicoCategoria" type="text" [formControl]="basicoCategoria" readonly
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right">
             </div>
-            <div class="row">
-              <div class="col-md-5">
-                <div class="form-group has-float-label">
-                  <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
-                  <input id="idImporte" type="text" formControlName="importe" autocomplete="off" (blur)="controlarImporte()"
-                  [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" 
-                  [disabled]="btnPrestamoModal"  placeholder="$0.00">
-                </div>
-              </div>
-              <div class="col-md-1">
-                <button id="idBotonPrestamo"  mat-raised-button color="primary" formnovalidate [disabled]="!btnPrestamoModal" 
-                (click)="abrirPrestamoModal()">
-                  Préstamo
-                </button>
-              </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label id="labelTopeAdelanto" for="idTopeAdelanto" class="descripcion-label">% Tope Adelanto *</label>
+              <input id="idTopeAdelanto" type="text" [formControl]="topeAdelanto" readonly autocomplete="off"
+                [textMask]="mascararPorcentaje()" class="form-control form-control-sm number-right"
+                placeholder="00.00%">
             </div>
-          <div class="row text-center" *ngIf="!btnPrestamoModal">
-            <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
-              {{pestaniaActual}}
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label id="labelSaldoActual" for="idSaldoActual" class="descripcion-label">Saldo Actual *</label>
+              <input id="idSaldoActual" type="text" [formControl]="saldoActual" autocomplete="off" readonly
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
+            </div>
+          </div>
+          <div class="col-md-5">
+            <div class="form-group has-float-label">
+              <label id="labelImporteDisponible" for="idImporteDisponible" class="descripcion-label">Importe Disponible
+                *</label>
+              <input id="idImporteDisponible" type="text" [formControl]="importeDisponible" autocomplete="off" readonly
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelFechaEmision" for="idFechaEmision" class="tamanio-label">Fecha de Emisión *</label>
+              <input id="idFechaEmision" type="date" formControlName="fechaEmision" readonly
+                class="form-control form-control-sm">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="form-group has-float-label">
+              <label id="labelObservacion" for="idObservacion" class="tamanio-label">Observaciones</label>
+              <textarea id="idObservacion" type="text" formControlName="observaciones" maxlength="60" rows="3"
+                class="form-control form-control-sm"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-5">
+            <div class="form-group has-float-label">
+              <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
+              <input id="idImporte" type="text" formControlName="importe" autocomplete="off" (blur)="controlarImporte()"
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right"
+                [readonly]="btnPrestamoModal" placeholder="$0.00">
+            </div>
+          </div>
+          <div class="col-md-1">
+            <button id="idBotonPrestamo" mat-raised-button color="primary" formnovalidate [disabled]="!btnPrestamoModal"
+              (click)="abrirPrestamoModal()">
+              Préstamo
             </button>
           </div>
-          <div class="row text-center" *ngIf="btnPrestamoModal">
-            <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-              (click)="accion(indiceSeleccionado)" [disabled]="listaPrestamos.length == 0">
-              {{pestaniaActual}}
+        </div>
+        <div class="row text-center" *ngIf="!btnPrestamoModal">
+          <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+            (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+            {{pestaniaActual}}
+          </button>
+        </div>
+        <div class="row text-center" *ngIf="btnPrestamoModal">
+          <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+            (click)="accion(indiceSeleccionado)" [disabled]="listaPrestamos.length == 0">
+            {{pestaniaActual}}
+          </button>
+        </div>
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado > 1">
+    <div class="col-md-10 text-center">
+      <h5>{{pestaniaActual}} Adelantos de Sueldos</h5>
+      <form [formGroup]="formularioListar" class="contenedor">
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelSucursal" for="idSucursal" class="descripcion-label">Sucursal Emisión *</label>
+              <mat-select id="idSucursal" class="form-control form-control-sm" formControlName="sucursal"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let item of sucursales" [value]="item">
+                  {{item.nombre}}
+                </mat-option>
+                <mat-option [value]="0">TODOS</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelFechaDesde" for="idFechaEmisionDesde" class="tamanio-label">Fecha Emisión Desde *</label>
+              <input id="idFechaEmisionDesde" type="date" formControlName="fechaEmisionDesde"
+                (blur)="controlarFechaEmisionDesde()" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelFechaHasta" for="idFechaEmisionHasta" class="tamanio-label">Fecha Emisión Hasta *</label>
+              <input id="idFechaEmisionHasta" type="date" formControlName="fechaEmisionHasta"
+                (blur)="controlarFechaEmisionHasta()" class="form-control form-control-sm">
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelTipoAdelanto" for="idTipoAdelanto" class="descripcion-label">Tipo Adelanto *</label>
+              <mat-select id="idTipoAdelanto" class="form-control form-control-sm" formControlName="adelanto"
+                [compareWith]="compareFn">
+                <mat-option [value]="0">TODOS</mat-option>
+                <mat-option [value]="1">NORMAL</mat-option>
+                <mat-option [value]="2">PRÉSTAMOS</mat-option>
+              </mat-select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelEstado" for="idEstado" class="descripcion-label">Estado *</label>
+              <mat-select id="idEstado" class="form-control form-control-sm" formControlName="estado"
+                [compareWith]="compareFn">
+                <mat-option [value]="2">TODOS</mat-option>
+                <mat-option [value]="0">PENDIENTES</mat-option>
+                <mat-option [value]="1">EN LIQUIDACIÓN</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <div class="form-group has-float-label">
+              <label id="labelPersonal" for="idPersonal" class="descripcion-label">Personal *</label>
+              <mat-select id="idPersonal" class="form-control form-control-sm" formControlName="personal"
+                [compareWith]="compareFn" (selectionChange)="cambioPersonal()">
+                <mat-option [value]="false">TODOS</mat-option>
+                <mat-option [value]="true">SELECCIONAR</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="form-group has-float-label">
+              <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
+              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
+                formControlName="alias" [matAutocomplete]="autoAlias" autocomplete="off"
+                (blur)="verificarSeleccion(alias)">
+              <mat-autocomplete #autoAlias="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                <mat-option *ngFor="let item of resultados" [value]="item">
+                  {{item.nombreCompleto}}
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate (click)="listarPorFiltros()"
+              [disabled]="!formularioListar.valid">
+              Buscar
             </button>
           </div>
-          <div class="row" *ngIf="show">
-            <div class="col text-center">
-              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+      </form>
+      <hr>
+      <form [formGroup]="formulario" class="contenedor">
+        <div class="row" *ngIf="indiceSeleccionado == 3 || indiceSeleccionado == 4">
+          <div class="col-md-3" *ngIf="indiceSeleccionado == 3">
+            <div class="form-group has-float-label">
+              <label id="labelFechaVto" for="idFechaVto" class="tamanio-label">Fecha Vto. *</label>
+              <input id="idFechaVto" type="date" formControlName="fechaVto" class="form-control form-control-sm">
             </div>
           </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado > 1">
-      <div class="col-md-10 text-center">
-        <h5>{{pestaniaActual}} Adelantos de Sueldos</h5>
-        <form [formGroup]="formulario" class="contenedor">
-          <div class="row">
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelSucursal" for="idSucursal" class="descripcion-label">Sucursal Emisión *</label>
-                <mat-select id="idSucursal" class="form-control form-control-sm" [formControl]="sucursal"
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let item of sucursales" [value]="item">
-                    {{item.nombre}}
-                  </mat-option>
-                  <mat-option [value]="0">TODOS</mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelFechaDesde" for="idFechaEmisionDesde" class="tamanio-label">Fecha Emisión Desde *</label>
-                <input id="idFechaEmisionDesde" type="date" [formControl]="fechaEmisionDesde" (blur)="controlarFechaEmisionDesde()"
-                    class="form-control form-control-sm">
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelFechaHasta" for="idFechaEmisionHasta" class="tamanio-label">Fecha Emisión Hasta *</label>
-                <input id="idFechaEmisionHasta" type="date" [formControl]="fechaEmisionHasta" (blur)="controlarFechaEmisionHasta()"
-                    class="form-control form-control-sm">
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="form-group has-float-label">
-                <label id="labelTipoAdelanto" for="idTipoAdelanto" class="descripcion-label">Tipo Adelanto *</label>
-                <mat-select id="idTipoAdelanto" class="form-control form-control-sm" [formControl]="adelanto"
-                  [compareWith]="compareFn">
-                  <mat-option [value]="0">TODOS</mat-option>
-                  <mat-option [value]="1">NORMAL</mat-option>
-                  <mat-option [value]="2">PRÉSTAMOS</mat-option>
-                </mat-select>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-              <div class="col-md-2">
-                <div class="form-group has-float-label">
-                  <label id="labelEstado" for="idEstado" class="descripcion-label">Estado *</label>
-                  <mat-select id="idEstado" class="form-control form-control-sm" [formControl]="estado"
-                    [compareWith]="compareFn">
-                    <mat-option [value]="2">TODOS</mat-option>
-                    <mat-option [value]="0">PENDIENTES</mat-option>
-                    <mat-option [value]="1">EN LIQUIDACIÓN</mat-option>
-                  </mat-select>
-                </div>
-              </div>
-              <div class="col-md-2">
-                <div class="form-group has-float-label">
-                  <label id="labelPersonal" for="idPersonal" class="descripcion-label">Personal *</label>
-                  <mat-select id="idPersonal" class="form-control form-control-sm" [formControl]="personal"
-                    [compareWith]="compareFn" (selectionChange)="cambioPersonal()">
-                    <mat-option [value]="false">TODOS</mat-option>
-                    <mat-option [value]="true">SELECCIONAR</mat-option>
-                  </mat-select>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group has-float-label">
-                  <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
-                  <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-                    [formControl]="alias" [matAutocomplete]="autoAlias" autocomplete="off" (blur)="verificarSeleccion(alias)">
-                  <mat-autocomplete #autoAlias="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                    <mat-option *ngFor="let item of resultados" [value]="item" >
-                      {{item.nombreCompleto}}
-                    </mat-option>
-                  </mat-autocomplete>
-                </div>
-              </div>
-              <div class="col-md-1">
-                <button id="idBotonBuscar"  mat-raised-button color="primary" formnovalidate (click)="listarPorFiltros()"
-                  [disabled]="!alias || !estado || !adelanto || !sucursal">
-                  Buscar
-                </button>
-              </div>
-          </div>
-          <hr>
-          <div class="row" *ngIf="indiceSeleccionado == 3 || indiceSeleccionado == 4">
-            <div class="col-md-3" *ngIf="indiceSeleccionado == 3">
-              <div class="form-group has-float-label">
-                  <label id="labelFechaVto" for="idFechaVto" class="tamanio-label">Fecha Vto. *</label>
-                  <input id="idFechaVto" type="date" formControlName="fechaVto" 
-                    class="form-control form-control-sm">
-              </div>
-            </div>
-            <div class="col-md-3" *ngIf="indiceSeleccionado == 4">
-              <div class="form-group has-float-label">
-                  <label id="labelLote" for="idLote" class="tamanio-label">Lote </label>
-                  <input id="idLote" type="text" [formControl]="lote" readonly
-                    class="form-control form-control-sm">
-              </div>
-            </div>
-            <div class="col-md-3" *ngIf="indiceSeleccionado == 4">
-              <div class="form-group has-float-label">
-                  <label id="labelObservaciones" for="idObservaciones" class="tamanio-label">Observaciones </label>
-                  <input id="idObservaciones" type="text" formControlName="observaciones" 
-                    class="form-control form-control-sm">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate 
-               (click)="actualizar()" *ngIf="indiceSeleccionado == 3">Actualizar
-              </button>
-              <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate 
-               (click)="eliminar()" *ngIf="indiceSeleccionado == 4">Anular
-              </button>
-              <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate (click)="cancelar()"
-                >Cancelar
-              </button>
+          <div class="col-md-3" *ngIf="indiceSeleccionado == 4">
+            <div class="form-group has-float-label">
+              <label id="labelLote" for="idLote" class="tamanio-label">Lote </label>
+              <input id="idLote" type="text" [formControl]="lote" readonly class="form-control form-control-sm">
             </div>
           </div>
           <div class="row">
@@ -358,25 +341,119 @@
                 </table>
                 <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
               </div>
+          <div class="col-md-3" *ngIf="indiceSeleccionado == 4">
+            <div class="form-group has-float-label">
+              <label id="labelObservaciones" for="idObservaciones" class="tamanio-label">Observaciones </label>
+              <input id="idObservaciones" type="text" formControlName="observaciones"
+                class="form-control form-control-sm">
             </div>
           </div>
-          <div class="row" *ngIf="show">
-            <div class="col text-center">
-              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <div class="col-md-1" *ngIf="indiceSeleccionado == 3">
+            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!idMod"
+              (click)="actualizar()">Actualizar
+            </button>
+          </div>
+          <div class="col-md-1" *ngIf="indiceSeleccionado == 4">
+            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!idMod"
+              (click)="eliminar()"> Anular
+            </button>
+          </div>
+          <div class="col-md-1">
+            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!idMod"
+              (click)="cancelar()">Cancelar
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="tabla">
+            <div class="tabla-ancho">
+              <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                <ng-container matColumnDef="sucursal">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="tipoCpte">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte.</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
+                </ng-container>
+                <ng-container matColumnDef="numAdelanto">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Adelanto</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                </ng-container>
+                <ng-container matColumnDef="anulado">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.estaAnulado? 'Sí' : 'No'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="fechaEmision">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.fechaEmision | date: 'dd/MM/yyyy'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="fechaVto">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto.</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.fechaVto | date: 'dd/MM/yyyy'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="personal">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Personal</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.personal.nombreCompleto}}</td>
+                </ng-container>
+                <ng-container matColumnDef="importe">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                  <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
+                </ng-container>
+                <ng-container matColumnDef="observaciones">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
+                  <td mat-cell *matCellDef="let elemento">
+                    <span *ngIf="elemento.observaciones" class="cursor-color"
+                      (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+                    <span *ngIf="!elemento.observaciones">Vacío</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="usuario">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.usuarioAlta.alias}}</td>
+                </ng-container>
+                <ng-container matColumnDef="cuota">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuota</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.cuota}}</td>
+                </ng-container>
+                <ng-container matColumnDef="totalCuotas">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Cuotas</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.totalCuotas}}</td>
+                </ng-container>
+                <ng-container matColumnDef="numeroLote">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Lote</th>
+                  <td mat-cell *matCellDef="let elemento">{{elemento.numeroLote}}</td>
+                </ng-container>
+                <ng-container matColumnDef="anular">
+                  <th mat-header-cell *matHeaderCellDef>-</th>
+                  <td mat-cell *matCellDef="let elemento; let i=index">
+                    <span class="cursor-color-rojo" (click)="activarAnular(elemento, i)"
+                      *ngIf="indiceSeleccionado == 4">anular</span>
+                  </td>
+                </ng-container>
+                <ng-container matColumnDef="mod">
+                  <th mat-header-cell *matHeaderCellDef>-</th>
+                  <td mat-cell *matCellDef="let elemento; let i=index;">
+                    <span class="cursor-color" (click)="activarActualizar(elemento, i)"
+                      *ngIf="indiceSeleccionado == 3">editar</span></td>
+                </ng-container>
+                <ng-container matColumnDef="ver">
+                  <th mat-header-cell *matHeaderCellDef>-</th>
+                  <td mat-cell *matCellDef="let elemento">
+                    <span class="cursor-color" (click)="activarConsultar(elemento)">ver</span></td>
+                </ng-container>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+              </table>
             </div>
           </div>
-        </form>
-      </div>
-    </div>
-    <!-- <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-      <div class="col-md-6">
+        </div>
         <div class="row" *ngIf="show">
           <div class="col text-center">
             <mat-progress-bar mode="indeterminate"></mat-progress-bar>
           </div>
         </div>
-        <br>
-        
-      </div>
-    </div> -->
+      </form>
+    </div>
   </div>
+</div>
