@@ -812,26 +812,28 @@ export class ClienteComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
         this.formulario.get('clienteOrdenesVentas').setValue(resultado);
-        console.log(this.formulario.value);
-        this.controlListaPrecios(resultado);
+        // this.controlListaPrecios(resultado);
       }
     });
   }
+  /***********
+  * Código para verifica si la lista tiene una orden de venta por defecto
+  ***********/
   //Controla que al menos una lista de precio tenga una orden venta por defecto = true
-  private controlListaPrecios(listaPrecios) {
-    //Cambia a true cuando un registro es porDefecto=true
-    let porDefecto = false;
-    if (listaPrecios.length > 0) {
-      listaPrecios.forEach(item => {
-        if (item.esOrdenVentaPorDefecto)
-          porDefecto = true;
-      });
-      if (!porDefecto) {
-        this.abrirListasPrecios();
-        this.toastr.warning("Falta seleccionar orden de venta por defecto");
-      }
-    }
-  }
+  // private controlListaPrecios(listaPrecios) {
+  //   //Cambia a true cuando un registro es porDefecto=true
+  //   let porDefecto = false;
+  //   if (listaPrecios.length > 0) {
+  //     listaPrecios.forEach(item => {
+  //       if (item.esOrdenVentaPorDefecto)
+  //         porDefecto = true;
+  //     });
+  //     if (!porDefecto) {
+  //       this.abrirListasPrecios();
+  //       this.toastr.warning("Falta seleccionar orden de venta por defecto");
+  //     }
+  //   }
+  // }
   //Obtiene la mascara de enteros
   public mascararEnteros(limite) {
     return this.appService.mascararEnteros(limite);
@@ -1018,7 +1020,7 @@ export class ListasDePreciosDialog {
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define las columnas de las tablas
-  public columnasEscala: string[] = ['descripcion', 'esOrdenVentaPorDefecto', 'tarifaDefecto',
+  public columnas: string[] = ['descripcion', /*'esOrdenVentaPorDefecto', 'tarifaDefecto',*/
     'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones', 'EDITAR'];
   //Constructor
   constructor(private appService: AppService, public dialogRef: MatDialogRef<ListasDePreciosDialog>, @Inject(MAT_DIALOG_DATA) public data,
@@ -1042,8 +1044,8 @@ export class ListasDePreciosDialog {
       usuarioMod: new FormControl(),
       usuarioAlta: new FormControl(),
       ordenVenta: new FormControl('', Validators.required),
-      esOrdenVentaPorDefecto: new FormControl('', Validators.required),
-      ordenVentaTarifaPorDefecto: new FormControl('', Validators.required),
+      // esOrdenVentaPorDefecto: new FormControl('', Validators.required),
+      // ordenVentaTarifaPorDefecto: new FormControl('', Validators.required),
       estaActiva: new FormControl('', Validators.required),
       fechaAlta: new FormControl(),
       fechaUltimaMod: new FormControl(),
@@ -1128,7 +1130,7 @@ export class ListasDePreciosDialog {
     }
   }
   //Limpia los campos seteados (si los hay) cuando se cambia el 'Tipo'
-  private limpiarCampos(tipoOrdenVenta) {
+  private limpiarCampos() {
     this.formulario.reset();
     this.resultadosClientes = [];
     this.btnMod = false;
@@ -1161,52 +1163,68 @@ export class ListasDePreciosDialog {
   public agregarListaPrecio() {
     this.loaderService.show();
     let formulario = this.formulario.value;
-    formulario.usuarioAlta = this.appService.getUsuario();
-    if (this.listaCompleta.data.length > 0 && formulario.esOrdenVentaPorDefecto) {
-      if(this.verificarOrdenVentaPorDefecto(formulario)) {
-        this.agregar(formulario);
-      }
+    if(this.verificarOrdenVentaEnLista(formulario, this.listaCompleta.data)) {
+      this.toastr.error('Orden de venta existente en tabla');
+      this.loaderService.hide();
     } else {
+      formulario.usuarioAlta = this.appService.getUsuario();
       this.agregar(formulario);
+      /************
+       * Código para verificar orden de venta por defecto (por ahora sin efectos)
+       ***********/
+      // if (this.listaCompleta.data.length > 0 && formulario.esOrdenVentaPorDefecto) {
+      //   if(this.verificarOrdenVentaPorDefecto(formulario)) {
+      //     this.agregar(formulario);
+      //   }
+      // } else {
+      //   this.agregar(formulario);
+      // }
     }
   }
+  /************
+  * Código para verificar orden de venta por defecto (por ahora sin efectos)
+  ************/
   //Verifica si ya existe orden de venta por defecto
-  private verificarOrdenVentaPorDefecto(formulario): boolean {
-    let porDefecto = true;
-    this.listaCompleta.data.forEach(item => {
-      if (item.esOrdenVentaPorDefecto) {
-        this.cambiarPorDefecto(item, formulario);
-        porDefecto = false;
-      }
-    });
-    return porDefecto;
-  }
+  // private verificarOrdenVentaPorDefecto(formulario): boolean {
+  //   let porDefecto = true;
+  //   this.listaCompleta.data.forEach(item => {
+  //     if (item.esOrdenVentaPorDefecto) {
+  //       this.cambiarPorDefecto(item, formulario);
+  //       porDefecto = false;
+  //     }
+  //   });
+  //   return porDefecto;
+  // }
+  /************
+  * Código para cambiar orden de venta por defecto (por ahora sin efectos)
+  ************/
   //Abre dialogo para cambiar orden de venta por defecto
-  private cambiarPorDefecto(item, formulario) {
-    this.loaderService.hide();
-    const dialogRef = this.dialog.open(CambiarOVporDefectoDialogo, {
-      width: '750px',
-      data: {},
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        if (this.indiceSeleccionado == 1) {
-          item.esOrdenVentaPorDefecto = false;
-          this.indice != null ? this.actualizar(this.indice, this.formulario.value) : this.agregar(formulario);
-        } else {
-          item.esOrdenVentaPorDefecto = false;
-          this.actualizarListaPrecio();
-        }
-      }
-    });
-  }
+  // private cambiarPorDefecto(item, formulario) {
+  //   this.loaderService.hide();
+  //   const dialogRef = this.dialog.open(CambiarOVporDefectoDialogo, {
+  //     width: '750px',
+  //     data: {},
+  //   });
+  //   dialogRef.afterClosed().subscribe(result => {
+  //     if (result) {
+  //       if (this.indiceSeleccionado == 1) {
+  //         item.esOrdenVentaPorDefecto = false;
+  //         this.indice != null ? this.actualizar(this.indice, this.formulario.value) : this.agregar(formulario);
+  //       } else {
+  //         item.esOrdenVentaPorDefecto = false;
+  //         this.actualizarListaPrecio();
+  //       }
+  //     }
+  //   });
+  // }
   //Agrega lista de precio a cliente
   private agregar(formulario): void {
     if(this.indiceSeleccionado == 1) {
       const dato = this.listaCompleta.data;
+      this.establecerDecimales(formulario);
       dato.push(formulario);
       this.listaCompleta.data = dato;
-      this.limpiarCampos(null);
+      this.limpiarCampos();
       this.toastr.success(MensajeExcepcion.AGREGADO);
       this.loaderService.hide();
     } else {
@@ -1254,9 +1272,13 @@ export class ListasDePreciosDialog {
         }
       );
     } else {
-      if(this.verificarOrdenVentaPorDefecto(this.formulario.value)) {
-        this.actualizar(this.formulario.value, this.indice);
-      }
+      /*
+      * Código para verificar orden de venta por defecto (por ahora sin efectos)
+      */
+      // if(this.verificarOrdenVentaPorDefecto(this.formulario.value)) {
+      //   this.actualizar(this.formulario.value, this.indice);
+      // }
+      this.actualizar(this.indice, this.formulario.value);
     }
   }
   //Establece campos al seleccionar 'editar' de la tabla
@@ -1285,7 +1307,7 @@ export class ListasDePreciosDialog {
     const dato = this.listaCompleta.data;
     dato[indice] = formulario;
     this.listaCompleta.data = dato;
-    this.limpiarCampos(null);
+    this.limpiarCampos();
     this.loaderService.hide();
     this.toastr.success(MensajeExcepcion.ACTUALIZADO);
   }
@@ -1308,14 +1330,29 @@ export class ListasDePreciosDialog {
       const dato = this.listaCompleta.data;
       dato.splice(indice, 1);
       this.listaCompleta.data = dato;
-      this.limpiarCampos(null);
+      this.limpiarCampos();
       this.toastr.success(MensajeExcepcion.ELIMINADO);
       this.loaderService.hide();
     }
   }
+  //Verifica si una orden de venta ya esta cargada en la lista
+  private verificarOrdenVentaEnLista(formulario, lista): boolean {
+    let resultado = false;
+    lista.forEach(elemento => {
+      if(elemento.ordenVenta.id == formulario.ordenVenta.id) {
+        resultado = true;
+      }
+    });
+    return resultado;
+  }
+  //Establece los decimales de cada numero
+  private establecerDecimales(formulario) {
+    formulario.ordenVenta.seguro = this.appService.establecerDecimales(formulario.ordenVenta.seguro, 2);
+    formulario.ordenVenta.comisionCR = this.appService.establecerDecimales(formulario.ordenVenta.comisionCR ? formulario.ordenVenta.comisionCR : '0', 2);
+  }
   //Cancela la actualizacion de un registro de la tabla
   public cancelar(): void {
-    this.limpiarCampos(null);
+    this.limpiarCampos();
   }
   //Obtiene las ordenes de venta por cliente
   private listarOrdenesVentasPorCliente() {
