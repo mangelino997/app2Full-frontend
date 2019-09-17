@@ -23,7 +23,7 @@ import { ObservacionDialogComponent } from 'src/app/componentes/observacion-dial
   declarations: [
     AdelantoPersonalComponent,
     PrestamoDialogo,
-    DetalleAdelantoDialogo
+    DetalleAdelantoDialogo,
   ],
   imports: [
     CommonModule,
@@ -56,7 +56,6 @@ import { ObservacionDialogComponent } from 'src/app/componentes/observacion-dial
   ],
   entryComponents: [
     PrestamoDialogo,
-    DetalleAdelantoDialogo,
-  ]
+    DetalleAdelantoDialogo  ]
 })
 export class AdelantoPersonalModule { }

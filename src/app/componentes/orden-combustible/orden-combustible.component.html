@@ -3,70 +3,20 @@
     <form [formGroup]="formulario">
       <div class="row">
         <div class="col-md-3 text-center">
-            <h5 class="text-center">Ordenes de Combustibles</h5>
+          <h5 class="text-center">Ordenes de Combustibles</h5>
         </div>
         <div class="col text-center">
-            <h5 class="text-center">Reparto:  "número" - Vehículo: 'dominio' : 'numeroInterno' - Chofer: 'nombre'</h5>
+          <h5 class="text-center">Reparto: "número" - Vehículo: 'dominio' : 'numeroInterno' - Chofer: 'nombre'</h5>
         </div>
       </div>
       <div class="row">
         <div class="col-md-12">
           <div class="row">
-            <div class="col">
+            <div class="col-md-6">
               <div class="form-group has-float-label">
-                <label for="idNumeroReparto">Proveedor Combustible *</label>
-                <input id="idNumeroReparto" type="number" class="form-control form-control-sm" readonly
-                  [formControl]="id">
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label for="idFecha">Fecha *</label>
-                <input id="idFecha" type="date" class="form-control form-control-sm" readonly
-                  formControlName="fechaRegistracion">
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label margin-left">
-                <label for="idTipoViaje" class="tamanio-label">Tipo de Viaje *</label>
-                <mat-select id="idTipoViaje" class="form-control form-control-sm" [formControl]="tipoViaje"
-                  (selectionChange)="cambioTipoViaje()">
-                  <mat-option [value]="true">Propio</mat-option>
-                  <mat-option [value]=false>Tercierizado</mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label margin-left">
-                <label for="idTipoRemolque" class="tamanio-label">Tipo de Remol.</label>
-                <mat-select id="idTipoRemolque" class="form-control form-control-sm" [formControl]="tipoRemolque"
-                  (selectionChange)="cambioTipoRemolque()">
-                  <mat-option [value]="true">Propio</mat-option>
-                  <mat-option [value]="false">Tercierizado</mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label for="idSucursal">Sucursal *</label>
-                <input id="idSucursal" type="text" class="form-control form-control-sm" readonly
-                  [formControl]="sucursal">
-              </div>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label for="idUsuario">Usuario *</label>
-                <input id="idUsuario" type="text" class="form-control form-control-sm" readonly [formControl]="usuario">
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label for="idVehiculo">Vehículo *</label>
-                <input id="idVehiculo" class="form-control form-control-sm " type="text" matInput
-                  [matAutocomplete]="autoVehiculo" required
-                  (blur)="tipoViaje.value? verificarSeleccion(formulario.get('vehiculo')) : verificarSeleccion(formulario.get('vehiculoProveedor'))"
+                <label for="idProveedorCombustible">Proveedor Combustible *</label>
+                <input id="idProveedorCombustible" class="form-control form-control-sm " type="text" matInput
+                  [matAutocomplete]="autoProveedorCombustible" required
                   [formControl]="tipoViaje.value ? formulario.get('vehiculo') : formulario.get('vehiculoProveedor')">
                 <mat-autocomplete #autoVehiculo="matAutocomplete" [displayWith]="displayFn.bind(this)">
                   <mat-option *ngFor="let itemVehiculo of resultadosVehiculo" [value]="itemVehiculo">
@@ -74,55 +24,22 @@
                   </mat-option>
                 </mat-autocomplete>
               </div>
-
-            </div>
-            <div class="col">
-              <button class="btn btn-primary btn-sm" disabled>Vtos.</button>
-              <button class="btn btn-primary btn-sm" disabled>Conf.</button>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label for="idRemolque">Remolque</label>
-                <input id="idRemolque" class="form-control form-control-sm " type="text" matInput
-                  [formControl]="formulario.get('vehiculoRemolque')" [matAutocomplete]="autoRemolque"
-                  (blur)="tipoRemolque.value? verificarSeleccion(formulario.get('vehiculoRemolque')) : verificarSeleccion(formulario.get('vehiculoRemolqueProveedor'))"
-                  [formControl]="tipoRemolque.value ? formulario.get('vehiculoRemolque') : formulario.get('vehiculoRemolqueProveedor')">
-                <mat-autocomplete #autoRemolque="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let itemRemolque of resultadosRemolque" [value]="itemRemolque">
-                    {{itemRemolque.alias}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
-
-            </div>
-            <div class="col">
-              <button class="btn btn-primary btn-sm" disabled>Vtos.</button>
-              <button class="btn btn-primary btn-sm" disabled>Conf.</button>
-            </div>
-            <div class="col">
-              <div class="form-group has-float-label">
-                <label for="idChofer">Chofer *</label>
-                <input id="idChofer" class="form-control form-control-sm" type="text" matInput autocomplete="off"
-                  [matAutocomplete]="autoChofer" required
-                  (blur)="tipoViaje.value? verificarSeleccion(formulario.get('personal')) : verificarSeleccion(formulario.get('choferProveedor'))"
-                  [formControl]="tipoViaje.value ? formulario.get('personal') : formulario.get('choferProveedor')">
-                <mat-autocomplete #autoChofer="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let itemChofer of resultadosChofer" [value]="itemChofer">
-                    {{itemChofer.nombre}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
-            </div>
-            <div class="col">
-              <button class="btn btn-primary btn-sm" disabled>Vtos.</button>
-              <button class="btn btn-primary btn-sm" (click)="abrirAcompaniante()">Acompañantes</button>
             </div>
           </div>
           <div class="row">
             <div class="col-md-3">
               <div class="form-group has-float-label">
-                <label for="idZona">Zona</label>
-                <mat-select id="idZona" class="form-control form-control-sm" formControlName="zona"
+                <label for="idFecha">Fecha *</label>
+                <input id="idFecha" type="date" class="form-control form-control-sm" readonly
+                  formControlName="fechaRegistracion">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label for="idInsumoCombustible">Insumo Combustible *</label>
+                <mat-select id="idInsumoCombustible" class="form-control form-control-sm" formControlName="zona"
                   [compareWith]="compareFn">
                   <mat-option *ngFor="let itemZonas of resultadosZona" [value]="itemZonas">
                     {{itemZonas.nombre}}
@@ -130,36 +47,53 @@
                 </mat-select>
               </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label for="idCantidad">Cantidad *</label>
+                <input id="idCantidad" type="number" class="form-control form-control-sm number-right"
+                  [formControl]="sucursal">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label id="labelPrecioUnitario" for="idPrecioUnitario" class="descripcion-label">Precio
+                  Unitario *</label>
+                <input id="idPrecioUnitario" type="text" formControlName="precioUnitario" autocomplete="off"
+                  class="form-control form-control-sm number-right" placeholder="$0.00" [textMask]="mascararImporte(8)"
+                  (blur)="calcularImporte()">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label id="labelImporteNetoGravado" for="idImporteNetoGravado" class="descripcion-label">Importe</label>
+                <input id="idImporteNetoGravado" type="text" formControlName="importe" autocomplete="off" readonly
+                  class="form-control form-control-sm number-right" placeholder="$0.00" [textMask]="mascararImporte(10)"
+                  (blur)="establecerDecimales(formulario.get('importe'), 2)">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
               <div class="form-group has-float-label">
                 <label for="idObservaciones">Observaciones</label>
                 <textarea type="text" class="form-control form-control-sm" maxlength="100" rows="1"
-                  formControlName="observaciones" (blur)="ver()"></textarea>
+                  formControlName="observaciones"></textarea>
               </div>
             </div>
             <div class="col-md-1">
-              <button class="btn btn-primary btn-sm" [disabled]="!formulario.valid" (click)="agregar()">
-                Agregar
-              </button>
-            </div>
-          </div>
+              <button class="btn btn-primary btn-sm">Agregar</button>
+            </iddiv>
+          </diidv>
         </div>
       </div>
       <br>
-      <div class="row">
-        <div class="col-md-2">
-          <button class="btn btn-primary btn-sm">
-            Planillas Cerradas
-          </button>
-        </div>
-      </div>
       <div class="row">
         <div class="tabla">
           <div class="tabla-ancho">
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
               <ng-container matColumnDef="numeroReparto">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Reparto</th>
-                <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.id}}</td>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+                <td mat-cell *matCellDef="let elemento; let i=index">{{elemento}}</td>
               </ng-container>
               <ng-container matColumnDef="fecha">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>

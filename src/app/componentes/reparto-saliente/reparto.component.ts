@@ -139,9 +139,6 @@ export class RepartoComponent implements OnInit {
       }
     })
   }
-  public ver(){
-    console.log(this.formulario);
-  }
   //Establece el N° de reparto
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
@@ -184,7 +181,10 @@ export class RepartoComponent implements OnInit {
   public abrirAcompaniante(): void {
     //Primero comprobar que ese numero de viaje exista y depsues abrir la ventana emergente
     const dialogRef = this.dialog.open(AcompanianteDialogo, {
-      width: '1200px'
+      width: '1200px',
+      data: {
+        listaAcompaniantesAgregados: this.formulario.value.acompaniantes,
+      },
     });
     dialogRef.afterClosed().subscribe(resultado => {
       console.log(resultado);
@@ -199,8 +199,7 @@ export class RepartoComponent implements OnInit {
     this.loaderService.show();
     console.log(this.formulario.value);
     this.formulario.get('fechaRegistracion').setValue(null);
-    if(!this.formulario.get('acompaniantes').value)
-      this.formulario.get('acompaniantes').setValue([]);
+    this.formulario.get('acompaniantes').setValue([]);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         console.log(res.json);
@@ -240,6 +239,7 @@ export class RepartoComponent implements OnInit {
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('empresaEmision').setValue(this.appComponent.getEmpresa());
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+    this.formulario.get('acompaniantes').setValue([]);
     this.tipoViaje.setValue(true);
     this.tipoRemolque.setValue(true);
     this.fechaService.obtenerFecha().subscribe(res => {
@@ -337,9 +337,14 @@ export class AcompanianteDialogo {
     //Declara el formulario y las variables 
     this.formulario = this.modelo.formulario;
     //Inicializa la lista completa para la tabla
-    this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
-    //Obtiene la lista de acompaniantes
+    if(this.data.listaAcompaniantesAgregados.length > 0){
+      this.listaCompleta = new MatTableDataSource(this.data.listaAcompaniantesAgregados);
+      this.listaCompleta.sort = this.sort;
+    }else{
+      this.listaCompleta = new MatTableDataSource([]);
+      this.listaCompleta.sort = this.sort;
+    }
+    //Obtiene la lista de acompaniantes - completa el mat-select
     this.listarAcompaniantes();
   }
   //Carga la lista de acompaniantes

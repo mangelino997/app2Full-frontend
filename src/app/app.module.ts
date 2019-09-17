@@ -96,7 +96,8 @@ const stompConfig: StompConfig = {
   ],
   bootstrap: [AppComponent],
   entryComponents: [
-    ReporteDialogoComponent
+    ReporteDialogoComponent,
+    ObservacionDialogComponent
   ]
 })
 export class AppModule { }
