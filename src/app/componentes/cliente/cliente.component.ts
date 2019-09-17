@@ -1221,7 +1221,6 @@ export class ListasDePreciosDialog {
   private agregar(formulario): void {
     if(this.indiceSeleccionado == 1) {
       const dato = this.listaCompleta.data;
-      this.establecerDecimales(formulario);
       dato.push(formulario);
       this.listaCompleta.data = dato;
       this.limpiarCampos();
@@ -1346,9 +1345,10 @@ export class ListasDePreciosDialog {
     return resultado;
   }
   //Establece los decimales de cada numero
-  private establecerDecimales(formulario) {
-    formulario.ordenVenta.seguro = this.appService.establecerDecimales(formulario.ordenVenta.seguro, 2);
-    formulario.ordenVenta.comisionCR = this.appService.establecerDecimales(formulario.ordenVenta.comisionCR ? formulario.ordenVenta.comisionCR : '0', 2);
+  private establecerDecimales(elemento, cantidad) {
+    return this.appService.establecerDecimales(elemento, cantidad);
+    // formulario.ordenVenta.seguro = this.appService.establecerDecimales(formulario.ordenVenta.seguro, 2);
+    // formulario.ordenVenta.comisionCR = this.appService.establecerDecimales(formulario.ordenVenta.comisionCR ? formulario.ordenVenta.comisionCR : '0', 2);
   }
   //Cancela la actualizacion de un registro de la tabla
   public cancelar(): void {
