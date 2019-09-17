@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AppService } from 'src/app/servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -11,6 +11,7 @@ import { AfipDeduccionGeneralTope } from 'src/app/modelos/afipDeduccionGeneralTo
 import { LoaderState } from 'src/app/modelos/loader';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AfipDeduccionGeneralService } from 'src/app/servicios/afip-deduccion-general.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-deduccion-general-tope',
@@ -55,9 +56,12 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['anio', 'deduccionGeneral', 'descripcion', 'importe', 'porcentajeGananciaNeta', 'mod', 'eliminar'];
+  public columnas: string[] = ['ANIO', 'DEDUCCION GENERAL', 'DESCRIPCION', 'IMPORTE', 'PORCENTAJE GANANCIA NETA', 'EDITAR', 'ELIMINAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -65,7 +69,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   //Constructor
   constructor(private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private fechaService: FechaService,
     private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipDeduccionGeneralTopeService,
-    private modelo: AfipDeduccionGeneralTope, private deduccionesGralService: AfipDeduccionGeneralService) {
+    private modelo: AfipDeduccionGeneralTope, private deduccionesGralService: AfipDeduccionGeneralService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -179,11 +183,13 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.loaderService.show();
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
+    this.listaCompleta.paginator = this.paginator;
     this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
         let respuesta = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -398,5 +404,37 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
+  }
+  //Retorna el numero a x decimales
+  public returnDecimales(valor: number, cantidad: number) {
+    return this.appService.establecerDecimales(valor, cantidad);
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          anio: elemento.anio,
+          deducciongeneral: elemento.afipDeduccionGeneral.descripcion,
+          descripcion: elemento.descripcion,
+          importe: '$' + this.returnDecimales(elemento.importe, 2),
+          porcentajeganancianeta: this.returnDecimales(elemento.porcentajeGananciaNeta, 2) + '%'
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Deducciones Generales Topes',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }

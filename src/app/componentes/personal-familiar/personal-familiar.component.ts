@@ -7,7 +7,7 @@ import { TipoDocumentoService } from '../../servicios/tipo-documento.service';
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
@@ -16,6 +16,7 @@ import { FechaService } from 'src/app/servicios/fecha.service';
 import { MesService } from 'src/app/servicios/mes.service';
 import { TipoFamiliarService } from 'src/app/servicios/tipo-familiar.service';
 import { PersonalFamiliarService } from 'src/app/servicios/personal-familiar.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-personal-familiar',
@@ -73,9 +74,12 @@ export class PersonalFamiliarComponent implements OnInit {
   //Define la lista de resultados de busqueda de localidades
   public resultadosLocalidades: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['legajo', 'familiar', 'apellido', 'nombre', 'fechaNacimiento', 'cuil', 'lugarNacimiento', 'nacionalidad', 'sexo', 'ver', 'mod'];
+  public columnas: string[] = ['LEGAJO', 'FAMILIAR', 'APELLIDO', 'NOMBRE', 'FECHA NACIMIENTO', 'CUIL', 'LUGAR NACIMIENTO', 'NACIONALIDAD', 'SEXO', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define la lista de personales
   public personales: Array<any> = [];
   //Define la lista para los Familiares del Personal que se seleccione
@@ -90,7 +94,8 @@ export class PersonalFamiliarComponent implements OnInit {
     private personalFamiliar: PersonalFamiliar, private appServicio: AppService,
     private toastr: ToastrService, private localidadServicio: LocalidadService, private sexoServicio: SexoService,
     private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, 
-    private anio: FechaService, private mes: MesService, private tipoFamiliar: TipoFamiliarService) {
+    private anio: FechaService, private mes: MesService, private tipoFamiliar: TipoFamiliarService, 
+    private reporteServicio: ReporteService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -363,6 +368,7 @@ export class PersonalFamiliarComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.listaCompletaArray = res.json();
         this.loaderService.hide();
       },
@@ -619,4 +625,36 @@ export class PersonalFamiliarComponent implements OnInit {
       }
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          legajo: elemento.id,
+          familiar: elemento.tipoFamiliar.nombre,
+          apellido: elemento.apellido,
+          nombre: elemento.nombre,
+          fechanacimiento: elemento.fechaNacimiento,
+          cuil: elemento.cuil,
+          lugarnacimiento: elemento.localidadNacimiento.nombre,
+          nacionalidad: elemento.localidadNacimiento.provincia.pais.nombre,
+          sexo: elemento.sexo.nombre
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Familiares Personal',
+      empresa: this.appServicio.getEmpresa().razonSocial,
+      usuario: this.appServicio.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

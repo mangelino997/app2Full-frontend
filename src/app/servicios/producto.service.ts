@@ -52,7 +52,7 @@ export class ProductoService {
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
-    return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {
+    return this.http.get(this.url + '/listarPorAlias/' + nombre, this.options).map(res => {
       return res.json().map(item => {
         return item;
       })

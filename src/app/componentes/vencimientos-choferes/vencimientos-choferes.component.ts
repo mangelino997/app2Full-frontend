@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { PersonalService } from 'src/app/servicios/personal.service';
@@ -12,6 +12,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { BugImagenDialogoComponent } from '../bugImagen-dialogo/bug-imagen-dialogo.component';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-vencimientos-choferes',
@@ -50,9 +51,12 @@ export class VencimientosChoferesComponent implements OnInit {
   //Define la lista de resultados de busqueda para el campo Personal
   public resultadosPersonal: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['legajo', 'nombre', 'choferLargaDistancia', 'vtoLicencia', 'vtoCurso', 'vtoCursoCargaPeligrosa', 'vtoCursoLINTI', 'ver', 'mod'];
+  public columnas: string[] = ['LEGAJO', 'NOMBRE', 'CHOFER LARGA DISTANCIA', 'VTO LICENCIA', 'VTO CURSO', 'VTO CURSO CARGA PELIGROSA', 'VTO CURSO LINTI', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
   //Define el form control para las busquedas
@@ -83,7 +87,7 @@ export class VencimientosChoferesComponent implements OnInit {
   //Constructor
   constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, 
     public dialog: MatDialog, private appService: AppService, private personal: Personal, private toastr: ToastrService, 
-    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService) {
+    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -146,6 +150,7 @@ export class VencimientosChoferesComponent implements OnInit {
         if (this.indiceSeleccionado == 5) {
           this.listaCompleta = new MatTableDataSource(res.json());
           this.listaCompleta.sort = this.sort;
+          this.listaCompleta.paginator = this.paginator;
         } else {
           this.listaChoferes = res.json();
         }
@@ -474,4 +479,34 @@ export class VencimientosChoferesComponent implements OnInit {
       }
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          legajo: elemento.id,
+          nombre: elemento.nombreCompleto,
+          choferlargadistancia: elemento.esChoferLargaDistancia ? 'Si' : 'No',
+          vtolicencia: elemento.vtoLicenciaConducir ? elemento.vtoLicenciaConducir : '--',
+          vtocurso: elemento.vtoCurso ? elemento.vtoCurso : '--',
+          vtocursocargapeligrosa: elemento.vtoCursoCargaPeligrosa ? elemento.vtoCursoCargaPeligrosa : '--',
+          vtocursolinti: elemento.vtoLibretaSanidad ? elemento.vtoLibretaSanidad : '--'
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Vencimientos Choferes',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }

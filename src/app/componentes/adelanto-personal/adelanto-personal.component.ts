@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { AppService } from 'src/app/servicios/app.service';
@@ -15,6 +15,7 @@ import { FechaService } from 'src/app/servicios/fecha.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
 import { DatePipe } from '@angular/common';
 import { ObservacionDialogComponent } from '../observacion-dialog/observacion-dialog.component';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-adelanto-personal',
@@ -65,6 +66,8 @@ export class AdelantoPersonalComponent implements OnInit {
   public sucursal: FormControl = new FormControl();
   public fechaEmisionDesde: FormControl = new FormControl();
   public fechaEmisionHasta: FormControl = new FormControl();
+  //Define las columnas a mostrar en el reporte
+  public columnasMostradas: FormControl = new FormControl();
   public adelanto: FormControl = new FormControl();
   public personal: FormControl = new FormControl();
   public estado: FormControl = new FormControl();
@@ -77,10 +80,13 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define la opcion seleccionada
   public opcionSeleccionada:number = null;
    //Define las columnas de la tabla
-  public columnas:string[] = ['sucursal', 'tipoCpte', 'numAdelanto', 'anulado', 'fechaEmision', 'fechaVto', 'personal',
-  'importe', 'observaciones', 'usuario', 'cuota', 'totalCuotas', 'numeroLote', 'anular', 'mod', 'ver'];
+   public columnas:string[] = ['SUCURSAL', 'TIPO CPTE', 'NUM ADELANTO', 'ANULADO', 'FECHA EMISION', 'FECHA VTO', 'PERSONAL',
+  'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL CUOTAS', 'NUMERO LOTE', 'ANULAR', 'EDITAR', 'VER'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -91,7 +97,7 @@ export class AdelantoPersonalComponent implements OnInit {
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService,
     private loaderService: LoaderService, private modelo: PersonalAdelanto, private servicio: PersonalAdelantoService, public dialog: MatDialog,
     private personalService: PersonalService, private basicoCategoriaService: BasicoCategoriaService, private fechaService: FechaService,
-    private sucursalService: SucursalService) {
+    private sucursalService: SucursalService, private reporteServicio: ReporteService) {
       //Obtiene la lista de pestania por rol y subopcion
       this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -230,6 +236,7 @@ export class AdelantoPersonalComponent implements OnInit {
     let alias = null;
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
+    this.listaCompleta.paginator = this.paginator;
     //Setea valores
     empresa = this.appService.getEmpresa();
     usuario = this.appService.getUsuario();
@@ -259,6 +266,7 @@ export class AdelantoPersonalComponent implements OnInit {
         console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err=>{
@@ -650,6 +658,46 @@ export class AdelantoPersonalComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+  //Retorna el numero a x decimales
+  public returnDecimales(valor: number, cantidad: number) {
+    return this.appService.establecerDecimales(valor, cantidad);
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          sucursal: elemento.sucursal.nombre,
+          tipocpte: elemento.tipoComprobante.nombre,
+          numadelanto: elemento.id,
+          anulado: elemento.estaAnulado? 'Sí' : 'No',
+          fechaemision: elemento.fechaEmision,
+          fechavto: elemento.fechaVto,
+          personal: elemento.personal.nombreCompleto,
+          importe: '$' + this.returnDecimales(elemento.importe, 2),
+          observaciones: elemento.observaciones,
+          usuario: elemento.usuarioAlta.alias,
+          cuota: elemento.cuota,
+          totalcuotas: elemento.totalCuotas,
+          numerolote: elemento.numeroLote
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Adelantos Sueldos',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  }
 }
 
 //Componente 

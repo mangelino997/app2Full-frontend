@@ -110,6 +110,14 @@ export class LocalidadComponent implements OnInit {
     //Obtiene la lista de provincias
     this.listarProvincias();
   }
+  //Habilita o deshabilita los campos select dependiendo de la pestania actual
+  private establecerEstadoCampos(estado) {
+    if (estado) {
+      this.formulario.get('provincia').enable();
+    } else {
+      this.formulario.get('provincia').disable();
+    }
+  }
   //Mascara enteros
   public mascararEnteros(limite) {
     return this.appService.mascararEnteros(limite);
@@ -148,18 +156,23 @@ export class LocalidadComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idNombre');
         break;
       case 2:
+          this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
+          this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
+          this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
+          this.establecerEstadoCampos(true);
         setTimeout(function () {
           document.getElementById('idProvincia').focus();
         }, 20);

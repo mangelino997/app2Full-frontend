@@ -276,50 +276,67 @@
         </div>
       </div>
       <br>
+      <div class="row">
+        <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idColumnas" class="tamanio-label">Columnas</label>
+              <mat-select class="form-control form-control-sm" [(ngModel)]="columnasSeleccionadas" multiple>
+                <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
+                  {{itemColumna}}
+                </mat-option>
+              </mat-select>
+        </div>
+      </div>
+        <div class="col-md-8"></div>
+        <div class="col-md-1">
+                <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
+        </div>
+    </div>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="legajo" sticky>
+        <ng-container matColumnDef="LEGAJO" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Legajo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="nombre" sticky>
+        <ng-container matColumnDef="NOMBRE" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombreCompleto}}</td>
         </ng-container>
-        <ng-container matColumnDef="choferLargaDistancia" sticky>
+        <ng-container matColumnDef="CHOFER LARGA DISTANCIA" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Chofer Larga Distancia</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.esChoferLargaDistancia? 'Sí' : 'No'}}</td>
         </ng-container>
-        <ng-container matColumnDef="vtoLicencia" sticky>
+        <ng-container matColumnDef="VTO LICENCIA" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Lic. Conducir</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.vtoLicenciaConducir? elemento.vtoLicenciaConducir : '--'}}
           </td>
         </ng-container>
-        <ng-container matColumnDef="vtoCurso" sticky>
+        <ng-container matColumnDef="VTO CURSO" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Curso</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.vtoCurso? elemento.vtoCurso : '--'}}</td>
         </ng-container>
-        <ng-container matColumnDef="vtoCursoCargaPeligrosa" sticky>
+        <ng-container matColumnDef="VTO CURSO CARGA PELIGROSA" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Curso Carga Peligrosa</th>
           <td mat-cell *matCellDef="let elemento">
             {{elemento.vtoCursoCargaPeligrosa? elemento.vtoCursoCargaPeligrosa : '--'}}</td>
         </ng-container>
-        <ng-container matColumnDef="vtoCursoLINTI" sticky>
+        <ng-container matColumnDef="VTO CURSO LINTI" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Lib. Sanidad</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.vtoLibretaSanidad? elemento.vtoLibretaSanidad : '--'}}</td>
         </ng-container>
-        <ng-container matColumnDef="ver" sticky>
+        <ng-container matColumnDef="VER" sticky>
           <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
               class="cursor-color">ver</span></td>
         </ng-container>
-        <ng-container matColumnDef="mod" sticky>
+        <ng-container matColumnDef="EDITAR" sticky>
           <th mat-header-cell *matHeaderCellDef>-</th>
           <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
               class="cursor-color">editar</span></td>
         </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+        <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
       </table>
+      <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
 </div>
