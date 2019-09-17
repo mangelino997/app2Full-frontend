@@ -10,80 +10,78 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-12">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group has-float-label">
-                <label for="idProveedorCombustible">Proveedor Combustible *</label>
-                <input id="idProveedorCombustible" class="form-control form-control-sm " type="text" matInput
-                  [matAutocomplete]="autoProveedorCombustible" required
-                  [formControl]="tipoViaje.value ? formulario.get('vehiculo') : formulario.get('vehiculoProveedor')">
-                <mat-autocomplete #autoVehiculo="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                  <mat-option *ngFor="let itemVehiculo of resultadosVehiculo" [value]="itemVehiculo">
-                    {{itemVehiculo.alias}}
-                  </mat-option>
-                </mat-autocomplete>
-              </div>
-            </div>
+        <div class="col-md-6">
+          <div class="form-group has-float-label">
+            <label for="idProveedorCombustible">Proveedor Combustible *</label>
+            <input id="idProveedorCombustible" class="form-control form-control-sm " type="text" matInput
+              [matAutocomplete]="autoProveedorCombustible" required
+              [formControl]="formulario.get('proveedor')">
+            <mat-autocomplete #autoProveedorCombustible="matAutocomplete" [displayWith]="displayFn.bind(this)">
+              <mat-option *ngFor="let itemVehiculo of resultadosVehiculo" [value]="itemVehiculo">
+                {{itemVehiculo.alias}}
+              </mat-option>
+            </mat-autocomplete>
           </div>
-          <div class="row">
-            <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idFecha">Fecha *</label>
-                <input id="idFecha" type="date" class="form-control form-control-sm" readonly
-                  formControlName="fechaRegistracion">
-              </div>
-            </div>
+        </div>
+        <div class="col"></div>
+        <div class="col-md-3">
+          <button class="btn btn-primary btn-sm" style="width: 100% !important;">Consultar últimas Cargas</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label for="idFecha">Fecha *</label>
+            <input id="idFecha" type="date" class="form-control form-control-sm" readonly formControlName="fecha">
           </div>
-          <div class="row">
-            <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idInsumoCombustible">Insumo Combustible *</label>
-                <mat-select id="idInsumoCombustible" class="form-control form-control-sm" formControlName="zona"
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let itemZonas of resultadosZona" [value]="itemZonas">
-                    {{itemZonas.nombre}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idCantidad">Cantidad *</label>
-                <input id="idCantidad" type="number" class="form-control form-control-sm number-right"
-                  [formControl]="sucursal">
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label id="labelPrecioUnitario" for="idPrecioUnitario" class="descripcion-label">Precio
-                  Unitario *</label>
-                <input id="idPrecioUnitario" type="text" formControlName="precioUnitario" autocomplete="off"
-                  class="form-control form-control-sm number-right" placeholder="$0.00" [textMask]="mascararImporte(8)"
-                  (blur)="calcularImporte()">
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label id="labelImporteNetoGravado" for="idImporteNetoGravado" class="descripcion-label">Importe</label>
-                <input id="idImporteNetoGravado" type="text" formControlName="importe" autocomplete="off" readonly
-                  class="form-control form-control-sm number-right" placeholder="$0.00" [textMask]="mascararImporte(10)"
-                  (blur)="establecerDecimales(formulario.get('importe'), 2)">
-              </div>
-            </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label for="idInsumoCombustible">Insumo Combustible *</label>
+            <mat-select id="idInsumoCombustible" class="form-control form-control-sm" formControlName="insumoProducto"
+              [compareWith]="compareFn">
+              <mat-option *ngFor="let item of resultadosInsProducto" [value]="item">
+                {{item.nombre}}
+              </mat-option>
+            </mat-select>
           </div>
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group has-float-label">
-                <label for="idObservaciones">Observaciones</label>
-                <textarea type="text" class="form-control form-control-sm" maxlength="100" rows="1"
-                  formControlName="observaciones"></textarea>
-              </div>
-            </div>
-            <div class="col-md-1">
-              <button class="btn btn-primary btn-sm">Agregar</button>
-            </iddiv>
-          </diidv>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label for="idCantidad">Cantidad *</label>
+            <input id="idCantidad" type="number" class="form-control form-control-sm number-right"
+              [textMask]="mascararDecimales(8)" placeholder="0.00" (blur)="calcularImporte()" [formControl]="sucursal">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label id="labelPrecioUnitario" for="idPrecioUnitario" class="descripcion-label">Precio
+              Unitario *</label>
+            <input id="idPrecioUnitario" type="text" formControlName="precioUnitario" autocomplete="off"
+              class="form-control form-control-sm number-right" placeholder="$0.00" [textMask]="mascararImporte(8)"
+              (blur)="calcularImporte()">
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group has-float-label">
+            <label id="labelImporteNetoGravado" for="idImporteNetoGravado" class="descripcion-label">Importe</label>
+            <input id="idImporteNetoGravado" type="text" [formControl]="importe" autocomplete="off" readonly
+              class="form-control form-control-sm number-right" placeholder="$0.00" [textMask]="mascararImporte(10)">
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group has-float-label">
+            <label for="idObservaciones">Observaciones</label>
+            <textarea type="text" class="form-control form-control-sm" maxlength="100" rows="1"
+              formControlName="observaciones"></textarea>
+          </div>
+        </div>
+        <div class="col-md-1">
+          <button class="btn btn-primary btn-sm">Agregar</button>
         </div>
       </div>
       <br>
@@ -91,67 +89,68 @@
         <div class="tabla">
           <div class="tabla-ancho">
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-              <ng-container matColumnDef="numeroReparto">
+              <ng-container matColumnDef="sucursal">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+                <td mat-cell *matCellDef="let elemento; let i=index">{{elemento}}</td>
+              </ng-container>
+              <ng-container matColumnDef="numeroOrden">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Orden</th>
                 <td mat-cell *matCellDef="let elemento; let i=index">{{elemento}}</td>
               </ng-container>
               <ng-container matColumnDef="fecha">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
                 <td mat-cell *matCellDef="let elemento">
-                  {{elemento.fechaRegistracion | date: 'dd-MM-yyyy'}}
+                  {{elemento | date: 'dd-MM-yyyy'}}
                 </td>
               </ng-container>
-              <ng-container matColumnDef="zona">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Zona</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.zona.nombre}}</td>
+              <ng-container matColumnDef="proveedor">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento}}</td>
               </ng-container>
-              <ng-container matColumnDef="vehiculo">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Vehículo</th>
+              <ng-container matColumnDef="insumoProducto">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Ins. Producto</th>
                 <td mat-cell *matCellDef="let elemento">
-                  <span>{{elemento.vehiculo!=null ? elemento.vehiculo.alias: elemento.vehiculoProveedor.alias}}</span>
+                  <span>{{elemento}}</span>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="chofer">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Chofer</th>
+              <ng-container matColumnDef="cantidad">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
                 <td mat-cell *matCellDef="let elemento">
-                  <span>{{elemento.personal!=null? elemento.personal.alias: elemento.choferProveedor.alias}}</span>
+                  <span>{{elemento}}</span>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="ordenesCombustibles">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Ordenes Combustibles</th>
+              <ng-container matColumnDef="precioUnitario">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
+                <td mat-cell *matCellDef="let elemento">$
+                  {{elemento.importe | number: '1.2-2'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="observaciones">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
                 <td mat-cell *matCellDef="let elemento">
-                  <span class="cursor-color" (click)="abrirOrdenesCombustibles()">
-                    <i class="material-icons">
-                      local_gas_station
-                    </i>
-                  </span>
+                  <span *ngIf="elemento.observaciones" class="cursor-color"
+                    (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+                  <span *ngIf="!elemento.observaciones">Vacío</span>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="adelantosEfectivos">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Adelantos Efectivo</th>
+              <ng-container matColumnDef="anulado">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
                 <td mat-cell *matCellDef="let elemento">
-                  <span class="cursor-color" (click)="abrirAdelantosEfectivo()">
-                    <i class="material-icons">
-                      attach_money
-                    </i>
-                  </span>
+                  <span>{{elemento}}</span>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="comprobantes">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Comprobantes</th>
+              <ng-container matColumnDef="observaciones">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
                 <td mat-cell *matCellDef="let elemento">
-                  <span class="cursor-color" (click)="abrirComprobantes()">
-                    <i class="material-icons">
-                      assignment
-                    </i>
-                  </span>
+                  <span *ngIf="elemento.observaciones" class="cursor-color"
+                    (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+                  <span *ngIf="!elemento.observaciones">Vacío</span>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="cerrar">
+              <ng-container matColumnDef="mod">
                 <th mat-header-cell *matHeaderCellDef>-</th>
                 <td mat-cell *matCellDef="let elemento; let i=index">
-                  <span class="cursor-color" (click)="activarCerrar(i)">
-                    Cerrar
+                  <span class="cursor-color" (click)="activarActualizar(i)">
+                    editar
                   </span>
                 </td>
               </ng-container>
@@ -167,6 +166,11 @@
               <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
             </table>
           </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="show">
+        <div class="col text-center">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
     </form>

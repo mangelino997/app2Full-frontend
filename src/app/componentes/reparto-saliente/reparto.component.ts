@@ -16,6 +16,7 @@ import { RepartoService } from 'src/app/servicios/reparto.service';
 import { Subscription } from 'rxjs';
 import { RepartoPersonal } from 'src/app/modelos/repartoPersonal';
 import { LoaderService } from 'src/app/servicios/loader.service';
+import { OrdenCombustibleComponent } from '../orden-combustible/orden-combustible.component';
 
 @Component({
   selector: 'app-reparto',
@@ -264,6 +265,47 @@ export class RepartoComponent implements OnInit {
       document.getElementById('idTipoViaje').focus();
     }, 20);
   }
+  //Abre el modal de Viaje Combustible
+  public abrirOrdenesCombustibles(elemento) {
+    const dialogRef = this.dialog.open(OrdenCombustibleComponent, {
+      width: '95%',
+      maxWidth: '100vw',
+      data: {
+        elemento: elemento
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+
+    });
+  }
+  //Abre el modal de viaje Efectivo
+  public abrirAdelantosEfectivo(elemento) {
+    const dialogRef = this.dialog.open(OrdenCombustibleComponent, {
+      width: '95%',
+      maxWidth: '100vw',
+      data: {
+        elemento: elemento
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+
+    });
+  }
+  //Abre el modal de Comprobantes
+  public abrirComprobantes(elemento) {
+    const dialogRef = this.dialog.open(OrdenCombustibleComponent, {
+      width: '95%',
+      maxWidth: '100vw',
+      data: {
+        elemento: elemento
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+    });
+  }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {
@@ -337,10 +379,10 @@ export class AcompanianteDialogo {
     //Declara el formulario y las variables 
     this.formulario = this.modelo.formulario;
     //Inicializa la lista completa para la tabla
-    if(this.data.listaAcompaniantesAgregados.length > 0){
+    if (this.data.listaAcompaniantesAgregados.length > 0) {
       this.listaCompleta = new MatTableDataSource(this.data.listaAcompaniantesAgregados);
       this.listaCompleta.sort = this.sort;
-    }else{
+    } else {
       this.listaCompleta = new MatTableDataSource([]);
       this.listaCompleta.sort = this.sort;
     }

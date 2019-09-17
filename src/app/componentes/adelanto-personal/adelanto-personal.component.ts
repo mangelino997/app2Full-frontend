@@ -361,6 +361,7 @@ export class AdelantoPersonalComponent implements OnInit {
     } else {
       this.formulario.get('importe').enable();
       this.btnPrestamoModal = false;
+      this.toastr.warning("El personal no está habilitado para recibir préstamos.");
     }
   }
   //Obtiene el valor de basico categoria
@@ -501,8 +502,7 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Controla el cambio en el select "Personal"
   public cambioPersonal() {
-    let opcion = null;
-    opcion = this.formularioListar.get('personal').value;
+    let opcion = this.formularioListar.get('personal').value;
     if (opcion) {
       this.formularioListar.get('alias').enable();
       this.formularioListar.get('alias').setValidators(Validators.required);
