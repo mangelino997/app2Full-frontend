@@ -38,8 +38,7 @@
           <div class="form-group has-float-label">
             <label for="idOrdenVenta" class="orden-venta-label">Orden de Venta *</label>
             <mat-select id="idOrdenVenta" class="form-control form-control-sm"
-              [formControl]="formulario.get('ordenVenta')" [compareWith]="compareFn"
-              (selectionChange)="cambioOrdenVenta()">
+              [formControl]="formulario.get('ordenVenta')" [compareWith]="compareFn">
               <mat-option *ngFor="let orden of ordenesVentas" [value]="orden">
                 {{orden.nombre}}
               </mat-option>
@@ -139,11 +138,11 @@
               <th mat-header-cell *matHeaderCellDef></th>
               <td mat-cell *matCellDef="let elemento ; let i = index">
                 <button mat-icon-button class="mat-icon-button-table" (click)="editarListaPrecio(elemento, i)"
-                  matTooltip="Editar" matTooltipPosition="above">
+                  matTooltip="Editar" matTooltipPosition="above" *ngIf="!soloLectura">
                   <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button class="mat-icon-button-table margin-left-3" *ngIf="!soloLectura"
-                  (click)="eliminarListaPrecio(i)" matTooltip="Eliminar" matTooltipPosition="above">
+                  (click)="eliminarListaPrecio(i, elemento)" matTooltip="Eliminar" matTooltipPosition="above">
                   <mat-icon>delete</mat-icon>
                 </button>
               </td>

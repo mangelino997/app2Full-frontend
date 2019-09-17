@@ -478,6 +478,7 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('rubro').enable();
       this.formulario.get('imprimirControlDeuda').enable();
       this.formulario.get('estaActiva').enable();
+      this.formulario.get('esReceptorFCE').enable();
     } else {
       this.formulario.get('sucursalLugarPago').disable();
       this.formulario.get('afipCondicionIva').disable();
@@ -492,6 +493,7 @@ export class ClienteComponent implements OnInit {
       this.formulario.get('rubro').disable();
       this.formulario.get('imprimirControlDeuda').disable();
       this.formulario.get('estaActiva').disable();
+      this.formulario.get('esReceptorFCE').disable();
     }
   }
   //Establece valores al seleccionar una pestania
@@ -795,7 +797,7 @@ export class ClienteComponent implements OnInit {
     this.loaderService.show();
     let cliente;
     if (this.indiceSeleccionado == 3) {
-      cliente = this.formulario.value.id;
+      cliente = this.formulario.value;
     } else {
       cliente = null;
     }
@@ -989,8 +991,8 @@ export class ClienteComponent implements OnInit {
 export class ListasDePreciosDialog {
   //Define la pestaña en la que se encuentra el usuario
   public indiceSeleccionado: number = null;
-  //Define el id Cliente cuando la pestaña es Actualizar
-  public idCliente: number = null;
+  //Define el Cliente cuando la pestaña es Actualizar
+  public cliente: any = null;
   //Define si los campos son soloLectura
   public soloLectura: boolean = null;
   //Define el formulario
@@ -1038,6 +1040,7 @@ export class ListasDePreciosDialog {
     //Establece el formulario
     this.formulario = new FormGroup({
       id: new FormControl(),
+      version: new FormControl(),
       tipoOrdenVenta: new FormControl(),
       empresa: new FormControl(),
       cliente: new FormControl(),
@@ -1062,8 +1065,8 @@ export class ListasDePreciosDialog {
     }
     //Establece la pestaña
     this.indiceSeleccionado = this.data.indiceSeleccionado;
-    //Establece el idCliente
-    this.idCliente = this.data.cliente;
+    //Establece el cliente
+    this.cliente = this.data.cliente;
     //Establecer empresa
     this.establecerEmpresa();
     //Autocompletado - Buscar por nombre cliente
@@ -1078,6 +1081,7 @@ export class ListasDePreciosDialog {
   //Establece la empresa
   private establecerEmpresa() {
     this.formulario.get('tipoOrdenVenta').setValue(false);
+    this.formulario.get('estaActiva').setValue(true);
     let empresa = this.appService.getEmpresa();
     this.formulario.get('empresa').setValue(empresa);
     this.empresa.setValue(empresa.razonSocial);
@@ -1140,22 +1144,6 @@ export class ListasDePreciosDialog {
     // }
     this.establecerEmpresa();
   }
-  //Controla el cambio en el campo 'Orden Vta'
-  public cambioOrdenVenta() {
-    this.formulario.get('estaActiva').setValue(this.formulario.value.ordenVenta.estaActiva);
-    this.listarTarifasPorOV();
-  }
-  //Obtiene una lista de Tarifas por Orden Venta
-  private listarTarifasPorOV() {
-    this.ovTarifaService.listarPorOrdenVenta(this.formulario.value.ordenVenta.id).subscribe(
-      res => {
-        this.tarifas = res.json();
-      },
-      err => {
-        this.toastr.error("No se pudo obtener las tarifas");
-      }
-    )
-  }
   /**************************************
   * AGREGAR LISTA DE PRECIO 
   **************************************/
@@ -1163,7 +1151,7 @@ export class ListasDePreciosDialog {
   public agregarListaPrecio() {
     this.loaderService.show();
     let formulario = this.formulario.value;
-    if(this.verificarOrdenVentaEnLista(formulario, this.listaCompleta.data)) {
+    if (this.verificarOrdenVentaEnLista(formulario, this.listaCompleta.data)) {
       this.toastr.error('Orden de venta existente en tabla');
       this.loaderService.hide();
     } else {
@@ -1219,7 +1207,7 @@ export class ListasDePreciosDialog {
   // }
   //Agrega lista de precio a cliente
   private agregar(formulario): void {
-    if(this.indiceSeleccionado == 1) {
+    if (this.indiceSeleccionado == 1) {
       const dato = this.listaCompleta.data;
       dato.push(formulario);
       this.listaCompleta.data = dato;
@@ -1227,12 +1215,13 @@ export class ListasDePreciosDialog {
       this.toastr.success(MensajeExcepcion.AGREGADO);
       this.loaderService.hide();
     } else {
-      formulario.cliente = { id: this.idCliente };
+      formulario.cliente = { id: this.cliente.id };
       this.clienteOrdenVtaService.agregar(formulario).subscribe(
         res => {
           if (res.status == 201) {
             this.formulario.reset();
             this.listarOrdenesVentasPorCliente();
+            this.limpiarCampos();
             this.toastr.success(MensajeExcepcion.AGREGADO);
           }
           this.loaderService.hide();
@@ -1256,17 +1245,20 @@ export class ListasDePreciosDialog {
     this.loaderService.show();
     let usuario = this.appService.getUsuario();
     if (this.indiceSeleccionado == 3) {
+      //Habilita tipo, cliente/empresa y orden de venta
+      this.establecerEstadoCampos(true);
       this.formulario.get('usuarioMod').setValue(usuario);
-      this.formulario.get('cliente').setValue({ id: this.idCliente });
+      this.formulario.get('cliente').setValue({ id: this.cliente.id });
       this.clienteOrdenVtaService.actualizar(this.formulario.value).subscribe(
         res => {
           this.formulario.reset();
           this.listarOrdenesVentasPorCliente();
-          this.loaderService.hide();
+          this.limpiarCampos();
           this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+          this.loaderService.hide();
         },
         err => {
-          this.toastr.error("Error al actualizar el registro");
+          this.toastr.error("No se pudo actualizar el registro");
           this.loaderService.hide();
         }
       );
@@ -1283,23 +1275,28 @@ export class ListasDePreciosDialog {
   //Establece campos al seleccionar 'editar' de la tabla
   public editarListaPrecio(elemento, indice) {
     this.formulario.patchValue(elemento);
-    if (this.indiceSeleccionado == 3) {
-      if (this.formulario.value.ordenVenta.cliente) {
-        this.formulario.get('tipoOrdenVenta').setValue(true);
-        this.formulario.get('cliente').setValue(this.formulario.value.ordenVenta.cliente);
-        this.listarOrdenesVentas('cliente');
-        this.cambioOrdenVenta();
+    if (elemento.cliente) {
+      this.formulario.get('tipoOrdenVenta').setValue(true);
+      if(this.indiceSeleccionado == 1) {
+        this.formulario.get('cliente').setValue(elemento.cliente);
+      } else {
+        this.formulario.get('cliente').setValue(this.cliente);
+        this.establecerEstadoCampos(false)
       }
-      else {
-        this.formulario.get('tipoOrdenVenta').setValue(false);
-        this.formulario.get('empresa').setValue(this.formulario.value.ordenVenta.empresa);
-        this.listarOrdenesVentas('empresa');
-        this.cambioOrdenVenta();
+      this.listarOrdenesVentas('cliente');
+    }
+    else {
+      this.formulario.get('tipoOrdenVenta').setValue(false);
+      if(this.indiceSeleccionado == 1) {
+        this.formulario.get('empresa').setValue(elemento.empresa);
+      } else {
+        this.formulario.get('empresa').setValue(this.appService.getEmpresa());
+        this.establecerEstadoCampos(false)
       }
+      this.listarOrdenesVentas('empresa');
     }
     this.indice = indice;
     this.btnMod = true;
-    this.cambioOrdenVenta();
   }
   //Actualiza la orden de venta en la lista
   private actualizar(indice, formulario): void {
@@ -1311,12 +1308,13 @@ export class ListasDePreciosDialog {
     this.toastr.success(MensajeExcepcion.ACTUALIZADO);
   }
   //Elimina una lista de precio de la tabla
-  public eliminarListaPrecio(indice) {
+  public eliminarListaPrecio(indice, elemento) {
     this.loaderService.show();
     if (this.indiceSeleccionado == 3) {
-      this.clienteOrdenVtaService.eliminar(this.listaCompleta.data[indice].id).subscribe(
+      this.clienteOrdenVtaService.eliminar(elemento.id).subscribe(
         res => {
           this.listarOrdenesVentasPorCliente();
+          this.limpiarCampos();
           this.toastr.success(MensajeExcepcion.ELIMINADO);
           this.loaderService.hide();
         },
@@ -1334,18 +1332,32 @@ export class ListasDePreciosDialog {
       this.loaderService.hide();
     }
   }
+  //Establece estado de campos al actualizar
+  private establecerEstadoCampos(estado): void {
+    if(estado) {
+      this.formulario.get('tipoOrdenVenta').enable();
+      this.empresa.enable();
+      this.formulario.get('cliente').enable();
+      this.formulario.get('ordenVenta').enable();
+    } else {
+      this.formulario.get('tipoOrdenVenta').disable();
+      this.empresa.disable();
+      this.formulario.get('cliente').disable();
+      this.formulario.get('ordenVenta').disable();
+    }
+  }
   //Verifica si una orden de venta ya esta cargada en la lista
   private verificarOrdenVentaEnLista(formulario, lista): boolean {
     let resultado = false;
     lista.forEach(elemento => {
-      if(elemento.ordenVenta.id == formulario.ordenVenta.id) {
+      if (elemento.ordenVenta.id == formulario.ordenVenta.id) {
         resultado = true;
       }
     });
     return resultado;
   }
   //Establece los decimales de cada numero
-  private establecerDecimales(elemento, cantidad) {
+  public establecerDecimales(elemento, cantidad) {
     return this.appService.establecerDecimales(elemento, cantidad);
     // formulario.ordenVenta.seguro = this.appService.establecerDecimales(formulario.ordenVenta.seguro, 2);
     // formulario.ordenVenta.comisionCR = this.appService.establecerDecimales(formulario.ordenVenta.comisionCR ? formulario.ordenVenta.comisionCR : '0', 2);
@@ -1356,13 +1368,13 @@ export class ListasDePreciosDialog {
   }
   //Obtiene las ordenes de venta por cliente
   private listarOrdenesVentasPorCliente() {
-    this.clienteOrdenVtaService.listarPorCliente(this.idCliente).subscribe(
+    this.clienteOrdenVtaService.listarPorCliente(this.cliente.id).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
       },
       err => {
-        this.toastr.error("Error al obtener la Lista de Precios");
+        this.toastr.error("No se pudo obtener la lista de precios");
       }
     );
   }
