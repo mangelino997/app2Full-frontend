@@ -39,7 +39,8 @@
               <label for="idNombreProveedor" class="tamanio-label">Nombre *</label>
               <input id="idNombreProveedor" class="form-control form-control-sm" type="text" matInput
                 (blur)="controlAutoVacio()" [formControl]="formularioListar.get('nombre')" [matAutocomplete]="auto"
-                autocomplete="off" [readOnly]="formularioListar.get('proveedor').value == 0" (blur)="verificarSeleccion(formularioListar.get('nombre'))">
+                autocomplete="off" [readOnly]="formularioListar.get('proveedor').value == 0"
+                (blur)="verificarSeleccion(formularioListar.get('nombre'))">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
                   (onSelectionChange)="establecerValores(item)">
@@ -156,7 +157,20 @@
                 class="form-control form-control-sm">
             </div>
           </div>
-          <div class="col-md-2">
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <div class="form-group has-float-label">
+              <label for="idTipoFecha" class="rubro-label">Establecer por</label>
+              <mat-select id="idTipoFecha" class="form-control form-control-sm" [formControl]="establecerCodigoAfipPor"
+                [compareWith]="compareFn" (selectionChange)="cambioEstablecerCodigoAfipPor()">
+                <mat-option [value]="true">CÓDIGO AFIP</mat-option>
+                <mat-option [value]="false">TIPO COMPROBANTE</mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col">
             <div class="form-group has-float-label">
               <label id="labelCodigoAfip" for="idCodigoAfip" class="descripcion-label">Código Afip</label>
               <input id="idCodigoAfip" type="text" formControlName="codigoAfip" autocomplete="off"
@@ -166,6 +180,17 @@
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
+              <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
+              <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
+                [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()">
+                <mat-option *ngFor="let item of tiposComprobantes" [value]="item">
+                  {{item.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col">
+            <div class="form-group has-float-label">
               <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Venta</label>
               <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off"
                 [readOnly]="soloLectura" [textMask]="mascararEnteros(5)"
@@ -173,39 +198,30 @@
                 class="form-control form-control-sm">
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col">
             <div class="form-group has-float-label">
               <label id="labelLetra" for="idLetra" class="descripcion-label">Letra</label>
               <input id="idLetra" type="text" formControlName="letra" autocomplete="off" maxlength="1"
                 [readOnly]="soloLectura" (blur)="cambioLetra()" class="form-control form-control-sm">
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col">
             <div class="form-group has-float-label">
               <label id="labelNumero" for="idNumero" class="descripcion-label">Número</label>
               <input id="idNumero" type="text" formControlName="numero" autocomplete="off" [readOnly]="soloLectura"
                 [textMask]="mascararEnteros(8)" (blur)="verificarComprobante()" class="form-control form-control-sm">
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group has-float-label">
-              <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
-              <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
-                [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()" >
-                <mat-option *ngFor="let item of tiposComprobantes" [value]="item">
-                  {{item.nombre}}
-                </mat-option>
-              </mat-select>
-            </div>
-          </div>
-          <div class="col-md-2">
+          <div class="col">
             <button id="idBotonAgregarItem" mat-raised-button color="primary" (click)="agregarItemDialogo()"
               [disabled]="!btnAgregarItem">
               Agregar Item
             </button>
           </div>
+        </div>
+
+        <div class="row">
+
         </div>
         <div class="row">
           <div class="tabla">

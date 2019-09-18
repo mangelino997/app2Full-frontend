@@ -70,8 +70,12 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public condicionesCompra: Array<any> = [];
   //Define la lista de tipos de comprobantes
   public tiposComprobantes: Array<any> = [];
+  //Define la lista de tipos de Letras 
+  public letras: Array<any> = [];
   //Defien la empresa 
   public empresa: FormControl = new FormControl();
+  //Defien el modo de establecer el codigo de afip como un formControl 
+  public establecerCodigoAfipPor: FormControl = new FormControl();
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista completa de registros para el modal 'DetalleComprasComprobantesDialogo'
@@ -468,6 +472,17 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       this.toastr.error("El campo Código Afip debe tener 3 dígitos como mínimo.");
     }
   }
+  //Controla el cambio en el select "establecer codigo afip"
+  public cambioEstablecerCodigoAfipPor(){
+    if(this.establecerCodigoAfipPor.value){
+      this.formulario.get('tipoComprobante').disable();
+      this.formulario.get('codigoAfip').enable();
+
+    }else{
+      this.formulario.get('tipoComprobante').enable();
+      this.formulario.get('codigoAfip').disable();
+    }
+  }
   //Controla el cambio en el campo "Número"
   public verificarComprobante() {
     let idProveedor = this.formulario.value.proveedor.id;
@@ -480,7 +495,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         this.compraComprobanteService.verificarUnicidadComprobante(idProveedor, codigoAfip, puntoVenta, numero).subscribe(
           res => {
             let respuesta = res.json();
-            if(respuesta){
+            if (respuesta) {
               this.formulario.get('numero').setValue(null);
               setTimeout(function () {
                 document.getElementById('idNumero').focus();
@@ -777,6 +792,8 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales('0.00', 2));
+    this.formulario.get('establecerCodigoAfipPor').setValue(true);
+    this.cambioEstablecerCodigoAfipPor();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -891,7 +908,6 @@ export class AgregarItemDialogo {
     this.listarDepositos();
     //Inicializa los valores por defecto
     this.reestablecerFormulario();
-
     //Autocompletado InsumoProducto- Buscar por alias
     this.formulario.get('insumoProducto').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -933,7 +949,6 @@ export class AgregarItemDialogo {
   public establecerValores() {
     let insumoProducto = this.formulario.get('insumoProducto').value;
     if (insumoProducto == '' || insumoProducto == null || insumoProducto == undefined) {
-      this.unidadMedida.reset();
       this.reestablecerFormulario();
     } else {
       this.unidadMedida.setValue(insumoProducto.unidadMedida.nombre);
@@ -1045,6 +1060,8 @@ export class AgregarItemDialogo {
     this.listaItems.push(this.formulario.value);
     this.toastr.success("Item agregado con éxito.");
     this.reestablecerFormulario();
+    //incrementa el contador 
+    this.data.cantidadItem += 1;
   }
   //Controla campso vacios. Establece en cero los nulos
   private controlarCamposVacios() {
