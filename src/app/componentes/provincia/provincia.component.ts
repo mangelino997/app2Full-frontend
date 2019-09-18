@@ -95,7 +95,7 @@ export class ProvinciaComponent implements OnInit {
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       codigoIIBB: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
-      codigoAfip: new FormControl('', [Validators.min(1), Validators.maxLength(3)]),
+      codigoAfip: new FormControl('', Validators.maxLength(3)),
       pais: new FormControl('', Validators.required)
     });
     //Establece los valores de la primera pestania activa

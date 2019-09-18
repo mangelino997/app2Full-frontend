@@ -113,28 +113,28 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="labelDomicilio" for="idDomicilio" class="descripcion-label">Domicilio</label>
-              <input id="idDomicilio" type="text" [formControl]="domicilio" autocomplete="off" readonly
+              <input id="idDomicilio" type="text" [formControl]="domicilio" autocomplete="off"
                 class="form-control form-control-sm">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="labelLocalidad" for="idLocalidad" class="descripcion-label">Localidad</label>
-              <input id="idLocalidad" type="text" [formControl]="localidad" autocomplete="off" readonly
+              <input id="idLocalidad" type="text" [formControl]="localidad" autocomplete="off"
                 class="form-control form-control-sm">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="labelCondicionIVA" for="idCondicionIVA" class="descripcion-label">Condición de IVA</label>
-              <input id="idCondicionIVA" type="text" [formControl]="condicionIVA" autocomplete="off" readonly
+              <input id="idCondicionIVA" type="text" [formControl]="condicionIVA" autocomplete="off"
                 class="form-control form-control-sm">
             </div>
           </div>
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="labelTipoProveedor" for="idTipoProveedor" class="descripcion-label">Tipo de Proveedor</label>
-              <input id="idTipoProveedor" type="text" [formControl]="tipoProveedor" autocomplete="off" readonly
+              <input id="idTipoProveedor" type="text" [formControl]="tipoProveedor" autocomplete="off"
                 class="form-control form-control-sm">
             </div>
           </div>
@@ -193,7 +193,7 @@
             <div class="form-group has-float-label">
               <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
               <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
-                [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()" [disabled]="soloLectura">
+                [compareWith]="compareFn" (selectionChange)="cambioTipoComprobante()" >
                 <mat-option *ngFor="let item of tiposComprobantes" [value]="item">
                   {{item.nombre}}
                 </mat-option>
@@ -346,7 +346,7 @@
               <label id="labelCondicionCompra" for="idCondicionCompra" class="descripcion-label">Condición de Compra
                 *</label>
               <mat-select id="idCondicionCompra" class="form-control form-control-sm" formControlName="condicionCompra"
-                [compareWith]="compareFn" [disabled]="soloLectura">
+                [compareWith]="compareFn">
                 <mat-option *ngFor="let item of condicionesCompra" [value]="item">
                   {{item.nombre}}
                 </mat-option>
