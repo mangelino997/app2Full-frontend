@@ -127,14 +127,6 @@ export class ChoferProveedorComponent implements OnInit {
   public establecerValores(): void {
     this.formulario.patchValue(this.autocompletado.value);
   }
-  //Habilita o deshabilita los campos dependiendo de la pestaña
-  private establecerEstadoCampos(estado) {
-    if(estado) {
-      this.formulario.get('tipoDocumento').enable();
-    } else {
-      this.formulario.get('tipoDocumento').disable();
-    }
-  }
   //Vacia la lista de resultados de autocompletados
   private vaciarLista() {
     this.resultados = new MatTableDataSource([]);
@@ -165,19 +157,15 @@ export class ChoferProveedorComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idProveedor');
         break;
       case 2:
-       this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idProveedor');
         break;
       case 3:
-        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, false, true, 'idProveedor');
         break;
       case 4:
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
         break;
       case 5:
@@ -268,7 +256,6 @@ export class ChoferProveedorComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -321,6 +308,7 @@ export class ChoferProveedorComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
+    this.formulario.get('numeroDocumento').setErrors({'incorrect': true});
     var respuesta = err;
     if(respuesta.codigo == 11010) {
       document.getElementById("labelNumeroDocumento").classList.add('label-error');
