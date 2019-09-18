@@ -83,8 +83,8 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define la opcion seleccionada
   public opcionSeleccionada:number = null;
    //Define las columnas de la tabla
-   public columnas:string[] = ['SUCURSAL', 'TIPO CPTE', 'NUM ADELANTO', 'ANULADO', 'FECHA EMISION', 'FECHA VTO', 'PERSONAL',
-  'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL CUOTAS', 'NUMERO LOTE', 'ANULAR', 'EDITAR', 'VER'];
+   public columnas: string[] = ['sucursal', 'tipoCpte', 'numAdelanto', 'anulado', 'fechaEmision', 'fechaVto', 'personal',
+   'importe', 'observaciones', 'usuario', 'cuota', 'totalCuotas', 'numeroLote', 'anular', 'mod', 'ver'];
   public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define el id del registro a modificar
   public idMod: number = null;

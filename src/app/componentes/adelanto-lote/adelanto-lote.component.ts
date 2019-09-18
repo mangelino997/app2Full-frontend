@@ -191,8 +191,10 @@ export class AdelantoLoteComponent implements OnInit {
       observaciones: observaciones,
       importe: importe
     };
+    console.log(elemento);
     this.servicio.agregarLote(elemento).subscribe(
       res => {
+        console.log(res.json());
         let respuesta = res.json();
         if (respuesta.length == 0) {
           this.toastr.success("Registros agregados con éxito");
@@ -209,12 +211,7 @@ export class AdelantoLoteComponent implements OnInit {
             },
           });
           dialogRef.afterClosed().subscribe(result => {
-            if (result.length == 0) {
-              this.toastr.success("Se agregaron todos los registros correctamente.");
-            } else {
-              this.toastr.error("Registros no guardados");
-
-            }
+            this.reestablecerFormulario(undefined);
           });
         }
         this.loaderService.hide();
@@ -281,7 +278,7 @@ export class AdelantoLoteComponent implements OnInit {
     this.observacion.reset();
     this.numeroLote.setValue(null);
     this.indiceElemento = null,
-      this.fechaDesde.reset();
+    this.fechaDesde.reset();
     this.fechaHasta.reset();
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
@@ -302,11 +299,26 @@ export class AdelantoLoteComponent implements OnInit {
     if (categoria != 0) {
       this.basicoCategoriaService.obtenerPorCategoria(categoria.id).subscribe(
         res => {
-          this.basicoCategoria.setValue(res.json());
-          let topeMax = (categoria.topeBasicoAdelantos / 100) * this.basicoCategoria.value.basico;
-          this.topeMax.setValue(this.appService.establecerDecimales(topeMax, 2));
+          if (res.status == 200) {
+            this.basicoCategoria.setValue(res.json());
+            let topeMax = (categoria.topeBasicoAdelantos / 100) * this.basicoCategoria.value.basico;
+            this.topeMax.setValue(this.appService.establecerDecimales(topeMax, 2));
+          } else {
+            this.basicoCategoria.setValue(null);
+            this.topeMax.setValue(null);
+            this.toastr.error("La categoría no tiene asignado un básico categoría.");
+            setTimeout(function () {
+              document.getElementById('idCategoria').focus();
+            }, 20);
+          }
         },
         err => {
+          this.basicoCategoria.setValue(null);
+          this.topeMax.setValue(null);
+          this.toastr.error("La categoría no tiene asignado un básico categoría.");
+          setTimeout(function () {
+            document.getElementById('idCategoria').focus();
+          }, 20);
         }
       )
     } else {
