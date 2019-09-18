@@ -84,7 +84,7 @@
             <div class="form-group has-float-label">
               <label for="idCapacidadCarga" class="tamanio-label">Capacidad Total de Carga(Tn) *</label>
               <input id="idCapacidadCarga" type="text" formControlName="capacidadCarga" autocomplete="off"
-                [textMask]="obtenerMascaraEnteroConDecimales(10)" placeholder="0.00"
+                [textMask]="obtenerMascaraEnteroConDecimales(2)" placeholder="0.00"
                 (blur)="setDecimales(formulario.get('capacidadCarga'), 2)"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
@@ -94,7 +94,7 @@
               <label for="idTara" class="tamanio-label">Tara(Tn)</label>
               <input id="idTara" type="text" formControlName="tara" autocomplete="off" placeholder="0.00"
                 (blur)="setDecimales(formulario.get('tara'), 2)" class="form-control form-control-sm number-right"
-                [textMask]="obtenerMascaraEnteroConDecimales(10)" [readonly]="soloLectura">
+                [textMask]="obtenerMascaraEnteroConDecimales(2)" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -104,7 +104,7 @@
               <label for="idAltura" class="tamanio-label">Altura(m)</label>
               <input id="idAltura" type="text" formControlName="altura" autocomplete="off" placeholder="0.00"
                 (blur)="setDecimales(formulario.get('altura'), 2)" class="form-control form-control-sm number-right"
-                [textMask]="obtenerMascaraEnteroConDecimales(10)" [readonly]="soloLectura">
+                [textMask]="obtenerMascaraEnteroConDecimales(2)" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
@@ -112,7 +112,7 @@
               <label for="idLargo" class="tamanio-label">Largo(m)</label>
               <input id="idLargo" type="text" formControlName="largo" autocomplete="off" placeholder="0.00"
                 (blur)="setDecimales(formulario.get('largo'), 2)" class="form-control form-control-sm number-right"
-                [textMask]="obtenerMascaraEnteroConDecimales(10)" [readonly]="soloLectura">
+                [textMask]="obtenerMascaraEnteroConDecimales(2)" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
@@ -120,7 +120,7 @@
               <label for="idAncho" class="tamanio-label">Ancho(m)</label>
               <input id="idAncho" type="text" formControlName="ancho" autocomplete="off" placeholder="0.00"
                 (blur)="setDecimales(formulario.get('ancho'), 2)" class="form-control form-control-sm number-right"
-                [textMask]="obtenerMascaraEnteroConDecimales(10)" [readonly]="soloLectura">
+                [textMask]="obtenerMascaraEnteroConDecimales(2)" [readonly]="soloLectura">
             </div>
           </div>
           <div class="col-md-3">
@@ -128,7 +128,7 @@
               <label for="idM3" class="tamanio-label">M3(m)</label>
               <input id="idM3" type="text" formControlName="m3" autocomplete="off" placeholder="0.00"
                 (blur)="setDecimales(formulario.get('m3'), 2)" class="form-control form-control-sm number-right"
-                [textMask]="obtenerMascaraEnteroConDecimales(10)" [readonly]="soloLectura">
+                [textMask]="obtenerMascaraEnteroConDecimales(2)" [readonly]="soloLectura">
             </div>
           </div>
         </div>
