@@ -183,10 +183,15 @@ export class AdelantoLoteComponent implements OnInit {
     let importe = this.formulario.value.importe;
     let categoria = this.categoria.value;
     let sucursal = usuario.sucursal;
+    let idCategoria;
+    if(categoria != 0)
+      idCategoria = categoria.id;
+      else
+      idCategoria = 0;
     let elemento = {
       idEmpresa: empresa.id,
       idSucursal: sucursal.id,
-      idCategoria: categoria.id,
+      idCategoria: idCategoria,
       idUsuarioAlta: usuario.id,
       observaciones: observaciones,
       importe: importe
@@ -296,6 +301,7 @@ export class AdelantoLoteComponent implements OnInit {
   //Controla el cambio en categoria
   public cambioCategoria() {
     let categoria = this.categoria.value;
+    console.log(categoria);
     if (categoria != 0) {
       this.basicoCategoriaService.obtenerPorCategoria(categoria.id).subscribe(
         res => {

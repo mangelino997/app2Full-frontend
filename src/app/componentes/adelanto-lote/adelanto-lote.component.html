@@ -71,7 +71,7 @@
                 <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
                 <input id="idImporte" type="text" formControlName="importe" autocomplete="off" (blur)="controlarImporte()"
                 [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00"
-                [readOnly]="!topeMax">
+                [readOnly]="!topeMax.value">
               </div>
             </div>
           </div>
