@@ -47,8 +47,8 @@ export class VentaComprobanteService {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
   //Obtiene por tipo Comprobante, puntoVenta, letra, numero, 
-  public obtener(tipo, punto, letra, numero) {
-    return this.http.get(this.url + '/obtener/' + tipo + '/' + punto + '/' + letra + '/' + numero, this.options);
+  public obtener(punto, letra, numero, tipo) {
+    return this.http.get(this.url + '/obtener/' + punto + '/' + letra + '/' + numero + '/' + tipo, this.options);
   }
   //Obtiene la lista de registros
   public listar() {

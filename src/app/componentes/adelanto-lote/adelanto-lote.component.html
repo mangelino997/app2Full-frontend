@@ -70,7 +70,8 @@
               <div class="form-group has-float-label">
                 <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
                 <input id="idImporte" type="text" formControlName="importe" autocomplete="off" (blur)="controlarImporte()"
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
+                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00"
+                [readOnly]="!topeMax">
               </div>
             </div>
           </div>

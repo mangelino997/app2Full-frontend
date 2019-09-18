@@ -245,102 +245,6 @@
               <input id="idLote" type="text" [formControl]="lote" readonly class="form-control form-control-sm">
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-3">
-                <div class="form-group has-float-label">
-                  <label for="idColumnas" class="tamanio-label">Columnas</label>
-                  <mat-select class="form-control form-control-sm" [formControl]="columnasMostradas" [(ngModel)]="columnasSeleccionadas" multiple>
-                    <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
-                      {{itemColumna}}
-                    </mat-option>
-                  </mat-select>
-            </div>
-          </div>
-            <div class="col-md-8"></div>
-            <div class="col-md-1">
-                    <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
-            </div>
-        </div>
-          <div class="row">
-            <div class="tabla">
-              <div class="tabla-ancho">
-                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                  <ng-container matColumnDef="SUCURSAL">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="TIPO CPTE">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte.</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="NUM ADELANTO">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Adelanto</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="ANULADO">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.estaAnulado? 'Sí' : 'No'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="FECHA EMISION">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaEmision | date: 'dd/MM/yyyy'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="FECHA VTO">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Vto.</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.fechaVto | date: 'dd/MM/yyyy'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="PERSONAL">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Personal</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.personal.nombreCompleto}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="IMPORTE">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                    <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="OBSERVACIONES">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span *ngIf="elemento.observaciones" class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
-                      <span *ngIf="!elemento.observaciones">Vacío</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="USUARIO">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.usuarioAlta.alias}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="CUOTA">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuota</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.cuota}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="TOTAL CUOTAS">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Cuotas</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.totalCuotas}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="NUMERO LOTE">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Lote</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.numeroLote}}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="ANULAR">
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento" >
-                      <span class="cursor-color-rojo" (click)="activarAnular(elemento)" *ngIf="indiceSeleccionado == 4">anular</span>
-                    </td>
-                  </ng-container>
-                  <ng-container matColumnDef="EDITAR">
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span class="cursor-color" (click)="activarActualizar(elemento)" *ngIf="indiceSeleccionado == 3">editar</span></td>
-                  </ng-container>
-                  <ng-container matColumnDef="VER">
-                    <th mat-header-cell *matHeaderCellDef>-</th>
-                    <td mat-cell *matCellDef="let elemento">
-                      <span class="cursor-color" (click)="activarConsultar(elemento)">ver</span></td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
-                  <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
-                </table>
-                <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
-              </div>
           <div class="col-md-3" *ngIf="indiceSeleccionado == 4">
             <div class="form-group has-float-label">
               <label id="labelObservaciones" for="idObservaciones" class="tamanio-label">Observaciones </label>
@@ -457,3 +361,4 @@
     </div>
   </div>
 </div>
+  
