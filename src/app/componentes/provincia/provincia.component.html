@@ -17,8 +17,8 @@
           <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
             [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
             (blur)="verificarSeleccion(autocompletado)">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)">
-            <mat-option *ngFor="let item of resultados" [value]="item" (onSelectionChange)="formulario.setValue(item)">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFa.bind(this)" (optionSelected)="cambioAutocompletado()">
+            <mat-option *ngFor="let item of resultados" [value]="item">
               {{item.nombre}}, {{item.pais.nombre}}
             </mat-option>
           </mat-autocomplete>

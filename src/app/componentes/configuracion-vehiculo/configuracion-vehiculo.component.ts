@@ -300,12 +300,29 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    let formulario = this.formulario.value;
+    this.servicio.eliminar(formulario.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          this.toastr.success(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje, 'No se puede eliminar');
+        this.loaderService.hide();
+      }
+    );
   }
   //Reestablece el formulario
   private reestablecerFormulario() {
     this.autocompletado.setValue(undefined);
     this.formulario.reset();
+    this.configuraciones = [];
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
