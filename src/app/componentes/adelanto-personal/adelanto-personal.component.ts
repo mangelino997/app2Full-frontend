@@ -53,6 +53,8 @@ export class AdelantoPersonalComponent implements OnInit {
   public formulario: FormGroup;
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
+  //Define las columnas elejidas en Listar
+  public columnasElejidas: FormControl = new FormControl();
   //Define los formControl de la vista
   public legajo: FormControl = new FormControl();
   public apellido: FormControl = new FormControl();
@@ -83,8 +85,8 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define la opcion seleccionada
   public opcionSeleccionada: number = null;
   //Define las columnas de la tabla
-  public columnas: string[] = ['sucursal', 'tipoCpte', 'numAdelanto', 'anulado', 'fechaEmision', 'fechaVto', 'personal',
-    'importe', 'observaciones', 'usuario', 'cuota', 'totalCuotas', 'numeroLote', 'anular', 'mod', 'ver'];
+  public columnas: string[] = ['SUCURSAL', 'TIPO CPTE', 'NUM ADELANTO', 'ANULADO', 'FECHA EMISION', 'FECHA VTO', 'PERSONAL',
+    'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL CUOTAS', 'NUMERO LOTE', 'ANULAR', 'EDITAR', 'VER'];
   public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define el id del registro a modificar
   public idMod: number = null;

@@ -94,7 +94,7 @@ export class ProvinciaComponent implements OnInit {
       id: new FormControl(),
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      codigoIIBB: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
+      codigoIIBB: new FormControl('', [Validators.min(0), Validators.maxLength(10)]),
       codigoAfip: new FormControl('', Validators.maxLength(3)),
       pais: new FormControl('', Validators.required)
     });
