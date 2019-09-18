@@ -310,6 +310,9 @@ export class ProvinciaComponent implements OnInit {
       }
     );
   }
+  public cambioAutocompletado(){
+    this.formulario.patchValue(this.autocompletado.value);
+  }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
