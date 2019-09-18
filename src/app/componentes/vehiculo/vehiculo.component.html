@@ -55,10 +55,10 @@
             <div class="form-group has-float-label">
               <label for="idConfiguracionVehiculo" class="tamanio-label">Lista de Configuraciones</label>
               <mat-select id="idConfiguracionVehiculo" class="form-control form-control-sm"
-                formControlName="configuracionVehiculo" [compareWith]="compareFn">
+                formControlName="configuracionVehiculo" [compareWith]="compareFn"
+                (selectionChange)="establecerConfiguracion()">
                 <mat-option *ngFor="let itemConfiguracionVehiculo of configuracionesVehiculos"
-                  [value]="itemConfiguracionVehiculo"
-                  (onSelectionChange)="establecerConfiguracion(itemConfiguracionVehiculo)">
+                  [value]="itemConfiguracionVehiculo">
                   Modelo: {{itemConfiguracionVehiculo.modelo}} -
                   Cantidad Ejes: {{itemConfiguracionVehiculo.cantidadEjes}} -
                   Capacidad Carga: {{itemConfiguracionVehiculo.capacidadCarga}}
