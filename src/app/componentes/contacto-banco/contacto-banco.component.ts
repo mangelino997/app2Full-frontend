@@ -278,20 +278,27 @@ export class ContactoBancoComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    this.servicio.agregar(this.formulario.value.id).subscribe(
+    let formulario = this.formulario.value;
+    this.servicio.eliminar(formulario.id).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           setTimeout(function () {
-            document.getElementById('idSucursalBanco').focus();
+            document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
-        this.lanzarError(err);
+        var respuesta = err.json();
+        if (respuesta.codigo == 500) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
         this.loaderService.hide();
       }
     );

@@ -81,11 +81,11 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
-  public opcionSeleccionada:number = null;
-   //Define las columnas de la tabla
-   public columnas:string[] = ['SUCURSAL', 'TIPO CPTE', 'NUM ADELANTO', 'ANULADO', 'FECHA EMISION', 'FECHA VTO', 'PERSONAL',
-  'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL CUOTAS', 'NUMERO LOTE', 'ANULAR', 'EDITAR', 'VER'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public opcionSeleccionada: number = null;
+  //Define las columnas de la tabla
+  public columnas: string[] = ['sucursal', 'tipoCpte', 'numAdelanto', 'anulado', 'fechaEmision', 'fechaVto', 'personal',
+    'importe', 'observaciones', 'usuario', 'cuota', 'totalCuotas', 'numeroLote', 'anular', 'mod', 'ver'];
+  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define la matSort
@@ -634,7 +634,7 @@ export class AdelantoPersonalComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
   //Retorna el numero a x decimales
   public returnDecimales(valor: number, cantidad: number) {
     return this.appService.establecerDecimales(valor, cantidad);
@@ -644,22 +644,22 @@ export class AdelantoPersonalComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          sucursal: elemento.sucursal.nombre,
-          tipocpte: elemento.tipoComprobante.nombre,
-          numadelanto: elemento.id,
-          anulado: elemento.estaAnulado? 'Sí' : 'No',
-          fechaemision: elemento.fechaEmision,
-          fechavto: elemento.fechaVto,
-          personal: elemento.personal.nombreCompleto,
-          importe: '$' + this.returnDecimales(elemento.importe, 2),
-          observaciones: elemento.observaciones,
-          usuario: elemento.usuarioAlta.alias,
-          cuota: elemento.cuota,
-          totalcuotas: elemento.totalCuotas,
-          numerolote: elemento.numeroLote
-        }
-        datos.push(f);
+      let f = {
+        sucursal: elemento.sucursal.nombre,
+        tipocpte: elemento.tipoComprobante.nombre,
+        numadelanto: elemento.id,
+        anulado: elemento.estaAnulado ? 'Sí' : 'No',
+        fechaemision: elemento.fechaEmision,
+        fechavto: elemento.fechaVto,
+        personal: elemento.personal.nombreCompleto,
+        importe: '$' + this.returnDecimales(elemento.importe, 2),
+        observaciones: elemento.observaciones,
+        usuario: elemento.usuarioAlta.alias,
+        cuota: elemento.cuota,
+        totalcuotas: elemento.totalCuotas,
+        numerolote: elemento.numeroLote
+      }
+      datos.push(f);
     });
     return datos;
   }

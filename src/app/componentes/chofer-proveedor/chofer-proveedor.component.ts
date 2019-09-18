@@ -298,7 +298,31 @@ export class ChoferProveedorComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    let formulario = this.formulario.value;
+    this.servicio.eliminar(formulario.id).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(null);
+          setTimeout(function () {
+            document.getElementById('idNombre').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        var respuesta = err.json();
+        if (respuesta.codigo == 500) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }
+    );
   }
   private reestablecerFormulario(id) {
     this.formulario.reset();

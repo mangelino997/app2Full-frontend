@@ -95,7 +95,7 @@ export class ProvinciaComponent implements OnInit {
       version: new FormControl(),
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       codigoIIBB: new FormControl('', [Validators.min(1), Validators.maxLength(10)]),
-      codigoAfip: new FormControl('', [Validators.min(1), Validators.maxLength(3)]),
+      codigoAfip: new FormControl('', Validators.maxLength(3)),
       pais: new FormControl('', Validators.required)
     });
     //Establece los valores de la primera pestania activa
@@ -115,6 +115,7 @@ export class ProvinciaComponent implements OnInit {
   public vaciarListas() {
     this.resultados = [];
     this.resultadosPaises = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -261,7 +262,31 @@ export class ProvinciaComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    let formulario = this.formulario.value;
+    this.servicio.eliminar(formulario.id).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(null);
+          setTimeout(function () {
+            document.getElementById('idNombre').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        var respuesta = err.json();
+        if (respuesta.codigo == 500) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }
+    );
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -273,12 +298,17 @@ export class ProvinciaComponent implements OnInit {
   //Obtiene la lista de provincias por pais
   public listarPorPais(pais) {
     this.loaderService.show();
-    this.servicio.listarPorPais(pais.id).subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res.json());
-      this.listaCompleta.sort = this.sort;
-      this.listaCompleta.paginator = this.paginator;
-      this.loaderService.hide();
-    })
+    this.servicio.listarPorPais(pais.id).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      }
+    );
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

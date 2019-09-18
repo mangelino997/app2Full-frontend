@@ -255,30 +255,27 @@ export class BancoComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    this.servicio.eliminar(this.formulario.value.id).subscribe(
+    let formulario = this.formulario.value;
+    this.servicio.eliminar(formulario.id).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario(null);
           setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
+            document.getElementById('idNombre').focus();
           }, 20);
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
+        if (respuesta.codigo == 500) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-        } else if (respuesta.codigo == 11008) {
-          document.getElementById("labelSitioWeb").classList.add('label-error');
-          document.getElementById("idSitioWeb").classList.add('is-invalid');
-          document.getElementById("idSitioWeb").focus();
+          this.toastr.error(respuesta.mensaje);
         }
-        this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
       }
     );
