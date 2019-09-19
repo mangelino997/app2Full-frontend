@@ -343,10 +343,12 @@ export class AdelantoPersonalComponent implements OnInit {
   private eliminar() {
     this.loaderService.show();
     this.formulario.get('estaAnulado').setValue(true);
+    this.formulario.get('estaAnulado').setValue(true);
+
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         this.listarPorFiltros();
-        this.toastr.success("Registro actualizado con éxito.");
+        this.toastr.success("Registro anulado con éxito.");
         setTimeout(function () {
           document.getElementById("idAutocompletado").focus();
         }, 20);
@@ -555,6 +557,7 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Abre un modal al consultar un registro de la tabla
   public activarConsultar(elemento) {
+    console.log(elemento);
     const dialogRef = this.dialog.open(DetalleAdelantoDialogo, {
       width: '95%',
       maxWidth: '100vw',
@@ -901,12 +904,12 @@ export class DetalleAdelantoDialogo {
       this.viaje.setValue(elemento.viaje.id);
     else
       this.viaje.setValue(null);
-    if (elemento.usuarioAnulado)
-      this.usuarioAnulacion.reset(elemento.usuarioAnulado.alias);
+    if (elemento.usuarioMod)
+      this.usuarioAnulacion.reset(elemento.usuarioMod.nombre);
     else
       this.usuarioAnulacion.reset(null);
     if (elemento.usuarioMod)
-      this.usuarioMod.setValue(elemento.usuarioMod.alias);
+      this.usuarioMod.setValue(elemento.usuarioMod.nombre);
     else
       this.usuarioMod.setValue(null);
   }

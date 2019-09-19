@@ -105,7 +105,7 @@
                 autocomplete="off">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="establecerValores(item)">
+                  (onSelectionChange)="establecerValoresProveedor(item)">
                   {{item.alias}}
                 </mat-option>
               </mat-autocomplete>
