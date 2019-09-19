@@ -33,11 +33,6 @@ mat-sidenav.top2 {
 .mat-table-sticky:last-child {
     border-left: 1px solid #e0e0e0;
 }
-.mat-column-EDITAR {
-    min-width: 20px !important;
-    width: 90px !important;
-    padding-right: 0px !important;
-}
 .mat-column-empresa {
     min-width: 20px !important;
     width: 300px !important;
