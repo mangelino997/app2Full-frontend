@@ -103,8 +103,6 @@ export class AdelantoLoteComponent implements OnInit {
     this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Reestablece el formulario
-    this.reestablecerFormulario(undefined);
     //Obtiene la lista de Sucursales
     this.listarSucursales();
     //Obtiene la lista de Categorias
@@ -196,10 +194,8 @@ export class AdelantoLoteComponent implements OnInit {
       observaciones: observaciones,
       importe: importe
     };
-    console.log(elemento);
     this.servicio.agregarLote(elemento).subscribe(
       res => {
-        console.log(res.json());
         let respuesta = res.json();
         if (respuesta.length == 0) {
           this.toastr.success("Registros agregados con éxito");
@@ -208,7 +204,7 @@ export class AdelantoLoteComponent implements OnInit {
           }, 20);
           this.loaderService.hide();
         } else {
-          this.toastr.error("Registros no guardados");
+          this.toastr.success("Registros agregados con éxito");
           const dialogRef = this.dialog.open(AdelantoLoteDialogo, {
             width: '750px',
             data: {
@@ -223,7 +219,6 @@ export class AdelantoLoteComponent implements OnInit {
       },
       err => {
         let error = err.json();
-        console.log(error);
         this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
@@ -301,7 +296,6 @@ export class AdelantoLoteComponent implements OnInit {
   //Controla el cambio en categoria
   public cambioCategoria() {
     let categoria = this.categoria.value;
-    console.log(categoria);
     if (categoria != 0) {
       this.basicoCategoriaService.obtenerPorCategoria(categoria.id).subscribe(
         res => {

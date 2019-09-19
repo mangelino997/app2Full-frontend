@@ -129,8 +129,6 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     });
     //Establece la empresa
     this.empresa.setValue(this.appService.getEmpresa());
-    //Reestablece el formulario
-    this.reestablecerFormulario(undefined);
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la fecha Actual
@@ -191,6 +189,16 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       }
     )
   }
+  //Controla el cambio en el select "establecer codigo afip"
+  public cambioEstablecerCodigoAfipPor(){
+    if(this.establecerCodigoAfipPor.value){
+      this.formulario.get('tipoComprobante').disable();
+      this.formulario.get('codigoAfip').enable();
+    }else{
+      this.formulario.get('tipoComprobante').enable();
+      this.formulario.get('codigoAfip').disable();
+    }
+  }
   //Establecer campos en disable/enable
   public establecerEstadoCampos(soloLectura): void {
     this.domicilio.disable();
@@ -201,7 +209,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       this.formulario.get('tipoComprobante').disable();
       this.formulario.get('condicionCompra').disable();
     } else {
-      this.formulario.get('tipoComprobante').enable();
+      this.formulario.get('tipoComprobante').disable();
       this.formulario.get('condicionCompra').enable();
     }
   }
@@ -470,17 +478,6 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       this.formulario.get('tipoComprobante').setValue(null);
       this.formulario.get('letra').setValue(null);
       this.toastr.error("El campo Código Afip debe tener 3 dígitos como mínimo.");
-    }
-  }
-  //Controla el cambio en el select "establecer codigo afip"
-  public cambioEstablecerCodigoAfipPor(){
-    if(this.establecerCodigoAfipPor.value){
-      this.formulario.get('tipoComprobante').disable();
-      this.formulario.get('codigoAfip').enable();
-
-    }else{
-      this.formulario.get('tipoComprobante').enable();
-      this.formulario.get('codigoAfip').disable();
     }
   }
   //Controla el cambio en el campo "Número"
@@ -792,8 +789,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales('0.00', 2));
-    this.formulario.get('establecerCodigoAfipPor').setValue(true);
-    this.cambioEstablecerCodigoAfipPor();
+    this.establecerCodigoAfipPor.setValue(true);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {

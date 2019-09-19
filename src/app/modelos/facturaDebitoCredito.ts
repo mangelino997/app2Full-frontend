@@ -14,7 +14,7 @@ export class FacturaDebitoCredito {
             puntoVenta: new FormControl(),
             letra: new FormControl(),
             numero: new FormControl(),
-            tipoComprobante: new FormControl('', Validators.required),
+            tipoComprobante: new FormControl(),
             codigoAfip: new FormControl(),
             fechaEmision: new FormControl('', Validators.required),
             fechaContable: new FormControl('', Validators.required),
