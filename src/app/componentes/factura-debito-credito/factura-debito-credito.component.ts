@@ -135,6 +135,8 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.obtenerFecha();
     //Obtiene la lista de tipos de comprobantes
     this.listarTipoComprobante();
+    //Obtiene la lista de letras, el 0 trae todas
+    this.listarLetras(0);
     //Obtiene la lista de Condiciones de Compra
     this.listarCondicionCompra();
     //Autocompletado Proveedor- Buscar por alias
@@ -163,7 +165,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         this.formulario.get('fechaContable').setValue(res.json());
       },
       err => {
-        this.toastr.error("Error al obtener la Fecha Actual");
+        this.toastr.error("Error al obtener la Fecha Actual.");
       }
     )
   }
@@ -174,7 +176,18 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         this.tiposComprobantes = res.json();
       },
       err => {
-        this.toastr.error("Error al obtener la lista de Tipos de Comprobantes");
+        this.toastr.error("Error al obtener la lista de Tipos de Comprobantes.");
+      }
+    )
+  }
+  //Carga la lista de letras
+  private listarLetras(idTipoComprobante){
+    this.afipComprobanteService.listarLetras(idTipoComprobante).subscribe(
+      res =>{
+        this.letras = res.json();
+      },
+      err=>{
+        this.toastr.error("Error al obtener la lista de Letras.");
       }
     )
   }
@@ -185,7 +198,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         this.condicionesCompra = res.json();
       },
       err => {
-        this.toastr.error("Error al obtener la lista de Tipos de Condiciones de Compra");
+        this.toastr.error("Error al obtener la lista de Tipos de Condiciones de Compra.");
       }
     )
   }
@@ -260,10 +273,6 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     switch (indice) {
       case 1:
         this.agregar();
-        break;
-      case 3:
-        break;
-      case 4:
         break;
       default:
         break;
@@ -380,6 +389,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   //Metodo Agregar 
   public agregar() {
     this.loaderService.show();
+    this.formulario.get('tipoComprobante').enable();
     let usuarioAlta = this.appService.getUsuario();
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('sucursal').setValue(usuarioAlta.sucursal);
@@ -391,6 +401,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         this.reestablecerFormulario(respuesta.id);
         this.listaCompleta = new MatTableDataSource([]);
         this.listaCompleta.sort = this.sort;
+        this.formulario.get('tipoComprobante').disable();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -562,6 +573,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public cambioTipoComprobante() {
     let tipoComprobante = this.formulario.get('tipoComprobante').value;
     let letra = this.formulario.get('letra').value;
+    this.listarLetras(tipoComprobante.id);    
     if (tipoComprobante && letra) {
       this.afipComprobanteService.obtenerCodigoAfip(tipoComprobante.id, letra).subscribe(
         res => {
@@ -579,13 +591,12 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         }
       )
     }
-    if (tipoComprobante == null || tipoComprobante == undefined || letra == null || letra == undefined) {
-      this.toastr.error("No se puede obtener el Código de Afip, campos vacíos en 'Tipo de Comprobante' o 'Letra'.");
-    }
   }
   //Controla el cambio en el campo "Letra"
   public cambioLetra() {
+    this.formulario.get('tipoComprobante').enable();
     let tipoComprobante = this.formulario.value.tipoComprobante;
+    this.formulario.get('tipoComprobante').disable();
     let letra = this.formulario.value.letra;
     if (tipoComprobante && letra) {
       this.afipComprobanteService.obtenerCodigoAfip(tipoComprobante.id, letra).subscribe(
@@ -790,6 +801,18 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     this.formulario.get('importeIVA').setValue(this.appService.establecerDecimales('0.00', 2));
     this.formulario.get('importeTotal').setValue(this.appService.establecerDecimales('0.00', 2));
     this.establecerCodigoAfipPor.setValue(true);
+  }
+  //Muestra en la pestania buscar el elemento seleccionado de listar
+  public activarConsultar(elemento) {
+    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    // this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
+  }
+  //Muestra en la pestania actualizar el elemento seleccionado de listar
+  public activarActualizar(elemento) {
+    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    // this.autocompletado.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {

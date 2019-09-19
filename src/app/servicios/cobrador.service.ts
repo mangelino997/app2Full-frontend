@@ -55,8 +55,8 @@ export class CobradorService {
     return this.http.get(this.url, this.options);
   }
   //Obtiene la lista de registros por estaActivoTrue
-  public listarPorEstaActivoTrue() {
-    return this.http.get(this.url + '/listarPorEstaActivoTrue', this.options);
+  public listarPorEstaActivo() {
+    return this.http.get(this.url + '/listarPorEstaActivo', this.options);
   }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {

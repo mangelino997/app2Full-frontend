@@ -66,6 +66,10 @@ export class AfipComprobanteService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de todas las letras
+  public listarLetras(idTipoComprobante) {
+    return this.http.get(this.url + '/listarLetras/' + idTipoComprobante, this.options);
+  }
   //Obtiene la lista de registros
   public listarPorTipoComprobante(idTipoComprobante) {
     return this.http.get(this.url + '/listarPorTipoComprobante/' + idTipoComprobante, this.options);

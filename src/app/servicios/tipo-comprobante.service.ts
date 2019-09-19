@@ -63,16 +63,16 @@ export class TipoComprobanteService {
     })
   }
   //Obtiene una lista por esta activo ingreso carga igual true
-  public listarPorEstaActivoIngresoCargaTrue() {
-    return this.http.get(this.url + '/listarPorEstaActivoIngresoCargaTrue', this.options);
+  public listarActivosIngresoCarga() {
+    return this.http.get(this.url + '/listarActivosIngresoCarga', this.options);
   }
   //Obtiene una lista 
-  public listarPorNumeracionPuntoVentaTrue() {
-    return this.http.get(this.url + '/listarPorNumeracionPuntoVentaTrue', this.options);
+  public listarConNumeracionPuntoVenta() {
+    return this.http.get(this.url + '/listarConNumeracionPuntoVenta', this.options);
   }
   //Obtiene una lista por esta activo reparto igual true
-  public listarPorEstaRepartoTrue() {
-    return this.http.get(this.url + '/listarPorEstaRepartoTrue', this.options);
+  public listarActivosReparto() {
+    return this.http.get(this.url + '/listarActivosReparto', this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

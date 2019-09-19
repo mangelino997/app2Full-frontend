@@ -582,6 +582,7 @@ export class AdelantoPersonalComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.listaPrestamos = result.listaCompleta;
+      console.log(this.listaPrestamos);
       if (result.listaCompleta.length > 0)
         this.formulario.get("importe").setValue(result.importe);
     });
@@ -753,6 +754,7 @@ export class PrestamoDialogo {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.calcularImporteTotal();
+        this.establecerUsuarioAlta();
         this.loaderService.hide();
       },
       err => {
@@ -784,6 +786,15 @@ export class PrestamoDialogo {
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
     this.numeroCuota.setValue(elemento.cuota);
     this.idMod = indice;
+  }
+  //Setea a cada registro (a cada prestamo) el usuario alta
+  private establecerUsuarioAlta(){
+    let usuarioAlta = this.appService.getUsuario();
+    this.listaCompleta.data.forEach(
+      item=>{
+        item.usuarioAlta = usuarioAlta;
+      }
+    )
   }
   //Calcula el importe total 
   private calcularImporteTotal() {
