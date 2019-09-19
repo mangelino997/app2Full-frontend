@@ -1069,7 +1069,8 @@ export class AgregarItemDialogo {
   public calcularNetoNoGravado() {
     this.establecerDecimales(this.importeNoGravado, 2);
     let netoNoGravado = this.importeNoGravado.value - this.netoITC.value;
-    this.netoNoGravado.setValue(this.appService.establecerDecimales(netoNoGravado, 2));
+    this.netoNoGravado.setValue(this.appService.establecerDecimales(netoNoGravado.toString(), 2));
+    this.formulario.get('importeNoGravado').setValue(this.appService.establecerDecimales(netoNoGravado.toString(), 2));
   }
   //Calcula el Importe IVA
   public calcularImporteIVA() {
