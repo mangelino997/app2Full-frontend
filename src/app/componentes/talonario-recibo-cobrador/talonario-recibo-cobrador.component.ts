@@ -100,7 +100,7 @@ public cambioAutocompletado(elemento) {
 }
 //Obtiene el listado de cobradores
 private listarCobradores() {
-  this.cobradorService.listarPorEstaActivoTrue().subscribe(
+  this.cobradorService.listarPorEstaActivo().subscribe(
     res => {
       console.log(res.json());
       this.listaCobradores = res.json();

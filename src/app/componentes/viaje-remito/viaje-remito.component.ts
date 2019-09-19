@@ -260,7 +260,7 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Obtiene el listado de tipos comprobantes
   private listarTiposComprobantes() {
-    this.tipoComprobanteServicio.listarPorEstaActivoIngresoCargaTrue().subscribe(
+    this.tipoComprobanteServicio.listarActivosIngresoCarga().subscribe(
       res => {
         this.tiposComprobantes = res.json();
         this.establecerTipoComprobantePorDefecto();

@@ -115,42 +115,42 @@ export class VehiculoService {
       formData.append('titulo', blob, tituloFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('titulo', blob, '');
+      formData.append('titulo', blob, 'null');
     }
     if (cedulaIdentFile != null) {
       blob = new Blob([cedulaIdentFile.datos], { type: 'application/pdf' });
       formData.append('cedulaIdent', blob, cedulaIdentFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('cedulaIdent', blob, '');
+      formData.append('cedulaIdent', blob, 'null');
     }
     if (vtoRutaFile != null) {
       blob = new Blob([vtoRutaFile.datos], { type: 'application/pdf' });
       formData.append('vtoRuta', blob, vtoRutaFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('vtoRuta', blob, '');
+      formData.append('vtoRuta', blob, 'null');
     }
     if (vtoInspTecnicaFile != null) {
       blob = new Blob([vtoInspTecnicaFile.datos], { type: 'application/pdf' });
       formData.append('vtoInspTecnica', blob, vtoInspTecnicaFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('vtoInspTecnica', blob, '');
+      formData.append('vtoInspTecnica', blob, 'null');
     }
     if (vtoSenasaFile != null) {
       blob = new Blob([vtoSenasaFile.datos], { type: 'application/pdf' });
       formData.append('vtoSenasa', blob, vtoSenasaFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('vtoSenasa', blob, '');
+      formData.append('vtoSenasa', blob, 'null');
     }
     if (habBromatFile != null) {
       blob = new Blob([habBromatFile.datos], { type: 'application/pdf' });
       formData.append('habBromat', blob, habBromatFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('habBromat', blob, '');
+      formData.append('habBromat', blob, 'null');
     }
     obj.pdfTitulo = null;
     obj.pdfCedulaIdent = null;
@@ -170,7 +170,6 @@ export class VehiculoService {
   //Actualiza un registro
   public actualizar(elemento) {
     let obj = Object.assign({}, elemento);
-
     let tituloFile = obj.pdfTitulo;
     let cedulaIdentFile = obj.pdfCedulaIdent;
     let vtoRutaFile = obj.pdfVtoRuta;
@@ -179,48 +178,47 @@ export class VehiculoService {
     let habBromatFile = obj.pdfHabBromat;
     let blob = new Blob([], { type: 'application/pdf' });
     const formData = new FormData();
-
     if (tituloFile.nombre != null) {
       blob = new Blob([tituloFile.datos], { type: 'application/pdf' });
       formData.append('titulo', blob, tituloFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('titulo', blob, '');
+      formData.append('titulo', blob, 'null');
     }
     if (cedulaIdentFile.nombre != null) {
       blob = new Blob([cedulaIdentFile.datos], { type: 'application/pdf' });
       formData.append('cedulaIdent', blob, cedulaIdentFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('cedulaIdent', blob, '');
+      formData.append('cedulaIdent', blob, 'null');
     }
     if (vtoRutaFile.nombre != null) {
       blob = new Blob([vtoRutaFile.datos], { type: 'application/pdf' });
       formData.append('vtoRuta', blob, vtoRutaFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('vtoRuta', blob, '');
+      formData.append('vtoRuta', blob, 'null');
     }
     if (vtoInspTecnicaFile.nombre != null) {
       blob = new Blob([vtoInspTecnicaFile.datos], { type: 'application/pdf' });
       formData.append('vtoInspTecnica', blob, vtoInspTecnicaFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('vtoInspTecnica', blob, '');
+      formData.append('vtoInspTecnica', blob, 'null');
     }
     if (vtoSenasaFile.nombre != null) {
       blob = new Blob([vtoSenasaFile.datos], { type: 'application/pdf' });
       formData.append('vtoSenasa', blob, vtoSenasaFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('vtoSenasa', blob, '');
+      formData.append('vtoSenasa', blob, 'null');
     }
     if (habBromatFile.nombre != null) {
       blob = new Blob([habBromatFile.datos], { type: 'application/pdf' });
       formData.append('habBromat', blob, habBromatFile.nombre);
     } else {
       blob = new Blob([null], { type: 'application/pdf' });
-      formData.append('habBromat', blob, '');
+      formData.append('habBromat', blob, 'null');
     }
     obj.pdfTitulo = null;
     obj.pdfCedulaIdent = null;

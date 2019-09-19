@@ -144,8 +144,6 @@ export class AdelantoPersonalComponent implements OnInit {
     });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Reestablece el formulario
-    this.reestablecerFormulario(undefined);
     //Obtiene la lista de Sucursal Emision
     this.listarSucursalesEmision();
     //Alias - Buscar por alias, empresa y sucursal
@@ -197,8 +195,6 @@ export class AdelantoPersonalComponent implements OnInit {
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-    }
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
@@ -213,6 +209,8 @@ export class AdelantoPersonalComponent implements OnInit {
         this.establecerValoresPestania(nombre, false, true, true, 'idSucursal');
         break;
       case 5:
+        this.establecerValoresPestania(nombre, false, true, true, 'idSucursal');
+        break
       default:
         break;
     }
@@ -345,10 +343,12 @@ export class AdelantoPersonalComponent implements OnInit {
   private eliminar() {
     this.loaderService.show();
     this.formulario.get('estaAnulado').setValue(true);
+    this.formulario.get('estaAnulado').setValue(true);
+
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         this.listarPorFiltros();
-        this.toastr.success("Registro actualizado con éxito.");
+        this.toastr.success("Registro anulado con éxito.");
         setTimeout(function () {
           document.getElementById("idAutocompletado").focus();
         }, 20);
@@ -557,6 +557,7 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Abre un modal al consultar un registro de la tabla
   public activarConsultar(elemento) {
+    console.log(elemento);
     const dialogRef = this.dialog.open(DetalleAdelantoDialogo, {
       width: '95%',
       maxWidth: '100vw',
@@ -579,11 +580,14 @@ export class AdelantoPersonalComponent implements OnInit {
       width: '95%',
       maxWidth: '100vw',
       data: {
-        personalAdelanto: this.formulario.value
+        personalAdelanto: this.formulario.value,
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.listaPrestamos = result;
+      this.listaPrestamos = result.listaCompleta;
+      console.log(this.listaPrestamos);
+      if (result.listaCompleta.length > 0)
+        this.formulario.get("importe").setValue(result.importe);
     });
   }
   //Obtiene la mascara de importe
@@ -753,6 +757,7 @@ export class PrestamoDialogo {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.calcularImporteTotal();
+        this.establecerUsuarioAlta();
         this.loaderService.hide();
       },
       err => {
@@ -784,6 +789,15 @@ export class PrestamoDialogo {
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
     this.numeroCuota.setValue(elemento.cuota);
     this.idMod = indice;
+  }
+  //Setea a cada registro (a cada prestamo) el usuario alta
+  private establecerUsuarioAlta(){
+    let usuarioAlta = this.appService.getUsuario();
+    this.listaCompleta.data.forEach(
+      item=>{
+        item.usuarioAlta = usuarioAlta;
+      }
+    )
   }
   //Calcula el importe total 
   private calcularImporteTotal() {
@@ -824,14 +838,18 @@ export class PrestamoDialogo {
     }
   }
   closeDialog(opcion) {
+    let obj = {
+      listaCompleta: this.listaCompleta.data,
+      importe: this.totalPrestamo.value
+    }
     if (opcion == 'aceptar') {
       if (this.btnAceptar)
-        this.dialogRef.close(this.listaCompleta.data);
+        this.dialogRef.close(obj);
       else
         this.toastr.warning("Campo Diferencia debe ser cero.");
     }
     if (opcion == 'cerrar') {
-      this.dialogRef.close([]);
+      this.dialogRef.close(obj);
     }
   }
 
@@ -886,12 +904,12 @@ export class DetalleAdelantoDialogo {
       this.viaje.setValue(elemento.viaje.id);
     else
       this.viaje.setValue(null);
-    if (elemento.usuarioAnulado)
-      this.usuarioAnulacion.reset(elemento.usuarioAnulado.alias);
+    if (elemento.usuarioMod)
+      this.usuarioAnulacion.reset(elemento.usuarioMod.nombre);
     else
       this.usuarioAnulacion.reset(null);
     if (elemento.usuarioMod)
-      this.usuarioMod.setValue(elemento.usuarioMod.alias);
+      this.usuarioMod.setValue(elemento.usuarioMod.nombre);
     else
       this.usuarioMod.setValue(null);
   }
