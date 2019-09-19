@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { AppService } from 'src/app/servicios/app.service';
@@ -9,6 +9,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { AfipDeduccionPersonalService } from 'src/app/servicios/afip-deduccion-personal.service';
 import { AfipDeduccionPersonal } from 'src/app/modelos/afipDeduccionPersonal';
 import { LoaderState } from 'src/app/modelos/loader';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-deduccion-personal',
@@ -47,9 +48,12 @@ export class DeduccionPersonalComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'ver', 'mod'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'VER', 'EDITAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -57,7 +61,7 @@ export class DeduccionPersonalComponent implements OnInit {
   //Constructor
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService,
     private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipDeduccionPersonalService,
-    private modelo: AfipDeduccionPersonal) {
+    private modelo: AfipDeduccionPersonal,  private reporteServicio: ReporteService) {
       //Obtiene la lista de pestanias
       this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
         .subscribe(
@@ -312,4 +316,29 @@ export class DeduccionPersonalComponent implements OnInit {
       valor.setValue(null);
     }
   } 
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.descripcion
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Deducciones Personales',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  }
 }

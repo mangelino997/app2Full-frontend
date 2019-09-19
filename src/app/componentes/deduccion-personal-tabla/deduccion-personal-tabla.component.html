@@ -106,28 +106,43 @@
             </button>
           </div>
         </div>
-
+        <div class="row">
+          <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label for="idColumnas" class="tamanio-label">Columnas</label>
+                <mat-select class="form-control form-control-sm" [formControl]="columnasElejidas" [(ngModel)]="columnasSeleccionadas" multiple>
+                  <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
+                    {{itemColumna}}
+                  </mat-option>
+                </mat-select>
+          </div>
+        </div>
+          <div class="col-md-8"></div>
+          <div class="col-md-1">
+                  <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
+          </div>
+      </div>
         <div class="row ">
           <div class="tabla">
             <div class="tabla-ancho">
               <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="anio">
+                <ng-container matColumnDef="ANIO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.anio}}</td>
                 </ng-container>
-                <ng-container matColumnDef="tipoBeneficio">
+                <ng-container matColumnDef="TIPO BENEFICIO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Beneficio</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.afipTipoBeneficio.descripcion}}</td>
                 </ng-container>
-                <ng-container matColumnDef="deduccionPersonal">
+                <ng-container matColumnDef="DEDUCCION PERSONAL">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Deducción Personal</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.afipDeduccionPersonal.descripcion}}</td>
                 </ng-container>
-                <ng-container matColumnDef="importeAcumulado">
+                <ng-container matColumnDef="IMPORTE ACUMULADO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Acumulado</th>
                   <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="tipoImporte">
+                <ng-container matColumnDef="TIPO IMPORTE">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Importe</th>
                   <td mat-cell *matCellDef="let elemento">
                     <span *ngIf="elemento.mes">Mensual</span>
@@ -138,11 +153,11 @@
                     </span>
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="mes">
+                <ng-container matColumnDef="MES">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Mes</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.mes? elemento.mes.nombre : '-'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="mod">
+                <ng-container matColumnDef="EDITAR">
                   <th mat-header-cell *matHeaderCellDef>-</th>
                   <td mat-cell *matCellDef="let elemento">
                     <span class="cursor-color" (click)="activarActualizar(elemento)"
@@ -151,7 +166,7 @@
                     </span>
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="eliminar">
+                <ng-container matColumnDef="ELIMINAR">
                   <th mat-header-cell *matHeaderCellDef>-</th>
                   <td mat-cell *matCellDef="let elemento">
                     <span class="cursor-color-rojo" (click)="activarEliminar(elemento.id)"
@@ -160,9 +175,10 @@
                     </span>
                   </td>
                 </ng-container>
-                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
               </table>
+              <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
             </div>
           </div>
         </div>

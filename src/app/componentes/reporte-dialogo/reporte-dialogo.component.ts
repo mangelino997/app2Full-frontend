@@ -82,6 +82,7 @@ export class ReporteDialogoComponent implements OnInit {
     let ultimaFila = [];
     for (let i = 0; i < columnas.length; i++) {
       if (i == 0) {
+        
         ultimaFila.push('Total:');
       } else if (i == 1) {
         ultimaFila.push(datos.length);

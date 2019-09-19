@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { MatTableDataSource, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatTableDataSource, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -13,6 +13,7 @@ import { AfipTipoBeneficioDeduccionService } from 'src/app/servicios/afip-tipo-b
 import { LoaderState } from 'src/app/modelos/loader';
 import { AfipTipoBeneficioService } from 'src/app/servicios/afip-tipo-beneficio.service';
 import { AfipDeduccionPersonalService } from 'src/app/servicios/afip-deduccion-personal.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-deduccion-personal-tabla',
@@ -46,6 +47,9 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define los formControl
   public anio: FormControl = new FormControl();
+  //Define las columnas del reporte en LISTAR
+  public columnasElejidas: FormControl = new FormControl();
+  //
   public tipoBeneficio: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
@@ -57,9 +61,12 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   public deduccionesPersonales: Array<any> = [];
   public meses: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['anio', 'tipoBeneficio', 'deduccionPersonal', 'importeAcumulado', 'tipoImporte', 'mes', 'mod', 'eliminar'];
+  public columnas: string[] = ['ANIO', 'TIPO BENEFICIO', 'DEDUCCION PERSONAL', 'IMPORTE ACUMULADO', 'TIPO IMPORTE', 'MES', 'EDITAR', 'ELIMINAR'];
+  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -67,7 +74,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   constructor(private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private fechaService: FechaService,
     private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipTipoBeneficioDeduccionService, 
     private modelo: AfipDeduccionPersonalTabla, private mesService: MesService, private afipTipoBenecioService: AfipTipoBeneficioService,
-    private afipDeduccionPersonalService: AfipDeduccionPersonalService, public dialog: MatDialog) {
+    private afipDeduccionPersonalService: AfipDeduccionPersonalService, public dialog: MatDialog, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
@@ -436,6 +443,39 @@ export class DeduccionPersonalTablaComponent implements OnInit {
 
     });
   }
+  //Retorna el numero a x decimales
+  public returnDecimales(valor: number, cantidad: number) {
+    return this.appService.establecerDecimales(valor, cantidad);
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          anio: elemento.anio,
+          tipobeneficio: elemento.afipTipoBeneficio.descripcion,
+          deduccionpersonal: elemento.afipDeduccionPersonal.descripcion, 
+          importeacumulado: '$' + this.returnDecimales(elemento.importe, 2),
+          tipoimporte: elemento.mes ? 'Mensual' : 'Anual',
+          mes: elemento.mes? elemento.mes.nombre : '-'
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Deducciones Personales',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }
 //Componente ventana modal/dialog
 @Component({
@@ -492,5 +532,4 @@ export class ImporteAnualDialogo {
   onNoClick(): void {
     this.dialogRef.close();
   }
-   
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -12,6 +12,7 @@ import { AfipGananciaNeta } from 'src/app/modelos/afipGananciaNeta';
 import { LoaderState } from 'src/app/modelos/loader';
 import { AfipAlicuotaGananciaService } from 'src/app/servicios/afip-alicuota-ganancia.service';
 import { MesService } from 'src/app/servicios/mes.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-ganancia-neta',
@@ -65,16 +66,21 @@ export class GananciaNetaComponent implements OnInit {
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['anio', 'gananciaNetaAcumulada', 'importeFijo', 'alicuotaSinExcedente', 'mod', 'eliminar'];
-  public columnasListar: string[] = ['anioMes', 'gananciaNetaDeMas', 'gananciaNetaA', 'importeFijo', 'alicuota', 'excedente'];
+  //
+  public columnasListar: string[] = ['ANIO MES', 'GANANCIA NETA DE MAS', 'GANANCIA NETA A', 'IMPORTE FIJO', 'ALICUOTA', 'EXCEDENTE'];
+  public columnasSeleccionadas:string[] = this.columnasListar.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   constructor(private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private fechaService: FechaService,
     private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipGananciaNetaService,
-    private modelo: AfipGananciaNeta, private alicuotaGananciaService: AfipAlicuotaGananciaService, private mesService: MesService) {
+    private modelo: AfipGananciaNeta, private alicuotaGananciaService: AfipAlicuotaGananciaService, private mesService: MesService, 
+    private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -151,6 +157,7 @@ export class GananciaNetaComponent implements OnInit {
         let respuesta = res.json;
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -446,4 +453,33 @@ export class GananciaNetaComponent implements OnInit {
       valor.setValue(null);
     }
   }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          aniomes: elemento.mes ? elemento.mes : elemento.anio,
+          ganancianetademas: elemento.ganancianetademas,
+          ganancianetaa: elemento.importe,
+          importefijo: elemento.importeFijo,
+          alicuota: elemento.afipAlicuotaGanancia.alicuota,
+          excedente: elemento.resultadosPorFiltro.importe
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'IMP. a la Ganancia',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasSeleccionadas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  } 
 }
