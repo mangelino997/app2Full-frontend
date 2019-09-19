@@ -376,7 +376,7 @@
           <div class="col-md-3">
             <button id="idBotonVencimientos" mat-raised-button color="primary" (click)="detalleVencimientosDialogo()"
               [disabled]="!btnAgregarItem">Vencimientos </button>
-            <button id="idBotonMediosDePago" mat-raised-button color="primary">Medios de Pago </button>
+            <button id="idBotonMediosDePago" mat-raised-button color="primary" [disabled]="!btnAgregarItem">Medios de Pago </button>
           </div>
         </div>
         <div class="row">
@@ -428,7 +428,7 @@
                 autocomplete="off" [readOnly]="formularioListar.get('proveedor').value == 0">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
                 <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="establecerValores(item)">
+                  (onSelectionChange)="establecerValoresProveedor(item)">
                   {{item.alias}}
                 </mat-option>
               </mat-autocomplete>
