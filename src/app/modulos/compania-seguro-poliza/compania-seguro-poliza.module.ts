@@ -1,16 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CompaniaSeguroPolizaRoutingModule } from './compania-seguro-poliza-routing.module';
-<<<<<<< HEAD
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
-=======
-import {
-  MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule
-} from '@angular/material';
->>>>>>> 851771be2b9f424398f1be9704ca69d2fe54b196
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CompaniaSeguroPolizaComponent } from 'src/app/componentes/compania-seguro-poliza/compania-seguro-poliza.component';
 import { CompaniaSeguroPolizaService } from 'src/app/servicios/compania-seguro-poliza.service';
@@ -24,7 +17,6 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
 @NgModule({
   declarations: [
     CompaniaSeguroPolizaComponent,
-
   ],
   imports: [
     CommonModule,
@@ -40,12 +32,8 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     MatProgressBarModule,
     MatButtonModule,
     MatDialogModule,
-<<<<<<< HEAD
-    MatIconModule
-=======
     MatIconModule,
-    
->>>>>>> 851771be2b9f424398f1be9704ca69d2fe54b196
+    PdfViewerModule
   ],
   providers: [
     CompaniaSeguroPolizaService,
@@ -55,7 +43,6 @@ import { PdfViewerModule } from 'ng2-pdf-viewer';
     EmpresaService,
     FechaService
   ],
-  entryComponents: [
-  ]
+  entryComponents: []
 })
 export class CompaniaSeguroPolizaModule { }
