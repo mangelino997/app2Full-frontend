@@ -264,6 +264,7 @@ export class AdelantoPersonalComponent implements OnInit {
     //Consulta
     this.servicio.listarPorFiltros(obj).subscribe(
       res => {
+        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
@@ -363,23 +364,31 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
-    this.formulario.get('personal').setValue(elemento);
-    this.formulario.get('totalCuotas').setValue(elemento.cuotasPrestamo);
-    this.categoria.setValue(elemento.categoria.nombre);
-    this.nombre.setValue(elemento.nombre);
-    this.apellido.setValue(elemento.apellido);
-    this.legajo.setValue(elemento.id);
-    this.obtenerBasicoCategoria(elemento.categoria.id);
-    let recibePrestamo = elemento.recibePrestamo;
-    this.btnPrestamoModal = null;
-    this.listaPrestamos = [];
-    if (recibePrestamo) {
-      this.formulario.get('importe').disable();
-      this.btnPrestamoModal = true;
+    if (elemento.recibeAdelanto) {
+      this.formulario.get('personal').setValue(elemento);
+      this.formulario.get('totalCuotas').setValue(elemento.cuotasPrestamo);
+      this.categoria.setValue(elemento.categoria.nombre);
+      this.nombre.setValue(elemento.nombre);
+      this.apellido.setValue(elemento.apellido);
+      this.legajo.setValue(elemento.id);
+      this.obtenerBasicoCategoria(elemento.categoria.id);
+      let recibePrestamo = elemento.recibePrestamo;
+      this.btnPrestamoModal = null;
+      this.listaPrestamos = [];
+      if (recibePrestamo) {
+        this.formulario.get('importe').disable();
+        this.btnPrestamoModal = true;
+      } else {
+        this.formulario.get('importe').enable();
+        this.btnPrestamoModal = false;
+        this.toastr.warning("El personal no está habilitado para recibir préstamos.");
+      }
     } else {
-      this.formulario.get('importe').enable();
-      this.btnPrestamoModal = false;
-      this.toastr.warning("El personal no está habilitado para recibir préstamos.");
+      this.autocompletado.reset();
+      this.toastr.warning("El usuario seleccionado no recibe adelanto de sueldo.");
+      setTimeout(function () {
+        document.getElementById('idAutocompletado').focus();
+      }, 20);
     }
   }
   //Obtiene el valor de basico categoria
@@ -791,10 +800,10 @@ export class PrestamoDialogo {
     this.idMod = indice;
   }
   //Setea a cada registro (a cada prestamo) el usuario alta
-  private establecerUsuarioAlta(){
+  private establecerUsuarioAlta() {
     let usuarioAlta = this.appService.getUsuario();
     this.listaCompleta.data.forEach(
-      item=>{
+      item => {
         item.usuarioAlta = usuarioAlta;
       }
     )
