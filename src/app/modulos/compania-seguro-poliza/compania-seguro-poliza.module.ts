@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CompaniaSeguroPolizaRoutingModule } from './compania-seguro-poliza-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CompaniaSeguroPolizaComponent } from 'src/app/componentes/compania-seguro-poliza/compania-seguro-poliza.component';
 import { CompaniaSeguroPolizaService } from 'src/app/servicios/compania-seguro-poliza.service';
@@ -31,7 +31,8 @@ import { FechaService } from 'src/app/servicios/fecha.service';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    MatIconModule
   ],
   providers: [
     CompaniaSeguroPolizaService,

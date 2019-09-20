@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MonedaRoutingModule } from './moneda-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MonedaComponent, CambiarMonedaPrincipalDialogo } from 'src/app/componentes/moneda/moneda.component';
 import { MonedaService } from 'src/app/servicios/moneda.service';
@@ -30,7 +30,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatProgressBarModule,
     MatButtonModule,
     MatDialogModule,
-    MatDividerModule
+    MatDividerModule,
+    MatIconModule
   ],
   providers: [
     MonedaService,

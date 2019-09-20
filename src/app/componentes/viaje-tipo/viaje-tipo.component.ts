@@ -44,8 +44,7 @@ export class ViajeTipoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'COSTO POR KM PROPIO', 'COSTO POR KM TERCERO', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'COSTO POR KM PROPIO', 'COSTO POR KM TERCERO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -349,11 +348,11 @@ export class ViajeTipoComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Costos de Viajes',
+      nombre: 'Costos Tipo Viajes',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

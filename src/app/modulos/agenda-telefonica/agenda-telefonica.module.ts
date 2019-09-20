@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AgendaTelefonicaRoutingModule } from './agenda-telefonica-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AgendaTelefonicaComponent } from 'src/app/componentes/agenda-telefonica/agenda-telefonica.component';
 import { AgendaTelefonicaService } from 'src/app/servicios/agenda-telefonica.service';
@@ -27,7 +27,8 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     SubopcionPestaniaService,

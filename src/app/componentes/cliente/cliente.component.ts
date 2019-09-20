@@ -99,7 +99,6 @@ export class ClienteComponent implements OnInit {
   public cuentasBancarias = new MatTableDataSource([]);
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'RAZON SOCIAL', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
-  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define las columnas de la tabla cuenta bancaria
   public columnasCuentaBancaria: string[] = ['empresa', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu', 'cuentaBancaria'];
   //Define la matSort
@@ -975,7 +974,7 @@ export class ClienteComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   }

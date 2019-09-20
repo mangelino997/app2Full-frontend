@@ -58,8 +58,7 @@ export class ChoferProveedorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'PROVEEDOR', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'LOCALIDAD', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas:string[] = ['ID', 'NOMBRE', 'PROVEEDOR', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'LOCALIDAD', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -492,7 +491,7 @@ export class ChoferProveedorComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     console.log(lista);
     this.reporteServicio.abrirDialogo(datos);

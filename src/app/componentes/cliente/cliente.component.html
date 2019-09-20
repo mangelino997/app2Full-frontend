@@ -523,17 +523,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-md-3">
-          <div class="form-group has-float-label">
-            <label for="idColumnas" class="tamanio-label">Columnas</label>
-            <mat-select class="form-control form-control-sm" [(ngModel)]="columnasSeleccionadas" multiple>
-              <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
-                {{itemColumna}}
-              </mat-option>
-            </mat-select>
-          </div>
-        </div>
-        <div class="col-md-8"></div>
+        <div class="col-md-10"></div>
         <div class="col-md-1">
           <button class="button-full-width" mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
         </div>
@@ -585,8 +575,8 @@
                 </button>
               </td>
             </ng-container>
-            <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
-            <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
+            <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+            <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
           </table>
         </div>
         <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>

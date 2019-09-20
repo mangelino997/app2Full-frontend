@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MonedaCotizacionRoutingModule } from './moneda-cotizacion-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MonedaCotizacionComponent } from 'src/app/componentes/moneda-cotizacion/moneda-cotizacion.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -29,7 +29,8 @@ import { MonedaService } from 'src/app/servicios/moneda.service';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     MonedaCotizacionService,

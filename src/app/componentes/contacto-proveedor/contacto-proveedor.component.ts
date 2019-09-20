@@ -49,8 +49,7 @@ export class ContactoProveedorComponent implements OnInit {
   //Define la lista de resultados de busqueda de sucursales bancos
   public resultadosProveedores: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'TIPO CONTACTO', 'NOMBRE CONTACTO', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'CORREO ELECTRONICO', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas:string[] = ['ID', 'TIPO CONTACTO', 'NOMBRE CONTACTO', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'CORREO ELECTRONICO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -417,7 +416,7 @@ export class ContactoProveedorComponent implements OnInit {
       empresa: this.appServicio.getEmpresa().razonSocial,
       usuario: this.appServicio.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

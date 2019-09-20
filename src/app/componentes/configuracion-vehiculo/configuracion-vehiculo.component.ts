@@ -46,8 +46,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   //Define la lista de marcas de vehiculos
   public marcasVehiculos: Array<any> = [];
    //Define las columnas de la tabla
-   public columnas: string[] = ['ID', 'TIPO VEHICULO', 'MARCA VEHICULO', 'MODELO', 'CANTIDAD EJES', 'CAPACIDAD CARGA', 'VER', 'EDITAR'];
-   public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+   public columnas: string[] = ['ID', 'TIPO VEHICULO', 'MARCA VEHICULO', 'MODELO', 'CANTIDAD EJES', 'CAPACIDAD CARGA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -424,11 +423,11 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Configuraciones Vehiculos',
+      nombre: 'Configuracion Vehiculos',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

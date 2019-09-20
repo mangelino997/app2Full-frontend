@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CobradorRoutingModule } from './cobrador-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatDialogModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatDialogModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CobradorComponent } from 'src/app/componentes/cobrador/cobrador.component';
 import { CobradorService } from 'src/app/servicios/cobrador.service';
@@ -28,7 +28,8 @@ import { Cobrador } from 'src/app/modelos/cobrador';
     MatSelectModule,
     MatProgressBarModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     CobradorService,

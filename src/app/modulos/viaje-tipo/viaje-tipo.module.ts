@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ViajeTipoRoutingModule } from './viaje-tipo-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ViajeTipoComponent } from 'src/app/componentes/viaje-tipo/viaje-tipo.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -29,7 +29,8 @@ import { ViajeTipo } from 'src/app/modelos/viajeTipo';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     ViajeTipoService,

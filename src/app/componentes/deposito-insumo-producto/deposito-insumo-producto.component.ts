@@ -44,8 +44,7 @@ public show = false;
 //Define la subscripcion a loader.service
 private subscription: Subscription;
 //Define las columnas de la tabla
-public columnas:string[] = ['ID', 'NOMBRE', 'ES PROPIO', 'VER', 'EDITAR'];
-public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+public columnas:string[] = ['ID', 'NOMBRE', 'ES PROPIO', 'EDITAR'];
 //Define la matSort
 @ViewChild(MatSort) sort: MatSort;
 //Define la paginacion
@@ -328,7 +327,6 @@ private prepararDatos(listaCompleta): Array<any> {
         espropio: elemento.esPropio ? 'Si' : 'No'
       }
       datos.push(f);
-      ['ID', 'NOMBRE', 'ES PROPIO', 'VER', 'EDITAR']
   });
   return datos;
 }
@@ -340,7 +338,7 @@ public abrirReporte(): void {
     empresa: this.appService.getEmpresa().razonSocial,
     usuario: this.appService.getUsuario().nombre,
     datos: lista,
-    columnas: this.columnasSeleccionadas
+    columnas: this.columnas
   }
   this.reporteServicio.abrirDialogo(datos);
 } 

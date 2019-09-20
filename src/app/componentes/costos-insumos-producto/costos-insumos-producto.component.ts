@@ -55,8 +55,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['CODIGO', 'NOMBRE', 'RUBRO', 'MARCA', 'UNIDAD MEDIDA', 'MODELO', 'PRECIO UNITARIO VIAJE', 'PRECIO UNITARIO VENTA', 'ITC POR LITRO', 'ITC NETO', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['CODIGO', 'NOMBRE', 'RUBRO', 'MARCA', 'UNIDAD MEDIDA', 'MODELO', 'PRECIO UNITARIO VIAJE', 'PRECIO UNITARIO VENTA', 'ITC POR LITRO', 'ITC NETO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -338,7 +337,7 @@ export class CostosInsumosProductoComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

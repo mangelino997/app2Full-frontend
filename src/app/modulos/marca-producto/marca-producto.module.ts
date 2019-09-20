@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MarcaProductoRoutingModule } from './marca-producto-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MarcaProductoComponent } from 'src/app/componentes/marca-producto/marca-producto.component';
 import { MarcaProductoService } from 'src/app/servicios/marca-producto.service';
@@ -26,7 +26,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     MarcaProductoService,
