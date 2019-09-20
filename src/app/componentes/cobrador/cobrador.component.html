@@ -54,7 +54,7 @@
             <mat-option [value]="true">Si</mat-option>
           </mat-select>
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton && !show" class="btn btn-primary" type="button" formnovalidate
+        <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>
