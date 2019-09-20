@@ -323,10 +323,13 @@ export class AdelantoPersonalComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         this.listarPorFiltros();
         this.idMod = null;
+        this.lote.reset();
+        this.formulario.reset();
         this.toastr.success("Registro actualizado con éxito.");
         setTimeout(function () {
           document.getElementById("idAutocompletado").focus();
@@ -344,11 +347,13 @@ export class AdelantoPersonalComponent implements OnInit {
   private eliminar() {
     this.loaderService.show();
     this.formulario.get('estaAnulado').setValue(true);
-    this.formulario.get('estaAnulado').setValue(true);
-
+    this.formulario.get('usuarioBaja').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         this.listarPorFiltros();
+        this.idMod = null;
+        this.lote.reset();
+        this.formulario.reset();
         this.toastr.success("Registro anulado con éxito.");
         setTimeout(function () {
           document.getElementById("idAutocompletado").focus();
@@ -428,6 +433,7 @@ export class AdelantoPersonalComponent implements OnInit {
     this.topeAdelanto.reset();
     this.saldoActual.reset();
     this.importeDisponible.reset();
+    this.lote.reset();
     this.idMod = null;
     //Restablece los formControls del formulario listar
     this.formularioListar.reset();
@@ -558,6 +564,7 @@ export class AdelantoPersonalComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.lote.setValue(elemento.numeroLote);
     this.idMod = indice;
+    console.log(this.idMod);
   }
   //Actualiza un registro de la tabla
   public activarActualizar(elemento, indice) {
@@ -581,6 +588,7 @@ export class AdelantoPersonalComponent implements OnInit {
   //Limpia los campos del formulario - cancela el actualizar
   public cancelar() {
     this.formulario.reset();
+    this.lote.reset();
     this.idMod = null;
   }
   //Abre modal de prestamos
@@ -894,7 +902,15 @@ export class DetalleAdelantoDialogo {
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario y sus validaciones
-    this.formulario = this.modelo.formulario;
+    this.formulario = new FormGroup({
+      viaje: new FormControl(),
+      reparto: new FormControl(),
+      fechaLiquidacion: new FormControl(),
+      numeroLiquidacion: new FormControl(),
+      observacionesAnulado: new FormControl(),
+      usuarioBaja: new FormControl(),
+      usuarioMod: new FormControl()
+    });
     //Reestablece el formulario
     this.reestablecerFormulario();
   }
@@ -902,27 +918,12 @@ export class DetalleAdelantoDialogo {
   private reestablecerFormulario() {
     let elemento = this.data.personalAdelanto;
     this.formulario.reset();
-    this.observacionAnulado.setValue(elemento.observacionesAnulado);
-    this.fechaLiquidacion.setValue(null);
-    this.numeroLiquidacion.setValue(null);
-    if (elemento.reparto)
-      this.reparto.setValue(elemento.reparto.id);
-    else
-      this.reparto.setValue(null);
-    if (elemento.viaje)
-      this.viaje.setValue(elemento.viaje.id);
-    else
-      this.viaje.setValue(null);
+    this.formulario.patchValue(elemento);
+    if (elemento.usuarioBaja)
+      this.formulario.get('usuarioBaja').setValue(elemento.usuarioBaja.nombre);
     if (elemento.usuarioMod)
-      this.usuarioAnulacion.reset(elemento.usuarioMod.nombre);
-    else
-      this.usuarioAnulacion.reset(null);
-    if (elemento.usuarioMod)
-      this.usuarioMod.setValue(elemento.usuarioMod.nombre);
-    else
-      this.usuarioMod.setValue(null);
+      this.formulario.get('usuarioMod').setValue(elemento.usuarioMod.nombre);
   }
-
   //Obtiene la mascara de importe
   public mascararImporte(intLimite) {
     return this.appService.mascararImporte(intLimite, 2);

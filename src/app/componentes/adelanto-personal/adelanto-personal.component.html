@@ -248,42 +248,43 @@
           <div class="col-md-3" *ngIf="indiceSeleccionado == 4">
             <div class="form-group has-float-label">
               <label id="labelObservaciones" for="idObservaciones" class="tamanio-label">Observaciones </label>
-              <input id="idObservaciones" type="text" formControlName="observaciones"
-                class="form-control form-control-sm">
+              <input id="idObservaciones" type="text" formControlName="observacionesAnulado" [readonly]="lote.value==null"
+                required class="form-control form-control-sm">
             </div>
           </div>
           <div class="col-md-1" *ngIf="indiceSeleccionado == 3">
-            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!idMod"
+            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!formulario.valid"
               (click)="actualizar()">Actualizar
             </button>
           </div>
           <div class="col-md-1" *ngIf="indiceSeleccionado == 4">
-            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!idMod"
-              (click)="eliminar()"> Anular
+            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!formulario.valid"
+              (click)="eliminar()">Anular
             </button>
           </div>
           <div class="col-md-1">
-            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!idMod"
+            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!formulario.valid"
               (click)="cancelar()">Cancelar
             </button>
           </div>
         </div>
         <div class="row">
           <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idColumnas" class="tamanio-label">Columnas</label>
-                <mat-select class="form-control form-control-sm" [formControl]="columnasElejidas" [(ngModel)]="columnasSeleccionadas" multiple>
-                  <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
-                    {{itemColumna}}
-                  </mat-option>
-                </mat-select>
+            <div class="form-group has-float-label">
+              <label for="idColumnas" class="tamanio-label">Columnas</label>
+              <mat-select class="form-control form-control-sm" [formControl]="columnasElejidas"
+                [(ngModel)]="columnasSeleccionadas" multiple>
+                <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
+                  {{itemColumna}}
+                </mat-option>
+              </mat-select>
+            </div>
           </div>
-        </div>
           <div class="col-md-8"></div>
           <div class="col-md-1">
-                  <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
+            <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
           </div>
-      </div>
+        </div>
         <div class="row">
           <div class="tabla">
             <div class="tabla-ancho">
@@ -348,7 +349,8 @@
                   <th mat-header-cell *matHeaderCellDef>-</th>
                   <td mat-cell *matCellDef="let elemento; let i=index">
                     <span class="cursor-color-rojo" (click)="activarAnular(elemento, i)"
-                      *ngIf="indiceSeleccionado == 4">anular</span>
+                      *ngIf="indiceSeleccionado == 4 && !elemento.estaAnulado">anular
+                    </span>
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="EDITAR">
@@ -378,4 +380,3 @@
     </div>
   </div>
 </div>
-  
