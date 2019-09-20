@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ConfiguracionVehiculoRoutingModule } from './configuracion-vehiculo-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ConfiguracionVehiculoComponent } from 'src/app/componentes/configuracion-vehiculo/configuracion-vehiculo.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -31,7 +31,8 @@ import { configuracionVehiculo } from 'src/app/modelos/configuracionVehiculo';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     ConfiguracionVehiculoService,

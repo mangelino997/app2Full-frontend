@@ -94,7 +94,6 @@ export class VehiculoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['DOMINIO', 'ID', 'TIPO VEHICULO', 'MARCA VEHICULO', 'CONFIGURACION', 'COMPAÑIA SEGURO', 'POLIZA', 'PDF TITULO',
     'PDF CEDULA IDENT', 'PDF VTO RUTA', 'PDF INSP TECNICA', 'PDF VTO SENASA', 'PDF HAB BROMAT', 'EDITAR'];
-  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -791,7 +790,7 @@ export class VehiculoComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   }

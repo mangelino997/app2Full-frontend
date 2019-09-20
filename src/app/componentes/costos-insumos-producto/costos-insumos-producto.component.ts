@@ -55,8 +55,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['CODIGO', 'NOMBRE', 'RUBRO', 'MARCA', 'UNIDAD MEDIDA', 'MODELO', 'PRECIO UNITARIO VIAJE', 'PRECIO UNITARIO VENTA', 'ITC POR LITRO', 'ITC NETO', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['CODIGO', 'NOMBRE', 'RUBRO', 'MARCA', 'UNIDAD MEDIDA', 'MODELO', 'PRECIO UNITARIO VIAJE', 'PRECIO UNITARIO VENTA', 'ITC POR LITRO', 'ITC NETO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -226,12 +225,16 @@ export class CostosInsumosProductoComponent implements OnInit {
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
-    let elemAutocompletado = this.autocompletado.value;
-    this.formulario.setValue(elemAutocompletado);
-    this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioViaje, 2));
-    this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemAutocompletado.precioUnitarioVenta, 2));
-    this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(elemAutocompletado.itcPorLitro, 4));
-    this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(elemAutocompletado.itcNeto.toString(), 2));
+    let elemento = this.autocompletado.value;
+    this.formulario.patchValue(elemento);
+    let precioUnitarioVenta = elemento.precioUnitarioViaje;
+    let precioUnitarioViaje = elemento.precioUnitarioVenta;
+    let itcPorLitro = elemento.itcPorLitro;
+    let itcNeto = elemento.itcNeto;
+    this.formulario.get('precioUnitarioViaje').setValue(this.appService.establecerDecimales(precioUnitarioViaje.toString(), 2));
+    this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(precioUnitarioVenta.toString(), 2));
+    this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(itcPorLitro.toString(), 4));
+    this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(itcNeto.toString(), 2));
 
   }
   //Obtiene la mascara de importe
@@ -338,7 +341,7 @@ export class CostosInsumosProductoComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

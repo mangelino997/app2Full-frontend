@@ -4,7 +4,7 @@ import { BarrioRoutingModule } from './barrio-routing.module';
 import { BarrioComponent } from 'src/app/componentes/barrio/barrio.component';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BarrioService } from 'src/app/servicios/barrio.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -25,7 +25,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     BarrioService,

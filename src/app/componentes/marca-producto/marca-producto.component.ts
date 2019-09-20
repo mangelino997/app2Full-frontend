@@ -39,8 +39,7 @@ export class MarcaProductoComponent implements OnInit {
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
  //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas:string[] = ['ID', 'NOMBRE', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -329,7 +328,7 @@ export class MarcaProductoComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   }  

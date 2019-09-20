@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProvinciaRoutingModule } from './provincia-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProvinciaComponent } from 'src/app/componentes/provincia/provincia.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -29,7 +29,8 @@ import { PaisService } from 'src/app/servicios/pais.service';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     ProvinciaService,

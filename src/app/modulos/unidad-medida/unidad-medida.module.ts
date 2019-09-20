@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { UnidadMedidaRoutingModule } from './unidad-medida-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { UnidadMedidaComponent } from 'src/app/componentes/unidad-medida/unidad-medida.component';
 import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
@@ -25,7 +25,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatIconModule
   ],
   providers: [
     SubopcionPestaniaService,

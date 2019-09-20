@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ContactoBancoRoutingModule } from './contacto-banco-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContactoBancoComponent } from 'src/app/componentes/contacto-banco/contacto-banco.component';
 import { ContactoBancoService } from 'src/app/servicios/contacto-banco.service';
@@ -28,7 +28,8 @@ import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     ContactoBancoService,

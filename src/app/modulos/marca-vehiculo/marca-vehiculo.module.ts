@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { MarcaVehiculoRoutingModule } from './marca-vehiculo-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MarcaVehiculoComponent } from 'src/app/componentes/marca-vehiculo/marca-vehiculo.component';
 import { MarcaVehiculoService } from 'src/app/servicios/marca-vehiculo.service';
@@ -26,7 +26,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     MarcaVehiculoService,

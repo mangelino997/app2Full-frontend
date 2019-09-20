@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ContactoClienteRoutingModule } from './contacto-cliente-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContactoClienteComponent } from 'src/app/componentes/contacto-cliente/contacto-cliente.component';
 import { ContactoClienteService } from 'src/app/servicios/contacto-cliente.service';
@@ -28,7 +28,8 @@ import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     ContactoClienteService,

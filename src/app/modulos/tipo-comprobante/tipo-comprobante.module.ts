@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoComprobanteRoutingModule } from './tipo-comprobante-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoComprobanteComponent } from 'src/app/componentes/tipo-comprobante/tipo-comprobante.component';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
@@ -26,7 +26,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     TipoComprobanteService,

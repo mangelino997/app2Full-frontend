@@ -30,7 +30,6 @@ import { PdfService } from 'src/app/servicios/pdf.service';
 import { AfipActividadService } from 'src/app/servicios/afip-actividad.service';
 import { AfipLocalidadService } from 'src/app/servicios/afip-localidad.service';
 import { AfipSiniestradoService } from 'src/app/servicios/afip-siniestrado.service';
-import { PdfDialogoComponent } from 'src/app/componentes/pdf-dialogo/pdf-dialogo.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { Personal } from 'src/app/modelos/personal';
 import { Foto } from 'src/app/modelos/foto';
@@ -39,7 +38,6 @@ import { Pdf } from 'src/app/modelos/pdf';
 @NgModule({
   declarations: [
     PersonalComponent,
-    PdfDialogoComponent
   ],
   imports: [
     CommonModule,
@@ -91,7 +89,7 @@ import { Pdf } from 'src/app/modelos/pdf';
     Pdf
   ],
   entryComponents: [
-    PdfDialogoComponent
+    
   ]
 })
 export class PersonalModule { }

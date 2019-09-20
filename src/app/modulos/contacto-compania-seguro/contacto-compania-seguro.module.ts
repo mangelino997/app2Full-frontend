@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ContactoCompaniaSeguroRoutingModule } from './contacto-compania-seguro-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ContactoCompaniaSeguroComponent } from 'src/app/componentes/contacto-compania-seguro/contacto-compania-seguro.component';
 import { ContactoCompaniaSeguroService } from 'src/app/servicios/contacto-compania-seguro.service';
@@ -28,7 +28,8 @@ import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     ContactoCompaniaSeguroService,
