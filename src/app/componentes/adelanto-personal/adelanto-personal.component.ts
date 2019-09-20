@@ -264,7 +264,6 @@ export class AdelantoPersonalComponent implements OnInit {
     //Consulta
     this.servicio.listarPorFiltros(obj).subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
@@ -564,7 +563,9 @@ export class AdelantoPersonalComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.lote.setValue(elemento.numeroLote);
     this.idMod = indice;
-    console.log(this.idMod);
+    setTimeout(function () {
+      document.getElementById('idObservaciones').focus();
+    }, 20);
   }
   //Actualiza un registro de la tabla
   public activarActualizar(elemento, indice) {
@@ -573,7 +574,6 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Abre un modal al consultar un registro de la tabla
   public activarConsultar(elemento) {
-    console.log(elemento);
     const dialogRef = this.dialog.open(DetalleAdelantoDialogo, {
       width: '95%',
       maxWidth: '100vw',
@@ -602,7 +602,6 @@ export class AdelantoPersonalComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.listaPrestamos = result.listaCompleta;
-      console.log(this.listaPrestamos);
       if (result.listaCompleta.length > 0)
         this.formulario.get("importe").setValue(result.importe);
     });

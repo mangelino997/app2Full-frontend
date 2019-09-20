@@ -30,6 +30,8 @@ import { ReporteDialogoComponent } from './componentes/reporte-dialogo/reporte-d
 import { FechaService } from './servicios/fecha.service';
 import { getDutchPaginatorIntl } from './dutch-paginator-intl';
 import { OrdenCombustibleComponent } from './componentes/orden-combustible/orden-combustible.component';
+import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -49,7 +51,8 @@ const stompConfig: StompConfig = {
     LoginComponent,
     ObservacionDialogComponent,
     ReporteDialogoComponent,
-    OrdenCombustibleComponent
+    OrdenCombustibleComponent,
+    PdfDialogoComponent
   ],
   imports: [
     FormsModule,
@@ -69,6 +72,7 @@ const stompConfig: StompConfig = {
     MatTableModule,
     MatButtonModule,
     MatProgressBarModule,
+    PdfViewerModule,
     ToastrModule.forRoot({
       timeOut: 4000,
       positionClass: 'toast-bottom-right',
@@ -97,7 +101,8 @@ const stompConfig: StompConfig = {
   bootstrap: [AppComponent],
   entryComponents: [
     ReporteDialogoComponent,
-    ObservacionDialogComponent
+    ObservacionDialogComponent,
+    PdfDialogoComponent
   ]
 })
 export class AppModule { }
