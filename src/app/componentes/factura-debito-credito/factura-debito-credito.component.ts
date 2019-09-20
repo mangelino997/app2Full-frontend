@@ -466,8 +466,18 @@ export class FacturaDebitoCreditoComponent implements OnInit {
       this.afipComprobanteService.obtenerPorCodigoAfip(codigoAfip).subscribe(
         res => {
           let respuesta = res.json();
-          this.formulario.get('tipoComprobante').setValue(respuesta.tipoComprobante);
-          this.formulario.get('letra').setValue(respuesta.letra);
+          if (respuesta) {
+            this.formulario.get('tipoComprobante').setValue(respuesta.tipoComprobante);
+            this.formulario.get('letra').setValue(respuesta.letra);
+          } else {
+            this.formulario.get('codigoAfip').setValue(null);
+            this.formulario.get('tipoComprobante').setValue(null);
+            this.formulario.get('letra').setValue(null);
+            this.toastr.error("El Código Afip ingresado no existe.");
+            setTimeout(function () {
+              document.getElementById('idCodigoAfip').focus();
+            }, 20);
+          }
         },
         err => {
           let error = err.json();
