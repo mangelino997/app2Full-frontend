@@ -48,8 +48,8 @@ export class CobradorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'ESTA HABILITADA', 'CORREO ELECTRONICO', 'POR DEFECTO EN CLIENTE EVENTUAL', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['ID', 'NOMBRE', 'ESTA HABILITADA', 'CORREO ELECTRONICO', 'POR DEFECTO EN CLIENTE EVENTUAL', 'VER', 'EDITAR'];
+  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -66,13 +66,8 @@ export class CobradorComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -93,8 +88,6 @@ export class CobradorComponent implements OnInit {
     this.formulario = this.cobrador.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    //this.listar();
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado() {
@@ -120,19 +113,14 @@ export class CobradorComponent implements OnInit {
     } else {
       this.formulario.get('estaActivo').disable();
       this.formulario.get('porDefectoClienteEventual').disable();
-
     }
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
+    this.reestablecerFormulario(undefined);
     this.nombreOriginal = null;
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -162,10 +150,10 @@ export class CobradorComponent implements OnInit {
   public accion(indice) {
     switch (indice) {
       case 1:
-        this.verificarPrincipal(1); //agregar
+        this.verificarPrincipal(1); //parametro 1 = agregar
         break;
       case 3:
-        this.verificarPrincipal(3); //actualizar
+        this.verificarPrincipal(3); //parametro 3 = actualizar
         break;
       case 4:
         this.eliminar();
@@ -174,48 +162,51 @@ export class CobradorComponent implements OnInit {
         break;
     }
   }
-  //Agrega un registro
-  private verificarPrincipal(opcion) {
-    console.log(this.formulario.get('porDefectoClienteEventual').value);
-
-    if(this.formulario.get('porDefectoClienteEventual').value) {
-     
+  //Agrega/Actualiza un registro
+  private verificarPrincipal(opcionPestania) {
+    let elemento = this.formulario.value;
+    this.listar();
+    if (elemento.porDefectoClienteEventual && this.listaCompleta.data.length>0) {
       this.servicio.obtenerPorDefecto().subscribe(
         res => {
-          console.log(res);
-          var respuesta = res.json();
-          //open modal
-          this.cambiarPrincipal(respuesta, this.formulario.value, opcion);
+          let respuesta = res.json(); //objeto con porDefectoClienteEventual=true (cobradorPrincipal)
+          if(elemento.id == respuesta.id) // Si el cobrador principal es el mismo que se quiere actualizar saltea el modal 'cambiarPrincipal'
+            this.controlaAccionPestania(opcionPestania);
+            else
+              this.cambiarPrincipal(respuesta, elemento, opcionPestania);
+        },
+        err => {
+          this.toastr.warning("Ningún cobrador es por defecto en Cliente Eventual.");
+          this.controlaAccionPestania(opcionPestania);
         }
       );
     }
     else {
-    
-      // this.formulario.get('id').setValue(null);
-      this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-      if(opcion==1)
-        this.agregar(this.formulario.value);
-      if(opcion==3)
-      this.actualizar(this.formulario.value);
+      this.controlaAccionPestania(opcionPestania);
     }
   }
-  //Abre ventana Dialog nueva Moneda Principal
-  public cambiarPrincipal(cobradorPrincipal, cobradorAgregar, opcion): void {
+  //Abre ventana Dialog para cambiar por defecto ClienteEventual
+  public cambiarPrincipal(cobradorPrincipal, cobradorAgregar, opcionPestania): void {
     const dialogRef = this.dialog.open(CambiarCobradorPrincipalDialogo, {
       width: '750px',
-      data: { cobradorPrincipal: cobradorPrincipal, cobradorAgregar: cobradorAgregar },
+      data: {
+        cobradorPrincipal: cobradorPrincipal,
+        cobradorAgregar: cobradorAgregar
+      },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.formulario.get('porDefectoClienteEventual').setValue(result);
-      if(opcion==1){
-        console.log("agregar");
-        this.agregar(this.formulario.value);
-      }
-      if(opcion==3){
-        console.log("actualizar");
-        this.actualizar(this.formulario.value);
-      }
+      this.controlaAccionPestania(opcionPestania);
     });
+  }
+  //Controlar acción pestaña - Si el usuario está en la pestaña 'Agregar' o en 'Actualizar' llama a su método correspondiente.
+  private controlaAccionPestania(opcionPestania) {
+    if (opcionPestania == 1) {
+      this.agregar(this.formulario.value);
+    }
+    if (opcionPestania == 3) {
+      this.actualizar(this.formulario.value);
+    }
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -224,7 +215,6 @@ export class CobradorComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -239,7 +229,6 @@ export class CobradorComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -247,6 +236,7 @@ export class CobradorComponent implements OnInit {
   //Agrega un registro
   private agregar(cobrador) {
     this.loaderService.show();
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(cobrador).subscribe(
       res => {
         var respuesta = res.json();
@@ -288,8 +278,6 @@ export class CobradorComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        console.log(respuesta.mensaje);
-        console.log(respuesta.codigo);
         if (respuesta.codigo == 11002) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -303,7 +291,23 @@ export class CobradorComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        this.reestablecerFormulario(undefined);
+        this.toastr.success(respuesta.mensaje);
+        setTimeout(function () {
+          document.getElementById('idAutocompletado').focus();
+        }, 20);
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        setTimeout(function () {
+          document.getElementById('idAutocompletado').focus();
+        }, 20);
+      }
+    )
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -368,14 +372,14 @@ export class CobradorComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          estahabilitada: elemento.estahabilitada ? 'Si' : 'No',
-          correoelectronico: elemento.correoElectronico ? elemento.correoElectronico : '-',
-          pordefectoclienteeventual: elemento.porDefectoClienteEventual ? 'Si' : 'No'
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        estahabilitada: elemento.estahabilitada ? 'Si' : 'No',
+        correoelectronico: elemento.correoElectronico ? elemento.correoElectronico : '-',
+        pordefectoclienteeventual: elemento.porDefectoClienteEventual ? 'Si' : 'No'
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -390,7 +394,7 @@ export class CobradorComponent implements OnInit {
       columnas: this.columnasSeleccionadas
     }
     this.reporteServicio.abrirDialogo(datos);
-  }   
+  }
 }
 
 //Componente Cambiar Moneda Principal Dialogo
@@ -416,5 +420,5 @@ export class CambiarCobradorPrincipalDialogo {
   onNoClick(): void {
     this.dialogRef.close();
   }
-   
+
 }
