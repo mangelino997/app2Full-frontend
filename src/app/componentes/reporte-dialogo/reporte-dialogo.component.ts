@@ -24,6 +24,8 @@ export class ReporteDialogoComponent implements OnInit {
   public lista = new MatTableDataSource([]);
   //Define las columnas de la tabla
   public columnas: string[] = [];
+  //Define las columnas seleccionadas
+  public columnasSeleccionadas: string[] = [];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -42,6 +44,7 @@ export class ReporteDialogoComponent implements OnInit {
     this.lista.sort = this.sort;
     //Establece las columnas
     this.columnas = this.data.columnas;
+    this.columnasSeleccionadas = this.columnas.filter((item, i) => true);
     //Obtiene la fecha actual
     this.obtenerFecha();
   }
@@ -55,7 +58,7 @@ export class ReporteDialogoComponent implements OnInit {
           + "/" + fecha.getFullYear();
       },
       err => {
-
+        console.log(err);
       }
     );
   }
@@ -80,16 +83,7 @@ export class ReporteDialogoComponent implements OnInit {
     let usuario = this.usuario;
     //Agrega ultima fila con total de items
     let ultimaFila = [];
-    for (let i = 0; i < columnas.length; i++) {
-      if (i == 0) {
-        
-        ultimaFila.push('Total:');
-      } else if (i == 1) {
-        ultimaFila.push(datos.length);
-      } else {
-        ultimaFila.push(null);
-      }
-    }
+    ultimaFila.push('Total:' + datos.length);
     datos.push(ultimaFila);
     //Establece la posicion del texto
     let posicionarTexto = function (posicion, texto) {
@@ -127,7 +121,19 @@ export class ReporteDialogoComponent implements OnInit {
     //Establece tabla
     pdf.autoTable(columnas, datos, {
       didDrawPage: pageContent,
-      margin: { top: 20 },
+      styles: {
+        fontSize: 8,
+        overflow: 'linebreak',
+        cellWidth: 'wrap'
+      },
+      // headerStyles: {
+      //   overflow: 'wrap'
+      // },
+      columnStyles: {
+        0: { cellWidth: 'auto' },
+        5: { cellWidth: 'auto' }
+      },
+      margin: { top: 20 }
     });
     // Total page number plugin only available in jspdf v1.0+
     if (typeof pdf.putTotalPages === 'function') {
@@ -137,7 +143,7 @@ export class ReporteDialogoComponent implements OnInit {
   }
   //Descarga el pdf
   public descargar(): void {
-    let columnas = this.data.columnas;
+    let columnas = this.columnasSeleccionadas;
     let datos = this.data.datos;
     let d = [];
     datos.forEach(dato => {

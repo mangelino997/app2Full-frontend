@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { PersonalRoutingModule } from './personal-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatSidenavModule, MatIconModule, MatDividerModule, MatDialogModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatSidenavModule, MatIconModule, MatDividerModule, MatDialogModule, MatButtonModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PersonalComponent } from 'src/app/componentes/personal/personal.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -58,6 +58,7 @@ import { Pdf } from 'src/app/modelos/pdf';
     MatDividerModule,
     MatButtonModule,
     MatDialogModule,
+    MatTooltipModule,
     TextMaskModule,
     PdfViewerModule
   ],

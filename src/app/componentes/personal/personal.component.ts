@@ -254,23 +254,8 @@ export class PersonalComponent implements OnInit {
     this.listarSindicatos();
     //Obtiene la lista de cateogrias
     this.listarCategorias();
-    //Obtiene la foto por defecto
-    this.obtenerFotoPorDefecto();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
-  }
-  //Obtiene la foto por defecto
-  private obtenerFotoPorDefecto(): void {
-    this.fotoService.obtenerPorId(1).subscribe(res => {
-      let respuesta = res.json();
-      this.formulario.get('foto').setValue(respuesta);
-      this.formulario.get('foto.nombre').setValue(null);
-      this.formulario.get('foto.datos').setValue(atob(this.formulario.get('foto.datos').value));
-    });
-  }
-  //Compara la foto por defecto para determinar si el usuario cargo una foto (cambio de logo de boton)
-  public determinarFotoCargada(): boolean {
-    return this.formulario.get('foto.nombre').value == 'jit-usuario-defecto.jpg';
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
@@ -950,9 +935,9 @@ export class PersonalComponent implements OnInit {
     } else {
       this.formulario.get(campo + '.nombre').setValue('');
       this.formulario.get(campo + '.datos').setValue('');
-      if (campo == 'foto') {
-        this.obtenerFotoPorDefecto();
-      }
+      // if (campo == 'foto') {
+      //   this.obtenerFotoPorDefecto();
+      // }
     }
   }
   //Obtiene el pdf para mostrarlo

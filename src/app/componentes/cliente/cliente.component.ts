@@ -98,8 +98,7 @@ export class ClienteComponent implements OnInit {
   //Define la lista de cuentas bancarias
   public cuentasBancarias = new MatTableDataSource([]);
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'RAZON SOCIAL', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
-  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['RAZON_SOCIAL', 'ID', 'TIPO_DOC', 'NUM_DOC', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   //Define las columnas de la tabla cuenta bancaria
   public columnasCuentaBancaria: string[] = ['empresa', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu', 'cuentaBancaria'];
   //Define la matSort
@@ -956,9 +955,9 @@ export class ClienteComponent implements OnInit {
     lista.forEach(elemento => {
       let f = {
         id: elemento.id,
-        razonsocial: elemento.razonSocial,
-        tipodocumento: elemento.tipoDocumento.nombre,
-        numerodocumento: elemento.numeroDocumento,
+        razon_social: elemento.razonSocial,
+        tipo_doc: elemento.tipoDocumento.nombre,
+        num_doc: elemento.numeroDocumento,
         telefono: elemento.telefono,
         domicilio: elemento.domicilio,
         localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
@@ -975,7 +974,7 @@ export class ClienteComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   }

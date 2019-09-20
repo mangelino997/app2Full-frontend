@@ -15,15 +15,29 @@
     </button>
   </mat-toolbar>
   <div class="contenedor">
+    <div class="row">
+      <div class="col-md-9"></div>
+      <div class="col-md-3">
+        <div class="form-group has-float-label">
+          <label for="idColumnas" class="tamanio-label">Columnas</label>
+          <mat-select class="form-control form-control-sm" [(ngModel)]="columnasSeleccionadas" multiple>
+            <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
+              {{itemColumna}}
+            </mat-option>
+          </mat-select>
+        </div>
+      </div>
+    </div>
     <div class="row justify-content-center">
-      <div class="col-md-10">
+      <div class="col-md-12">
         <table mat-table [dataSource]="lista" matSort class="mat-elevation-z1">
           <ng-container [matColumnDef]="columna" *ngFor="let columna of columnas ; let i = index">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columna}}</th>
-            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[eliminarEspaciosBlanco(columna)]}}</td>
+            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[eliminarEspaciosBlanco(columna)]}}
+            </td>
           </ng-container>
-          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+          <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
         </table>
       </div>
     </div>
