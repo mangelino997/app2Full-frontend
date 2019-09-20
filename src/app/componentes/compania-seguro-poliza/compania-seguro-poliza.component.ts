@@ -14,7 +14,7 @@ import { Subscription } from 'rxjs';
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
 import { element } from '@angular/core/src/render3';
-import { FechaService} from 'src/app/servicios/fecha.service';
+import { FechaService } from 'src/app/servicios/fecha.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
@@ -78,19 +78,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     private fechaService: FechaService,
     private pdfServicio: PdfService, public dialog: MatDialog,
     private reporteServicio: ReporteService) {
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
-  }
-  //Al iniciarse el componente
-  ngOnInit() {
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
-    this.loaderService.show();
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -100,9 +87,17 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-          console.log(err);
         }
       );
+  }
+  //Al iniciarse el componente
+  ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
+    this.loaderService.show();
     //Define el formulario y validaciones
     this.formulario = this.companiaSeguroPolizaModelo.formulario;
     //Autocompletado Compania Seguro - Buscar por nombre
@@ -117,17 +112,12 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Obtiene la lista de empresas
     this.listarEmpresas();
-
     //Obtiene la fecha del dia actual
-    
     this.fechaService.obtenerFecha().subscribe(
       res => {
-        console.log(res);
-        this.fechaActual =res.json();
-        //this.fechaActual = new Date();
+        this.fechaActual = res.json();
       },
       err => {
-        console.log("error")
       }
     );
 
@@ -192,7 +182,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
         break;
       case 5:
-        //this.listar();
         setTimeout(function () {
           document.getElementById('idCompaniaSeguro').focus();
         }, 20);
@@ -223,7 +212,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -276,7 +264,25 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (res.status == 200) {
+          let companiaSeguro = this.formulario.value.companiaSeguro;
+          this.formulario.reset();
+          this.formulario.get('companiaSeguro').setValue(companiaSeguro);
+          this.listarPorCompaniaSeguro();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    )
   }
   //Obtiene un listado por empresa
   public listarPorEmpresa(elemento) {
@@ -286,23 +292,6 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         this.resultados = res.json();
       })
     }
-  }
-  //Obtiene el listado de registros
-  private listar() {
-    let empresa = this.appService.getEmpresa();
-    this.loaderService.show();
-    this.servicio.listarPorEmpresa(empresa.id).subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-      },
-      err => {
-        console.log(err);
-        this.loaderService.hide();
-      }
-    );
   }
   //Obtiene un listado por compania de seguro
   public listarPorCompaniaSeguro() {
@@ -328,9 +317,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Establece los datos de la poliza seleccionada
   public establecerPoliza(): void {
     let poliza = this.poliza.value;
-    if(!poliza.pdf) {
+    if (!poliza.pdf) {
       poliza.pdf = this.companiaSeguroPolizaModelo.formulario.get('pdf');
-    this.obtenerPDF();
+      this.obtenerPDF();
     }
     this.formulario.patchValue(poliza);
   }
@@ -351,13 +340,11 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   private obtenerPorId(id) {
     this.servicio.obtenerPorId(id).subscribe(
       res => {
-      
         let elemento = res.json();
         this.formulario.patchValue(elemento);
         this.establecerPdf(elemento);
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -371,6 +358,11 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.obtenerPorId(elemento.id);
   }
+  //Muestra en la pestania actualizar el elemento seleccionado de listar
+  public activarEliminar(elemento) {
+    this.formulario.patchValue(elemento);
+    this.eliminar();
+  }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerPdf(elemento): void {
     this.autocompletado.setValue(elemento);
@@ -381,7 +373,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Muestra en la pestania buscar,actualizar,eliminar y listar el elemento seleccionado de listar
   public activarVer(elemento) {
-    if(elemento.pdf) {
+    if (elemento.pdf) {
       elemento.pdf = this.companiaSeguroPolizaModelo.formulario.get('pdf');
       this.obtenerPDF();
       this.verPDF();
@@ -441,7 +433,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene el pdf para mostrarlo
   public obtenerPDF() {
-    if(this.formulario.get('pdf.id').value) {
+    if (this.formulario.get('pdf.id').value) {
       this.pdfServicio.obtenerPorId(this.formulario.get('pdf.id').value).subscribe(res => {
         let resultado = res.json();
         let pdf = {
@@ -455,7 +447,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   }
   //Obtiene el pdf para mostrarlo en la tabla
   public obtenerPDFTabla(elemento) {
-    if(elemento.pdf) {
+    if (elemento.pdf) {
       this.pdfServicio.obtenerPorId(elemento.pdf.id).subscribe(res => {
         let resultado = res.json();
         let pdf = {
@@ -463,7 +455,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
           nombre: resultado.nombre,
           datos: atob(resultado.datos)
         }
-       window.open(pdf.datos, '_blank');
+        window.open(pdf.datos, '_blank');
       })
     }
   }
@@ -485,21 +477,18 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         datos: this.formulario.get('pdf.datos').value
       }
     });
-    dialogRef.afterClosed().subscribe(resultado => {});
+    dialogRef.afterClosed().subscribe(resultado => { });
   }
   //Muestra el pdf en una pestana nueva
   public verPDFTabla(elemento) {
-    console.log(elemento);
     if (!elemento.pdf) {
       this.toastr.success("Sin archivo adjunto");
     } else {
       this.pdfServicio.obtenerPorId(elemento.pdf.id).subscribe(
-        res=>{
-          console.log(res.json());
+        res => {
           let respuesta = res.json();
           elemento.pdf.datos = respuesta.datos;
-          console.log(elemento);
-          if(elemento.pdf.datos){
+          if (elemento.pdf.datos) {
             const dialogRef = this.dialog.open(PdfDialogoComponent, {
               width: '95%',
               height: '95%',
@@ -508,18 +497,18 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
                 datos: atob(elemento.pdf.datos)
               }
             });
-            dialogRef.afterClosed().subscribe(resultado => {});
+            dialogRef.afterClosed().subscribe(resultado => { });
           }
         },
-        err=>{
-          this.toastr.error("Error al obtener los datos del pdf '"+elemento.pdf.nombre+"'");
+        err => {
+          this.toastr.error("Error al obtener los datos del pdf '" + elemento.pdf.nombre + "'");
         }
       );
     }
   }
   //Carga el pdf
   public readURL(event): void {
-    if (event.target.files && event.target.files[0] && event.target.files[0].type== 'application/pdf') {
+    if (event.target.files && event.target.files[0] && event.target.files[0].type == 'application/pdf') {
       const file = event.target.files[0];
       const reader = new FileReader();
       reader.onload = e => {
@@ -532,8 +521,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         event.target.value = null;
       }
       reader.readAsDataURL(file);
-      console.log(this.formulario);
-    }else {
+    } else {
       this.toastr.error("Debe adjuntar un archivo con extensión .pdf");
     }
   }
@@ -542,13 +530,13 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          empresa: elemento.empresa.razonSocial,
-          numeropoliza: elemento.numeroPoliza,
-          vtopoliza: elemento.vtoPoliza,
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        empresa: elemento.empresa.razonSocial,
+        numeropoliza: elemento.numeroPoliza,
+        vtopoliza: elemento.vtoPoliza,
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -563,5 +551,5 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }
