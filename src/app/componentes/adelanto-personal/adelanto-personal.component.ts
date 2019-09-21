@@ -450,24 +450,21 @@ export class AdelantoPersonalComponent implements OnInit {
     this.formulario.get('empresa').setValue(empresa);
     if (this.indiceSeleccionado == 1) {
       this.formulario.get('usuarioAlta').setValue(usuario);
-      this.formulario.get('observaciones').setValidators([]);
-      this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('observacionesAnulado').setValidators([]);
       this.formulario.get('fechaVto').setValidators([]);
-      this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('observacionesAnulado').updateValueAndValidity();//Actualiza la validacion
     }
     if (this.indiceSeleccionado == 3) {
       this.formulario.get('usuarioMod').setValue(usuario);
-      this.formulario.get('observaciones').setValidators([]);
-      this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('observacionesAnulado').setValidators([]);
       this.formulario.get('fechaVto').setValidators(Validators.required);
-      this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('observacionesAnulado').updateValueAndValidity();//Actualiza la validacion
     }
     if (this.indiceSeleccionado == 4) {
       this.formulario.get('usuarioBaja').setValue(usuario);
-      this.formulario.get('observaciones').setValidators(Validators.required);
-      this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('observacionesAnulado').setValidators(Validators.required);
       this.formulario.get('fechaVto').setValidators([]);
-      this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
+      this.formulario.get('observacionesAnulado').updateValueAndValidity();//Actualiza la validacion
     }
     this.saldoActual.setValue(this.appService.establecerDecimales('0.00', 2));
     this.btnPrestamoModal = null;
@@ -563,6 +560,10 @@ export class AdelantoPersonalComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.lote.setValue(elemento.numeroLote);
     this.idMod = indice;
+    this.formulario.get('observaciones').setValidators([]);
+    this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
+    this.formulario.get('fechaVto').setValidators([]);
+    this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
     setTimeout(function () {
       document.getElementById('idObservaciones').focus();
     }, 20);
@@ -734,8 +735,7 @@ export class PrestamoDialogo {
   subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<PrestamoDialogo>, @Inject(MAT_DIALOG_DATA) public data, private appService: AppService,
-    private servicio: PersonalAdelantoService, private toastr: ToastrService, private loaderService: LoaderService,
-    private datePipe: DatePipe) {
+    private servicio: PersonalAdelantoService, private toastr: ToastrService, private loaderService: LoaderService) {
     dialogRef.disableClose = true;
   }
   //Al inicializarse el componente

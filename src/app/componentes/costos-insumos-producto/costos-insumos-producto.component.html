@@ -116,7 +116,7 @@
             <div class="form-group has-float-label">
               <label for="idCoeficienteITC" class="tamanio-label">ITC por Litro</label>
               <input id="idCoeficienteITC" type="text" formControlName="itcPorLitro" autocomplete="off"
-                placeholder="00.0000" [textMask]="mascararCoeficiente(3)" class="form-control form-control-sm number-right"
+                placeholder="00.0000" [textMask]="mascararCoeficiente(2)" class="form-control form-control-sm number-right"
                 [readonly]="soloLectura" maxlength="45"
                 (blur)="establecerDecimales(formulario.get('itcPorLitro'), 4)">
             </div>
