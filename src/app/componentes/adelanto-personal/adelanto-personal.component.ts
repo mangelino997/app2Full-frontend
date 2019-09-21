@@ -560,10 +560,6 @@ export class AdelantoPersonalComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.lote.setValue(elemento.numeroLote);
     this.idMod = indice;
-    this.formulario.get('observaciones').setValidators([]);
-    this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
-    this.formulario.get('fechaVto').setValidators([]);
-    this.formulario.get('observaciones').updateValueAndValidity();//Actualiza la validacion
     setTimeout(function () {
       document.getElementById('idObservaciones').focus();
     }, 20);
