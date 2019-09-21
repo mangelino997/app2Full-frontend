@@ -78,7 +78,6 @@ export class DeduccionGeneralTopeComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
   }
@@ -140,10 +139,6 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.resultados = [];
-    if (opcion == 0) {
-      this.anio.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, false, false, true, 'idAnio');
@@ -186,7 +181,6 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.listaCompleta.paginator = this.paginator;
     this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
-        let respuesta = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
