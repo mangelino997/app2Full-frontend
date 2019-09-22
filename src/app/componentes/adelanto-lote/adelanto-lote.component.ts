@@ -182,9 +182,9 @@ export class AdelantoLoteComponent implements OnInit {
     let categoria = this.categoria.value;
     let sucursal = usuario.sucursal;
     let idCategoria;
-    if(categoria != 0)
+    if (categoria != 0)
       idCategoria = categoria.id;
-      else
+    else
       idCategoria = 0;
     let elemento = {
       idEmpresa: empresa.id,
@@ -205,24 +205,31 @@ export class AdelantoLoteComponent implements OnInit {
           this.loaderService.hide();
         } else {
           this.toastr.success("Registros agregados con éxito");
-          const dialogRef = this.dialog.open(AdelantoLoteDialogo, {
-            width: '750px',
-            data: {
-              listaPersonalAdelanto: respuesta
-            },
-          });
-          dialogRef.afterClosed().subscribe(result => {
-            this.reestablecerFormulario(undefined);
-          });
+          this.modalAdelantosFallidos(respuesta);
         }
         this.loaderService.hide();
       },
       err => {
         let error = err.json();
-        this.toastr.error(error.mensaje);
+        if (err.status == 409) {
+          this.modalAdelantosFallidos(error);
+          this.toastr.error("No se aplicó ningún adelanto.");
+        }
         this.loaderService.hide();
       }
     )
+  }
+  //Abre el modal de los personales a los que no se aplico el adelanto de sueldo (fallidos)
+  private modalAdelantosFallidos(adelantosFallidos) {
+    const dialogRef = this.dialog.open(AdelantoLoteDialogo, {
+      width: '750px',
+      data: {
+        listaPersonalAdelanto: adelantosFallidos
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.reestablecerFormulario(undefined);
+    });
   }
   //Elimina un registro
   public anular() {
@@ -278,7 +285,7 @@ export class AdelantoLoteComponent implements OnInit {
     this.observacion.reset();
     this.numeroLote.setValue(null);
     this.indiceElemento = null,
-    this.fechaDesde.reset();
+      this.fechaDesde.reset();
     this.fechaHasta.reset();
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;

@@ -88,7 +88,6 @@ export class CostosInsumosProductoComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-          console.log(err);
         }
       );
     //Autocompletado - Buscar por alias
@@ -103,7 +102,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Al inicializarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = this.insumoProducto.formulario;    
+    this.formulario = this.insumoProducto.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(2, 'Consultar', 0);
     //Obtiene la lista de rubros de productos
@@ -164,10 +163,6 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 2:
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
@@ -197,7 +192,6 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.loaderService.show();
     this.formulario.enable();
     this.controlaValores(this.formulario.value); //Controla que no haya valores en null/Nan
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -252,7 +246,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Establece los decimales de porcentaje
   public establecerPorcentaje(formulario, cantidad): void {
     formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
-    if(formulario.value>100.00)
+    if (formulario.value > 100.00)
       formulario.setValue('100.00');
   }
   //Formatea el numero a x decimales
@@ -264,7 +258,6 @@ export class CostosInsumosProductoComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[0].nombre, 1);
     this.autocompletado.patchValue(elemento);
     this.cambioAutocompletado();
@@ -276,14 +269,14 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.cambioAutocompletado();
   }
   ////Controla que no haya valores en null/Nan
-  private controlaValores(elemento){
-    if(elemento.itcNeto == null || elemento.itcNeto == NaN)
+  private controlaValores(elemento) {
+    if (elemento.itcNeto == null || elemento.itcNeto == NaN)
       this.formulario.get('itcNeto').setValue(0);
-    if(elemento.itcPorLitro == null || elemento.itcPorLitro == NaN)
+    if (elemento.itcPorLitro == null || elemento.itcPorLitro == NaN)
       this.formulario.get('itcPorLitro').setValue(0);
-    if(elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == "NaN")
+    if (elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == "NaN")
       this.formulario.get('precioUnitarioVenta').setValue(0);
-    if(elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == "NaN")
+    if (elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == "NaN")
       this.formulario.get('precioUnitarioViaje').setValue(0);
   }
   //Define el mostrado de datos y comparacion en campo select
@@ -317,19 +310,19 @@ export class CostosInsumosProductoComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          codigo: elemento.id,
-          nombre: elemento.nombre,
-          rubro: elemento.rubroProducto.nombre,
-          marca: elemento.marcaProducto.nombre,
-          unidadmedida: elemento.unidadMedida.nombre,
-          modelo: elemento.modelo,
-          preciounitarioviaje: '$' + elemento.precioUnitarioViaje,
-          preciounitarioventa: '$' + elemento.precioUnitarioVenta,
-          itcporlitro: elemento.itcPorLitro,
-          itcneto: '%' + elemento.itcNeto
-        }
-        datos.push(f);
+      let f = {
+        codigo: elemento.id,
+        nombre: elemento.nombre,
+        rubro: elemento.rubroProducto.nombre,
+        marca: elemento.marcaProducto.nombre,
+        unidadmedida: elemento.unidadMedida.nombre,
+        modelo: elemento.modelo,
+        preciounitarioviaje: '$' + elemento.precioUnitarioViaje,
+        preciounitarioventa: '$' + elemento.precioUnitarioVenta,
+        itcporlitro: elemento.itcPorLitro,
+        itcneto: '%' + elemento.itcNeto
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -344,5 +337,5 @@ export class CostosInsumosProductoComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

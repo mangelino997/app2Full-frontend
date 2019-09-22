@@ -21,7 +21,7 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./deduccion-personal-tabla.component.css']
 })
 export class DeduccionPersonalTablaComponent implements OnInit {
-//Define la pestania activa
+  //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
   public indiceSeleccionado: number = null;
@@ -49,7 +49,6 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   public anio: FormControl = new FormControl();
   //Define las columnas del reporte en LISTAR
   public columnasElejidas: FormControl = new FormControl();
-  //
   public tipoBeneficio: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
@@ -62,7 +61,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   public meses: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['ANIO', 'TIPO BENEFICIO', 'DEDUCCION PERSONAL', 'IMPORTE ACUMULADO', 'TIPO IMPORTE', 'MES', 'EDITAR', 'ELIMINAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -72,21 +71,20 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   constructor(private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private fechaService: FechaService,
-    private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipTipoBeneficioDeduccionService, 
+    private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipTipoBeneficioDeduccionService,
     private modelo: AfipDeduccionPersonalTabla, private mesService: MesService, private afipTipoBenecioService: AfipTipoBeneficioService,
     private afipDeduccionPersonalService: AfipDeduccionPersonalService, public dialog: MatDialog, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-    .subscribe(
-      res => {
-        this.pestanias = res.json();
-        this.activeLink = this.pestanias[0].nombre;
-      },
-      err => {
-        console.log(err);
-      }
-    );
-   }
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
+        }
+      );
+  }
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -109,48 +107,45 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.formulario.get('importeAnualMensual').setValue(false);
   }
   //carga la lista de Años Fiscales
-  private listarAnios(){
+  private listarAnios() {
     this.fechaService.listarAnioFiscal().subscribe(
-      res=>{
+      res => {
         this.anios = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de año fiscal");
       }
     )
   }
   //carga la lista de Tipos de Beneficios
-  private listarTipoBeneficios(){
+  private listarTipoBeneficios() {
     this.afipTipoBenecioService.listar().subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.tiposBeneficios = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de tipo de beneficios");
       }
     )
   }
   //carga la lista de Deducciones Personales
-  private listarDeduccionPersonales(){
+  private listarDeduccionPersonales() {
     this.afipDeduccionPersonalService.listar().subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.deduccionesPersonales = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de deducciones personales");
       }
     )
   }
   //carga la lista de meses en pestaña listar
-  private listarMeses(){
+  private listarMeses() {
     this.mesService.listar().subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         this.meses = res.json();
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de meses");
       }
     )
@@ -171,10 +166,6 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.resultados = [];
-    if (opcion == 0) {
-      this.anio.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
         this.formulario.enable();
@@ -187,7 +178,6 @@ export class DeduccionPersonalTablaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, false, true, 'idAnioFiscal');
         break;
       case 4:
-        // this.establecerValoresPestania(nombre, true, true, true, 'idAnio');
         break;
       case 5:
         this.establecerValoresPestania(nombre, false, false, false, 'idAnio');
@@ -200,10 +190,10 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(); 
+        this.agregar();
         break;
       case 3:
-        this.actualizar(); 
+        this.actualizar();
         break;
       case 4:
         break;
@@ -213,7 +203,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   }
   //Metodo Agregar 
   public agregar() {
-    this.loaderService.show();    
+    this.loaderService.show();
     this.anio.setValue(this.formulario.value.anio);
     this.tipoBeneficio.setValue(this.formulario.value.afipTipoBeneficio);
     this.servicio.agregar(this.formulario.value).subscribe(
@@ -261,12 +251,11 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     );
   }
   //Carga la Lista Completa - Tabla
-  public listar(){
+  public listar() {
     this.loaderService.show();
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
-    switch(this.indiceSeleccionado){
-      case 1: 
+    if (this.indiceSeleccionado == 1) {
       this.servicio.listar().subscribe(
         res => {
           this.listaCompleta = new MatTableDataSource(res.json());
@@ -279,30 +268,24 @@ export class DeduccionPersonalTablaComponent implements OnInit {
           this.loaderService.hide();
         }
       );
-      break;
-
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-        this.servicio.listarPorAnioYTipoBeneficio(this.anio.value, this.tipoBeneficio.value.id).subscribe(
-          res => {
-            let respuesta = res.json();
-            if(respuesta.length == 0){
-              this.toastr.error("Sin datos para ésta consulta");
-            }
-            this.listaCompleta = new MatTableDataSource(res.json());
-            this.listaCompleta.sort = this.sort;
-            this.loaderService.hide();
-          },
-          err => {
-            let error = err.json();
-            this.toastr.error(error.mensaje);
-            this.loaderService.hide();
+    } else {
+      this.servicio.listarPorAnioYTipoBeneficio(this.anio.value, this.tipoBeneficio.value.id).subscribe(
+        res => {
+          let respuesta = res.json();
+          if (respuesta.length == 0) {
+            this.toastr.error("Sin datos para ésta consulta");
           }
-        );
-        break;
-    }    
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.loaderService.hide();
+        },
+        err => {
+          let error = err.json();
+          this.toastr.error(error.mensaje);
+          this.loaderService.hide();
+        }
+      );
+    }
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -321,7 +304,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.resultados = [];
   }
   //Reestablece los valores
-  private reestablecerValores(){
+  private reestablecerValores() {
     this.reestablecerFormulario(undefined);
     this.anio.reset();
     this.tipoBeneficio.reset();
@@ -335,16 +318,16 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.establecerDecimales(this.formulario.get('importe'), 2);
   }
   //elimina el registro seleccionado
-  public activarEliminar(idElemento){
+  public activarEliminar(idElemento) {
     this.loaderService.show();
     this.servicio.eliminar(idElemento).subscribe(
-      res=>{
+      res => {
         let respuesta = res.json();
         this.listar();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
-      err=>{
+      err => {
         let error = err.json();
         this.toastr.error(error.mensaje);
         this.loaderService.hide();
@@ -352,27 +335,27 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     );
   }
   //Controla el cambio de seleccion
-  public cambioTipoImporte(){
-    if(!this.formulario.value.gananciaNeta)
+  public cambioTipoImporte() {
+    if (!this.formulario.value.gananciaNeta)
       this.formulario.get('mes').reset();
   }
   //Controla el cambio de seleccion
-  public cambioAnio(elemento){
-    if(elemento != undefined){
+  public cambioAnio(elemento) {
+    if (elemento != undefined) {
       this.anio.setValue(elemento);
     }
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
   }
   //Controla el cambio de seleccion
-  public cambioTipoBeneficio(elemento){
+  public cambioTipoBeneficio(elemento) {
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
     this.tipoBeneficio.setValue(elemento);
   }
   //Limpia los campos en la pestaña Actualizar
-  public cancelar(){
-    if(this.indiceSeleccionado == 3){
+  public cancelar() {
+    if (this.indiceSeleccionado == 3) {
       let anio = this.formulario.value.anio;
       let tipoBeneficio = this.formulario.value.afipTipoBeneficio
       this.formulario.reset();
@@ -380,7 +363,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
       this.formulario.get('anio').setValue(anio);
       this.formulario.get('afipTipoBeneficio').enable();
       this.formulario.get('afipTipoBeneficio').setValue(tipoBeneficio);
-    }else{
+    } else {
       this.formulario.reset();
       this.formulario.enable();
     }
@@ -418,10 +401,10 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;
-    if(valor) {
+    if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
       this.condicion = true;
-    }else{
+    } else {
       this.condicion = false;
     }
   }
@@ -430,12 +413,12 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  } 
+  }
   //Abre ventana Dialog 
   public verModaAnual(elemento): void {
     const dialogRef = this.dialog.open(ImporteAnualDialogo, {
       width: '750px',
-      data: { 
+      data: {
         elemento: elemento
       },
     });
@@ -452,15 +435,15 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          anio: elemento.anio,
-          tipobeneficio: elemento.afipTipoBeneficio.descripcion,
-          deduccionpersonal: elemento.afipDeduccionPersonal.descripcion, 
-          importeacumulado: '$' + this.returnDecimales(elemento.importe, 2),
-          tipoimporte: elemento.mes ? 'Mensual' : 'Anual',
-          mes: elemento.mes? elemento.mes.nombre : '-'
-        }
-        datos.push(f);
+      let f = {
+        anio: elemento.anio,
+        tipobeneficio: elemento.afipTipoBeneficio.descripcion,
+        deduccionpersonal: elemento.afipDeduccionPersonal.descripcion,
+        importeacumulado: '$' + this.returnDecimales(elemento.importe, 2),
+        tipoimporte: elemento.mes ? 'Mensual' : 'Anual',
+        mes: elemento.mes ? elemento.mes.nombre : '-'
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -475,7 +458,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
       columnas: this.columnasSeleccionadas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }
 //Componente ventana modal/dialog
 @Component({
@@ -484,7 +467,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
 })
 export class ImporteAnualDialogo {
   //Define el elemento que se pasa por paramentro
-  public elemento: FormControl= new FormControl();
+  public elemento: FormControl = new FormControl();
   //Lista de meses con sus importes
   public lista: Array<any> = [];
   //Define la lista completa de registros
@@ -495,36 +478,33 @@ export class ImporteAnualDialogo {
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
   constructor(public dialogRef: MatDialogRef<ImporteAnualDialogo>, @Inject(MAT_DIALOG_DATA) public data, private mesService: MesService,
-  private toastr: ToastrService) { }
+    private toastr: ToastrService) { }
   //Al inicializarse el componente
   ngOnInit() {
     this.elemento.setValue(this.data.elemento);
-    console.log(this.elemento.value); 
     this.listarMeses();
   }
   //Obtiene la lista de meses y le añade el importe
-  private listarMeses(){
+  private listarMeses() {
     this.mesService.listar().subscribe(
-      res=>{
-        console.log(res.json());
+      res => {
         let respuesta = res.json();
         this.calcularImporteMensual(respuesta);
       },
-      err=>{
+      err => {
         this.toastr.error("Error al obtener la lista de meses");
       }
     )
-    
+
   }
   //Calcula el importe mensual
-  private calcularImporteMensual(listaMeses){
+  private calcularImporteMensual(listaMeses) {
     let importeAcumulado = this.elemento.value.importe;
     listaMeses.forEach(item => {
-      let importeMensual = (importeAcumulado/12)*item.id;
-      let fila = {mes: item.nombre, importeMensual: importeMensual};
+      let importeMensual = (importeAcumulado / 12) * item.id;
+      let fila = { mes: item.nombre, importeMensual: importeMensual };
       this.lista.push(fila);
     });
-    console.log(this.lista);
     this.listaCompleta = new MatTableDataSource(this.lista);
     this.listaCompleta.sort = this.sort;
   }

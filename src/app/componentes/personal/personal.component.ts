@@ -107,7 +107,7 @@ export class PersonalComponent implements OnInit {
   public resultadosAfipSituaciones: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'TIPO DOCUMENTO', 'DOCUMENTO', 'TELEFONO MOVIL', 'DOMICILIO', 'LOCALIDAD', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la lista de tipos de imagenes
   private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
   //Define la matSort
@@ -123,7 +123,7 @@ export class PersonalComponent implements OnInit {
   public btnPdfLibSanidad: boolean = null;
   public btnPdflinti: boolean = null;
   //Constructor
-  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, 
+  constructor(private servicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appServicio: AppService, private toastr: ToastrService, private personal: Personal,
     private rolOpcionServicio: RolOpcionService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private sexoServicio: SexoService, private loaderService: LoaderService,
@@ -134,7 +134,7 @@ export class PersonalComponent implements OnInit {
     private afipActividadServicio: AfipActividadService, private afipCondicionServicio: AfipCondicionService,
     private afipLocalidadServicio: AfipLocalidadService, private afipModContratacionServicio: AfipModContratacionService,
     private afipSiniestradoServicio: AfipSiniestradoService, private afipSituacionServicio: AfipSituacionService,
-    private fotoService: FotoService, private pdfServicio: PdfService, public dialog: MatDialog,  private reporteServicio: ReporteService) {
+    private fotoService: FotoService, private pdfServicio: PdfService, public dialog: MatDialog, private reporteServicio: ReporteService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -149,7 +149,7 @@ export class PersonalComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
+
         }
       );
     //Obtiene la lista de opciones por rol y subopcion
@@ -160,7 +160,7 @@ export class PersonalComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-          console.log(err);
+
           this.loaderService.hide();
         }
       );
@@ -238,8 +238,6 @@ export class PersonalComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(15, 0);
-    //Obtiene la lista completa de registros
-    //this.listar();
     //Obtiene la lista de sexos
     this.listarSexos();
     //Obtiene la lista de estados civiles
@@ -257,6 +255,10 @@ export class PersonalComponent implements OnInit {
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
   }
+  //
+  public mostar(){
+    console.log(this.formulario);
+  }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
     return this.appServicio.mascararEnteros(intLimite);
@@ -267,7 +269,7 @@ export class PersonalComponent implements OnInit {
   }
   //Obtiene la mascara de porcentaje
   public mascararPorcentaje() {
-    return this.appServicio.mascararPorcentaje();
+    return this.appServicio.mascararPorcentajeDosEnteros();
   }
   //Obtiene la mascara de hora-minuto
   public mascararHora() {
@@ -285,6 +287,8 @@ export class PersonalComponent implements OnInit {
     let valor = formulario.value;
     if (valor) {
       formulario.setValue(this.appServicio.desenmascararPorcentaje(valor, cantidad));
+    } else {
+      formulario.setValue(this.appServicio.desenmascararPorcentaje('00.00', cantidad));
     }
   }
   //Establece los valores por defecto
@@ -359,7 +363,6 @@ export class PersonalComponent implements OnInit {
         this.sexos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -368,11 +371,9 @@ export class PersonalComponent implements OnInit {
     this.servicio.obtenerPorId(id).subscribe(
       res => {
         let elemento = res.json();
-        // this.formulario.patchValue(elemento);
         this.establecerFotoYPdfs(elemento);
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -383,7 +384,6 @@ export class PersonalComponent implements OnInit {
         this.estadosCiviles = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -395,7 +395,6 @@ export class PersonalComponent implements OnInit {
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -406,7 +405,6 @@ export class PersonalComponent implements OnInit {
         this.sucursales = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -417,7 +415,6 @@ export class PersonalComponent implements OnInit {
         this.areas = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -428,7 +425,6 @@ export class PersonalComponent implements OnInit {
         this.sindicatos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -439,7 +435,6 @@ export class PersonalComponent implements OnInit {
         this.resultadosCategorias = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -518,43 +513,11 @@ export class PersonalComponent implements OnInit {
       this.formulario.get('estaActiva').disable();
     }
   }
-  //Cambio en elemento autocompletado
+  //Cambio en elemento autocompletado - formatea los valores en campos
   public cambioAutocompletado() {
-    let elemAutocompletado = this.autocompletado.value;
-    this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
-    // this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
-    // this.formulario.get('fechaInicio').setValue(elemAutocompletado.fechaInicio.substring(0, 10));
-    // this.formulario.get('aporteAdicObraSocial').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteAdicObraSocial, 2));
-    // this.formulario.get('contribAdicObraSocial').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribAdicObraSocial, 2));
-    // this.formulario.get('aporteAdicSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteAdicSegSoc, 2));
-    // this.formulario.get('aporteDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.aporteDifSegSoc, 2));
-    // this.formulario.get('contribTareaDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
-    // this.formulario.get('contribTareaDifSegSoc').setValue(this.appServicio.establecerDecimales(elemAutocompletado.contribTareaDifSegSoc, 2));
-    // if (elemAutocompletado.fechaFin != null) {
-    //   this.formulario.get('fechaFin').setValue(elemAutocompletado.fechaFin.substring(0, 10));
-    // }
-    // if (elemAutocompletado.vtoLicenciaConducir != null) {
-    //   this.formulario.get('vtoLicenciaConducir').setValue(elemAutocompletado.vtoLicenciaConducir.substring(0, 10));
-    // }
-    // if (elemAutocompletado.vtoCurso != null) {
-    //   this.formulario.get('vtoCurso').setValue(elemAutocompletado.vtoCurso.substring(0, 10));
-    // }
-    // if (elemAutocompletado.vtoCursoCargaPeligrosa != null) {
-    //   this.formulario.get('vtoCursoCargaPeligrosa').setValue(elemAutocompletado.vtoCursoCargaPeligrosa.substring(0, 10));
-    // }
-    // if (elemAutocompletado.vtoLINTI != null) {
-    //   this.formulario.get('vtoLINTI').setValue(elemAutocompletado.vtoLINTI.substring(0, 10));
-    // }
-    // if (elemAutocompletado.vtoLibretaSanidad != null) {
-    //   this.formulario.get('vtoLibretaSanidad').setValue(elemAutocompletado.vtoLibretaSanidad.substring(0, 10));
-    // }
-    // if (elemAutocompletado.telefonoMovilFechaEntrega != null) {
-    //   this.formulario.get('telefonoMovilFechaEntrega').setValue(elemAutocompletado.telefonoMovilFechaEntrega.substring(0, 10));
-    // }
-    // if (elemAutocompletado.telefonoMovilFechaDevolucion != null) {
-    //   this.formulario.get('telefonoMovilFechaDevolucion').setValue(elemAutocompletado.telefonoMovilFechaDevolucion.substring(0, 10));
-    // }
-    this.obtenerPorId(elemAutocompletado.id);
+    let elemento = this.autocompletado.value;
+    this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
+    this.obtenerPorId(elemento.id);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -562,7 +525,6 @@ export class PersonalComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    //this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -670,7 +632,6 @@ export class PersonalComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -685,7 +646,6 @@ export class PersonalComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -711,7 +671,9 @@ export class PersonalComponent implements OnInit {
             this.toastr.success(data.mensaje);
           },
             err => {
-              console.log(err.json());
+              let error = err.json();
+              this.toastr.error(error.mensaje);
+              this.loaderService.hide();
             })
         } else {
           respuesta.then(err => {
@@ -748,7 +710,6 @@ export class PersonalComponent implements OnInit {
         }
       },
       err => {
-        console.log(err);
         this.lanzarError(err.json());
         this.loaderService.hide();
       }
@@ -756,7 +717,25 @@ export class PersonalComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (res.status == 200) {
+          this.reestablecerFormulario(undefined);
+          this.toastr.success(respuesta.mensaje);
+          setTimeout(function () {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    )
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -1033,13 +1012,13 @@ export class PersonalComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.obtenerPorId(elemento.id);
-    this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
+    this.autocompletado.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.obtenerPorId(elemento.id);
-    this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
+    this.autocompletado.setValue(elemento);
   }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
@@ -1061,9 +1040,22 @@ export class PersonalComponent implements OnInit {
     if (elemento.pdfAltaTemprana) {
       elemento.pdfAltaTemprana.datos = atob(elemento.pdfAltaTemprana.datos);
     }
-    // this.autocompletado.patchValue(elemento);
     this.formulario.patchValue(elemento);
+    this.establecerValoresPersonal();
     this.cambioEsChofer();
+  }
+  //Formatea los valores en los campos
+  private establecerValoresPersonal() {
+    this.formulario.get('aporteAdicSegSoc').setValue(this.formulario.get('aporteAdicSegSoc').value ?
+      this.appServicio.desenmascararPorcentaje(this.formulario.get('aporteAdicSegSoc').value.toString(), 2) : null);
+    this.formulario.get('aporteDifSegSoc').setValue(this.formulario.get('aporteDifSegSoc').value ?
+      this.appServicio.desenmascararPorcentaje(this.formulario.get('aporteDifSegSoc').value.toString(), 2) : null);
+    this.formulario.get('contribTareaDifSegSoc').setValue(this.formulario.get('contribTareaDifSegSoc').value ?
+      this.appServicio.desenmascararPorcentaje(this.formulario.get('contribTareaDifSegSoc').value.toString(), 2) : null);
+    this.formulario.get('aporteAdicObraSocial').setValue(this.formulario.get('aporteAdicObraSocial').value ?
+      this.establecerDecimales(this.formulario.get('aporteAdicObraSocial'), 2) : null);
+    this.formulario.get('contribAdicObraSocial').setValue(this.formulario.get('contribAdicObraSocial').value ?
+      this.establecerDecimales(this.formulario.get('contribAdicObraSocial'), 2) : null);
   }
   //Establece la nacionalidad
   public establecerNacionalidad(localidad) {
@@ -1148,16 +1140,16 @@ export class PersonalComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          tipodocumento: elemento.tipoDocumento.nombre,
-          documento: elemento.numeroDocumento,
-          telefonomovil: elemento.telefonoMovil,
-          domicilio: elemento.domicilio,
-          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        tipodocumento: elemento.tipoDocumento.nombre,
+        documento: elemento.numeroDocumento,
+        telefonomovil: elemento.telefonoMovil,
+        domicilio: elemento.domicilio,
+        localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
+      }
+      datos.push(f);
     });
     return datos;
   }

@@ -948,7 +948,7 @@
                       <div class="form-group has-float-label">
                         <label for="idTurnoDSalida" class="tamanio-label">Turno Domingo Salida</label>
                         <input id="idTurnoDSalida" [textMask]="{mask: mascararHora()}" type="text"
-                          formControlName="turnoDSalida" autocomplete="off"
+                          formControlName="turnoDSalida" autocomplete="off" (blur)="mostar()"
                           class="form-control form-control-sm number-right" placeholder="00:00 hs"
                           [readonly]="soloLectura">
                       </div>
@@ -1047,12 +1047,12 @@
                 {{elemento.localidad.provincia.nombre}}
               </td>
             </ng-container>
-            <ng-container matColumnDef="VER" sticky>
+            <ng-container matColumnDef="VER">
               <th mat-header-cell *matHeaderCellDef>-</th>
               <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
                   class="cursor-color">ver</span></td>
             </ng-container>
-            <ng-container matColumnDef="EDITAR" sticky>
+            <ng-container matColumnDef="EDITAR">
               <th mat-header-cell *matHeaderCellDef>-</th>
               <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
                   class="cursor-color">editar</span></td>

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CostosInsumosProductoRoutingModule } from './costos-insumos-producto-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatDividerModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatDividerModule, MatIconModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CostosInsumosProductoComponent } from 'src/app/componentes/costos-insumos-producto/costos-insumos-producto.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -33,7 +33,8 @@ import { UnidadMedidaService } from 'src/app/servicios/unidad-medida.service';
     MatProgressBarModule,
     MatDividerModule,
     TextMaskModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule,
   ],
   providers: [
     InsumoProductoService,

@@ -21,7 +21,7 @@ export class PersonalAdelanto {
             usuarioAlta: new FormControl(),
             observaciones: new FormControl('', Validators.maxLength(60)),
             estaAnulado: new FormControl(),
-            observacionesAnulado: new FormControl(),
+            observacionesAnulado: new FormControl('', Validators.maxLength(60)),
             usuarioMod: new FormControl(),
             usuarioBaja: new FormControl(),
             numeroLote: new FormControl(),

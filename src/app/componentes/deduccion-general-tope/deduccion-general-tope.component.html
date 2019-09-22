@@ -64,7 +64,7 @@
             <div class="form-group has-float-label">
               <label id="labelImporte" for="idImporte" class="descripcion-label">Importe Tope</label>
               <input id="idImporte" type="text" formControlName="importe" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura" [textMask]="mascararImporte(10)" (keyup)="establecerDecimales(formulario.get('importe'), 2)"
+                [readonly]="soloLectura" [textMask]="mascararImporte(10)" (blur)="establecerDecimales(formulario.get('importe'), 2)"
                 placeholder="$0.00">
             </div>
           </div>
@@ -74,7 +74,7 @@
             <div class="form-group has-float-label">
               <label id="labelPorcentajeGanancia" for="idPorcentajeGanancia" class="descripcion-label">% Tope Ganacia Neta</label>
               <input id="idPorcentajeGanancia" type="text" formControlName="porcentajeGananciaNeta" autocomplete="off" class="form-control form-control-sm"
-                [readonly]="soloLectura" (keyup)="establecerPorcentaje(formulario.get('porcentajeGananciaNeta'), 2)"
+                [readonly]="soloLectura" (blur)="establecerPorcentaje(formulario.get('porcentajeGananciaNeta'), 2)"
                 [textMask]="mascararPorcentaje()" placeholder="00.00%">
             </div>
           </div>
