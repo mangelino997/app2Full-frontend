@@ -21,12 +21,10 @@ import { CondicionCompraService } from 'src/app/servicios/condicion-compra.servi
 import { BancoService } from 'src/app/servicios/banco.service';
 import { TipoCuentaBancariaService } from 'src/app/servicios/tipo-cuenta-bancaria.service';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
-import { PlanCuentaDialogo } from 'src/app/componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 
 @NgModule({
   declarations: [
-    ProveedorComponent,
-    PlanCuentaDialogo
+    ProveedorComponent
   ],
   imports: [
     CommonModule,
@@ -64,8 +62,6 @@ import { PlanCuentaDialogo } from 'src/app/componentes/plan-cuenta-dialogo/plan-
     ProveedorService,
     UsuarioEmpresaService
   ],
-  entryComponents: [
-    PlanCuentaDialogo
-  ]
+  entryComponents: []
 })
 export class ProveedorModule { }

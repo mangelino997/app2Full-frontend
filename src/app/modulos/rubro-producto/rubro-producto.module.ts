@@ -10,12 +10,10 @@ import { RubroProductoComponent } from 'src/app/componentes/rubro-producto/rubro
 import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
-import { PlanCuentaDialogo } from 'src/app/componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 
 @NgModule({
   declarations: [
-    RubroProductoComponent,
-    PlanCuentaDialogo
+    RubroProductoComponent
   ],
   imports: [
     CommonModule,
@@ -39,8 +37,6 @@ import { PlanCuentaDialogo } from 'src/app/componentes/plan-cuenta-dialogo/plan-
     SubopcionPestaniaService,
     UsuarioEmpresaService
   ],
-  entryComponents: [
-    PlanCuentaDialogo
-  ]
+  entryComponents: []
 })
 export class RubroProductoModule { }

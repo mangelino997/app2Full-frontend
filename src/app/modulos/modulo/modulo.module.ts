@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { ModuloRoutingModule } from './modulo-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ModuloComponent } from 'src/app/componentes/modulo/modulo.component';
 import { ModuloService } from 'src/app/servicios/modulo.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +25,12 @@ import { ModuloService } from 'src/app/servicios/modulo.service';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    ModuloService
+    ModuloService,
+    SubopcionPestaniaService
   ]
 })
 export class ModuloModule { }

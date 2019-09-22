@@ -12,7 +12,6 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { Personal } from 'src/app/modelos/personal';
 import { TipoDocumentoService } from 'src/app/servicios/tipo-documento.service';
 import { BugImagenDialogoComponent } from 'src/app/componentes/bugImagen-dialogo/bug-imagen-dialogo.component';
-import { PdfDialogoComponent } from 'src/app/componentes/pdf-dialogo/pdf-dialogo.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { Foto } from 'src/app/modelos/foto';
 import { Pdf } from 'src/app/modelos/pdf';
@@ -20,8 +19,7 @@ import { Pdf } from 'src/app/modelos/pdf';
 @NgModule({
   declarations: [
     VencimientosChoferesComponent,
-    BugImagenDialogoComponent,
-    PdfDialogoComponent
+    BugImagenDialogoComponent
   ],
   imports: [
     CommonModule,
@@ -48,8 +46,7 @@ import { Pdf } from 'src/app/modelos/pdf';
     Pdf
   ],
   entryComponents: [
-    BugImagenDialogoComponent,
-    PdfDialogoComponent
+    BugImagenDialogoComponent
   ]
 })
 export class VencimientosChoferesModule { }

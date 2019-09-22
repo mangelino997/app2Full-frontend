@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { ObraSocialRoutingModule } from './obra-social-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ObraSocialComponent } from 'src/app/componentes/obra-social/obra-social.component';
 import { ObraSocialService } from 'src/app/servicios/obra-social.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +25,12 @@ import { ObraSocialService } from 'src/app/servicios/obra-social.service';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    ObraSocialService
+    ObraSocialService,
+    SubopcionPestaniaService
   ]
 })
 export class ObraSocialModule { }

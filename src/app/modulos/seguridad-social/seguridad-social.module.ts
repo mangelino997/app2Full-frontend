@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { SeguridadSocialRoutingModule } from './seguridad-social-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SeguridadSocialComponent } from 'src/app/componentes/seguridad-social/seguridad-social.component';
 import { SeguridadSocialService } from 'src/app/servicios/seguridad-social.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +25,12 @@ import { SeguridadSocialService } from 'src/app/servicios/seguridad-social.servi
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    SeguridadSocialService
+    SeguridadSocialService,
+    SubopcionPestaniaService
   ]
 })
 export class SeguridadSocialModule { }

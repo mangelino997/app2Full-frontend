@@ -11,12 +11,10 @@ import { MonedaCuentaContableService } from 'src/app/servicios/moneda-cuenta-con
 import { MonedaCuentaContable } from 'src/app/modelos/moneda-cuenta-contable';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
-import { PlanCuentaDialogo } from 'src/app/componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 
 @NgModule({
   declarations: [
-    MonedaCuentaContableComponent,
-    PlanCuentaDialogo
+    MonedaCuentaContableComponent
   ],
   imports: [
     CommonModule,
@@ -41,8 +39,6 @@ import { PlanCuentaDialogo } from 'src/app/componentes/plan-cuenta-dialogo/plan-
     SubopcionPestaniaService,
     MonedaService
   ],
-  entryComponents: [
-    PlanCuentaDialogo
-  ]
+  entryComponents: []
 })
 export class MonedaCuentaContableModule { }

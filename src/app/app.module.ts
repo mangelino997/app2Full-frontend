@@ -15,7 +15,7 @@ import { GuardiaService } from './servicios/guardia.service';
 
 //Modulos
 import { MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule, 
-  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule } from '@angular/material';
 import { ReporteService } from './servicios/reporte.service';
 import { HttpModule } from '@angular/http';
 
@@ -32,6 +32,7 @@ import { getDutchPaginatorIntl } from './dutch-paginator-intl';
 import { OrdenCombustibleComponent } from './componentes/orden-combustible/orden-combustible.component';
 import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
+import { PlanCuentaDialogo } from './componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -52,7 +53,8 @@ const stompConfig: StompConfig = {
     ObservacionDialogComponent,
     ReporteDialogoComponent,
     OrdenCombustibleComponent,
-    PdfDialogoComponent
+    PdfDialogoComponent,
+    PlanCuentaDialogo
   ],
   imports: [
     FormsModule,
@@ -71,6 +73,7 @@ const stompConfig: StompConfig = {
     MatDialogModule,
     MatTableModule,
     MatButtonModule,
+    MatTreeModule,
     MatProgressBarModule,
     PdfViewerModule,
     ToastrModule.forRoot({
@@ -102,7 +105,8 @@ const stompConfig: StompConfig = {
   entryComponents: [
     ReporteDialogoComponent,
     ObservacionDialogComponent,
-    PdfDialogoComponent
+    PdfDialogoComponent,
+    PlanCuentaDialogo
   ]
 })
 export class AppModule { }

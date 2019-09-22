@@ -4,10 +4,13 @@ import { CommonModule } from '@angular/common';
 import { SucursalRoutingModule } from './sucursal-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SucursalComponent } from 'src/app/componentes/sucursal/sucursal.component';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
+import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { BarrioService } from 'src/app/servicios/barrio.service';
+import { LocalidadService } from 'src/app/servicios/localidad.service';
 
 @NgModule({
   declarations: [
@@ -24,10 +27,14 @@ import { SucursalService } from 'src/app/servicios/sucursal.service';
     MatPaginatorModule,
     MatSortModule,
     MatSelectModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    MatButtonModule
   ],
   providers: [
-    SucursalService
+    SucursalService,
+    SubopcionPestaniaService,
+    BarrioService,
+    LocalidadService
   ]
 })
 export class SucursalModule { }
