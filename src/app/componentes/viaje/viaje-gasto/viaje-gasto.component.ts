@@ -25,7 +25,6 @@ export class ViajeGastoComponent implements OnInit {
   //Define un formulario viaje  gasto para validaciones de campos
   public formularioViajeGasto: FormGroup;
   //Define la lista de ordenes de gastos (tabla)
-  public listaGastos: Array<any> = [];
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de resultados rubro producto de busqueda
   public resultadosRubrosProductos: Array<any> = [];
@@ -37,10 +36,8 @@ export class ViajeGastoComponent implements OnInit {
   public btnGasto: boolean = true;
   //Define la pestaña seleccionada
   public indiceSeleccionado: number = 1;
-  //Define el viaje actual de los tramos
-  public viaje: any;
   //Define el viaje Cabecera
-  public VIAJE_CABECERA: any;
+  public ID_VIAJE: number;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -70,17 +67,15 @@ export class ViajeGastoComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Establece el id del viaje de Cabecera
-  public establecerViajeCabecera(viajeCabecera) {
-    this.VIAJE_CABECERA = viajeCabecera;
+  public establecerViajeCabecera(idViaje) {
+    this.ID_VIAJE = idViaje;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar() {
     this.loaderService.show();
-    this.servicio.listarGastos(this.VIAJE_CABECERA.id).subscribe(
+    this.servicio.listarGastos(this.ID_VIAJE).subscribe(
       res => {
-        this.listaGastos = res.json();
-        this.recargarListaCompleta(this.listaGastos);
-        // this.emitirGastos(this.listaGastos);
+        this.recargarListaCompleta(res.json());
         this.loaderService.hide();
       },
       err => {
@@ -116,8 +111,7 @@ export class ViajeGastoComponent implements OnInit {
     let usuario = this.appComponent.getUsuario();
     this.formularioViajeGasto.get('sucursal').setValue(usuario.sucursal);
     this.formularioViajeGasto.get('usuarioAlta').setValue(usuario);
-    let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeGasto.value.viaje = { id: idViajeCabecera };
+    this.formularioViajeGasto.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeGasto.value).subscribe(
       res => {
         if (res.status == 201) {
@@ -140,8 +134,7 @@ export class ViajeGastoComponent implements OnInit {
   public modificarGasto(): void {
     let usuarioMod = this.appService.getUsuario();
     this.formularioViajeGasto.value.usuarioMod = usuarioMod;
-    let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeGasto.value.viaje = { id: idViajeCabecera };
+    this.formularioViajeGasto.value.viaje = { id: this.ID_VIAJE };
     this.servicio.actualizar(this.formularioViajeGasto.value).subscribe(
       res => {
         if (res.status == 200) {
@@ -165,7 +158,7 @@ export class ViajeGastoComponent implements OnInit {
   public modGasto(indice): void {
     this.indiceGasto = indice;
     this.btnGasto = false;
-    this.formularioViajeGasto.patchValue(this.listaGastos[indice]);
+    this.formularioViajeGasto.patchValue(this.listaCompleta.data[indice]);
     this.formularioViajeGasto.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajeGasto.value.importe, 2));
     this.formularioViajeGasto.get('precioUnitario').setValue(this.appService.establecerDecimales(this.formularioViajeGasto.value.precioUnitario, 2));
   }
@@ -180,7 +173,7 @@ export class ViajeGastoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado.value.observaciones) {
         this.loaderService.show();
-        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.viaje = { id: this.ID_VIAJE };
         elemento.observacionesAnulado = resultado.value.observaciones;
         this.servicio.anular(elemento).subscribe(
           res => {
@@ -209,7 +202,7 @@ export class ViajeGastoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
         this.loaderService.show();
-        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.viaje = { id: this.ID_VIAJE };
         this.servicio.normalizar(elemento).subscribe(
           res => {
             let respuesta = res.json();
@@ -240,7 +233,7 @@ export class ViajeGastoComponent implements OnInit {
   //Calcula el importe total
   private calcularImporteTotal(): void {
     let importeTotal = 0;
-    this.listaGastos.forEach(item => {
+    this.listaCompleta.data.forEach(item => {
       if(!item.estaAnulado) {
         importeTotal += Number(item.importe);
       }
@@ -251,16 +244,13 @@ export class ViajeGastoComponent implements OnInit {
   private recargarListaCompleta(listaGastos) {
     this.listaCompleta = new MatTableDataSource(listaGastos);
     this.listaCompleta.sort = this.sort;
-    // this.emitirGastos(listaGastos);
     this.calcularImporteTotal();
   }
   //Establece la lista de efectivos
-  public establecerLista(lista, viaje, pestaniaViaje): void {
+  public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
-    this.listaGastos = lista;
-    this.viaje = viaje;
-    this.formularioViajeGasto.get('viaje').patchValue(viaje);
-    this.establecerViajeCabecera(viaje);
+    this.formularioViajeGasto.get('viaje').setValue({id: idViaje});
+    this.establecerViajeCabecera(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
   }
@@ -290,9 +280,8 @@ export class ViajeGastoComponent implements OnInit {
   //Limpia el formulario
   public cancelar() {
     this.formularioViajeGasto.reset();
-    this.formularioViajeGasto.value.viaje = this.VIAJE_CABECERA;
+    this.formularioViajeGasto.get('viaje').setValue(this.ID_VIAJE);
     this.btnGasto = true;
-    this.formularioViajeGasto.get('viaje').setValue(this.viaje);
     this.establecerValoresPorDefecto(0);
     document.getElementById('idFechaG').focus();
   }
@@ -328,13 +317,13 @@ export class ViajeGastoComponent implements OnInit {
   }
   //Vacia la lista
   public vaciarListas(): void {
-    this.listaGastos = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeGasto.reset();
-    this.formularioViajeGasto.value.viaje = this.VIAJE_CABECERA;
+    this.formularioViajeGasto.value.viaje = this.ID_VIAJE;
     this.btnGasto = true;
   }
   //Funcion para comparar y mostrar elemento de campo select

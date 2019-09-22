@@ -99,7 +99,7 @@
                                         required
                                         [formControl]="tipoViaje.value ? formularioViaje.get('vehiculo') : formularioViaje.get('vehiculoProveedor')"
                                         [matAutocomplete]="autoVehiculo" autocomplete="off"
-                                        [readonly]="soloLecturaCabecera" (blur)="establecerViajeCabecera()"
+                                        [readonly]="soloLecturaCabecera"
                                         placeholder="Buscar por Dominio o Tipo/Marca Vehículo">
                                     <mat-autocomplete #autoVehiculo="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
@@ -124,7 +124,7 @@
                                         required matInput
                                         [formControl]="formularioViaje.get('esRemolquePropio').value ? formularioViaje.get('vehiculoRemolque') : formularioViaje.get('vehiculoRemolqueProveedor')"
                                         [matAutocomplete]="autoVehiculoRemolque" autocomplete="off"
-                                        [readonly]="soloLecturaCabecera" (blur)="establecerViajeCabecera()"
+                                        [readonly]="soloLecturaCabecera"
                                         placeholder="Buscar por Dominio o Tipo/Marca Vehículo">
                                     <mat-autocomplete #autoVehiculoRemolque="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">
@@ -148,7 +148,7 @@
                                         required
                                         [formControl]="tipoViaje.value ? formularioViaje.get('personal') : formularioViaje.get('choferProveedor')"
                                         [matAutocomplete]="autoChofer" autocomplete="off"
-                                        [readonly]="soloLecturaCabecera" (blur)="establecerViajeCabecera()"
+                                        [readonly]="soloLecturaCabecera"
                                         placeholder="Buscar por N° Legajo, Nombre o Num. Doc.">
                                     <mat-autocomplete #autoChofer="matAutocomplete"
                                         [displayWith]="displayFn.bind(this)">

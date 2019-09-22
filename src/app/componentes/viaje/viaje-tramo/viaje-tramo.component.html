@@ -128,11 +128,11 @@
                     [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">Observaciones</button>
                 <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarTramo()"
                     [disabled]="!formularioViajeTramo.valid"
-                    *ngIf="btnTramo && !soloLectura && listaTramos.length > 0 && !show">Agregar Tramo
+                    *ngIf="btnTramo && !soloLectura && listaCompleta.data.length > 0 && !show">Agregar Tramo
                 </button>
                 <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarTramo()"
                     [disabled]="!formularioViaje.valid || !formularioViajeTramo.valid"
-                    *ngIf="btnTramo && !soloLectura && listaTramos.length == 0 && !show">Agregar Tramo
+                    *ngIf="btnTramo && !soloLectura && listaCompleta.data.length == 0 && !show">Agregar Tramo
                 </button>
                 <button class="margin-left-3" mat-raised-button color="primary" (click)="modificarTramo()"
                     [disabled]="!formularioViajeTramo.valid" *ngIf="!btnTramo && !soloLectura && !show">Actualizar Tramo

@@ -16,7 +16,20 @@
   </mat-toolbar>
   <div class="contenedor">
     <div class="row">
-      <div class="col-md-9"></div>
+      <div class="col-md-2">
+        <div class="form-group has-float-label">
+          <label for="idColumnas" class="tamanio-label">Tamaño Letra</label>
+          <mat-select class="form-control form-control-sm" [formControl]="tamanioLetra">
+            <mat-option [value]="9">9</mat-option>
+            <mat-option [value]="10">10</mat-option>
+            <mat-option [value]="11">11</mat-option>
+            <mat-option [value]="12">12</mat-option>
+            <mat-option [value]="13">13</mat-option>
+            <mat-option [value]="14">14</mat-option>
+          </mat-select>
+        </div>
+      </div>
+      <div class="col-md-7"></div>
       <div class="col-md-3">
         <div class="form-group has-float-label">
           <label for="idColumnas" class="tamanio-label">Columnas</label>
@@ -32,9 +45,9 @@
       <div class="col-md-12">
         <table mat-table [dataSource]="lista" matSort class="mat-elevation-z1">
           <ng-container [matColumnDef]="columna" *ngFor="let columna of columnas ; let i = index">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header>{{columna}}</th>
-            <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento[eliminarEspaciosBlanco(columna)]}}
-            </td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header [ngStyle]="{'font-size': tamanioLetra.value+'px' }">{{columna}}</th>
+            <td class="mat-cell-left" mat-cell *matCellDef="let elemento" [ngStyle]="{'font-size': tamanioLetra.value+'px' }">
+              {{elemento[eliminarEspaciosBlanco(columna)]}}</td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>

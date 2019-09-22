@@ -28,7 +28,6 @@ export class ViajeInsumoComponent implements OnInit {
   //Define la lista de resultados proveedores de busqueda
   public resultadosProveedores: Array<any> = [];
   //Define la lista de ordenes de insumos (tabla)
-  public listaInsumos: Array<any> = [];
   public listaCompleta = new MatTableDataSource([]);
   //Define el importe Total como un formControl
   public importeTotal = new FormControl();
@@ -42,10 +41,8 @@ export class ViajeInsumoComponent implements OnInit {
   public btnInsumo: boolean = true;
   //Define la pestaña seleccionada
   public indiceSeleccionado: number = 1;
-  //Define el viaje actual de los tramos
-  public viaje: any;
   //Define el viaje Cabecera
-  public VIAJE_CABECERA: any;
+  public ID_VIAJE: number;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -86,16 +83,14 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Establece el id del viaje de Cabecera
   public establecerViajeCabecera(viajeCabecera) {
-    this.VIAJE_CABECERA = viajeCabecera;
+    this.ID_VIAJE = viajeCabecera;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar() {
     this.loaderService.show();
-    this.servicio.listarInsumos(this.VIAJE_CABECERA.id).subscribe(
+    this.servicio.listarInsumos(this.ID_VIAJE).subscribe(
       res => {
-        this.listaInsumos = res.json();
-        this.recargarListaCompleta(this.listaInsumos);
-        // this.emitirInsumos(this.listaInsumos);
+        this.recargarListaCompleta(res.json());
         this.loaderService.hide();
       },
       err => {
@@ -170,8 +165,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.formularioViajeInsumo.get('tipoComprobante').setValue({ id: 18 });
     this.formularioViajeInsumo.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formularioViajeInsumo.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeInsumo.value.viaje = { id: idViajeCabecera };
+    this.formularioViajeInsumo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeInsumo.value).subscribe(
       res => {
         if (res.status == 201) {
@@ -194,12 +188,9 @@ export class ViajeInsumoComponent implements OnInit {
   public modificarInsumo(): void {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeInsumo.value.usuarioMod = usuarioMod;
-    let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeInsumo.value.viaje = { id: idViajeCabecera };
+    this.formularioViajeInsumo.value.viaje = { id: this.ID_VIAJE };
     this.servicio.actualizar(this.formularioViajeInsumo.value).subscribe(
       res => {
-        let resultado = res.json();
-        let viajeCabecera = resultado.viaje;
         if (res.status == 200) {
           this.reestablecerFormulario();
           this.listar();
@@ -222,7 +213,7 @@ export class ViajeInsumoComponent implements OnInit {
   public modInsumo(indice): void {
     this.indiceInsumo = indice;
     this.btnInsumo = false;
-    this.formularioViajeInsumo.patchValue(this.listaInsumos[indice]);
+    this.formularioViajeInsumo.patchValue(this.listaCompleta.data[indice]);
     this.formularioViajeInsumo.get('importe').setValue(this.appServicio.establecerDecimales(this.formularioViajeInsumo.value.importe, 2));
     this.formularioViajeInsumo.get('precioUnitario').setValue(this.appServicio.establecerDecimales(this.formularioViajeInsumo.value.precioUnitario, 2));
   }
@@ -237,7 +228,7 @@ export class ViajeInsumoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado.value.observaciones) {
         this.loaderService.show();
-        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.viaje = { id: this.ID_VIAJE };
         elemento.observacionesAnulado = resultado.value.observaciones;
         this.servicio.anularInsumo(elemento).subscribe(
           res => {
@@ -266,7 +257,7 @@ export class ViajeInsumoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
         this.loaderService.show();
-        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.viaje = { id: this.ID_VIAJE };
         this.servicio.normalizarInsumo(elemento).subscribe(
           res => {
             let respuesta = res.json();
@@ -286,7 +277,7 @@ export class ViajeInsumoComponent implements OnInit {
   //Calcula el importe total al agregar
   private calcularImporteTotal(): void {
     let total = 0;
-    this.listaInsumos.forEach(item => {
+    this.listaCompleta.data.forEach(item => {
       if(!item.estaAnulado) {
         total += parseFloat(item.importe);
       }
@@ -296,13 +287,11 @@ export class ViajeInsumoComponent implements OnInit {
     }
   }
   //Establece la lista de efectivos
-  public establecerLista(lista, viaje, pestaniaViaje): void {
+  public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto();
-    this.listaInsumos = lista;
-    this.recargarListaCompleta(this.listaInsumos);
-    this.viaje = viaje;
-    this.formularioViajeInsumo.get('viaje').patchValue(viaje);
-    this.establecerViajeCabecera(viaje);
+    this.recargarListaCompleta(lista);
+    this.formularioViajeInsumo.get('viaje').setValue({id: idViaje});
+    this.establecerViajeCabecera(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
   }
@@ -332,10 +321,9 @@ export class ViajeInsumoComponent implements OnInit {
   //Limpia el formulario
   public cancelar() {
     this.formularioViajeInsumo.reset();
-    this.formularioViajeInsumo.value.viaje = this.VIAJE_CABECERA;
+    this.formularioViajeInsumo.get('viaje').setValue({id: this.ID_VIAJE});
     this.indiceInsumo = null;
     this.btnInsumo = true;
-    this.formularioViajeInsumo.get('viaje').setValue(this.viaje);
     this.establecerValoresPorDefecto();
     document.getElementById('idProveedor').focus();
   }
@@ -379,14 +367,13 @@ export class ViajeInsumoComponent implements OnInit {
   //Vacia la lista
   public vaciarListas(): void {
     this.resultadosProveedores = [];
-    this.listaInsumos = [];
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeInsumo.reset();
-    this.formularioViajeInsumo.value.viaje = this.VIAJE_CABECERA;
+    this.formularioViajeInsumo.value.viaje = this.ID_VIAJE;
     this.indiceInsumo = null;
     this.btnInsumo = true;
   }

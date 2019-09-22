@@ -20,14 +20,12 @@ import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service
 import { ConfiguracionVehiculoService } from 'src/app/servicios/configuracion-vehiculo.service';
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PersonalService } from 'src/app/servicios/personal.service';
-import { PdfDialogoComponent } from 'src/app/componentes/pdf-dialogo/pdf-dialogo.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { Pdf } from 'src/app/modelos/pdf';
 
 @NgModule({
   declarations: [
-    VehiculoComponent,
-    PdfDialogoComponent
+    VehiculoComponent
   ],
   imports: [
     CommonModule,
@@ -63,8 +61,6 @@ import { Pdf } from 'src/app/modelos/pdf';
     Vehiculo,
     Pdf
   ],
-  entryComponents: [
-    PdfDialogoComponent
-  ]
+  entryComponents: []
 })
 export class VehiculoModule { }

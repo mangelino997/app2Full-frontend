@@ -34,7 +34,6 @@ export class ViajeCombustibleComponent implements OnInit {
   //Define la lista de insumos
   public insumos: Array<any> = [];
   //Define la lista de tramos (tabla)
-  public listaCombustibles: Array<any> = [];
   public listaCompleta = new MatTableDataSource([]);
   //Define si los campos son de solo lectura
   public soloLectura: boolean = false;
@@ -44,10 +43,8 @@ export class ViajeCombustibleComponent implements OnInit {
   public btnCombustible: boolean = true;
   //Define la pestaña seleccionada
   public indiceSeleccionado: number = 1;
-  //Define el viaje actual de los tramos
-  public viaje: any;
-  //Define el viaje Cabecera
-  public VIAJE_CABECERA: any;
+  //Define el id del viaje actual
+  public ID_VIAJE: number;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -88,16 +85,15 @@ export class ViajeCombustibleComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Establece el id del viaje de Cabecera
-  public establecerViajeCabecera(viajeCabecera) {
-    this.VIAJE_CABECERA = viajeCabecera;
+  public establecerViajeCabecera(idViaje) {
+    this.ID_VIAJE = idViaje;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar() {
     this.loaderService.show();
-    this.servicio.listarCombustibles(this.VIAJE_CABECERA.id).subscribe(
+    this.servicio.listarCombustibles(this.ID_VIAJE).subscribe(
       res => {
-        this.listaCombustibles = res.json();
-        this.recargarListaCompleta(this.listaCombustibles);
+        this.recargarListaCompleta(res.json());
         // this.emitirCombustibles(this.listaCombustibles);
         this.loaderService.hide();
       },
@@ -168,7 +164,7 @@ export class ViajeCombustibleComponent implements OnInit {
     if (cantidad != null && precioUnitario != null) {
       let importe = cantidad * precioUnitario;
       this.importe.setValue(importe);
-      this.establecerCeros(this.importe.value);
+      this.establecerCeros(this.importe);
     }
   }
   //Establece el precio unitario
@@ -199,8 +195,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajeCombustible.get('tipoComprobante').setValue({ id: 15 });
     this.formularioViajeCombustible.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formularioViajeCombustible.get('usuarioAlta').setValue(this.appService.getUsuario());
-    let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeCombustible.value.viaje = { id: idViajeCabecera };
+    this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeCombustible.value).subscribe(
       res => {
         if (res.status == 201) {
@@ -223,8 +218,7 @@ export class ViajeCombustibleComponent implements OnInit {
   public modificarCombustible(): void {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeCombustible.value.usuarioMod = usuarioMod;
-    let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeCombustible.value.viaje = { id: idViajeCabecera };
+    this.formularioViajeCombustible.value.viaje = { id: this.ID_VIAJE };
     this.servicio.actualizar(this.formularioViajeCombustible.value).subscribe(
       res => {
         if (res.status == 200) {
@@ -248,7 +242,7 @@ export class ViajeCombustibleComponent implements OnInit {
   public modCombustible(indice): void {
     this.indiceCombustible = indice;
     this.btnCombustible = false;
-    this.formularioViajeCombustible.patchValue(this.listaCombustibles[indice]);
+    this.formularioViajeCombustible.patchValue(this.listaCompleta.data[indice]);
     this.calcularImporte(this.formularioViajeCombustible);
   }
   //Elimina un combustible de la tabla por indice
@@ -262,7 +256,7 @@ export class ViajeCombustibleComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado.value.observaciones) {
         this.loaderService.show();
-        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.viaje = { id: this.ID_VIAJE };
         elemento.observacionesAnulado = resultado.value.observaciones;
         this.servicio.anularCombustible(elemento).subscribe(
           res => {
@@ -291,7 +285,7 @@ export class ViajeCombustibleComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if(resultado) {
         this.loaderService.show();
-        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.viaje = { id: this.ID_VIAJE };
         this.servicio.normalizarCombustible(elemento).subscribe(
           res => {
             let respuesta = res.json();
@@ -313,8 +307,8 @@ export class ViajeCombustibleComponent implements OnInit {
     let totalCombustible = 0;
     let totalAceite = 0;
     let totalUrea = 0;
-    if (this.listaCombustibles.length > 0) {
-      this.listaCombustibles.forEach(item => {
+    if (this.listaCompleta.data.length > 0) {
+      this.listaCompleta.data.forEach(item => {
         if (!item.estaAnulado) {
           if (item.insumoProducto.id == 1) {
             totalCombustible += Number(item.cantidad);
@@ -332,28 +326,18 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Limpia el formulario
   public cancelar() {
-    this.reestablecerFormulario();
+    // this.reestablecerFormulario();
     this.formularioViajeCombustible.reset();
-    this.formularioViajeCombustible.get('viaje').setValue(this.viaje);
-    this.totalCombustible.setValue(null);
-    this.totalAceite.setValue(null);
-    this.totalUrea.setValue(null);
-    this.importe.setValue(null);
-    this.listar();
-    this.establecerValoresPorDefecto(0);
-    document.getElementById('idProveedorOC').focus();
-  }
-  //Finalizar
-  public finalizar() {
-    this.formularioViajeCombustible.reset();
-    this.totalCombustible.setValue(null);
-    this.totalAceite.setValue(null);
-    this.totalUrea.setValue(null);
-    this.importe.setValue(null)
+    this.formularioViajeCombustible.get('viaje').setValue({id: this.ID_VIAJE});
+    // this.totalCombustible.reset();
+    // this.totalAceite.reset();
+    // this.totalUrea.reset();
+    this.importe.reset();
     this.indiceCombustible = null;
     this.btnCombustible = true;
+    // this.listar();
     this.establecerValoresPorDefecto(0);
-    this.vaciarListas();
+    document.getElementById('idProveedorOC').focus();
   }
   //Establece los ceros en los numeros flotantes
   public establecerCeros(elemento): void {
@@ -364,12 +348,11 @@ export class ViajeCombustibleComponent implements OnInit {
     return this.appService.setDecimales(elemento, 2);
   }
   //Establece la lista de combustibles
-  public establecerLista(lista, viaje, pestaniaViaje): void {
+  public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
-    this.listaCombustibles = lista;
-    this.recargarListaCompleta(this.listaCombustibles);
-    this.formularioViajeCombustible.get('viaje').patchValue(viaje);
-    this.establecerViajeCabecera(viaje);
+    this.recargarListaCompleta(lista);
+    this.formularioViajeCombustible.get('viaje').setValue({id: idViaje});
+    this.establecerViajeCabecera(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
   }
@@ -412,7 +395,6 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Vacia la lista
   public vaciarListas(): void {
-    this.listaCombustibles = [];
     this.resultadosProveedores = [];
     this.listaCompleta = new MatTableDataSource([]);
   }
@@ -420,9 +402,20 @@ export class ViajeCombustibleComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeCombustible.reset();
-    this.formularioViajeCombustible.value.viaje = this.VIAJE_CABECERA;
+    this.formularioViajeCombustible.get('viaje').setValue({id: this.ID_VIAJE});
+    this.importe.reset();
     this.indiceCombustible = null;
     this.btnCombustible = true;
+  }
+  //Finalizar
+  public finalizar() {
+    this.ID_VIAJE = 0;
+    this.reestablecerFormulario();
+    this.totalCombustible.reset();
+    this.totalAceite.reset();
+    this.totalUrea.reset();
+    this.importe.reset()
+    this.establecerValoresPorDefecto(0);
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

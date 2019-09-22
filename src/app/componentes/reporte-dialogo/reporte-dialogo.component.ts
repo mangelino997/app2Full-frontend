@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource, MatSort } from '@ang
 import { FechaService } from 'src/app/servicios/fecha.service';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-reporte-dialogo',
@@ -26,6 +27,8 @@ export class ReporteDialogoComponent implements OnInit {
   public columnas: string[] = [];
   //Define las columnas seleccionadas
   public columnasSeleccionadas: string[] = [];
+  //Define el tamanio de la letra
+  public tamanioLetra:FormControl = new FormControl();
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -45,6 +48,8 @@ export class ReporteDialogoComponent implements OnInit {
     //Establece las columnas
     this.columnas = this.data.columnas;
     this.columnasSeleccionadas = this.columnas.filter((item, i) => true);
+    //Establece el tamanio de letra
+    this.tamanioLetra.setValue(12);
     //Obtiene la fecha actual
     this.obtenerFecha();
   }
@@ -109,7 +114,7 @@ export class ReporteDialogoComponent implements OnInit {
       pdf.text('Listado de ' + nombre, posicionarTexto('center', empresa), 18);
       //FOOTER
       let str = "Página " + data.pageCount;
-      // Total page number plugin only available in jspdf v1.0+
+      //Numero total de paginas
       if (typeof pdf.putTotalPages === 'function') {
         str = str + " de " + totalPagesExp;
       }
@@ -122,20 +127,17 @@ export class ReporteDialogoComponent implements OnInit {
     pdf.autoTable(columnas, datos, {
       didDrawPage: pageContent,
       styles: {
-        fontSize: 8,
+        fontSize: this.tamanioLetra.value - 4,
         overflow: 'linebreak',
         cellWidth: 'wrap'
       },
-      // headerStyles: {
-      //   overflow: 'wrap'
-      // },
       columnStyles: {
-        0: { cellWidth: 'auto' },
-        5: { cellWidth: 'auto' }
+        RAZON_SOCIAL: { cellWidth: 'auto' },
+        DOMICILIO: { cellWidth: 'auto' }
       },
       margin: { top: 20 }
     });
-    // Total page number plugin only available in jspdf v1.0+
+    //Establece numero total de paginas
     if (typeof pdf.putTotalPages === 'function') {
       pdf.putTotalPages(totalPagesExp);
     }
@@ -143,13 +145,19 @@ export class ReporteDialogoComponent implements OnInit {
   }
   //Descarga el pdf
   public descargar(): void {
-    let columnas = this.columnasSeleccionadas;
+    let columnas = [];
+    this.columnasSeleccionadas.forEach(elemento => {
+      let json = <any>{};
+      json.header = elemento;
+      json.dataKey = elemento;
+      columnas.push(json);
+    });
     let datos = this.data.datos;
     let d = [];
     datos.forEach(dato => {
       let f = [];
       columnas.forEach(columna => {
-        f.push(dato[columna.toLowerCase()]);
+        f.push(dato[columna.header.toLowerCase()]);
       });
       d.push(f);
     });

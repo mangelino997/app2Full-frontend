@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FechaService } from '../../servicios/fecha.service';
 import { SucursalService } from '../../servicios/sucursal.service';
@@ -29,7 +29,7 @@ import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
   templateUrl: './viaje.component.html',
   styleUrls: ['./viaje.component.css']
 })
-export class ViajeComponent implements OnInit {
+export class ViajeComponent implements OnInit, AfterViewInit {
   //Define los componentes hijos
   @ViewChild(ViajeTramoComponent) viajeTramoComponente;
   @ViewChild(ViajeCombustibleComponent) viajeCombustibleComponente;
@@ -138,6 +138,12 @@ export class ViajeComponent implements OnInit {
       }
     })
   }
+  //Una vez inicializada la vista
+  ngAfterViewInit(): void {
+    setTimeout(function () {
+      document.getElementById('idFecha').focus();
+    }, 100);
+  }
   //Al iniciarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -227,13 +233,12 @@ export class ViajeComponent implements OnInit {
       res => {
         let viajeRes = res.json();
         this.formularioViaje.patchValue(viajeRes);
-        // Le paso el IndiceSeleccionado, viaje, lista
-        this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje, this.indiceSeleccionado);
-        this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje, this.indiceSeleccionado);
-        this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje, this.indiceSeleccionado);
-        this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje, this.indiceSeleccionado);
-        this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje, this.indiceSeleccionado);
-        this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje, this.indiceSeleccionado);
+        this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje.id, this.indiceSeleccionado);
+        this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje.id, this.indiceSeleccionado);
+        this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje.id, this.indiceSeleccionado);
+        this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje.id, this.indiceSeleccionado);
+        this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje.id, this.indiceSeleccionado);
+        this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje.id, this.indiceSeleccionado);
         this.loaderService.hide();
       },
       err => {
@@ -327,9 +332,6 @@ export class ViajeComponent implements OnInit {
       this.viajePeajeComponente.reestablecerFormulario();
       this.viajePeajeComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
-    setTimeout(function () {
-      document.getElementById(componente).focus();
-    }, 80);
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -611,15 +613,14 @@ export class ViajeComponent implements OnInit {
     this.cambioAutocompletado();
   }
   //Establece los valores del viaje en viajeCabecera del appService
-  public establecerViajeCabecera() {
-    this.viajeTramoComponente.establecerViajeCabecera(this.formularioViaje.value);
-    this.viajeCombustibleComponente.establecerViajeCabecera(this.formularioViaje.value);
-    this.viajeEfectivoComponente.establecerViajeCabecera(this.formularioViaje.value);
-    this.viajeGastoComponente.establecerViajeCabecera(this.formularioViaje.value);
-    this.viajeInsumoComponente.establecerViajeCabecera(this.formularioViaje.value);
-    this.viajePeajeComponente.establecerViajeCabecera(this.formularioViaje.value);
-
-  }
+  // public establecerViajeCabecera() {
+  //   this.viajeTramoComponente.establecerViajeCabecera(this.formularioViaje.value);
+  //   this.viajeCombustibleComponente.establecerViajeCabecera(this.formularioViaje.value);
+  //   this.viajeEfectivoComponente.establecerViajeCabecera(this.formularioViaje.value);
+  //   this.viajeGastoComponente.establecerViajeCabecera(this.formularioViaje.value);
+  //   this.viajeInsumoComponente.establecerViajeCabecera(this.formularioViaje.value);
+  //   this.viajePeajeComponente.establecerViajeCabecera(this.formularioViaje.value);
+  // }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {

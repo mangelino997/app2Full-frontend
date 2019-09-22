@@ -26,7 +26,6 @@ export class ViajeEfectivoComponent implements OnInit {
   //Define el importe Total como un formControl
   public importeTotal = new FormControl();
   //Define la lista de adelantos de efectivo (tabla)
-  public listaEfectivos: Array<any> = [];
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de empresas
   public empresas: Array<any> = [];
@@ -40,10 +39,8 @@ export class ViajeEfectivoComponent implements OnInit {
   public btnEfectivo: boolean = true;
   //Define la pestaña seleccionada
   public indiceSeleccionado: number = 1;
-  //Define el viaje actual de los tramos
-  public viaje: any;
-  //Define el viaje Cabecera
-  public VIAJE_CABECERA: any;
+  //Define el id del viaje
+  public ID_VIAJE: number;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -73,18 +70,16 @@ export class ViajeEfectivoComponent implements OnInit {
     //Establece los valores por defecto del formulario viaje efectivo
     this.establecerValoresPorDefecto(1);
   }
-  //Establece el id del viaje de Cabecera
-  public establecerViajeCabecera(viajeCabecera) {
-    this.VIAJE_CABECERA = viajeCabecera;
+  //Establece el id del viaje
+  public establecerViajeCabecera(idViaje) {
+    this.ID_VIAJE = idViaje;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
   private listar() {
     this.loaderService.show();
-    this.servicio.listarEfectivos(this.VIAJE_CABECERA.id).subscribe(
+    this.servicio.listarEfectivos(this.ID_VIAJE).subscribe(
       res => {
-        this.listaEfectivos = res.json();
-        this.recargarListaCompleta(this.listaEfectivos);
-        // this.emitirEfectivos(this.listaEfectivos);
+        this.recargarListaCompleta(res.json());
         this.loaderService.hide();
       },
       err => {
@@ -125,10 +120,10 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajeEfectivo.get('tipoComprobante').setValue({ id: 16 });
     this.formularioViajeEfectivo.get('sucursal').setValue(this.appServicio.getUsuario().sucursal);
     this.formularioViajeEfectivo.get('usuarioAlta').setValue(this.appServicio.getUsuario());
-    if (!this.formularioViajeEfectivo.value.importe)
+    if (!this.formularioViajeEfectivo.value.importe) {
       this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
-    let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeEfectivo.value.viaje = { id: idViajeCabecera };
+    }
+    this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeEfectivo.value).subscribe(
       res => {
         if (res.status == 201) {
@@ -151,10 +146,10 @@ export class ViajeEfectivoComponent implements OnInit {
   public modificarEfectivo(): void {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeEfectivo.value.usuarioMod = usuarioMod;
-    if (!this.formularioViajeEfectivo.value.importe)
+    if (!this.formularioViajeEfectivo.value.importe) {
       this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
-    let idViajeCabecera = this.VIAJE_CABECERA.id;
-    this.formularioViajeEfectivo.value.viaje = { id: idViajeCabecera };
+    }
+    this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.actualizar(this.formularioViajeEfectivo.value).subscribe(
       res => {
         if (res.status == 200) {
@@ -178,7 +173,7 @@ export class ViajeEfectivoComponent implements OnInit {
   public modEfectivo(indice): void {
     this.indiceEfectivo = indice;
     this.btnEfectivo = false;
-    let elemento = this.listaEfectivos[indice];
+    let elemento = this.listaCompleta.data[indice];
     elemento.importe = this.appServicio.establecerDecimales(elemento.importe, 2);
     this.formularioViajeEfectivo.patchValue(elemento);
   }
@@ -193,7 +188,7 @@ export class ViajeEfectivoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado.value.observaciones) {
         this.loaderService.show();
-        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.viaje = { id: this.ID_VIAJE };
         elemento.observacionesAnulado = resultado.value.observaciones;
         this.servicio.anularEfectivo(elemento).subscribe(
           res => {
@@ -222,7 +217,7 @@ export class ViajeEfectivoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
         this.loaderService.show();
-        elemento.viaje = { id: this.VIAJE_CABECERA.id };
+        elemento.viaje = { id: this.ID_VIAJE };
         this.servicio.normalizarEfectivo(elemento).subscribe(
           res => {
             let respuesta = res.json();
@@ -242,7 +237,7 @@ export class ViajeEfectivoComponent implements OnInit {
   //Calcula el importe total para agregar
   private calcularImporteTotal(): void {
     let total = 0;
-    this.listaEfectivos.forEach(item => {
+    this.listaCompleta.data.forEach(item => {
       if(!item.estaAnulado) {
         total += parseFloat(item.importe);
       }
@@ -258,13 +253,11 @@ export class ViajeEfectivoComponent implements OnInit {
     return this.appServicio.establecerDecimales(elemento, 2);
   }
   //Establece la lista de efectivos
-  public establecerLista(lista, viaje, pestaniaViaje): void {
+  public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
-    this.listaEfectivos = lista;
-    this.recargarListaCompleta(this.listaEfectivos);
-    this.viaje = viaje;
-    this.formularioViajeEfectivo.get('viaje').patchValue(viaje);
-    this.establecerViajeCabecera(viaje);
+    this.recargarListaCompleta(lista);
+    this.formularioViajeEfectivo.get('viaje').patchValue({id: idViaje});
+    this.establecerViajeCabecera(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
 
@@ -294,10 +287,12 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Limpia el formulario
   public cancelar() {
-    this.reestablecerFormulario();
-    this.formularioViajeEfectivo.get('viaje').setValue(this.viaje);
-    this.listar();
+    this.formularioViajeEfectivo.reset();
+    this.formularioViajeEfectivo.get('viaje').setValue({id: this.ID_VIAJE});
+    // this.listar();
     this.establecerValoresPorDefecto(0);
+    this.indiceEfectivo = null;
+    this.btnEfectivo = true;
     document.getElementById('idFechaCajaAE').focus();
   }
   //Finalizar
@@ -312,7 +307,6 @@ export class ViajeEfectivoComponent implements OnInit {
   private recargarListaCompleta(listaEfectivos) {
     this.listaCompleta = new MatTableDataSource(listaEfectivos);
     this.listaCompleta.sort = this.sort;
-    // this.emitirEfectivos(listaEfectivos);
     this.calcularImporteTotal();
   }
   //Establece los campos select en solo lectura o no
@@ -331,14 +325,13 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Vacia la lista
   public vaciarListas(): void {
-    this.listaEfectivos = [];
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Reestablece formulario y lista al cambiar de pestaña
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeEfectivo.reset();
-    this.formularioViajeEfectivo.value.viaje = this.VIAJE_CABECERA;
+    this.formularioViajeEfectivo.value.viaje = this.ID_VIAJE;
     this.indiceEfectivo = null;
     this.btnEfectivo = true;
   }
