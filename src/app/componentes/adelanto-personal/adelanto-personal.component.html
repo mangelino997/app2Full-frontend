@@ -269,18 +269,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
-            <div class="form-group has-float-label">
-              <label for="idColumnas" class="tamanio-label">Columnas</label>
-              <mat-select class="form-control form-control-sm" [formControl]="columnasElejidas"
-                [(ngModel)]="columnasSeleccionadas" multiple>
-                <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
-                  {{itemColumna}}
-                </mat-option>
-              </mat-select>
-            </div>
-          </div>
-          <div class="col-md-8"></div>
+          <div class="col-md-10"></div>
           <div class="col-md-1">
             <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
           </div>
@@ -353,21 +342,23 @@
                     </span>
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="EDITAR">
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento; let i=index;">
-                    <span class="cursor-color" (click)="activarActualizar(elemento, i)"
-                      *ngIf="indiceSeleccionado == 3">editar</span></td>
-                </ng-container>
-                <ng-container matColumnDef="VER">
-                  <th mat-header-cell *matHeaderCellDef>-</th>
+                <ng-container matColumnDef="EDITAR" stickyEnd>
+                  <th mat-header-cell *matHeaderCellDef></th>
                   <td mat-cell *matCellDef="let elemento">
-                    <span class="cursor-color" (click)="activarConsultar(elemento)">ver</span></td>
+                    <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+                      matTooltip="Consultar" matTooltipPosition="above">
+                      <mat-icon>search</mat-icon>
+                    </button>
+                    <button mat-icon-button class="mat-icon-button-table margin-left-3" 
+                      (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  </td>
                 </ng-container>
-                <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
               </table>
-              <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
+              <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
             </div>
           </div>
         </div>

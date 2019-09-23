@@ -22,7 +22,6 @@ export class EscalaTarifaComponent implements OnInit {
   public columnasMostradas: FormControl = new FormControl();
   //Define las columnas de la tabla
   public columnas: string[] = ['HASTA', 'VALOR', 'ELIMINAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -176,7 +175,7 @@ export class EscalaTarifaComponent implements OnInit {
       empresa: this.appServicio.getEmpresa().razonSocial,
       usuario: this.appServicio.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

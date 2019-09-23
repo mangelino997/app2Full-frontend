@@ -135,7 +135,6 @@ export class OrdenVentaComponent implements OnInit {
   public columnas: string[] = ['id', 'tarifa', 'escala', 'porPorcentaje', 'ver', 'eliminar'];
   //Define las columnas de la tabla para la pestaña LISTAR
   public columnasListar: string[] = ['ELIMINAR', 'EDITAR', 'ID', 'DESCRIPCION', 'VENDEDOR', 'SEGURO', 'CR', 'ES CONTADO'];
-  public columnasSeleccionadas:string[] = this.columnasListar.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -724,6 +723,7 @@ export class OrdenVentaComponent implements OnInit {
         res => {
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
+          this.listaCompleta.paginator = this.paginator;
         },
         err => {
           let error = err.json();
@@ -927,7 +927,7 @@ export class OrdenVentaComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnasListar
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

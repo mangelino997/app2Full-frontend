@@ -86,8 +86,7 @@ export class AdelantoPersonalComponent implements OnInit {
   public opcionSeleccionada: number = null;
   //Define las columnas de la tabla
   public columnas: string[] = ['SUCURSAL', 'TIPO CPTE', 'NUM ADELANTO', 'ANULADO', 'FECHA EMISION', 'FECHA VTO', 'PERSONAL',
-    'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL CUOTAS', 'NUMERO LOTE', 'ANULAR', 'EDITAR', 'VER'];
-  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
+    'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL CUOTAS', 'NUMERO LOTE', 'ANULAR', 'EDITAR'];
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define la matSort
@@ -691,7 +690,7 @@ export class AdelantoPersonalComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   }

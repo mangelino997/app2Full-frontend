@@ -55,8 +55,7 @@ export class BasicoCategoriaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'CATEGORIA', 'MES', 'ANIO', 'BASICO', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['ID', 'CATEGORIA', 'MES', 'ANIO', 'BASICO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
    //Define la paginacion
@@ -402,7 +401,7 @@ export class BasicoCategoriaComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

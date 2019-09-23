@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CategoriaRoutingModule } from './categoria-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CategoriaComponent } from 'src/app/componentes/categoria/categoria.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -29,7 +29,8 @@ import { Categoria } from 'src/app/modelos/categoria';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     CategoriaService,

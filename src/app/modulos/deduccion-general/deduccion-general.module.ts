@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DeduccionGeneralRoutingModule } from './deduccion-general-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeduccionGeneralComponent } from 'src/app/componentes/deduccion-general/deduccion-general.component';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -27,7 +27,8 @@ import { AfipDeduccionGeneral } from 'src/app/modelos/afipDeduccionGeneral';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     SubopcionPestaniaService,
