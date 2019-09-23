@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { EscalaTarifaRoutingModule } from './escala-tarifa-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EscalaTarifaComponent } from 'src/app/componentes/escala-tarifa/escala-tarifa.component';
 import { EscalaTarifaService } from 'src/app/servicios/escala-tarifa.service';
@@ -25,7 +25,8 @@ import { EscalaTarifaService } from 'src/app/servicios/escala-tarifa.service';
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     EscalaTarifaService

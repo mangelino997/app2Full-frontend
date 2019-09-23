@@ -51,8 +51,7 @@ export class VencimientosChoferesComponent implements OnInit {
   //Define la lista de resultados de busqueda para el campo Personal
   public resultadosPersonal: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['LEGAJO', 'NOMBRE', 'CHOFER LARGA DISTANCIA', 'VTO LICENCIA', 'VTO CURSO', 'VTO CURSO CARGA PELIGROSA', 'VTO CURSO LINTI', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['LEGAJO', 'NOMBRE', 'CHOFER LARGA DISTANCIA', 'VTO LICENCIA', 'VTO CURSO', 'VTO CURSO CARGA PELIGROSA', 'VTO CURSO LINTI', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -505,7 +504,7 @@ export class VencimientosChoferesComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

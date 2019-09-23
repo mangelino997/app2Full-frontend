@@ -106,8 +106,7 @@ export class PersonalComponent implements OnInit {
   //Define la lista de resultados de busqueda de afip situacion
   public resultadosAfipSituaciones: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'TIPO DOCUMENTO', 'DOCUMENTO', 'TELEFONO MOVIL', 'DOMICILIO', 'LOCALIDAD', 'VER', 'EDITAR'];
-  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['ID', 'NOMBRE', 'TIPO DOCUMENTO', 'DOCUMENTO', 'TELEFONO MOVIL', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   //Define la lista de tipos de imagenes
   private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
   //Define la matSort
@@ -1161,7 +1160,7 @@ export class PersonalComponent implements OnInit {
       empresa: this.appServicio.getEmpresa().razonSocial,
       usuario: this.appServicio.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   }

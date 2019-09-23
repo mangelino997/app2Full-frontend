@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DeduccionGeneralTopeRoutingModule } from './deduccion-general-tope-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeduccionGeneralTopeComponent } from 'src/app/componentes/deduccion-general-tope/deduccion-general-tope.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -30,7 +30,8 @@ import { AfipDeduccionGeneralService } from 'src/app/servicios/afip-deduccion-ge
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     SubopcionPestaniaService,

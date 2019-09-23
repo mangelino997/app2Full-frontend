@@ -305,8 +305,8 @@ export class RubroProductoComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    let formulario = this.formulario.value;
-    this.servicio.eliminar(formulario.id).subscribe(
+    console.log(this.formulario.value.id);
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
