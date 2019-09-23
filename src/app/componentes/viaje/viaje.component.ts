@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FechaService } from '../../servicios/fecha.service';
 import { SucursalService } from '../../servicios/sucursal.service';
@@ -29,7 +29,7 @@ import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
   templateUrl: './viaje.component.html',
   styleUrls: ['./viaje.component.css']
 })
-export class ViajeComponent implements OnInit, AfterViewInit {
+export class ViajeComponent implements OnInit {
   //Define los componentes hijos
   @ViewChild(ViajeTramoComponent) viajeTramoComponente;
   @ViewChild(ViajeCombustibleComponent) viajeCombustibleComponente;
@@ -46,8 +46,6 @@ export class ViajeComponent implements OnInit, AfterViewInit {
   public pestaniaActual: string = null;
   //Define si mostrar el autocompletado
   public mostrarAutocompletado: boolean = null;
-  //Define si los campos de la cebecera son de solo lectura
-  public soloLecturaCabecera: boolean = false;
   //Define si el campo es de solo lectura
   public soloLectura: boolean = false;
   //Define si mostrar el boton
@@ -55,7 +53,7 @@ export class ViajeComponent implements OnInit, AfterViewInit {
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define el id del Viaje que se quiere modificar
-  public idMod: number = null;
+  // public idMod: number = null;
   //Define la lista de opciones
   // public opciones: Array<any> = [];
   //Define un formulario viaje propio para validaciones de campos
@@ -101,7 +99,7 @@ export class ViajeComponent implements OnInit, AfterViewInit {
   //Define la lista de sucursales
   public sucursales: Array<any> = [];
   //Define una bandera para campos solo lectura de componentes hijos
-  public banderaSoloLectura: boolean = false;
+  // public banderaSoloLectura: boolean = false;
   //Define si la lista de tramos tiene registros
   public estadoFormulario: boolean = true;
   //Define el mostrar del circulo de progreso
@@ -137,12 +135,6 @@ export class ViajeComponent implements OnInit, AfterViewInit {
         })
       }
     })
-  }
-  //Una vez inicializada la vista
-  ngAfterViewInit(): void {
-    setTimeout(function () {
-      document.getElementById('idFecha').focus();
-    }, 100);
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -227,12 +219,12 @@ export class ViajeComponent implements OnInit, AfterViewInit {
   public cambioAutocompletado(): void {
     this.loaderService.show();
     let viaje = this.autocompletado.value;
-    this.appService.setViajeCabecera(viaje);
-    this.idMod = this.autocompletado.value.id;
+    // this.appService.setViajeCabecera(viaje);
+    // this.idMod = this.autocompletado.value.id;
     this.servicio.obtenerPorId(viaje.id).subscribe(
       res => {
-        let viajeRes = res.json();
-        this.formularioViaje.patchValue(viajeRes);
+        let respuesta = res.json();
+        this.formularioViaje.patchValue(respuesta);
         this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje.id, this.indiceSeleccionado);
         this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje.id, this.indiceSeleccionado);
         this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje.id, this.indiceSeleccionado);
@@ -277,6 +269,9 @@ export class ViajeComponent implements OnInit, AfterViewInit {
       res => {
         this.sucursales = res.json();
         this.render = true;
+        setTimeout(function() {
+          document.getElementById('idFecha').focus();
+        }, 50);
         this.establecerValoresPorDefecto();
       },
       err => {
@@ -297,10 +292,9 @@ export class ViajeComponent implements OnInit, AfterViewInit {
     }
   }
   //Funcion para establecer los valores de las pestañas
-  private establecerValoresPestania(nombrePestania, autocompletado, soloLecturaCabecera, soloLectura, boton, componente) {
+  private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
-    this.soloLecturaCabecera = soloLecturaCabecera;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.vaciarListas();
@@ -321,7 +315,7 @@ export class ViajeComponent implements OnInit, AfterViewInit {
       this.viajeInsumoComponente.reestablecerFormulario();
       this.viajeInsumoComponente.establecerCamposSoloLectura(this.indiceSeleccionado);
     }
-    if(this.viajeRemitoGSComponente){
+    if (this.viajeRemitoGSComponente) {
       this.viajeRemitoGSComponente.reestablecerFormularioGS(this.indiceSeleccionado);
     }
     if (this.viajeGastoComponente) {
@@ -346,28 +340,28 @@ export class ViajeComponent implements OnInit, AfterViewInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.banderaSoloLectura = false;
+        // this.banderaSoloLectura = false;
         this.establecerCamposSoloLectura(false);
         this.estadoFormulario = true;
-        this.establecerValoresPestania(nombre, false, false, false, true, 'idFecha');
+        this.establecerValoresPestania(nombre, false, false, true);
         break;
       case 2:
-        this.banderaSoloLectura = true;
+        // this.banderaSoloLectura = true;
         this.establecerCamposSoloLectura(true);
-        this.establecerValoresPestania(nombre, true, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false);
         break;
       case 3:
-        this.banderaSoloLectura = false;
+        // this.banderaSoloLectura = false;
         this.establecerCamposSoloLectura(true);
-        this.establecerValoresPestania(nombre, true, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true);
         break;
       case 4:
-        this.banderaSoloLectura = true;
+        // this.banderaSoloLectura = true;
         this.establecerCamposSoloLectura(true);
-        this.establecerValoresPestania(nombre, true, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true);
         break;
       case 5:
-        this.banderaSoloLectura = true;
+        // this.banderaSoloLectura = true;
         this.listar();
         break;
       default:
@@ -421,7 +415,6 @@ export class ViajeComponent implements OnInit, AfterViewInit {
   private listar() {
     this.servicio.listar().subscribe(
       res => {
-        this.listaCompleta = res.json();
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
       },
@@ -433,67 +426,51 @@ export class ViajeComponent implements OnInit, AfterViewInit {
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
     this.formularioViajeTramo.get('lista').setValue($event);
-    if ($event.length > 0) {
-      this.estadoFormulario = false;
-    } else {
-      this.estadoFormulario = true;
-    }
+    this.estadoFormulario = $event.length > 0 ? false : true;
     this.viajeRemitoGSComponente.establecerTramos($event);
   }
-  //Recibe la lista de combustibles de Viaje Combustible
-  public recibirCombustibles($event) {}
-  //Recibe la lista de adelantos de efectivo de Viaje Efectivo
-  public recibirEfectivos($event) {}
-  //Recibe la lista de ordenes de insumo de Viaje Insumo
-  public recibirInsumos($event) {}
-  //Recibe la lista de gastos de Viaje Gasto
-  public recibirGastos($event) {}
-  //Recibe la lista de peajes de Viaje Peaje
-  public recibirPeajes($event) {}
-  //Recibe la lista de remitos de Viaje Remito
-  public recibirRemitos($event) {}
   //Agrega el viaje (CABECERA)
-  public agregarViaje() {
-    this.loaderService.show();
-    this.idMod = null;
-    this.servicio.agregar(this.formularioViaje.value).subscribe(
-      res => {
-        let resultado = res.json();
-        if (res.status == 201) {
-          this.formularioViaje.patchValue(resultado);
-          this.idMod = resultado.id;
-          this.toastr.success("Registro agregado con éxito");
-          this.loaderService.hide();
-        }
-      },
-      err => {
-        let resultado = err.json();
-        this.toastr.error(resultado.mensaje);
-        this.loaderService.hide();
-      }
-    );
-  }
+  // public agregarViaje() {
+  //   this.loaderService.show();
+  //   // this.idMod = null;
+  //   this.servicio.agregar(this.formularioViaje.value).subscribe(
+  //     res => {
+  //       let resultado = res.json();
+  //       if (res.status == 201) {
+  //         this.formularioViaje.patchValue(resultado);
+  //         // this.idMod = resultado.id;
+  //         this.toastr.success("Registro agregado con éxito");
+  //         this.loaderService.hide();
+  //       }
+  //     },
+  //     err => {
+  //       let resultado = err.json();
+  //       this.toastr.error(resultado.mensaje);
+  //       this.loaderService.hide();
+  //     }
+  //   );
+  // }
   //Actualiza el viaje (CABECERA)
-  public actualizarViaje() {
-    this.loaderService.show();
-    this.establecerCamposSoloLectura(false);
-    this.servicio.actualizar(this.formularioViaje.value).subscribe(
-      res => {
-        let resultado = res.json();
-        if (res.status == 200) {
-          this.formularioViaje.patchValue(resultado);
-          this.idMod = resultado.id;
-          this.toastr.success("Registro actualizado con éxito");
-          this.loaderService.hide();
-        }
-      },
-      err => {
-        let resultado = err.json();
-        this.toastr.error(resultado.mensaje);
-        this.loaderService.hide();
-      }
-    );
-  }
+  // public actualizarViaje() {
+  //   this.loaderService.show();
+  //   this.establecerCamposSoloLectura(false);
+  //   this.servicio.actualizar(this.formularioViaje.value).subscribe(
+  //     res => {
+  //       let resultado = res.json();
+  //       if (res.status == 200) {
+  //         this.formularioViaje.patchValue(resultado);
+  //         // this.idMod = resultado.id;
+  //         this.toastr.success("Registro actualizado con éxito");
+  //         this.loaderService.hide();
+  //       }
+  //     },
+  //     err => {
+  //       let resultado = err.json();
+  //       this.toastr.error(resultado.mensaje);
+  //       this.loaderService.hide();
+  //     }
+  //   );
+  // }
   //Finaliza un viaje
   public finalizar(): void {
     this.reestablecerFormulario();
@@ -506,12 +483,8 @@ export class ViajeComponent implements OnInit, AfterViewInit {
     this.viajeInsumoComponente.finalizar();
     this.viajeGastoComponente.finalizar();
     this.viajePeajeComponente.finalizar();
-    if(this.indiceSeleccionado == 1) {
-      document.getElementById('idFecha').focus();
-    } else {
-      document.getElementById('idAutocompletado').focus();
-    }
-    switch(this.indiceSeleccionado) {
+    this.indiceSeleccionado == 1 ? document.getElementById('idFecha').focus() : document.getElementById('idAutocompletado').focus();
+    switch (this.indiceSeleccionado) {
       case 1:
         this.toastr.success(MensajeExcepcion.AGREGADO);
         break;
@@ -555,27 +528,27 @@ export class ViajeComponent implements OnInit, AfterViewInit {
     }
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
-  private lanzarError(err) {
-    var respuesta = err.json();
-    if (respuesta.codigo == 11006) {
-      document.getElementById("labelRazonSocial").classList.add('label-error');
-      document.getElementById("idRazonSocial").classList.add('is-invalid');
-      document.getElementById("idRazonSocial").focus();
-    } else if (respuesta.codigo == 11009) {
-      document.getElementById("labelTelefono").classList.add('label-error');
-      document.getElementById("idTelefono").classList.add('is-invalid');
-      document.getElementById("idTelefono").focus();
-    } else if (respuesta.codigo == 11008) {
-      document.getElementById("labelSitioWeb").classList.add('label-error');
-      document.getElementById("idSitioWeb").classList.add('is-invalid');
-      document.getElementById("idSitioWeb").focus();
-    } else if (respuesta.codigo == 11010) {
-      document.getElementById("labelNumeroDocumento").classList.add('label-error');
-      document.getElementById("idNumeroDocumento").classList.add('is-invalid');
-      document.getElementById("idNumeroDocumento").focus();
-    }
-    this.toastr.error(respuesta.mensaje);
-  }
+  // private lanzarError(err) {
+  //   var respuesta = err.json();
+  //   if (respuesta.codigo == 11006) {
+  //     document.getElementById("labelRazonSocial").classList.add('label-error');
+  //     document.getElementById("idRazonSocial").classList.add('is-invalid');
+  //     document.getElementById("idRazonSocial").focus();
+  //   } else if (respuesta.codigo == 11009) {
+  //     document.getElementById("labelTelefono").classList.add('label-error');
+  //     document.getElementById("idTelefono").classList.add('is-invalid');
+  //     document.getElementById("idTelefono").focus();
+  //   } else if (respuesta.codigo == 11008) {
+  //     document.getElementById("labelSitioWeb").classList.add('label-error');
+  //     document.getElementById("idSitioWeb").classList.add('is-invalid');
+  //     document.getElementById("idSitioWeb").focus();
+  //   } else if (respuesta.codigo == 11010) {
+  //     document.getElementById("labelNumeroDocumento").classList.add('label-error');
+  //     document.getElementById("idNumeroDocumento").classList.add('is-invalid');
+  //     document.getElementById("idNumeroDocumento").focus();
+  //   }
+  //   this.toastr.error(respuesta.mensaje);
+  // }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -605,7 +578,7 @@ export class ViajeComponent implements OnInit, AfterViewInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.appService.setViajeCabecera(elemento);
+    // this.appService.setViajeCabecera(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formularioViaje.patchValue(elemento);

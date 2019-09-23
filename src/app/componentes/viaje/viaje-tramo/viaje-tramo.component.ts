@@ -34,14 +34,6 @@ export class ViajeTramoComponent implements OnInit {
   public formularioViajeTramo: FormGroup;
   //Define el formulario para Viaje Cabecera
   public formularioViaje: FormGroup;
-  //Define un formControl para viaje cabecera (lo que devuelve el agregar)
-  public viajeCabecera: FormGroup;
-  //Define la lista de resultados de vehiculos
-  public resultadosVehiculos: Array<any> = [];
-  //Define la lista de resultados de vehiculos remolques
-  public resultadosVehiculosRemolques: Array<any> = [];
-  //Define la lista de resultados de choferes
-  public resultadosChoferes: Array<any> = [];
   //Define la lista de resultados de tramos
   public resultadosTramos: Array<any> = [];
   //Define la lista de empresas
@@ -54,8 +46,6 @@ export class ViajeTramoComponent implements OnInit {
   public viajesTipos: Array<any> = [];
   //Define la lista de viajes tarifas
   public viajesTarifas: Array<any> = [];
-  //Define la lista de dedor-destinatario
-  public listaDadorDestinatario: Array<any> = [];
   //Define la lista de tramos (tabla)
   public listaCompleta = new MatTableDataSource([]);
   //Define el numero de orden del tramo
@@ -134,7 +124,7 @@ export class ViajeTramoComponent implements OnInit {
     this.servicio.listarTramos(this.ID_VIAJE).subscribe(
       res => {
         let tramos = res.json();
-        this.recargarListaCompleta(tramos);
+        this.convertirListaAMatTable(tramos);
         this.emitirTramos(tramos);
         this.loaderService.hide();
 
@@ -487,7 +477,7 @@ export class ViajeTramoComponent implements OnInit {
   public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto();
     this.establecerViajeTarifaPorDefecto();
-    this.recargarListaCompleta(lista);
+    this.convertirListaAMatTable(lista);
     this.formularioViajeTramo.get('viaje').setValue({id: idViaje});
     this.establecerViajeCabecera(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
@@ -532,8 +522,8 @@ export class ViajeTramoComponent implements OnInit {
       this.formularioViajeTramo.get('viajeTarifa').enable();
     }
   }
-  //Recarga la listaCompleta con cada agregar, mod, eliminar que afecte a 'this.listaTramos'
-  private recargarListaCompleta(listaTramos) {
+  //Convierte la lista de tramos a MatTableDataSource
+  private convertirListaAMatTable(listaTramos) {
     this.listaCompleta = new MatTableDataSource(listaTramos);
     this.listaCompleta.sort = this.sort;
   }
@@ -590,7 +580,8 @@ export class ViajeTramoComponent implements OnInit {
   //Abre un dialogo para agregar dadores y destinatarios
   public verDadorDestinatarioDialogo(): void {
     const dialogRef = this.dialog.open(DadorDestinatarioDialogo, {
-      width: '1200px',
+      width: '95%',
+      maxWidth: '95%',
       data: {
         tema: this.appServicio.getTema(),
         listaDadorDestinatario: this.formularioViajeTramo.get('viajeTramoClientes').value
@@ -607,7 +598,8 @@ export class ViajeTramoComponent implements OnInit {
   //Abre un dialogo para ver la lista de dadores y destinatarios
   public verDadorDestTablaDialogo(elemento): void {
     const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
-      width: '1200px',
+      width: '95%',
+      maxWidth: '95%',
       data: {
         tema: this.appServicio.getTema(),
         elemento: elemento
@@ -618,7 +610,8 @@ export class ViajeTramoComponent implements OnInit {
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
-      width: '1200px',
+      width: '70%',
+      maxWidth: '70%',
       data: {
         tema: this.appServicio.getTema(),
         elemento: elemento,
@@ -630,7 +623,8 @@ export class ViajeTramoComponent implements OnInit {
   //Abre un dialogo para ver las observaciones
   public abrirObservacionesDialogo(): void {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
-      width: '1200px',
+      width: '70%',
+      maxWidth: '70%',
       data: {
         tema: this.appServicio.getTema(),
         elemento: this.formularioViajeTramo.get('observaciones').value,
@@ -654,7 +648,6 @@ export class DadorDestinatarioDialogo {
   //Define el formulario
   public formulario: FormGroup;
   //Define la lista de dador-destinatario
-  public listaDadorDestinatario: Array<any> = [];
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista de clientes
   public resultadosClientes: Array<any> = [];
@@ -695,8 +688,7 @@ export class DadorDestinatarioDialogo {
   //Establece la tabla de dadores y destinatarios
   private inicializarTabla() {
     if (this.data.listaDadorDestinatario) {
-      this.listaDadorDestinatario = this.data.listaDadorDestinatario;
-      this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+      this.listaCompleta = new MatTableDataSource(this.data.listaDadorDestinatario);
       this.listaCompleta.sort = this.sort;
     }
   }
@@ -708,8 +700,9 @@ export class DadorDestinatarioDialogo {
   }
   //Agrega el dador y el destinatario a la tabla
   public agregarDadorDestinatario(): void {
-    this.listaDadorDestinatario.push(this.formulario.value);
-    this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+    const lista = this.listaCompleta.data;
+    lista.push(this.formulario.value);
+    this.listaCompleta = new MatTableDataSource(lista);
     this.listaCompleta.sort = this.sort;
     this.formulario.reset();
   }
@@ -718,21 +711,22 @@ export class DadorDestinatarioDialogo {
     if (elemento.id) {
       this.viajeTramoClienteService.eliminar(elemento.id).subscribe(
         res => {
-          this.listaDadorDestinatario.splice(indice, 1);
-          this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+          const lista = this.listaCompleta.data;
+          lista.splice(indice, 1);
+          this.listaCompleta = new MatTableDataSource(lista);
           this.listaCompleta.sort = this.sort;
           this.toastr.success("Registro eliminado con éxito.");
         },
         err => {
-          this.toastr.error("Error al eliminar el registro.");
+          this.toastr.error("No se pudo eliminar el registro");
         }
       )
     } else {
-      this.listaDadorDestinatario.splice(indice, 1);
-      this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+      const lista = this.listaCompleta.data;
+      lista.splice(indice, 1);
+      this.listaCompleta = new MatTableDataSource(lista);
       this.listaCompleta.sort = this.sort;
     }
-
   }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
@@ -751,10 +745,9 @@ export class DadorDestinatarioDialogo {
 export class DadorDestTablaDialogo {
   //Define el tema
   public tema: string;
-  //Define la observacion
-  public listaDadorDestinatario: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['dador', 'destinatario'];
+  //Define la lista de dadores-destinatarios
   public listaCompleta = new MatTableDataSource([]);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
@@ -764,9 +757,9 @@ export class DadorDestTablaDialogo {
     //Establece el tema
     this.tema = this.data.tema;
     //Establece la lista de dadores-destinatarios
-    this.listaDadorDestinatario = this.data.elemento.viajeTramoClientes;
-    if (this.listaDadorDestinatario.length > 0) {
-      this.listaCompleta = new MatTableDataSource(this.listaDadorDestinatario);
+    let listaDadorDestinatario = this.data.elemento.viajeTramoClientes;
+    if (listaDadorDestinatario.length > 0) {
+      this.listaCompleta = new MatTableDataSource(listaDadorDestinatario);
       this.listaCompleta.sort = this.sort;
     }
   }

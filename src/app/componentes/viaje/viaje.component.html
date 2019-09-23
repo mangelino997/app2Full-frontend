@@ -180,27 +180,27 @@
                 </form>
                 <br>
                 <div class="row justify-content-center">
-                    <button mat-raised-button color="primary" (click)="finalizar()"
-                        [disabled]="estadoFormulario" *ngIf="indiceSeleccionado != 2">{{pestaniaActual}}</button>
+                    <button mat-raised-button color="primary" (click)="finalizar()" [disabled]="estadoFormulario"
+                        *ngIf="indiceSeleccionado != 2">{{pestaniaActual}}</button>
                 </div>
                 <br>
             </mat-step>
             <mat-step [stepControl]="formularioViajeCombustible">
                 <ng-template matStepLabel>Ordenes Combustibles</ng-template>
                 <form [formGroup]="formularioViajeCombustible">
-                    <app-viaje-combustible (dataEvent)="recibirCombustibles($event)"></app-viaje-combustible>
+                    <app-viaje-combustible></app-viaje-combustible>
                 </form>
             </mat-step>
             <mat-step [stepControl]="formularioViajeEfectivo">
                 <ng-template matStepLabel>Adelantos Efectivo</ng-template>
                 <form [formGroup]="formularioViajeEfectivo">
-                    <app-viaje-efectivo (dataEvent)="recibirEfectivos($event)"></app-viaje-efectivo>
+                    <app-viaje-efectivo></app-viaje-efectivo>
                 </form>
             </mat-step>
             <mat-step [stepControl]="formularioViajeInsumo">
                 <ng-template matStepLabel>Ordenes Insumo</ng-template>
                 <form [formGroup]="formularioViajeInsumo">
-                    <app-viaje-insumo (dataEvent)="recibirInsumos($event)"></app-viaje-insumo>
+                    <app-viaje-insumo></app-viaje-insumo>
                 </form>
             </mat-step>
             <!-- <mat-step [stepControl]="formularioViajeTramo">
@@ -212,35 +212,22 @@
             <mat-step [stepControl]="formularioViajeRemito">
                 <ng-template matStepLabel>Remitos Generales</ng-template>
                 <form [formGroup]="formularioViajeRemito">
-                    <app-viaje-remito-gs (dataEvent)="recibirRemitos($event)"></app-viaje-remito-gs>
+                    <app-viaje-remito-gs></app-viaje-remito-gs>
                 </form>
             </mat-step>
             <mat-step [stepControl]="formularioViajeGasto">
                 <ng-template matStepLabel>Gastos</ng-template>
                 <form [formGroup]="formularioViajeGasto">
-                    <app-viaje-gasto (dataEvent)="recibirGastos($event)"></app-viaje-gasto>
+                    <app-viaje-gasto></app-viaje-gasto>
                 </form>
             </mat-step>
             <mat-step [stepControl]="formularioViajePeaje">
                 <ng-template matStepLabel>Peaje</ng-template>
                 <form [formGroup]="formularioViajePeaje">
-                    <app-viaje-peaje (dataEvent)="recibirPeajes($event)"></app-viaje-peaje>
+                    <app-viaje-peaje></app-viaje-peaje>
                 </form>
             </mat-step>
         </mat-horizontal-stepper>
-        <!-- <div class="row" *ngIf="mostrarBoton && !show">
-            <div class="centrar">
-                <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="accion()"
-                    [disabled]="obtenerEstadoFormulario(formularioViaje.valid, estadoFormulario)">
-                    {{pestaniaActual}} Viaje
-                </button>
-            </div>
-        </div> -->
-        <!-- <div class="row" *ngIf="show">
-            <div class="col text-center">
-                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-            </div>
-        </div> -->
     </div>
     <div class="row justify-content-center" *ngIf="indiceSeleccionado == 5">
         <div class="col-md-12">
