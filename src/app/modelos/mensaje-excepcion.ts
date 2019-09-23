@@ -15,9 +15,14 @@ export class MensajeExcepcion {
 
     public static NO_ELIMINADO = "No se pudo eliminar el registro";
 
+    public static NO_LISTO = "No se obtener la lista de registros";
+
+
     /*
     * FIN ERRORES GENERALES
     */
+
+    
 
     /*
     * DATO DUPLICADO 

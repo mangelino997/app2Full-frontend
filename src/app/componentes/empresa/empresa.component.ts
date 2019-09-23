@@ -72,13 +72,8 @@ export class EmpresaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -141,7 +136,6 @@ export class EmpresaComponent implements OnInit {
         this.condicionesIva = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -224,7 +218,6 @@ export class EmpresaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -238,7 +231,6 @@ export class EmpresaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -247,7 +239,6 @@ export class EmpresaComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -269,7 +260,6 @@ export class EmpresaComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -290,7 +280,6 @@ export class EmpresaComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {

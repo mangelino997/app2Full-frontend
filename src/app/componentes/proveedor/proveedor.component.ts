@@ -110,7 +110,6 @@ export class ProveedorComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
     //Obtiene la lista de opciones por rol y subopcion
@@ -121,7 +120,6 @@ export class ProveedorComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-          console.log(err);
           this.loaderService.hide();
         }
       );
@@ -163,11 +161,9 @@ export class ProveedorComponent implements OnInit {
       }
     })
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(8, 0);
-    //Obtiene la lista completa de registros
-    //this.listar();
     //Obtiene la lista de tipos de proveedores
     this.listarTiposProveedores();
     //Obtiene la lista de condiciones de iva
@@ -178,8 +174,6 @@ export class ProveedorComponent implements OnInit {
     this.listarCondicionesCompras();
     //Obtiene la lista de tipos de cuentas bancarias
     this.listarTiposCuentasBancarias();
-    //Establece valores por defecto
-    this.establecerValoresPorDefecto();
   }
   //Establece el formulario
   public establecerFormulario() {
@@ -189,6 +183,7 @@ export class ProveedorComponent implements OnInit {
       this.crearCuentasContables();
     } else {
       this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
+      this.planesCuentas.sort = this.sort;
     }
   }
   //Crea la lista de planes de cuenta
@@ -209,6 +204,7 @@ export class ProveedorComponent implements OnInit {
           planesCuentas.push(formulario);
         }
         this.planesCuentas = new MatTableDataSource(planesCuentas);
+        this.planesCuentas.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
@@ -219,7 +215,7 @@ export class ProveedorComponent implements OnInit {
   //Abre el dialogo Plan de Cuenta
   public asignarPlanCuenta(elemento) {
     const dialogRef = this.dialog.open(PlanCuentaDialogo, {
-      width: '70%',
+      width: '95%',
       height: '70%',
       data: {
         empresa: elemento.empresa,
@@ -248,7 +244,6 @@ export class ProveedorComponent implements OnInit {
         this.tiposProveedores = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -259,7 +254,6 @@ export class ProveedorComponent implements OnInit {
         this.condicionesIva = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -270,7 +264,6 @@ export class ProveedorComponent implements OnInit {
         this.tiposDocumentos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -282,7 +275,6 @@ export class ProveedorComponent implements OnInit {
         this.formulario.get('condicionCompra').setValue(this.condicionesCompras[0]);
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -293,13 +285,13 @@ export class ProveedorComponent implements OnInit {
         this.tiposCuentasBancarias = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
   //Establece valores por defecto
   private establecerValoresPorDefecto(): void {
     this.formulario.get('estaActiva').setValue(true);
+    this.formulario.get('condicionCompra').setValue(this.condicionesCompras[0]);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -339,14 +331,10 @@ export class ProveedorComponent implements OnInit {
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.reestablecerFormulario('');
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -427,7 +415,6 @@ export class ProveedorComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -451,7 +438,6 @@ export class ProveedorComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.formulario.get('proveedorCuentasContables').setValue(this.planesCuentas.data);
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -479,10 +465,8 @@ export class ProveedorComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -495,7 +479,21 @@ export class ProveedorComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res=>{
+        let respuesta = res.json();
+        this.reestablecerFormulario(undefined);
+        document.getElementById('idAutocompletado').focus();
+        this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
+      },
+      err=>{
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    )
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -504,6 +502,7 @@ export class ProveedorComponent implements OnInit {
     this.autocompletado.setValue(undefined);
     this.vaciarListas();
     this.crearCuentasContables();
+    this.establecerValoresPorDefecto();
   }
   //Lanza error (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -564,6 +563,7 @@ export class ProveedorComponent implements OnInit {
           let respuesta = this.appService.validarCUIT(documento.toString());
           if (!respuesta) {
             let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
+            this.formulario.get('numeroDocumento').reset();
             this.lanzarError(err);
           }
           break;
@@ -571,6 +571,7 @@ export class ProveedorComponent implements OnInit {
           let respuesta2 = this.appService.validarCUIT(documento.toString());
           if (!respuesta2) {
             let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
+            this.formulario.get('numeroDocumento').reset();
             this.lanzarError(err);
           }
           break;
@@ -578,6 +579,7 @@ export class ProveedorComponent implements OnInit {
           let respuesta8 = this.appService.validarDNI(documento.toString());
           if (!respuesta8) {
             let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
+            this.formulario.get('numeroDocumento').reset();
             this.lanzarError(err);
           }
           break;
@@ -592,14 +594,14 @@ export class ProveedorComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
     this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
     this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
@@ -650,9 +652,9 @@ export class ProveedorComponent implements OnInit {
     var opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     } else if (keycode == 115) {
       if (opcion < this.opciones[(this.opciones.length - 1)].id) {
