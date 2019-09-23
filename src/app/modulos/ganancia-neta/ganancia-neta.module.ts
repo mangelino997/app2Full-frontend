@@ -13,6 +13,7 @@ import { AfipGananciaNetaService } from 'src/app/servicios/afip-ganancia-neta.se
 import { AfipGananciaNeta } from 'src/app/modelos/afipGananciaNeta';
 import { AfipAlicuotaGananciaService } from 'src/app/servicios/afip-alicuota-ganancia.service';
 import { MesService } from 'src/app/servicios/mes.service';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { MesService } from 'src/app/servicios/mes.service';
     AfipGananciaNetaService,
     AfipGananciaNeta,
     AfipAlicuotaGananciaService,
-    MesService
+    MesService,
+    MensajeExcepcion
   ]
 })
 export class GananciaNetaModule { }

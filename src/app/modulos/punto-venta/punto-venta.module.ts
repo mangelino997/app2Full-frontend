@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { PuntoVentaRoutingModule } from './punto-venta-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PuntoVentaComponent } from 'src/app/componentes/punto-venta/punto-venta.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -33,7 +33,8 @@ import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.servi
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     PuntoVentaService,

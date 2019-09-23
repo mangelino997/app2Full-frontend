@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoCuentaBancariaRoutingModule } from './tipo-cuenta-bancaria-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoCuentaBancariaComponent } from 'src/app/componentes/tipo-cuenta-bancaria/tipo-cuenta-bancaria.component';
 import { TipoCuentaBancariaService } from 'src/app/servicios/tipo-cuenta-bancaria.service';
@@ -27,7 +27,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule
   ],
   providers: [
     SubopcionPestaniaService,

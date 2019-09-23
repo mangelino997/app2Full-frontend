@@ -41,7 +41,7 @@ export class GananciaNetaComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define un formulario para la pestaña Listar y  sus validaciones de campos
-  public formularioListar: FormGroup;
+  public formularioFiltro: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
@@ -50,8 +50,6 @@ export class GananciaNetaComponent implements OnInit {
   public id: FormControl = new FormControl();
   //Define empresa para las busquedas
   public empresaBusqueda: FormControl = new FormControl();
-  //Define la lista de resultados de busqueda
-  public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda
   public resultadosPorFiltro: Array<any> = [];
   //Define la lista de Años Fiscales
@@ -64,11 +62,11 @@ export class GananciaNetaComponent implements OnInit {
   public resultadosCompaniasSeguros: Array<any> = [];
   //Defien la lista de empresas
   public empresas: Array<any> = [];
-  //Define las columnas de la tabla
+  //Define las columnas de la tabla principal
   public columnas: string[] = ['anio', 'gananciaNetaAcumulada', 'importeFijo', 'alicuotaSinExcedente', 'mod', 'eliminar'];
-  //
+  //Define las columnas de la tabla reporte
   public columnasListar: string[] = ['ANIO MES', 'GANANCIA NETA DE MAS', 'GANANCIA NETA A', 'IMPORTE FIJO', 'ALICUOTA', 'EXCEDENTE'];
-  public columnasSeleccionadas:string[] = this.columnasListar.filter((item, i) => true);
+  public columnasSeleccionadas: string[] = this.columnasListar.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -79,7 +77,7 @@ export class GananciaNetaComponent implements OnInit {
   private subscription: Subscription;
   constructor(private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private fechaService: FechaService,
     private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipGananciaNetaService,
-    private modelo: AfipGananciaNeta, private alicuotaGananciaService: AfipAlicuotaGananciaService, private mesService: MesService, 
+    private modelo: AfipGananciaNeta, private alicuotaGananciaService: AfipAlicuotaGananciaService, private mesService: MesService,
     private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -89,7 +87,6 @@ export class GananciaNetaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
   }
@@ -101,18 +98,20 @@ export class GananciaNetaComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.modelo.formulario;
-    //Define el formularioListar y sus validaciones
-    this.formularioListar = new FormGroup({
-      anio: new FormControl('', Validators.required),
+    //Define el formulario para los filtros y sus validaciones
+    this.formularioFiltro = new FormGroup({
+      anio: new FormControl('', [Validators.required, Validators.minLength(4)]),
       gananciaNeta: new FormControl('', Validators.required),
-      mes: new FormControl(),
+      mes: new FormControl('', Validators.required),
     });
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de Años Fiscales
     this.listarAnios();
     //Obtiene la lista de Alicuotas
     this.listarAlicuotasGanancia();
+    //Obtiene la lista de meses
+    this.listarMeses();
   }
   //carga la lista de Años Fiscales
   public listarAnios() {
@@ -121,7 +120,6 @@ export class GananciaNetaComponent implements OnInit {
         this.anioFiscal = res.json();
       },
       err => {
-        this.toastr.error("Error al obtener la lista de año fiscal");
       }
     )
   }
@@ -129,11 +127,9 @@ export class GananciaNetaComponent implements OnInit {
   public listarAlicuotasGanancia() {
     this.alicuotaGananciaService.listar().subscribe(
       res => {
-        console.log(res.json());
         this.alicuotasGanancia = res.json();
       },
       err => {
-        this.toastr.error("Error al obtener la lista de año fiscal");
       }
     )
   }
@@ -141,11 +137,9 @@ export class GananciaNetaComponent implements OnInit {
   private listarMeses() {
     this.mesService.listar().subscribe(
       res => {
-        console.log(res.json());
         this.meses = res.json();
       },
       err => {
-        this.toastr.error("Error al obtener la lista de meses");
       }
     )
   }
@@ -154,7 +148,6 @@ export class GananciaNetaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
-        let respuesta = res.json;
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
@@ -173,29 +166,35 @@ export class GananciaNetaComponent implements OnInit {
       this.anio.setValue(elemento);
     }
     this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
   }
   //Controla el cambio en el campo "anio" pestaña listar
-  public cambioAnioListar() {
+  public cambioAnioFiltro() {
     this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
+  }
+  //Controla el cambio en el campo "mes" pestaña listar
+  public cambioMesFiltro() {
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Controla el cambio de seleccion
-  public cambioGananciaNeta() {
+  public cambioGananciaNetaFiltro() {
     this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
-    if (!this.formularioListar.value.gananciaNeta)
-      this.formularioListar.get('mes').reset();
+    if (!this.formularioFiltro.value.gananciaNeta) {
+      this.formularioFiltro.get('mes').reset();
+      this.formularioFiltro.get('mes').disable();
+      this.formularioFiltro.get('mes').setValidators([]);
+      this.formularioFiltro.get('mes').updateValueAndValidity();//Actualiza la validacion
+    } else {
+      this.formularioFiltro.get('mes').enable();
+      this.formularioFiltro.get('mes').setValidators([Validators.required]);
+      this.formularioFiltro.get('mes').updateValueAndValidity();//Actualiza la validacion
+    }
   }
   //Carga la tabla por Filtros
   public listarPorFiltro() {
     this.loaderService.show();
     let mes = null;
-    let anio = this.formularioListar.value.anio;
-    if (this.formularioListar.value.mes)
-      mes = this.formularioListar.value.mes.id;
-    else
-      mes = 0;
+    this.formularioFiltro.value.mes? mes=this.formularioFiltro.value.mes.id: mes=0;
+    let anio = this.formularioFiltro.value.anio;
     this.servicio.listarPorFiltros(anio, mes).subscribe(
       res => {
         this.resultadosPorFiltro = res.json();
@@ -204,6 +203,7 @@ export class GananciaNetaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
+        this.toastr.error("Error al obtener la lista de registros.");
         this.loaderService.hide();
       }
     );
@@ -219,24 +219,18 @@ export class GananciaNetaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
+  public seleccionarPestania(id, nombre) {
+    this.reestablecerFormulario(undefined);
     this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
-    this.anio.setValue(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.resultados = [];
-    if (opcion == 0) {
-      this.anio.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
         this.formulario.enable();
         this.establecerValoresPestania(nombre, false, false, true, 'idAnioFiscal');
         break;
       case 2:
+        this.formulario.enable();
         this.establecerValoresPestania(nombre, true, true, false, 'idAnio');
         break;
       case 3:
@@ -244,11 +238,11 @@ export class GananciaNetaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, false, true, 'idAnio');
         break;
       case 4:
+        this.formulario.enable();
         this.establecerValoresPestania(nombre, true, true, true, 'idAnio');
         break;
       case 5:
-        this.listarMeses();
-        this.formularioListar.get('gananciaNeta').setValue(true);
+        this.establecerValoresPestania(nombre, true, true, true, 'idAnio');
         break;
       default:
         break;
@@ -276,14 +270,13 @@ export class GananciaNetaComponent implements OnInit {
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        this.reestablecerFormulario(respuesta.id);
-        if (this.indiceSeleccionado == 1) {
-          this.formulario.get('anio').setValue(anio);
-        } else {
+        if (res.status == 201) {
+          this.reestablecerFormulario(respuesta.id);
+          document.getElementById('idAnioFiscal').focus();
           this.anio.setValue(anio);
+          this.toastr.success(respuesta.mensaje);
+          this.listar();
         }
-        this.toastr.success(respuesta.mensaje);
-        this.listar();
         this.loaderService.hide();
       },
       err => {
@@ -301,15 +294,13 @@ export class GananciaNetaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          if (this.indiceSeleccionado == 1) {
-            this.formulario.get('anio').setValue(anio);
-          } else {
-            this.anio.setValue(anio);
-          }
+          document.getElementById('idAnio').focus();
+          this.formulario.get('anio').setValue(anio);
+          this.anio.setValue(anio);
           this.toastr.success(respuesta.mensaje);
           this.listar();
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err);
@@ -327,21 +318,13 @@ export class GananciaNetaComponent implements OnInit {
     }
     this.toastr.error(respuesta.mensaje);
   }
-  //Reestablece los campos formularios
+  //Reestablece los campos de los formularios y limpia la lista de resultados de 
   private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.formularioFiltro.reset();
+    this.formularioFiltro.get('gananciaNeta').setValue(true);
     this.anio.setValue(undefined);
     this.idMod = null;
-    this.resultados = [];
-    if (this.indiceSeleccionado == 1) {
-      setTimeout(function () {
-        document.getElementById('idAnioFiscal').focus();
-      }, 20);
-    } else {
-      setTimeout(function () {
-        document.getElementById('idAnio').focus();
-      }, 20);
-    }
   }
   //Controla que el campo "importe" (Ganancia Neta Acumulada) no sea menor o igual a cero
   public controlImporte() {
@@ -357,7 +340,7 @@ export class GananciaNetaComponent implements OnInit {
   }
   //Controla que el campo "importeFijo" no sea mayor a "importe" ni menor a cero (puede ser cero)
   public controlImporteFijo() {
-    let importe = this.formulario.value.importe;
+    let importe = Number(this.formulario.value.importe);
     if (!importe) {
       this.toastr.warning("Primero debe ingresar la Ganancia Neta Acumulada");
       setTimeout(function () {
@@ -365,7 +348,7 @@ export class GananciaNetaComponent implements OnInit {
       }, 20);
     } else {
       this.establecerDecimales(this.formulario.get('importeFijo'), 2); //Quita la máscara
-      let importeFijo = this.formulario.value.importeFijo;
+      let importeFijo = Number(this.formulario.value.importeFijo);
       if (importeFijo > importe || importeFijo < 0) {
         this.formulario.get('importeFijo').setValue(null);
         this.toastr.error("El Importe Fijo debe ser menor Ganancia Neta Acumulada y mayor o igual a cero");
@@ -412,9 +395,9 @@ export class GananciaNetaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
@@ -457,16 +440,18 @@ export class GananciaNetaComponent implements OnInit {
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
     let datos = [];
-    lista.forEach(elemento => {
-        let f = {
-          aniomes: elemento.mes ? elemento.mes : elemento.anio,
-          ganancianetademas: elemento.ganancianetademas,
-          ganancianetaa: elemento.importe,
-          importefijo: elemento.importeFijo,
-          alicuota: elemento.afipAlicuotaGanancia.alicuota,
-          excedente: elemento.resultadosPorFiltro.importe
-        }
-        datos.push(f);
+    lista.forEach((elemento, index) => {
+      let importeExcedente =null;
+      index == 0? importeExcedente = 0 : importeExcedente = lista[index-1].importe;
+      let f = {
+        aniomes: elemento.mes ? elemento.mes : elemento.anio,
+        ganancianetademas: elemento.ganancianetademas,
+        ganancianetaa: elemento.importe,
+        importefijo: elemento.importeFijo,
+        alicuota: elemento.afipAlicuotaGanancia.alicuota,
+        excedente: importeExcedente
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -481,5 +466,5 @@ export class GananciaNetaComponent implements OnInit {
       columnas: this.columnasSeleccionadas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

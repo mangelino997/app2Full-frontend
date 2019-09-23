@@ -57,7 +57,6 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['ANIO', 'DEDUCCION GENERAL', 'DESCRIPCION', 'IMPORTE', 'PORCENTAJE GANANCIA NETA', 'EDITAR', 'ELIMINAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -427,7 +426,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   }

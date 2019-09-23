@@ -62,8 +62,7 @@ export class PuntoVentaComponent implements OnInit {
   public tipoComprobante: FormControl = new FormControl('', Validators.required);
   //Define las columnas de la tabla
   public columnas: string[] = ['SUCURSAL', 'EMPRESA', 'PUNTO VENTA', 'FE', 'FE LINEA',
-    'CAE', 'CUENTA ORDEN', 'NUMERO', 'COPIA', 'IMPRIME', 'HABILITADA', 'DEFECTO', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+    'CAE', 'CUENTA ORDEN', 'NUMERO', 'COPIA', 'IMPRIME', 'HABILITADA', 'DEFECTO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -500,7 +499,7 @@ export class PuntoVentaComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   } 

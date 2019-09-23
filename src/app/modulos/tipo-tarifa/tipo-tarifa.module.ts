@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoTarifaRoutingModule } from './tipo-tarifa-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoTarifaComponent } from 'src/app/componentes/tipo-tarifa/tipo-tarifa.component';
 import { TipoTarifaService } from 'src/app/servicios/tipo-tarifa.service';
@@ -26,7 +26,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     SubopcionPestaniaService,

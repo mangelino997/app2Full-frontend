@@ -74,8 +74,8 @@ export class AdelantoPersonalComponent implements OnInit {
   public personal: FormControl = new FormControl();
   public estado: FormControl = new FormControl();
   public alias: FormControl = new FormControl();
-  //Define el formulairo para las pestañas que tienen habilitado el btn "buscar" (Consultar, Actualizar, Eliminar, Listar)
-  public formularioListar: FormGroup;
+  //Define el formulario para buscar por filtros(en pestaña Consultar, Actualizar, Eliminar, Listar)
+  public formularioFiltro: FormGroup;
   //Define el numero del lote como un formControl
   public lote: FormControl = new FormControl();
   //Define la fecha actual
@@ -86,8 +86,7 @@ export class AdelantoPersonalComponent implements OnInit {
   public opcionSeleccionada: number = null;
   //Define las columnas de la tabla
   public columnas: string[] = ['SUCURSAL', 'TIPO CPTE', 'NUM ADELANTO', 'ANULADO', 'FECHA EMISION', 'FECHA VTO', 'PERSONAL',
-    'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL CUOTAS', 'NUMERO LOTE', 'ANULAR', 'EDITAR', 'VER'];
-  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
+    'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL CUOTAS', 'NUMERO LOTE', 'ANULAR', 'EDITAR'];
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define la matSort
@@ -133,7 +132,7 @@ export class AdelantoPersonalComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
     //Define los campos para las validaciones del segundo formulario
-    this.formularioListar = new FormGroup({
+    this.formularioFiltro = new FormGroup({
       sucursal: new FormControl('', Validators.required),
       fechaEmisionDesde: new FormControl('', Validators.required),
       fechaEmisionHasta: new FormControl('', Validators.required),
@@ -143,13 +142,13 @@ export class AdelantoPersonalComponent implements OnInit {
       alias: new FormControl(),
     });
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de Sucursal Emision
     this.listarSucursalesEmision();
     //Alias - Buscar por alias, empresa y sucursal
     let empresa = this.appService.getEmpresa();
     let usuario = this.appService.getUsuario();
-    this.formularioListar.get('alias').valueChanges.subscribe(data => {
+    this.formularioFiltro.get('alias').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.personalService.listarActivosPorAliasEmpresaYSucursal(data, empresa.id, usuario.sucursal.id).subscribe(res => {
           this.resultados = res;
@@ -173,8 +172,8 @@ export class AdelantoPersonalComponent implements OnInit {
       res => {
         this.FECHA_ACTUAL.setValue(res.json());
         this.formulario.get('fechaEmision').setValue(res.json());
-        this.formularioListar.get('fechaEmisionDesde').setValue(res.json());
-        this.formularioListar.get('fechaEmisionHasta').setValue(res.json());
+        this.formularioFiltro.get('fechaEmisionDesde').setValue(res.json());
+        this.formularioFiltro.get('fechaEmisionHasta').setValue(res.json());
       },
       err => {
       }
@@ -191,7 +190,7 @@ export class AdelantoPersonalComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
@@ -236,19 +235,18 @@ export class AdelantoPersonalComponent implements OnInit {
   public listarPorFiltros() {
     this.loaderService.show();
     this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
     this.listaCompleta.paginator = this.paginator;
     //Setea valores
     let empresa = this.appService.getEmpresa();
     let usuario = this.appService.getUsuario();
     let idSucursal = usuario.sucursal.id;
-    let fechaDesde = this.formularioListar.get('fechaEmisionDesde').value;
-    let fechaHasta = this.formularioListar.get('fechaEmisionHasta').value;
-    let adelanto = this.formularioListar.get('adelanto').value;
-    let estado = this.formularioListar.get('estado').value;
-    let alias = this.formularioListar.get('alias').value;
+    let fechaDesde = this.formularioFiltro.get('fechaEmisionDesde').value;
+    let fechaHasta = this.formularioFiltro.get('fechaEmisionHasta').value;
+    let adelanto = this.formularioFiltro.get('adelanto').value;
+    let estado = this.formularioFiltro.get('estado').value;
+    let alias = this.formularioFiltro.get('alias').value;
     if (alias != undefined || alias != null)
-      alias = this.formularioListar.value.alias;
+      alias = this.formularioFiltro.value.alias;
     else
       alias = "";
     //Genero el objeto
@@ -400,8 +398,10 @@ export class AdelantoPersonalComponent implements OnInit {
     this.basicoCategoriaService.obtenerPorCategoria(idCategoria).subscribe(
       res => {
         let respuesta = res.json();
-        this.basicoCategoria.setValue(this.appService.establecerDecimales(respuesta.basico, 2));
-        this.calcularImporteDisponible();
+        if (respuesta) {
+          this.basicoCategoria.setValue(this.appService.establecerDecimales(respuesta.basico, 2));
+          this.calcularImporteDisponible();
+        }
       },
       err => {
         let error = err.json();
@@ -435,12 +435,11 @@ export class AdelantoPersonalComponent implements OnInit {
     this.lote.reset();
     this.idMod = null;
     //Restablece los formControls del formulario listar
-    this.formularioListar.reset();
+    this.formularioFiltro.reset();
     //Vacía las listas
     this.listaPrestamos = [];
     this.resultados = [];
     this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
     //Valores por defecto
     let usuario = this.appService.getUsuario();
     let empresa = this.appService.getEmpresa();
@@ -499,11 +498,11 @@ export class AdelantoPersonalComponent implements OnInit {
   public controlarFechaEmisionDesde() {
     let fechaEmisionDesde = null;
     let fechaEmisionHasta = null;
-    fechaEmisionDesde = this.formularioListar.get('fechaEmisionDesde').value;
-    fechaEmisionHasta = this.formularioListar.get('fechaEmisionHasta').value;
+    fechaEmisionDesde = this.formularioFiltro.get('fechaEmisionDesde').value;
+    fechaEmisionHasta = this.formularioFiltro.get('fechaEmisionHasta').value;
     if (fechaEmisionDesde > fechaEmisionHasta) {
       this.toastr.error("Fecha Emisión Desde debe ser igual o menor a la Fecha Emisión Hasta.");
-      this.formularioListar.get('fechaEmisionDesde').setValue(null);
+      this.formularioFiltro.get('fechaEmisionDesde').setValue(null);
       setTimeout(function () {
         document.getElementById('idFechaEmisionDesde').focus();
       }, 20);
@@ -513,8 +512,8 @@ export class AdelantoPersonalComponent implements OnInit {
   public controlarFechaEmisionHasta() {
     let fechaEmisionDesde = null;
     let fechaEmisionHasta = null;
-    fechaEmisionDesde = this.formularioListar.get('fechaEmisionDesde').value;
-    fechaEmisionHasta = this.formularioListar.get('fechaEmisionHasta').value;
+    fechaEmisionDesde = this.formularioFiltro.get('fechaEmisionDesde').value;
+    fechaEmisionHasta = this.formularioFiltro.get('fechaEmisionHasta').value;
     if (fechaEmisionDesde == null || fechaEmisionDesde == undefined) {
       this.toastr.error("Debe ingresar Fecha de Emisión Desde.");
       setTimeout(function () {
@@ -531,16 +530,16 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Controla el cambio en el select "Personal"
   public cambioPersonal() {
-    let opcion = this.formularioListar.get('personal').value;
+    let opcion = this.formularioFiltro.get('personal').value;
     if (opcion) {
-      this.formularioListar.get('alias').enable();
-      this.formularioListar.get('alias').setValidators(Validators.required);
-      this.formularioListar.get('alias').updateValueAndValidity();//Actualiza la validacion
+      this.formularioFiltro.get('alias').enable();
+      this.formularioFiltro.get('alias').setValidators(Validators.required);
+      this.formularioFiltro.get('alias').updateValueAndValidity();//Actualiza la validacion
     } else {
-      this.formularioListar.get('alias').disable();
-      this.formularioListar.get('alias').setValidators([]);
-      this.formularioListar.get('alias').updateValueAndValidity();//Actualiza la validacion
-      this.formularioListar.get('alias').setValue(null);
+      this.formularioFiltro.get('alias').disable();
+      this.formularioFiltro.get('alias').setValidators([]);
+      this.formularioFiltro.get('alias').updateValueAndValidity();//Actualiza la validacion
+      this.formularioFiltro.get('alias').setValue(null);
     }
   }
   //Abre un dialogo para ver las observaciones
@@ -601,6 +600,7 @@ export class AdelantoPersonalComponent implements OnInit {
       this.listaPrestamos = result.listaCompleta;
       if (result.listaCompleta.length > 0)
         this.formulario.get("importe").setValue(result.importe);
+
     });
   }
   //Obtiene la mascara de importe
@@ -642,9 +642,9 @@ export class AdelantoPersonalComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
@@ -690,7 +690,7 @@ export class AdelantoPersonalComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   }
@@ -796,11 +796,12 @@ export class PrestamoDialogo {
     this.idMod = null;
   }
   //Completa los campos del formulario con los datos del registro a modificar
-  public activarActualizar(elemento, indice) {
+  public activarActualizar(elemento) {
     this.formulario.patchValue(elemento);
     this.formulario.get('importe').setValue(this.appService.establecerDecimales(elemento.importe, 2));
     this.numeroCuota.setValue(elemento.cuota);
-    this.idMod = indice;
+    this.idMod = elemento.cuota;
+
   }
   //Setea a cada registro (a cada prestamo) el usuario alta
   private establecerUsuarioAlta() {
@@ -830,6 +831,7 @@ export class PrestamoDialogo {
     let totalPrestamo = 0;
     totalPrestamo = Number(this.appService.establecerDecimales(this.totalPrestamo.value, 2));
     diferencia = totalPrestamo - totalImporte;
+    console.log(diferencia, diferencia.toString());
     if (diferencia == 0) {
       this.btnAceptar = true;
       this.diferencia.setValue(this.appService.establecerDecimales('0.00', 2));
@@ -860,8 +862,8 @@ export class PrestamoDialogo {
       else
         this.toastr.warning("Campo Diferencia debe ser cero.");
     }
-    if (opcion == 'cerrar') {
-      this.dialogRef.close(obj);
+    if (opcion == 'cancelar') {
+      this.dialogRef.close();
     }
   }
 
