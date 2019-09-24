@@ -80,41 +80,52 @@
         </div>
       </div>
       <br>
+      <div class="row">
+        <div class="col-md-11"></div>
+        <div class="col-md-1">
+          <button mat-raised-button color="primary" (click)="abrirReporte()"  style="width: 100%;">Reporte</button>
+        </div>
+      </div>
+      <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="id" sticky>
+        <ng-container matColumnDef="ID" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="nombre" sticky>
+        <ng-container matColumnDef="NOMBRE" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="domicilio" sticky>
+        <ng-container matColumnDef="DOMICILIO" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.domicilio}}</td>
         </ng-container>
-        <ng-container matColumnDef="barrio" sticky>
+        <ng-container matColumnDef="BARRIO" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Barrio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.barrio ? elemento.barrio.nombre : ''}}</td>
         </ng-container>
-        <ng-container matColumnDef="localidad" sticky>
+        <ng-container matColumnDef="LOCALIDAD" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}}, {{elemento.localidad.provincia.nombre}}
           </td>
         </ng-container>
-        <ng-container matColumnDef="ver" sticky>
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-              class="cursor-color">ver</span></td>
-        </ng-container>
-        <ng-container matColumnDef="mod" sticky>
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-              class="cursor-color">editar</span></td>
+        <ng-container matColumnDef="EDITAR" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let elemento">
+            <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+              matTooltip="Consultar" matTooltipPosition="above">
+              <mat-icon>search</mat-icon>
+            </button>
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" 
+              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
       </table>
+      <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
 </div>

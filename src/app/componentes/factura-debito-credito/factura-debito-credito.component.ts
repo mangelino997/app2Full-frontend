@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { MatTableDataSource, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatTableDataSource, MatSort, MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { CondicionCompraService } from 'src/app/servicios/condicion-compra.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
@@ -26,6 +26,7 @@ import { CompraComprobantePercepcionJurisdiccion } from 'src/app/modelos/compra-
 import { CompraComprobanteVencimiento } from 'src/app/modelos/compra-comprobante-vencimiento';
 import { CompraComprobanteVencimientoService } from 'src/app/servicios/compra-comprobante-vencimiento.service';
 import { Proveedor } from 'src/app/modelos/proveedor';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-factura-debito-credito',
@@ -84,10 +85,12 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public columnas: string[] = ['id', 'producto', 'deposito', 'cantidad', 'precioUnitario', 'importeNetoGravado', 'alicuotaIva', 'IVA',
     'importeNoGravado', 'importeExento', 'impuestoInterno', 'importeITC', 'cuentaContable', 'eliminar'];
   //Define las columnas de la tabla para la pestaña Listar
-  public columnasListar: string[] = ['empresa', 'sucursal', 'proveedor', 'tipoCpte', 'puntoVenta', 'letra', 'numero', 'fechaEmision',
-    'fechaContable', 'fechaRegistracion', 'importe', 'saldo', 'ver', 'mod'];
+  public columnasListar: string[] = ['EMPRESA', 'SUCURSAL', 'PROVEEDOR', 'TIPO_CPTE', 'PUNTO_VENTA', 'LETRA', 'NUMERO', 'FECHA_EMISION',
+    'FECHA_CONTABLE', 'FECHA_REGISTRACION', 'IMPORTE', 'SALDO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -96,7 +99,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     private servicio: CondicionCompraService, private modelo: FacturaDebitoCredito, private subopcionPestaniaService: SubopcionPestaniaService,
     private tipoComprobanteService: TipoComprobanteService, private afipComprobanteService: AfipComprobanteService,
     private proveedorService: ProveedorService, private compraComprobanteService: CompraComprobanteService, public dialog: MatDialog,
-    private condicionCompraService: CondicionCompraService, ) {
+    private condicionCompraService: CondicionCompraService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -376,6 +379,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
         if (opcion == 'listaCompleta') {
           this.listaCompleta = new MatTableDataSource(resultado);
           this.listaCompleta.sort = this.sort;
+          this.listaCompleta.paginator = this.paginator;
         }
         this.loaderService.hide();
       },
@@ -898,6 +902,41 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          empresa: elemento.empresa.razonSocial,
+          sucursal: elemento.sucursal.nombre,
+          proveedor: elemento.proveedor.razonSocial,
+          tipo_cpte: elemento.tipoComprobante.nombre,
+          punto_venta: '$' + elemento.puntoVenta,
+          letra: '$' + elemento.letra,
+          numero: elemento.numero + '%',
+          fecha_emision: elemento.fechaEmision,
+          fecha_contable: elemento.fechaContable,
+          fecha_regisracion: elemento.fechaRegistracion,
+          importe: elemento.importe,
+          saldo: elemento.importeSaldo
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Facturas Debitos Creditos',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnasListar
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }
 

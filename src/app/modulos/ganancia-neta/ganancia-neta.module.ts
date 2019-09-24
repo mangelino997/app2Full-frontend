@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { GananciaNetaRoutingModule } from './ganancia-neta-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GananciaNetaComponent } from 'src/app/componentes/ganancia-neta/ganancia-neta.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -32,7 +32,8 @@ import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     SubopcionPestaniaService,

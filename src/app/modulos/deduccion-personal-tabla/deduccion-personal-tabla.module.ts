@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { DeduccionPersonalTablaRoutingModule } from './deduccion-personal-tabla-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeduccionPersonalTablaComponent, ImporteAnualDialogo } from 'src/app/componentes/deduccion-personal-tabla/deduccion-personal-tabla.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -34,7 +34,8 @@ import { AfipDeduccionPersonalService } from 'src/app/servicios/afip-deduccion-p
     MatProgressBarModule,
     MatButtonModule,
     MatDialogModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     SubopcionPestaniaService,

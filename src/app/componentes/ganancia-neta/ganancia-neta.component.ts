@@ -65,8 +65,7 @@ export class GananciaNetaComponent implements OnInit {
   //Define las columnas de la tabla principal
   public columnas: string[] = ['anio', 'gananciaNetaAcumulada', 'importeFijo', 'alicuotaSinExcedente', 'mod', 'eliminar'];
   //Define las columnas de la tabla reporte
-  public columnasListar: string[] = ['ANIO MES', 'GANANCIA NETA DE MAS', 'GANANCIA NETA A', 'IMPORTE FIJO', 'ALICUOTA', 'EXCEDENTE'];
-  public columnasSeleccionadas: string[] = this.columnasListar.filter((item, i) => true);
+  public columnasListar: string[] = ['ANIO_MES', 'GANANCIA_NETA_DE_MAS', 'GANANCIA_NETA_A', 'IMPORTE_FIJO', 'ALICUOTA', 'EXCEDENTE'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -444,10 +443,10 @@ export class GananciaNetaComponent implements OnInit {
       let importeExcedente =null;
       index == 0? importeExcedente = 0 : importeExcedente = lista[index-1].importe;
       let f = {
-        aniomes: elemento.mes ? elemento.mes : elemento.anio,
-        ganancianetademas: elemento.ganancianetademas,
-        ganancianetaa: elemento.importe,
-        importefijo: elemento.importeFijo,
+        anio_mes: elemento.mes ? elemento.mes : elemento.anio,
+        ganancia_neta_de_mas: importeExcedente,
+        ganancia_neta_a: elemento.importe,
+        importe_fijo: elemento.importeFijo,
         alicuota: elemento.afipAlicuotaGanancia.alicuota,
         excedente: importeExcedente
       }
@@ -463,7 +462,7 @@ export class GananciaNetaComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnasListar
     }
     this.reporteServicio.abrirDialogo(datos);
   }

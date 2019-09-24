@@ -8,12 +8,13 @@ import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Empresa } from 'src/app/modelos/empresa';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatPaginator } from '@angular/material';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-empresa',
@@ -51,9 +52,11 @@ export class EmpresaComponent implements OnInit {
   //Define la lista de resultados de busqueda de barrio
   public resultadosLocalidades: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'razonSocial', 'domicilio', 'barrio', 'localidad', 'cuit', 'inicioActividad', 'estaActiva', 'usuarios', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'RAZON_SOCIAL', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'CUIT', 'INICIO_ACTIVIDAD', 'ESTA_ACTIVA', 'USUARIOS', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -63,7 +66,7 @@ export class EmpresaComponent implements OnInit {
     private appService: AppService, private toastr: ToastrService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
     private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa, public dialog: MatDialog,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -379,6 +382,38 @@ export class EmpresaComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       // var listaSocioDedudas= result;
     });
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          razon_social: elemento.razonSocial,
+          domicilio: elemento.domicilio,
+          barrio: elemento.barrio ? elemento.barrio.nombre : '',
+          localidad: elemento.localidad.nombre + elemento.localidad.provincia.nombre,
+          cuit: elemento.cuit,
+          inicio_actividad: elemento.inicioActividad,
+          esta_activa: elemento.estaActiva ? 'Si' : 'No',
+          usuarios: elemento.usuarios
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Empresas',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }
 

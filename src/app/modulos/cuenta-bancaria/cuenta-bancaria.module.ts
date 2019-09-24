@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CuentaBancariaRoutingModule } from './cuenta-bancaria-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CuentaBancariaComponent } from 'src/app/componentes/cuenta-bancaria/cuenta-bancaria.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -33,7 +33,8 @@ import { MonedaService } from 'src/app/servicios/moneda.service';
     MatSelectModule,
     MatProgressBarModule,
     TextMaskModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule
   ],
   providers: [
     SubopcionPestaniaService,

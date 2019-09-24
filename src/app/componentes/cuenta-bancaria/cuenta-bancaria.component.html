@@ -164,33 +164,40 @@
         </div>
       </div>
       <br>
+      <div class="row">
+          <div class="col-md-11"></div>
+          <div class="col-md-1">
+            <button mat-raised-button color="primary" (click)="abrirReporte()"  style="width: 100%;">Reporte</button>
+          </div>
+        </div>
+      <br>
       <div class="example-container justify-content-center">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="id">
+          <ng-container matColumnDef="ID">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
           </ng-container>
-          <ng-container matColumnDef="empresa">
+          <ng-container matColumnDef="EMPRESA">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
           </ng-container>
-          <ng-container matColumnDef="banco">
+          <ng-container matColumnDef="BANCO">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.sucursalBanco.banco.nombre}}</td>
           </ng-container>
-          <ng-container matColumnDef="sucursal">
+          <ng-container matColumnDef="SUCURSAL">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.sucursalBanco.nombre}}</td>
           </ng-container>
-          <ng-container matColumnDef="tipoCuentaBancaria">
+          <ng-container matColumnDef="TIPO_CUENTA_BANCARIA">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cta. Bancaria</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.tipoCuentaBancaria.nombre}}</td>
           </ng-container>
-          <ng-container matColumnDef="numeroCuenta">
+          <ng-container matColumnDef="NUMERO_CUENTA">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Cuenta</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.numeroCuenta}}</td>
           </ng-container>
-          <ng-container matColumnDef="moneda">
+          <ng-container matColumnDef="MONEDA">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Moneda</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.moneda.nombre}}</td>
           </ng-container>
@@ -198,32 +205,36 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.cbu}}</td>
           </ng-container>
-          <ng-container matColumnDef="aliasCBU">
+          <ng-container matColumnDef="ALIAS_CBU">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.aliasCBU}}</td>
           </ng-container>
-          <ng-container matColumnDef="estaActiva">
+          <ng-container matColumnDef="ESTA_ACTIVA">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Esta Activa</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.estaActiva? 'Sí' : 'No'}}</td>
           </ng-container>
-          <ng-container matColumnDef="fechaApertura">
+          <ng-container matColumnDef="FECHA_APERTURA">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Apertura</th>
             <td mat-cell *matCellDef="let elemento">{{elemento.fechaApertura | date:'dd-MM-yyyy'}}</td>
           </ng-container>
-          <ng-container matColumnDef="ver">
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-                class="cursor-color">ver</span></td>
-          </ng-container>
-          <ng-container matColumnDef="mod">
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-                class="cursor-color">editar</span></td>
-          </ng-container>
+          <ng-container matColumnDef="EDITAR" stickyEnd>
+              <th mat-header-cell *matHeaderCellDef></th>
+              <td mat-cell *matCellDef="let elemento">
+                <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+                  matTooltip="Consultar" matTooltipPosition="above">
+                  <mat-icon>search</mat-icon>
+                </button>
+                <button mat-icon-button class="mat-icon-button-table margin-left-3" 
+                  (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+                  <mat-icon>edit</mat-icon>
+                </button>
+              </td>
+            </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>
           <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
         </table>
       </div>
     </div>
+    <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
   </div>
 </div>

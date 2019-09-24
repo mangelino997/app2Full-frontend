@@ -60,8 +60,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   public deduccionesPersonales: Array<any> = [];
   public meses: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['ANIO', 'TIPO BENEFICIO', 'DEDUCCION PERSONAL', 'IMPORTE ACUMULADO', 'TIPO IMPORTE', 'MES', 'EDITAR', 'ELIMINAR'];
-  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['ANIO', 'TIPO_BENEFICIO', 'DEDUCCION_PERSONAL', 'IMPORTE_ACUMULADO', 'TIPO_IMPORTE', 'MES', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -437,10 +436,10 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     lista.forEach(elemento => {
       let f = {
         anio: elemento.anio,
-        tipobeneficio: elemento.afipTipoBeneficio.descripcion,
-        deduccionpersonal: elemento.afipDeduccionPersonal.descripcion,
-        importeacumulado: '$' + this.returnDecimales(elemento.importe, 2),
-        tipoimporte: elemento.mes ? 'Mensual' : 'Anual',
+        tipo_beneficio: elemento.afipTipoBeneficio.descripcion,
+        deduccion_personal: elemento.afipDeduccionPersonal.descripcion,
+        importe_acumulado: '$' + this.returnDecimales(elemento.importe, 2),
+        tipo_importe: elemento.mes ? 'Mensual' : 'Anual',
         mes: elemento.mes ? elemento.mes.nombre : '-'
       }
       datos.push(f);
@@ -455,7 +454,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
-      columnas: this.columnasSeleccionadas
+      columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
   }

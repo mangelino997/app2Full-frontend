@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { EmpresaRoutingModule } from './empresa-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EmpresaComponent, ListaUsuariosDialogo } from 'src/app/componentes/empresa/empresa.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -34,7 +34,8 @@ import { UsuarioService } from 'src/app/servicios/usuario.service';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     EmpresaService,

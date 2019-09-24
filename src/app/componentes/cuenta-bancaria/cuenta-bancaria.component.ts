@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -13,6 +13,7 @@ import { BancoService } from 'src/app/servicios/banco.service';
 import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
 import { TipoCuentaBancariaService } from 'src/app/servicios/tipo-cuenta-bancaria.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-cuenta-bancaria',
@@ -61,9 +62,11 @@ export class CuentaBancariaComponent implements OnInit {
   //Define la lista de resultados de busqueda para Cuentas Bancarias
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id','empresa', 'banco', 'sucursal', 'tipoCuentaBancaria', 'numeroCuenta', 'moneda', 'CBU', 'aliasCBU', 'estaActiva', 'fechaApertura', 'ver', 'mod'];
+  public columnas: string[] = ['ID','EMPRESA', 'BANCO', 'SUCURSAL', 'TIPO_CUENTA_BANCARIA', 'NUMERO_CUENTA', 'MONEDA', 'CBU', 'ALIAS_CBU', 'ESTA_ACTIVA', 'FECHA_APERTURA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define la lista de personales
   public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso
@@ -74,7 +77,8 @@ export class CuentaBancariaComponent implements OnInit {
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private loaderService: LoaderService, 
     private cuentaBancaria: CuentaBancaria, private servicio: CuentaBancariaService, 
     private bancoService: BancoService, private sucursalService: SucursalBancoService, 
-    private tipoCuentaBancariaService: TipoCuentaBancariaService, private monedaService:MonedaService, private toastr: ToastrService) {
+    private tipoCuentaBancariaService: TipoCuentaBancariaService, private monedaService:MonedaService, private toastr: ToastrService,
+    private reporteServicio: ReporteService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -446,6 +450,40 @@ export class CuentaBancariaComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          empresa: elemento.empresa.razonSocial,
+          banco: elemento.sucursalBanco.banco.nombre,
+          sucursal: elemento.sucursalBanco.nombre,
+          tipo_cuenta_bancaria: elemento.tipoCuentaBancaria.nombre,
+          numero_cuenta: elemento.numeroCuenta,
+          moneda: elemento.moneda.nombre,
+          cbu: elemento.cbu,
+          alias_cbu: elemento.aliasCBU,
+          esta_activa: elemento.estaActiva? 'Sí' : 'No',
+          fecha_apertura: elemento.fechaApertura
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Cuentas Bancarias',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  }
   
 
 }
