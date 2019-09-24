@@ -71,7 +71,7 @@ export class ViajePeajeComponent implements OnInit {
     this.establecerValoresPorDefecto();
   }
   //Establece el id del viaje de Cabecera
-  public establecerViajeCabecera(viajeCabecera) {
+  public establecerIdViaje(viajeCabecera) {
     this.ID_VIAJE = viajeCabecera;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
@@ -80,7 +80,6 @@ export class ViajePeajeComponent implements OnInit {
     this.servicio.listarPeajes(this.ID_VIAJE).subscribe(
       res => {
         this.recargarListaCompleta(res.json());
-        // this.emitirPeajes(this.listaPeajes);
         this.loaderService.hide();
       },
       err => {
@@ -139,7 +138,6 @@ export class ViajePeajeComponent implements OnInit {
   public modificarPeaje(): void {
     if (!this.formularioViajePeaje.value.importe) {
       this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
-      // this.formularioViajePeaje.get('importe').setValue(this.appService.establecerDecimales(this.formularioViajePeaje.value.importe, 2));
     }
     let usuarioMod = this.appService.getUsuario();
     this.formularioViajePeaje.value.usuarioMod = usuarioMod;
@@ -175,7 +173,8 @@ export class ViajePeajeComponent implements OnInit {
   //Elimina un peaje de la tabla por indice
   public eliminarPeaje(elemento): void {
     const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
-      width: '800px',
+      width: '60%',
+      maxWidth: '60%',
       data: {
         tema: this.appService.getTema()
       }
@@ -225,7 +224,7 @@ export class ViajePeajeComponent implements OnInit {
   public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto();
     this.formularioViajePeaje.get('viaje').setValue({id: idViaje});
-    this.establecerViajeCabecera(idViaje);
+    this.establecerIdViaje(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
   }

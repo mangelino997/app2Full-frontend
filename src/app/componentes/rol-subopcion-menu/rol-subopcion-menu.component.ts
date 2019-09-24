@@ -195,36 +195,33 @@ export class RolSubopcionMenuComponent implements OnInit {
   //Abre el dialogo usuario para ver los usuarios de un determinado rol
   public verUsuariosDeRol(): void {
     const dialogRef = this.dialog.open(UsuarioDialogo, {
-      width: '800px',
+      width: '80%',
+      maxWidth: '80%',
       data: { rol: this.formulario.get('rol') }
     });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Diálogo Usuarios Cerrado!');
-    });
+    dialogRef.afterClosed().subscribe(result => {});
   }
   //Abre el dialogo vista previa para visualizar el menu del rol
   public verVistaPrevia(): void {
     const dialogRef = this.dialog.open(VistaPreviaDialogo, {
-      width: '1200px',
+      width: '95%',
+      maxWidth: '95%',
       data: { rol: this.formulario.get('rol') }
     });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Diálogo Vista Previa Cerrado!');
-    });
+    dialogRef.afterClosed().subscribe(result => {});
   }
   //Abre el dialogo vista previa para visualizar el menu del rol
   public verPestaniasDialogo(subopcion, pestanias): void {
     const dialogRef = this.dialog.open(PestaniaDialogo, {
-      width: '1200px',
+      width: '95%',
+      maxWidth: '95%',
       data: {
         rol: this.formulario.get('rol'),
         subopcion: subopcion,
         pestanias: pestanias
       }
     });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('Diálogo Pestanias Cerrado!');
-    });
+    dialogRef.afterClosed().subscribe(result => {});
   }
   //Visualiza las pestanias de una subopcion para actualizar estado
   public verPestanias(subopcion): void {
@@ -341,7 +338,7 @@ export class VistaPreviaDialogo {
         this.loaderService.hide();
       },
       err => {
-        this.toastr.warning('El rol seleccionado no tiene subopciones asignadas.');
+        this.toastr.warning('El rol seleccionado no tiene subopciones asignadas');
         this.loaderService.hide();
         this.dialogRef.close();
       });

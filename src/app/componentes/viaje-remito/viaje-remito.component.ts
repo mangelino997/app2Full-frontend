@@ -266,7 +266,6 @@ export class ViajeRemitoComponent implements OnInit {
         this.establecerTipoComprobantePorDefecto();
       },
       err => {
-        console.log(err);
         let error = err.json();
         this.toastr.error(error.mensaje);
       }
@@ -368,7 +367,6 @@ export class ViajeRemitoComponent implements OnInit {
     this.loaderService.show();
     let sucursalIngreso = this.formularioListar.value.idSucursalIngreso;
     let sucursalDestino = this.formularioListar.value.idSucursalDestino; 
-    console.log(sucursalIngreso,sucursalDestino );
     if(sucursalIngreso == 0)
       this.formularioListar.get('idSucursalIngreso').setValue(null);
     if(sucursalDestino == 0)
@@ -377,17 +375,14 @@ export class ViajeRemitoComponent implements OnInit {
       this.formularioListar.get('idClienteRemitente').setValue(this.autocompletadoRemitente.value.id);
     if(this.autocompletadoDestinatario.value)
       this.formularioListar.get('idClienteDestinatario').setValue(this.autocompletadoDestinatario.value.id);
-    console.log(this.formularioListar.value);
     this.servicio.listarPorFiltros(this.formularioListar.value).subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
-        this.toastr.error("Error al obtener la lista de Remitos");
+        this.toastr.error("No se pudo obtener la lista de remitos");
         this.loaderService.hide();
       }
     );
@@ -411,7 +406,6 @@ export class ViajeRemitoComponent implements OnInit {
           this.establecerValoresPorDefecto(numeroCamion, sucursalDestino);
           this.formulario.get('tipoComprobante').setValue(tipoComprobante);
           this.cambioTipoComprobante();
-          // this.establecerTipoComprobantePorDefecto();
           setTimeout(function () {
             document.getElementById('idPuntoVenta').focus();
           }, 20);
@@ -488,11 +482,6 @@ export class ViajeRemitoComponent implements OnInit {
       this.formulario.get('letra').setValue(this.letras[0]);
     }
   }
-  //Maneja el cambio en Sucursal Ingreso
-  // public cambioSucursalIngreso(){
-    
-
-  // }
   //Formatea el numero a x decimales
   public setDecimales(valor, cantidad) {
     valor.target.value = this.appService.setDecimales(valor.target.value, cantidad);
@@ -514,7 +503,8 @@ export class ViajeRemitoComponent implements OnInit {
   //Abre el dialogo para agregar un cliente eventual
   public agregarCliente(tipo): void {
     const dialogRef = this.dialog.open(ClienteEventualComponent, {
-      width: '1200px',
+      width: '95%',
+      maxWidth: '95%',
       data: {
         formulario: null,
         usuario: this.appService.getUsuario()
@@ -536,7 +526,8 @@ export class ViajeRemitoComponent implements OnInit {
   //Abre un modal para agregar un aforo
   public agregarAforo(): void {
     const dialogRef = this.dialog.open(AforoComponent, {
-      width: '1200px',
+      width: '80%',
+      maxWidth: '80%',
       data: {}
     });
     dialogRef.afterClosed().subscribe(resultado => {

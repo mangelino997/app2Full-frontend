@@ -25,21 +25,21 @@ export class AforoComponent implements OnInit {
     this.formulario = this.aforo.formulario;
     this.servicio.obtenerPorId(1).subscribe(
       res => {
-        this.formulario.get('aforo').setValue(res.json().aforo);
+        let aforo = res.json().aforo;
+        this.formulario.get('aforo').setValue(this.establecerDecimales(aforo, 2));
       }
-    )
+    );
   }
   //calcula el aforo total 
   public calcularTotal() {
-    this.formulario.get('kiloAforadoTotal').setValue(0);
     let total = 0;
-    let aforo = this.formulario.get('aforo').value;
-    let cantidad = this.formulario.get('cantidad').value;
-    let alto = this.formulario.get('alto').value;
-    let ancho = this.formulario.get('ancho').value;
-    let largo = this.formulario.get('largo').value;
+    let aforo = this.formulario.get('aforo').value ? this.formulario.get('aforo').value : '350';
+    let cantidad = this.formulario.get('cantidad').value ? this.formulario.get('cantidad').value : '0';
+    let alto = this.formulario.get('alto').value ? this.formulario.get('alto').value : '0.00';
+    let ancho = this.formulario.get('ancho').value ? this.formulario.get('ancho').value : '0.00';
+    let largo = this.formulario.get('largo').value ? this.formulario.get('largo').value : '0.00';
     total = aforo * cantidad * alto * ancho * largo;
-    this.formulario.get('kiloAforadoTotal').setValue(this.appService.setDecimales(total, 2));
+    this.formulario.get('kiloAforadoTotal').setValue(this.establecerDecimales(total, 2));
     this.data.formulario = this.formulario.get('kiloAforadoTotal').value;
   }
   //Obtiene la mascara de enteros SIN decimales
