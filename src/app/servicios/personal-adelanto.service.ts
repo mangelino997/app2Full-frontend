@@ -64,6 +64,10 @@ export class PersonalAdelantoService {
   public listarCuotas(elemento) {
     return this.http.post(this.url + '/listarCuotas', elemento, this.options);
   }
+  //Obtiene la lista diferencia real entre el Total Prestamo que recibe el personal y el total de la suma de importes de las cuotas.
+  public obtenerDiferenciaImportes(listaCuotas) {
+    return this.http.put(this.url + '/obtenerDiferenciaImportes', listaCuotas, this.options);
+  }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
