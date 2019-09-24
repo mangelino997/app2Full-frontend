@@ -67,7 +67,7 @@ export class ViajeGastoComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Establece el id del viaje de Cabecera
-  public establecerViajeCabecera(idViaje) {
+  public establecerIdViaje(idViaje) {
     this.ID_VIAJE = idViaje;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
@@ -165,7 +165,8 @@ export class ViajeGastoComponent implements OnInit {
   //Anula un gasto de la tabla por indice
   public anularGasto(elemento): void {
     const dialogRef = this.dialog.open(AnularDialogo, {
-      width: '800px',
+      width: '60%',
+      maxWidth: '60%',
       data: {
         tema: this.appService.getTema()
       }
@@ -194,7 +195,8 @@ export class ViajeGastoComponent implements OnInit {
   //Normaliza un gasto de la tabla por indice
   public normalizarGasto(elemento): void {
     const dialogRef = this.dialog.open(NormalizarDialogo, {
-      width: '800px',
+      width: '60%',
+      maxWidth: '60%',
       data: {
         tema: this.appService.getTema()
       }
@@ -250,7 +252,7 @@ export class ViajeGastoComponent implements OnInit {
   public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
     this.formularioViajeGasto.get('viaje').setValue({id: idViaje});
-    this.establecerViajeCabecera(idViaje);
+    this.establecerIdViaje(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
   }
@@ -344,7 +346,8 @@ export class ViajeGastoComponent implements OnInit {
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
-      width: '1200px',
+      width: '70%',
+      maxWidth: '70%',
       data: {
         tema: this.appComponent.getTema(),
         elemento: elemento,

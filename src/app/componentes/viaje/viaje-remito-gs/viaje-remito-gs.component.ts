@@ -112,9 +112,10 @@ export class ViajeRemitoGSComponent implements OnInit {
               this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosPendientes[i]));
             }
             this.establecerRemitos(this.remitos);
-          } else {
-            this.toastr.warning("Remitos inexistentes");
-          }
+          } 
+          // else {
+          //   this.toastr.warning("Remitos inexistentes");
+          // }
           this.loaderService.hide();
         },
         err => {
@@ -144,9 +145,10 @@ export class ViajeRemitoGSComponent implements OnInit {
               this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosAsignados[i]));
             }
             this.establecerRemitos(this.remitos);
-          } else {
-            this.toastr.warning("Remitos inexistentes");
-          }
+          } 
+          // else {
+          //   this.toastr.warning("Remitos inexistentes");
+          // }
           this.loaderService.hide();
         },
         err => {
@@ -228,9 +230,9 @@ export class ViajeRemitoGSComponent implements OnInit {
   }
   //Establece el foco en fecha
   public establecerFoco(): void {
-    setTimeout(function () {
-      // document.getElementById('idTramoRG').focus();
-    }, 100);
+    // setTimeout(function () {
+    //   document.getElementById('idTramoRG').focus();
+    // }, 100);
   }
   //Define como se muestran los ceros a la izquierda en tablas
   public mostrarCeros(elemento, string, cantidad) {

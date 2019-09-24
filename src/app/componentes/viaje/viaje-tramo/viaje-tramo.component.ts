@@ -125,7 +125,7 @@ export class ViajeTramoComponent implements OnInit {
       res => {
         let tramos = res.json();
         this.convertirListaAMatTable(tramos);
-        this.emitirTramos(tramos);
+        this.emitirTramos(tramos, this.ID_VIAJE);
         this.loaderService.hide();
 
       },
@@ -137,8 +137,8 @@ export class ViajeTramoComponent implements OnInit {
     );
   }
   //Emite tamaño lista tramos al Padre
-  public emitirTramos(lista) {
-    this.dataEvent.emit(lista);
+  public emitirTramos(lista, idViaje) {
+    this.dataEvent.emit([lista, idViaje]);
   }
   //Establece los valores por defecto del formulario viaje tramo
   public establecerValoresPorDefecto(): void {

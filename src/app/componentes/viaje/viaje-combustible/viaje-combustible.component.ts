@@ -85,7 +85,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Establece el id del viaje de Cabecera
-  public establecerViajeCabecera(idViaje) {
+  public establecerIdViaje(idViaje) {
     this.ID_VIAJE = idViaje;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
@@ -94,7 +94,6 @@ export class ViajeCombustibleComponent implements OnInit {
     this.servicio.listarCombustibles(this.ID_VIAJE).subscribe(
       res => {
         this.recargarListaCompleta(res.json());
-        // this.emitirCombustibles(this.listaCombustibles);
         this.loaderService.hide();
       },
       err => {
@@ -112,7 +111,6 @@ export class ViajeCombustibleComponent implements OnInit {
   private recargarListaCompleta(listaCombustibles) {
     this.listaCompleta = new MatTableDataSource(listaCombustibles);
     this.listaCompleta.sort = this.sort;
-    // this.emitirCombustibles(listaCombustibles);
     this.calcularTotalLitros();
   }
   //Establece los valores por defecto del formulario viaje combustible
@@ -151,14 +149,9 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
-    if (!formulario.value.cantidad)
-      formulario.get('cantidad').setValue('0');
-    if (!formulario.value.precioUnitario)
-      formulario.get('precioUnitario').setValue(this.appService.setDecimales('0', 2));
-    if (!this.importe.value)
-      this.importe.setValue(this.appService.setDecimales('0', 2));
-    this.establecerDecimales(formulario.get('precioUnitario'), 2);
-    this.establecerDecimales(formulario.get('cantidad'), 2);
+    this.establecerDecimales(formulario.get('precioUnitario').value ? formulario.get('precioUnitario') : '0', 2);
+    this.establecerDecimales(formulario.get('cantidad').value ? formulario.get('cantidad') : '0', 2);
+    this.establecerDecimales(this.importe.value ? this.importe : '0', 2);
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
     if (cantidad != null && precioUnitario != null) {
@@ -248,7 +241,8 @@ export class ViajeCombustibleComponent implements OnInit {
   //Elimina un combustible de la tabla por indice
   public anularCombustible(elemento): void {
     const dialogRef = this.dialog.open(AnularDialogo, {
-      width: '800px',
+      width: '60%',
+      maxWidth: '60%',
       data: {
         tema: this.appService.getTema()
       }
@@ -277,7 +271,8 @@ export class ViajeCombustibleComponent implements OnInit {
   //Normaliza un combustible de la tabla por indice
   public normalizarCombustible(elemento): void {
     const dialogRef = this.dialog.open(NormalizarDialogo, {
-      width: '800px',
+      width: '60%',
+      maxWidth: '60%',
       data: {
         tema: this.appService.getTema()
       }
@@ -326,16 +321,11 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Limpia el formulario
   public cancelar() {
-    // this.reestablecerFormulario();
     this.formularioViajeCombustible.reset();
     this.formularioViajeCombustible.get('viaje').setValue({id: this.ID_VIAJE});
-    // this.totalCombustible.reset();
-    // this.totalAceite.reset();
-    // this.totalUrea.reset();
     this.importe.reset();
     this.indiceCombustible = null;
     this.btnCombustible = true;
-    // this.listar();
     this.establecerValoresPorDefecto(0);
     document.getElementById('idProveedorOC').focus();
   }
@@ -352,7 +342,7 @@ export class ViajeCombustibleComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
     this.recargarListaCompleta(lista);
     this.formularioViajeCombustible.get('viaje').setValue({id: idViaje});
-    this.establecerViajeCabecera(idViaje);
+    this.establecerIdViaje(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
   }

@@ -52,10 +52,6 @@ export class ViajeComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
-  //Define el id del Viaje que se quiere modificar
-  // public idMod: number = null;
-  //Define la lista de opciones
-  // public opciones: Array<any> = [];
   //Define un formulario viaje propio para validaciones de campos
   public formularioViaje: FormGroup;
   //Define un formulario viaje  tramo para validaciones de campos
@@ -98,8 +94,6 @@ export class ViajeComponent implements OnInit {
   public usuarioNombre: FormControl = new FormControl();
   //Define la lista de sucursales
   public sucursales: Array<any> = [];
-  //Define una bandera para campos solo lectura de componentes hijos
-  // public banderaSoloLectura: boolean = false;
   //Define si la lista de tramos tiene registros
   public estadoFormulario: boolean = true;
   //Define el mostrar del circulo de progreso
@@ -203,6 +197,15 @@ export class ViajeComponent implements OnInit {
       }
     })
   }
+  //Establece el id viaje en componentes hijo
+  public establecerIdViajeEnHijos(idViaje) {
+    // this.viajeTramoComponente.establecerViajeCabecera(idViaje);
+    this.viajeCombustibleComponente.establecerIdViaje(idViaje);
+    this.viajeEfectivoComponente.establecerIdViaje(idViaje);
+    this.viajeInsumoComponente.establecerIdViaje(idViaje);
+    this.viajeGastoComponente.establecerIdViaje(idViaje);
+    this.viajePeajeComponente.establecerIdViaje(idViaje);
+  }
   //Reestablece el formulario
   private reestablecerFormulario() {
     this.formularioViaje.reset();
@@ -219,8 +222,6 @@ export class ViajeComponent implements OnInit {
   public cambioAutocompletado(): void {
     this.loaderService.show();
     let viaje = this.autocompletado.value;
-    // this.appService.setViajeCabecera(viaje);
-    // this.idMod = this.autocompletado.value.id;
     this.servicio.obtenerPorId(viaje.id).subscribe(
       res => {
         let respuesta = res.json();
@@ -340,28 +341,23 @@ export class ViajeComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        // this.banderaSoloLectura = false;
         this.establecerCamposSoloLectura(false);
         this.estadoFormulario = true;
         this.establecerValoresPestania(nombre, false, false, true);
         break;
       case 2:
-        // this.banderaSoloLectura = true;
         this.establecerCamposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, false);
         break;
       case 3:
-        // this.banderaSoloLectura = false;
         this.establecerCamposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, false, true);
         break;
       case 4:
-        // this.banderaSoloLectura = true;
         this.establecerCamposSoloLectura(true);
         this.establecerValoresPestania(nombre, true, true, true);
         break;
       case 5:
-        // this.banderaSoloLectura = true;
         this.listar();
         break;
       default:
@@ -425,52 +421,13 @@ export class ViajeComponent implements OnInit {
   }
   //Recibe la lista de tramos de Viaje Tramos
   public recibirTramos($event) {
-    this.formularioViajeTramo.get('lista').setValue($event);
-    this.estadoFormulario = $event.length > 0 ? false : true;
-    this.viajeRemitoGSComponente.establecerTramos($event);
+    let lista = $event[0];
+    let idViaje = $event[1];
+    this.establecerIdViajeEnHijos(idViaje);
+    this.formularioViajeTramo.get('lista').setValue(lista);
+    this.estadoFormulario = lista.length > 0 ? false : true;
+    this.viajeRemitoGSComponente.establecerTramos(lista);
   }
-  //Agrega el viaje (CABECERA)
-  // public agregarViaje() {
-  //   this.loaderService.show();
-  //   // this.idMod = null;
-  //   this.servicio.agregar(this.formularioViaje.value).subscribe(
-  //     res => {
-  //       let resultado = res.json();
-  //       if (res.status == 201) {
-  //         this.formularioViaje.patchValue(resultado);
-  //         // this.idMod = resultado.id;
-  //         this.toastr.success("Registro agregado con éxito");
-  //         this.loaderService.hide();
-  //       }
-  //     },
-  //     err => {
-  //       let resultado = err.json();
-  //       this.toastr.error(resultado.mensaje);
-  //       this.loaderService.hide();
-  //     }
-  //   );
-  // }
-  //Actualiza el viaje (CABECERA)
-  // public actualizarViaje() {
-  //   this.loaderService.show();
-  //   this.establecerCamposSoloLectura(false);
-  //   this.servicio.actualizar(this.formularioViaje.value).subscribe(
-  //     res => {
-  //       let resultado = res.json();
-  //       if (res.status == 200) {
-  //         this.formularioViaje.patchValue(resultado);
-  //         // this.idMod = resultado.id;
-  //         this.toastr.success("Registro actualizado con éxito");
-  //         this.loaderService.hide();
-  //       }
-  //     },
-  //     err => {
-  //       let resultado = err.json();
-  //       this.toastr.error(resultado.mensaje);
-  //       this.loaderService.hide();
-  //     }
-  //   );
-  // }
   //Finaliza un viaje
   public finalizar(): void {
     this.reestablecerFormulario();
@@ -527,28 +484,6 @@ export class ViajeComponent implements OnInit {
         break;
     }
   }
-  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
-  // private lanzarError(err) {
-  //   var respuesta = err.json();
-  //   if (respuesta.codigo == 11006) {
-  //     document.getElementById("labelRazonSocial").classList.add('label-error');
-  //     document.getElementById("idRazonSocial").classList.add('is-invalid');
-  //     document.getElementById("idRazonSocial").focus();
-  //   } else if (respuesta.codigo == 11009) {
-  //     document.getElementById("labelTelefono").classList.add('label-error');
-  //     document.getElementById("idTelefono").classList.add('is-invalid');
-  //     document.getElementById("idTelefono").focus();
-  //   } else if (respuesta.codigo == 11008) {
-  //     document.getElementById("labelSitioWeb").classList.add('label-error');
-  //     document.getElementById("idSitioWeb").classList.add('is-invalid');
-  //     document.getElementById("idSitioWeb").focus();
-  //   } else if (respuesta.codigo == 11010) {
-  //     document.getElementById("labelNumeroDocumento").classList.add('label-error');
-  //     document.getElementById("idNumeroDocumento").classList.add('is-invalid');
-  //     document.getElementById("idNumeroDocumento").focus();
-  //   }
-  //   this.toastr.error(respuesta.mensaje);
-  // }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
@@ -585,15 +520,6 @@ export class ViajeComponent implements OnInit {
     this.establecerValoresPorDefecto();
     this.cambioAutocompletado();
   }
-  //Establece los valores del viaje en viajeCabecera del appService
-  // public establecerViajeCabecera() {
-  //   this.viajeTramoComponente.establecerViajeCabecera(this.formularioViaje.value);
-  //   this.viajeCombustibleComponente.establecerViajeCabecera(this.formularioViaje.value);
-  //   this.viajeEfectivoComponente.establecerViajeCabecera(this.formularioViaje.value);
-  //   this.viajeGastoComponente.establecerViajeCabecera(this.formularioViaje.value);
-  //   this.viajeInsumoComponente.establecerViajeCabecera(this.formularioViaje.value);
-  //   this.viajePeajeComponente.establecerViajeCabecera(this.formularioViaje.value);
-  // }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
   private compararFn(a, b) {

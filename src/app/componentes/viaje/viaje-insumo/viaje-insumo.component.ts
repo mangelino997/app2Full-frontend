@@ -82,7 +82,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.establecerValoresPorDefecto();
   }
   //Establece el id del viaje de Cabecera
-  public establecerViajeCabecera(viajeCabecera) {
+  public establecerIdViaje(viajeCabecera) {
     this.ID_VIAJE = viajeCabecera;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
@@ -144,13 +144,11 @@ export class ViajeInsumoComponent implements OnInit {
   }
   //Calcula el importe a partir de cantidad/km y precio unitario
   public calcularImporte(formulario): void {
-    if (!this.formularioViajeInsumo.value.cantidad)
+    if (!this.formularioViajeInsumo.value.cantidad) {
       this.formularioViajeInsumo.get('cantidad').setValue('0');
-    if (!this.formularioViajeInsumo.value.importe)
-      this.formularioViajeInsumo.get('importe').setValue(this.appServicio.setDecimales('0', 2));
-    if (!this.formularioViajeInsumo.value.precioUnitario)
-      this.formularioViajeInsumo.get('precioUnitario').setValue(this.appServicio.setDecimales('0', 2));
-    this.establecerDecimales(formulario.get('precioUnitario'), 2);
+    }
+    this.establecerDecimales(formulario.get('importe').value ? formulario.get('importe') : '0', 2);
+    this.establecerDecimales(formulario.get('precioUnitario').value ? formulario.get('precioUnitario') : '0', 2);
     let cantidad = formulario.get('cantidad').value;
     let precioUnitario = formulario.get('precioUnitario').value;
     if (cantidad != null && precioUnitario != null) {
@@ -220,7 +218,8 @@ export class ViajeInsumoComponent implements OnInit {
   //Anula un insumo de la tabla por indice
   public anularInsumo(elemento): void {
     const dialogRef = this.dialog.open(AnularDialogo, {
-      width: '800px',
+      width: '60%',
+      maxWidth: '60%',
       data: {
         tema: this.appServicio.getTema()
       }
@@ -249,7 +248,8 @@ export class ViajeInsumoComponent implements OnInit {
   //Normaliza un insumo de la tabla por indice
   public normalizarInsumo(elemento): void {
     const dialogRef = this.dialog.open(NormalizarDialogo, {
-      width: '800px',
+      width: '60%',
+      maxWidth: '60%',
       data: {
         tema: this.appServicio.getTema()
       }
@@ -291,7 +291,7 @@ export class ViajeInsumoComponent implements OnInit {
     this.establecerValoresPorDefecto();
     this.recargarListaCompleta(lista);
     this.formularioViajeInsumo.get('viaje').setValue({id: idViaje});
-    this.establecerViajeCabecera(idViaje);
+    this.establecerIdViaje(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
   }
@@ -347,7 +347,6 @@ export class ViajeInsumoComponent implements OnInit {
   private recargarListaCompleta(listaInsumos) {
     this.listaCompleta = new MatTableDataSource(listaInsumos);
     this.listaCompleta.sort = this.sort;
-    // this.emitirInsumos(listaInsumos);
     this.calcularImporteTotal();
   }
   //Establece los ceros en los numeros flotantes
@@ -416,7 +415,8 @@ export class ViajeInsumoComponent implements OnInit {
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
-      width: '1200px',
+      width: '70%',
+      maxWidth: '70%',
       data: {
         tema: this.appComponent.getTema(),
         elemento: elemento,

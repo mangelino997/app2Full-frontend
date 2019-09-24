@@ -180,7 +180,6 @@ export class PersonalService {
     obj.pdfDni = null;
     obj.pdfAltaTemprana = null;
     formData.append('personal', JSON.stringify(obj));
-    console.log(obj);
 		return fetch(this.url, {
       method: "POST",
       headers: {
@@ -198,7 +197,6 @@ export class PersonalService {
     let linti = obj.pdfLinti;
     let dni = obj.pdfDni;
     let altaTemprana = obj.pdfAltaTemprana;
-    console.log(dni);
     let noBlobPdf = new Blob([null], {type : 'application/pdf'});
     const formData = new FormData(); 
     if(foto.nombre!=null){
@@ -251,7 +249,6 @@ export class PersonalService {
     obj.pdfDni = null;
     obj.pdfAltaTemprana = null;
     formData.append('personal', JSON.stringify(obj));
-    console.log(obj);
 		return fetch(this.url, {
       method: "PUT",
       headers: {

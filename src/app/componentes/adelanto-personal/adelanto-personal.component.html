@@ -13,15 +13,15 @@
       <h5>{{pestaniaActual}} Adelanto de Sueldos</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
-          <div class="col-md-10">
+          <div class="col-md-7">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
                 [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
                 (blur)="verificarSeleccion(autocompletado)">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                <mat-option *ngFor="let item of resultados" [value]="item"
-                  (onSelectionChange)="cambioAutocompletado(item)">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                (optionSelected)="cambioAutocompletado()">
+                <mat-option *ngFor="let item of resultados" [value]="item">
                   {{item.nombreCompleto}}
                 </mat-option>
               </mat-autocomplete>
@@ -32,20 +32,22 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="labelLegajo" for="idLegajo" class="tamanio-label">N° de Legajo *</label>
-              <input id="idLegajo" type="text" [formControl]="legajo" readonly class="form-control form-control-sm ">
+              <input id="idLegajo" type="text" [formControl]="formularioDatosPersonal.get('legajo')" readonly
+                class="form-control form-control-sm ">
             </div>
           </div>
           <div class="col-md-5">
             <div class="form-group has-float-label">
               <label id="labelApellido" for="idApellido" class="tamanio-label">Apellido *</label>
-              <input id="idApellido" type="text" [formControl]="apellido" readonly
+              <input id="idApellido" type="text" [formControl]="formularioDatosPersonal.get('apellido')" readonly
                 class="form-control form-control-sm ">
             </div>
           </div>
           <div class="col-md-5">
             <div class="form-group has-float-label">
               <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
-              <input id="idNombre" type="text" [formControl]="nombre" readonly class="form-control form-control-sm ">
+              <input id="idNombre" type="text" [formControl]="formularioDatosPersonal.get('nombre')" readonly
+                class="form-control form-control-sm ">
             </div>
           </div>
         </div>
@@ -53,15 +55,16 @@
           <div class="col-md-7">
             <div class="form-group has-float-label">
               <label id="labelCategoria" for="idCategoria" class="tamanio-label">Categoría *</label>
-              <input id="idCategoria" type="text" [formControl]="categoria" readonly
+              <input id="idCategoria" type="text" [formControl]="formularioDatosPersonal.get('categoria')" readonly
                 class="form-control form-control-sm ">
             </div>
           </div>
           <div class="col-md-5">
             <div class="form-group has-float-label">
               <label id="labelBasicoCategoria" for="idBasicoCategoria" class="tamanio-label">Básico Categoría *</label>
-              <input id="idBasicoCategoria" type="text" [formControl]="basicoCategoria" readonly placeholder="$0.00"
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right">
+              <input id="idBasicoCategoria" type="text" [formControl]="formularioDatosPersonal.get('basicoCategoria')"
+                readonly placeholder="$0.00" [textMask]="mascararImporte(10)"
+                class="form-control form-control-sm number-right">
             </div>
           </div>
         </div>
@@ -69,23 +72,25 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelTopeAdelanto" for="idTopeAdelanto" class="descripcion-label">% Tope Adelanto *</label>
-              <input id="idTopeAdelanto" type="text" [formControl]="topeAdelanto" readonly autocomplete="off"
-                [textMask]="mascararPorcentaje()" class="form-control form-control-sm number-right"
-                placeholder="00.00%">
+              <input id="idTopeAdelanto" type="text" [formControl]="formularioDatosPersonal.get('topeAdelanto')"
+                readonly autocomplete="off" [textMask]="mascararPorcentaje()"
+                class="form-control form-control-sm number-right" placeholder="00.00%">
             </div>
           </div>
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="labelSaldoActual" for="idSaldoActual" class="descripcion-label">Saldo Actual *</label>
-              <input id="idSaldoActual" type="text" [formControl]="saldoActual" autocomplete="off" readonly
-                [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
+              <input id="idSaldoActual" type="text" [formControl]="formularioDatosPersonal.get('saldoActual')"
+                autocomplete="off" readonly [textMask]="mascararImporte(10)"
+                class="form-control form-control-sm number-right" placeholder="$0.00">
             </div>
           </div>
           <div class="col-md-5">
             <div class="form-group has-float-label">
               <label id="labelImporteDisponible" for="idImporteDisponible" class="descripcion-label">Importe Disponible
                 *</label>
-              <input id="idImporteDisponible" type="text" [formControl]="importeDisponible" autocomplete="off" readonly
+              <input id="idImporteDisponible" type="text"
+                [formControl]="formularioDatosPersonal.get('importeDisponible')" autocomplete="off" readonly
                 [textMask]="mascararImporte(10)" class="form-control form-control-sm number-right" placeholder="$0.00">
             </div>
           </div>
@@ -109,7 +114,7 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-5">
+          <div class="col-md-6">
             <div class="form-group has-float-label">
               <label id="labelImporte" for="idImporte" class="descripcion-label">Importe *</label>
               <input id="idImporte" type="text" formControlName="importe" autocomplete="off" (blur)="controlarImporte()"
@@ -124,17 +129,19 @@
             </button>
           </div>
         </div>
-        <div class="row text-center" *ngIf="!btnPrestamoModal">
-          <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-            (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
-            {{pestaniaActual}}
-          </button>
-        </div>
-        <div class="row text-center" *ngIf="btnPrestamoModal">
-          <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-            (click)="accion(indiceSeleccionado)" [disabled]="listaPrestamos.length == 0">
-            {{pestaniaActual}}
-          </button>
+        <div class="row justify-content-center">
+          <div class="col-md-1" *ngIf="!btnPrestamoModal">
+            <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+              {{pestaniaActual}}
+            </button>
+          </div>
+          <div class="col-md-1" *ngIf="btnPrestamoModal">
+            <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+              (click)="accion(indiceSeleccionado)" [disabled]="listaPrestamos.length == 0">
+              {{pestaniaActual}}
+            </button>
+          </div>
         </div>
         <div class="row" *ngIf="show">
           <div class="col text-center">
@@ -248,11 +255,11 @@
           <div class="col-md-3" *ngIf="indiceSeleccionado == 4">
             <div class="form-group has-float-label">
               <label id="labelObservaciones" for="idObservaciones" class="tamanio-label">Observaciones </label>
-              <input id="idObservaciones" type="text" formControlName="observacionesAnulado" [readonly]="lote.value==null"
-               class="form-control form-control-sm">
+              <input id="idObservaciones" type="text" formControlName="observacionesAnulado"
+                [readonly]="lote.value==null" class="form-control form-control-sm">
             </div>
           </div>
-          <div class="col-md-1" *ngIf="indiceSeleccionado == 3">
+          <div class="col-md-2" *ngIf="indiceSeleccionado == 3">
             <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!formulario.valid"
               (click)="actualizar()">Actualizar
             </button>
@@ -349,7 +356,7 @@
                       matTooltip="Consultar" matTooltipPosition="above">
                       <mat-icon>search</mat-icon>
                     </button>
-                    <button mat-icon-button class="mat-icon-button-table margin-left-3" 
+                    <button mat-icon-button class="mat-icon-button-table margin-left-3"
                       (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
                       <mat-icon>edit</mat-icon>
                     </button>
