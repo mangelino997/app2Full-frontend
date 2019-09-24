@@ -9,11 +9,11 @@ export class Aforo {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            aforo: new FormControl('', Validators.required),
-            cantidad: new FormControl(1, Validators.required),
-            alto: new FormControl(0.00, Validators.required),
-            ancho: new FormControl(0.00, Validators.required),
-            largo: new FormControl(0.00, Validators.required),
+            aforo: new FormControl(),
+            cantidad: new FormControl('', Validators.required),
+            alto: new FormControl('', Validators.required),
+            ancho: new FormControl('', Validators.required),
+            largo: new FormControl('', Validators.required),
             kiloAforadoTotal: new FormControl('', Validators.required)
         })
     }

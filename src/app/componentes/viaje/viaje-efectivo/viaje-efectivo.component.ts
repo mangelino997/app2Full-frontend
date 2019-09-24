@@ -71,7 +71,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
   }
   //Establece el id del viaje
-  public establecerViajeCabecera(idViaje) {
+  public establecerIdViaje(idViaje) {
     this.ID_VIAJE = idViaje;
   }
   //Obtiene la lista completa de registros segun el Id del Viaje (CABECERA)
@@ -108,7 +108,7 @@ export class ViajeEfectivoComponent implements OnInit {
   public establecerValoresPorDefecto(opcion): void {
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.fechaActual = res.json();
-      this.formularioViajeEfectivo.get('fechaCaja').setValue(res.json());
+      this.formularioViajeEfectivo.get('fechaCaja').setValue(this.fechaActual);
     })
     if (opcion == 1) {
       this.importeTotal.setValue(this.appServicio.setDecimales('0', 2));
@@ -180,7 +180,8 @@ export class ViajeEfectivoComponent implements OnInit {
   //Elimina un efectivo de la tabla por indice
   public anularEfectivo(elemento): void {
     const dialogRef = this.dialog.open(AnularDialogo, {
-      width: '800px',
+      width: '60%',
+      maxWidth: '60%',
       data: {
         tema: this.appServicio.getTema()
       }
@@ -209,7 +210,8 @@ export class ViajeEfectivoComponent implements OnInit {
   //Normaliza un efectivo de la tabla por indice
   public normalizarEfectivo(elemento): void {
     const dialogRef = this.dialog.open(NormalizarDialogo, {
-      width: '800px',
+      width: '60%',
+      maxWidth: '60%',
       data: {
         tema: this.appServicio.getTema()
       }
@@ -257,7 +259,7 @@ export class ViajeEfectivoComponent implements OnInit {
     this.establecerValoresPorDefecto(1);
     this.recargarListaCompleta(lista);
     this.formularioViajeEfectivo.get('viaje').patchValue({id: idViaje});
-    this.establecerViajeCabecera(idViaje);
+    this.establecerIdViaje(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
 
@@ -289,7 +291,6 @@ export class ViajeEfectivoComponent implements OnInit {
   public cancelar() {
     this.formularioViajeEfectivo.reset();
     this.formularioViajeEfectivo.get('viaje').setValue({id: this.ID_VIAJE});
-    // this.listar();
     this.establecerValoresPorDefecto(0);
     this.indiceEfectivo = null;
     this.btnEfectivo = true;
@@ -345,7 +346,8 @@ export class ViajeEfectivoComponent implements OnInit {
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
-      width: '1200px',
+      width: '70%',
+      maxWidth: '70%',
       data: {
         tema: this.appServicio.getTema(),
         elemento: elemento,

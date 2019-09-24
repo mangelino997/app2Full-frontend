@@ -267,7 +267,6 @@ export class ClienteEventualComponent implements OnInit {
   }
   //Maneja el cambio en Condicion Iva
   public cambioCondicionIva() {
-    console.log( this.tiposDocumentos);
     if(this.formulario.value.afipCondicionIva.nombre == 'Consumidor Final'){
       this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]); //la posicion 7 pertenece a DNI
     }else{
