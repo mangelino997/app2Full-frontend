@@ -63,7 +63,7 @@ export class GananciaNetaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla principal
-  public columnas: string[] = ['anio', 'gananciaNetaAcumulada', 'importeFijo', 'alicuotaSinExcedente', 'mod', 'eliminar'];
+  public columnas: string[] = ['anio', 'id', 'gananciaNetaAcumulada', 'importeFijo', 'alicuotaSinExcedente', 'mod', 'eliminar'];
   //Define las columnas de la tabla reporte
   public columnasListar: string[] = ['ANIO_MES', 'GANANCIA_NETA_DE_MAS', 'GANANCIA_NETA_A', 'IMPORTE_FIJO', 'ALICUOTA', 'EXCEDENTE'];
   //Define la matSort
@@ -154,7 +154,7 @@ export class GananciaNetaComponent implements OnInit {
       },
       err => {
         let error = err.json();
-        this.toastr.error(error.mensaje);
+        this.toastr.error(error.message);
         this.loaderService.hide();
       }
     );
@@ -220,7 +220,6 @@ export class GananciaNetaComponent implements OnInit {
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
     this.reestablecerFormulario(undefined);
-    this.listaCompleta = new MatTableDataSource([]);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     switch (id) {
@@ -241,7 +240,7 @@ export class GananciaNetaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAnio');
         break;
       case 5:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAnio');
+        this.establecerValoresPestania(nombre, true, true, true, 'idAnioListar');
         break;
       default:
         break;
@@ -271,8 +270,8 @@ export class GananciaNetaComponent implements OnInit {
         var respuesta = res.json();
         if (res.status == 201) {
           this.reestablecerFormulario(respuesta.id);
-          document.getElementById('idAnioFiscal').focus();
           this.anio.setValue(anio);
+          this.formulario.get('anio').setValue(anio);
           this.toastr.success(respuesta.mensaje);
           this.listar();
         }
@@ -288,14 +287,15 @@ export class GananciaNetaComponent implements OnInit {
   public actualizar() {
     this.loaderService.show();
     let anio = this.formulario.value.anio;
+    console.log(anio);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          document.getElementById('idAnio').focus();
-          this.formulario.get('anio').setValue(anio);
           this.anio.setValue(anio);
+          this.formulario.get('anio').setValue(anio);
+          console.log(anio);
           this.toastr.success(respuesta.mensaje);
           this.listar();
         }
@@ -321,6 +321,7 @@ export class GananciaNetaComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formularioFiltro.reset();
+    this.listaCompleta = new MatTableDataSource([]);
     this.formularioFiltro.get('gananciaNeta').setValue(true);
     this.anio.setValue(undefined);
     this.idMod = null;
@@ -388,6 +389,7 @@ export class GananciaNetaComponent implements OnInit {
   public cancelar() {
     this.formulario.reset();
     this.formulario.disable();
+    this.idMod = null;
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
@@ -405,6 +407,12 @@ export class GananciaNetaComponent implements OnInit {
   private compararFn(a, b) {
     if (a != null && b != null) {
       return a.id === b.id;
+    }
+  }
+  public compareF = this.compararF.bind(this);
+  private compararF(a, b) {
+    if (a != null && b != null) {
+      return a === b;
     }
   }
   //Formatea el valor del autocompletado

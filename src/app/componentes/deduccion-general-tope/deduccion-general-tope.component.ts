@@ -90,7 +90,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     //Define el formulario y validaciones
     this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de Años Fiscales
     this.listarAnios();
     //Obtiene la lista de Deducciones Generales
@@ -129,15 +129,11 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
-    this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
+  public seleccionarPestania(id, nombre) {
+    this.reestablecerFormulario(undefined);
     this.anio.setValue(undefined);
-    this.condicion = false;
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.resultados = [];
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, false, false, true, 'idAnio');
@@ -159,24 +155,15 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
-    switch (indice) {
-      case 1:
-        this.agregar();
-        break;
-      case 3:
-        this.actualizar();
-        break;
-      case 4:
-        break;
-      default:
-        break;
-    }
+    if(indice == 1)
+      this.agregar();
+      else
+      this.actualizar();
   }
   //Obtiene el listado de registros
   public listar() {
     this.loaderService.show();
     this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
     this.listaCompleta.paginator = this.paginator;
     this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
@@ -196,7 +183,6 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   private verificarCamposVacios() {
     let importe = this.formulario.value.importe;
     let importeFijo = this.formulario.value.porcentajeGananciaNeta;
-    let descripcion = this.formulario.value.descripcion;
     if (!importe || importe == undefined)
       this.formulario.get('importe').setValue(0);
     if (!importeFijo || importeFijo == undefined)
@@ -210,6 +196,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
       res => {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
+        document.getElementById('idAnio').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -222,34 +209,17 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    this.formulario.enable();
+    let anio = this.anio.value;
     this.verificarCamposVacios();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
+          this.anio.setValue(anio);
           this.listar();
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
-        }
-      },
-      err => {
-        this.lanzarError(err);
-        this.loaderService.hide();
-      }
-    );
-  }
-  //Elimina un registro
-  private eliminar() {
-    this.loaderService.show();
-    this.servicio.eliminar(this.formulario.value.id).subscribe(
-      res => {
-        var respuesta = res.json();
-        if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAnioLista').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -274,23 +244,15 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.resultados = [];
-    if (this.indiceSeleccionado == 1) {
-      setTimeout(function () {
-        document.getElementById('idAnio').focus();
-      }, 20);
-    } else {
-      setTimeout(function () {
-        document.getElementById('idAnioLista').focus();
-      }, 20);
-    }
+    this.listaCompleta = new MatTableDataSource([]);
+    this.condicion = false;
+    this.resultados = [];
   }
   //Controla el cambio en el campo "anio"
-  public cambioAnio(elemento) {
-    if (elemento != undefined) {
-      this.anio.setValue(elemento);
-    }
-    this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
+  public cambioAnio() {
+    let anio = this.anio.value;
+    if(!anio)
+      this.listaCompleta = new MatTableDataSource([]);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -304,10 +266,11 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    if (this.indiceSeleccionado == 5) {
-      this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    }
+    // if (this.indiceSeleccionado == 5) {
+    //   this.seleccionarPestania(3, this.pestanias[2].nombre);
+    // }
     this.formulario.patchValue(elemento);
+    this.formulario.get('afipDeduccionGeneral').disable();
     this.establecerDecimales(this.formulario.get('importe'), 2);
     this.formulario.get('porcentajeGananciaNeta').setValue(this.appService.desenmascararPorcentaje(elemento.porcentajeGananciaNeta.toString(), 2));
     this.anio.setValue(elemento.anio);
@@ -335,9 +298,9 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
@@ -407,14 +370,14 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          anio: elemento.anio,
-          deducciongeneral: elemento.afipDeduccionGeneral.descripcion,
-          descripcion: elemento.descripcion,
-          importe: '$' + this.returnDecimales(elemento.importe, 2),
-          porcentajeganancianeta: this.returnDecimales(elemento.porcentajeGananciaNeta, 2) + '%'
-        }
-        datos.push(f);
+      let f = {
+        anio: elemento.anio,
+        deducciongeneral: elemento.afipDeduccionGeneral.descripcion,
+        descripcion: elemento.descripcion,
+        importe: '$' + this.returnDecimales(elemento.importe, 2),
+        porcentajeganancianeta: this.returnDecimales(elemento.porcentajeGananciaNeta, 2) + '%'
+      }
+      datos.push(f);
     });
     return datos;
   }
