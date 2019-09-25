@@ -165,7 +165,7 @@ export class PersonalComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       let empresa = this.appServicio.getEmpresa();
       if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
+        this.servicio.listarActivosPorAliasYEmpresa(data, empresa.id).subscribe(response => {
           this.resultados = response;
         })
       }

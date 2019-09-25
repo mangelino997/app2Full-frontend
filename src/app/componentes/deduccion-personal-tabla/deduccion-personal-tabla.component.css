@@ -6,3 +6,6 @@
 .tabla-ancho {
     width: 1890px !important;
 }
+button {
+    width: 100%;
+}

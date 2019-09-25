@@ -287,7 +287,6 @@ export class GananciaNetaComponent implements OnInit {
   public actualizar() {
     this.loaderService.show();
     let anio = this.formulario.value.anio;
-    console.log(anio);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -295,7 +294,6 @@ export class GananciaNetaComponent implements OnInit {
           this.reestablecerFormulario(undefined);
           this.anio.setValue(anio);
           this.formulario.get('anio').setValue(anio);
-          console.log(anio);
           this.toastr.success(respuesta.mensaje);
           this.listar();
         }

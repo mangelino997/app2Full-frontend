@@ -106,7 +106,7 @@ export class AdelantoPersonalComponent implements OnInit {
     //Autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalService.listarPorAlias(data).subscribe(res => {
+        this.personalService.listarActivosPorAlias(data).subscribe(res => {
           this.resultados = res;
         })
       }

@@ -180,7 +180,7 @@ export class ViajeComponent implements OnInit {
     //Autocompletado Personal - Buscar por alias
     this.formularioViaje.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarChoferesLargaDistanciaPorAlias(data).subscribe(res => {
+        this.personalServicio.listarChoferesPorDistanciaPorAlias(data, true).subscribe(res => {
           this.resultadosChoferes = res.json();
         })
       }

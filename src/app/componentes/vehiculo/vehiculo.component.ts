@@ -164,7 +164,7 @@ export class VehiculoComponent implements OnInit {
     //Autocompletado Personal - Buscar chofer por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarChoferPorAlias(data).subscribe(response => {
+        this.personalServicio.listarChoferActivoPorAlias(data).subscribe(response => {
           this.resultadosPersonales = response;
         })
       }
