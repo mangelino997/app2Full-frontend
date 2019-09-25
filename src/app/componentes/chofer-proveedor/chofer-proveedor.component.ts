@@ -58,7 +58,7 @@ export class ChoferProveedorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'PROVEEDOR', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'LOCALIDAD', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'PROVEEDOR', 'TIPO_DOCUMENTO', 'NUMERO_DOCUMENTO', 'LOCALIDAD', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -475,8 +475,8 @@ export class ChoferProveedorComponent implements OnInit {
           id: elemento.id,
           nombre: elemento.nombre,
           proveedor: elemento.proveedor.razonSocial,
-          tipodocumento: elemento.tipoDocumento.nombre,
-          numerodocumento: elemento.numeroDocumento,
+          tipo_documento: elemento.tipoDocumento.nombre,
+          numero_documento: elemento.numeroDocumento,
           localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
         }
         datos.push(f);

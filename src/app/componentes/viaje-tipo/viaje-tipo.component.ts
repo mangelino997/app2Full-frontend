@@ -44,7 +44,7 @@ export class ViajeTipoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'COSTO POR KM PROPIO', 'COSTO POR KM TERCERO', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'COSTO_POR_KM_PROPIO', 'COSTO_POR_KM_TERCERO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -337,8 +337,8 @@ export class ViajeTipoComponent implements OnInit {
           id: elemento.id,
           nombre: elemento.nombre,
           abreviatura: elemento.abreviatura,
-          costoporkmpropio: elemento.costoPorKmPropio,
-          costoporkmtercero: elemento.costoPorKmTercero
+          costo_por_km_propio: elemento.costoPorKmPropio,
+          costo_por_km_tercero: elemento.costoPorKmTercero
         }
         datos.push(f);
     });

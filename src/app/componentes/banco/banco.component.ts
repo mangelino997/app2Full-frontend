@@ -45,7 +45,7 @@ export class BancoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'SITIO WEB', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'SITIO_WEB', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -342,7 +342,7 @@ export class BancoComponent implements OnInit {
       let f = {
         id: elemento.id,
         nombre: elemento.nombre,
-        sitioweb: elemento.sitioWeb,
+        sitio_web: elemento.sitioWeb,
       }
       datos.push(f);
     });

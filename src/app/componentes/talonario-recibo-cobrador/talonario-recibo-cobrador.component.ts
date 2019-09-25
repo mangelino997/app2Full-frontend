@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { LoaderState } from 'src/app/modelos/loader';
 import { TalonarioReciboCobrador } from 'src/app/modelos/talonarioReciboCobrador';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -12,6 +12,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { TalonarioReciboLoteService } from 'src/app/servicios/talonario-recibo-lote.service';
 import { CobradorService } from 'src/app/servicios/cobrador.service';
 import { AppComponent } from 'src/app/app.component';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-talonario-recibo-cobrador',
@@ -54,13 +55,15 @@ public show = false;
 //Define la subscripcion a loader.service
 private subscription: Subscription;
 //Define las columnas de la tabla
-public columnas: string[] = ['id', 'empresa', 'cobrador', 'talreclote', 'pVenta', 'letra', 'desde', 'hasta', 'ver', 'mod'];
+public columnas: string[] = ['ID', 'EMPRESA', 'COBRADOR', 'TAL_REC_LOTE', 'P_VENTA', 'LETRA', 'DESDE', 'HASTA', 'EDITAR'];
 //Define la matSort
 @ViewChild(MatSort) sort: MatSort;
+//Define la paginacion
+@ViewChild(MatPaginator) paginator: MatPaginator;
 //Constructor
 constructor(private servicio: TalonarioReciboService, private subopcionPestaniaService: SubopcionPestaniaService, private appComponent: AppComponent,
   private talonarioReciboLoteService: TalonarioReciboLoteService, private appService: AppService, private modelo: TalonarioReciboCobrador,
-  private toastr: ToastrService, private loaderService: LoaderService, private cobradorService: CobradorService) {
+  private toastr: ToastrService, private loaderService: LoaderService, private cobradorService: CobradorService, private reporteServicio: ReporteService) {
   //Obtiene la lista de pestania por rol y subopcion
   this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
     .subscribe(
@@ -215,6 +218,7 @@ private listar() {
       console.log(res.json());
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
+      this.listaCompleta.paginator = this.paginator;
       this.loaderService.hide();
     },
     err => {
@@ -384,5 +388,35 @@ public verificarSeleccion(valor): void {
     valor.setValue(null);
   }
 } 
-
+//Prepara los datos para exportar
+private prepararDatos(listaCompleta): Array<any> {
+  let lista = listaCompleta;
+  let datos = [];
+  lista.forEach(elemento => {
+      let f = {
+        id: elemento.id,
+        empresa: elemento.talonarioReciboLote.empresa.razonSocial,
+        cobrador: elemento.cobrador.nombre,
+        tal_rec_lote: 'Desde: ' + elemento.talonarioReciboLote.desde + 'Hasta: ' + elemento.talonarioReciboLote.hasta,
+        p_venta: elemento.talonarioReciboLote.puntoVenta,
+        letra: elemento.talonarioReciboLote.letra,
+        desde: elemento.desde,
+        hasta: elemento.hasta
+      }
+      datos.push(f);
+  });
+  return datos;
+}
+//Abre el dialogo de reporte
+public abrirReporte(): void {
+  let lista = this.prepararDatos(this.listaCompleta.data);
+  let datos = {
+    nombre: 'Talonarios Recibos Cobradores',
+    empresa: this.appService.getEmpresa().razonSocial,
+    usuario: this.appService.getUsuario().nombre,
+    datos: lista,
+    columnas: this.columnas
+  }
+  this.reporteServicio.abrirDialogo(datos);
+}
 }

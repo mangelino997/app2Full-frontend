@@ -7,13 +7,15 @@ import { TipoComprobanteService } from '../../servicios/tipo-comprobante.service
 import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
+import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AforoComponent } from '../aforo/aforo.component';
 import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.component';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
+import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-viaje-remito',
@@ -68,15 +70,17 @@ export class ViajeRemitoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['sucursalIngreso', 'sucursalDestino', 'fecha', 'puntoVenta', 'numero', 'remitente', 'destinatario', 'bultos', 'kgEfectivo', 'valorDeclarado', 'observaciones', 'ver', 'mod'];
+  public columnas: string[] = ['SUCURSAL_INGRESO', 'SUCURSAL_DESTINO', 'FECHA', 'PUNTO_VENTA', 'NUMERO', 'REMITENTE', 'DESTINATARIO', 'BULTOS', 'KG_EFECTIVO', 'VALOR_DECLARADO', 'OBSERVACIONES', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private loaderService: LoaderService, private toastr: ToastrService,
     private sucursalServicio: SucursalService, private clienteServicio: ClienteService,
     private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog,
-    private fechaServicio: FechaService, private appService: AppService) {
+    private fechaServicio: FechaService, private appService: AppService,  private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -379,6 +383,7 @@ export class ViajeRemitoComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -579,5 +584,39 @@ export class ViajeRemitoComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+      let f = {
+        sucursal_ingreso: elemento.sucursalIngreso.nombre,
+        sucursal_destino: elemento.sucursalDestino.nombre,
+        fecha: elemento.fecha,
+        punto_venta: this.displayCeros(elemento.puntoVenta, '0000', -5),
+        numero: this.displayCeros(elemento.numero, '0000000', -8),
+        remitente: elemento.clienteRemitente? elemento.clienteRemitente.razonSocial: '',
+        destinatario: elemento.clienteDestinatario? elemento.clienteDestinatario.razonSocial: '',
+        bultos: elemento.bultos ? elemento.bultos: '',
+        kg_efectivo: elemento.kilosEfectivo ? elemento.kilosEfectivo + ' Kg' : '',
+        valor_declarado: elemento.valorDeclarado ? elemento.valorDeclarado: '',
+        observaciones: elemento.observaciones ? elemento.observaciones : ''
+      }
+      datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Guias de Servicio',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TalonarioReciboLoteRoutingModule } from './talonario-recibo-lote-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TalonarioReciboLoteComponent } from 'src/app/componentes/talonario-recibo-lote/talonario-recibo-lote.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -29,7 +29,8 @@ import { TalonarioReciboLote } from 'src/app/modelos/talonarioReciboLote';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     TalonarioReciboLoteService,

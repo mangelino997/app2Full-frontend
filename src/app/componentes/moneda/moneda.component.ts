@@ -48,7 +48,7 @@ export class MonedaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'ESTA ACTIVO', 'MONEDA PRINCIPAL', 'CODIGO AFIP', 'SIMBOLO', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ESTA_ACTIVO', 'MONEDA_PRINCIPAL', 'CODIGO_AFIP', 'SIMBOLO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -390,9 +390,9 @@ export class MonedaComponent implements OnInit {
         let f = {
           id: elemento.id,
           nombre: elemento.nombre,
-          estaactivo: elemento.estaActivo ? 'Si' : 'No',
-          monedaprincipal: elemento.porDefecto ? 'Si' : 'No',
-          codigoafip: elemento.codigoAfip,
+          esta_activo: elemento.estaActivo ? 'Si' : 'No',
+          moneda_principal: elemento.porDefecto ? 'Si' : 'No',
+          codigo_afip: elemento.codigoAfip,
           simbolo: elemento.simbolo
         }
         datos.push(f);

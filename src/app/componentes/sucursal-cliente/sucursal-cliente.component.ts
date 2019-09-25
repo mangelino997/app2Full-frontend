@@ -54,7 +54,7 @@ export class SucursalClienteComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'CLIENTE', 'NOMBRE', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'EDITAR'];
+  public columnas:string[] = ['ID', 'CLIENTE', 'NOMBRE', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -468,8 +468,8 @@ export class SucursalClienteComponent implements OnInit {
           domicilio: elemento.domicilio,
           barrio: elemento.barrio.nombre,
           localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre,
-          telefonofijo: elemento.telefonoFijo,
-          telefonomovil: elemento.telefonoMovil
+          telefono_fijo: elemento.telefonoFijo,
+          telefono_movil: elemento.telefonoMovil
         }
         datos.push(f);
     });

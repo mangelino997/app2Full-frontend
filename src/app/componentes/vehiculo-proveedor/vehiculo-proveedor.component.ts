@@ -64,7 +64,7 @@ export class VehiculoProveedorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'DOMINIO', 'TIPO VEHICULO', 'MARCA VEHICULO', 'COMPANIA SEGURO', 'EDITAR'];
+  public columnas:string[] = ['ID', 'DOMINIO', 'TIPO_VEHICULO', 'MARCA_VEHICULO', 'COMPANIA_SEGURO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -500,9 +500,9 @@ export class VehiculoProveedorComponent implements OnInit {
         let f = {
           id: elemento.id,
           dominio: elemento.dominio,
-          tipovehiculo: elemento.tipoVehiculo.nombre,
-          marcavehiculo: elemento.marcaVehiculo.nombre,
-          companiaseguro: elemento.companiaSeguro.nombre
+          tipo_vehiculo: elemento.tipoVehiculo.nombre,
+          marca_vehiculo: elemento.marcaVehiculo.nombre,
+          compania_seguro: elemento.companiaSeguro.nombre
         }
         datos.push(f);
     });

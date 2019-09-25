@@ -43,7 +43,7 @@ export class TipoVehiculoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'ES REMOLQUE', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'ES_REMOLQUE', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -344,7 +344,7 @@ export class TipoVehiculoComponent implements OnInit {
         let f = {
           id: elemento.id,
           nombre: elemento.nombre,
-          esremolque: elemento.esRemolque ? 'Si' : 'No'
+          es_remolque: elemento.esRemolque ? 'Si' : 'No'
         }
         datos.push(f);
     });

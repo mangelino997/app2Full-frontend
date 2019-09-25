@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TalonarioReciboCobradorRoutingModule } from './talonario-recibo-cobrador-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TalonarioReciboCobradorComponent } from 'src/app/componentes/talonario-recibo-cobrador/talonario-recibo-cobrador.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -31,7 +31,8 @@ import { CobradorService } from 'src/app/servicios/cobrador.service';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     TalonarioReciboService,

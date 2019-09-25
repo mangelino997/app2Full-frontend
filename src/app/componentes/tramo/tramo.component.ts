@@ -8,7 +8,8 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-tramo',
@@ -49,9 +50,11 @@ export class TramoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'origen', 'destino', 'km', 'rutaAlternativa', 'liqChofer', 'estaActivo', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'ORIGEN', 'DESTINO', 'KM', 'RUTA_ALTERNATIVA', 'LIQ_CHOFER', 'ESTA_ACTIVO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+   //Define la paginacion
+   @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define autocompletados listar
   public autocompletadoOrigenListar:FormControl = new FormControl();
   public autocompletadoDestinoListar:FormControl = new FormControl();
@@ -60,7 +63,7 @@ export class TramoComponent implements OnInit {
   //Constructor
   constructor(private servicio: TramoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private origenDestinoServicio: OrigenDestinoService,
-    private toastr: ToastrService, private loaderService: LoaderService) {
+    private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -332,6 +335,7 @@ export class TramoComponent implements OnInit {
     this.servicio.listarPorFiltro(origen ? origen.id : 0, destino ? destino.id : 0).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sort = this.sort;
+      this.listaCompleta.paginator = this.paginator;
     })
   }
   //Reestablece el formulario
@@ -404,5 +408,35 @@ export class TramoComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+      let f = {
+        id: elemento.id,
+        origen: elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre,
+        destino: elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre,
+        km: elemento.km,
+        ruta_alternativa: elemento.rutaAlternativa,
+        liq_chofer: elemento.excluirLiqChofer?'Sí':'No',
+        esta_activo: elemento.estaActivo?'Sí': 'No'
+      }
+      datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Tramos',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }

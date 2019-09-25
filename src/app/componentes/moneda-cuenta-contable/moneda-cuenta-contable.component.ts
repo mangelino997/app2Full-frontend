@@ -86,7 +86,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Defien la  empresa del Login
   public empresa: FormControl = new FormControl();
   //Define las columnas de la tabla
-  public columnas: string[] = ['MONEDA', 'EMPRESA', 'CUENTA CONTABLE', 'EDITAR'];
+  public columnas: string[] = ['MONEDA', 'EMPRESA', 'CUENTA_CONTABLE', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -406,7 +406,7 @@ export class MonedaCuentaContableComponent implements OnInit {
         let f = {
           moneda: elemento.moneda.nombre,
           empresa: elemento.empresa.razonSocial,
-          cuentacontable: elemento.planCuenta.nombre
+          cuenta_contable: elemento.planCuenta.nombre
         }
         datos.push(f);
     });

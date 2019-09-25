@@ -48,7 +48,7 @@ export class ProvinciaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'CODIGO IIBB', 'CODIGO AFIP', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'CODIGO_IIBB', 'CODIGO_AFIP', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -361,8 +361,8 @@ export class ProvinciaComponent implements OnInit {
         let f = {
           id: elemento.id,
           nombre: elemento.nombre,
-          codigoiibb: elemento.codigoIIBB,
-          codigoafip: elemento.codigoAfip,
+          codigo_iibb: elemento.codigoIIBB,
+          codigo_afip: elemento.codigoAfip,
         }
         datos.push(f);
     });

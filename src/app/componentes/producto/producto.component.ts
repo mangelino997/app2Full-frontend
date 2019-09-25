@@ -59,7 +59,7 @@ export class ProductoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'MARCA', 'MODELO', 'RUBRO', 'ES ASIGNABLE', 'ES SERIALIZABLE', 'ES CRITICO', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'MARCA', 'MODELO', 'RUBRO', 'ES_ASIGNABLE', 'ES_SERIALIZABLE', 'ES_CRITICO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -428,9 +428,9 @@ export class ProductoComponent implements OnInit {
           marca: elemento.marcaProducto.nombre,
           modelo: elemento.modelo,
           rubro: elemento.rubroProducto.nombre,
-          esasignable: elemento.esAsignable ? 'Si' : 'No',
-          esserializable: elemento.esSerializable ? 'Si' : 'No',
-          escritico: elemento.esCritico ? 'Si' : 'No'
+          es_asignable: elemento.esAsignable ? 'Si' : 'No',
+          es_serializable: elemento.esSerializable ? 'Si' : 'No',
+          es_critico: elemento.esCritico ? 'Si' : 'No'
         }
         datos.push(f);
     });

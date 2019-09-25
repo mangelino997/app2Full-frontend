@@ -46,7 +46,7 @@ export class CondicionVentaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'ES CONTADO', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ES_CONTADO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -340,7 +340,7 @@ export class CondicionVentaComponent implements OnInit {
         let f = {
           id: elemento.id,
           nombre: elemento.nombre,
-          escontado: elemento.esContado ? 'Si' : 'No'
+          es_contado: elemento.esContado ? 'Si' : 'No'
         }
         datos.push(f);
     });

@@ -21,8 +21,9 @@ import { Subscription } from 'rxjs';
 import { Viaje } from 'src/app/modelos/viaje';
 import { ViajeService } from 'src/app/servicios/viaje.service';
 import { VehiculoProveedorService } from 'src/app/servicios/vehiculo-proveedor.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-viaje',
@@ -103,15 +104,17 @@ export class ViajeComponent implements OnInit {
   //Define el render de los componentes
   public render: boolean = false;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'empresaEmision', 'sucursal', 'fecha', 'vehiculo', 'chofer', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'EMPRESA_EMISION', 'SUCURSAL', 'FECHA', 'VEHICULO', 'CHOFER', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ViajeService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private fechaServicio: FechaService,
     private sucursalServicio: SucursalService, private vehiculoServicio: VehiculoService, private vehiculoProveedorService: VehiculoProveedorService,
     private personalServicio: PersonalService, private viajePropioModelo: Viaje,
-    private choferProveedorServicio: ChoferProveedorService, private loaderService: LoaderService) {
+    private choferProveedorServicio: ChoferProveedorService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -270,7 +273,7 @@ export class ViajeComponent implements OnInit {
       res => {
         this.sucursales = res.json();
         this.render = true;
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idFecha').focus();
         }, 50);
         this.establecerValoresPorDefecto();
@@ -413,6 +416,7 @@ export class ViajeComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
       },
       err => {
         console.log(err);
@@ -553,5 +557,34 @@ export class ViajeComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+      let f = {
+        id: elemento.id,
+        empresa_emision: elemento.empresaEmision ? elemento.empresaEmision.razonSocial : '--',
+        sucursal: elemento.sucursal ? elemento.sucursal.nombre : '--',
+        fecha: elemento.fecha,
+        vehiculo: elemento.vehiculo ? elemento.vehiculo.dominio : '--',
+        chofer: elemento.personal ? elemento.personal.nombreCompleto : '--'
+      }
+      datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Guias de Servicio',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }

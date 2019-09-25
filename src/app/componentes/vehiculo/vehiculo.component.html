@@ -442,12 +442,6 @@
           </div>
         </div>
       </form>
-      <div class="row">
-          <div class="col-md-10"></div>
-          <div class="col-md-1">
-                  <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
-          </div>
-      </div>
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -464,11 +458,11 @@
               <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
             </ng-container>
-            <ng-container matColumnDef="TIPO VEHICULO">
+            <ng-container matColumnDef="TIPO_VEHICULO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Vehículo</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.configuracionVehiculo.tipoVehiculo.nombre}}</td>
             </ng-container>
-            <ng-container matColumnDef="MARCA VEHICULO">
+            <ng-container matColumnDef="MARCA_VEHICULO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca Vehículo</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.configuracionVehiculo.marcaVehiculo.nombre}}</td>
             </ng-container>
@@ -476,7 +470,7 @@
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Configuración</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.configuracionVehiculo.descripcion}}</td>
             </ng-container>
-            <ng-container matColumnDef="COMPAÑIA SEGURO">
+            <ng-container matColumnDef="COMPAÑIA_SEGURO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Compañia de Seguro</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.companiaSeguroPoliza.companiaSeguro.nombre}}</td>
             </ng-container>
@@ -485,7 +479,7 @@
               <td mat-cell *matCellDef="let elemento">{{elemento.companiaSeguroPoliza.numeroPoliza}}
               </td>
             </ng-container>
-            <ng-container matColumnDef="PDF TITULO">
+            <ng-container matColumnDef="PDF_TITULO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Título</th>
               <td mat-cell *matCellDef="let elemento">
                 <span class="cursor-color" *ngIf="elemento.pdfTitulo"
@@ -493,7 +487,7 @@
                 <span *ngIf="!elemento.pdfTitulo">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="PDF CEDULA IDENT">
+            <ng-container matColumnDef="PDF_CEDULA_IDENT">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Cédula Identidad</th>
               <td mat-cell *matCellDef="let elemento">
                 <span class="cursor-color" *ngIf="elemento.pdfCedulaIdent"
@@ -501,7 +495,7 @@
                 <span *ngIf="!elemento.pdfCedulaIdent">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="PDF VTO RUTA">
+            <ng-container matColumnDef="PDF_VTO_RUTA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Vto. Ruta</th>
               <td mat-cell *matCellDef="let elemento">
                 <span class="cursor-color" *ngIf="elemento.pdfVtoRuta"
@@ -509,7 +503,7 @@
                 <span *ngIf="!elemento.pdfVtoRuta">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="PDF INSP TECNICA">
+            <ng-container matColumnDef="PDF_INSP_TECNICA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Insp. Técnica</th>
               <td mat-cell *matCellDef="let elemento">
                 <span class="cursor-color" *ngIf="elemento.pdfVtoInspTecnica"
@@ -517,7 +511,7 @@
                 <span *ngIf="!elemento.pdfVtoInspTecnica">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="PDF VTO SENASA">
+            <ng-container matColumnDef="PDF_VTO_SENASA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Vto. Senasa</th>
               <td mat-cell *matCellDef="let elemento">
                 <span class="cursor-color" *ngIf="elemento.pdfVtoSenasa"
@@ -525,7 +519,7 @@
                 <span *ngIf="!elemento.pdfVtoSenasa">-</span>
               </td>
             </ng-container>
-            <ng-container matColumnDef="PDF HAB BROMAT">
+            <ng-container matColumnDef="PDF_HAB_BROMAT">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF Hab. Bromatológica</th>
               <td mat-cell *matCellDef="let elemento">
                 <span class="cursor-color" *ngIf="elemento.pdfHabBromat"
@@ -534,13 +528,14 @@
               </td>
             </ng-container>
             <ng-container matColumnDef="EDITAR" stickyEnd>
-              <th mat-header-cell *matHeaderCellDef></th>
+              <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+                  (click)="abrirReporte()">Reporte</button></th>
               <td mat-cell *matCellDef="let elemento">
                 <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                   matTooltip="Consultar" matTooltipPosition="above">
                   <mat-icon>search</mat-icon>
                 </button>
-                <button mat-icon-button class="mat-icon-button-table margin-left-3" 
+                <button mat-icon-button class="mat-icon-button-table margin-left-3"
                   (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
                   <mat-icon>edit</mat-icon>
                 </button>

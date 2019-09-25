@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -9,6 +9,7 @@ import { AppService } from 'src/app/servicios/app.service';
 import { TalonarioReciboLoteService } from 'src/app/servicios/talonario-recibo-lote.service';
 import { TalonarioReciboLote } from 'src/app/modelos/talonarioReciboLote';
 import { LoaderState } from 'src/app/modelos/loader';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-talonario-recibo-lote',
@@ -51,13 +52,15 @@ export class TalonarioReciboLoteComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'empresa', 'pVenta', 'letra', 'desde', 'hasta', 'cai', 'caiVencimiento', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'EMPRESA', 'P_VENTA', 'LETRA', 'DESDE', 'HASTA', 'CAI', 'CAI_VENCIMIENTO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: TalonarioReciboLoteService, private subopcionPestaniaService: SubopcionPestaniaService, 
     private appService: AppService, private modelo: TalonarioReciboLote, private toastr: ToastrService, 
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -203,6 +206,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
         console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -379,4 +383,35 @@ export class TalonarioReciboLoteComponent implements OnInit {
       valor.setValue(null);
     }
   }
+  //Prepara los datos para exportar
+private prepararDatos(listaCompleta): Array<any> {
+  let lista = listaCompleta;
+  let datos = [];
+  lista.forEach(elemento => {
+      let f = {
+        id: elemento.id,
+        empresa: elemento.empresa.razonSocial,
+        p_venta: this.establecerCerosIzq(elemento.puntoVenta, '0000', -5),
+        letra: elemento.letra,
+        desde: this.establecerCerosIzq(elemento.desde, '0000000', -8),
+        hasta: this.establecerCerosIzq(elemento.hasta, '0000000', -8),
+        cai: elemento.cai,
+        cai_vencimiento: elemento.caiVencimiento,
+      }
+      datos.push(f);
+  });
+  return datos;
+}
+//Abre el dialogo de reporte
+public abrirReporte(): void {
+  let lista = this.prepararDatos(this.listaCompleta.data);
+  let datos = {
+    nombre: 'Talonarios Recibos Lotes',
+    empresa: this.appService.getEmpresa().razonSocial,
+    usuario: this.appService.getUsuario().nombre,
+    datos: lista,
+    columnas: this.columnas
+  }
+  this.reporteServicio.abrirDialogo(datos);
+}
 }

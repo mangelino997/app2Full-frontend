@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Chequera } from 'src/app/modelos/chequera';
 import { ChequeraService } from 'src/app/servicios/chequera.service';
 import { FormGroup, FormControl } from '@angular/forms';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { TipoChequeraService } from 'src/app/servicios/tipo-chequera.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
 import { LoaderState } from 'src/app/modelos/loader';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-chequera',
@@ -59,13 +60,15 @@ export class ChequeraComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'empresa', 'cuentaBancaria', 'tipoChequera', 'desde', 'hasta', 'ver'];
+  public columnas: string[] = ['ID', 'EMPRESA', 'CUENTA_BANCARIA', 'TIPO_CHEQUERA', 'DESDE', 'HASTA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private chequera: Chequera, private servicio: ChequeraService, private tipoChequeraService: TipoChequeraService, 
     private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService, 
-    private loaderService: LoaderService, private cuentaBancariaService: CuentaBancariaService) {
+    private loaderService: LoaderService, private cuentaBancariaService: CuentaBancariaService,  private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -244,6 +247,7 @@ export class ChequeraComponent implements OnInit {
         console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -417,5 +421,34 @@ export class ChequeraComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          empresa: elemento.cuentaBancaria.empresa.razonSocial,
+          cuenta_bancaria: elemento.cuentaBancaria.sucursalBanco.banco.nombre+'-'+ elemento.cuentaBancaria.sucursalBanco.nombre +'-'+ elemento.cuentaBancaria.numeroCuenta,
+          tipo_chequera: elemento.tipoChequera.nombre,
+          desde: elemento.desde,
+          hasta: elemento.hasta
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Chequeras',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }
