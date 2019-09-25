@@ -96,7 +96,7 @@ export class EmpresaComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.empresaModelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -113,8 +113,6 @@ export class EmpresaComponent implements OnInit {
         })
       }
     })
-    //Obtiene la lista completa de registros
-    //this.listar();
     //Obtiene la lista de condiciones de iva
     this.listarCondicionesIva();
   }
@@ -149,7 +147,6 @@ export class EmpresaComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.mostrarUsuarios = btnUsuarios;
-    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -165,14 +162,10 @@ export class EmpresaComponent implements OnInit {
     }
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -208,7 +201,6 @@ export class EmpresaComponent implements OnInit {
         this.actualizar();
         break;
       case 4:
-        this.eliminar();
         break;
       default:
         break;
@@ -281,9 +273,6 @@ export class EmpresaComponent implements OnInit {
       }
     );
   }
-  //Elimina un registro
-  private eliminar() {
-  }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
@@ -293,7 +282,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    var respuesta = err;
     if (respuesta.codigo == 11006) {
       document.getElementById("labelRazonSocial").classList.add('label-error');
       document.getElementById("idRazonSocial").classList.add('is-invalid');
@@ -312,15 +301,26 @@ export class EmpresaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+  }
+  //Valida el CUIT
+  public validarCUIT(){
+    let cuit = this.formulario.get('cuit').value;
+    if (cuit) {
+      let respuesta = this.appService.validarCUIT(cuit + '');
+      if (!respuesta) {
+        let err = { codigo: 11007, mensaje: 'CUIT Incorrecto!' };
+        this.lanzarError(err);
+      }
+    }
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
@@ -359,9 +359,9 @@ export class EmpresaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

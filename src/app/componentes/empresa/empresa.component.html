@@ -101,9 +101,9 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelCUIT" for="idCUIT" class="tamanio-label">CUIT *</label>
-              <input id="idCUIT" type="number" formControlName="cuit" autocomplete="off"
+              <input id="idCUIT" type="number" formControlName="cuit" autocomplete="off" maxlength="11"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                (ngModelChange)="cambioCampo('idCUIT', 'labelCUIT')">
+                (ngModelChange)="cambioCampo('idCUIT', 'labelCUIT')" (blur)="validarCUIT()">
             </div>
           </div>
           <div class="col-md-4">

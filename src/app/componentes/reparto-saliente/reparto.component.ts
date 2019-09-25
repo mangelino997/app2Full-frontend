@@ -125,9 +125,8 @@ export class RepartoComponent implements OnInit {
     //Autocompletado chofer- Buscar por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalServie.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
-          console.log(response);
-          this.resultadosChofer = response;
+        this.personalServie.listarChoferesPorDistanciaPorAlias(data, false).subscribe(response => {
+          this.resultadosChofer = response.json();
         })
       }
     })

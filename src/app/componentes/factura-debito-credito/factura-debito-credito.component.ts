@@ -1052,9 +1052,6 @@ export class AgregarItemDialogo {
       let importe = precioUnitario * cantidad;
       this.formulario.get('importeNetoGravado').setValue(this.appService.establecerDecimales(importe, 2));
     }
-    if (precioUnitario == null || precioUnitario == '' || cantidad == null || cantidad == '') {
-      this.toastr.error("Error al calcular el importe. Campo vacío en 'Precio Unitario' o en 'Cantidad'.");
-    }
     this.calcularImporteIVA();
     this.calcularImporteITC();
   }
