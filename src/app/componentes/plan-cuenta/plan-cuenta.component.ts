@@ -5,7 +5,7 @@ import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
-import { Subscription } from 'rxjs';
+import { Subscription, TimeoutError } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { TipoCuentaContableService } from 'src/app/servicios/tipo-cuenta-contable.service';
 import { GrupoCuentaContableService } from 'src/app/servicios/grupo-cuenta-contable.service';
@@ -77,15 +77,7 @@ export class PlanCuentaComponent implements OnInit {
   //Constructor
   constructor(private planCuentaServicio: PlanCuentaService, private appService: AppService,
     private loaderService: LoaderService, private tipoCuentaContableServicio: TipoCuentaContableService,
-    private grupoCuentaContableServicio: GrupoCuentaContableService) {
-    this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
-      this.isExpandable, this.getChildren);
-    this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
-    this.datos = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
-    this.planCuentaServicio.listaCompleta.subscribe(data => {
-      this.datos.data = data;
-    });
-  }
+    private grupoCuentaContableServicio: GrupoCuentaContableService) {}
   //Al inicializarse el componente
   ngOnInit(): void {
     //Establece la subscripcion a loader
@@ -93,6 +85,13 @@ export class PlanCuentaComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
+    this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
+        this.isExpandable, this.getChildren);
+    this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
+    this.datos = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
+    this.planCuentaServicio.listaCompleta.subscribe(data => {
+      this.datos.data = data;
+    });
     //Establece el formulario
     this.formulario = new FormGroup({
       id: new FormControl(),
@@ -318,6 +317,21 @@ export class PlanCuentaComponent implements OnInit {
       return true;
     } else {
       return !estadoFormulario;
+    }
+  }
+  //Define el estado del boton y selects de formulario (enable/disable)
+  public estadoBotonYSelects(): boolean {
+    this.estadoEsImputable() ? this.formulario.get('esImputable').disable() : this.formulario.get('esImputable').enable();
+    if(this.formulario.valid) {
+      this.formulario.get('grupoCuentaContable').enable();
+      this.formulario.get('tipoCuentaContable').enable();
+      this.formulario.get('estaActivo').enable();
+      return false;
+    } else {
+      this.formulario.get('grupoCuentaContable').disable();
+      this.formulario.get('tipoCuentaContable').disable();
+      this.formulario.get('estaActivo').disable();
+      return true;
     }
   }
   //Define el mostrado de datos y comparacion en campo select

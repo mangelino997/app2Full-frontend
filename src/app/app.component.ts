@@ -116,12 +116,11 @@ export class AppComponent implements OnInit {
   //Nuevo Ingreso
   public nuevoIngreso(): void {
     window.open(this.appService.getUrlOrigen() + '/login', '_blank');
-    // this.router.navigate(['login'], {replaceUrl: true});
   }
   //Logout
   public logout(): void {
     localStorage.removeItem('token');
-    this.router.navigate(['login'], {replaceUrl: true});
+    window.location.reload();
   }
   public navegar(submodulo, subopcion, idSubopcion) {
     this.setSubopcion(idSubopcion);

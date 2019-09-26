@@ -125,42 +125,7 @@ export class ViajeRemitoComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-<<<<<<< HEAD
     this.formulario = this.modelo.formulario;
-=======
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      sucursalIngreso: new FormControl(),
-      empresa: new FormControl(),
-      usuario: new FormControl(),
-      fecha: new FormControl('', Validators.required),
-      numeroCamion: new FormControl('', Validators.required),
-      sucursalDestino: new FormControl('', Validators.required),
-      tipoComprobante: new FormControl('', Validators.required),
-      puntoVenta: new FormControl('', [Validators.required, Validators.maxLength(5)]),
-      letra: new FormControl('', Validators.required),
-      numero: new FormControl('', [Validators.required, Validators.maxLength(8)]),
-      clienteRemitente: new FormControl('', Validators.required),
-      clienteDestinatario: new FormControl('', Validators.required),
-      clienteDestinatarioSuc: new FormControl(),
-      bultos: new FormControl('', [Validators.required, Validators.min(1), Validators.max(30000)]),
-      kilosEfectivo: new FormControl(),
-      kilosAforado: new FormControl(),
-      m3: new FormControl(),
-      valorDeclarado: new FormControl(),
-      importeRetiro: new FormControl(),
-      importeEntrega: new FormControl(),
-      estaPendiente: new FormControl(),
-      viajePropioTramo: new FormControl(),
-      viajeTerceroTramo: new FormControl(),
-      observaciones: new FormControl(),
-      estaFacturado: new FormControl(),
-      seguimiento: new FormControl(''),
-      estaEnReparto: new FormControl(),
-      alias: new FormControl()
-    });
->>>>>>> 70788deb5f6501ec8f2813083dde352111011eff
     //Define el formulario para el Listar
     this.formularioFiltro = this.modelo.formularioFiltro;
     //Establece los valores de la primera pestania activa
@@ -191,20 +156,16 @@ export class ViajeRemitoComponent implements OnInit {
         })
       }
     });
-<<<<<<< HEAD
   }
   //Maneja el cambio en el campo Destinatario - obtiene las sucursales del cliente
   public cambioClienteDestinatario() {
     this.sucursalClienteService.listarPorCliente(this.formulario.get('clienteDestinatario').value.id).subscribe(
       res => {
-        console.log(res.json());
         this.sucursalesDestinatario = res.json();
         if (this.sucursalesDestinatario.length > 0)
           this.formulario.get('clienteDestinatarioSuc').setValue(this.sucursalesDestinatario[0]);
       }
     )
-=======
->>>>>>> 70788deb5f6501ec8f2813083dde352111011eff
   }
   //Establece los enteros
   public establecerEnteros(formulario): void {

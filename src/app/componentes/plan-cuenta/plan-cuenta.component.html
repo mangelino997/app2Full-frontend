@@ -24,7 +24,7 @@
               <div class="form-group has-float-label" *ngIf="mostrarTipoCuentasContables">
                 <label for="idGrupoCuentaContable" class="tamanio-label">Grupo Cuenta Contable *</label>
                 <mat-select id="idGrupoCuentaContable" class="form-control form-control-sm" style="width: 200px;"
-                  formControlName="grupoCuentaContable" [disabled]="!formulario.valid" [compareWith]="compareFn">
+                  formControlName="grupoCuentaContable" [compareWith]="compareFn">
                   <mat-option *ngFor="let itemGrupoCuentaContable of gruposCuentasContables"
                     [value]="itemGrupoCuentaContable">
                     {{itemGrupoCuentaContable.nombre}}
@@ -34,7 +34,7 @@
               <div class="form-group has-float-label" *ngIf="mostrarTipoCuentasContables">
                 <label for="idTipoCuentaContable" class="tamanio-label">Tipo Cuenta Contable *</label>
                 <mat-select id="idTipoCuentaContable" class="form-control form-control-sm" style="width: 200px;"
-                  formControlName="tipoCuentaContable" [disabled]="!formulario.valid" [compareWith]="compareFn">
+                  formControlName="tipoCuentaContable" [compareWith]="compareFn">
                   <mat-option *ngFor="let itemTipoCuentaContable of tiposCuentasContables"
                     [value]="itemTipoCuentaContable">
                     {{itemTipoCuentaContable.nombre}}
@@ -44,7 +44,7 @@
               <div class="form-group has-float-label">
                 <label for="idImputable" class="tamanio-label">Es Imputable *</label>
                 <mat-select id="idImputable" class="form-control form-control-sm" style="width: 120px;"
-                  formControlName="esImputable" (selectionChange)="cambioImputable()" [disabled]="estadoEsImputable()">
+                  formControlName="esImputable" (selectionChange)="cambioImputable()">
                   <mat-option [value]="false">No</mat-option>
                   <mat-option [value]="true">Si</mat-option>
                 </mat-select>
@@ -52,13 +52,13 @@
               <div class="form-group has-float-label">
                 <label for="idActivo" class="tamanio-label">Esta Activa *</label>
                 <mat-select id="idActivo" class="form-control form-control-sm" style="width: 108px;"
-                  formControlName="estaActivo" [disabled]="!formulario.valid">
+                  formControlName="estaActivo">
                   <mat-option [value]="false">No</mat-option>
                   <mat-option [value]="true">Si</mat-option>
                 </mat-select>
               </div>
               <button mat-raised-button color="primary" (click)="agregar(node)"
-                [disabled]="!formulario.valid">Agregar</button>
+                [disabled]="estadoBotonYSelects()">Agregar</button>
               <button mat-raised-button style="background-color: red; color: white"
                 (click)="eliminarNodo(node)">Quitar</button>
             </div>
