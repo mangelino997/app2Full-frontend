@@ -128,7 +128,7 @@ export class RubroProductoComponent implements OnInit {
         for(let i = 0 ; i < empresas.length ; i++) {
           formulario = {
             empresa: empresas[i],
-            planCuenta: null
+            planCuentaCompra: null
           }
           planesCuentas.push(formulario);
         }
@@ -157,13 +157,13 @@ export class RubroProductoComponent implements OnInit {
           version: resultado.version,
           nombre: resultado.nombre
         }
-        elemento.planCuenta = planCuenta;
+        elemento.planCuentaCompra = planCuenta;
       }
     });
   }
   //Elimina la cuenta contable de la empresa
   public eliminarPlanCuenta(elemento) {
-    elemento.planCuenta = null;
+    elemento.planCuentaCompra = null;
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -305,7 +305,6 @@ export class RubroProductoComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    console.log(this.formulario.value.id);
     this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
         var respuesta = res.json();

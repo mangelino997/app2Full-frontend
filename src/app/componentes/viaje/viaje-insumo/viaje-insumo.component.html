@@ -84,31 +84,7 @@
     <div class="tabla">
       <div class="tabla-ancho">
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-          <ng-container matColumnDef="anular">
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento; let i = index"
-              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && !elemento.estaAnulado"
-                (click)="anularInsumo(elemento)" matTooltip="Anular" matTooltipPosition="above">
-                <mat-icon>close</mat-icon>
-              </button>
-              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && elemento.estaAnulado"
-                (click)="normalizarInsumo(elemento)" matTooltip="Normalizar" matTooltipPosition="above">
-                <mat-icon>open_in_browser</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="mod">
-            <th mat-header-cell *matHeaderCellDef>-</th>
-            <td mat-cell *matCellDef="let elemento; let i = index"
-              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && !elemento.estaAnulado"
-                (click)="modInsumo(i)" matTooltip="Editar" matTooltipPosition="above">
-                <mat-icon>edit</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-          <ng-container matColumnDef="orden">
+          <ng-container matColumnDef="orden" sticky>
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
             <td mat-cell *matCellDef="let elemento; let i=index"
               [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}</td>
@@ -172,6 +148,25 @@
             <td mat-cell *matCellDef="let elemento"
               [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
               <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="EDITAR" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let elemento; let i = index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && !elemento.estaAnulado"
+                (click)="modInsumo(i)" matTooltip="Editar" matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                *ngIf="!soloLectura && !elemento.estaAnulado" (click)="anularInsumo(elemento)" matTooltip="Anular"
+                matTooltipPosition="above">
+                <mat-icon>close</mat-icon>
+              </button>
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && elemento.estaAnulado"
+                (click)="normalizarInsumo(elemento)" matTooltip="Normalizar" matTooltipPosition="above">
+                <mat-icon>open_in_browser</mat-icon>
+              </button>
             </td>
           </ng-container>
           <tr mat-header-row *matHeaderRowDef="columnas"></tr>

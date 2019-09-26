@@ -49,7 +49,6 @@ import { ClienteService } from 'src/app/servicios/cliente.service';
 import { ObservacionesDialogo } from 'src/app/componentes/viaje/observaciones-dialogo.component';
 import { AnularDialogo } from 'src/app/componentes/viaje/anular-dialogo.component';
 import { NormalizarDialogo } from 'src/app/componentes/viaje/normalizar-dialogo.component';
-import { ConfirmarDialogoComponent } from 'src/app/componentes/confirmar-dialogo/confirmar-dialogo.component';
 
 const routes: Routes = [
   {path: '', component: ViajeComponent}
@@ -69,7 +68,6 @@ const routes: Routes = [
     ObservacionesDialogo,
     AnularDialogo,
     NormalizarDialogo,
-    ConfirmarDialogoComponent,
     DadorDestTablaDialogo
   ],
   imports: [
@@ -135,7 +133,6 @@ const routes: Routes = [
     ObservacionesDialogo,
     AnularDialogo,
     NormalizarDialogo,
-    ConfirmarDialogoComponent,
     DadorDestTablaDialogo
   ],
   exports: [RouterModule]

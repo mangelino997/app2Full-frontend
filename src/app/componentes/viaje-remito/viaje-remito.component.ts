@@ -141,7 +141,7 @@ export class ViajeRemitoComponent implements OnInit {
       clienteRemitente: new FormControl('', Validators.required),
       clienteDestinatario: new FormControl('', Validators.required),
       clienteDestinatarioSuc: new FormControl(),
-      bultos: new FormControl('', Validators.required),
+      bultos: new FormControl('', [Validators.required, Validators.min(1), Validators.max(30000)]),
       kilosEfectivo: new FormControl(),
       kilosAforado: new FormControl(),
       m3: new FormControl(),
@@ -197,7 +197,6 @@ export class ViajeRemitoComponent implements OnInit {
         })
       }
     });
-    
   }
   //Establece los enteros
   public establecerEnteros(formulario): void {
@@ -317,6 +316,7 @@ export class ViajeRemitoComponent implements OnInit {
         this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPorDefecto(null, null);
+        this.establecerTipoComprobantePorDefecto();
         this.establecerValoresPestania(nombre, false, false, true, 'idFecha');
         break;
       case 2:

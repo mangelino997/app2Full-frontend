@@ -43,7 +43,7 @@ export class ViajeGastoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['eliminar', 'mod', 'fecha', 'rubro', 'cantidad', 'precioUnitario', 'importe', 'obs', 'anulado', 'obsAnulado'];
+  public columnas: string[] = ['fecha', 'rubro', 'cantidad', 'precioUnitario', 'importe', 'obs', 'anulado', 'obsAnulado', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor

@@ -127,7 +127,7 @@
                 <button class="margin-left-3" mat-raised-button (click)="abrirObservacionesDialogo()" 
                     [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">Observaciones</button>
                 <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarTramo()"
-                    [disabled]="!formularioViajeTramo.valid"
+                    [disabled]="!formularioViaje.valid || !formularioViajeTramo.valid"
                     *ngIf="btnTramo && !soloLectura && !show">Agregar Tramo
                 </button>
                 <button class="margin-left-3" mat-raised-button color="primary" (click)="modificarTramo()"

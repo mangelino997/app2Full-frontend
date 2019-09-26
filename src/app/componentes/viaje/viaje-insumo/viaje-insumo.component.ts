@@ -48,8 +48,8 @@ export class ViajeInsumoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['anular', 'mod', 'orden', 'sucursal', 'fecha', 'proveedor', 'insumo', 'cantidad', 'precioUnitario', 'importe', 'observaciones',
-    'anulado', 'obsAnulado'];
+  public columnas: string[] = ['orden', 'sucursal', 'fecha', 'proveedor', 'insumo', 'cantidad', 'precioUnitario', 'importe', 'observaciones',
+    'anulado', 'obsAnulado', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor

@@ -46,7 +46,7 @@ export class ViajeEfectivoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['anular', 'mod', 'adelanto', 'sucursal', 'fecha', 'empresa', 'importe', 'observaciones', 'anulado', 'obsAnulado'];
+  public columnas: string[] = ['adelanto', 'sucursal', 'fecha', 'empresa', 'importe', 'observaciones', 'anulado', 'obsAnulado', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor

@@ -55,7 +55,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idEsPropio" class="tamanio-label-titulo">Tipo de Viaje *</label>
                                     <mat-select id="idEsPropio" class="form-control form-control-sm"
-                                        [formControl]="formularioViaje.get('esViajePropio')">
+                                        [formControl]="formularioViaje.get('esViajePropio')" (selectionChange)="cambioTipoViaje()">
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>
@@ -66,7 +66,7 @@
                                     <label for="idEsRemolquePropio" class="tamanio-label-titulo">Tipo de Remolque
                                         *</label>
                                     <mat-select id="idEsRemolquePropio" class="form-control form-control-sm"
-                                        [formControl]="formularioViaje.get('esRemolquePropio')">
+                                        [formControl]="formularioViaje.get('esRemolquePropio')" (selectionChange)="cambioTipoRemolque()">
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>
@@ -95,8 +95,7 @@
                             <div class="col-md-3">
                                 <div class="form-group has-float-label">
                                     <label for="idVehiculo" class="tamanio-label-titulo">Vehículo *</label>
-                                    <input id="idVehiculo" class="form-control form-control-sm" type="text" matInput
-                                        required
+                                    <input id="idVehiculo" class="form-control form-control-sm" type="text" 
                                         [formControl]="tipoViaje.value ? formularioViaje.get('vehiculo') : formularioViaje.get('vehiculoProveedor')"
                                         [matAutocomplete]="autoVehiculo" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
@@ -121,7 +120,6 @@
                                     <label for="idVehiculoRemolque" class="tamanio-label-titulo">Vehículo Remolque
                                         *</label>
                                     <input id="idVehiculoRemolque" class="form-control form-control-sm" type="text"
-                                        required matInput
                                         [formControl]="formularioViaje.get('esRemolquePropio').value ? formularioViaje.get('vehiculoRemolque') : formularioViaje.get('vehiculoRemolqueProveedor')"
                                         [matAutocomplete]="autoVehiculoRemolque" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
@@ -144,8 +142,7 @@
                             <div class="col-md-3">
                                 <div class="form-group has-float-label">
                                     <label for="idPersonal" class="tamanio-label-titulo">Chofer *</label>
-                                    <input id="idPersonal" class="form-control form-control-sm" type="text" matInput
-                                        required
+                                    <input id="idPersonal" class="form-control form-control-sm" type="text" 
                                         [formControl]="tipoViaje.value ? formularioViaje.get('personal') : formularioViaje.get('choferProveedor')"
                                         [matAutocomplete]="autoChofer" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
@@ -231,6 +228,7 @@
     </div>
     <div class="row justify-content-center" *ngIf="indiceSeleccionado == 5">
         <div class="col-md-12">
+            <mat-progress-bar mode="indeterminate" *ngIf="show"></mat-progress-bar>
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="ID">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
