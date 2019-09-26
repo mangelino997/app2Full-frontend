@@ -50,6 +50,10 @@ export class CompraComprobanteVencimientoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista diferencia real entre el total comprobante y el total de la suma de importes de las cuotas.
+  public obtenerDiferenciaImportes(listaVenciimientos) {
+    return this.http.put(this.url + '/obtenerDiferenciaImportes', listaVenciimientos, this.options);
+  }
   //Genera la tabla de vencimientos
   public generarTablaVencimientos(cantidadCuotas, totalImporte, idCondicionCompra) {
     return this.http.get(this.url + '/generarTablaVencimientos/' + cantidadCuotas + '/' + totalImporte + '/' + idCondicionCompra , this.options);

@@ -34,10 +34,11 @@
                                     class="form-control form-control-sm">
                             </div>
                         </div>
-                        <div class="col-md-1">
+                        <div class="col">
                             <button id="idBotonConfirmar" mat-raised-button color="primary" (click)="confirmar()"
                                 [disabled]="!condicionCompra || !cantidadCuotas">Confirmar</button>
                         </div>
+                        <div class="col"></div>
                     </div>
                     <div class="" style="padding-top: 10px;"></div>
                     <div class="row">
@@ -66,9 +67,11 @@
                                     class="form-control form-control-sm number-right">
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col">
                             <button id="idBotonActualizar" mat-raised-button color="primary" (click)="actualizar()"
                                 [disabled]="!formulario.valid">Actualizar</button>
+                        </div>
+                        <div class="col">
                             <button id="idBotonCancelar" mat-raised-button color="primary"
                                 (click)="cancelar()">Cancelar</button>
                         </div>
@@ -94,7 +97,8 @@
                                     <ng-container matColumnDef="mod">
                                         <th mat-header-cell *matHeaderCellDef>-</th>
                                         <td mat-cell *matCellDef="let elemento; let i=index">
-                                            <span class="cursor-color" (click)="activarActualizar(elemento, i)">Mod</span>
+                                            <span class="cursor-color"
+                                                (click)="activarActualizar(elemento, i)">Mod</span>
                                         </td>
                                     </ng-container>
                                     <ng-container matColumnDef="eliminar">
@@ -127,9 +131,12 @@
             </div>
         </div>
         <br>
-        <div class="row">
-            <div class="col text-center">
-                <button id="idBoton" mat-raised-button color="primary" (click)="closeDialog('aceptar')">Aceptar</button>
+        <div class="row justify-content-center">
+            <div class="col-md-1">
+                <button id="idBoton" mat-raised-button color="primary" (click)="closeDialog('aceptar')" [disabled]="!btnAceptar">
+                    Aceptar</button>
+            </div>
+            <div class="col-md-1">
                 <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show"
                     (click)="closeDialog('cancelar')">Cancelar</button>
             </div>

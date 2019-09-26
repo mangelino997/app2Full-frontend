@@ -133,7 +133,8 @@
                 [formControl]="formulario.get('clienteDestinatario')" [matAutocomplete]="autoClienteDestinatario"
                 autocomplete="off" [readonly]="soloLectura"
                 (blur)="verificarSeleccion(formulario.get('clienteDestinatario'))">
-              <mat-autocomplete #autoClienteDestinatario="matAutocomplete" [displayWith]="displayFn.bind(this)">
+              <mat-autocomplete #autoClienteDestinatario="matAutocomplete" [displayWith]="displayFn.bind(this)"
+                (optionSelected)="cambioClienteDestinatario()">
                 <mat-option *ngFor="let itemClienteDestinatario of resultadosClienteDestinatario"
                   [value]="itemClienteDestinatario">{{itemClienteDestinatario.alias}}</mat-option>
               </mat-autocomplete>
@@ -141,6 +142,18 @@
           </div>
           <div class="col-md-1 button-input">
             <button mat-raised-button (click)="agregarCliente(2)" [disabled]="!mostrarBoton">+</button>
+          </div>
+        </div>
+        <div class="row justify-content-end">
+          <div class="col-md-6">
+            <div class="form-group has-float-label" *ngIf="sucursalesDestinatario.length > 0">
+              <label for="idSucursalDestinatario" class="tamanio-label">Sucursal Destinatario </label>
+              <mat-select id="idSucursalDestinatario" class="form-control form-control-sm" formControlName="clienteDestinatarioSuc">
+                <div *ngFor="let item of sucursalesDestinatario">
+                  <mat-option [value]="item">{{item.nombre}} - {{item.domicilio}} - {{item.localidad.nombre}}</mat-option>
+                </div>
+              </mat-select>
+            </div>
           </div>
         </div>
         <br style="padding-top: 70px;">
@@ -250,7 +263,7 @@
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-12">
       <br>
-      <form [formGroup]="formularioListar" class="contenedor">
+      <form [formGroup]="formularioFiltro" class="contenedor">
         <div class="row">
           <div class="col">
             <div class="form-group has-float-label">
@@ -323,7 +336,7 @@
           </div>
           <div class="col">
             <button mat-raised-button color="primary" (click)="listar()"
-              [disabled]="!formularioListar.valid">Buscar</button>
+              [disabled]="!formularioFiltro.valid">Buscar</button>
           </div>
         </div>
       </form>
@@ -374,7 +387,8 @@
             </ng-container>
             <ng-container matColumnDef="KG_EFECTIVO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg efectivo</th>
-              <td mat-cell *matCellDef="let elemento">{{elemento.kilosEfectivo ? elemento.kilosEfectivo + ' Kg' : ''}}</td>
+              <td mat-cell *matCellDef="let elemento">{{elemento.kilosEfectivo ? elemento.kilosEfectivo + ' Kg' : ''}}
+              </td>
             </ng-container>
             <ng-container matColumnDef="VALOR_DECLARADO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor Declarado</th>

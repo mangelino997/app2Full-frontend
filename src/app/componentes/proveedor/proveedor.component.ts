@@ -242,8 +242,6 @@ export class ProveedorComponent implements OnInit {
     this.tipoProveedorServicio.listar().subscribe(
       res => {
         this.tiposProveedores = res.json();
-      },
-      err => {
       }
     );
   }
@@ -252,8 +250,6 @@ export class ProveedorComponent implements OnInit {
     this.afipCondicionIvaServicio.listar().subscribe(
       res => {
         this.condicionesIva = res.json();
-      },
-      err => {
       }
     );
   }
@@ -262,8 +258,6 @@ export class ProveedorComponent implements OnInit {
     this.tipoDocumentoServicio.listar().subscribe(
       res => {
         this.tiposDocumentos = res.json();
-      },
-      err => {
       }
     );
   }
@@ -273,8 +267,6 @@ export class ProveedorComponent implements OnInit {
       res => {
         this.condicionesCompras = res.json();
         this.formulario.get('condicionCompra').setValue(this.condicionesCompras[0]);
-      },
-      err => {
       }
     );
   }
@@ -283,8 +275,6 @@ export class ProveedorComponent implements OnInit {
     this.tipoCuentaBancariaServicio.listar().subscribe(
       res => {
         this.tiposCuentasBancarias = res.json();
-      },
-      err => {
       }
     );
   }
@@ -324,8 +314,6 @@ export class ProveedorComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarListas();
-    this.establecerValoresPorDefecto();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);

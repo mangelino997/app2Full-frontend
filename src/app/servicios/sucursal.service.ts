@@ -50,6 +50,10 @@ export class SucursalService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de sucursales por cliente
+  public listarPorCliente(idCliente) {
+    return this.http.get(this.url + '/listarPorCliente/' + idCliente, this.options);
+  }
   //Obtiene un listado por nombre
   public listarPorNombre(nombre) {
     return this.http.get(this.url + '/listarPorNombre/' + nombre, this.options).map(res => {

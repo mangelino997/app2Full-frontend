@@ -15,7 +15,8 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ReporteService } from 'src/app/servicios/reporte.service';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { ViajeRemitoGS } from 'src/app/modelos/viajeRemitoGS';
+import { SucursalClienteService } from 'src/app/servicios/sucursal-cliente.service';
 
 @Component({
   selector: 'app-viaje-remito',
@@ -40,7 +41,7 @@ export class ViajeRemitoComponent implements OnInit {
   //Define el formulario 
   public formulario: FormGroup;
   //Define el formulario para el listar
-  public formularioListar: FormGroup;
+  public formularioFiltro: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el form control para las busquedas
@@ -61,6 +62,8 @@ export class ViajeRemitoComponent implements OnInit {
   public tiposComprobantes: Array<any> = [];
   //Define la lista de letras
   public letras: Array<any> = [];
+  //Define la lista de sucursales que tiene el Destinatario
+  public sucursalesDestinatario: Array<any> = [];
   //Define el estado de la letra
   public estadoLetra: boolean = false;
   //Define la fecha actual
@@ -77,19 +80,16 @@ export class ViajeRemitoComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private loaderService: LoaderService, private toastr: ToastrService,
-    private sucursalServicio: SucursalService, private clienteServicio: ClienteService,
+    private loaderService: LoaderService, private toastr: ToastrService, private modelo: ViajeRemitoGS,
+    private sucursalServicio: SucursalService, private clienteServicio: ClienteService, private sucursalClienteService: SucursalClienteService,
     private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog,
-    private fechaServicio: FechaService, private appService: AppService,  private reporteServicio: ReporteService) {
+    private fechaServicio: FechaService, private appService: AppService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
-        },
-        err => {
-          console.log(err);
         }
       );
     //Autocompletado - Buscar por alias
@@ -125,55 +125,14 @@ export class ViajeRemitoComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      sucursalIngreso: new FormControl(),
-      empresa: new FormControl(),
-      usuario: new FormControl(),
-      fecha: new FormControl('', Validators.required),
-      numeroCamion: new FormControl('', Validators.required),
-      sucursalDestino: new FormControl('', Validators.required),
-      tipoComprobante: new FormControl('', Validators.required),
-      puntoVenta: new FormControl('', [Validators.required, Validators.maxLength(5)]),
-      letra: new FormControl('', Validators.required),
-      numero: new FormControl('', [Validators.required, Validators.maxLength(8)]),
-      clienteRemitente: new FormControl('', Validators.required),
-      clienteDestinatario: new FormControl('', Validators.required),
-      clienteDestinatarioSuc: new FormControl(),
-      bultos: new FormControl('', Validators.required),
-      kilosEfectivo: new FormControl(),
-      kilosAforado: new FormControl(),
-      m3: new FormControl(),
-      valorDeclarado: new FormControl(),
-      importeRetiro: new FormControl(),
-      importeEntrega: new FormControl(),
-      estaPendiente: new FormControl(),
-      viajePropioTramo: new FormControl(),
-      viajeTerceroTramo: new FormControl(),
-      observaciones: new FormControl(),
-      estaFacturado: new FormControl(),
-      seguimiento: new FormControl(''),
-      estaEnReparto: new FormControl(),
-      alias: new FormControl()
-    });
+    this.formulario = this.modelo.formulario;
     //Define el formulario para el Listar
-    this.formularioListar = new FormGroup({
-      fechaDesde: new FormControl(),
-      fechaHasta: new FormControl(),
-      idSucursalIngreso: new FormControl(),
-      idSucursalDestino: new FormControl(),
-      idClienteRemitente: new FormControl(),
-      idClienteDestinatario: new FormControl(),
-      numeroCamion: new FormControl()
-    });
+    this.formularioFiltro = this.modelo.formularioFiltro;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.fechaActual = res.json();
-      //Establece valores por defecto
-      this.establecerValoresPorDefecto(null, null);
     });
     //Obtiene la lista de condiciones de iva
     this.listarSucursales();
@@ -197,19 +156,29 @@ export class ViajeRemitoComponent implements OnInit {
         })
       }
     });
-    
+  }
+  //Maneja el cambio en el campo Destinatario - obtiene las sucursales del cliente
+  public cambioClienteDestinatario() {
+    this.sucursalClienteService.listarPorCliente(this.formulario.get('clienteDestinatario').value.id).subscribe(
+      res => {
+        console.log(res.json());
+        this.sucursalesDestinatario = res.json();
+        if (this.sucursalesDestinatario.length > 0)
+          this.formulario.get('clienteDestinatarioSuc').setValue(this.sucursalesDestinatario[0]);
+      }
+    )
   }
   //Establece los enteros
   public establecerEnteros(formulario): void {
     let valor = formulario.value;
-    if(valor) {
+    if (valor) {
       formulario.setValue(this.appService.establecerEnteros(valor));
     }
   }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;
-    if(valor) {
+    if (valor) {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
@@ -229,14 +198,25 @@ export class ViajeRemitoComponent implements OnInit {
   public establecerFormulario() {
     let elemento = this.autocompletado.value;
     this.formulario.patchValue(elemento);
-    this.formulario.get('puntoVenta').setValue(this.displayCeros(elemento.puntoVenta, '0000', -5));
-    this.formulario.get('numero').setValue(this.displayCeros(elemento.numero, '0000000', -8));
-    this.formulario.get('kilosEfectivo').setValue(this.appService.establecerDecimales(elemento.kilosEfectivo, 2));
-    this.formulario.get('kilosAforado').setValue(this.appService.establecerDecimales(elemento.kilosAforado, 2));
-    this.formulario.get('m3').setValue(this.appService.establecerDecimales(elemento.m3, 2));
-    this.formulario.get('valorDeclarado').setValue(this.appService.establecerDecimales(elemento.valorDeclarado, 2));
-    this.formulario.get('importeRetiro').setValue(this.appService.establecerDecimales(elemento.importeRetiro, 2));
-    this.formulario.get('importeEntrega').setValue(this.appService.establecerDecimales(elemento.importeEntrega, 2));
+    this.cambioClienteDestinatario();
+    elemento.puntoVenta ? this.formulario.get('puntoVenta').setValue(this.displayCeros(elemento.puntoVenta, '0000', -5)) :
+      this.formulario.get('puntoVenta').reset();
+    elemento.numero ? this.formulario.get('numero').setValue(this.displayCeros(elemento.numero, '0000000', -8)) :
+      this.formulario.get('numero').reset();
+    elemento.m3 ? this.formulario.get('m3').setValue(this.appService.establecerDecimales(elemento.m3, 2)) :
+      this.formulario.get('m3').reset();
+    elemento.valorDeclarado ? this.formulario.get('valorDeclarado').setValue(this.appService.establecerDecimales(elemento.valorDeclarado, 2)) :
+      this.formulario.get('valorDeclarado').reset();
+    elemento.kilosEfectivo ? this.formulario.get('kilosEfectivo').setValue(this.appService.establecerDecimales(elemento.kilosEfectivo, 2)) :
+      this.formulario.get('kilosEfectivo').reset();
+    elemento.kilosAforado ? this.formulario.get('kilosAforado').setValue(this.appService.establecerDecimales(elemento.kilosAforado, 2)) :
+      this.formulario.get('kilosAforado').reset();
+    elemento.importeRetiro ? this.formulario.get('importeRetiro').setValue(this.appService.establecerDecimales(elemento.importeRetiro, 2)) :
+      this.formulario.get('importeRetiro').reset();
+    elemento.importeEntrega ? this.formulario.get('importeEntrega').setValue(this.appService.establecerDecimales(elemento.importeEntrega, 2)) :
+      this.formulario.get('importeEntrega').reset();
+    elemento.idClienteDestinatarioSuc ? this.formulario.get('clienteDestinatarioSuc').setValue(elemento.idClienteDestinatarioSuc) :
+      this.formulario.get('clienteDestinatarioSuc').setValue(null);
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(numeroCamion, sucursalDestino) {
@@ -258,7 +238,6 @@ export class ViajeRemitoComponent implements OnInit {
         this.sucursales = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -286,7 +265,6 @@ export class ViajeRemitoComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -304,14 +282,10 @@ export class ViajeRemitoComponent implements OnInit {
     }
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -360,7 +334,6 @@ export class ViajeRemitoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
         let error = err.json();
         this.toastr.error(error.mensaje);
       }
@@ -369,17 +342,17 @@ export class ViajeRemitoComponent implements OnInit {
   //Obtiene el listado de registros
   public listar() {
     this.loaderService.show();
-    let sucursalIngreso = this.formularioListar.value.idSucursalIngreso;
-    let sucursalDestino = this.formularioListar.value.idSucursalDestino; 
-    if(sucursalIngreso == 0)
-      this.formularioListar.get('idSucursalIngreso').setValue(null);
-    if(sucursalDestino == 0)
-      this.formularioListar.get('idSucursalDestino').setValue(null);
-    if(this.autocompletadoRemitente.value)
-      this.formularioListar.get('idClienteRemitente').setValue(this.autocompletadoRemitente.value.id);
-    if(this.autocompletadoDestinatario.value)
-      this.formularioListar.get('idClienteDestinatario').setValue(this.autocompletadoDestinatario.value.id);
-    this.servicio.listarPorFiltros(this.formularioListar.value).subscribe(
+    let sucursalIngreso = this.formularioFiltro.value.idSucursalIngreso;
+    let sucursalDestino = this.formularioFiltro.value.idSucursalDestino;
+    if (sucursalIngreso == 0)
+      this.formularioFiltro.get('idSucursalIngreso').setValue(null);
+    if (sucursalDestino == 0)
+      this.formularioFiltro.get('idSucursalDestino').setValue(null);
+    if (this.autocompletadoRemitente.value)
+      this.formularioFiltro.get('idClienteRemitente').setValue(this.autocompletadoRemitente.value.id);
+    if (this.autocompletadoDestinatario.value)
+      this.formularioFiltro.get('idClienteDestinatario').setValue(this.autocompletadoDestinatario.value.id);
+    this.servicio.listarPorFiltros(this.formularioFiltro.value).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -411,9 +384,7 @@ export class ViajeRemitoComponent implements OnInit {
           this.establecerValoresPorDefecto(numeroCamion, sucursalDestino);
           this.formulario.get('tipoComprobante').setValue(tipoComprobante);
           this.cambioTipoComprobante();
-          setTimeout(function () {
-            document.getElementById('idPuntoVenta').focus();
-          }, 20);
+          document.getElementById('idPuntoVenta').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -434,9 +405,7 @@ export class ViajeRemitoComponent implements OnInit {
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           this.establecerTipoComprobantePorDefecto();
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -449,22 +418,23 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
-    this.formularioListar.reset();
-    this.formulario.get('fecha').setValue(undefined);
+    this.autocompletado.reset();
+    this.formularioFiltro.reset();
+    this.formulario.get('fecha').reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.vaciarListas();
+    //Establece valores por defecto
+    this.establecerValoresPorDefecto(null, null);
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -493,14 +463,14 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario();
     this.establecerEstadoCampos(false);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.establecerEstadoCampos(true);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario();
@@ -516,7 +486,7 @@ export class ViajeRemitoComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      if(resultado){
+      if (resultado) {
         this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
           var cliente = res.json();
           if (tipo == 1) {
@@ -579,9 +549,9 @@ export class ViajeRemitoComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
@@ -596,11 +566,11 @@ export class ViajeRemitoComponent implements OnInit {
         fecha: elemento.fecha,
         punto_venta: this.displayCeros(elemento.puntoVenta, '0000', -5),
         numero: this.displayCeros(elemento.numero, '0000000', -8),
-        remitente: elemento.clienteRemitente? elemento.clienteRemitente.razonSocial: '',
-        destinatario: elemento.clienteDestinatario? elemento.clienteDestinatario.razonSocial: '',
-        bultos: elemento.bultos ? elemento.bultos: '',
+        remitente: elemento.clienteRemitente ? elemento.clienteRemitente.razonSocial : '',
+        destinatario: elemento.clienteDestinatario ? elemento.clienteDestinatario.razonSocial : '',
+        bultos: elemento.bultos ? elemento.bultos : '',
         kg_efectivo: elemento.kilosEfectivo ? elemento.kilosEfectivo + ' Kg' : '',
-        valor_declarado: elemento.valorDeclarado ? elemento.valorDeclarado: '',
+        valor_declarado: elemento.valorDeclarado ? elemento.valorDeclarado : '',
         observaciones: elemento.observaciones ? elemento.observaciones : ''
       }
       datos.push(f);

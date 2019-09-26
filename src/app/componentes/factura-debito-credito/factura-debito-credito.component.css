@@ -28,3 +28,6 @@ legend.scheduler-border {
 .tabla-vencimientos-ancho {
     width: 1280px !important;
 }
+button {
+    width: 100%;
+}

@@ -184,10 +184,12 @@
             </div>
         </div>
         <br>
-        <div class="row">
-            <div class="col text-center">
+        <div class="row justify-content-center">
+            <div class="col-md-1">
                 <button id="idBoton" mat-raised-button color="primary" *ngIf="!show"
                     (click)="closeDialog('aceptar')">Aceptar</button>
+            </div>
+            <div class="col-md-1">
                 <button id="idBoton" mat-raised-button color="secondary" *ngIf="!show"
                     (click)="closeDialog('cancelar')">Cancelar</button>
             </div>

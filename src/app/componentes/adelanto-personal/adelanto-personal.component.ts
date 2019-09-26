@@ -754,7 +754,7 @@ export class PrestamoDialogo {
     this.personalAdelanto.setValue(this.data.personalAdelanto);
     this.totalCuotas.setValue(this.personalAdelanto.value.personal.cuotasPrestamo);
   }
-  //Realiza la accion confirmar
+  //Realiza la accion confirmar - Obtiene un listado de cuotas
   public confirmar() {
     this.loaderService.show();
     let totalPrestamo = Number(this.appService.establecerDecimales(this.totalPrestamo.value, 2));
@@ -790,7 +790,7 @@ export class PrestamoDialogo {
     this.listaCompleta.data[this.idMod].importe = this.formulario.value.importe;
     this.listaCompleta.data[this.idMod].fechaVto = this.formulario.value.fechaVto;
     this.listaCompleta.sort = this.sort;
-    this.calcularImporteTotal();
+    this.calcularDiferenciaImporte();
     this.formulario.reset();
     this.numeroCuota.setValue(null);
     this.idMod = null;
@@ -820,8 +820,8 @@ export class PrestamoDialogo {
       }
     )
   }
-  //Calcula el importe total 
-  private calcularImporteTotal() {
+  //Calcula la diferencia entre el prestamo y la suma de los importes de las cuotas
+  private calcularDiferenciaImporte() {
     let diferencia = 0;
     this.servicio.obtenerDiferenciaImportes(this.listaCompleta.data).subscribe(
       res => {
