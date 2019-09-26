@@ -103,7 +103,7 @@ export class ViajeComponent implements OnInit {
   //Define el render de los componentes
   public render: boolean = false;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'empresaEmision', 'sucursal', 'fecha', 'vehiculo', 'chofer', 'ver', 'mod'];
+  public columnas: string[] = ['id', 'empresaEmision', 'sucursal', 'fecha', 'vehiculo', 'chofer', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor
@@ -145,6 +145,9 @@ export class ViajeComponent implements OnInit {
     this.listarSucursales();
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
+    //Establece validaciones de formulario
+    // this.cambioTipoViaje();
+    // this.cambioTipoRemolque();
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViaje.get('vehiculo').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -197,9 +200,55 @@ export class ViajeComponent implements OnInit {
       }
     })
   }
+  //Establece validaciones de formulario al cambiar tipo de viaje
+  public cambioTipoViaje(): void {
+    this.formularioViaje.get('vehiculo').reset();
+    this.formularioViaje.get('personal').reset();
+    this.formularioViaje.get('vehiculoProveedor').reset();
+    this.formularioViaje.get('choferProveedor').reset();
+    this.resultadosVehiculos = [];
+    this.resultadosChoferes = [];
+    let tipoViaje = this.formularioViaje.get('esViajePropio').value;
+    if(tipoViaje) {
+      this.formularioViaje.get('vehiculo').setValidators(Validators.required);
+      this.formularioViaje.get('vehiculo').updateValueAndValidity();
+      this.formularioViaje.get('personal').setValidators(Validators.required);
+      this.formularioViaje.get('personal').updateValueAndValidity();
+      this.formularioViaje.get('vehiculoProveedor').setValidators([]);
+      this.formularioViaje.get('vehiculoProveedor').updateValueAndValidity();
+      this.formularioViaje.get('choferProveedor').setValidators([]);
+      this.formularioViaje.get('choferProveedor').updateValueAndValidity();
+    } else {
+      this.formularioViaje.get('vehiculo').setValidators([]);
+      this.formularioViaje.get('vehiculo').updateValueAndValidity();
+      this.formularioViaje.get('personal').setValidators([]);
+      this.formularioViaje.get('personal').updateValueAndValidity();
+      this.formularioViaje.get('vehiculoProveedor').setValidators(Validators.required);
+      this.formularioViaje.get('vehiculoProveedor').updateValueAndValidity();
+      this.formularioViaje.get('choferProveedor').setValidators(Validators.required);
+      this.formularioViaje.get('choferProveedor').updateValueAndValidity();
+    }
+  }
+  //Establece validaciones de formulario al cambiar tipo de remolque
+  public cambioTipoRemolque(): void {
+    this.formularioViaje.get('vehiculoRemolque').reset();
+    this.formularioViaje.get('vehiculoRemolqueProveedor').reset();
+    this.resultadosVehiculosRemolques = [];
+    let tipoRemolque = this.formularioViaje.get('esRemolquePropio').value;
+    if(tipoRemolque) {
+      this.formularioViaje.get('vehiculoRemolque').setValidators(Validators.required);
+      this.formularioViaje.get('vehiculoRemolque').updateValueAndValidity();
+      this.formularioViaje.get('vehiculoRemolqueProveedor').setValidators([]);
+      this.formularioViaje.get('vehiculoRemolqueProveedor').updateValueAndValidity();
+    } else {
+      this.formularioViaje.get('vehiculoRemolque').setValidators([]);
+      this.formularioViaje.get('vehiculoRemolque').updateValueAndValidity();
+      this.formularioViaje.get('vehiculoRemolqueProveedor').setValidators(Validators.required);
+      this.formularioViaje.get('vehiculoRemolqueProveedor').updateValueAndValidity();
+    }
+  }
   //Establece el id viaje en componentes hijo
   public establecerIdViajeEnHijos(idViaje) {
-    // this.viajeTramoComponente.establecerViajeCabecera(idViaje);
     this.viajeCombustibleComponente.establecerIdViaje(idViaje);
     this.viajeEfectivoComponente.establecerIdViaje(idViaje);
     this.viajeInsumoComponente.establecerIdViaje(idViaje);
@@ -409,13 +458,15 @@ export class ViajeComponent implements OnInit {
   }
   //Obtiene el listado de registros
   private listar() {
+    this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        this.loaderService.hide();
       }
     );
   }

@@ -24,14 +24,11 @@ import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
 import { ViajeEfectivo } from 'src/app/modelos/viajeEfectivo';
 import { ZonaService } from 'src/app/servicios/zona.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
-import { LoaderService } from 'src/app/servicios/loader.service';
-import { OrdenCombustibleComponent } from 'src/app/componentes/orden-combustible/orden-combustible.component';
 
 @NgModule({
   declarations: [
     RepartoComponent,
     AcompanianteDialogo,
-    OrdenCombustibleComponent
   ],
   imports: [
     CommonModule,
@@ -70,8 +67,6 @@ import { OrdenCombustibleComponent } from 'src/app/componentes/orden-combustible
   ],
   entryComponents: [
     AcompanianteDialogo,
-    OrdenCombustibleComponent,
-    
   ]
 })
 export class RepartoSalienteModule { }

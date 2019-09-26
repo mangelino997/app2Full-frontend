@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Inject, Output, EventEmitter, ViewChild, Input } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ViajeTramo } from 'src/app/modelos/viajeTramo';
 import { TramoService } from 'src/app/servicios/tramo.service';
@@ -307,7 +307,6 @@ export class ViajeTramoComponent implements OnInit {
         formulario.get('importe').setValue(this.appServicio.establecerDecimales(importe, 2));
       }
     }
-
   }
   //Agrega primero un Viaje y luego un viajeTramo (cuando listaCompleta esta vacia)
   public agregarTramo(): void {
@@ -316,32 +315,15 @@ export class ViajeTramoComponent implements OnInit {
     this.formularioViajeTramo.enable();
     let usuario = this.appServicio.getUsuario();
     this.numeroOrden++;
-    // let fecha = this.formularioViajeTramo.get('fechaTramo').value;
-    // let km = this.formularioViajeTramo.get('tramo').value.km;
     this.formularioViajeTramo.get('fechaAlta').setValue(this.fechaActual);
-    // this.formularioViajeTramo.get('km').setValue(km);
     this.formularioViajeTramo.get('numeroOrden').setValue(this.numeroOrden);
     this.formularioViajeTramo.get('usuarioAlta').setValue(usuario);
-    // if (!this.formularioViajeTramo.value.importe)
-    //   this.formularioViajeTramo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
-    // if (!this.formularioViajeTramo.value.cantidad)
-    //   this.formularioViajeTramo.get('cantidad').setValue('0');
-    // if (!this.formularioViajeTramo.value.precioUnitario)
-    //   this.formularioViajeTramo.get('precioUnitario').setValue(this.appServicio.establecerDecimales('0.00', 2));
     if (this.listaCompleta.data.length > 0) {
       this.agregar();
     } else {
-      // this.formularioViaje.patchValue(this.ID_VIAJE);
-      // this.formularioViaje.value.sucursal = this.ID_VIAJE.sucursal;
-      // this.formularioViajeTramo.value.id = 0;
       let tramos = [];
       tramos.push(this.formularioViajeTramo.value);
       this.formularioViaje.get('viajeTramos').setValue(tramos);
-      // this.formularioViaje.get('viajeInsumos').setValue([]);
-      // this.formularioViaje.get('viajeGastos').setValue([]);
-      // this.formularioViaje.get('viajePeajes').setValue([]);
-      // this.formularioViaje.get('viajeCombustibles').setValue([]);
-      // this.formularioViaje.get('viajeEfectivos').setValue([]);
       this.formularioViaje.get('id').setValue(null);
       this.viajeServicio.agregar(this.formularioViaje.value).subscribe(
         res => {

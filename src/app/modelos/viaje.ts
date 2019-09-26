@@ -45,8 +45,6 @@ export class Viaje {
             viajeCombustibles: new FormControl(),
             viajeGastos: new FormControl(),
             viajeInsumos: new FormControl(),
-
-
         })
     }
 }
