@@ -110,13 +110,14 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
-          <th mat-header-cell *matHeaderCellDef></th>
+          <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+              (click)="abrirReporte()">Reporte</button></th>
           <td mat-cell *matCellDef="let elemento">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3" 
+            <button mat-icon-button class="mat-icon-button-table margin-left-3"
               (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>

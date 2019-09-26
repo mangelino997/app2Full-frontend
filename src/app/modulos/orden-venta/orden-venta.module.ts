@@ -19,7 +19,6 @@ import { ClienteService } from 'src/app/servicios/cliente.service';
 import { VendedorService } from 'src/app/servicios/vendedor.service';
 import { TipoTarifaService } from 'src/app/servicios/tipo-tarifa.service';
 import { OrdenVentaTarifa } from 'src/app/modelos/ordenVentaTarifa';
-import { ConfirmarDialogoComponent } from 'src/app/componentes/confirmar-dialogo/confirmar-dialogo.component';
 import { OrdenVentaTramoService } from 'src/app/servicios/orden-venta-tramo.service';
 import { EscalaTarifaService } from 'src/app/servicios/escala-tarifa.service';
 import { TramoService } from 'src/app/servicios/tramo.service';
@@ -27,7 +26,6 @@ import { TramoService } from 'src/app/servicios/tramo.service';
 @NgModule({
   declarations: [
     OrdenVentaComponent,
-    ConfirmarDialogoComponent,
     VerTarifaDialogo
   ],
   imports: [
@@ -67,7 +65,6 @@ import { TramoService } from 'src/app/servicios/tramo.service';
     TramoService
   ],
   entryComponents: [
-    ConfirmarDialogoComponent,
     VerTarifaDialogo
   ]
 })

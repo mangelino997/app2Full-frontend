@@ -848,21 +848,21 @@ export class FacturaDebitoCreditoComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-      let f = {
-        empresa: elemento.empresa.razonSocial,
-        sucursal: elemento.sucursal.nombre,
-        proveedor: elemento.proveedor.razonSocial,
-        tipo_cpte: elemento.tipoComprobante.nombre,
-        punto_venta: '$' + elemento.puntoVenta,
-        letra: '$' + elemento.letra,
-        numero: elemento.numero + '%',
-        fecha_emision: elemento.fechaEmision,
-        fecha_contable: elemento.fechaContable,
-        fecha_regisracion: elemento.fechaRegistracion,
-        importe: elemento.importe,
-        saldo: elemento.importeSaldo
-      }
-      datos.push(f);
+        let f = {
+          empresa: elemento.empresa.razonSocial,
+          sucursal: elemento.sucursal.nombre,
+          proveedor: elemento.proveedor.razonSocial,
+          tipo_cpte: elemento.tipoComprobante.nombre,
+          punto_venta: '$' + elemento.puntoVenta,
+          letra: '$' + elemento.letra,
+          numero: elemento.numero + '%',
+          fecha_emision: elemento.fechaEmision,
+          fecha_contable: elemento.fechaContable,
+          fecha_registracion: elemento.fechaRegistracion,
+          importe: elemento.importe,
+          saldo: elemento.importeSaldo
+        }
+        datos.push(f);
     });
     return datos;
   }

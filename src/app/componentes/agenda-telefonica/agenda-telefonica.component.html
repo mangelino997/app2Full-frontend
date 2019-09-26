@@ -30,7 +30,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">Código</label>
-              <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm" readonly>
+              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
             </div>
           </div>
           <div class="col-md-4">
@@ -53,14 +53,14 @@
             <div class="form-group has-float-label">
               <label id="labelTelefonoFijo" for="idTelefonoFijo" class="tamanio-label">Teléfono Fijo</label>
               <input id="idTelefonoFijo" type="tel" formControlName="telefonoFijo" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelTelefonoMovil" for="idTelefonoMovil" class="tamanio-label">Teléfono Móvil</label>
               <input id="idTelefonoMovil" type="tel" formControlName="telefonoMovil" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" maxlength="45">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45">
             </div>
           </div>
         </div>

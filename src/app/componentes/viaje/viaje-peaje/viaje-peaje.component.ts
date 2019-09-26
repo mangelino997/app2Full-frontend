@@ -41,7 +41,7 @@ export class ViajePeajeComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['eliminar', 'mod', 'fecha', 'proveedor', 'puntoVenta', 'ticket', 'importe'];
+  public columnas: string[] = ['fecha', 'proveedor', 'puntoVenta', 'ticket', 'importe', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Constructor

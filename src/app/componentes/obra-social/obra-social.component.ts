@@ -43,7 +43,7 @@ export class ObraSocialComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['ID', 'NOMBRE', 'CODIGO AFIP', 'SITIO WEB', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'CODIGO_AFIP', 'SITIO_WEB', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -315,8 +315,8 @@ export class ObraSocialComponent implements OnInit {
         let f = {
           id: elemento.id,
           nombre: elemento.nombre,
-          codigoafip: elemento.codigoAfip,
-          sitioweb: elemento.sitioWeb
+          codigo_afip: elemento.codigoAfip,
+          sitio_web: elemento.sitioWeb
         }
         datos.push(f);
     });

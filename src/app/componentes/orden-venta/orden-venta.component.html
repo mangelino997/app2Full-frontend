@@ -278,28 +278,18 @@
         </div>
         <div class="row justify-content-center text-center">
           <div class="col-md-12">
-            <div class="row">
-              <div class="col-md-10"></div>
-              <div class="col-md-1">
-                <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
-              </div>
-            </div>
             <br>
             <table mat-table [dataSource]="listaOrdenVenta" matSort class="mat-elevation-z1">
-              <ng-container matColumnDef="ELIMINAR">
-                <th mat-header-cell *matHeaderCellDef>-</th>
-                <td class="mat-cell-left" mat-cell *matCellDef="let elemento;">
+              <ng-container matColumnDef="EDITAR" stickyEnd>
+                <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+                    (click)="abrirReporte()">Reporte</button></th>
+                <td mat-cell *matCellDef="let elemento">
                   <button mat-icon-button class="mat-icon-button-table" (click)="eliminar(elemento.id, false)"
                     matTooltip="Eliminar" matTooltipPosition="above">
                     <mat-icon>delete</mat-icon>
                   </button>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="EDITAR">
-                <th mat-header-cell *matHeaderCellDef>-</th>
-                <td class="mat-cell-left" mat-cell *matCellDef="let elemento;">
-                  <button mat-icon-button class="mat-icon-button-table" (click)="activarActualizar(elemento)"
-                    matTooltip="Editar" matTooltipPosition="above">
+                  <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                    (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
                     <mat-icon>edit</mat-icon>
                   </button>
                 </td>
@@ -330,14 +320,14 @@
                   <span *ngIf="elemento.comisionCR > 0">{{establecerDecimales(elemento.comisionCR, 2)}} %</span>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="ES CONTADO">
+              <ng-container matColumnDef="ES_CONTADO">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Contado</th>
                 <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.esContado? 'Sí' : 'No'}}</td>
               </ng-container>
               <tr mat-header-row *matHeaderRowDef="columnasListar"></tr>
               <tr mat-row *matRowDef="let row; columns: columnasListar;"></tr>
             </table>
-            <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
+            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
           </div>
         </div>
       </form>

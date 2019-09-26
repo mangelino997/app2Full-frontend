@@ -11,6 +11,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { elementContainerEnd } from '@angular/core/src/render3';
 
 @Component({
   selector: 'app-contacto-cliente',
@@ -273,7 +274,31 @@ export class ContactoClienteComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
+    this.loaderService.show();
+    let formulario = this.formulario.value;
+    this.servicio.eliminar(formulario.id).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          setTimeout(function () {
+            document.getElementById('idNombre').focus();
+          }, 20);
+          this.toastr.success(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        var respuesta = err.json();
+        if (respuesta.codigo == 500) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      }
+    );
   }
   //Reestablece el formulario
   private reestablecerFormulario() {
@@ -365,7 +390,7 @@ export class ContactoClienteComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Contactos Clientes',
+      nombre: 'Contactos - Cliente',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,

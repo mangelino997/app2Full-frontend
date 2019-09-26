@@ -162,7 +162,7 @@
             <!-- Bultos -->
             <div class="form-group has-float-label">
               <label for="idBultos" class="tamanio-label">Bultos *</label>
-              <input id="idBultos" [textMask]="mascararEnterosSinDecimales(6)" type="text" formControlName="bultos"
+              <input id="idBultos" [textMask]="mascararEnterosSinDecimales(5)" type="text" formControlName="bultos"
                 autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
                 placeholder="0" (blur)="establecerEnteros(formulario.get('bultos'))">
             </div>
@@ -180,7 +180,7 @@
             <!-- Valor Declarado -->
             <div class="form-group has-float-label">
               <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
-              <input id="idValorDeclarado" [textMask]="mascararEnterosConDecimales(10)" type="text"
+              <input id="idValorDeclarado" [textMask]="mascararEnterosConDecimales(8)" type="text"
                 formControlName="valorDeclarado" autocomplete="off" class="form-control form-control-sm number-right"
                 [readonly]="soloLectura" (blur)="establecerDecimales(formulario.get('valorDeclarado'), 2)"
                 placeholder="0.00">

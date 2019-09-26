@@ -9,8 +9,9 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { Usuario } from 'src/app/modelos/usuario';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-usuario',
@@ -51,15 +52,18 @@ export class UsuarioComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'username', 'rol', 'rolSecundario', 'sucursal', 'cuentaHabilitada', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'USERNAME', 'ROL', 'ROL_SECUNDARIO', 'SUCURSAL', 'CUENTA_HABILITADA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el estado de contraseña y repetir contraseña
   public estadoContrasenia:boolean = false;
   //Constructor
   constructor(private servicio: UsuarioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
-    private rolServicio: RolService, private sucursalServicio: SucursalService, private usuario: Usuario) {
+    private rolServicio: RolService, private sucursalServicio: SucursalService, private usuario: Usuario,  
+    private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -375,5 +379,36 @@ export class UsuarioComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          username: elemento.username,
+          rol: elemento.rol.nombre,
+          rol_secundario: elemento.rolSecundario ? elemento.rolSecundario.nombre : null,
+          sucursal: elemento.sucursal.nombre,
+          cuenta_habilitada: elemento.cuentaHabilitada?'Sí':'No'
+        }
+        datos.push(f);
+    });
+    console.log(datos);
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Usuarios',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }

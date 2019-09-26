@@ -74,7 +74,7 @@ export class PersonalFamiliarComponent implements OnInit {
   //Define la lista de resultados de busqueda de localidades
   public resultadosLocalidades: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['LEGAJO', 'FAMILIAR', 'APELLIDO', 'NOMBRE', 'FECHA NACIMIENTO', 'CUIL', 'LUGAR NACIMIENTO', 'NACIONALIDAD', 'SEXO', 'EDITAR'];
+  public columnas: string[] = ['LEGAJO', 'FAMILIAR', 'APELLIDO', 'NOMBRE', 'FECHA_NACIMIENTO', 'CUIL', 'LUGAR_NACIMIENTO', 'NACIONALIDAD', 'SEXO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -634,9 +634,9 @@ export class PersonalFamiliarComponent implements OnInit {
           familiar: elemento.tipoFamiliar.nombre,
           apellido: elemento.apellido,
           nombre: elemento.nombre,
-          fechanacimiento: elemento.fechaNacimiento,
+          fecha_nacimiento: elemento.fechaNacimiento,
           cuil: elemento.cuil,
-          lugarnacimiento: elemento.localidadNacimiento.nombre,
+          lugar_nacimiento: elemento.localidadNacimiento.nombre,
           nacionalidad: elemento.localidadNacimiento.provincia.pais.nombre,
           sexo: elemento.sexo.nombre
         }

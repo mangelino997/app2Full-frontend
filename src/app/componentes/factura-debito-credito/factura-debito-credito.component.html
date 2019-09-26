@@ -477,12 +477,6 @@
             <button id="idBotonVencimientos" mat-raised-button color="primary" (click)="listar('listaCompleta')"
               [disabled]="!formularioFiltro.valid">Buscar </button>
           </div>
-          <div class="col-md-4"></div>
-          <div class="col-md-1">
-            <div class="row justify-content-end">
-              <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
-            </div>
-          </div>
         </div>
         <div class="row">
           <div class="tabla">
@@ -541,7 +535,8 @@
                   <td mat-cell *matCellDef="let elemento">$ {{elemento.importeSaldo | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="EDITAR" stickyEnd>
-                  <th mat-header-cell *matHeaderCellDef></th>
+                  <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+                      (click)="abrirReporte()">Reporte</button></th>
                   <td mat-cell *matCellDef="let elemento">
                     <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                       matTooltip="Consultar" matTooltipPosition="above">
