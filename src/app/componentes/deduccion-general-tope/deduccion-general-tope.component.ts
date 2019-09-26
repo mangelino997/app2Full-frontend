@@ -56,7 +56,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['ANIO', 'DEDUCCION GENERAL', 'DESCRIPCION', 'IMPORTE', 'PORCENTAJE GANANCIA NETA', 'EDITAR', 'ELIMINAR'];
+  public columnas: string[] = ['ANIO', 'DEDUCCION_GENERAL', 'DESCRIPCION', 'IMPORTE', 'PORCENTAJE_GANANCIA_NETA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -372,10 +372,10 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     lista.forEach(elemento => {
       let f = {
         anio: elemento.anio,
-        deducciongeneral: elemento.afipDeduccionGeneral.descripcion,
+        deduccion_general: elemento.afipDeduccionGeneral.descripcion,
         descripcion: elemento.descripcion,
         importe: '$' + this.returnDecimales(elemento.importe, 2),
-        porcentajeganancianeta: this.returnDecimales(elemento.porcentajeGananciaNeta, 2) + '%'
+        porcentaje_ganancia_neta: this.returnDecimales(elemento.porcentajeGananciaNeta, 2) + '%'
       }
       datos.push(f);
     });

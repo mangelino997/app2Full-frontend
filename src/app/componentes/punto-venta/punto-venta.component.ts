@@ -61,8 +61,8 @@ export class PuntoVentaComponent implements OnInit {
   //Define el tipo de comprobante
   public tipoComprobante: FormControl = new FormControl('', Validators.required);
   //Define las columnas de la tabla
-  public columnas: string[] = ['SUCURSAL', 'EMPRESA', 'PUNTO VENTA', 'FE', 'FE LINEA',
-    'CAE', 'CUENTA ORDEN', 'NUMERO', 'COPIA', 'IMPRIME', 'HABILITADA', 'DEFECTO', 'EDITAR'];
+  public columnas: string[] = ['SUCURSAL', 'EMPRESA', 'PUNTO_VENTA', 'FE', 'FE_LINEA',
+    'CAE', 'CUENTA_ORDEN', 'NUMERO', 'COPIA', 'IMPRIME', 'HABILITADA', 'DEFECTO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -476,11 +476,11 @@ export class PuntoVentaComponent implements OnInit {
         let f = {
           sucursal: elemento.sucursal.nombre,
           empresa: elemento.empresa.razonSocial,
-          puntoventa: this.displayFb(elemento),
+          punto_venta: this.displayFb(elemento),
           fe: elemento.fe ? 'Si' : 'No',
-          felinea: elemento.feEnLinea ? 'Si' : 'No',
+          fe_linea: elemento.feEnLinea ? 'Si' : 'No',
           cae: elemento.feCAEA ? 'Si' : 'No',
-          cuentaorden: elemento.esCuentaOrden ? 'Si' : 'No',
+          cuenta_orden: elemento.esCuentaOrden ? 'Si' : 'No',
           numero: elemento.ultimoNumero,
           copia: elemento.copias,
           imprime: elemento.imprime ? 'Si' : 'No',

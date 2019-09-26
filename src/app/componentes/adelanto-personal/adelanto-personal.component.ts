@@ -74,8 +74,8 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define la opcion seleccionada
   public opcionSeleccionada: number = null;
   //Define las columnas de la tabla
-  public columnas: string[] = ['SUCURSAL', 'TIPO CPTE', 'NUM ADELANTO', 'ANULADO', 'FECHA EMISION', 'FECHA VTO', 'PERSONAL',
-    'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL CUOTAS', 'NUMERO LOTE', 'ANULAR', 'EDITAR'];
+  public columnas: string[] = ['SUCURSAL', 'TIPO_CPTE', 'NUM_ADELANTO', 'ANULADO', 'FECHA_EMISION', 'FECHA_VTO', 'PERSONAL',
+    'IMPORTE', 'OBSERVACIONES', 'USUARIO', 'CUOTA', 'TOTAL_CUOTAS', 'NUMERO_LOTE', 'ANULAR', 'EDITAR'];
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define la matSort
@@ -658,18 +658,18 @@ export class AdelantoPersonalComponent implements OnInit {
     lista.forEach(elemento => {
       let f = {
         sucursal: elemento.sucursal.nombre,
-        tipocpte: elemento.tipoComprobante.nombre,
-        numadelanto: elemento.id,
+        tipo_cpte: elemento.tipoComprobante.nombre,
+        num_adelanto: elemento.id,
         anulado: elemento.estaAnulado ? 'Sí' : 'No',
-        fechaemision: elemento.fechaEmision,
-        fechavto: elemento.fechaVto,
+        fecha_emision: elemento.fechaEmision,
+        fecha_vto: elemento.fechaVto,
         personal: elemento.personal.nombreCompleto,
         importe: '$' + this.returnDecimales(elemento.importe, 2),
         observaciones: elemento.observaciones,
         usuario: elemento.usuarioAlta.alias,
         cuota: elemento.cuota,
-        totalcuotas: elemento.totalCuotas,
-        numerolote: elemento.numeroLote
+        total_cuotas: elemento.totalCuotas,
+        numero_lote: elemento.numeroLote
       }
       datos.push(f);
     });

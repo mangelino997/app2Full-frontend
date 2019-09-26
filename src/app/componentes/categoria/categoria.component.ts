@@ -46,7 +46,7 @@ export class CategoriaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'ADICIONAL VACACIONES', 'TOPE ADELANTOS', 'DIAS LABORABLES', 'HORAS LABORABLES', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'ADICIONAL_VACACIONES', 'TOPE_ADELANTOS', 'DIAS_LABORABLES', 'HORAS_LABORABLES', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -342,10 +342,10 @@ export class CategoriaComponent implements OnInit {
         let f = {
           id: elemento.id,
           nombre: elemento.nombre,
-          adicionalvacaciones: this.returnDecimales(elemento.adicionalBasicoVacaciones, 2) + '%',
-          topeadelantos: this.returnDecimales(elemento.topeBasicoAdelantos, 2) + '%',
-          diaslaborables: elemento.diasLaborables,
-          horaslaborables: elemento.horasLaborables
+          adicional_vacaciones: this.returnDecimales(elemento.adicionalBasicoVacaciones, 2) + '%',
+          tope_adelantos: this.returnDecimales(elemento.topeBasicoAdelantos, 2) + '%',
+          dias_laborables: elemento.diasLaborables,
+          horas_laborables: elemento.horasLaborables
         }
         datos.push(f);
     });

@@ -918,7 +918,7 @@ export class FacturaDebitoCreditoComponent implements OnInit {
           numero: elemento.numero + '%',
           fecha_emision: elemento.fechaEmision,
           fecha_contable: elemento.fechaContable,
-          fecha_regisracion: elemento.fechaRegistracion,
+          fecha_registracion: elemento.fechaRegistracion,
           importe: elemento.importe,
           saldo: elemento.importeSaldo
         }

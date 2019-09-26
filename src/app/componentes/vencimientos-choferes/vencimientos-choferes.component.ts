@@ -51,7 +51,7 @@ export class VencimientosChoferesComponent implements OnInit {
   //Define la lista de resultados de busqueda para el campo Personal
   public resultadosPersonal: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['LEGAJO', 'NOMBRE', 'CHOFER LARGA DISTANCIA', 'VTO LICENCIA', 'VTO CURSO', 'VTO CURSO CARGA PELIGROSA', 'VTO CURSO LINTI', 'EDITAR'];
+  public columnas: string[] = ['LEGAJO', 'NOMBRE', 'CHOFER_LARGA_DISTANCIA', 'VTO_LICENCIA', 'VTO_CURSO', 'VTO_CURSO_CARGA_PELIGROSA', 'VTO_CURSO_LINTI', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -486,11 +486,11 @@ export class VencimientosChoferesComponent implements OnInit {
         let f = {
           legajo: elemento.id,
           nombre: elemento.nombreCompleto,
-          choferlargadistancia: elemento.esChoferLargaDistancia ? 'Si' : 'No',
-          vtolicencia: elemento.vtoLicenciaConducir ? elemento.vtoLicenciaConducir : '--',
-          vtocurso: elemento.vtoCurso ? elemento.vtoCurso : '--',
-          vtocursocargapeligrosa: elemento.vtoCursoCargaPeligrosa ? elemento.vtoCursoCargaPeligrosa : '--',
-          vtocursolinti: elemento.vtoLibretaSanidad ? elemento.vtoLibretaSanidad : '--'
+          chofer_larga_distancia: elemento.esChoferLargaDistancia ? 'Si' : 'No',
+          vto_licencia: elemento.vtoLicenciaConducir ? elemento.vtoLicenciaConducir : '--',
+          vto_curso: elemento.vtoCurso ? elemento.vtoCurso : '--',
+          vto_curso_carga_peligrosa: elemento.vtoCursoCargaPeligrosa ? elemento.vtoCursoCargaPeligrosa : '--',
+          vto_curso_linti: elemento.vtoLibretaSanidad ? elemento.vtoLibretaSanidad : '--'
         }
         datos.push(f);
     });

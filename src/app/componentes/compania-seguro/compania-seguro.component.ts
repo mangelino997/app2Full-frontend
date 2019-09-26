@@ -325,7 +325,7 @@ export class CompaniaSeguroComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Companias Seguros',
+      nombre: 'Compañias de Seguros',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,

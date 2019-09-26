@@ -110,12 +110,6 @@
             </button>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-10"></div>
-          <div class="col-md-1">
-            <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
-          </div>
-        </div>
         <div class="row ">
           <div class="tabla">
             <div class="tabla-ancho">
@@ -152,13 +146,14 @@
                   <td mat-cell *matCellDef="let elemento">{{elemento.mes? elemento.mes.nombre : '-'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="EDITAR" stickyEnd>
-                  <th mat-header-cell *matHeaderCellDef></th>
+                  <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+                      (click)="abrirReporte()">Reporte</button></th>
                   <td mat-cell *matCellDef="let elemento">
-                    <button mat-icon-button class="mat-icon-button-table" (click)="activarEliminar(elemento.id)"
-                      matTooltip="Eliminar" matTooltipPosition="above" [hidden]="indiceSeleccionado == 2 || indiceSeleccionado == 5">
-                      <mat-icon>delete</mat-icon>
+                    <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+                      matTooltip="Consultar" matTooltipPosition="above">
+                      <mat-icon>search</mat-icon>
                     </button>
-                    <button mat-icon-button class="mat-icon-button-table margin-left-3" [hidden]="indiceSeleccionado == 2 || indiceSeleccionado == 5"
+                    <button mat-icon-button class="mat-icon-button-table margin-left-3"
                       (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
                       <mat-icon>edit</mat-icon>
                     </button>

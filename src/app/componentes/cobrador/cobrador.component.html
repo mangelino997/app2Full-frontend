@@ -26,7 +26,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Código</label>
-          <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm" readonly>
+          <input id="idCodigo" type="text" formControlName="id" class="form-control form-control-sm number-right" readonly>
         </div>
         <div class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
@@ -41,12 +41,16 @@
             <mat-option [value]="true">Si</mat-option>
           </mat-select>
         </div>
+
         <div class="form-group has-float-label">
-          <label id="labelNombre" for="idNombre" class="tamanio-label">Correo Electrónico</label>
-          <input id="idNombre" type="text" formControlName="correoElectronico" autocomplete="off"
+          <label id="labelCorreoelectronico" for="idCorreoelectronico" class="tamanio-label">Correo Electrónico</label>
+          <input id="idCorreoelectronico" type="text" formControlName="correoElectronico" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
-            (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="45">
+            (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')"
+            pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
+            (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoElectronico')"  maxlength="60">
         </div>
+
         <div class="form-group has-float-label">
           <label for="idPrincipal" class="principal-label">Por Defecto en Cliente Eventual *</label>
           <mat-select id="idPrincipal" class="form-control form-control-sm" formControlName="porDefectoClienteEventual">
@@ -83,7 +87,7 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="ESTA_HABILITADA" sticky>
+        <ng-container matColumnDef="CUENTA_HABILITADA" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Habilitada</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.estaActivo ? 'Si' : 'No'}}</td>
         </ng-container>

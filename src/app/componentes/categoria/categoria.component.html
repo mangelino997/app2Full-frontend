@@ -111,30 +111,31 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="ADICIONAL VACACIONES" sticky>
+        <ng-container matColumnDef="ADICIONAL_VACACIONES" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Adicional Vacaciones</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.adicionalBasicoVacaciones | number:'2.2-2'}}%</td>
         </ng-container>
-        <ng-container matColumnDef="TOPE ADELANTOS" sticky>
+        <ng-container matColumnDef="TOPE_ADELANTOS" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tope Adelantos</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.topeBasicoAdelantos | number:'2.2-2'}}%</td>
         </ng-container>
-        <ng-container matColumnDef="DIAS LABORABLES" sticky>
+        <ng-container matColumnDef="DIAS_LABORABLES" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Días Laborables</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.diasLaborables}}</td>
         </ng-container>
-        <ng-container matColumnDef="HORAS LABORABLES" sticky>
+        <ng-container matColumnDef="HORAS_LABORABLES" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Horas Laborables</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.horasLaborables}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
-          <th mat-header-cell *matHeaderCellDef></th>
+          <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+              (click)="abrirReporte()">Reporte</button></th>
           <td mat-cell *matCellDef="let elemento">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3" 
+            <button mat-icon-button class="mat-icon-button-table margin-left-3"
               (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
@@ -145,10 +146,5 @@
       </table>
       <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
     </div>
-    <div class="col-md-1">
-        <div class="row justify-content-end">
-          <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
-        </div>
-      </div>
   </div>
 </div>

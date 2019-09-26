@@ -48,7 +48,7 @@ export class CobradorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'ESTA_HABILITADA', 'CORREO_ELECTRONICO', 'POR_DEFECTO_EN_CLIENTE_EVENTUAL', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'CUENTA_HABILITADA', 'CORREO_ELECTRONICO', 'POR_DEFECTO_EN_CLIENTE_EVENTUAL', 'EDITAR'];
   public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
@@ -218,6 +218,20 @@ export class CobradorComponent implements OnInit {
       }
     );
   }
+  //Manejo de colores de campos y labels con patron erroneo
+  public validarPatron(patron, campo) {
+    let valor = this.formulario.get(campo).value;
+    if (valor != undefined && valor != null && valor != '') {
+      var patronVerificador = new RegExp(patron);
+      if (!patronVerificador.test(valor)) {
+        if (campo == 'correoElectronico') {
+          document.getElementById("labelCorreoelectronico").classList.add('label-error');
+          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+          this.toastr.error('Correo Electronico Incorrecto');
+        } 
+      }
+    }
+  }
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
@@ -375,7 +389,7 @@ export class CobradorComponent implements OnInit {
       let f = {
         id: elemento.id,
         nombre: elemento.nombre,
-        esta_habilitada: elemento.estahabilitada ? 'Si' : 'No',
+        cuenta_habilitada: elemento.estahabilitada ? 'Si' : 'No',
         correo_electronico: elemento.correoElectronico ? elemento.correoElectronico : '-',
         por_defecto_en_cliente_eventual: elemento.porDefectoClienteEventual ? 'Si' : 'No'
       }
