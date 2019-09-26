@@ -54,7 +54,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'EMPRESA', 'NUMERO POLIZA', 'VTO POLIZA', 'PDF', 'EDITAR', 'ELIMINAR'];
+  public columnas:string[] = ['ID', 'EMPRESA', 'NUMERO_POLIZA', 'VTO_POLIZA', 'PDF', 'EDITAR', 'ELIMINAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -533,8 +533,8 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       let f = {
         id: elemento.id,
         empresa: elemento.empresa.razonSocial,
-        numeropoliza: elemento.numeroPoliza,
-        vtopoliza: elemento.vtoPoliza,
+        numero_poliza: elemento.numeroPoliza,
+        vto_poliza: elemento.vtoPoliza,
       }
       datos.push(f);
     });

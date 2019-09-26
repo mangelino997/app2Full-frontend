@@ -477,75 +477,80 @@
             <button id="idBotonVencimientos" mat-raised-button color="primary" (click)="listar('listaCompleta')"
               [disabled]="!formularioListar.valid">Buscar </button>
           </div>
+          <div class="col-md-4"></div>
+          <div class="col-md-1">
+            <div class="row justify-content-end">
+              <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
+            </div>
+          </div>
         </div>
         <div class="row">
           <div class="tabla">
             <div class="tabla-ancho">
               <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="empresa">
+                <ng-container matColumnDef="EMPRESA">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
                   <td mat-cell *matCellDef="let elemento;">{{elemento.empresa.razonSocial}}</td>
                 </ng-container>
-                <ng-container matColumnDef="sucursal">
+                <ng-container matColumnDef="SUCURSAL">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
                 </ng-container>
-                <ng-container matColumnDef="proveedor">
+                <ng-container matColumnDef="PROVEEDOR">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.proveedor.razonSocial}}</td>
                 </ng-container>
-                <ng-container matColumnDef="tipoCpte">
+                <ng-container matColumnDef="TIPO_CPTE">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Cpte.</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
                 </ng-container>
-                <ng-container matColumnDef="puntoVenta">
+                <ng-container matColumnDef="PUNTO_VENTA">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Venta</th>
                   <td mat-cell *matCellDef="let elemento">$ {{elemento.puntoVenta}}</td>
                 </ng-container>
-                <ng-container matColumnDef="letra">
+                <ng-container matColumnDef="LETRA">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
                   <td mat-cell *matCellDef="let elemento">$ {{elemento.letra}}
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="numero">
+                <ng-container matColumnDef="NUMERO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Número</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.numero}}%
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="fechaEmision">
+                <ng-container matColumnDef="FECHA_EMISION">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Emisión</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.fechaEmision | date: 'dd-MM-yyyy'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="fechaContable">
+                <ng-container matColumnDef="FECHA_CONTABLE">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Contable</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.fechaContable | date: 'dd-MM-yyyy'}}
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="fechaRegistracion">
+                <ng-container matColumnDef="FECHA_REGISTRACION">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Registración</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.fechaRegistracion | date: 'dd-MM-yyyy'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="importe">
+                <ng-container matColumnDef="IMPORTE">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
                   <td mat-cell *matCellDef="let elemento">$
                     {{elemento.importe | number: '1.2-2'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="saldo">
+                <ng-container matColumnDef="SALDO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Saldo</th>
                   <td mat-cell *matCellDef="let elemento">$ {{elemento.importeSaldo | number: '1.2-2'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="ver">
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento; let i=index">
-                    <span class="cursor-color" (click)="activarConsultar(elemento)">
-                      ver
-                    </span>
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="mod">
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento; let i=index">
-                    <span class="cursor-color" (click)="activarActualizar(elemento)">Mod</span>
+                <ng-container matColumnDef="EDITAR" stickyEnd>
+                  <th mat-header-cell *matHeaderCellDef></th>
+                  <td mat-cell *matCellDef="let elemento">
+                    <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+                      matTooltip="Consultar" matTooltipPosition="above">
+                      <mat-icon>search</mat-icon>
+                    </button>
+                    <button mat-icon-button class="mat-icon-button-table margin-left-3" 
+                      (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+                      <mat-icon>edit</mat-icon>
+                    </button>
                   </td>
                 </ng-container>
                 <tr mat-header-row *matHeaderRowDef="columnasListar"></tr>
@@ -554,6 +559,7 @@
             </div>
           </div>
         </div>
+        <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
       </form>
     </div>
 

@@ -46,7 +46,7 @@ export class AgendaTelefonicaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'DOMICILIO', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'CORREO ELECTRONICO', 'LOCALIDAD', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'DOMICILIO', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'CORREO_ELECTRONICO', 'LOCALIDAD', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -371,9 +371,9 @@ export class AgendaTelefonicaComponent implements OnInit {
           id: elemento.id,
           nombre: elemento.nombre,
           domicilio: elemento.domicilio,
-          telefonofijo: elemento.telefonoFijo,
-          telefonomovil: elemento.telefonoMovil,
-          correoelectronico: elemento.correoelectronico,
+          telefono_fijo: elemento.telefonoFijo,
+          telefono_movil: elemento.telefonoMovil,
+          correo_electronico: elemento.correoelectronico,
           localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
         }
         datos.push(f);

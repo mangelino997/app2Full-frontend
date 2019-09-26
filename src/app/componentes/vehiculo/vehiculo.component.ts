@@ -9,7 +9,7 @@ import { CompaniaSeguroPolizaService } from '../../servicios/compania-seguro-pol
 import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehiculo.service';
 import { PersonalService } from '../../servicios/personal.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr';
+import { ToastrService } from 'ngx-toastr'
 import { Vehiculo } from 'src/app/modelos/vehiculo';
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -92,10 +92,10 @@ export class VehiculoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['DOMINIO', 'ID', 'TIPO VEHICULO', 'MARCA VEHICULO', 'CONFIGURACION', 'COMPAÑIA SEGURO', 'POLIZA', 'PDF TITULO',
-    'PDF CEDULA IDENT', 'PDF VTO RUTA', 'PDF INSP TECNICA', 'PDF VTO SENASA', 'PDF HAB BROMAT', 'EDITAR'];
+  public columnas: string[] = ['DOMINIO', 'ID', 'TIPO_VEHICULO', 'MARCA_VEHICULO', 'CONFIGURACION', 'COMPAÑIA_SEGURO', 'POLIZA', 'PDF_TITULO',
+    'PDF_CEDULA_IDENT', 'PDF_VTO_RUTA', 'PDF_INSP_TECNICA', 'PDF_VTO_SENASA', 'PDF_HAB_BROMAT', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort) sort: MatSort;_
   //Define la paginacion
   @ViewChild(MatPaginator) paginator: MatPaginator;
   //Constructor
@@ -164,7 +164,7 @@ export class VehiculoComponent implements OnInit {
     //Autocompletado Personal - Buscar chofer por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarChoferPorAlias(data).subscribe(response => {
+        this.personalServicio.listarChoferActivoPorAlias(data).subscribe(response => {
           this.resultadosPersonales = response;
         })
       }
@@ -765,18 +765,18 @@ export class VehiculoComponent implements OnInit {
     lista.forEach(elemento => {
       let f = {
         id: elemento.id,
-        tipovehiculo: elemento.configuracionVehiculo.tipoVehiculo.nombre,
+        tipo_vehiculo: elemento.configuracionVehiculo.tipoVehiculo.nombre,
         dominio: elemento.dominio,
-        marcavehiculo: elemento.configuracionVehiculo.marcaVehiculo.nombre,
+        marca_vehiculo: elemento.configuracionVehiculo.marcaVehiculo.nombre,
         configuracion: elemento.configuracionVehiculo.descripcion,
-        compañiaseguro: elemento.companiaSeguroPoliza.companiaSeguro.nombre,
+        compañia_seguro: elemento.companiaSeguroPoliza.companiaSeguro.nombre,
         poliza: elemento.companiaSeguroPoliza.numeroPoliza,
-        pdftitulo: elemento.pdfTitulo ? elemento.pdfTitulo.nombre : '',
-        pdfcedulaident: elemento.pdfCedulaIdent ? elemento.pdfCedulaIdent.nombre : '',
-        pdfvtoruta: elemento.pdfVtoRuta ? elemento.pdfVtoRuta.nombre : '',
-        pdfinsptecnica: elemento.pdfVtoInspTecnica ? elemento.pdfVtoInspTecnica.nombre : '',
-        pdfvtosenasa: elemento.pdfVtoSenasa ? elemento.pdfVtoSenasa.nombre : '',
-        pdfhabbromat: elemento.pdfHabBromat ? elemento.pdfHabBromat.nombre : ''
+        pdf_titulo: elemento.pdfTitulo ? elemento.pdfTitulo.nombre : '',
+        pdf_cedula_ident: elemento.pdfCedulaIdent ? elemento.pdfCedulaIdent.nombre : '',
+        pdf_vto_ruta: elemento.pdfVtoRuta ? elemento.pdfVtoRuta.nombre : '',
+        pdf_insp_tecnica: elemento.pdfVtoInspTecnica ? elemento.pdfVtoInspTecnica.nombre : '',
+        pdf_vto_senasa: elemento.pdfVtoSenasa ? elemento.pdfVtoSenasa.nombre : '',
+        pdf_hab_bromat: elemento.pdfHabBromat ? elemento.pdfHabBromat.nombre : ''
       }
       datos.push(f);
     });

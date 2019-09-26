@@ -46,7 +46,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   //Define la lista de marcas de vehiculos
   public marcasVehiculos: Array<any> = [];
    //Define las columnas de la tabla
-   public columnas: string[] = ['ID', 'TIPO VEHICULO', 'MARCA VEHICULO', 'MODELO', 'CANTIDAD EJES', 'CAPACIDAD CARGA', 'EDITAR'];
+   public columnas: string[] = ['ID', 'TIPO_VEHICULO', 'MARCA_VEHICULO', 'MODELO', 'CANTIDAD_EJES', 'CAPACIDAD_CARGA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -409,11 +409,11 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     lista.forEach(elemento => {
         let f = {
           id: elemento.id,
-          tipovehiculo: elemento.tipoVehiculo.nombre,
-          marcavehiculo: elemento.marcaVehiculo.nombre,
+          tipo_vehiculo: elemento.tipoVehiculo.nombre,
+          marca_vehiculo: elemento.marcaVehiculo.nombre,
           modelo: elemento.modelo,
-          cantidadejes: elemento.cantidadEjes,
-          capacidadcarga: elemento.capacidadCarga
+          cantidad_ejes: elemento.cantidadEjes,
+          capacidad_carga: elemento.capacidadCarga
         }
         datos.push(f);
     });

@@ -79,7 +79,7 @@ export class ProveedorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'RAZON SOCIAL', 'TIPO DOCUMENTO', 'NUMERO DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
+  public columnas:string[] = ['ID', 'RAZON_SOCIAL', 'TIPO_DOCUMENTO', 'NUMERO_DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   //Define las columnas de la tabla
   public columnasPlanCuenta: string[] = ['empresa', 'cuentaContable', 'planCuenta', 'eliminar'];
   //Define la matSort
@@ -675,9 +675,9 @@ export class ProveedorComponent implements OnInit {
     lista.forEach(elemento => {
         let f = {
           id: elemento.id,
-          razonsocial: elemento.razonSocial,
-          tipodocumento: elemento.tipoDocumento.nombre,
-          numerodocumento: elemento.numeroDocumento,
+          razon_social: elemento.razonSocial,
+          tipodo_cumento: elemento.tipoDocumento.nombre,
+          numero_documento: elemento.numeroDocumento,
           telefono: elemento.telefono,
           domicilio: elemento.domicilio,
           localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre

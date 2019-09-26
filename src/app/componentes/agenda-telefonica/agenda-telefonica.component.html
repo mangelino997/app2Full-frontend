@@ -123,15 +123,15 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.domicilio}}</td>
         </ng-container>
-        <ng-container matColumnDef="TELEFONO FIJO" sticky>
+        <ng-container matColumnDef="TELEFONO_FIJO" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Fijo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.telefonoFijo}}</td>
         </ng-container>
-        <ng-container matColumnDef="TELEFONO MOVIL" sticky>
+        <ng-container matColumnDef="TELEFONO_MOVIL" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono Movil</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.telefonoMovil}}</td>
         </ng-container>
-        <ng-container matColumnDef="CORREO ELECTRONICO" sticky>
+        <ng-container matColumnDef="CORREO_ELECTRONICO" sticky>
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electrónico</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.correoelectronico}}</td>
         </ng-container>
@@ -141,27 +141,23 @@
           </td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
-            <th mat-header-cell *matHeaderCellDef></th>
-            <td mat-cell *matCellDef="let elemento">
-              <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
-                matTooltip="Consultar" matTooltipPosition="above">
-                <mat-icon>search</mat-icon>
-              </button>
-              <button mat-icon-button class="mat-icon-button-table margin-left-3" 
-                (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
-                <mat-icon>edit</mat-icon>
-              </button>
-            </td>
-          </ng-container>
+          <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+              (click)="abrirReporte()">Reporte</button></th>
+          <td mat-cell *matCellDef="let elemento">
+            <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+              matTooltip="Consultar" matTooltipPosition="above">
+              <mat-icon>search</mat-icon>
+            </button>
+            <button mat-icon-button class="mat-icon-button-table margin-left-3"
+              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
+        </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
       </table>
       <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
     </div>
-    <div class="col-md-1">
-        <div class="row justify-content-end">
-          <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
-        </div>
-      </div>
   </div>
 </div>

@@ -154,48 +154,53 @@
         </div>
       </div>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="id">
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="origen">
+        <ng-container matColumnDef="ORIGEN">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Origen</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.origen.nombre}}, {{elemento.origen.provincia.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="destino">
+        <ng-container matColumnDef="DESTINO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Destino</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.destino.nombre}}, {{elemento.destino.provincia.nombre}}
           </td>
         </ng-container>
-        <ng-container matColumnDef="km">
+        <ng-container matColumnDef="KM">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.km}}</td>
         </ng-container>
-        <ng-container matColumnDef="rutaAlternativa">
+        <ng-container matColumnDef="RUTA_ALTERNATIVA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Ruta Alternativa</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.rutaAlternativa}}</td>
         </ng-container>
-        <ng-container matColumnDef="liqChofer">
+        <ng-container matColumnDef="LIQ_CHOFER">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Excluir Liq. Chofer</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.excluirLiqChofer?'Sí':'No'}}</td>
         </ng-container>
-        <ng-container matColumnDef="estaActivo">
+        <ng-container matColumnDef="ESTA_ACTIVO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>esta Activo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.estaActivo?'Sí': 'No'}}</td>
         </ng-container>
-        <ng-container matColumnDef="ver">
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarConsultar(elemento)"><span
-              class="cursor-color">ver</span></td>
-        </ng-container>
-        <ng-container matColumnDef="mod">
-          <th mat-header-cell *matHeaderCellDef>-</th>
-          <td mat-cell *matCellDef="let elemento" (click)="activarActualizar(elemento)"><span
-              class="cursor-color">editar</span></td>
+        <ng-container matColumnDef="EDITAR" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+              (click)="abrirReporte()">Reporte</button></th>
+          <td mat-cell *matCellDef="let elemento">
+            <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+              matTooltip="Consultar" matTooltipPosition="above">
+              <mat-icon>search</mat-icon>
+            </button>
+            <button mat-icon-button class="mat-icon-button-table margin-left-3"
+              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnas"></tr>
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
       </table>
+      <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
     </div>
   </div>
 </div>

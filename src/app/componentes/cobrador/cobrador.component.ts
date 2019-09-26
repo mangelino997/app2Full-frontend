@@ -48,7 +48,7 @@ export class CobradorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'ESTA HABILITADA', 'CORREO ELECTRONICO', 'POR DEFECTO EN CLIENTE EVENTUAL', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'ESTA_HABILITADA', 'CORREO_ELECTRONICO', 'POR_DEFECTO_EN_CLIENTE_EVENTUAL', 'EDITAR'];
   public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
@@ -375,9 +375,9 @@ export class CobradorComponent implements OnInit {
       let f = {
         id: elemento.id,
         nombre: elemento.nombre,
-        estahabilitada: elemento.estahabilitada ? 'Si' : 'No',
-        correoelectronico: elemento.correoElectronico ? elemento.correoElectronico : '-',
-        pordefectoclienteeventual: elemento.porDefectoClienteEventual ? 'Si' : 'No'
+        esta_habilitada: elemento.estahabilitada ? 'Si' : 'No',
+        correo_electronico: elemento.correoElectronico ? elemento.correoElectronico : '-',
+        por_defecto_en_cliente_eventual: elemento.porDefectoClienteEventual ? 'Si' : 'No'
       }
       datos.push(f);
     });

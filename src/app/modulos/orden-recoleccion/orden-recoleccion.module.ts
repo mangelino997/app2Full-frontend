@@ -45,7 +45,7 @@ import { CobradorService } from 'src/app/servicios/cobrador.service';
     MatDividerModule,
     MatButtonModule,
     MatDialogModule,
-    TextMaskModule
+    TextMaskModule,
   ],
   providers: [
     OrdenRecoleccionService,

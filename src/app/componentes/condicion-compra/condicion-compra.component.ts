@@ -49,7 +49,7 @@ export class CondicionCompraComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID CODIGO', 'NOMBRE', 'ES CONTADO','CUOTAS','DIAS', 'EDITAR'];
+  public columnas:string[] = ['ID_CODIGO', 'NOMBRE', 'ES_CONTADO','CUOTAS','DIAS', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -349,9 +349,9 @@ export class CondicionCompraComponent implements OnInit {
     let datos = [];
     lista.forEach(elemento => {
         let f = {
-          idcodigo: elemento.id,
+          id_codigo: elemento.id,
           nombre: elemento.nombre,
-          escontado: elemento.esContado ? 'Si' : 'No',
+          es_contado: elemento.esContado ? 'Si' : 'No',
           cuotas: elemento.cuotas,
           dias: elemento.dias
         }

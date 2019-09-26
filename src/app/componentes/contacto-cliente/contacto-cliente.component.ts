@@ -49,7 +49,7 @@ export class ContactoClienteComponent implements OnInit {
   //Define la lista de resultados de busqueda sucursales clientes
   public resultadosClientes: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'TIPO CONTACTO', 'NOMBRE CONTACTO', 'TELEFONO FIJO', 'TELEFONO MOVIL', 'CORREO ELECTRONICO', 'EDITAR'];
+  public columnas:string[] = ['ID', 'TIPO_CONTACTO', 'NOMBRE_CONTACTO', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'CORREO_ELECTRONICO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -351,11 +351,11 @@ export class ContactoClienteComponent implements OnInit {
     lista.forEach(elemento => {
         let f = {
           id: elemento.id,
-          tipocontacto: elemento.tipoContacto.nombre,
-          nombrecontacto: elemento.nombre,
-          telefonofijo: elemento.telefonoFijo,
-          telefonomovil: elemento.telefonoMovil,
-          correoelectronico: elemento.correoelectronico
+          tipo_contacto: elemento.tipoContacto.nombre,
+          nombre_contacto: elemento.nombre,
+          telefono_fijo: elemento.telefonoFijo,
+          telefono_movil: elemento.telefonoMovil,
+          correo_electronico: elemento.correoelectronico
         }
         datos.push(f);
     });

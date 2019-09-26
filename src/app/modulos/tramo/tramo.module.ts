@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TramoRoutingModule } from './tramo-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TramoComponent } from 'src/app/componentes/tramo/tramo.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -29,7 +29,8 @@ import { OrigenDestinoService } from 'src/app/servicios/origen-destino.service';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     TramoService,

@@ -5,11 +5,12 @@ import { ToastrService } from 'ngx-toastr';
 import { EjercicioService } from 'src/app/servicios/ejercicio.service';
 import { Ejercicio } from 'src/app/modelos/ejercicio';
 import { MesService } from 'src/app/servicios/mes.service';
-import { MatSort, MatTableDataSource } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-ejercicio',
@@ -44,16 +45,19 @@ export class EjercicioComponent implements OnInit {
   //Define la lista de resultados del autocompletado
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'nombre', 'anio', 'mes', 'cantidadMeses', 'predeterminado', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'ANIO', 'MES', 'CANTIDAD_MESES', 'PREDETERMINADO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: EjercicioService, private subopcionPestaniaService: SubopcionPestaniaService, private mesService: MesService,
-    private ejercicio: Ejercicio, private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService) {
+    private ejercicio: Ejercicio, private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
+    private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -191,6 +195,7 @@ export class EjercicioComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -352,4 +357,33 @@ export class EjercicioComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          nombre: elemento.nombre,
+          anio: elemento.anioInicio,
+          mes: elemento.mesInicio.nombre,
+          cantidad_meses: elemento.cantidadMeses,
+          predeterminado: elemento.porDefecto ? 'Sí' : 'No'
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Ejercicios',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  }
 }

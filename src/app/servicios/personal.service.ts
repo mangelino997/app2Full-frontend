@@ -8,11 +8,11 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class PersonalService {
   //Define la ruta al servicio web
-  private ruta:string = "/personal";
+  private ruta: string = "/personal";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la subcripcion
@@ -20,7 +20,7 @@ export class PersonalService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Define la lista completa
   public tipos: any[] = ['png', 'jpeg', 'jpg'];
   //Constructor
@@ -33,7 +33,7 @@ export class PersonalService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -54,13 +54,9 @@ export class PersonalService {
   public obtenerPorId(id) {
     return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
   }
-  //Obtiene la lista de choferes de corta distancia por alias
-  public listarChoferesCortaDistanciaPorAlias(nombre) {
-    return this.http.get(this.url + '/listarChoferesCortaDistanciaPorAlias/' + nombre, this.options);
-  }
-  //Obtiene la lista de choferes de larga distancia por alias
-  public listarChoferesLargaDistanciaPorAlias(nombre) {
-    return this.http.get(this.url + '/listarChoferesLargaDistanciaPorAlias/' + nombre, this.options);
+  //Obtiene la lista de choferes por distancia (corta/larga) y por alias
+  public listarChoferesPorDistanciaPorAlias(alias, distancia) {
+    return this.http.get(this.url + '/listarChoferesPorDistanciaPorAlias/' + alias + '/' + distancia, this.options);
   }
   //Obtiene la lista de choferes por empresa
   // public listarChoferesPorEmpresa(empresa) {
@@ -78,7 +74,7 @@ export class PersonalService {
   public listarAcompaniantesPorEmpresa(idEmpresa) {
     return this.http.get(this.url + '/listarAcompaniantesPorEmpresa/' + idEmpresa, this.options);
   }
-  
+
   //Obtiene un listado por alias
   public listarPorAlias(alias) {
     return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
@@ -87,9 +83,25 @@ export class PersonalService {
       })
     })
   }
+  //Obtiene un listado por alias de los personales activos
+  public listarActivosPorAlias(alias) {
+    return this.http.get(this.url + '/listarActivosPorAlias/' + alias, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Obtiene un listado por Empresa y Alias
   public listarPorAliasYEmpresa(idEmpresa, alias) {
-    return this.http.get(this.url + '/listarPorAliasYEmpresa/' +idEmpresa + '/' + alias, this.options).map(res => {
+    return this.http.get(this.url + '/listarPorAliasYEmpresa/' + idEmpresa + '/' + alias, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
+  //Obtiene un listado por Empresa y Alias (activo)
+  public listarActivosPorAliasYEmpresa(idEmpresa, alias) {
+    return this.http.get(this.url + '/listarActivosPorAliasYEmpresa/' + idEmpresa + '/' + alias, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })
@@ -97,15 +109,15 @@ export class PersonalService {
   }
   //Obtiene un listado por Empresa, Alias y Sucursal
   public listarActivosPorAliasEmpresaYSucursal(alias, idEmpresa, idSucursal) {
-    return this.http.get(this.url + '/listarActivosPorAliasEmpresaYSucursal/' +alias + '/' + idEmpresa + '/' + idSucursal, this.options).map(res => {
+    return this.http.get(this.url + '/listarActivosPorAliasEmpresaYSucursal/' + alias + '/' + idEmpresa + '/' + idSucursal, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })
     })
   }
   //Obtiene un listado de choferes por alias
-  public listarChoferPorAlias(alias) {
-    return this.http.get(this.url + '/listarChoferPorAlias/' + alias, this.options).map(res => {
+  public listarChoferActivoPorAlias(alias) {
+    return this.http.get(this.url + '/listarChoferActivoPorAlias/' + alias, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })
@@ -128,49 +140,49 @@ export class PersonalService {
     let linti = obj.pdfLinti;
     let dni = obj.pdfDni;
     let altaTemprana = obj.pdfAltaTemprana;
-    let noBlobPdf = new Blob([null], {type : 'application/pdf'});
-    const formData = new FormData(); 
-    if(foto.nombre!=null){
-      let blob = new Blob([foto.datos], {type : 'image/jpeg'});
+    let noBlobPdf = new Blob([null], { type: 'application/pdf' });
+    const formData = new FormData();
+    if (foto.nombre != null) {
+      let blob = new Blob([foto.datos], { type: 'image/jpeg' });
       formData.append('foto', blob, foto.nombre);
-    }else{
-      let blob = new Blob([null], {type : 'image/jpeg'});
+    } else {
+      let blob = new Blob([null], { type: 'image/jpeg' });
       formData.append('foto', blob, '');
     }
-    if(licConducir.nombre!=null){
-      let blobPdf = new Blob([licConducir.datos], {type :'application/pdf'});
+    if (licConducir.nombre != null) {
+      let blobPdf = new Blob([licConducir.datos], { type: 'application/pdf' });
       formData.append('licConducir', blobPdf, licConducir.nombre);
-    }else{
+    } else {
       formData.append('licConducir', noBlobPdf, '');
     }
-    if(libSanidad.nombre!=null){
-      let blobPdf = new Blob([libSanidad.datos], {type : 'application/pdf'});
+    if (libSanidad.nombre != null) {
+      let blobPdf = new Blob([libSanidad.datos], { type: 'application/pdf' });
       formData.append('libSanidad', blobPdf, libSanidad.nombre);
-    }else{
+    } else {
       formData.append('libSanidad', noBlobPdf, '');
     }
-    if(linti.nombre!=null){
-      let blobPdf = new Blob([linti.datos], {type : 'application/pdf'});
+    if (linti.nombre != null) {
+      let blobPdf = new Blob([linti.datos], { type: 'application/pdf' });
       formData.append('linti', blobPdf, linti.nombre);
-    }else{
+    } else {
       formData.append('linti', noBlobPdf, '');
     }
-    if(dni.nombre!=null){
+    if (dni.nombre != null) {
       let tipo = dni.nombre.split(".", 2);
-      if(this.tipos.includes(tipo[1])){
-        let blobPdf = new Blob([dni.datos], {type : 'image/jpeg'});
+      if (this.tipos.includes(tipo[1])) {
+        let blobPdf = new Blob([dni.datos], { type: 'image/jpeg' });
         formData.append('dni', blobPdf, dni.nombre);
-      } else if(tipo[1]=='pdf') {
-        let blobPdf = new Blob([dni.datos], {type : 'application/pdf'});
+      } else if (tipo[1] == 'pdf') {
+        let blobPdf = new Blob([dni.datos], { type: 'application/pdf' });
         formData.append('dni', blobPdf, dni.nombre);
       }
-    }else{
+    } else {
       formData.append('dni', noBlobPdf, '');
     }
-    if(altaTemprana.nombre!=null){
-      let blobPdf = new Blob([altaTemprana.datos], {type : 'application/pdf'});
+    if (altaTemprana.nombre != null) {
+      let blobPdf = new Blob([altaTemprana.datos], { type: 'application/pdf' });
       formData.append('altaTemprana', blobPdf, altaTemprana.nombre);
-    }else{
+    } else {
       formData.append('altaTemprana', noBlobPdf, '');
     }
     obj.foto = null;
@@ -180,8 +192,7 @@ export class PersonalService {
     obj.pdfDni = null;
     obj.pdfAltaTemprana = null;
     formData.append('personal', JSON.stringify(obj));
-    console.log(obj);
-		return fetch(this.url, {
+    return fetch(this.url, {
       method: "POST",
       headers: {
         'Authorization': localStorage.getItem('token')
@@ -198,50 +209,49 @@ export class PersonalService {
     let linti = obj.pdfLinti;
     let dni = obj.pdfDni;
     let altaTemprana = obj.pdfAltaTemprana;
-    console.log(dni);
-    let noBlobPdf = new Blob([null], {type : 'application/pdf'});
-    const formData = new FormData(); 
-    if(foto.nombre!=null){
-      let blob = new Blob([foto.datos], {type : 'image/jpeg'});
+    let noBlobPdf = new Blob([null], { type: 'application/pdf' });
+    const formData = new FormData();
+    if (foto.nombre != null) {
+      let blob = new Blob([foto.datos], { type: 'image/jpeg' });
       formData.append('foto', blob, foto.nombre);
-    }else{
-      let blob = new Blob([null], {type : 'image/jpeg'});
+    } else {
+      let blob = new Blob([null], { type: 'image/jpeg' });
       formData.append('foto', blob, '');
     }
-    if(licConducir.nombre!=null){
-      let blobPdf = new Blob([licConducir.datos], {type :'application/pdf'});
+    if (licConducir.nombre != null) {
+      let blobPdf = new Blob([licConducir.datos], { type: 'application/pdf' });
       formData.append('licConducir', blobPdf, licConducir.nombre);
-    }else{
+    } else {
       formData.append('licConducir', noBlobPdf, '');
     }
-    if(libSanidad.nombre!=null){
-      let blobPdf = new Blob([libSanidad.datos], {type : 'application/pdf'});
+    if (libSanidad.nombre != null) {
+      let blobPdf = new Blob([libSanidad.datos], { type: 'application/pdf' });
       formData.append('libSanidad', blobPdf, libSanidad.nombre);
-    }else{
+    } else {
       formData.append('libSanidad', noBlobPdf, '');
     }
-    if(linti.nombre!=null){
-      let blobPdf = new Blob([linti.datos], {type : 'application/pdf'});
+    if (linti.nombre != null) {
+      let blobPdf = new Blob([linti.datos], { type: 'application/pdf' });
       formData.append('linti', blobPdf, linti.nombre);
-    }else{
+    } else {
       formData.append('linti', noBlobPdf, '');
     }
-    if(dni.nombre!=null){
+    if (dni.nombre != null) {
       let tipo = dni.nombre.split(".", 2);
-      if(this.tipos.includes(tipo[1])){
-        let blobPdf = new Blob([dni.datos], {type : 'image/jpeg'});
+      if (this.tipos.includes(tipo[1])) {
+        let blobPdf = new Blob([dni.datos], { type: 'image/jpeg' });
         formData.append('dni', blobPdf, dni.nombre);
-      } else if(tipo[1]=='pdf') {
-        let blobPdf = new Blob([dni.datos], {type : 'application/pdf'});
+      } else if (tipo[1] == 'pdf') {
+        let blobPdf = new Blob([dni.datos], { type: 'application/pdf' });
         formData.append('dni', blobPdf, dni.nombre);
       }
-    }else{
+    } else {
       formData.append('dni', noBlobPdf, '');
     }
-    if(altaTemprana.nombre!=null){
-      let blobPdf = new Blob([altaTemprana.datos], {type : 'application/pdf'});
+    if (altaTemprana.nombre != null) {
+      let blobPdf = new Blob([altaTemprana.datos], { type: 'application/pdf' });
       formData.append('altaTemprana', blobPdf, altaTemprana.nombre);
-    }else{
+    } else {
       formData.append('altaTemprana', noBlobPdf, '');
     }
     obj.foto = null;
@@ -251,8 +261,7 @@ export class PersonalService {
     obj.pdfDni = null;
     obj.pdfAltaTemprana = null;
     formData.append('personal', JSON.stringify(obj));
-    console.log(obj);
-		return fetch(this.url, {
+    return fetch(this.url, {
       method: "PUT",
       headers: {
         'Authorization': localStorage.getItem('token')

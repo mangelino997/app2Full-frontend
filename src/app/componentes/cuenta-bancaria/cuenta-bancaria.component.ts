@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -13,6 +13,7 @@ import { BancoService } from 'src/app/servicios/banco.service';
 import { SucursalBancoService } from 'src/app/servicios/sucursal-banco.service';
 import { TipoCuentaBancariaService } from 'src/app/servicios/tipo-cuenta-bancaria.service';
 import { MonedaService } from 'src/app/servicios/moneda.service';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-cuenta-bancaria',
@@ -61,9 +62,11 @@ export class CuentaBancariaComponent implements OnInit {
   //Define la lista de resultados de busqueda para Cuentas Bancarias
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id','empresa', 'banco', 'sucursal', 'tipoCuentaBancaria', 'numeroCuenta', 'moneda', 'CBU', 'aliasCBU', 'estaActiva', 'fechaApertura', 'ver', 'mod'];
+  public columnas: string[] = ['ID','EMPRESA', 'BANCO', 'SUCURSAL', 'TIPO_CUENTA_BANCARIA', 'NUMERO_CUENTA', 'MONEDA', 'CBU', 'ALIAS_CBU', 'ESTA_ACTIVA', 'FECHA_APERTURA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define la lista de personales
   public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso
@@ -74,7 +77,8 @@ export class CuentaBancariaComponent implements OnInit {
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private loaderService: LoaderService, 
     private cuentaBancaria: CuentaBancaria, private servicio: CuentaBancariaService, 
     private bancoService: BancoService, private sucursalService: SucursalBancoService, 
-    private tipoCuentaBancariaService: TipoCuentaBancariaService, private monedaService:MonedaService, private toastr: ToastrService) {
+    private tipoCuentaBancariaService: TipoCuentaBancariaService, private monedaService:MonedaService, private toastr: ToastrService,
+    private reporteServicio: ReporteService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -89,7 +93,6 @@ export class CuentaBancariaComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-          console.log(err);
         }
       );
    }
@@ -98,14 +101,12 @@ export class CuentaBancariaComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.cuentaBancaria.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista completa de Cuentas bancarias (campo "Buscar")
-    // this.listarCuentasBancarias();
     this.inicializarValores();
-    //Obtiene la lista completa de registros (Pestaña "Listar")
-    this.listar();
-    //Se ejecutan todos los listar necesarios
+    //Obtiene la lsita de Tipos de Cuentas Bancarias
     this.listarTiposCuentaBancaria();
+    //Obtiene la lista de Monedas
     this.listarMonedas();
     //Autocompletado - Buscar Bancos por nombre
     this.formulario.get('banco').valueChanges.subscribe(data => {
@@ -171,22 +172,16 @@ export class CuentaBancariaComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+  public seleccionarPestania(id, nombre) {
+    this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.listar();
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-      this.cuentasBancarias = [];
-    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -206,7 +201,6 @@ export class CuentaBancariaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idCuentasBancarias');
         break;
       case 5:
-        this.listar();
         break;
       default:
         break;
@@ -220,7 +214,6 @@ export class CuentaBancariaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -280,17 +273,14 @@ export class CuentaBancariaComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    let usuario = this.appService.getUsuario();
-    this.formulario.get('usuarioAlta').setValue(usuario);
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.formulario.get('empresa').setValue(this.empresa.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -309,23 +299,35 @@ export class CuentaBancariaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idCuentasBancarias').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
         let error= err;
-        document.getElementById("idAutocompletado").focus();
+        document.getElementById("idCuentasBancarias").focus();
         this.toastr.error(error.mensaje);
       }
     );
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        var respuesta = res.json();
+          this.reestablecerFormulario(respuesta.id);
+          document.getElementById('idCuentasBancarias').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+      },
+      err => {
+        this.lanzarError(err);
+        this.loaderService.hide();
+      }
+    );
   }
   //Reestablece los campos agregar
   private reestablecerFormulario(id) {
@@ -333,7 +335,6 @@ export class CuentaBancariaComponent implements OnInit {
     this.autocompletado.setValue(undefined);
     this.resultados = [];
     this.sucursales = [];
-    this.cuentasBancarias = [];
     this.cuentaBan.setValue(null);
     this.inicializarValores();
   }
@@ -345,7 +346,7 @@ export class CuentaBancariaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.formulario.patchValue(elemento);
     this.cuentaBan.setValue(elemento);
     this.formulario.get('banco').setValue(elemento.sucursalBanco.banco);
@@ -355,7 +356,7 @@ export class CuentaBancariaComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.formulario.patchValue(elemento);
     this.cuentaBan.setValue(elemento);
     this.formulario.get('banco').setValue(elemento.sucursalBanco.banco); //Setea el banco
@@ -434,9 +435,9 @@ export class CuentaBancariaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
@@ -446,6 +447,40 @@ export class CuentaBancariaComponent implements OnInit {
       valor.setValue(null);
     }
   }  
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          empresa: elemento.empresa.razonSocial,
+          banco: elemento.sucursalBanco.banco.nombre,
+          sucursal: elemento.sucursalBanco.nombre,
+          tipo_cuenta_bancaria: elemento.tipoCuentaBancaria.nombre,
+          numero_cuenta: elemento.numeroCuenta,
+          moneda: elemento.moneda.nombre,
+          cbu: elemento.cbu,
+          alias_cbu: elemento.aliasCBU,
+          esta_activa: elemento.estaActiva? 'Sí' : 'No',
+          fecha_apertura: elemento.fechaApertura
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Cuentas Bancarias',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  }
   
 
 }

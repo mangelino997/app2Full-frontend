@@ -230,50 +230,50 @@
         <div class="col-md-12">
             <mat-progress-bar mode="indeterminate" *ngIf="show"></mat-progress-bar>
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="id">
+                <ng-container matColumnDef="ID">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
                     <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
                 </ng-container>
-                <ng-container matColumnDef="empresaEmision">
+                <ng-container matColumnDef="EMPRESA_EMISION">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa Emisión</th>
                     <td mat-cell *matCellDef="let elemento">
                         {{elemento.empresaEmision? elemento.empresaEmision.razonSocial : '--'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="sucursal">
+                <ng-container matColumnDef="SUCURSAL">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.sucursal? elemento.sucursal.nombre : '--'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="fecha">
+                <ng-container matColumnDef="FECHA">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="vehiculo">
+                <ng-container matColumnDef="VEHICULO">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Vehículo</th>
                     <td mat-cell *matCellDef="let elemento">{{elemento.vehiculo? elemento.vehiculo.dominio : '--'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="chofer">
+                <ng-container matColumnDef="CHOFER">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Chofer</th>
                     <td mat-cell *matCellDef="let elemento">
                         {{elemento.personal? elemento.personal.nombreCompleto : '--'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="EDITAR">
-                    <th mat-header-cell *matHeaderCellDef></th>
-                    <td mat-cell *matCellDef="let elemento; let i = index;">
-                        <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                            (click)="activarConsultar(elemento)" matTooltip="Consultar"
-                            matTooltipPosition="above">
-                            <mat-icon>search</mat-icon>
-                        </button>
-                        <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                            (click)="activarActualizar(elemento)" matTooltip="Editar"
-                            matTooltipPosition="above">
-                            <mat-icon>edit</mat-icon>
-                        </button>
+                <ng-container matColumnDef="EDITAR" stickyEnd>
+                    <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+                        (click)="abrirReporte()">Reporte</button></th>
+                    <td mat-cell *matCellDef="let elemento">
+                      <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+                        matTooltip="Consultar" matTooltipPosition="above">
+                        <mat-icon>search</mat-icon>
+                      </button>
+                      <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                        (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+                        <mat-icon>edit</mat-icon>
+                      </button>
                     </td>
-                </ng-container>
+                  </ng-container>
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
             </table>
+            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
         </div>
     </div>
 </div>

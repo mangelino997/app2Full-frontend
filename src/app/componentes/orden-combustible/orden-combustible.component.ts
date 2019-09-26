@@ -62,7 +62,7 @@ export class OrdenCombustibleComponent implements OnInit {
     //Alias - Buscar por alias
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalService.listarPorAlias(data).subscribe(res => {
+        this.personalService.listarActivosPorAlias(data).subscribe(res => {
           this.resultados = res;
         })
       }

@@ -44,7 +44,7 @@ public show = false;
 //Define la subscripcion a loader.service
 private subscription: Subscription;
 //Define las columnas de la tabla
-public columnas:string[] = ['ID', 'NOMBRE', 'ES PROPIO', 'EDITAR'];
+public columnas:string[] = ['ID', 'NOMBRE', 'ES_PROPIO', 'EDITAR'];
 //Define la matSort
 @ViewChild(MatSort) sort: MatSort;
 //Define la paginacion
@@ -324,7 +324,7 @@ private prepararDatos(listaCompleta): Array<any> {
       let f = {
         id: elemento.id,
         nombre: elemento.nombre,
-        espropio: elemento.esPropio ? 'Si' : 'No'
+        es_propio: elemento.esPropio ? 'Si' : 'No'
       }
       datos.push(f);
   });

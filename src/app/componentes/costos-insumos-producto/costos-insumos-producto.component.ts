@@ -55,7 +55,7 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['CODIGO', 'NOMBRE', 'RUBRO', 'MARCA', 'UNIDAD MEDIDA', 'MODELO', 'PRECIO UNITARIO VIAJE', 'PRECIO UNITARIO VENTA', 'ITC POR LITRO', 'ITC NETO', 'EDITAR'];
+  public columnas: string[] = ['CODIGO', 'NOMBRE', 'RUBRO', 'MARCA', 'UNIDAD_MEDIDA', 'MODELO', 'PRECIO_UNITARIO_VIAJE', 'PRECIO_UNITARIO_VENTA', 'ITC_POR_LITRO', 'ITC_NETO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -315,12 +315,12 @@ export class CostosInsumosProductoComponent implements OnInit {
         nombre: elemento.nombre,
         rubro: elemento.rubroProducto.nombre,
         marca: elemento.marcaProducto.nombre,
-        unidadmedida: elemento.unidadMedida.nombre,
+        unidad_medida: elemento.unidadMedida.nombre,
         modelo: elemento.modelo,
-        preciounitarioviaje: '$' + elemento.precioUnitarioViaje,
-        preciounitarioventa: '$' + elemento.precioUnitarioVenta,
-        itcporlitro: elemento.itcPorLitro,
-        itcneto: '%' + elemento.itcNeto
+        precio_unitario_viaje: '$' + elemento.precioUnitarioViaje,
+        precio_unitario_venta: '$' + elemento.precioUnitarioVenta,
+        itc_por_litro: elemento.itcPorLitro,
+        itc_neto: '%' + elemento.itcNeto
       }
       datos.push(f);
     });

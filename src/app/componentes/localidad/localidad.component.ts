@@ -44,7 +44,7 @@ export class LocalidadComponent implements OnInit {
   //Define la lista de resultados de busqueda provincia
   public resultadosProvincias: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'CODIGO POSTAL', 'PROVINCIA', 'EDITAR'];
+  public columnas:string[] = ['ID', 'NOMBRE', 'CODIGO_POSTAL', 'PROVINCIA', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -384,7 +384,7 @@ export class LocalidadComponent implements OnInit {
         let f = {
           id: elemento.id,
           nombre: elemento.nombre,
-          codigopostal: elemento.codigoPostal,
+          codigo_postal: elemento.codigoPostal,
           provincia: elemento.provincia.nombre
         }
         datos.push(f);

@@ -10,11 +10,12 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
 import { BarrioService } from 'src/app/servicios/barrio.service';
 import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
-import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialog, MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ClienteEventualComponent } from '../cliente-eventual/cliente-eventual.component';
 import { Subscription } from 'rxjs';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-orden-recoleccion',
@@ -75,9 +76,11 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Define la lista de resultados de busqueda barrio
   public resultadosBarrios = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'fechaEmision', 'cliente', 'domicilio', 'horaDesde', 'horaHasta', 'bultos', 'kgEfectivo', 'pagoEnOrigen', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'FECHA_EMISION', 'CLIENTE', 'DOMICILIO', 'HORA_DESDE', 'HORA_HASTA', 'BULTOS', 'KG_EFECTIVO', 'PAGO_EN_ORIGEN', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator; 
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -86,7 +89,8 @@ export class OrdenRecoleccionComponent implements OnInit {
     private ordenRecoleccion: OrdenRecoleccion, private subopcionPestaniaService: SubopcionPestaniaService,
     private fechaServicio: FechaService, private localidadService: LocalidadService, private clienteService: ClienteService, private toastr: ToastrService,
     private barrioService: BarrioService, private appService: AppService, private servicio: OrdenRecoleccionService,
-    private sucursalService: SucursalService, public dialog: MatDialog, public clienteServicio: ClienteService, private loaderService: LoaderService) {
+    private sucursalService: SucursalService, public dialog: MatDialog, public clienteServicio: ClienteService, private loaderService: LoaderService,
+    private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -160,6 +164,7 @@ export class OrdenRecoleccionComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
@@ -539,4 +544,36 @@ export class OrdenRecoleccionComponent implements OnInit {
       valor.setValue(null);
     }
   }
+  //Prepara los datos para exportar
+private prepararDatos(listaCompleta): Array<any> {
+  let lista = listaCompleta;
+  let datos = [];
+  lista.forEach(elemento => {
+      let f = {
+        id: elemento.id,
+        fecha_emision: elemento.fechaEmision.dayOfMonth +' - '+ elemento.fechaEmision.monthValue +' - '+ elemento.fechaEmision.year,
+        cliente: elemento.cliente.razonSocial,
+        domicilio: elemento.domicilio,
+        hora_desde: elemento.horaDesde,
+        hora_hasta: elemento.horaHasta,
+        bultos: elemento.bultos,
+        kg_efectivo: elemento.kilosEfectivo,
+        pago_en_origen: elemento.pagoEnOrigen? 'Sí': 'No',
+      }
+      datos.push(f);
+  });
+  return datos;
+}
+//Abre el dialogo de reporte
+public abrirReporte(): void {
+  let lista = this.prepararDatos(this.listaCompleta.data);
+  let datos = {
+    nombre: 'Ordenes Recolecciones',
+    empresa: this.appService.getEmpresa().razonSocial,
+    usuario: this.appService.getUsuario().nombre,
+    datos: lista,
+    columnas: this.columnas
+  }
+  this.reporteServicio.abrirDialogo(datos);
+}
 }

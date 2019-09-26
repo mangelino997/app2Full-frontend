@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ViajeRemitoRoutingModule } from './viaje-remito-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ViajeRemitoComponent } from 'src/app/componentes/viaje-remito/viaje-remito.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -47,7 +47,8 @@ import { Aforo } from 'src/app/modelos/aforo';
     MatProgressBarModule,
     MatButtonModule,
     MatDialogModule,
-    TextMaskModule
+    TextMaskModule,
+    MatIconModule
   ],
   providers: [
     ViajeRemitoService,

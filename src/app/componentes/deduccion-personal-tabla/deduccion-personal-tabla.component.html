@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>DEDUCCIÓN PERSONAL</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -42,7 +42,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-2" *ngIf="indiceSeleccionado == 2 || indiceSeleccionado == 3 || indiceSeleccionado == 5">
+          <div class="col-md-1" [hidden]="indiceSeleccionado == 1 || indiceSeleccionado == 4">
             <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate (click)="listar()"
               [disabled]="!tipoBeneficio.value || !anio.value">
               Buscar
@@ -76,7 +76,7 @@
             <div class="form-group has-float-label">
               <label for="idMes" class="tamanio-label">Mes *</label>
               <mat-select id="idMes" class="form-control form-control-sm" formControlName="mes"
-                [compareWith]="compareFn" [disabled]="formulario.value.importeAnualMensual == false">
+                [compareWith]="compareFn">
                 <mat-option *ngFor="let item of meses" [value]="item" required>
                   {{item.nombre}}
                 </mat-option>
@@ -92,36 +92,30 @@
                 (blur)="establecerDecimales(formulario.get('importe'), 2)">
             </div>
           </div>
-          <div class="col-md-2">
-            <button id="idBotonPestania" *ngIf="mostrarBoton && !show && !idMod" mat-raised-button color="primary"
-              formnovalidate (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+          <div class="col-md-1" *ngIf="mostrarBoton && !idMod">
+            <button id="idBotonPestania" mat-raised-button color="primary" formnovalidate
+              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
               {{pestaniaActual}}
             </button>
-            <button id="idBotonActualizar" *ngIf="idMod" mat-raised-button color="primary" formnovalidate
-              (click)="actualizar()" [disabled]="!formulario.valid">
+          </div>
+          <div class="col-md-1" *ngIf="idMod">
+            <button id="idBotonActualizar" mat-raised-button color="primary" formnovalidate (click)="actualizar()"
+              [disabled]="!formulario.valid">
               Actualizar
             </button>
-            <button id="idBotonCancelar" *ngIf="idMod" mat-raised-button formnovalidate (click)="cancelar()">
+          </div>
+          <div class="col-md-1" *ngIf="idMod">
+            <button id="idBotonCancelar" mat-raised-button formnovalidate (click)="cancelar()">
               Cancelar
             </button>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idColumnas" class="tamanio-label">Columnas</label>
-                <mat-select class="form-control form-control-sm" [formControl]="columnasElejidas" [(ngModel)]="columnasSeleccionadas" multiple>
-                  <mat-option *ngFor="let itemColumna of columnas" [value]="itemColumna">
-                    {{itemColumna}}
-                  </mat-option>
-                </mat-select>
+          <div class="col-md-10"></div>
+          <div class="col-md-1">
+            <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
           </div>
         </div>
-          <div class="col-md-8"></div>
-          <div class="col-md-1">
-                  <button mat-raised-button color="primary" (click)="abrirReporte()">Reporte</button>
-          </div>
-      </div>
         <div class="row ">
           <div class="tabla">
             <div class="tabla-ancho">
@@ -130,19 +124,19 @@
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.anio}}</td>
                 </ng-container>
-                <ng-container matColumnDef="TIPO BENEFICIO">
+                <ng-container matColumnDef="TIPO_BENEFICIO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Beneficio</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.afipTipoBeneficio.descripcion}}</td>
                 </ng-container>
-                <ng-container matColumnDef="DEDUCCION PERSONAL">
+                <ng-container matColumnDef="DEDUCCION_PERSONAL">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Deducción Personal</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.afipDeduccionPersonal.descripcion}}</td>
                 </ng-container>
-                <ng-container matColumnDef="IMPORTE ACUMULADO">
+                <ng-container matColumnDef="IMPORTE_ACUMULADO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Acumulado</th>
                   <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="TIPO IMPORTE">
+                <ng-container matColumnDef="TIPO_IMPORTE">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Importe</th>
                   <td mat-cell *matCellDef="let elemento">
                     <span *ngIf="elemento.mes">Mensual</span>
@@ -157,31 +151,26 @@
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Mes</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.mes? elemento.mes.nombre : '-'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="EDITAR">
-                  <th mat-header-cell *matHeaderCellDef>-</th>
+                <ng-container matColumnDef="EDITAR" stickyEnd>
+                  <th mat-header-cell *matHeaderCellDef></th>
                   <td mat-cell *matCellDef="let elemento">
-                    <span class="cursor-color" (click)="activarActualizar(elemento)"
-                      *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
-                      editar
-                    </span>
+                    <button mat-icon-button class="mat-icon-button-table" (click)="activarEliminar(elemento.id)"
+                      matTooltip="Eliminar" matTooltipPosition="above" [hidden]="indiceSeleccionado == 2 || indiceSeleccionado == 5">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button class="mat-icon-button-table margin-left-3" [hidden]="indiceSeleccionado == 2 || indiceSeleccionado == 5"
+                      (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+                      <mat-icon>edit</mat-icon>
+                    </button>
                   </td>
                 </ng-container>
-                <ng-container matColumnDef="ELIMINAR">
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento">
-                    <span class="cursor-color-rojo" (click)="activarEliminar(elemento.id)"
-                      *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
-                      x
-                    </span>
-                  </td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="columnasSeleccionadas"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnasSeleccionadas;"></tr>
+                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
               </table>
-              <mat-paginator [pageSizeOptions]="[5, 10]" showFirstLastButtons></mat-paginator>
             </div>
           </div>
         </div>
+        <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
         <div class="row" *ngIf="show">
           <div class="col text-center">
             <mat-progress-bar mode="indeterminate"></mat-progress-bar>

@@ -8,12 +8,13 @@ import { AppService } from '../../servicios/app.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { Empresa } from 'src/app/modelos/empresa';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatPaginator } from '@angular/material';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { MatSort, MatTableDataSource } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
+import { ReporteService } from 'src/app/servicios/reporte.service';
 
 @Component({
   selector: 'app-empresa',
@@ -51,9 +52,11 @@ export class EmpresaComponent implements OnInit {
   //Define la lista de resultados de busqueda de barrio
   public resultadosLocalidades: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'razonSocial', 'domicilio', 'barrio', 'localidad', 'cuit', 'inicioActividad', 'estaActiva', 'usuarios', 'ver', 'mod'];
+  public columnas: string[] = ['ID', 'RAZON_SOCIAL', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'CUIT', 'INICIO_ACTIVIDAD', 'ESTA_ACTIVA', 'USUARIOS', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -63,7 +66,7 @@ export class EmpresaComponent implements OnInit {
     private appService: AppService, private toastr: ToastrService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService,
     private afipCondicionIvaServicio: AfipCondicionIvaService, private empresaModelo: Empresa, public dialog: MatDialog,
-    private loaderService: LoaderService) {
+    private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -93,7 +96,7 @@ export class EmpresaComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.empresaModelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Barrio - Buscar por nombre
     this.formulario.get('barrio').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -110,8 +113,6 @@ export class EmpresaComponent implements OnInit {
         })
       }
     })
-    //Obtiene la lista completa de registros
-    //this.listar();
     //Obtiene la lista de condiciones de iva
     this.listarCondicionesIva();
   }
@@ -146,7 +147,6 @@ export class EmpresaComponent implements OnInit {
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
     this.mostrarUsuarios = btnUsuarios;
-    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -162,14 +162,10 @@ export class EmpresaComponent implements OnInit {
     }
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -205,7 +201,6 @@ export class EmpresaComponent implements OnInit {
         this.actualizar();
         break;
       case 4:
-        this.eliminar();
         break;
       default:
         break;
@@ -278,9 +273,6 @@ export class EmpresaComponent implements OnInit {
       }
     );
   }
-  //Elimina un registro
-  private eliminar() {
-  }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
@@ -290,7 +282,7 @@ export class EmpresaComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    var respuesta = err;
     if (respuesta.codigo == 11006) {
       document.getElementById("labelRazonSocial").classList.add('label-error');
       document.getElementById("idRazonSocial").classList.add('is-invalid');
@@ -309,15 +301,26 @@ export class EmpresaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+  }
+  //Valida el CUIT
+  public validarCUIT(){
+    let cuit = this.formulario.get('cuit').value;
+    if (cuit) {
+      let respuesta = this.appService.validarCUIT(cuit + '');
+      if (!respuesta) {
+        let err = { codigo: 11007, mensaje: 'CUIT Incorrecto!' };
+        this.lanzarError(err);
+      }
+    }
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
@@ -356,9 +359,9 @@ export class EmpresaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
@@ -379,6 +382,38 @@ export class EmpresaComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       // var listaSocioDedudas= result;
     });
+  }
+  //Prepara los datos para exportar
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
+        let f = {
+          id: elemento.id,
+          razon_social: elemento.razonSocial,
+          domicilio: elemento.domicilio,
+          barrio: elemento.barrio ? elemento.barrio.nombre : '',
+          localidad: elemento.localidad.nombre + elemento.localidad.provincia.nombre,
+          cuit: elemento.cuit,
+          inicio_actividad: elemento.inicioActividad,
+          esta_activa: elemento.estaActiva ? 'Si' : 'No',
+          usuarios: elemento.usuarios
+        }
+        datos.push(f);
+    });
+    return datos;
+  }
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Empresas',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
   }
 }
 

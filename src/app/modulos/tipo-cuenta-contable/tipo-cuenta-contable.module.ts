@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { TipoCuentaContableRoutingModule } from './tipo-cuenta-contable-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatIconModule, MatButton, MatButtonModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoCuentaContableComponent } from 'src/app/componentes/tipo-cuenta-contable/tipo-cuenta-contable.component';
 import { TipoCuentaContableService } from 'src/app/servicios/tipo-cuenta-contable.service';
@@ -27,7 +27,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule
   ],
   providers: [
     SubopcionPestaniaService,

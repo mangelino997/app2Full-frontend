@@ -148,7 +148,6 @@ export class PersonalComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-
         }
       );
     //Obtiene la lista de opciones por rol y subopcion
@@ -159,7 +158,6 @@ export class PersonalComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-
           this.loaderService.hide();
         }
       );
@@ -167,7 +165,7 @@ export class PersonalComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       let empresa = this.appServicio.getEmpresa();
       if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAliasYEmpresa(data, empresa.id).subscribe(response => {
+        this.servicio.listarActivosPorAliasYEmpresa(data, empresa.id).subscribe(response => {
           this.resultados = response;
         })
       }
@@ -253,10 +251,6 @@ export class PersonalComponent implements OnInit {
     this.listarCategorias();
     //Establece los valores por defecto
     this.establecerValoresPorDefecto();
-  }
-  //
-  public mostar(){
-    console.log(this.formulario);
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
@@ -750,7 +744,6 @@ export class PersonalComponent implements OnInit {
     this.formulario.get('foto').setValue(foto);
     this.autocompletado.setValue(undefined);
     this.nacionalidadNacimiento.setValue(undefined);
-    //this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
