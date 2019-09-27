@@ -46,10 +46,6 @@ export class GananciaNetaComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
   public anio: FormControl = new FormControl();
-  //Define el id que se muestra en el campo Codigo
-  public id: FormControl = new FormControl();
-  //Define empresa para las busquedas
-  public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultadosPorFiltro: Array<any> = [];
   //Define la lista de Años Fiscales
@@ -58,10 +54,6 @@ export class GananciaNetaComponent implements OnInit {
   public meses: Array<any> = [];
   //Define la lista de Deduccion General
   public alicuotasGanancia: Array<any> = [];
-  //Define la lista de resultados de busqueda companias seguros
-  public resultadosCompaniasSeguros: Array<any> = [];
-  //Defien la lista de empresas
-  public empresas: Array<any> = [];
   //Define las columnas de la tabla principal
   public columnas: string[] = ['anio', 'id', 'gananciaNetaAcumulada', 'importeFijo', 'alicuotaSinExcedente', 'mod', 'eliminar'];
   //Define las columnas de la tabla reporte
@@ -219,9 +211,9 @@ export class GananciaNetaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario();
     switch (id) {
       case 1:
         this.formulario.enable();
@@ -269,7 +261,7 @@ export class GananciaNetaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (res.status == 201) {
-          this.reestablecerFormulario(respuesta.id);
+          this.reestablecerFormulario();
           this.anio.setValue(anio);
           this.formulario.get('anio').setValue(anio);
           this.toastr.success(respuesta.mensaje);
@@ -291,7 +283,7 @@ export class GananciaNetaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario();
           this.anio.setValue(anio);
           this.formulario.get('anio').setValue(anio);
           this.toastr.success(respuesta.mensaje);
@@ -316,7 +308,7 @@ export class GananciaNetaComponent implements OnInit {
     this.toastr.error(respuesta.mensaje);
   }
   //Reestablece los campos de los formularios y limpia la lista de resultados de 
-  private reestablecerFormulario(id) {
+  private reestablecerFormulario() {
     this.formulario.reset();
     this.formularioFiltro.reset();
     this.listaCompleta = new MatTableDataSource([]);
