@@ -49,9 +49,9 @@ export class TipoFamiliarComponent implements OnInit {
   public columnas:string[] = ['ID', 'NOMBRE', 'ES DEDUCIBLE IMP. GAN.', 'VER', 'EDITAR'];
   public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: TipoFamiliarService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService, private appService: AppService, private tipoFamiliar: TipoFamiliar,

@@ -95,9 +95,9 @@ export class VehiculoComponent implements OnInit {
   public columnas: string[] = ['DOMINIO', 'ID', 'TIPO_VEHICULO', 'MARCA_VEHICULO', 'CONFIGURACION', 'COMPAÑIA_SEGURO', 'POLIZA', 'PDF_TITULO',
     'PDF_CEDULA_IDENT', 'PDF_VTO_RUTA', 'PDF_INSP_TECNICA', 'PDF_VTO_SENASA', 'PDF_HAB_BROMAT', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;_
+  @ViewChild(MatSort, {static: false}) sort: MatSort;_
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: VehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService,

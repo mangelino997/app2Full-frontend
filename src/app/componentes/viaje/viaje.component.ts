@@ -32,13 +32,13 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
 })
 export class ViajeComponent implements OnInit {
   //Define los componentes hijos
-  @ViewChild(ViajeTramoComponent) viajeTramoComponente;
-  @ViewChild(ViajeCombustibleComponent) viajeCombustibleComponente;
-  @ViewChild(ViajeEfectivoComponent) viajeEfectivoComponente;
-  @ViewChild(ViajeGastoComponent) viajeGastoComponente;
-  @ViewChild(ViajeInsumoComponent) viajeInsumoComponente;
-  @ViewChild(ViajePeajeComponent) viajePeajeComponente;
-  @ViewChild(ViajeRemitoGSComponent) viajeRemitoGSComponente;
+  @ViewChild(ViajeTramoComponent,{static: false}) viajeTramoComponente;
+  @ViewChild(ViajeCombustibleComponent, {static: false}) viajeCombustibleComponente;
+  @ViewChild(ViajeEfectivoComponent, {static: false}) viajeEfectivoComponente;
+  @ViewChild(ViajeGastoComponent, {static: false}) viajeGastoComponente;
+  @ViewChild(ViajeInsumoComponent, {static: false}) viajeInsumoComponente;
+  @ViewChild(ViajePeajeComponent, {static: false}) viajePeajeComponente;
+  @ViewChild(ViajeRemitoGSComponent, {static: false}) viajeRemitoGSComponente;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -106,9 +106,9 @@ export class ViajeComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'EMPRESA_EMISION', 'SUCURSAL', 'FECHA', 'VEHICULO', 'CHOFER', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ViajeService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private fechaServicio: FechaService,

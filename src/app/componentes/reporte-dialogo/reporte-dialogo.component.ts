@@ -30,7 +30,7 @@ export class ReporteDialogoComponent implements OnInit {
   //Define el tamanio de la letra
   public tamanioLetra:FormControl = new FormControl();
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(public dialogRef: MatDialogRef<ReporteDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data,
     private fechaServicio: FechaService) { }

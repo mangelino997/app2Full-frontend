@@ -57,9 +57,9 @@ private subscription: Subscription;
 //Define las columnas de la tabla
 public columnas: string[] = ['ID', 'EMPRESA', 'COBRADOR', 'TAL_REC_LOTE', 'P_VENTA', 'LETRA', 'DESDE', 'HASTA', 'EDITAR'];
 //Define la matSort
-@ViewChild(MatSort) sort: MatSort;
+@ViewChild(MatSort, {static: false}) sort: MatSort;
 //Define la paginacion
-@ViewChild(MatPaginator) paginator: MatPaginator;
+@ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 //Constructor
 constructor(private servicio: TalonarioReciboService, private subopcionPestaniaService: SubopcionPestaniaService, private appComponent: AppComponent,
   private talonarioReciboLoteService: TalonarioReciboLoteService, private appService: AppService, private modelo: TalonarioReciboCobrador,

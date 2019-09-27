@@ -52,9 +52,9 @@ export class TramoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'ORIGEN', 'DESTINO', 'KM', 'RUTA_ALTERNATIVA', 'LIQ_CHOFER', 'ESTA_ACTIVO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
    //Define la paginacion
-   @ViewChild(MatPaginator) paginator: MatPaginator;
+   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define autocompletados listar
   public autocompletadoOrigenListar:FormControl = new FormControl();
   public autocompletadoDestinoListar:FormControl = new FormControl();

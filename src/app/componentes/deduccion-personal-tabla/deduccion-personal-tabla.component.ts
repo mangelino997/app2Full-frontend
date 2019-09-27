@@ -63,9 +63,9 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ANIO', 'TIPO_BENEFICIO', 'DEDUCCION_PERSONAL', 'IMPORTE_ACUMULADO', 'TIPO_IMPORTE', 'MES', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -94,7 +94,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     //Define el formulario y validaciones
     this.formulario = this.modelo.formulario;
     //Define el formulario para el metodo buscar (filtro)
-    this.formulario
+    // this.formulario
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de Años Fiscales
@@ -164,7 +164,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerFormulario(undefined);
+    this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     switch (id) {
@@ -210,7 +210,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        this.reestablecerFormulario(respuesta.id);
+        this.reestablecerFormulario();
         this.establecerValoresCampos(anio, afipTipoBeneficio);
         this.toastr.success(respuesta.mensaje);
         this.listar();
@@ -231,7 +231,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario();
           this.establecerValoresCampos(anio, afipTipoBeneficio);
           this.listar();
           this.toastr.success(respuesta.mensaje);
@@ -299,7 +299,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.toastr.error(respuesta.mensaje);
   }
   //Reestablece los campos formularios
-  private reestablecerFormulario(id) {
+  private reestablecerFormulario() {
     this.formulario.reset();
     this.idMod = null;
     this.resultados = [];
@@ -469,7 +469,7 @@ export class ImporteAnualDialogo {
   //Define las columnas de la tabla
   public columnas: string[] = ['mes', 'importeMensual'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(public dialogRef: MatDialogRef<ImporteAnualDialogo>, @Inject(MAT_DIALOG_DATA) public data, private mesService: MesService,
     private toastr: ToastrService) { }

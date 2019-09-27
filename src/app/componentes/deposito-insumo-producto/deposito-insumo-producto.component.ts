@@ -46,9 +46,9 @@ private subscription: Subscription;
 //Define las columnas de la tabla
 public columnas:string[] = ['ID', 'NOMBRE', 'ES_PROPIO', 'EDITAR'];
 //Define la matSort
-@ViewChild(MatSort) sort: MatSort;
+@ViewChild(MatSort,{static: false}) sort: MatSort;
 //Define la paginacion
-@ViewChild(MatPaginator) paginator: MatPaginator;
+@ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
 //Constructor
 constructor(private servicio: DepositoInsumoProductoService, private subopcionPestaniaService: SubopcionPestaniaService,
   private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private modelo: DepositoInsumoProducto,

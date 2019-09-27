@@ -13,7 +13,6 @@ import { PersonalService } from 'src/app/servicios/personal.service';
 import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
-import { DatePipe } from '@angular/common';
 import { ObservacionDialogComponent } from '../observacion-dialog/observacion-dialog.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 
@@ -79,9 +78,9 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -236,42 +235,31 @@ export class AdelantoPersonalComponent implements OnInit {
     this.loaderService.show();
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.paginator = this.paginator;
-    //Setea valores
-    let empresa = this.appService.getEmpresa();
-    let usuario = this.appService.getUsuario();
-    let idSucursal = usuario.sucursal.id;
-    let fechaDesde = this.formularioFiltro.get('fechaEmisionDesde').value;
-    let fechaHasta = this.formularioFiltro.get('fechaEmisionHasta').value;
-    let adelanto = this.formularioFiltro.get('adelanto').value;
-    let estado = this.formularioFiltro.get('estado').value;
     let alias = this.formularioFiltro.get('alias').value;
-    if (alias != undefined || alias != null)
-      alias = this.formularioFiltro.value.alias;
-    else
-      alias = "";
+    alias != undefined || alias != null ? alias = alias.alias : alias = "";
     //Genero el objeto
     let obj = {
-      idEmpresa: empresa.id,
-      idSucursal: idSucursal,
-      fechaDesde: fechaDesde,
-      fechaHasta: fechaHasta,
-      adelanto: adelanto,
+      idEmpresa: this.appService.getEmpresa().id,
+      idSucursal: this.appService.getUsuario().sucursal.id,
+      fechaDesde: this.formularioFiltro.get('fechaEmisionDesde').value,
+      fechaHasta: this.formularioFiltro.get('fechaEmisionHasta').value,
+      adelanto: this.formularioFiltro.get('adelanto').value,
       alias: alias,
-      estado: estado
+      estado: this.formularioFiltro.get('estado').value
     }
-    //Consulta
+    //Consulta por filtro
     this.servicio.listarPorFiltros(obj).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
-        if(this.listaCompleta.data.length == 0)
+        if (this.listaCompleta.data.length == 0)
           this.toastr.warning("Sin registros para mostrar.");
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
         let error = err.json();
-        this.toastr.error(error.mensaje);
+        this.toastr.error(error.message);
         this.loaderService.hide();
       }
     )
@@ -325,11 +313,11 @@ export class AdelantoPersonalComponent implements OnInit {
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        this.listarPorFiltros();
         this.idMod = null;
         this.lote.reset();
         this.formulario.reset();
         this.toastr.success("Registro actualizado con éxito.");
+        this.listarPorFiltros();
         setTimeout(function () {
           document.getElementById("idAutocompletado").focus();
         }, 20);
@@ -345,15 +333,14 @@ export class AdelantoPersonalComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    this.formulario.get('estaAnulado').setValue(true);
     this.formulario.get('usuarioBaja').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        this.listarPorFiltros();
         this.idMod = null;
         this.lote.reset();
         this.formulario.reset();
         this.toastr.success("Registro anulado con éxito.");
+        this.listarPorFiltros();
         setTimeout(function () {
           document.getElementById("idAutocompletado").focus();
         }, 20);
@@ -460,7 +447,6 @@ export class AdelantoPersonalComponent implements OnInit {
       this.formulario.get('fechaVto').setValidators([]);
       this.formulario.get('observacionesAnulado').updateValueAndValidity();//Actualiza la validacion
     }
-    // this.formularioDatosPersonal.get('saldoActual').setValue(this.appService.establecerDecimales('0.00', 2));
   }
   //Controla el campo importe
   public controlarImporte() {
@@ -468,10 +454,6 @@ export class AdelantoPersonalComponent implements OnInit {
     let importe = this.formulario.value.importe;
     importe != null || importe != undefined ? this.formulario.get('importe').setValue(this.appService.establecerDecimales(importe, 2)) :
       this.formulario.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
-    // if (importe != null || importe != undefined)
-    //   this.formulario.get('importe').setValue(this.appService.establecerDecimales(importe, 2));
-    // else
-    //   this.formulario.get('importe').setValue(this.appService.establecerDecimales('0.00', 2));
     importe = Number(this.appService.establecerDecimales(importe, 2));
     this.controlarImporteSuperior(importe, importeDisponible);
   }
@@ -719,7 +701,7 @@ export class PrestamoDialogo {
   //Define las columnas de la tabla
   public columnas: string[] = ['numeroCuota', 'fechaVencimiento', 'importe', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Se subscribe al loader

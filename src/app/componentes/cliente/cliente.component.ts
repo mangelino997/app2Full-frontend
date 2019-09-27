@@ -103,9 +103,9 @@ export class ClienteComponent implements OnInit {
   //Define las columnas de la tabla cuenta bancaria
   public columnasCuentaBancaria: string[] = ['empresa', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu', 'cuentaBancaria', 'vtoPago'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -1041,7 +1041,7 @@ export class ListasDePreciosDialog {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define las columnas de las tablas
   public columnas: string[] = ['descripcion', /*'esOrdenVentaPorDefecto', 'tarifaDefecto',*/
     'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones', 'EDITAR'];

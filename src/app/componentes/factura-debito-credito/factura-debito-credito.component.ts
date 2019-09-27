@@ -80,9 +80,9 @@ export class FacturaDebitoCreditoComponent implements OnInit {
   public columnasListar: string[] = ['EMPRESA', 'SUCURSAL', 'PROVEEDOR', 'TIPO_CPTE', 'PUNTO_VENTA', 'LETRA', 'NUMERO', 'FECHA_EMISION',
     'FECHA_CONTABLE', 'FECHA_REGISTRACION', 'IMPORTE', 'SALDO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -1206,7 +1206,7 @@ export class DetallePercepcionesDialogo {
   //Define las columnas de la segunda tabla (percepciones)
   public columnasPercepcion: string[] = ['tipoPercepcion', 'anio', 'mes', 'importe', 'eliminar'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -1459,7 +1459,7 @@ export class DetalleVencimientosDialogo {
   //Define las columnas de la tabla
   public columnasPercepcion: string[] = ['numeroCuota', 'fechaVencimiento', 'importe', 'mod', 'eliminar'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -1662,7 +1662,7 @@ export class DetalleCompraComprobantesDialogo {
   public columnas: string[] = ['id', 'empresa', 'sucursal', 'proveedor', 'tipoCpte', 'puntoVenta', 'letra', 'numero', 'fechaEmision',
     'fechaContable', 'fechaRegistracion', 'importe', 'saldo', 'elige'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

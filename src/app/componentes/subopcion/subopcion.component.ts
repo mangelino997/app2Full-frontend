@@ -49,7 +49,7 @@ export class SubopcionComponent implements OnInit {
   //Define submodulo
   public submodulo:FormControl = new FormControl();
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(private servicio: SubopcionService, private subopcionPestaniaService: SubopcionPestaniaService,
     private submoduloServicio: SubmoduloService, private appService: AppService, private toastr: ToastrService,

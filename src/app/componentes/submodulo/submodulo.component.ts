@@ -47,7 +47,7 @@ export class SubmoduloComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'nombre', 'ver', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(private servicio: SubmoduloService, private subopcionPestaniaService: SubopcionPestaniaService,
     private moduloServicio: ModuloService, private appService: AppService, private toastr: ToastrService,

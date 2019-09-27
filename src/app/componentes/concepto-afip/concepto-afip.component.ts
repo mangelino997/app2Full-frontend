@@ -48,7 +48,7 @@ export class ConceptoAfipComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'nombre', 'codigoAfip', 'ver', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

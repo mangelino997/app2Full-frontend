@@ -44,7 +44,7 @@ export class SituacionClienteComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'nombre', 'ver', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(private servicio: SituacionClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService) {

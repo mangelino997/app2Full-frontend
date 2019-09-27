@@ -51,9 +51,9 @@ export class SucursalComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: SucursalService, private subopcionPestaniaService: SubopcionPestaniaService,
     private barrioServicio: BarrioService, private localidadServicio: LocalidadService,

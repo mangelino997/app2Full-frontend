@@ -54,9 +54,9 @@ export class UsuarioComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'USERNAME', 'ROL', 'ROL_SECUNDARIO', 'SUCURSAL', 'CUENTA_HABILITADA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define el estado de contraseña y repetir contraseña
   public estadoContrasenia:boolean = false;
   //Constructor

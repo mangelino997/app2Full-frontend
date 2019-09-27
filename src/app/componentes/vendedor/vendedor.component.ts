@@ -44,7 +44,7 @@ export class VendedorComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'nombre', 'estaActivo', 'ver', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
 
   //Establece la subscripcion a loader
   //Constructor

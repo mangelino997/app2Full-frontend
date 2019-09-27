@@ -48,9 +48,9 @@ export class CategoriaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas:string[] = ['ID', 'NOMBRE', 'ADICIONAL_VACACIONES', 'TOPE_ADELANTOS', 'DIAS_LABORABLES', 'HORAS_LABORABLES', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: CategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private appServicio: AppService, 

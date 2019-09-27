@@ -114,7 +114,7 @@ export class EmitirFacturaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnasRemitos: string[] = ['tramo', 'id', 'bultos', 'fecha', 'numeroViaje', 'remitente', 'destinatario', 'sucursalDestino', 'observaciones'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   constructor(
     private appComponent: AppComponent, public dialog: MatDialog, private fechaService: FechaService, private ventaComprobanteService: VentaComprobanteService,
     public clienteService: ClienteService, private toastr: ToastrService, private factura: EmitirFactura, private appService: AppService,
@@ -1082,7 +1082,7 @@ export class ViajeDialogo {
   //Define las columnas de la tabla
   public columnasRemitos: string[] = ['tramo', 'id', 'bultos', 'fecha', 'numeroViaje', 'remitente', 'destinatario', 'sucursalDestino', 'observaciones'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static : false}) sort: MatSort;
   constructor(public dialogRef: MatDialogRef<ViajeDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private viajeTramoService: ViajeTramoService, private viajeTerceroTramoServicio: ViajeTerceroTramoService,
     public dialog: MatDialog) { }

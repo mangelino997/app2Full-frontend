@@ -43,7 +43,7 @@ export class ViajePeajeComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['fecha', 'proveedor', 'puntoVenta', 'ticket', 'importe', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(private viajePeajeModelo: ViajePeaje, private proveedorServicio: ProveedorService,
     private fechaServicio: FechaService, private servicio: ViajePeajeService, private toastr: ToastrService,

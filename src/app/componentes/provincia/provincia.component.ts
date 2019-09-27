@@ -50,9 +50,9 @@ export class ProvinciaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas:string[] = ['ID', 'NOMBRE', 'CODIGO_IIBB', 'CODIGO_AFIP', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ProvinciaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private paisServicio: PaisService, private toastr: ToastrService,

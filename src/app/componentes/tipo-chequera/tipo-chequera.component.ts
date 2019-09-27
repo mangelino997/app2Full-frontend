@@ -47,9 +47,9 @@ export class TipoChequeraComponent implements OnInit {
   public columnas:string[] = ['ID', 'NOMBRE', 'VER', 'EDITAR'];
   public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: TipoChequeraService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private tipoChequera: TipoChequera, 
