@@ -334,7 +334,7 @@ export class AdelantoPersonalComponent implements OnInit {
   private eliminar() {
     this.loaderService.show();
     this.formulario.get('usuarioBaja').setValue(this.appService.getUsuario());
-    this.servicio.actualizar(this.formulario.value).subscribe(
+    this.servicio.anular(this.formulario.value).subscribe(
       res => {
         this.idMod = null;
         this.lote.reset();

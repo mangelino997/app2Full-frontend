@@ -63,9 +63,9 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ANIO', 'TIPO_BENEFICIO', 'DEDUCCION_PERSONAL', 'IMPORTE_ACUMULADO', 'TIPO_IMPORTE', 'MES', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -164,9 +164,9 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario();
     switch (id) {
       case 1:
         this.formulario.enable();
@@ -225,6 +225,9 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   //Actualiza un registro
   public actualizar() {
     this.loaderService.show();
+    this.formulario.get('anio').enable();
+    this.formulario.get('afipTipoBeneficio').enable();
+    this.formulario.get('afipDeduccionPersonal').enable();
     let anio = this.formulario.value.anio;
     let afipTipoBeneficio = this.formulario.value.afipTipoBeneficio;
     this.servicio.actualizar(this.formulario.value).subscribe(
@@ -306,11 +309,17 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.anio.reset();
     this.tipoBeneficio.reset();
     this.listaCompleta = new MatTableDataSource([]);
+    this.formulario.get('anio').enable();
+    this.formulario.get('afipTipoBeneficio').enable();
+    console.log(this.indiceSeleccionado);
+    this.indiceSeleccionado == 3? this.formulario.get('afipDeduccionPersonal').disable() : this.formulario.get('afipDeduccionPersonal').enable();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.idMod = elemento.id;
     this.formulario.patchValue(elemento);
+    this.formulario.get('anio').disable();
+    this.formulario.get('afipTipoBeneficio').disable();
     this.establecerDecimales(this.formulario.get('importe'), 2);
   }
   //elimina el registro seleccionado
@@ -469,7 +478,7 @@ export class ImporteAnualDialogo {
   //Define las columnas de la tabla
   public columnas: string[] = ['mes', 'importeMensual'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Constructor
   constructor(public dialogRef: MatDialogRef<ImporteAnualDialogo>, @Inject(MAT_DIALOG_DATA) public data, private mesService: MesService,
     private toastr: ToastrService) { }
