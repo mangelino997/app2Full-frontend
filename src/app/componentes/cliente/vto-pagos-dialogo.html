@@ -1,0 +1,109 @@
+<div class="padd-20">
+    <div class="row">
+        <div class="col text-center">
+            <h5>Vencimientos de Pago FCE MiPyMEs</h5>
+        </div>
+    </div>
+    <div [formGroup]="formulario">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idEmpresa" class="tamanio-label">Empresa</label>
+                    <input id="idEmpresa" type="text" [formControl]="razonSocialEmpresa" class="form-control form-control-sm" readonly>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group has-float-label">
+                    <label for="idDiasFechaFactura" class="tamanio-label">Días Fecha Factura</label>
+                    <input id="idDiasFechaFactura" type="number" formControlName="diasFechaFactura"
+                        class="form-control form-control-sm number-right">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idEnero" class="tamanio-label">Enero</label>
+                    <input id="idEnero" type="date" formControlName="enero" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idFebrero" class="tamanio-label">Febrero</label>
+                    <input id="idFebrero" type="date" formControlName="febrero" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idMarzo" class="tamanio-label">Marzo</label>
+                    <input id="idMarzo" type="date" formControlName="marzo" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idAbril" class="tamanio-label">Abril</label>
+                    <input id="idAbril" type="date" formControlName="abril" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idMayo" class="tamanio-label">Mayo</label>
+                    <input id="idMayo" type="date" formControlName="mayo" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idJunio" class="tamanio-label">Junio</label>
+                    <input id="idJunio" type="date" formControlName="junio" class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idJulio" class="tamanio-label">Julio</label>
+                    <input id="idJulio" type="date" formControlName="julio" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idAgosto" class="tamanio-label">Agosto</label>
+                    <input id="idAgosto" type="date" formControlName="agosto" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idSeptiembre" class="tamanio-label">Septiembre</label>
+                    <input id="idSeptiembre" type="date" formControlName="septiembre"
+                        class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idOctubre" class="tamanio-label">Octubre</label>
+                    <input id="idOctubre" type="date" formControlName="octubre" class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idNoviembre" class="tamanio-label">Noviembre</label>
+                    <input id="idNoviembre" type="date" formControlName="noviembre"
+                        class="form-control form-control-sm">
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idDiciembre" class="tamanio-label">Diciembre</label>
+                    <input id="idDiciembre" type="date" formControlName="diciembre"
+                        class="form-control form-control-sm">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <button mat-raised-button color="primary" [mat-dialog-close]="formulario">Aceptar</button>
+        <button class="margin-left-3" mat-raised-button (click)="cerrar()">Cancelar</button>
+    </div>
+</div>

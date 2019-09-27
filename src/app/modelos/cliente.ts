@@ -55,7 +55,8 @@ export class Cliente {
             fechaAlta: new FormControl(),
             esReceptorFCE: new FormControl('', Validators.required),
             clienteOrdenesVentas: new FormControl(),
-            clienteCuentasBancarias: new FormControl()
+            clienteCuentasBancarias: new FormControl(),
+            clienteVtoPago: new FormControl()
         })
     }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject, AfterViewInit } from '@angular/core';
 import { ClienteService } from '../../servicios/cliente.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
@@ -30,6 +30,7 @@ import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service
 import { CuentaBancariaDialogoComponent } from '../cuenta-bancaria-dialogo/cuenta-bancaria-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
+import { ClienteVtoPago } from 'src/app/modelos/clienteVtoPago';
 
 @Component({
   selector: 'app-cliente',
@@ -100,7 +101,7 @@ export class ClienteComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['RAZON_SOCIAL', 'ID', 'TIPO_DOC', 'NUM_DOC', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   //Define las columnas de la tabla cuenta bancaria
-  public columnasCuentaBancaria: string[] = ['empresa', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu', 'cuentaBancaria'];
+  public columnasCuentaBancaria: string[] = ['empresa', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu', 'cuentaBancaria', 'vtoPago'];
   //Define la matSort
   @ViewChild(MatSort) sort: MatSort;
   //Define la paginacion
@@ -281,6 +282,27 @@ export class ClienteComponent implements OnInit {
   //Elimina la cuenta bancaria
   public eliminarCuentaBancaria(elemento): void {
     elemento.cuentaBancaria = null;
+  }
+  //Abre el dialogo de registro de vencimientos de pagos
+  public registrarVtoPagos(elemento) {
+    const dialogRef = this.dialog.open(VtoPagosDialogo, {
+      width: '95%',
+      maxWidth: '95%',
+      data: {
+        empresa: elemento.empresa,
+        vtoPago: elemento.clienteVtoPago
+      },
+    });
+    dialogRef.afterClosed().subscribe(resultado => {
+      if (resultado) {
+        elemento.clienteVtoPago = resultado;
+        console.log(elemento);
+      }
+    });
+  }
+  //Elimina vencimientos de pagos
+  public eliminarVtoPagos(elemento): void {
+    elemento.clienteVtoPago.reset();
   }
   //Obtiene el listado de cobradores
   private listarCobradores() {
@@ -1436,4 +1458,38 @@ export class CambiarOVporDefectoDialogo {
 }
 /****************************************************************************************************
 * FIN DIALOGO CAMBIAR ORDEN DE VENTA POR DEFECTO
+****************************************************************************************************/
+/****************************************************************************************************
+* DIALOGO VENCIMIENTOS DE PAGOS
+****************************************************************************************************/
+@Component({
+  selector: 'vto-pagos-dialogo',
+  templateUrl: 'vto-pagos-dialogo.html'
+})
+export class VtoPagosDialogo implements OnInit {
+  //Define la empresa
+  public formulario: FormGroup;
+  //Defiene razon social de empresa
+  public razonSocialEmpresa: FormControl = new FormControl();
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<VtoPagosDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private clienteVtoPago: ClienteVtoPago) { }
+  //Al inicializarse el componente
+  ngOnInit() {
+    //Establece el formulario
+    this.formulario = this.clienteVtoPago.formulario;
+    //Establece la empresa
+    this.formulario.get('empresa').setValue(this.data.empresa);
+    this.razonSocialEmpresa.setValue(this.data.empresa.razonSocial);
+    if(this.data.clienteVtoPago) {
+      this.formulario.setValue(this.data.clienteVtoPago);
+    }
+  }
+  //Cierra el dialogo
+  public cerrar(): void {
+    this.dialogRef.close();
+  }
+}
+/****************************************************************************************************
+* FIN DIALOGO VENCIMIENTOS DE PAGOS
 ****************************************************************************************************/

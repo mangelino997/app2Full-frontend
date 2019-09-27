@@ -6,7 +6,7 @@ import { ClienteRoutingModule } from './cliente-routing.module';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatSidenavModule, MatDividerModule, MatIconModule, MatButtonModule, MatDialogModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { ClienteComponent, ListasDePreciosDialog, CambiarOVporDefectoDialogo } from 'src/app/componentes/cliente/cliente.component';
+import { ClienteComponent, ListasDePreciosDialog, CambiarOVporDefectoDialogo, VtoPagosDialogo } from 'src/app/componentes/cliente/cliente.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { Cliente } from 'src/app/modelos/cliente';
@@ -31,13 +31,15 @@ import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service
 import { OrdenVentaService } from 'src/app/servicios/orden-venta.service';
 import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.service';
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
+import { ClienteVtoPago } from 'src/app/modelos/clienteVtoPago';
 
 @NgModule({
   declarations: [
     ClienteComponent,
     CuentaBancariaDialogoComponent,
     ListasDePreciosDialog,
-    CambiarOVporDefectoDialogo
+    CambiarOVporDefectoDialogo,
+    VtoPagosDialogo
   ],
   imports: [
     CommonModule,
@@ -83,12 +85,14 @@ import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.se
     CuentaBancariaService,
     OrdenVentaService,
     ClienteOrdenVentaService,
-    OrdenVentaTarifaService
+    OrdenVentaTarifaService,
+    ClienteVtoPago
   ],
   entryComponents: [
     CuentaBancariaDialogoComponent,
     ListasDePreciosDialog,
-    CambiarOVporDefectoDialogo
+    CambiarOVporDefectoDialogo,
+    VtoPagosDialogo
   ]
 })
 export class ClienteModule { }
