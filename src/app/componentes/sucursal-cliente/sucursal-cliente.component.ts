@@ -56,9 +56,9 @@ export class SucursalClienteComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas:string[] = ['ID', 'CLIENTE', 'NOMBRE', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: SucursalClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService,

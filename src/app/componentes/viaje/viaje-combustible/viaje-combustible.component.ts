@@ -52,7 +52,7 @@ export class ViajeCombustibleComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['orden', 'sucursal', 'fecha', 'proveedor', 'insumoProducto', 'cantidad', 'precioUnitario', 'observaciones', 'anulado', 'obsAnulado', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define estado de campo precio unitario
   public estadoPrecioUnitario: boolean = false;
   //Constructor

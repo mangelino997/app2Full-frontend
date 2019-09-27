@@ -66,9 +66,9 @@ export class VehiculoProveedorComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas:string[] = ['ID', 'DOMINIO', 'TIPO_VEHICULO', 'MARCA_VEHICULO', 'COMPANIA_SEGURO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: VehiculoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService,

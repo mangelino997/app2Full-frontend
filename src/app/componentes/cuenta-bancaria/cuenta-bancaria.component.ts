@@ -64,9 +64,9 @@ export class CuentaBancariaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID','EMPRESA', 'BANCO', 'SUCURSAL', 'TIPO_CUENTA_BANCARIA', 'NUMERO_CUENTA', 'MONEDA', 'CBU', 'ALIAS_CBU', 'ESTA_ACTIVA', 'FECHA_APERTURA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define la lista de personales
   public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso

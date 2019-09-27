@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { AdelantoPersonalRoutingModule } from './adelanto-personal-routing.module';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatDialog, MatButtonModule, MatDialogModule, MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA, MatDividerModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatDialog, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdelantoPersonalComponent, PrestamoDialogo, DetalleAdelantoDialogo } from 'src/app/componentes/adelanto-personal/adelanto-personal.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -16,8 +16,6 @@ import { PersonalService } from 'src/app/servicios/personal.service';
 import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
-import { Subscription } from 'rxjs';
-import { ObservacionDialogComponent } from 'src/app/componentes/observacion-dialog/observacion-dialog.component';
 
 @NgModule({
   declarations: [

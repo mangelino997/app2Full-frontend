@@ -136,9 +136,9 @@ export class OrdenVentaComponent implements OnInit {
   //Define las columnas de la tabla para la pestaña LISTAR
   public columnasListar: string[] = ['EDITAR', 'ID', 'DESCRIPCION', 'VENDEDOR', 'SEGURO', 'CR', 'ES_CONTADO'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private clienteServicio: ClienteService, private fechaService: FechaService,
@@ -983,7 +983,7 @@ export class VerTarifaDialogo {
   public columnasTramo: string[] = ['eliminar', 'mod', 'origendestino', 'km', 'kmPactado', 'precioFijoSeco', 'precioUnitSeco',
     'precioFijoRefrig', 'precioUnitRefrig'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

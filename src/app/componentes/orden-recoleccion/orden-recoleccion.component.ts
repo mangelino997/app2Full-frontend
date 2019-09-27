@@ -78,9 +78,9 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'FECHA_EMISION', 'CLIENTE', 'DOMICILIO', 'HORA_DESDE', 'HORA_HASTA', 'BULTOS', 'KG_EFECTIVO', 'PAGO_EN_ORIGEN', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator; 
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator; 
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

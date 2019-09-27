@@ -35,7 +35,7 @@ export class OrdenCombustibleComponent implements OnInit {
   public columnas: string[] = ['sucursal', 'numeroOrden', 'fecha', 'proveedor', 'insumoProducto', 'cantidad', 'precioUnitario',
     'observaciones', 'anulado', 'obsAnulado', 'mod', 'ver'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

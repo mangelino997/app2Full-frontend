@@ -110,9 +110,9 @@ export class PersonalComponent implements OnInit {
   //Define la lista de tipos de imagenes
   private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

@@ -88,6 +88,10 @@ export class PersonalAdelantoService {
   public anularLote(elemento) {
     return this.http.put(this.url + '/anularLote', elemento, this.options);
   }
+  //Anula un registro - un adelanto personal
+  public anular(elemento) {
+    return this.http.put(this.url + '/anular', elemento, this.options);
+  }
   //Elimina un registro
   public eliminar(id) {
     return this.http.delete(this.url + '/' + id, this.options);

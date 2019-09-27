@@ -62,9 +62,9 @@ export class ChequeraComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'EMPRESA', 'CUENTA_BANCARIA', 'TIPO_CHEQUERA', 'DESDE', 'HASTA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private chequera: Chequera, private servicio: ChequeraService, private tipoChequeraService: TipoChequeraService, 
     private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService, 

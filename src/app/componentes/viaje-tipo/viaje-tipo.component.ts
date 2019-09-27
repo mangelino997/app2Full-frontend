@@ -46,9 +46,9 @@ export class ViajeTipoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'COSTO_POR_KM_PROPIO', 'COSTO_POR_KM_TERCERO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private viajeTipoServicio: ViajeTipoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private loaderService: LoaderService, private toastr: ToastrService, private viajeTipo: ViajeTipo,

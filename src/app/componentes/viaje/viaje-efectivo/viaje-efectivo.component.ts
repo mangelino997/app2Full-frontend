@@ -48,7 +48,7 @@ export class ViajeEfectivoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['adelanto', 'sucursal', 'fecha', 'empresa', 'importe', 'observaciones', 'anulado', 'obsAnulado', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Constructor
   constructor(private viajeEfectivoModelo: ViajeEfectivo, private empresaServicio: EmpresaService,
     private fechaServicio: FechaService, public dialog: MatDialog,

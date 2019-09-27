@@ -13,7 +13,6 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { PdfService } from 'src/app/servicios/pdf.service';
 import { PdfDialogoComponent } from '../pdf-dialogo/pdf-dialogo.component';
-import { element } from '@angular/core/src/render3';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 
@@ -56,9 +55,9 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas:string[] = ['ID', 'EMPRESA', 'NUMERO_POLIZA', 'VTO_POLIZA', 'PDF', 'EDITAR', 'ELIMINAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

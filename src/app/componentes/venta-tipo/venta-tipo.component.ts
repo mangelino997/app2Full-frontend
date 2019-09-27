@@ -56,7 +56,7 @@ export class VentaTipoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'nombre', 'tipoComprobante', 'esContraReembolso', 'afipConcepto', 'chequeRechazado', 'habilitado', 'ver', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   // public compereFn:any;
 
   //Constructor

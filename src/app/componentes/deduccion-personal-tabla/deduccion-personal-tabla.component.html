@@ -24,7 +24,7 @@
             <div class="form-group has-float-label">
               <label for="idAnioFiscal" class="tamanio-label">Año Fiscal *</label>
               <mat-select id="idAnioFiscal" class="form-control form-control-sm" formControlName="anio"
-                [compareWith]="compareFn" [disabled]="idMod">
+                [compareWith]="compareFn">
                 <mat-option *ngFor="let item of anios" [value]="item" (blur)="cambioAnio(item)">
                   {{item}}
                 </mat-option>
@@ -35,7 +35,7 @@
             <div class="form-group has-float-label">
               <label for="labelTipoBeneficio" class="tamanio-label">Tipo de Beneficio *</label>
               <mat-select id="labelTipoBeneficio" class="form-control form-control-sm"
-                formControlName="afipTipoBeneficio" [compareWith]="compareFn" [disabled]="idMod">
+                formControlName="afipTipoBeneficio" [compareWith]="compareFn">
                 <mat-option *ngFor="let item of tiposBeneficios" [value]="item" (blur)="cambioTipoBeneficio(item)">
                   {{item.descripcion}}
                 </mat-option>
@@ -55,7 +55,7 @@
             <div class="form-group has-float-label">
               <label for="labelDeduccionPersonal" class="tamanio-label">Deducción Personal *</label>
               <mat-select id="labelDeduccionPersonal" class="form-control form-control-sm"
-                formControlName="afipDeduccionPersonal" [compareWith]="compareFn" [disabled]="indiceSeleccionado == 3">
+                formControlName="afipDeduccionPersonal" [compareWith]="compareFn">
                 <mat-option *ngFor="let item of deduccionesPersonales" [value]="item">
                   {{item.descripcion}}
                 </mat-option>
@@ -149,11 +149,11 @@
                   <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
                       (click)="abrirReporte()">Reporte</button></th>
                   <td mat-cell *matCellDef="let elemento">
-                    <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
-                      matTooltip="Consultar" matTooltipPosition="above">
-                      <mat-icon>search</mat-icon>
+                    <button mat-icon-button class="mat-icon-button-table" (click)="activarEliminar(elemento)"
+                      matTooltip="Consultar" matTooltipPosition="above" *ngIf="indiceSeleccionado ==  4">
+                      <mat-icon>delete</mat-icon>
                     </button>
-                    <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                    <button mat-icon-button class="mat-icon-button-table margin-left-3" *ngIf="indiceSeleccionado ==  3"
                       (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
                       <mat-icon>edit</mat-icon>
                     </button>

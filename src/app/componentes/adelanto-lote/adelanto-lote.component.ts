@@ -69,7 +69,7 @@ export class AdelantoLoteComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['empresa', 'fechaEmision', 'lote', 'importeAdelanto', 'totalLegajos', 'importeTotal', 'anular'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -399,7 +399,7 @@ export class AdelantoLoteDialogo {
   //Define las columnas de la tabla
   public columnas: string[] = ['numeroLegajo', 'personal', 'motivo'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(public dialogRef: MatDialogRef<AdelantoLoteDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente

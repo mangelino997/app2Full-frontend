@@ -75,9 +75,9 @@ export class ViajeRemitoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['SUCURSAL_INGRESO', 'SUCURSAL_DESTINO', 'FECHA', 'PUNTO_VENTA', 'NUMERO', 'REMITENTE', 'DESTINATARIO', 'BULTOS', 'KG_EFECTIVO', 'VALOR_DECLARADO', 'OBSERVACIONES', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private loaderService: LoaderService, private toastr: ToastrService, private modelo: ViajeRemitoGS,
