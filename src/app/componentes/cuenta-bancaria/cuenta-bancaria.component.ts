@@ -49,8 +49,6 @@ export class CuentaBancariaComponent implements OnInit {
   public tiposCuentaBancarias: Array<any> = [];
   public monedas: Array<any> = [];
   public cuentasBancarias: Array<any> = [];
-  //Define la opcion activa
-  public botonOpcionActivo: boolean = null;
   //Define el form control para las busquedas
   public bancos: Array<any> = [];
   //Define  el autocompletado como FormControl
@@ -67,8 +65,6 @@ export class CuentaBancariaComponent implements OnInit {
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
-  //Define la lista de personales
-  public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

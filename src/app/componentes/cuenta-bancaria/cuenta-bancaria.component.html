@@ -108,7 +108,7 @@
             <div class="form-group has-float-label">
               <label for="idCBU" class="tamanio-label">CBU *</label>
               <input id="idCBU" type="text" formControlName="cbu" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" [textMask]="mascararEnteros(22)"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" [textMask]="mascararEnteros(22)"
                 (blur)="validarCBU()">
             </div>
           </div>

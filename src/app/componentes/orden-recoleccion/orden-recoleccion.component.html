@@ -166,7 +166,7 @@
             <div class="form-group has-float-label">
               <label for="idTelefonoContacto" class="tamanio-label">Teléfono Contacto *</label>
               <input id="idTelefonoContacto" type="number" formControlName="telefonoContacto" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
         </div>
@@ -182,7 +182,7 @@
             <div class="form-group has-float-label">
               <label for="idBultos" class="tamanio-label">Bultos *</label>
               <input id="idBultos" type="text" formControlName="bultos" autocomplete="off"
-                class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0"
                 [textMask]="mascararEnterosSinDecimales(6)" (blur)="establecerEnteros(formulario.get('bultos'))">
             </div>
           </div>
@@ -190,7 +190,7 @@
             <div class="form-group has-float-label">
               <label for="idKgEfectivo" class="tamanio-label">Kg Efectivo </label>
               <input id="idKgEfectivo" type="text" formControlName="kilosEfectivo" autocomplete="off"
-                (blur)="setDecimales($event, 2)" class="form-control form-control-sm" [readonly]="soloLectura"
+                (blur)="setDecimales($event, 2)" class="form-control form-control-sm number-right" [readonly]="soloLectura"
                 placeholder="0.00" (blur)="establecerDecimales(formulario.get('kilosEfectivo'), 2)"
                 [textMask]="mascararEnterosConDecimales(8)">
             </div>
@@ -199,7 +199,7 @@
             <div class="form-group has-float-label">
               <label for="idM3" class="tamanio-label">m3 </label>
               <input id="idM3" type="text" formControlName="m3" autocomplete="off" (blur)="setDecimales($event, 2)"
-                class="form-control form-control-sm" [readonly]="soloLectura" placeholder="0.00"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" placeholder="0.00"
                 (blur)="establecerDecimales(formulario.get('m3'), 2)" [textMask]="mascararEnterosConDecimales(3)">
             </div>
           </div>
@@ -207,7 +207,7 @@
             <div class="form-group has-float-label">
               <label for="idValorDeclarado" class="tamanio-label">Valor Declarado *</label>
               <input id="idValorDeclarado" type="text" formControlName="valorDeclarado" autocomplete="off"
-                (blur)="setDecimales($event, 2)" class="form-control form-control-sm" [readonly]="soloLectura"
+                (blur)="setDecimales($event, 2)" class="form-control form-control-sm number-right" [readonly]="soloLectura"
                 placeholder="0.00" (blur)="establecerDecimales(formulario.get('valorDeclarado'), 2)"
                 [textMask]="mascararEnterosConDecimales(10)">
             </div>
