@@ -37,7 +37,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['check', 'fecha', 'tipoComprobante', 'puntoVenta', 'numeroComprobante', 'remitente', 'destinatario'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(private viajeRemito: ViajeRemito, private ViajeTramo: ViajeTramo, private viajeRemitoServicio: ViajeRemitoService,
     private appService: AppService, private sucursalServicio: SucursalService, private loaderService: LoaderService,

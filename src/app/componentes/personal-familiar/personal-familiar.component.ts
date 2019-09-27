@@ -76,9 +76,9 @@ export class PersonalFamiliarComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['LEGAJO', 'FAMILIAR', 'APELLIDO', 'NOMBRE', 'FECHA_NACIMIENTO', 'CUIL', 'LUGAR_NACIMIENTO', 'NACIONALIDAD', 'SEXO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define la lista de personales
   public personales: Array<any> = [];
   //Define la lista para los Familiares del Personal que se seleccione

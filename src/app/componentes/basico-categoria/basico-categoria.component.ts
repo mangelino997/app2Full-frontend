@@ -57,9 +57,9 @@ export class BasicoCategoriaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'CATEGORIA', 'MES', 'ANIO', 'BASICO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
    //Define la paginacion
-   @ViewChild(MatPaginator) paginator: MatPaginator;
+   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: BasicoCategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private appService: AppService, private basicoCategoria: BasicoCategoria,

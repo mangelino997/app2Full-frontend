@@ -61,9 +61,9 @@ export class ProductoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas:string[] = ['ID', 'NOMBRE', 'MARCA', 'MODELO', 'RUBRO', 'ES_ASIGNABLE', 'ES_SERIALIZABLE', 'ES_CRITICO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private appService: AppService, private producto: Producto, private servicio: ProductoService,
     private subopcionPestaniaService: SubopcionPestaniaService, private rubrosServicio: RubroProductoService,

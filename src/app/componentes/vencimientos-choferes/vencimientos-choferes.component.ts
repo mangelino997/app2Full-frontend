@@ -53,9 +53,9 @@ export class VencimientosChoferesComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['LEGAJO', 'NOMBRE', 'CHOFER_LARGA_DISTANCIA', 'VTO_LICENCIA', 'VTO_CURSO', 'VTO_CURSO_CARGA_PELIGROSA', 'VTO_CURSO_LINTI', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
   //Define el form control para las busquedas

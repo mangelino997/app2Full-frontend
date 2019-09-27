@@ -57,9 +57,9 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['CODIGO', 'NOMBRE', 'RUBRO', 'MARCA', 'UNIDAD_MEDIDA', 'MODELO', 'PRECIO_UNITARIO_VIAJE', 'PRECIO_UNITARIO_VENTA', 'ITC_POR_LITRO', 'ITC_NETO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define la lista de personales
   public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso

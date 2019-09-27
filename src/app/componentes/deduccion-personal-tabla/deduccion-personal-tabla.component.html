@@ -24,7 +24,7 @@
             <div class="form-group has-float-label">
               <label for="idAnioFiscal" class="tamanio-label">Año Fiscal *</label>
               <mat-select id="idAnioFiscal" class="form-control form-control-sm" formControlName="anio"
-                [compareWith]="compareFn" [disabled]="idMod">
+                [compareWith]="compareFn" [disabled]="!idMod">
                 <mat-option *ngFor="let item of anios" [value]="item" (blur)="cambioAnio(item)">
                   {{item}}
                 </mat-option>
@@ -35,7 +35,7 @@
             <div class="form-group has-float-label">
               <label for="labelTipoBeneficio" class="tamanio-label">Tipo de Beneficio *</label>
               <mat-select id="labelTipoBeneficio" class="form-control form-control-sm"
-                formControlName="afipTipoBeneficio" [compareWith]="compareFn" [disabled]="idMod">
+                formControlName="afipTipoBeneficio" [compareWith]="compareFn" [disabled]="!idMod">
                 <mat-option *ngFor="let item of tiposBeneficios" [value]="item" (blur)="cambioTipoBeneficio(item)">
                   {{item.descripcion}}
                 </mat-option>

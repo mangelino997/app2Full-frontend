@@ -51,9 +51,9 @@ export class CobradorComponent implements OnInit {
   public columnas:string[] = ['ID', 'NOMBRE', 'CUENTA_HABILITADA', 'CORREO_ELECTRONICO', 'POR_DEFECTO_EN_CLIENTE_EVENTUAL', 'EDITAR'];
   public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: CobradorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private cobrador: Cobrador,

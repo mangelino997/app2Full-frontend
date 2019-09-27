@@ -79,7 +79,7 @@ export class SoporteComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 'subopcion', 'mensaje', 'estado', 'ver', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(private servicio: SoporteService, private modelo: Soporte, private loaderService: LoaderService, private toastr: ToastrService,
     private appComponent: AppComponent, private appService: AppService,

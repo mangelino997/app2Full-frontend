@@ -15,7 +15,7 @@ export class CuentaBancariaDialogoComponent implements OnInit {
   //Define las columnas de la tabla cuenta bancaria
   public columnasCuentaBancaria: string[] = ['banco', 'sucursal', 'tipoCuenta', 'numCuenta', 'cbu', 'aliasCbu', 'seleccionar'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructo
   constructor(public dialogRef: MatDialogRef<CuentaBancariaDialogoComponent>, @Inject(MAT_DIALOG_DATA) public data,
     private cuentaBancariaServicio: CuentaBancariaService) { }

@@ -73,7 +73,7 @@ export class ViajeTramoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'fecha', 'tramo', 'km', 'empresa', 'tipoCarga', 'tipoViaje', 'tarifa', 'destinatario', 'unidadNegocio', 'obs', 'editar'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Constructor
   constructor(
     private viajeTramoModelo: ViajeTramo, private viajeServicio: ViajeService, private viajeModelo: Viaje,
@@ -636,7 +636,7 @@ export class DadorDestinatarioDialogo {
   //Define las columnas de la tabla
   public columnas: string[] = ['dador', 'destinatario', 'eliminar'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Constructor
   constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
     private viajeTramoClienteModelo: ViajeTramoCliente, private viajeTramoClienteService: ViajeTramoClienteService, private clienteServicio: ClienteService) { }
@@ -732,7 +732,7 @@ export class DadorDestTablaDialogo {
   //Define la lista de dadores-destinatarios
   public listaCompleta = new MatTableDataSource([]);
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(public dialogRef: MatDialogRef<DadorDestTablaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
   ngOnInit() {

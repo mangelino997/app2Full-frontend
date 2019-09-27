@@ -48,9 +48,9 @@ export class CondicionVentaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'ES_CONTADO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

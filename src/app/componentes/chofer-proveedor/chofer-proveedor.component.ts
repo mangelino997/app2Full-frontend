@@ -60,9 +60,9 @@ export class ChoferProveedorComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas:string[] = ['ID', 'NOMBRE', 'PROVEEDOR', 'TIPO_DOCUMENTO', 'NUMERO_DOCUMENTO', 'LOCALIDAD', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ChoferProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private choferProveedor: ChoferProveedor, private appService: AppService, private toastr: ToastrService, 

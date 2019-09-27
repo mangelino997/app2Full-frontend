@@ -78,9 +78,9 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -333,7 +333,6 @@ export class AdelantoPersonalComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    this.formulario.get('estaAnulado').setValue(true);
     this.formulario.get('usuarioBaja').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -702,7 +701,7 @@ export class PrestamoDialogo {
   //Define las columnas de la tabla
   public columnas: string[] = ['numeroCuota', 'fechaVencimiento', 'importe', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Se subscribe al loader

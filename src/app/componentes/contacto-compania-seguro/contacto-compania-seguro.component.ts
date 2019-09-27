@@ -49,9 +49,9 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas:string[] = ['ID', 'TIPO_CONTACTO', 'NOMBRE_CONTACTO', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'CORREO_ELECTRONICO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service

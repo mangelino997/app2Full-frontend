@@ -46,9 +46,9 @@ export class TipoCuentaContableComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas:string[] = ['ID', 'NOMBRE', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: TipoCuentaContableService, private subopcionPestaniaService: SubopcionPestaniaService,
     private tipoCuentaContable: TipoCuentaContable, private appService: AppService, private toastr: ToastrService

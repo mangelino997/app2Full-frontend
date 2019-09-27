@@ -51,7 +51,7 @@ export class ViajeInsumoComponent implements OnInit {
   public columnas: string[] = ['orden', 'sucursal', 'fecha', 'proveedor', 'insumo', 'cantidad', 'precioUnitario', 'importe', 'observaciones',
     'anulado', 'obsAnulado', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
   constructor(private viajeInsumoModelo: ViajeInsumo, private proveedorServicio: ProveedorService,
     private fechaServicio: FechaService, private appComponent: AppComponent, private loaderService: LoaderService,
