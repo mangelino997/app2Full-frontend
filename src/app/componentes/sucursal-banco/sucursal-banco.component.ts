@@ -101,9 +101,8 @@ export class SucursalBancoComponent implements OnInit {
     // this.listar();
   }
   //Establece el formulario
-  public establecerFormulario(): void {
-    let elemento = this.autocompletado.value;
-    this.formulario.setValue(elemento);
+  public establecerFormulario(){
+    this.formulario.setValue(this.autocompletado.value);
   }
   //Vacia la lista de resultados de autocompletados
   private vaciarListas() {
@@ -145,7 +144,12 @@ export class SucursalBancoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idBanco');
         break;
       case 5:
-        this.listar();
+        this.sucursales = [];
+        this.listaCompleta = new MatTableDataSource([]);
+        this.mostrarAutocompletado = true;
+        setTimeout(function () {
+          document.getElementById('idBanco').focus();
+        }, 20);
         break;
       default:
         break;
@@ -195,7 +199,23 @@ export class SucursalBancoComponent implements OnInit {
     );
   }
   //Obtiene una lista por banco
-  public listarPorBanco() {
+  public listarPorBanco(elemento) {
+    if (this.mostrarAutocompletado) {
+      this.servicio.listarPorBanco(elemento.id).subscribe(
+        res => {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          if (this.indiceSeleccionado == 5)
+            this.listaCompleta.sort = this.sort,
+              this.listaCompleta.paginator = this.paginator;
+          else
+            this.sucursales = res.json();
+        },
+        err => {
+        }
+      )
+    }
+  }
+  /* public listarPorBanco(elemento) {
     if (this.mostrarAutocompletado) {
       this.loaderService.show();
       let elemento = this.formulario.get('banco').value;
@@ -209,7 +229,7 @@ export class SucursalBancoComponent implements OnInit {
         }
       )
     }
-  }
+  } */
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -314,15 +334,14 @@ export class SucursalBancoComponent implements OnInit {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.patchValue(elemento);
     this.establecerFormulario();
-    this.listarPorBanco();
+    this.listarPorBanco(elemento.banco);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.patchValue(elemento);
     this.establecerFormulario();
-    this.listarPorBanco();
+    this.listarPorBanco(elemento.banco);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

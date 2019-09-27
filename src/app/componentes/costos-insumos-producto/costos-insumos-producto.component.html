@@ -157,6 +157,38 @@
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
+        <br>
+        <div class="row">
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label for="idRubro" class="tamanio-label">Rubro *</label>
+                <mat-select id="idRubro" class="form-control form-control-sm" [formControl]="rubro"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let itemRubro of rubros" [value]="itemRubro">
+                    {{itemRubro.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group has-float-label">
+                <label for="idMarca" class="tamanio-label">Marca *</label>
+                <mat-select id="idMarca" class="form-control form-control-sm" [formControl]="marca"
+                  [compareWith]="compareFn">
+                  <mat-option *ngFor="let itemMarca of marcas" [value]="itemMarca">
+                    {{itemMarca.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <button id="idBoton" mat-raised-button color="primary" formnovalidate
+                (click)="listarPorRubroYMarcaLista(rubro, marca)">
+                Buscar
+              </button>
+            </div>
+          </div>
+          <br>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="CODIGO">

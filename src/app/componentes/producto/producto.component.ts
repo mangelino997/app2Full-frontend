@@ -40,8 +40,12 @@ export class ProductoComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista completa de rubros
   public rubros: Array<any> = [];
-  //Define la lista completa de marcas
+  //Define rubro para la lista
+  public rubro: FormControl = new FormControl();
+  //Define la lista de marcas
   public marcas: Array<any> = [];
+  //Define marca para la lista
+  public marca: FormControl = new FormControl();
   //Define la lista completa de unidades de medida
   public unidadesMedidas: Array<any> = [];
   //Define el autocompletado
@@ -207,7 +211,10 @@ export class ProductoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
+          this.listaCompleta = new MatTableDataSource([]);
+          setTimeout(function () {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
         break;
       default:
         break;
@@ -383,6 +390,16 @@ export class ProductoComponent implements OnInit {
         this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
       }
     }
+  }
+  //Obtiene la lista por rubro y marca
+  public listarPorRubroYMarcaLista(rubro, marca) {
+    this.loaderService.show();
+    this.servicio.listarPorRubroYMarca(rubro.value.id, marca.value.id).subscribe(res => {
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
+      this.listaCompleta.paginator = this.paginator;
+      this.loaderService.hide();
+    });
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

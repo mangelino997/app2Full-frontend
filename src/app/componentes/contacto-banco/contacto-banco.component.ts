@@ -56,6 +56,8 @@ export class ContactoBancoComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Define la variable para guardar el valor de un campo
+  public guardarCampo: any; 
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
@@ -238,6 +240,8 @@ export class ContactoBancoComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
+          var guardarCampo = this.formulario.value.sucursalBanco;
+          console.log(guardarCampo);
           this.reestablecerFormulario();
           setTimeout(function () {
             document.getElementById('idSucursalBanco').focus();
@@ -304,6 +308,13 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario() {
+    //this.formulario.get('idSucursalBanco').setValue(this.guardarCampo);
+    this.formulario.reset();
+    this.autocompletado.setValue(undefined);
+    this.vaciarListas();
+  }
+  //Reestablece el formulario
+  private reestablecerFormularioAgregar() {
     this.formulario.reset();
     this.autocompletado.setValue(undefined);
     this.vaciarListas();

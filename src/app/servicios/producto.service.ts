@@ -46,6 +46,10 @@ export class ProductoService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
+  //Obtiene un listado de Rubro y Marca
+  public listarPorRubroYMarca(idRubro, idMarca){
+    return this.http.get(this.url + '/listarPorRubroYMarca/' + idRubro + '/' + idMarca, this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
