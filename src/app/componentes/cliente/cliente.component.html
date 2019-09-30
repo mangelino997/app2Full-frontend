@@ -484,16 +484,16 @@
                         </ng-container>
                         <ng-container matColumnDef="vtoPago" stickyEnd>
                           <th mat-header-cell *matHeaderCellDef mat-sort-header>Vto. Pago</th>
-                          <td mat-cell *matCellDef="let elemento">
+                          <td mat-cell *matCellDef="let elemento ; let i = index">
                             <button mat-icon-button class="mat-icon-button-table"
-                              (click)="registrarVtoPagos(elemento)"
+                              (click)="registrarVtoPagos(elemento, i)"
                               *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3"
                               [disabled]="!formulario.get('esReceptorFCE').value"
                               matTooltip="Registrar Vto. Pagos" matTooltipPosition="above">
                               <mat-icon>payment</mat-icon>
                             </button>
                             <button mat-icon-button class="mat-icon-button-table"
-                              (click)="eliminarVtoPagos(elemento)" style="margin-left: 10px;"
+                              (click)="eliminarVtoPagos(i)" style="margin-left: 10px;"
                               *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3" matTooltip="Eliminar"
                               matTooltipPosition="above">
                               <mat-icon>delete</mat-icon>

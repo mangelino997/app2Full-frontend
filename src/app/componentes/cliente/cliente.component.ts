@@ -284,25 +284,32 @@ export class ClienteComponent implements OnInit {
     elemento.cuentaBancaria = null;
   }
   //Abre el dialogo de registro de vencimientos de pagos
-  public registrarVtoPagos(elemento) {
+  public registrarVtoPagos(elemento, indice) {
     const dialogRef = this.dialog.open(VtoPagosDialogo, {
       width: '95%',
       maxWidth: '95%',
       data: {
         empresa: elemento.empresa,
-        vtoPago: elemento.clienteVtoPago
+        clienteVtoPago: this.formulario.get('clienteVtosPagos').value[indice]
       },
     });
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
-        elemento.clienteVtoPago = resultado;
-        console.log(elemento);
+        let lista = this.formulario.get('clienteVtosPagos').value;
+        if(lista) {
+          lista.push(resultado);
+        } else {
+          lista = [];
+          lista.push(resultado);
+        };
+        this.formulario.get('clienteVtosPagos').setValue(lista);
       }
     });
   }
   //Elimina vencimientos de pagos
-  public eliminarVtoPagos(elemento): void {
-    elemento.clienteVtoPago.reset();
+  public eliminarVtoPagos(indice): void {
+    let lista = this.formulario.get('clienteVtosPagos').value;
+    lista.splice(indice, 1);
   }
   //Obtiene el listado de cobradores
   private listarCobradores() {
@@ -1478,11 +1485,12 @@ export class VtoPagosDialogo implements OnInit {
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.clienteVtoPago.formulario;
+    this.formulario.reset();
     //Establece la empresa
     this.formulario.get('empresa').setValue(this.data.empresa);
     this.razonSocialEmpresa.setValue(this.data.empresa.razonSocial);
     if(this.data.clienteVtoPago) {
-      this.formulario.setValue(this.data.clienteVtoPago);
+      this.formulario.patchValue(this.data.clienteVtoPago);
     }
   }
   //Cierra el dialogo
