@@ -356,7 +356,6 @@ export class GananciaNetaComponent implements OnInit {
     this.formulario.patchValue(elemento);
     this.establecerDecimales(this.formulario.get('importe'), 2);
     this.establecerDecimales(this.formulario.get('importeFijo'), 2);
-    this.listar();
   }
   //elimina el registro seleccionado
   public activarEliminar(idElemento) {
