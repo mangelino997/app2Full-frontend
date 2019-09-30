@@ -59,9 +59,9 @@ export class GananciaNetaComponent implements OnInit {
   //Define las columnas de la tabla reporte
   public columnasListar: string[] = ['ANIO_MES', 'GANANCIA_NETA_DE_MAS', 'GANANCIA_NETA_A', 'IMPORTE_FIJO', 'ALICUOTA', 'EXCEDENTE'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -135,7 +135,7 @@ export class GananciaNetaComponent implements OnInit {
     )
   }
   //Carga la tabla
-  public listar() {
+  public listarPorAnio() {
     this.loaderService.show();
     this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
@@ -184,7 +184,7 @@ export class GananciaNetaComponent implements OnInit {
   public listarPorFiltro() {
     this.loaderService.show();
     let mes = null;
-    this.formularioFiltro.value.mes? mes=this.formularioFiltro.value.mes.id: mes=0;
+    this.formularioFiltro.value.mes ? mes = this.formularioFiltro.value.mes.id : mes = 0;
     let anio = this.formularioFiltro.value.anio;
     this.servicio.listarPorFiltros(anio, mes).subscribe(
       res => {
@@ -265,7 +265,7 @@ export class GananciaNetaComponent implements OnInit {
           this.anio.setValue(anio);
           this.formulario.get('anio').setValue(anio);
           this.toastr.success(respuesta.mensaje);
-          this.listar();
+          this.listarPorAnio();
         }
         this.loaderService.hide();
       },
@@ -287,7 +287,7 @@ export class GananciaNetaComponent implements OnInit {
           this.anio.setValue(anio);
           this.formulario.get('anio').setValue(anio);
           this.toastr.success(respuesta.mensaje);
-          this.listar();
+          this.listarPorAnio();
         }
         this.loaderService.hide();
       },
@@ -322,9 +322,7 @@ export class GananciaNetaComponent implements OnInit {
     if (this.formulario.value.importe < 0 || this.formulario.value.importe == 0) {
       this.formulario.get('importe').setValue(null);
       this.toastr.error("La Ganancia Neta Acumulada debe ser mayor a cero");
-      setTimeout(function () {
-        document.getElementById('idImporte').focus();
-      }, 20);
+      document.getElementById('idImporte').focus();
     }
 
   }
@@ -333,30 +331,24 @@ export class GananciaNetaComponent implements OnInit {
     let importe = Number(this.formulario.value.importe);
     if (!importe) {
       this.toastr.warning("Primero debe ingresar la Ganancia Neta Acumulada");
-      setTimeout(function () {
-        document.getElementById('idImporte').focus();
-      }, 20);
+      document.getElementById('idImporte').focus();
     } else {
       this.establecerDecimales(this.formulario.get('importeFijo'), 2); //Quita la máscara
       let importeFijo = Number(this.formulario.value.importeFijo);
       if (importeFijo > importe || importeFijo < 0) {
         this.formulario.get('importeFijo').setValue(null);
         this.toastr.error("El Importe Fijo debe ser menor Ganancia Neta Acumulada y mayor o igual a cero");
-        setTimeout(function () {
-          document.getElementById('idImporteFijo').focus();
-        }, 20);
+        document.getElementById('idImporteFijo').focus();
       }
     }
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.idMod = elemento.id;
-    if (this.indiceSeleccionado == 3)
-      this.formulario.enable();
+    this.formulario.enable();
     this.formulario.patchValue(elemento);
     this.establecerDecimales(this.formulario.get('importe'), 2);
     this.establecerDecimales(this.formulario.get('importeFijo'), 2);
-    this.listar();
   }
   //elimina el registro seleccionado
   public activarEliminar(idElemento) {
@@ -365,7 +357,7 @@ export class GananciaNetaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         this.toastr.success(respuesta.mensaje);
-        this.listar();
+        this.listarPorAnio();
         this.loaderService.hide();
       },
       err => {
@@ -438,8 +430,8 @@ export class GananciaNetaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach((elemento, index) => {
-      let importeExcedente =null;
-      index == 0? importeExcedente = 0 : importeExcedente = lista[index-1].importe;
+      let importeExcedente = null;
+      index == 0 ? importeExcedente = 0 : importeExcedente = lista[index - 1].importe;
       let f = {
         anio_mes: elemento.mes ? elemento.mes : elemento.anio,
         ganancia_neta_de_mas: importeExcedente,

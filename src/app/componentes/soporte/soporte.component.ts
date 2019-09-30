@@ -79,7 +79,7 @@ export class SoporteComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'fecha', 'empresa', 'modulo', 'submodulo', 'subopcion', 'mensaje', 'estado', 'ver', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Constructor
   constructor(private servicio: SoporteService, private modelo: Soporte, private loaderService: LoaderService, private toastr: ToastrService,
     private appComponent: AppComponent, private appService: AppService,
@@ -160,7 +160,6 @@ export class SoporteComponent implements OnInit {
         this.establecerBug(elemento);
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -255,7 +254,6 @@ export class SoporteComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -270,6 +268,8 @@ export class SoporteComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -310,15 +310,11 @@ export class SoporteComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).then(
       res => {
-        console.log(res);
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success('Registro actualizado con éxito');
         }
         this.loaderService.hide();
@@ -337,7 +333,6 @@ export class SoporteComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Reestablece el formulario
   private reestablecerFormulario(estado) {

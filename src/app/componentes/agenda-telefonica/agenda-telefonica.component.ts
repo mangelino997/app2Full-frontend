@@ -46,11 +46,11 @@ export class AgendaTelefonicaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'DOMICILIO', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'CORREO_ELECTRONICO', 'LOCALIDAD', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'DOMICILIO', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'CORREO_ELECTRONICO', 'LOCALIDAD', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: AgendaTelefonicaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private localidadServicio: LocalidadService, private appService: AppService,
@@ -63,7 +63,6 @@ export class AgendaTelefonicaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
   }
@@ -103,7 +102,7 @@ export class AgendaTelefonicaComponent implements OnInit {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
-      }else{
+      } else {
         this.formulario.reset();
       }
     })
@@ -196,7 +195,6 @@ export class AgendaTelefonicaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -211,7 +209,8 @@ export class AgendaTelefonicaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -225,9 +224,7 @@ export class AgendaTelefonicaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -252,9 +249,7 @@ export class AgendaTelefonicaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -279,10 +274,8 @@ export class AgendaTelefonicaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         this.reestablecerFormulario(undefined);
-        setTimeout(function () {
-          document.getElementById('idAutocompletado').focus();
-        }, 20);
-        if(respuesta.codigo == 200) {
+        document.getElementById('idAutocompletado').focus();
+        if (respuesta.codigo == 200) {
           this.toastr.success(MensajeExcepcion.ELIMINADO);
         }
         this.loaderService.hide();
@@ -367,16 +360,16 @@ export class AgendaTelefonicaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          domicilio: elemento.domicilio,
-          telefono_fijo: elemento.telefonoFijo,
-          telefono_movil: elemento.telefonoMovil,
-          correo_electronico: elemento.correoelectronico,
-          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        domicilio: elemento.domicilio,
+        telefono_fijo: elemento.telefonoFijo,
+        telefono_movil: elemento.telefonoMovil,
+        correo_electronico: elemento.correoelectronico,
+        localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -391,5 +384,5 @@ export class AgendaTelefonicaComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

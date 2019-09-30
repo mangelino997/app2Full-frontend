@@ -38,7 +38,7 @@ export class OpcionComponent implements OnInit {
   //Define la lista de resultados del autocompletado
   public resultados: Array<any> = [];
   //Define la lista de subopciones
-  public subopciones:Array<any> = [];
+  public subopciones: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -55,16 +55,11 @@ export class OpcionComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
@@ -76,7 +71,7 @@ export class OpcionComponent implements OnInit {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
-          this.show = state.show;
+        this.show = state.show;
       });
     //Define los campos para validaciones
     this.formulario = new FormGroup({
@@ -90,7 +85,7 @@ export class OpcionComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar', 0);
     //Autocompletado Subopcion - Buscar por Nombre
     this.formulario.get('subopcion').valueChanges.subscribe(data => {
-      if(typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.subopcionServicio.listarPorNombre(data).subscribe(res => {
           this.subopciones = res.json();
         })
@@ -162,7 +157,6 @@ export class OpcionComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -175,7 +169,8 @@ export class OpcionComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -189,9 +184,7 @@ export class OpcionComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -216,9 +209,7 @@ export class OpcionComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -237,7 +228,6 @@ export class OpcionComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -310,5 +300,5 @@ export class OpcionComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
 }

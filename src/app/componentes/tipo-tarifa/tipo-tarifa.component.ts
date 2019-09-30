@@ -43,11 +43,11 @@ export class TipoTarifaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'POR ESCALA', 'POR PORCENTAJE', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'POR ESCALA', 'POR PORCENTAJE', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: TipoTarifaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
@@ -59,17 +59,16 @@ export class TipoTarifaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-      //Autocompletado - Buscar por nombre
-      this.autocompletado.valueChanges.subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.servicio.listarPorNombre(data).subscribe(res => {
-            this.resultados = res;
-          })
-        }
-      })
+    //Autocompletado - Buscar por nombre
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorNombre(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -168,7 +167,6 @@ export class TipoTarifaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -183,7 +181,8 @@ export class TipoTarifaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -197,9 +196,7 @@ export class TipoTarifaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -224,9 +221,7 @@ export class TipoTarifaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -245,11 +240,10 @@ export class TipoTarifaComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -267,7 +261,6 @@ export class TipoTarifaComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
@@ -309,15 +302,14 @@ export class TipoTarifaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          porescala: elemento.porEscala ? 'Si' : 'No',
-          porporcentaje: elemento.porPorcentaje ? 'Si' : 'No'
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        porescala: elemento.porEscala ? 'Si' : 'No',
+        porporcentaje: elemento.porPorcentaje ? 'Si' : 'No'
+      }
+      datos.push(f);
     });
-    console.log(datos);
     return datos;
   }
   //Abre el dialogo de reporte

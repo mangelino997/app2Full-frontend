@@ -72,14 +72,14 @@ export class ActualizacionPreciosComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private actualizacionPrecios: ActualizacionPrecios, 
+  constructor(private actualizacionPrecios: ActualizacionPrecios,
     private clienteService: ClienteService, private appService: AppService,
-    private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService, 
+    private ordenVentaTramoServicio: OrdenVentaTramoService, private ordenVentaEscalaServicio: OrdenVentaEscalaService,
     private empresaServicio: EmpresaService, private ordenVentaServicio: OrdenVentaService,
     private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService) {
     //Defiene autocompletado de Clientes
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
           this.resultados = res;
         })
@@ -107,7 +107,7 @@ export class ActualizacionPreciosComponent implements OnInit {
     this.empresa.setValue(this.appService.getEmpresa());
     this.empresa.disable();
     //Establece el foco en buscar por
-    setTimeout(function() {
+    setTimeout(function () {
       document.getElementById('idBuscarPor').focus();
     }, 20);
   }
@@ -218,9 +218,7 @@ export class ActualizacionPreciosComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      setTimeout(function () {
-        document.getElementById('idActualizacion').focus();
-      }, 20);
+      document.getElementById('idActualizacion').focus();
     });
   }
   //Abre un modal con los datos actualizados antes de confirmar 
@@ -239,9 +237,7 @@ export class ActualizacionPreciosComponent implements OnInit {
         this.reestablecerFormulario(undefined);
         this.buscarPor.setValue(0);
         this.buscarPorCliente = true;
-        setTimeout(function() {
-          document.getElementById('idBuscarPor').focus();
-        }, 20);
+        document.getElementById('idBuscarPor').focus();
       }
     });
   }
@@ -479,9 +475,7 @@ export class ConfirmarDialogo {
         res => {
           var respuesta = res.json();
           if (respuesta.codigo == 201) {
-            setTimeout(function () {
-              document.getElementById('idBuscarPor').focus();
-            }, 20);
+            document.getElementById('idBuscarPor').focus();
             this.toastr.success(respuesta.mensaje);
             this.loaderService.hide();
           }
@@ -502,9 +496,7 @@ export class ConfirmarDialogo {
         res => {
           var respuesta = res.json();
           if (respuesta.codigo == 201) {
-            setTimeout(function () {
-              document.getElementById('idBuscarPor').focus();
-            }, 20);
+            document.getElementById('idBuscarPor').focus();
             this.toastr.success(respuesta.mensaje);
             this.loaderService.hide();
           }

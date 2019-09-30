@@ -100,23 +100,23 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" sticky>
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="ANIO" sticky>
+        <ng-container matColumnDef="ANIO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Año de Inicio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.anioInicio}}</td>
         </ng-container>
-        <ng-container matColumnDef="MES" sticky>
+        <ng-container matColumnDef="MES">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Mes de Inicio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.mesInicio.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="CANTIDAD_MESES" sticky>
+        <ng-container matColumnDef="CANTIDAD_MESES">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad de Meses</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.cantidadMeses}}</td>
         </ng-container>
-        <ng-container matColumnDef="PREDETERMINADO" sticky>
+        <ng-container matColumnDef="PREDETERMINADO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Predeterminado</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.porDefecto? 'Sí':'No'}}</td>
         </ng-container>

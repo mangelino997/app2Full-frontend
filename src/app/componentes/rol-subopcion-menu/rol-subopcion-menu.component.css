@@ -2,7 +2,7 @@
   width: 320px;
 }
 th {
-  position: -webkit-sticky;
+  /* position: -webkit-sticky; */
   position: sticky;
   top: 0; 
   background-color: #FFF;

@@ -95,9 +95,9 @@ export class VehiculoComponent implements OnInit {
   public columnas: string[] = ['DOMINIO', 'ID', 'TIPO_VEHICULO', 'MARCA_VEHICULO', 'CONFIGURACION', 'COMPAÑIA_SEGURO', 'POLIZA', 'PDF_TITULO',
     'PDF_CEDULA_IDENT', 'PDF_VTO_RUTA', 'PDF_INSP_TECNICA', 'PDF_VTO_SENASA', 'PDF_HAB_BROMAT', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;_
+  @ViewChild(MatSort, { static: false }) sort: MatSort; _
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: VehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService,
@@ -114,13 +114,8 @@ export class VehiculoComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -396,7 +391,6 @@ export class VehiculoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -451,7 +445,7 @@ export class VehiculoComponent implements OnInit {
       this.formulario.get('personal').enable();
       this.formulario.get('vehiculoRemolque').enable();
     }
-    if(tipoVehiculo.vtoSanidadAlimenticia) {
+    if (tipoVehiculo.vtoSanidadAlimenticia) {
       this.esVtoSanidadAlimenticia = false;
       this.formulario.get('vtoSenasa').setValidators(Validators.required);
       this.formulario.get('vtoHabBromatologica').setValidators(Validators.required);
@@ -488,13 +482,10 @@ export class VehiculoComponent implements OnInit {
         if (res.status == 201) {
           respuesta.then(data => {
             this.reestablecerFormulario(data.id);
-            setTimeout(function () {
-              document.getElementById('idTipoVehiculo').focus();
-            }, 20);
+            document.getElementById('idTipoVehiculo').focus();
             this.toastr.success(data.mensaje);
           },
             err => {
-              console.log(err.json());
             })
         } else {
           respuesta.then(err => {
@@ -532,7 +523,7 @@ export class VehiculoComponent implements OnInit {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success('Registro actualizado con éxito');
-        } else if(res.status == 500) {
+        } else if (res.status == 500) {
           respuesta.then(data => {
             this.toastr.error(data.mensaje);
           });
@@ -562,7 +553,7 @@ export class VehiculoComponent implements OnInit {
     this.servicio.eliminar(elemento.id).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
@@ -760,8 +751,6 @@ export class VehiculoComponent implements OnInit {
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
     let datos = [];
-    console.log("hola");
-    console.log(listaCompleta);
     lista.forEach(elemento => {
       let f = {
         id: elemento.id,

@@ -137,31 +137,31 @@
       </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID" sticky>
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" sticky>
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="USERNAME" sticky>
+        <ng-container matColumnDef="USERNAME">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.username}}</td>
         </ng-container>
-        <ng-container matColumnDef="ROL" sticky>
+        <ng-container matColumnDef="ROL">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Rol</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.rol.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="ROL_SECUNDARIO" sticky>
+        <ng-container matColumnDef="ROL_SECUNDARIO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Rol Secundario</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.rolSecundario ? elemento.rolSecundario.nombre : null}}</td>
         </ng-container>
-        <ng-container matColumnDef="SUCURSAL" sticky>
+        <ng-container matColumnDef="SUCURSAL">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.sucursal.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="CUENTA_HABILITADA" sticky>
+        <ng-container matColumnDef="CUENTA_HABILITADA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Habilitada</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.cuentaHabilitada?'Sí':'No'}}</td>
         </ng-container>

@@ -60,7 +60,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Define la pestania actual seleccionada
   public pestaniaActual: string = null;
   //Define el form control para las busquedas
-  public autocompletado:FormControl = new FormControl();
+  public autocompletado: FormControl = new FormControl();
   //Define si mostrar el autocompletado
   public mostrarAutocompletado: boolean = null;
   //Define si el campo es de solo lectura
@@ -88,9 +88,9 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['MONEDA', 'EMPRESA', 'CUENTA_CONTABLE', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -108,15 +108,13 @@ export class MonedaCuentaContableComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-      //Autocompletado - Buscar por nombre cliente
-      let empresa = this.appService.getEmpresa();
-      this.autocompletado.valueChanges.subscribe(data => {
+    //Autocompletado - Buscar por nombre cliente
+    let empresa = this.appService.getEmpresa();
+    this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.monedaCuentaContableServicio.listarPorNombreMoneda(data, empresa.id).subscribe(response => {
-          console.log(response.json());
           this.resultados = response.json();
         })
       }
@@ -162,7 +160,6 @@ export class MonedaCuentaContableComponent implements OnInit {
         this.listaMonedas = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -174,7 +171,6 @@ export class MonedaCuentaContableComponent implements OnInit {
           this.formulario.get('planCuenta').setValue(res.json());
         },
         err => {
-          console.log(err);
         }
       )
     }
@@ -266,9 +262,7 @@ export class MonedaCuentaContableComponent implements OnInit {
         let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idMoneda').focus();
-          }, 20);
+          document.getElementById('idMoneda').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -288,9 +282,7 @@ export class MonedaCuentaContableComponent implements OnInit {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -303,7 +295,7 @@ export class MonedaCuentaContableComponent implements OnInit {
     );
   }
   //Elimina un registro
-  private eliminar(): void {}
+  private eliminar(): void { }
   //Reestablece los campos formularios
   private reestablecerFormulario() {
     this.formulario.reset();
@@ -403,12 +395,12 @@ export class MonedaCuentaContableComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          moneda: elemento.moneda.nombre,
-          empresa: elemento.empresa.razonSocial,
-          cuenta_contable: elemento.planCuenta.nombre
-        }
-        datos.push(f);
+      let f = {
+        moneda: elemento.moneda.nombre,
+        empresa: elemento.empresa.razonSocial,
+        cuenta_contable: elemento.planCuenta.nombre
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -423,5 +415,5 @@ export class MonedaCuentaContableComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

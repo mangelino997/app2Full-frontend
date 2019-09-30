@@ -93,19 +93,19 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" sticky>
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="ES_CONTADO" sticky>
+        <ng-container matColumnDef="ES_CONTADO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Contado</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.esContado? 'Sí':'No'}}</td>
         </ng-container>
-        <ng-container matColumnDef="CUOTAS" sticky>
+        <ng-container matColumnDef="CUOTAS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuotas</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.cuotas}}</td>
         </ng-container>
-        <ng-container matColumnDef="DIAS" sticky>
+        <ng-container matColumnDef="DIAS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Días entre Cuotas para Vto.</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.dias}}</td>
         </ng-container>

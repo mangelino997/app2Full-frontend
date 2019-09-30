@@ -48,11 +48,11 @@ export class ProvinciaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'CODIGO_IIBB', 'CODIGO_AFIP', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'CODIGO_IIBB', 'CODIGO_AFIP', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ProvinciaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private paisServicio: PaisService, private toastr: ToastrService,
@@ -65,7 +65,6 @@ export class ProvinciaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
     //Autocompletado - Buscar por nombre
@@ -175,7 +174,6 @@ export class ProvinciaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -185,7 +183,7 @@ export class ProvinciaComponent implements OnInit {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
-        
+
       },
       err => {
       }
@@ -200,9 +198,7 @@ export class ProvinciaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -227,9 +223,7 @@ export class ProvinciaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -248,7 +242,7 @@ export class ProvinciaComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -261,9 +255,7 @@ export class ProvinciaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -302,7 +294,7 @@ export class ProvinciaComponent implements OnInit {
       }
     );
   }
-  public cambioAutocompletado(){
+  public cambioAutocompletado() {
     this.formulario.patchValue(this.autocompletado.value);
   }
   //Manejo de colores de campos y labels
@@ -358,13 +350,13 @@ export class ProvinciaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          codigo_iibb: elemento.codigoIIBB,
-          codigo_afip: elemento.codigoAfip,
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        codigo_iibb: elemento.codigoIIBB,
+        codigo_afip: elemento.codigoAfip,
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -379,5 +371,5 @@ export class ProvinciaComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

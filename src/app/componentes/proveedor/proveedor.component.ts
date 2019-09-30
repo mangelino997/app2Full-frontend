@@ -79,13 +79,13 @@ export class ProveedorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'RAZON_SOCIAL', 'TIPO_DOCUMENTO', 'NUMERO_DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
+  public columnas: string[] = ['ID', 'RAZON_SOCIAL', 'TIPO_DOCUMENTO', 'NUMERO_DOCUMENTO', 'TELEFONO', 'DOMICILIO', 'LOCALIDAD', 'EDITAR'];
   //Define las columnas de la tabla
   public columnasPlanCuenta: string[] = ['empresa', 'cuentaContable', 'planCuenta', 'eliminar'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService,
@@ -179,7 +179,7 @@ export class ProveedorComponent implements OnInit {
   public establecerFormulario() {
     let elemento = this.autocompletado.value;
     this.formulario.setValue(elemento);
-    if(elemento.proveedorCuentasContables.length == 0) {
+    if (elemento.proveedorCuentasContables.length == 0) {
       this.crearCuentasContables();
     } else {
       this.planesCuentas = new MatTableDataSource(elemento.proveedorCuentasContables);
@@ -196,7 +196,7 @@ export class ProveedorComponent implements OnInit {
         let planesCuentas = [];
         let empresas = res.json();
         let formulario = null;
-        for(let i = 0 ; i < empresas.length ; i++) {
+        for (let i = 0; i < empresas.length; i++) {
           formulario = {
             empresa: empresas[i],
             planCuenta: null
@@ -431,9 +431,7 @@ export class ProveedorComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idRazonSocial').focus();
-          }, 20);
+          document.getElementById('idRazonSocial').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -469,14 +467,14 @@ export class ProveedorComponent implements OnInit {
   private eliminar() {
     this.loaderService.show();
     this.servicio.eliminar(this.formulario.value.id).subscribe(
-      res=>{
+      res => {
         let respuesta = res.json();
         this.reestablecerFormulario(undefined);
         document.getElementById('idAutocompletado').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
-      err=>{
+      err => {
         let error = err.json();
         this.toastr.error(error.mensaje);
         this.loaderService.hide();
@@ -661,16 +659,16 @@ export class ProveedorComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          razon_social: elemento.razonSocial,
-          tipodo_cumento: elemento.tipoDocumento.nombre,
-          numero_documento: elemento.numeroDocumento,
-          telefono: elemento.telefono,
-          domicilio: elemento.domicilio,
-          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        razon_social: elemento.razonSocial,
+        tipodo_cumento: elemento.tipoDocumento.nombre,
+        numero_documento: elemento.numeroDocumento,
+        telefono: elemento.telefono,
+        domicilio: elemento.domicilio,
+        localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -685,5 +683,5 @@ export class ProveedorComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

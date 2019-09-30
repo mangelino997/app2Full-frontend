@@ -39,7 +39,7 @@ export class BasicoCategoriaComponent implements OnInit {
   //Define una lista de anios
   public anios: Array<any> = [];
   //Defiene la categoria
-  public formularioListar:FormGroup;
+  public formularioListar: FormGroup;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
@@ -57,9 +57,9 @@ export class BasicoCategoriaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'CATEGORIA', 'MES', 'ANIO', 'BASICO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
-   //Define la paginacion
-   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: BasicoCategoriaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private appService: AppService, private basicoCategoria: BasicoCategoria,
@@ -73,16 +73,11 @@ export class BasicoCategoriaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorCategoriaNombre(data).subscribe(res => {
           this.resultados = res;
         })
@@ -147,7 +142,7 @@ export class BasicoCategoriaComponent implements OnInit {
   }
   //Establecer campos en disabled
   public establecerEstadoCampos(opcion): void {
-    if(opcion) {
+    if (opcion) {
       this.formulario.get('categoria').enable();
       this.formulario.get('anio').enable();
       this.formulario.get('mes').enable();
@@ -225,7 +220,6 @@ export class BasicoCategoriaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -238,9 +232,7 @@ export class BasicoCategoriaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idCategoria').focus();
-          }, 20);
+          document.getElementById('idCategoria').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -264,9 +256,7 @@ export class BasicoCategoriaComponent implements OnInit {
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           this.establecerEstadoCampos(false);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -282,7 +272,6 @@ export class BasicoCategoriaComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Obtiene una lista por categoria y anio
   public listarPorCategoriaYAnio(): void {
@@ -292,7 +281,7 @@ export class BasicoCategoriaComponent implements OnInit {
     this.servicio.listarPorCategoriaYAnio(idCategoria, anio).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
       this.listaCompleta.sortingDataAccessor = (item, property) => {
-        switch(property) {
+        switch (property) {
           case 'categoria': return item.categoria.nombre;
           case 'mes': return item.mes.nombre;
           default: return item[property];
@@ -323,7 +312,7 @@ export class BasicoCategoriaComponent implements OnInit {
   }
   //Muestra numero con decimales
   public mostrarDecimales(valor, cantidad) {
-    if(valor) {
+    if (valor) {
       return this.appService.establecerDecimales(valor, cantidad);
     }
   }
@@ -376,20 +365,20 @@ export class BasicoCategoriaComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          categoria: elemento.categoria.nombre,
-          mes: elemento.mes.nombre,
-          anio: elemento.anio,
-          basico: '$' + this.mostrarDecimales(elemento.basico, 2)
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        categoria: elemento.categoria.nombre,
+        mes: elemento.mes.nombre,
+        anio: elemento.anio,
+        basico: '$' + this.mostrarDecimales(elemento.basico, 2)
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -404,5 +393,5 @@ export class BasicoCategoriaComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

@@ -52,12 +52,12 @@ export class TramoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'ORIGEN', 'DESTINO', 'KM', 'RUTA_ALTERNATIVA', 'LIQ_CHOFER', 'ESTA_ACTIVO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
-   //Define la paginacion
-   @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //Define la paginacion
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define autocompletados listar
-  public autocompletadoOrigenListar:FormControl = new FormControl();
-  public autocompletadoDestinoListar:FormControl = new FormControl();
+  public autocompletadoOrigenListar: FormControl = new FormControl();
+  public autocompletadoDestinoListar: FormControl = new FormControl();
   public resultadosOrigenListar: Array<any> = [];
   public resultadosDestinoListar: Array<any> = [];
   //Constructor
@@ -72,13 +72,8 @@ export class TramoComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -258,7 +253,6 @@ export class TramoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -272,9 +266,7 @@ export class TramoComponent implements OnInit {
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto();
-          setTimeout(function () {
-            document.getElementById('idOrigen').focus();
-          }, 20);
+          document.getElementById('idOrigen').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -296,22 +288,20 @@ export class TramoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -329,7 +319,7 @@ export class TramoComponent implements OnInit {
     }
   }
   //Establece la tabla al seleccion elemento de autocompletado
-  public establecerTabla() {  
+  public establecerTabla() {
     let origen = this.autocompletadoOrigenListar.value;
     let destino = this.autocompletadoDestinoListar.value;
     this.servicio.listarPorFiltro(origen ? origen.id : 0, destino ? destino.id : 0).subscribe(res => {
@@ -375,8 +365,8 @@ export class TramoComponent implements OnInit {
   //Define como se muestra los datos en el autocompletado a
   public displayFa(elemento) {
     if (elemento != undefined) {
-      return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre + ' -> ' 
-        + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre 
+      return elemento.origen ? elemento.origen.nombre + ', ' + elemento.origen.provincia.nombre + ' -> '
+        + elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre
         + ' (Ruta Alt.: ' + elemento.rutaAlternativa + ')' : elemento;
     } else {
       return elemento;
@@ -420,8 +410,8 @@ export class TramoComponent implements OnInit {
         destino: elemento.destino.nombre + ', ' + elemento.destino.provincia.nombre,
         km: elemento.km,
         ruta_alternativa: elemento.rutaAlternativa,
-        liq_chofer: elemento.excluirLiqChofer?'Sí':'No',
-        esta_activo: elemento.estaActivo?'Sí': 'No'
+        liq_chofer: elemento.excluirLiqChofer ? 'Sí' : 'No',
+        esta_activo: elemento.estaActivo ? 'Sí' : 'No'
       }
       datos.push(f);
     });

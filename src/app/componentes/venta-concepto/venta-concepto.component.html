@@ -85,19 +85,19 @@
       </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID" sticky>
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" sticky>
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="TIPO COMPROBANTE" sticky>
+        <ng-container matColumnDef="TIPO COMPROBANTE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Comprobante</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.tipoComprobante.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="ESTA HABILITADO" sticky>
+        <ng-container matColumnDef="ESTA HABILITADO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Esta Habilitado</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.estaHabilitado?'Sí':'No'}}</td>
         </ng-container>

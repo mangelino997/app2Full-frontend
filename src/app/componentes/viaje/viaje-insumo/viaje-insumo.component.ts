@@ -111,7 +111,6 @@ export class ViajeInsumoComponent implements OnInit {
         this.insumos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -138,7 +137,6 @@ export class ViajeInsumoComponent implements OnInit {
         this.calcularImporte(formulario);
       },
       err => {
-        console.log(err);
       }
     );
   }

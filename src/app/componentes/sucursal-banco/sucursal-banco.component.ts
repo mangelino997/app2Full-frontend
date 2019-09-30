@@ -50,9 +50,9 @@ export class SucursalBancoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'BANCO', 'NOMBRE', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: SucursalBancoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService,
@@ -65,13 +65,8 @@ export class SucursalBancoComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -101,7 +96,7 @@ export class SucursalBancoComponent implements OnInit {
     // this.listar();
   }
   //Establece el formulario
-  public establecerFormulario(){
+  public establecerFormulario() {
     this.formulario.setValue(this.autocompletado.value);
   }
   //Vacia la lista de resultados de autocompletados
@@ -178,7 +173,6 @@ export class SucursalBancoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -193,7 +187,8 @@ export class SucursalBancoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -215,21 +210,6 @@ export class SucursalBancoComponent implements OnInit {
       )
     }
   }
-  /* public listarPorBanco(elemento) {
-    if (this.mostrarAutocompletado) {
-      this.loaderService.show();
-      let elemento = this.formulario.get('banco').value;
-      this.servicio.listarPorBanco(elemento.id).subscribe(
-        res => {
-          this.sucursales = res.json();
-          this.loaderService.hide();
-        },
-        err => {
-          this.loaderService.hide();
-        }
-      )
-    }
-  } */
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -239,9 +219,7 @@ export class SucursalBancoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idBanco').focus();
-          }, 20);
+          document.getElementById('idBanco').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -260,9 +238,7 @@ export class SucursalBancoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idBanco').focus();
-          }, 20);
+          document.getElementById('idBanco').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -282,9 +258,7 @@ export class SucursalBancoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -303,7 +277,7 @@ export class SucursalBancoComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -382,12 +356,12 @@ export class SucursalBancoComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          banco: elemento.banco.nombre,
-          nombre: elemento.nombre,
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        banco: elemento.banco.nombre,
+        nombre: elemento.nombre,
+      }
+      datos.push(f);
     });
     return datos;
   }

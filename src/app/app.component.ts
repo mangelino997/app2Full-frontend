@@ -101,7 +101,6 @@ export class AppComponent implements OnInit {
         this.modulos = res.json().modulos;
       },
       err => {
-        console.log(err);
       }
     )
   }

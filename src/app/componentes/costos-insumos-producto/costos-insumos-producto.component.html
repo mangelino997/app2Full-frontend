@@ -137,7 +137,7 @@
         <div class="row">
           <div class="centrar">
             <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+              (click)="accion()" [disabled]="!formulario.valid">
               {{pestaniaActual}}
             </button>
             <div class="row" *ngIf="show">

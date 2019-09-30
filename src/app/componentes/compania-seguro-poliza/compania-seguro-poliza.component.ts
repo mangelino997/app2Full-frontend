@@ -53,11 +53,11 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'EMPRESA', 'NUMERO_POLIZA', 'VTO_POLIZA', 'PDF', 'EDITAR', 'ELIMINAR'];
+  public columnas: string[] = ['ID', 'EMPRESA', 'NUMERO_POLIZA', 'VTO_POLIZA', 'PDF', 'EDITAR', 'ELIMINAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -224,9 +224,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
         if (res.status == 201) {
           respuesta.then(data => {
             this.reestablecerFormulario(data.id);
-            setTimeout(function () {
-              document.getElementById('idCompaniaSeguro').focus();
-            }, 20);
+            document.getElementById('idCompaniaSeguro').focus();
             this.toastr.success('Registro agregado con éxito');
           })
         }
@@ -246,9 +244,7 @@ export class CompaniaSeguroPolizaComponent implements OnInit {
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idCompaniaSeguro').focus();
-          }, 20);
+          document.getElementById('idCompaniaSeguro').focus();
           this.toastr.success('Registro actualizado con éxito');
         }
         this.loaderService.hide();

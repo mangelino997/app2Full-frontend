@@ -46,12 +46,12 @@ export class TipoFamiliarComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'ES DEDUCIBLE IMP. GAN.', 'VER', 'EDITAR'];
-  public columnasSeleccionadas:string[] = this.columnas.filter((item, i) => true);
+  public columnas: string[] = ['ID', 'NOMBRE', 'ES DEDUCIBLE IMP. GAN.', 'VER', 'EDITAR'];
+  public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: TipoFamiliarService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService, private appService: AppService, private tipoFamiliar: TipoFamiliar,
@@ -66,13 +66,8 @@ export class TipoFamiliarComponent implements OnInit {
           this.seleccionarPestania(this.pestanias[0].id, this.pestanias[0].nombre, 0);
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -104,9 +99,9 @@ export class TipoFamiliarComponent implements OnInit {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
-    if(soloLectura) {
+    if (soloLectura) {
       this.formulario.get('esDeducibleImpGan').disable();
-    }else {
+    } else {
       this.formulario.get('esDeducibleImpGan').enable();
     }
     this.mostrarBoton = boton;
@@ -172,7 +167,6 @@ export class TipoFamiliarComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -187,7 +181,8 @@ export class TipoFamiliarComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -201,9 +196,7 @@ export class TipoFamiliarComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -228,9 +221,7 @@ export class TipoFamiliarComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -249,7 +240,6 @@ export class TipoFamiliarComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -305,12 +295,12 @@ export class TipoFamiliarComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          esdeducibleimpgan: elemento.esDeducibleImpGan ? 'Si' : 'No'
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        esdeducibleimpgan: elemento.esDeducibleImpGan ? 'Si' : 'No'
+      }
+      datos.push(f);
     });
     return datos;
   }

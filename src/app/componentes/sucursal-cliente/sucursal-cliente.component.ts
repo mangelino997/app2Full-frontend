@@ -54,11 +54,11 @@ export class SucursalClienteComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'CLIENTE', 'NOMBRE', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'EDITAR'];
+  public columnas: string[] = ['ID', 'CLIENTE', 'NOMBRE', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: SucursalClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService,
@@ -72,13 +72,8 @@ export class SucursalClienteComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -131,7 +126,7 @@ export class SucursalClienteComponent implements OnInit {
   }
   //Al cambiar el campo autocompletado, borra formulario y lista
   public cambioAutocompletado(elemento): void {
-    if(this.indiceSeleccionado != 1 && typeof elemento == 'string') {
+    if (this.indiceSeleccionado != 1 && typeof elemento == 'string') {
       this.formulario.get('id').reset();
       this.formulario.get('nombre').reset();
       this.formulario.get('domicilio').reset();
@@ -191,9 +186,7 @@ export class SucursalClienteComponent implements OnInit {
         break;
       case 5:
         this.mostrarAutocompletado = true;
-        setTimeout(function() {
-          document.getElementById('idCliente').focus();
-        }, 20);
+        document.getElementById('idCliente').focus();
         break;
       default:
         break;
@@ -222,7 +215,6 @@ export class SucursalClienteComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -237,7 +229,8 @@ export class SucursalClienteComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -249,7 +242,7 @@ export class SucursalClienteComponent implements OnInit {
       this.loaderService.show();
       this.servicio.listarPorCliente(elemento.id).subscribe(
         res => {
-          if(this.indiceSeleccionado == 5) {
+          if (this.indiceSeleccionado == 5) {
             this.listaCompleta = new MatTableDataSource(res.json());
             this.listaCompleta.paginator = this.paginator;
             this.listaCompleta.sort = this.sort;
@@ -273,9 +266,7 @@ export class SucursalClienteComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idCliente').focus();
-          }, 20);
+          document.getElementById('idCliente').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -294,9 +285,7 @@ export class SucursalClienteComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idCliente').focus();
-          }, 20);
+          document.getElementById('idCliente').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -316,9 +305,7 @@ export class SucursalClienteComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -337,7 +324,7 @@ export class SucursalClienteComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -458,20 +445,19 @@ export class SucursalClienteComponent implements OnInit {
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
-    console.log(lista);
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          cliente: elemento.cliente.razonSocial,
-          nombre: elemento.nombre,
-          domicilio: elemento.domicilio,
-          barrio: elemento.barrio.nombre,
-          localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre,
-          telefono_fijo: elemento.telefonoFijo,
-          telefono_movil: elemento.telefonoMovil
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        cliente: elemento.cliente.razonSocial,
+        nombre: elemento.nombre,
+        domicilio: elemento.domicilio,
+        barrio: elemento.barrio.nombre,
+        localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre,
+        telefono_fijo: elemento.telefonoFijo,
+        telefono_movil: elemento.telefonoMovil
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -486,5 +472,5 @@ export class SucursalClienteComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }
