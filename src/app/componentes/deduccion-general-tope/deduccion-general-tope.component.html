@@ -198,11 +198,13 @@
                   (click)="abrirReporte()">Reporte</button></th>
               <td mat-cell *matCellDef="let elemento">
                 <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                  (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+                  (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above" 
+                  *ngIf=" indiceSeleccionado == 3 || indiceSeleccionado == 5">
                   <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button class="mat-icon-button-table" (click)="activarEliminar(elemento.id)"
-                  matTooltip="Eliminar" matTooltipPosition="above">
+                  matTooltip="Eliminar" matTooltipPosition="above"
+                  *ngIf="indiceSeleccionado == 4">
                   <mat-icon>delete</mat-icon>
                 </button>
               </td>

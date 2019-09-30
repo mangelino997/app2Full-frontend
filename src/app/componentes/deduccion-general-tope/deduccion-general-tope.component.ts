@@ -270,7 +270,6 @@ export class DeduccionGeneralTopeComponent implements OnInit {
       this.seleccionarPestania(3, this.pestanias[2].nombre);
     }
     this.habilitarCamposActualizar(elemento);
-    this.listar();
   }
   //Habilita los campos del formulario en el Actualizar luego de seleccionar un registro y setea sus valores
   private habilitarCamposActualizar(elemento){

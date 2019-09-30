@@ -100,8 +100,8 @@ export class PersonalService {
     })
   }
   //Obtiene un listado por Empresa y Alias (activo)
-  public listarActivosPorAliasYEmpresa(idEmpresa, alias) {
-    return this.http.get(this.url + '/listarActivosPorAliasYEmpresa/' + idEmpresa + '/' + alias, this.options).map(res => {
+  public listarPorActivosAliasYEmpresa(idEmpresa, alias) {
+    return this.http.get(this.url + '/listarPorActivosAliasYEmpresa/' + idEmpresa + '/' + alias, this.options).map(res => {
       return res.json().map(data => {
         return data;
       })

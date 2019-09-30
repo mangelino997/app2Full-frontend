@@ -78,9 +78,9 @@ export class AdelantoPersonalComponent implements OnInit {
   //Define el id del registro a modificar
   public idMod: number = null;
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -260,7 +260,7 @@ export class AdelantoPersonalComponent implements OnInit {
       err => {
         let error = err.json();
         this.toastr.error(error.message);
-        this.loaderService.hide();
+        this.loaderService.hide()
       }
     )
   }
@@ -275,9 +275,7 @@ export class AdelantoPersonalComponent implements OnInit {
           if (res.status == 201) {
             this.reestablecerFormulario(respuesta.id);
             this.toastr.success("Registro agregado con éxito.");
-            setTimeout(function () {
-              document.getElementById("idAutocompletado").focus();
-            }, 20);
+            document.getElementById("idAutocompletado").focus();
           }
           this.loaderService.hide();
         },
@@ -294,9 +292,7 @@ export class AdelantoPersonalComponent implements OnInit {
           let respuesta = res.json();
           this.reestablecerFormulario(respuesta.id);
           this.toastr.success("Registro agregado con éxito.");
-          setTimeout(function () {
-            document.getElementById("idAutocompletado").focus();
-          }, 20);
+          document.getElementById("idAutocompletado").focus();
           this.loaderService.hide();
         },
         err => {
@@ -318,9 +314,7 @@ export class AdelantoPersonalComponent implements OnInit {
         this.formulario.reset();
         this.toastr.success("Registro actualizado con éxito.");
         this.listarPorFiltros();
-        setTimeout(function () {
-          document.getElementById("idAutocompletado").focus();
-        }, 20);
+        document.getElementById("idAutocompletado").focus();
         this.loaderService.hide();
       },
       err => {
@@ -341,9 +335,7 @@ export class AdelantoPersonalComponent implements OnInit {
         this.formulario.reset();
         this.toastr.success("Registro anulado con éxito.");
         this.listarPorFiltros();
-        setTimeout(function () {
-          document.getElementById("idAutocompletado").focus();
-        }, 20);
+        document.getElementById("idAutocompletado").focus();
         this.loaderService.hide();
       },
       err => {
@@ -379,9 +371,7 @@ export class AdelantoPersonalComponent implements OnInit {
     } else {
       this.autocompletado.reset();
       this.toastr.warning("El usuario seleccionado no recibe adelanto de sueldo.");
-      setTimeout(function () {
-        document.getElementById('idAutocompletado').focus();
-      }, 20);
+      document.getElementById('idAutocompletado').focus();
     }
   }
   //Obtiene el valor de basico categoria
@@ -462,9 +452,7 @@ export class AdelantoPersonalComponent implements OnInit {
     if (importe > importeDisponible) {
       this.formulario.get('importe').reset();
       this.toastr.error("El valor no puede ser superior al campo 'Importe Disponible'.");
-      setTimeout(function () {
-        document.getElementById('idImporte').focus();
-      }, 20);
+      document.getElementById('idImporte').focus();
     } else {
       this.formulario.get('importe').setValue(this.appService.establecerDecimales(importe, 2));
     }
@@ -476,9 +464,7 @@ export class AdelantoPersonalComponent implements OnInit {
     if (fechaEmisionDesde > fechaEmisionHasta) {
       this.toastr.error("Fecha Emisión Desde debe ser igual o menor a la Fecha Emisión Hasta.");
       this.formularioFiltro.get('fechaEmisionDesde').setValue(null);
-      setTimeout(function () {
-        document.getElementById('idFechaEmisionDesde').focus();
-      }, 20);
+      document.getElementById('idFechaEmisionDesde').focus();
     }
   }
   //Controla el cambio en el campo "Fecha Emision Hasta"
@@ -487,16 +473,12 @@ export class AdelantoPersonalComponent implements OnInit {
     let fechaEmisionHasta = this.formularioFiltro.get('fechaEmisionHasta').value;
     if (fechaEmisionDesde == null || fechaEmisionDesde == undefined) {
       this.toastr.error("Debe ingresar Fecha de Emisión Desde.");
-      setTimeout(function () {
-        document.getElementById('idFechaEmision').focus();
-      }, 20);
+      document.getElementById('idFechaEmision').focus();
     } else if (fechaEmisionHasta < fechaEmisionDesde) {
       this.toastr.error("Fecha Emision Hasta debe ser igual o mayor a Fecha de Emisión Desde.");
       this.formulario.get('idFechaEmisionDesde').setValue(null);
       this.formulario.get('idFechaEmisionHasta').setValue(this.FECHA_ACTUAL.value);
-      setTimeout(function () {
-        document.getElementById('idFechaEmisionDesde').focus();
-      }, 20);
+      document.getElementById('idFechaEmisionDesde').focus();
     }
   }
   //Controla el cambio en el select "Personal"
@@ -528,12 +510,12 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Anula un registro de la tabla
   public activarAnular(elemento, indice) {
+    console.log(elemento);
     this.formulario.patchValue(elemento);
+    this.formulario.value.importe = elemento.importe;
     this.lote.setValue(elemento.numeroLote);
     this.idMod = indice;
-    setTimeout(function () {
-      document.getElementById('idObservaciones').focus();
-    }, 20);
+    document.getElementById('idObservaciones').focus();
   }
   //Actualiza un registro de la tabla
   public activarActualizar(elemento, indice) {
@@ -701,7 +683,7 @@ export class PrestamoDialogo {
   //Define las columnas de la tabla
   public columnas: string[] = ['numeroCuota', 'fechaVencimiento', 'importe', 'mod'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Se subscribe al loader

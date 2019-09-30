@@ -135,7 +135,7 @@ export class GananciaNetaComponent implements OnInit {
     )
   }
   //Carga la tabla
-  public listar() {
+  public listarPorAnio() {
     this.loaderService.show();
     this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
@@ -265,7 +265,7 @@ export class GananciaNetaComponent implements OnInit {
           this.anio.setValue(anio);
           this.formulario.get('anio').setValue(anio);
           this.toastr.success(respuesta.mensaje);
-          this.listar();
+          this.listarPorAnio();
         }
         this.loaderService.hide();
       },
@@ -287,7 +287,7 @@ export class GananciaNetaComponent implements OnInit {
           this.anio.setValue(anio);
           this.formulario.get('anio').setValue(anio);
           this.toastr.success(respuesta.mensaje);
-          this.listar();
+          this.listarPorAnio();
         }
         this.loaderService.hide();
       },
@@ -364,7 +364,7 @@ export class GananciaNetaComponent implements OnInit {
       res => {
         let respuesta = res.json();
         this.toastr.success(respuesta.mensaje);
-        this.listar();
+        this.listarPorAnio();
         this.loaderService.hide();
       },
       err => {
