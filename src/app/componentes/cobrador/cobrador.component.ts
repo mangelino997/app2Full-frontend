@@ -48,12 +48,12 @@ export class CobradorComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'CUENTA_HABILITADA', 'CORREO_ELECTRONICO', 'POR_DEFECTO_EN_CLIENTE_EVENTUAL', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'CUENTA_HABILITADA', 'CORREO_ELECTRONICO', 'POR_DEFECTO_EN_CLIENTE_EVENTUAL', 'EDITAR'];
   public columnasSeleccionadas: string[] = this.columnas.filter((item, i) => true);
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: CobradorService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private cobrador: Cobrador,
@@ -166,14 +166,14 @@ export class CobradorComponent implements OnInit {
   private verificarPrincipal(opcionPestania) {
     let elemento = this.formulario.value;
     this.listar();
-    if (elemento.porDefectoClienteEventual && this.listaCompleta.data.length>0) {
+    if (elemento.porDefectoClienteEventual && this.listaCompleta.data.length > 0) {
       this.servicio.obtenerPorDefecto().subscribe(
         res => {
           let respuesta = res.json(); //objeto con porDefectoClienteEventual=true (cobradorPrincipal)
-          if(elemento.id == respuesta.id) // Si el cobrador principal es el mismo que se quiere actualizar saltea el modal 'cambiarPrincipal'
+          if (elemento.id == respuesta.id) // Si el cobrador principal es el mismo que se quiere actualizar saltea el modal 'cambiarPrincipal'
             this.controlaAccionPestania(opcionPestania);
-            else
-              this.cambiarPrincipal(respuesta, elemento, opcionPestania);
+          else
+            this.cambiarPrincipal(respuesta, elemento, opcionPestania);
         },
         err => {
           this.toastr.warning("Ningún cobrador es por defecto en Cliente Eventual.");
@@ -228,7 +228,7 @@ export class CobradorComponent implements OnInit {
           document.getElementById("labelCorreoelectronico").classList.add('label-error');
           document.getElementById("idCorreoelectronico").classList.add('is-invalid');
           this.toastr.error('Correo Electronico Incorrecto');
-        } 
+        }
       }
     }
   }
@@ -256,9 +256,7 @@ export class CobradorComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -283,9 +281,7 @@ export class CobradorComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -310,16 +306,12 @@ export class CobradorComponent implements OnInit {
         let respuesta = res.json();
         this.reestablecerFormulario(undefined);
         this.toastr.success(respuesta.mensaje);
-        setTimeout(function () {
-          document.getElementById('idAutocompletado').focus();
-        }, 20);
+        document.getElementById('idAutocompletado').focus();
       },
       err => {
         let error = err.json();
         this.toastr.error(error.mensaje);
-        setTimeout(function () {
-          document.getElementById('idAutocompletado').focus();
-        }, 20);
+        document.getElementById('idAutocompletado').focus();
       }
     )
   }

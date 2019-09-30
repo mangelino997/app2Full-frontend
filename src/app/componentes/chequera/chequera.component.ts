@@ -78,7 +78,6 @@ export class ChequeraComponent implements OnInit {
           this.pestanias.splice(2, 1);
         },
         err => {
-          console.log(err);
         }
       );
   }
@@ -115,7 +114,6 @@ export class ChequeraComponent implements OnInit {
   private listarCuentasBancarias() {
     this.cuentaBancariaService.listarPorEmpresa(this.empresa.id).subscribe(
       res => {
-        console.log(res.json());
         this.cuentasBancarias = res.json();
       }
     )
@@ -124,7 +122,6 @@ export class ChequeraComponent implements OnInit {
     this.empresa = this.appService.getEmpresa();
     this.servicio.listarPorEmpresa(this.empresa.id).subscribe(
       res => {
-        console.log(res.json());
         this.listaCuentasBancariasEmpresa = res.json();
       }
     )
@@ -133,7 +130,6 @@ export class ChequeraComponent implements OnInit {
     this.empresa = this.appService.getEmpresa();
     this.cuentaBancariaService.listarConChequerasPorEmpresa(this.empresa.id).subscribe(
       res => {
-        console.log(res.json());
         this.listaCuentasConChequeraEmpresa = res.json();
       }
     )
@@ -141,7 +137,6 @@ export class ChequeraComponent implements OnInit {
   private listarChequerasConsultas(idCuentaBancaria) {
     this.servicio.listarPorCuentaBancaria(idCuentaBancaria).subscribe(
       res => {
-        console.log(res.json());
         this.listaChequerasCuentaBancaria = res.json();
       }
     )
@@ -150,7 +145,6 @@ export class ChequeraComponent implements OnInit {
   private listarTiposChequeras() {
     this.tipoChequeraService.listar().subscribe(
       res => {
-        console.log(res.json());
         this.tiposChequeras = res.json();
       }
     )
@@ -158,7 +152,6 @@ export class ChequeraComponent implements OnInit {
   //Obtiene los datos de la cuenta bancaria seleccionada
   public cambioCuentaBancaria() {
     let elemento = this.cuentaSeleccionada.value;
-    console.log(this.cuentaSeleccionada.value);
     this.listarChequerasConsultas(elemento.id);
   }
   //Obtiene los datos de la cuenta bancaria seleccionada
@@ -235,7 +228,6 @@ export class ChequeraComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -244,14 +236,14 @@ export class ChequeraComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listarPorEmpresa(this.empresa.id).subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -306,7 +298,6 @@ export class ChequeraComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
@@ -358,7 +349,6 @@ export class ChequeraComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.cuentaSeleccionada.setValue(elemento.cuentaBancaria);
     this.listarChequerasConsultas(this.cuentaSeleccionada.value.id)

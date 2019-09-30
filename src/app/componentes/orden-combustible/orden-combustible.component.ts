@@ -72,7 +72,6 @@ export class OrdenCombustibleComponent implements OnInit {
   private listarInsProducto() {
     this.insProductoService.listarCombustibles().subscribe(
       res => {
-        console.log(res.json());
         this.resultadosInsComb = res.json();
       }
     )
@@ -82,7 +81,6 @@ export class OrdenCombustibleComponent implements OnInit {
     this.loaderService.show();
     this.controlarCamposVacios();
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -136,7 +134,6 @@ export class OrdenCombustibleComponent implements OnInit {
   private listarCombustiblesReparto() {
     this.servicio.listarCombustiblesReparto(this.data.elemento.id).subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
       },

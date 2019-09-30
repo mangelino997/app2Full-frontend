@@ -510,7 +510,6 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Anula un registro de la tabla
   public activarAnular(elemento, indice) {
-    console.log(elemento);
     this.formulario.patchValue(elemento);
     this.formulario.value.importe = elemento.importe;
     this.lote.setValue(elemento.numeroLote);

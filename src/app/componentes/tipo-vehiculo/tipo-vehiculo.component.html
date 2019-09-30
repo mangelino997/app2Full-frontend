@@ -55,15 +55,15 @@
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-10">
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID" sticky>
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" sticky>
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="ES_REMOLQUE" sticky>
+        <ng-container matColumnDef="ES_REMOLQUE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Remolque</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.esRemolque? 'Sí':'No'}}</td>
         </ng-container>

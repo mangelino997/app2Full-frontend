@@ -17,7 +17,7 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./deduccion-personal.component.css']
 })
 export class DeduccionPersonalComponent implements OnInit {
-//Define la pestania activa
+  //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
   public indiceSeleccionado: number = null;
@@ -48,11 +48,11 @@ export class DeduccionPersonalComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -60,28 +60,26 @@ export class DeduccionPersonalComponent implements OnInit {
   //Constructor
   constructor(private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService,
     private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipDeduccionPersonalService,
-    private modelo: AfipDeduccionPersonal,  private reporteServicio: ReporteService) {
-      //Obtiene la lista de pestanias
-      this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
-        .subscribe(
-          res => {
-            this.pestanias = res.json();
-            this.activeLink = this.pestanias[0].nombre;
-          },
-          err => {
-            console.log(err);
-          }
-        );
-      //Controla el autocompletado
-      this.autocompletado.valueChanges.subscribe(data => {
-        if (typeof data == 'string' && data.length > 2) {
-          this.servicio.listarPorDescripcion(data).subscribe(res => {
-            this.resultados = res;
-          })
+    private modelo: AfipDeduccionPersonal, private reporteServicio: ReporteService) {
+    //Obtiene la lista de pestanias
+    this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
+      .subscribe(
+        res => {
+          this.pestanias = res.json();
+          this.activeLink = this.pestanias[0].nombre;
+        },
+        err => {
         }
-      });
-   }
-
+      );
+    //Controla el autocompletado
+    this.autocompletado.valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.servicio.listarPorDescripcion(data).subscribe(res => {
+          this.resultados = res;
+        })
+      }
+    });
+  }
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -138,10 +136,10 @@ export class DeduccionPersonalComponent implements OnInit {
   public accion(indice) {
     switch (indice) {
       case 1:
-        this.agregar(); 
+        this.agregar();
         break;
       case 3:
-        this.actualizar(); 
+        this.actualizar();
         break;
       case 4:
         this.eliminar();
@@ -157,7 +155,6 @@ export class DeduccionPersonalComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -166,13 +163,13 @@ export class DeduccionPersonalComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -185,9 +182,7 @@ export class DeduccionPersonalComponent implements OnInit {
       res => {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
-        setTimeout(function () {
-          document.getElementById('idDescripcion').focus();
-        }, 20);
+        document.getElementById('idDescripcion').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -205,9 +200,7 @@ export class DeduccionPersonalComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -226,9 +219,7 @@ export class DeduccionPersonalComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -255,9 +246,7 @@ export class DeduccionPersonalComponent implements OnInit {
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.resultados = [];
-    setTimeout(function () {
-      document.getElementById('idDescripcion').focus();
-    }, 20);
+    document.getElementById('idDescripcion').focus();
     this.obtenerSiguienteId();
   }
   //Manejo de colores de campos y labels
@@ -314,17 +303,17 @@ export class DeduccionPersonalComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  } 
+  }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.descripcion
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.descripcion
+      }
+      datos.push(f);
     });
     return datos;
   }

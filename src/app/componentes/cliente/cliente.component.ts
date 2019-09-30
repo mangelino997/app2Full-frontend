@@ -102,9 +102,9 @@ export class ClienteComponent implements OnInit {
   //Define las columnas de la tabla cuenta bancaria
   public columnasCuentaBancaria: string[] = ['empresa', 'banco', 'sucursal', 'numCuenta', 'cbu', 'aliasCbu', 'cuentaBancaria'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -132,7 +132,6 @@ export class ClienteComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
     //Obtiene la lista de opciones por rol y subopcion
@@ -165,7 +164,7 @@ export class ClienteComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.clienteModelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(1, 0);
     //Autocompletado Barrio - Buscar por nombre
@@ -290,7 +289,6 @@ export class ClienteComponent implements OnInit {
         this.establecerCobrador();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -306,7 +304,6 @@ export class ClienteComponent implements OnInit {
         this.establecerVendedor();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -322,7 +319,6 @@ export class ClienteComponent implements OnInit {
         this.establecerZona();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -338,7 +334,6 @@ export class ClienteComponent implements OnInit {
         this.establecerRubro();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -393,7 +388,6 @@ export class ClienteComponent implements OnInit {
         this.condicionesIva = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -404,7 +398,6 @@ export class ClienteComponent implements OnInit {
         this.tiposDocumentos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -415,7 +408,6 @@ export class ClienteComponent implements OnInit {
         this.resumenesClientes = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -427,7 +419,6 @@ export class ClienteComponent implements OnInit {
         this.establecerSituacionCliente();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -443,7 +434,6 @@ export class ClienteComponent implements OnInit {
         this.establecerCondicionVenta();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -496,15 +486,10 @@ export class ClienteComponent implements OnInit {
     }
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.reestablecerFormulario(undefined);
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-      this.establecerValoresPorDefecto();
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -585,7 +570,6 @@ export class ClienteComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -619,7 +603,7 @@ export class ClienteComponent implements OnInit {
           this.establecerValoresPorDefecto();
           this.establecerSituacionCliente();
           this.establecerCondicionVenta();
-            document.getElementById('idRazonSocial').focus();
+          document.getElementById('idRazonSocial').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -640,9 +624,7 @@ export class ClienteComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -655,7 +637,6 @@ export class ClienteComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -669,6 +650,7 @@ export class ClienteComponent implements OnInit {
     this.establecerVendedor();
     this.establecerZona();
     this.establecerRubro();
+    this.establecerValoresPorDefecto();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -750,13 +732,13 @@ export class ClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario();
   }
@@ -934,9 +916,9 @@ export class ClienteComponent implements OnInit {
     var opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     } else if (keycode == 115) {
       if (opcion < this.opciones.length) {
@@ -1017,7 +999,7 @@ export class ListasDePreciosDialog {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define las columnas de las tablas
   public columnas: string[] = ['descripcion', /*'esOrdenVentaPorDefecto', 'tarifaDefecto',*/
     'seguro', 'comisionCR', 'esContado', 'estaActiva', 'observaciones', 'EDITAR'];
@@ -1274,7 +1256,7 @@ export class ListasDePreciosDialog {
     this.formulario.patchValue(elemento);
     if (elemento.cliente) {
       this.formulario.get('tipoOrdenVenta').setValue(true);
-      if(this.indiceSeleccionado == 1) {
+      if (this.indiceSeleccionado == 1) {
         this.formulario.get('cliente').setValue(elemento.cliente);
       } else {
         this.formulario.get('cliente').setValue(this.cliente);
@@ -1284,7 +1266,7 @@ export class ListasDePreciosDialog {
     }
     else {
       this.formulario.get('tipoOrdenVenta').setValue(false);
-      if(this.indiceSeleccionado == 1) {
+      if (this.indiceSeleccionado == 1) {
         this.formulario.get('empresa').setValue(elemento.empresa);
       } else {
         this.formulario.get('empresa').setValue(this.appService.getEmpresa());
@@ -1331,7 +1313,7 @@ export class ListasDePreciosDialog {
   }
   //Establece estado de campos al actualizar
   private establecerEstadoCampos(estado): void {
-    if(estado) {
+    if (estado) {
       this.formulario.get('tipoOrdenVenta').enable();
       this.empresa.enable();
       this.formulario.get('cliente').enable();

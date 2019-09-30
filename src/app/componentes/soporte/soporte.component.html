@@ -134,36 +134,36 @@
       </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="id" sticky>
+        <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="fecha" sticky>
+        <ng-container matColumnDef="fecha">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.fecha | date: 'dd/MM/yyyy'}}
           </td>
         </ng-container>
-        <ng-container matColumnDef="empresa" sticky>
+        <ng-container matColumnDef="empresa">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.empresa.razonSocial}}</td>
         </ng-container>
-        <ng-container matColumnDef="modulo" sticky>
+        <ng-container matColumnDef="modulo">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Módulo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.subopcion.submodulo.modulo.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="submodulo" sticky>
+        <ng-container matColumnDef="submodulo">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Submódulo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.subopcion.submodulo.nombre}} </td>
         </ng-container>
-        <ng-container matColumnDef="subopcion" sticky>
+        <ng-container matColumnDef="subopcion">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Subopción</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.subopcion.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="mensaje" sticky>
+        <ng-container matColumnDef="mensaje">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Mensaje</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.mensaje}}</td>
         </ng-container>
-        <ng-container matColumnDef="estado" sticky>
+        <ng-container matColumnDef="estado">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.soporteEstado.nombre}}</td>
         </ng-container>

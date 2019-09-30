@@ -51,13 +51,13 @@ export class ContactoBancoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'TIPO_CONTACTO', 'NOMBRE_CONTACTO', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'CORREO_ELECTRONICO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la variable para guardar el valor de un campo
-  public guardarCampo: any; 
+  public guardarCampo: any;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
@@ -215,7 +215,6 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Obtiene la lista de contactos por sucursal banco
   public listarPorSucursalBanco(elemento) {
-    console.log(elemento);
     if (this.mostrarAutocompletado) {
       this.servicio.listarPorSucursalBanco(elemento.id).subscribe(
         res => {
@@ -241,11 +240,8 @@ export class ContactoBancoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           var guardarCampo = this.formulario.value.sucursalBanco;
-          console.log(guardarCampo);
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idSucursalBanco').focus();
-          }, 20);
+          document.getElementById('idSucursalBanco').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -265,9 +261,7 @@ export class ContactoBancoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idSucursalBanco').focus();
-          }, 20);
+          document.getElementById('idSucursalBanco').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -287,9 +281,7 @@ export class ContactoBancoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -308,7 +300,6 @@ export class ContactoBancoComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario() {
-    //this.formulario.get('idSucursalBanco').setValue(this.guardarCampo);
     this.formulario.reset();
     this.autocompletado.setValue(undefined);
     this.vaciarListas();

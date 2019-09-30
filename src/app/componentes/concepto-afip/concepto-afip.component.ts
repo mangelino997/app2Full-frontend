@@ -100,7 +100,6 @@ export class ConceptoAfipComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -175,9 +174,7 @@ export class ConceptoAfipComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
             document.getElementById('idNombre').focus();
-          }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -200,9 +197,7 @@ export class ConceptoAfipComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
-          }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -219,7 +214,6 @@ export class ConceptoAfipComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
@@ -228,7 +222,6 @@ export class ConceptoAfipComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }

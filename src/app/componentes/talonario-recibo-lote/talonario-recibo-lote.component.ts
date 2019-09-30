@@ -54,12 +54,12 @@ export class TalonarioReciboLoteComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'EMPRESA', 'P_VENTA', 'LETRA', 'DESDE', 'HASTA', 'CAI', 'CAI_VENCIMIENTO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private servicio: TalonarioReciboLoteService, private subopcionPestaniaService: SubopcionPestaniaService, 
-    private appService: AppService, private modelo: TalonarioReciboLote, private toastr: ToastrService, 
+  constructor(private servicio: TalonarioReciboLoteService, private subopcionPestaniaService: SubopcionPestaniaService,
+    private appService: AppService, private modelo: TalonarioReciboLote, private toastr: ToastrService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -69,7 +69,6 @@ export class TalonarioReciboLoteComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
   }
@@ -194,7 +193,6 @@ export class TalonarioReciboLoteComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -203,14 +201,14 @@ export class TalonarioReciboLoteComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listar().subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -223,15 +221,12 @@ export class TalonarioReciboLoteComponent implements OnInit {
     this.formulario.get('usuarioAlta').setValue(usuario);
     this.formulario.get('letra').setValue(this.letra.value);
     this.formulario.get('loteEntregado').setValue(false);
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idPuntoVenta').focus();
-          }, 20);
+          document.getElementById('idPuntoVenta').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -251,9 +246,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -267,7 +260,6 @@ export class TalonarioReciboLoteComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -295,9 +287,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
 
       case 'hasta':
         if (!this.formulario.value.desde) {
-          setTimeout(function () {
-            document.getElementById('idDesde').focus();
-          }, 20);
+          document.getElementById('idDesde').focus();
           this.toastr.error("El campo Desde es requerido");
         } else {
           this.validarMayor();
@@ -314,9 +304,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
     } else {
       this.formulario.get('desde').setValue(null);
       this.formulario.get('hasta').setValue(null);
-      setTimeout(function () {
-        document.getElementById('idDesde').focus();
-      }, 20);
+      document.getElementById('idDesde').focus();
       this.toastr.error("El campo Hasta debe ser Mayor que el campo Desde");
     }
   }
@@ -384,10 +372,10 @@ export class TalonarioReciboLoteComponent implements OnInit {
     }
   }
   //Prepara los datos para exportar
-private prepararDatos(listaCompleta): Array<any> {
-  let lista = listaCompleta;
-  let datos = [];
-  lista.forEach(elemento => {
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
       let f = {
         id: elemento.id,
         empresa: elemento.empresa.razonSocial,
@@ -399,19 +387,19 @@ private prepararDatos(listaCompleta): Array<any> {
         cai_vencimiento: elemento.caiVencimiento,
       }
       datos.push(f);
-  });
-  return datos;
-}
-//Abre el dialogo de reporte
-public abrirReporte(): void {
-  let lista = this.prepararDatos(this.listaCompleta.data);
-  let datos = {
-    nombre: 'Talonarios Recibos Lotes',
-    empresa: this.appService.getEmpresa().razonSocial,
-    usuario: this.appService.getUsuario().nombre,
-    datos: lista,
-    columnas: this.columnas
+    });
+    return datos;
   }
-  this.reporteServicio.abrirDialogo(datos);
-}
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Talonarios Recibos Lotes',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  }
 }

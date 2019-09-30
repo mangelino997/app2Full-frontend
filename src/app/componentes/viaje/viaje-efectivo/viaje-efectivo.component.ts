@@ -100,7 +100,6 @@ export class ViajeEfectivoComponent implements OnInit {
         this.empresas = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }

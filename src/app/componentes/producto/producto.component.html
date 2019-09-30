@@ -180,35 +180,35 @@
         </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID" sticky>
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" sticky>
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="MARCA" sticky>
+        <ng-container matColumnDef="MARCA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.marcaProducto.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="MODELO" sticky>
+        <ng-container matColumnDef="MODELO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Modelo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.modelo}}</td>
         </ng-container>
-        <ng-container matColumnDef="RUBRO" sticky>
+        <ng-container matColumnDef="RUBRO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Rubro</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.rubroProducto.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="ES_ASIGNABLE" sticky>
+        <ng-container matColumnDef="ES_ASIGNABLE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Asignable</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.esAsignable ? 'Si' : 'No'}}</td>
         </ng-container>
-        <ng-container matColumnDef="ES_SERIALIZABLE" sticky>
+        <ng-container matColumnDef="ES_SERIALIZABLE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Serializable</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.esSerializable ? 'Si' : 'No'}}</td>
         </ng-container>
-        <ng-container matColumnDef="ES_CRITICO" sticky>
+        <ng-container matColumnDef="ES_CRITICO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Crítico</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.esCritico ? 'Si' : 'No'}}</td>
         </ng-container>

@@ -47,17 +47,17 @@ export class RubroProductoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'EDITAR'];
   //Define las columnas de la tabla
   public columnasPlanCuenta: string[] = ['empresa', 'cuentaContable', 'planCuenta', 'eliminar'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: RubroProductoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
-    private usuarioEmpresaService: UsuarioEmpresaService, private dialog: MatDialog,  private reporteServicio: ReporteService) {
+    private usuarioEmpresaService: UsuarioEmpresaService, private dialog: MatDialog, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -66,13 +66,8 @@ export class RubroProductoComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -109,7 +104,7 @@ export class RubroProductoComponent implements OnInit {
   public establecerFormulario() {
     let elemento = this.autocompletado.value;
     this.formulario.setValue(elemento);
-    if(elemento.rubrosProductosCuentasContables.length == 0) {
+    if (elemento.rubrosProductosCuentasContables.length == 0) {
       this.crearCuentasContables();
     } else {
       this.planesCuentas = new MatTableDataSource(elemento.rubrosProductosCuentasContables);
@@ -125,7 +120,7 @@ export class RubroProductoComponent implements OnInit {
         let planesCuentas = [];
         let empresas = res.json();
         let formulario = null;
-        for(let i = 0 ; i < empresas.length ; i++) {
+        for (let i = 0; i < empresas.length; i++) {
           formulario = {
             empresa: empresas[i],
             planCuentaCompra: null
@@ -228,7 +223,6 @@ export class RubroProductoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -243,7 +237,9 @@ export class RubroProductoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
       }
     );
   }
@@ -283,9 +279,7 @@ export class RubroProductoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -310,9 +304,7 @@ export class RubroProductoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -331,7 +323,7 @@ export class RubroProductoComponent implements OnInit {
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -386,11 +378,11 @@ export class RubroProductoComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -405,5 +397,5 @@ export class RubroProductoComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

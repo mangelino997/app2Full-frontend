@@ -7,15 +7,15 @@
     <div class="row">
         <div class="col-md-12">
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="numeroLegajo" sticky>
+                <ng-container matColumnDef="numeroLegajo" >
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Legajo</th>
                 <td mat-cell *matCellDef="let elemento">{{elemento.personal.id}}</td>
                 </ng-container>
-                <ng-container matColumnDef="personal" sticky>
+                <ng-container matColumnDef="personal" >
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
                 <td mat-cell *matCellDef="let elemento">{{elemento.personal.nombreCompleto}}</td>
                 </ng-container>
-                <ng-container matColumnDef="motivo" sticky>
+                <ng-container matColumnDef="motivo" >
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</th>
                 <td mat-cell *matCellDef="let elemento">{{elemento.observaciones}}</td>
                 </ng-container>

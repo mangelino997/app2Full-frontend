@@ -150,7 +150,7 @@ export class PlanCuentaService {
         }
       },
       err => {
-        console.log('ERROR');
+        
       }
     );
   }
@@ -168,7 +168,6 @@ export class PlanCuentaService {
         }
       },
       err => {
-        console.log('ERROR');
       }
     );
   }
@@ -187,7 +186,6 @@ export class PlanCuentaService {
         }
       },
       err => {
-        console.log('ERROR');
       }
     );
   }

@@ -136,14 +136,14 @@ export class OrdenVentaComponent implements OnInit {
   //Define las columnas de la tabla para la pestaña LISTAR
   public columnasListar: string[] = ['EDITAR', 'ID', 'DESCRIPCION', 'VENDEDOR', 'SEGURO', 'CR', 'ES_CONTADO'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: OrdenVentaService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private clienteServicio: ClienteService, private fechaService: FechaService,
     private vendedorServicio: VendedorService, private tipoTarifaServicio: TipoTarifaService, public dialog: MatDialog,
-    private appService: AppService, private ordenVenta: OrdenVenta, 
+    private appService: AppService, private ordenVenta: OrdenVenta,
     private ordenVentaEscala: OrdenVentaEscala, private ordenVentaTramo: OrdenVentaTramo,
     private loaderService: LoaderService, private ordenVentaTarifa: OrdenVentaTarifa, private ordenVentaTarifaService: OrdenVentaTarifaService,
     private reporteServicio: ReporteService) {
@@ -525,9 +525,7 @@ export class OrdenVentaComponent implements OnInit {
                 this.tipoOrdenVenta.disable();
                 this.toastr.success("Registro agregado con éxito");
                 this.loaderService.hide();
-                setTimeout(function () {
-                  document.getElementById('idTipoTarifa').focus();
-                }, 20);
+                document.getElementById('idTipoTarifa').focus();
               }
             );
 
@@ -544,7 +542,6 @@ export class OrdenVentaComponent implements OnInit {
       this.formularioTarifa.get('ordenVenta').setValue({ id: this.ORDEN_VTA_CABECERA });
       this.ordenVentaTarifaService.agregar(this.formularioTarifa.value).subscribe(
         res => {
-          console.log(res);
           if (res.status == 201) {
             this.formularioTarifa.reset();
             this.listarTarifasOrdenVenta();
@@ -555,7 +552,7 @@ export class OrdenVentaComponent implements OnInit {
         },
         err => {
           let error = err.json();
-          if(error.codigo == 11025) {
+          if (error.codigo == 11025) {
             this.toastr.error(MensajeExcepcion.DD_ORDENVENTATARIFA_TIPOTARIFA);
           } else {
             this.toastr.error(error.mensaje);
@@ -612,7 +609,7 @@ export class OrdenVentaComponent implements OnInit {
         this.servicio.eliminar(id).subscribe(
           res => {
             if (res.status == 200) {
-              if(opcion) {
+              if (opcion) {
                 this.establecerCamposSoloLectura(4);
                 this.establecerValoresPestania('Eliminar', true, true, true, 'idTipoOrdenVenta');
                 //Obtiene la lista de ordenes de venta por empresa actual
@@ -754,7 +751,7 @@ export class OrdenVentaComponent implements OnInit {
     this.listarTarifasOrdenVenta();
     this.btnOrdenVta = true;
     //En la pestaña consultar y eliminar, deshabilita todo
-    if(this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
+    if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4) {
       this.formulario.get('vendedor').disable();
       this.formulario.get('esContado').disable();
       this.formulario.disable();
@@ -907,15 +904,15 @@ export class OrdenVentaComponent implements OnInit {
     let lista = listaOrdenVenta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          descripcion: elemento.nombre,
-          vendedor: elemento.vendedor.nombre,
-          seguro: this.returnDecimales(elemento.seguro, 2) + '%',
-          cr: this.returnDecimales(elemento.comisionCR, 2) + '%',
-          es_contado: elemento.esContado ? 'Si' : 'No'
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        descripcion: elemento.nombre,
+        vendedor: elemento.vendedor.nombre,
+        seguro: this.returnDecimales(elemento.seguro, 2) + '%',
+        cr: this.returnDecimales(elemento.comisionCR, 2) + '%',
+        es_contado: elemento.esContado ? 'Si' : 'No'
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -930,7 +927,7 @@ export class OrdenVentaComponent implements OnInit {
       columnas: this.columnasListar
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }
 //Componente: dialogo para ver tarifa de Orden Venta
 @Component({
@@ -983,7 +980,7 @@ export class VerTarifaDialogo {
   public columnasTramo: string[] = ['eliminar', 'mod', 'origendestino', 'km', 'kmPactado', 'precioFijoSeco', 'precioUnitSeco',
     'precioFijoRefrig', 'precioUnitRefrig'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -1326,9 +1323,7 @@ export class VerTarifaDialogo {
     }
     this.formularioEscala.get('porcentaje').setValue(parseFloat(elemento.porcentaje).toFixed(2));
     this.formularioEscala.get('minimo').setValue(parseFloat(elemento.minimo).toFixed(2));
-    setTimeout(function () {
-      document.getElementById('idEscala').focus();
-    }, 20);
+    document.getElementById('idEscala').focus();
   }
   //Controla el modificar en Tramo
   public controlModTramo(elemento) {
@@ -1355,9 +1350,7 @@ export class VerTarifaDialogo {
       this.importeRefPor.setValue(true);
       this.cambioImportesRefPor();
     }
-    setTimeout(function () {
-      document.getElementById('idTramo').focus();
-    }, 20);
+    document.getElementById('idTramo').focus();
   }
   //Elimina un Tramo a listaDeTramos
   public controlEliminarTramo(elemento) {

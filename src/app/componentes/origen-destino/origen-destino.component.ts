@@ -44,9 +44,9 @@ export class OrigenDestinoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -63,13 +63,8 @@ export class OrigenDestinoComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -174,7 +169,6 @@ export class OrigenDestinoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -187,9 +181,7 @@ export class OrigenDestinoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -214,9 +206,7 @@ export class OrigenDestinoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -235,7 +225,6 @@ export class OrigenDestinoComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -303,7 +292,7 @@ export class OrigenDestinoComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;

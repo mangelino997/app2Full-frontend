@@ -237,23 +237,23 @@
         </div>
       </div>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID" sticky>
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="DOMINIO" sticky>
+        <ng-container matColumnDef="DOMINIO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Dominio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.dominio}}</td>
         </ng-container>
-        <ng-container matColumnDef="TIPO_VEHICULO" sticky>
+        <ng-container matColumnDef="TIPO_VEHICULO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Vehiculo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.tipoVehiculo.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="MARCA_VEHICULO" sticky>
+        <ng-container matColumnDef="MARCA_VEHICULO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca Vehiculo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.marcaVehiculo.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="COMPANIA_SEGURO" sticky>
+        <ng-container matColumnDef="COMPANIA_SEGURO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Compania Seguro</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.companiaSeguro.nombre}}</td>
         </ng-container>

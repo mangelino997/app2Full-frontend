@@ -54,11 +54,11 @@ export class VentaConceptoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'NOMBRE', 'TIPO COMPROBANTE', 'ESTA HABILITADO', 'EDITAR'];
+  public columnas: string[] = ['ID', 'NOMBRE', 'TIPO COMPROBANTE', 'ESTA HABILITADO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: VentaItemConceptoService, private ventaConcepto: VentaConcepto, private appService: AppService,
     private loaderService: LoaderService, private subopcionPestaniaService: SubopcionPestaniaService,
@@ -79,7 +79,6 @@ export class VentaConceptoComponent implements OnInit {
       if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
-          console.log(res);
         })
       }
     })
@@ -111,7 +110,8 @@ export class VentaConceptoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -123,7 +123,8 @@ export class VentaConceptoComponent implements OnInit {
         this.tiposComprobantes = res.json();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
       }
     );
   }
@@ -209,9 +210,7 @@ export class VentaConceptoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -234,9 +233,7 @@ export class VentaConceptoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -253,7 +250,6 @@ export class VentaConceptoComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -268,7 +264,6 @@ export class VentaConceptoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -326,15 +321,14 @@ export class VentaConceptoComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          tipocomprobante: elemento.tipoComprobante ? 'Si' : 'No',
-          estahabilitado: elemento.estaHabilitado ? 'Si' : 'No'
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        tipocomprobante: elemento.tipoComprobante ? 'Si' : 'No',
+        estahabilitado: elemento.estaHabilitado ? 'Si' : 'No'
+      }
+      datos.push(f);
     });
-    console.log(datos);
     return datos;
   }
   //Abre el dialogo de reporte

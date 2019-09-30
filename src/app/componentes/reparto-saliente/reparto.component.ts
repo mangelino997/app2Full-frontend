@@ -62,7 +62,7 @@ export class RepartoComponent implements OnInit {
   public columnas: string[] = ['numeroReparto', 'fecha', 'zona', 'vehiculo', 'chofer', 'ordenesCombustibles', 'adelantosEfectivos',
     'comprobantes', 'cerrar', 'eliminar'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -146,7 +146,6 @@ export class RepartoComponent implements OnInit {
         this.id.setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -155,7 +154,6 @@ export class RepartoComponent implements OnInit {
     this.zonaService.listar().subscribe(
       res => {
         this.resultadosZona = res.json();
-        console.log(res.json());
       },
       err => {
         this.toastr.error('Error al obtener listado de Zonas');
@@ -187,7 +185,6 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      console.log(resultado);
       if (resultado.length > 0)
         this.formulario.get('acompaniantes').setValue(resultado);
       else
@@ -197,17 +194,13 @@ export class RepartoComponent implements OnInit {
   //Agrega un reparto a la tabla
   public agregar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
     this.formulario.get('fechaRegistracion').setValue(null);
     this.formulario.get('acompaniantes').setValue([]);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        console.log(res.json);
         let respuesta = res.json();
         if (res.status == 201) {
-          setTimeout(function () {
-            document.getElementById('idTipoViaje').focus();
-          }, 20);
+          document.getElementById('idTipoViaje').focus();
           this.toastr.success("Registro agregado con éxito.");
           this.reestablecerFormulario(respuesta.id);
           this.listarRepartos();
@@ -226,7 +219,6 @@ export class RepartoComponent implements OnInit {
     let empresa = this.appComponent.getEmpresa();
     this.servicio.listarPorEstaCerradaYEmpresa(false, empresa.id).subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
       }
@@ -257,12 +249,9 @@ export class RepartoComponent implements OnInit {
     this.listaCompleta = new MatTableDataSource([]);
     this.listaCompleta.sort = this.sort;
     this.establecerValoresPorDefecto();
-    console.log(id);
     if (id != undefined || id != null)
       this.id.setValue(id);
-    setTimeout(function () {
-      document.getElementById('idTipoViaje').focus();
-    }, 20);
+    document.getElementById('idTipoViaje').focus();
   }
   //Abre el modal de Viaje Combustible
   public abrirOrdenesCombustibles(elemento) {
@@ -274,7 +263,6 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
 
     });
   }
@@ -288,7 +276,6 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
 
     });
   }
@@ -302,7 +289,6 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
     });
   }
   //Define el mostrado de datos y comparacion en campo select
@@ -364,7 +350,7 @@ export class AcompanianteDialogo {
   //Define las columnas de la tabla general
   public columnas: string[] = ['acompaniante', 'quitar'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -394,10 +380,10 @@ export class AcompanianteDialogo {
     this.personalService.listarAcompaniantesPorEmpresa(empresa.id).subscribe(
       res => {
         this.resultadosAcompaniante = res.json();
-        console.log(res.json());
       },
       err => {
-        console.log("Error al obtener la lista de acompaniantes por empresa.");
+        let error = err.json();
+        this.toastr.error(error.mensaje);
       }
     )
   }
@@ -408,9 +394,7 @@ export class AcompanianteDialogo {
         if (this.formulario.get('personal').value.id == this.listaCompleta.data[i].personal.id) {
           this.formulario.reset();
           this.toastr.error("El acompañante seleccionado ya fue agregado a la lista.");
-          setTimeout(function () {
-            document.getElementById('idAcompaniante').focus();
-          }, 20);
+          document.getElementById('idAcompaniante').focus();
         } else {
           this.agregarAcompaniante();
         }
@@ -425,18 +409,14 @@ export class AcompanianteDialogo {
     this.listaCompleta.sort = this.sort;
     this.toastr.success("Acompañante agregado a la lista.");
     this.formulario.reset();
-    setTimeout(function () {
-      document.getElementById('idAcompaniante').focus();
-    }, 20);
+    document.getElementById('idAcompaniante').focus();
   }
   //Quita un acompaniante de la lista
   public quitarAcompaniante(indice) {
     this.listaCompleta.data.splice(indice, 1);
     this.listaCompleta.sort = this.sort;
     this.toastr.success("Acompañante quitado de la lista.");
-    setTimeout(function () {
-      document.getElementById('idAcompaniante').focus();
-    }, 20);
+    document.getElementById('idAcompaniante').focus();
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

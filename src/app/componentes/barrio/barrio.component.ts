@@ -64,13 +64,8 @@ export class BarrioComponent implements OnInit {
           this.seleccionarPestania(this.pestanias[0].id, this.pestanias[0].nombre, 0);
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -169,7 +164,6 @@ export class BarrioComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -184,7 +178,8 @@ export class BarrioComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );

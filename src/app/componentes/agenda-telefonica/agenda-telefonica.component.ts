@@ -63,7 +63,6 @@ export class AgendaTelefonicaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
   }
@@ -196,7 +195,6 @@ export class AgendaTelefonicaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -211,7 +209,8 @@ export class AgendaTelefonicaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
