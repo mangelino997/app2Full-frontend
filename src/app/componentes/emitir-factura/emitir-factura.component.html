@@ -42,7 +42,7 @@
         <div class="col-md-1">
           <div class="form-group has-float-label">
             <label for="idLetra" class="tamanio-label">P. Venta</label>
-            <input id="idLetra" type="text" [formControl]="puntoVenta" class="form-control form-control-sm" readonly>
+            <input id="idLetra" type="text" [formControl]="puntoVenta" class="form-control form-control-sm number-right" readonly>
           </div>
         </div>
         <div class="col-md-1">
@@ -54,13 +54,13 @@
         <div class="col-md-1">
           <div class="form-group has-float-label">
             <label for="idNumero" class="tamanio-label">Número</label>
-            <input id="idNumero" type="number" formControlName="numero" class="form-control form-control-sm" readonly>
+            <input id="idNumero" type="number" formControlName="numero" class="form-control form-control-sm number-right" readonly>
           </div>
         </div>
         <div class="col-md-1">
           <div class="form-group has-float-label">
             <label for="idCodigoAfip" class="tamanio-label">Código Afip</label>
-            <input id="idCodigoAfip" type="text" formControlName="codigoAfip" class="form-control form-control-sm"
+            <input id="idCodigoAfip" type="text" formControlName="codigoAfip" class="form-control form-control-sm number-right"
               readonly>
           </div>
         </div>
@@ -205,27 +205,27 @@
           <div class="form-group has-float-label">
             <label for="idViaje" class="tamanio-label">N° Viaje*</label>
             <input id="idViaje" type="text" formControlName="numeroViaje" [readOnly]="soloLectura" placeholder="00"
-            [textMask]="obtenerMascaraEnteroSinDecimales(8)"  class="form-control form-control-sm" style="width: 78px;">
+            [textMask]="obtenerMascaraEnteroSinDecimales(8)"  class="form-control form-control-sm number-right" style="width: 78px;">
           </div>
           <div class="form-group has-float-label ">
             <label for="idRemito" class="tamanio-label">N° Remito*</label>
             <input id="idRemito" type="number" [formControl]="viajeRemito" [readOnly]="soloLectura" placeholder="00"
-            [textMask]="obtenerMascaraEnteroSinDecimales(8)" class="form-control form-control-sm" style="width: 100px;" (blur)="cambioRemito()">
+            [textMask]="obtenerMascaraEnteroSinDecimales(8)" class="form-control form-control-sm number-right" style="width: 100px;" (blur)="cambioRemito()">
           </div>
           <div class="form-group has-float-label">
             <label for="idBultos" class="tamanio-label">Bultos</label>
-            <input id="idBultos" type="text" formControlName="bultos" class="form-control form-control-sm"
+            <input id="idBultos" type="text" formControlName="bultos" class="form-control form-control-sm number-right"
              placeholder="00" [textMask]="obtenerMascaraEnteroSinDecimales(8)" style="width: 58px;" autocomplete="off" [readOnly]="soloLectura">
           </div>
           <div class="form-group has-float-label">
             <label for="idKiloEfectivo" class="tamanio-label">Kg Efectivo</label>
             <input id="idKiloEfectivo" type="text" formControlName="kilosEfectivo"
-              class="form-control form-control-sm" style="width: 91px;" autocomplete="off"  placeholder="0.00"
+              class="form-control form-control-sm number-right" style="width: 91px;" autocomplete="off"  placeholder="0.00"
               [textMask]="obtenerMascaraEnteroConDecimales(8)" (blur)="setDecimales(formularioItem.get('kilosEfectivo'), 2)" [readOnly]="soloLectura">
           </div>
           <div class="form-group has-float-label">
             <label for="idKiloAforado" class="tamanio-label">Kg Aforado</label>
-            <input id="idKiloAforado" type="text" formControlName="kilosAforado" class="form-control form-control-sm" placeholder="0.00"
+            <input id="idKiloAforado" type="text" formControlName="kilosAforado" class="form-control form-control-sm number-right" placeholder="0.00"
               style="width: 91px;" autocomplete="off" (blur)="setDecimales(formularioItem.get('kilosAforado'), 2)" [textMask]="obtenerMascaraEnteroConDecimales(8)"
               [readOnly]="soloLectura">
           </div>
@@ -257,7 +257,7 @@
           </div>
           <div class="form-group has-float-label">
             <label for="idSeguro" class="tamanio-label">% Seguro</label>
-            <input id="idSeguro" type="text" formControlName="importeSeguro" class="form-control form-control-sm" placeholder="% 0.00"
+            <input id="idSeguro" type="text" formControlName="importeSeguro" class="form-control form-control-sm number-right" placeholder="% 0.00"
               style="width: 80px;" (blur)="calcularSubtotal($event)" readonly>
           </div>
           <div class="form-group has-float-label">
@@ -268,7 +268,7 @@
           </div>
           <div class="form-group has-float-label">
             <label for="idDescuento" class="tamanio-label">% Dto.</label>
-            <input id="idDescuento" type="number" formControlName="descuento" class="form-control form-control-sm" placeholder="% 0.00"
+            <input id="idDescuento" type="number" formControlName="descuento" class="form-control form-control-sm number-right" placeholder="% 0.00"
               style="width: 60px;" autocomplete="off"  (blur)="calcularSubtotal($event)" [readOnly]="soloLectura">
           </div>
           <div class="form-group has-float-label">

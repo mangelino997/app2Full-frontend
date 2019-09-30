@@ -130,10 +130,9 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerFormulario(undefined);
-    this.anio.setValue(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario();
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, false, false, true, 'idAnio');
@@ -195,7 +194,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        this.reestablecerFormulario(respuesta.id);
+        this.reestablecerFormulario();
         document.getElementById('idAnio').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
@@ -216,7 +215,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario(undefined);
+          this.reestablecerFormulario();
           this.anio.setValue(anio);
           this.listar();
           document.getElementById('idAnioLista').focus();
@@ -241,12 +240,13 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.toastr.error(respuesta.mensaje);
   }
   //Reestablece los campos formularios
-  private reestablecerFormulario(id) {
+  private reestablecerFormulario() {
     this.formulario.reset();
     this.resultados = [];
-    this.listaCompleta = new MatTableDataSource([]);
+    this.anio.reset();
     this.condicion = false;
-    this.resultados = [];
+    this.listaCompleta = new MatTableDataSource([]);
+    this.indiceSeleccionado == 3? this.formulario.disable() : this.formulario.enable();
   }
   //Controla el cambio en el campo "anio"
   public cambioAnio() {
@@ -266,15 +266,20 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    // if (this.indiceSeleccionado == 5) {
-    //   this.seleccionarPestania(3, this.pestanias[2].nombre);
-    // }
-    this.formulario.patchValue(elemento);
+    if (this.indiceSeleccionado == 5) {
+      this.seleccionarPestania(3, this.pestanias[2].nombre);
+    }
+    this.habilitarCamposActualizar(elemento);
+    this.listar();
+  }
+  //Habilita los campos del formulario en el Actualizar luego de seleccionar un registro y setea sus valores
+  private habilitarCamposActualizar(elemento){
+    this.formulario.enable();
     this.formulario.get('afipDeduccionGeneral').disable();
+    this.formulario.patchValue(elemento);
     this.establecerDecimales(this.formulario.get('importe'), 2);
     this.formulario.get('porcentajeGananciaNeta').setValue(this.appService.desenmascararPorcentaje(elemento.porcentajeGananciaNeta.toString(), 2));
     this.anio.setValue(elemento.anio);
-    this.listar();
   }
   //elimina el registro seleccionado
   public activarEliminar(idElemento) {

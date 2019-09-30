@@ -44,8 +44,12 @@ export class CostosInsumosProductoComponent implements OnInit {
   public opcionSeleccionada: number = null;
   //Define la lista de rubros
   public rubros: Array<any> = [];
+  //Define rubro para la lista
+  public rubro: FormControl = new FormControl();
   //Define la lista de marcas
   public marcas: Array<any> = [];
+  //Define marca para la lista
+  public marca: FormControl = new FormControl();
   //Define la lista de unidades de medida
   public unidadesMedidas: Array<any> = [];
   //Define la opcion activa
@@ -171,7 +175,10 @@ export class CostosInsumosProductoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 5:
-        this.listar();
+          this.listaCompleta = new MatTableDataSource([]);
+          setTimeout(function () {
+            document.getElementById('idAutocompletado').focus();
+          }, 20);
         break;
       default:
         break;
@@ -230,6 +237,16 @@ export class CostosInsumosProductoComponent implements OnInit {
     this.formulario.get('itcPorLitro').setValue(this.appService.establecerDecimales(itcPorLitro.toString(), 4));
     this.formulario.get('itcNeto').setValue(this.appService.desenmascararPorcentaje(itcNeto.toString(), 2));
 
+  }
+  //Obtiene la lista por rubro y marca
+  public listarPorRubroYMarcaLista(rubro, marca) {
+    this.loaderService.show();
+    this.servicio.listarPorRubroYMarca(rubro.value.id, marca.value.id).subscribe(res => {
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
+      this.listaCompleta.paginator = this.paginator;
+      this.loaderService.hide();
+    });
   }
   //Obtiene la mascara de importe
   public mascararImporte(intLimite, decimalLimite) {

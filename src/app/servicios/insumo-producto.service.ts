@@ -58,6 +58,10 @@ export class InsumoProductoService {
       })
     })
   }
+  //Obtiene un listado de Rubro y Marca
+  public listarPorRubroYMarca(idRubro, idMarca){
+    return this.http.get(this.url + '/listarPorRubroYMarca/' + idRubro + '/' + idMarca, this.options);
+  }
   //Obtiene una lista de combustibles
   public listarCombustibles() {
     return this.http.get(this.url + '/listarCombustibles', this.options);

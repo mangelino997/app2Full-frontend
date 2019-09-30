@@ -121,7 +121,7 @@
             <div class="form-group has-float-label">
               <label for="idDeduccionGeneral" class="tamanio-label">Deducción General *</label>
               <mat-select id="idDeduccionGeneral" class="form-control form-control-sm"
-                formControlName="afipDeduccionGeneral" [compareWith]="compareFn" readOnly>
+                formControlName="afipDeduccionGeneral" [compareWith]="compareFn">
                 <mat-option *ngFor="let item of deduccionesGenerales" [value]="item">
                   {{item.descripcion}}
                 </mat-option>
