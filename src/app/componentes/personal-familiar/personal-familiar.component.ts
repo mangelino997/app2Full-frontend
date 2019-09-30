@@ -117,7 +117,7 @@ export class PersonalFamiliarComponent implements OnInit {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarActivosPorAliasYEmpresa(data, empresa.id).subscribe(response => {
+        this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
           this.resultados = response;
         })
       }
@@ -125,7 +125,7 @@ export class PersonalFamiliarComponent implements OnInit {
     //Autocompletado - Buscar personal por alias
     this.autocompletadoListar.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarActivosPorAliasYEmpresa(data, empresa.id).subscribe(response => {
+        this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
           this.resultadosPersonal = response;
         })
       }
@@ -161,7 +161,7 @@ export class PersonalFamiliarComponent implements OnInit {
     //Autocompletado - Buscar personal por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalServicio.listarActivosPorAliasYEmpresa(data, empresa.id).subscribe(response => {
+        this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
           this.resultadosPersonal = response;
         })
       }

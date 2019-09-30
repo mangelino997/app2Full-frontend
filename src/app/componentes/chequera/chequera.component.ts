@@ -20,15 +20,15 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
 })
 export class ChequeraComponent implements OnInit {
   //Define la lista de Cuentas Bancarias
-  public cuentasBancarias:Array<any> = [];
+  public cuentasBancarias: Array<any> = [];
   //Define la lista de Cuentas Bancarias para las Consultas
-  public listaCuentasBancariasEmpresa:Array<any> = [];
+  public listaCuentasBancariasEmpresa: Array<any> = [];
   //Define la lista de Cuentas Bancarias con chequeras para las Consultas
-  public listaCuentasConChequeraEmpresa:Array<any> = [];
+  public listaCuentasConChequeraEmpresa: Array<any> = [];
   //Define la lista de chequeras por Cuenta Bancaria para las Consultas
-  public listaChequerasCuentaBancaria:Array<any> = [];
+  public listaChequerasCuentaBancaria: Array<any> = [];
   //Define la lista de Tipos de Chequeras
-  public tiposChequeras:Array<any> = [];
+  public tiposChequeras: Array<any> = [];
   //Define la pestania activa
   public activeLink: any = null;
   //Define los datos de la empresa
@@ -62,13 +62,13 @@ export class ChequeraComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'EMPRESA', 'CUENTA_BANCARIA', 'TIPO_CHEQUERA', 'DESDE', 'HASTA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
-  constructor(private chequera: Chequera, private servicio: ChequeraService, private tipoChequeraService: TipoChequeraService, 
-    private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService, 
-    private loaderService: LoaderService, private cuentaBancariaService: CuentaBancariaService,  private reporteServicio: ReporteService) {
+  constructor(private chequera: Chequera, private servicio: ChequeraService, private tipoChequeraService: TipoChequeraService,
+    private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService, private toastr: ToastrService,
+    private loaderService: LoaderService, private cuentaBancariaService: CuentaBancariaService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -81,7 +81,7 @@ export class ChequeraComponent implements OnInit {
           console.log(err);
         }
       );
-   }
+  }
 
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -107,62 +107,62 @@ export class ChequeraComponent implements OnInit {
     this.listarTiposChequeras();
   }
   //Establece la empresa por defecto
-  private establecerEmpresa(){
+  private establecerEmpresa() {
     this.empresa = this.appService.getEmpresa();
     this.empresaDatos.setValue(this.empresa.razonSocial);
   }
   //Obtiene la lista de Cuentas Bancarias
-  private listarCuentasBancarias(){
+  private listarCuentasBancarias() {
     this.cuentaBancariaService.listarPorEmpresa(this.empresa.id).subscribe(
-      res=>{
+      res => {
         console.log(res.json());
         this.cuentasBancarias = res.json();
       }
     )
   }
-  private listarCuentasBancariasConsultas(){
+  private listarCuentasBancariasConsultas() {
     this.empresa = this.appService.getEmpresa();
     this.servicio.listarPorEmpresa(this.empresa.id).subscribe(
-      res=>{
+      res => {
         console.log(res.json());
         this.listaCuentasBancariasEmpresa = res.json();
       }
     )
   }
-  private listarCuentasConChequerasConsultas(){
+  private listarCuentasConChequerasConsultas() {
     this.empresa = this.appService.getEmpresa();
     this.cuentaBancariaService.listarConChequerasPorEmpresa(this.empresa.id).subscribe(
-      res=>{
+      res => {
         console.log(res.json());
         this.listaCuentasConChequeraEmpresa = res.json();
       }
     )
   }
-  private listarChequerasConsultas(idCuentaBancaria){
+  private listarChequerasConsultas(idCuentaBancaria) {
     this.servicio.listarPorCuentaBancaria(idCuentaBancaria).subscribe(
-      res=>{
+      res => {
         console.log(res.json());
         this.listaChequerasCuentaBancaria = res.json();
       }
     )
   }
   //Obtiene la lista de Tipos de Chequeras
-  private listarTiposChequeras(){
+  private listarTiposChequeras() {
     this.tipoChequeraService.listar().subscribe(
-      res=>{
+      res => {
         console.log(res.json());
         this.tiposChequeras = res.json();
       }
     )
   }
   //Obtiene los datos de la cuenta bancaria seleccionada
-  public cambioCuentaBancaria(){
-    let elemento= this.cuentaSeleccionada.value;
+  public cambioCuentaBancaria() {
+    let elemento = this.cuentaSeleccionada.value;
     console.log(this.cuentaSeleccionada.value);
     this.listarChequerasConsultas(elemento.id);
   }
   //Obtiene los datos de la cuenta bancaria seleccionada
-  public cambioChequera(){
+  public cambioChequera() {
     this.formulario.patchValue(this.chequeraSeleccionada.value);
   }
   //Funcion para establecer los valores de las pestañas
@@ -171,9 +171,9 @@ export class ChequeraComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    if(soloLectura){
+    if (soloLectura) {
       this.formulario.get('tipoChequera').disable();
-    }else{
+    } else {
       this.formulario.get('tipoChequera').enable();
     }
     setTimeout(function () {
@@ -189,7 +189,7 @@ export class ChequeraComponent implements OnInit {
     if (opcion == 0) {
       this.cuentaSeleccionada.reset();
       this.chequeraSeleccionada.reset();
-      this.listaChequerasCuentaBancaria=[];
+      this.listaChequerasCuentaBancaria = [];
     }
     switch (id) {
       case 1:
@@ -260,18 +260,14 @@ export class ChequeraComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    let usuario= this.appService.getUsuario();
+    let usuario = this.appService.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
-    // this.formulario.get('empresa').setValue(this.empresa.value);
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idCuentaBancaria').focus();
-          }, 20);
+          document.getElementById('idCuentaBancaria').focus();
           this.empresaDatos.setValue(this.empresa.abreviatura);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -294,16 +290,14 @@ export class ChequeraComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.empresaDatos.setValue(this.empresa.abreviatura);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
-        var respuesta = err.json(); 
+        var respuesta = err.json();
         this.empresaDatos.setValue(this.empresa.abreviatura);
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
@@ -316,29 +310,27 @@ export class ChequeraComponent implements OnInit {
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
-    if(elemento.value) {
+    if (elemento.value) {
       elemento.setValue((string + elemento.value).slice(cantidad));
     }
   }
   //Valida si el campo "Hasta" es mayor al campo "Desde"
-  public validarMayor(){
+  public validarMayor() {
     this.establecerCerosIzq(this.formulario.get('hasta'), "0000000", -8);
-    if(this.formulario.value.hasta< this.formulario.value.desde){
+    if (this.formulario.value.hasta < this.formulario.value.desde) {
       this.formulario.get('desde').setValue(null);
       this.toastr.error("El campo 'Desde' debe ser MENOR que el campo 'Hasta' ");
-      setTimeout(function () {
-        document.getElementById('idDesde').focus();
-      }, 20);
+      document.getElementById('idDesde').focus();
     }
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
   //Controla el Autocompletado
-  public cambioAutocompletado(elemento){
+  public cambioAutocompletado(elemento) {
     this.formulario.patchValue(elemento);
     this.establecerCerosIzq(this.formulario.get('desde'), "0000000", -8);
     this.establecerCerosIzq(this.formulario.get('hasta'), "0000000", -8);
@@ -360,7 +352,7 @@ export class ChequeraComponent implements OnInit {
     if (valor != undefined && valor != null && valor != '') {
       var patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
-       
+
       }
     }
   }
@@ -427,15 +419,15 @@ export class ChequeraComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          empresa: elemento.cuentaBancaria.empresa.razonSocial,
-          cuenta_bancaria: elemento.cuentaBancaria.sucursalBanco.banco.nombre+'-'+ elemento.cuentaBancaria.sucursalBanco.nombre +'-'+ elemento.cuentaBancaria.numeroCuenta,
-          tipo_chequera: elemento.tipoChequera.nombre,
-          desde: elemento.desde,
-          hasta: elemento.hasta
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        empresa: elemento.cuentaBancaria.empresa.razonSocial,
+        cuenta_bancaria: elemento.cuentaBancaria.sucursalBanco.banco.nombre + '-' + elemento.cuentaBancaria.sucursalBanco.nombre + '-' + elemento.cuentaBancaria.numeroCuenta,
+        tipo_chequera: elemento.tipoChequera.nombre,
+        desde: elemento.desde,
+        hasta: elemento.hasta
+      }
+      datos.push(f);
     });
     return datos;
   }

@@ -69,7 +69,7 @@ export class AdelantoLoteComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['empresa', 'fechaEmision', 'lote', 'importeAdelanto', 'totalLegajos', 'importeTotal', 'anular'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -199,9 +199,7 @@ export class AdelantoLoteComponent implements OnInit {
         let respuesta = res.json();
         if (respuesta.length == 0) {
           this.toastr.success("Registros agregados con éxito");
-          setTimeout(function () {
-            document.getElementById('idSucursal').focus();
-          }, 20);
+          document.getElementById('idSucursal').focus();
           this.loaderService.hide();
         } else {
           this.toastr.success("Registros agregados con éxito");
@@ -257,9 +255,7 @@ export class AdelantoLoteComponent implements OnInit {
   public activarAnular(numeroLote, indice) {
     this.numeroLote.setValue(numeroLote);
     this.indiceElemento = indice;
-    setTimeout(function () {
-      document.getElementById('idObervaciones').focus();
-    }, 20);
+    document.getElementById('idObervaciones').focus();
   }
   //Carga la tabla con registros
   public buscar() {
@@ -314,18 +310,14 @@ export class AdelantoLoteComponent implements OnInit {
             this.basicoCategoria.setValue(null);
             this.topeMax.setValue(null);
             this.toastr.error("La categoría no tiene asignado un básico categoría.");
-            setTimeout(function () {
-              document.getElementById('idCategoria').focus();
-            }, 20);
+            document.getElementById('idCategoria').focus();
           }
         },
         err => {
           this.basicoCategoria.setValue(null);
           this.topeMax.setValue(null);
           this.toastr.error("La categoría no tiene asignado un básico categoría.");
-          setTimeout(function () {
-            document.getElementById('idCategoria').focus();
-          }, 20);
+          document.getElementById('idCategoria').focus();
         }
       )
     } else {
@@ -342,9 +334,7 @@ export class AdelantoLoteComponent implements OnInit {
       if (importe > topeMax) {
         this.toastr.error("El importe no debe ser mayor al tope máximo.");
         this.formulario.get('importe').setValue(null);
-        setTimeout(function () {
-          document.getElementById('idImporte').focus();
-        }, 20);
+        document.getElementById('idImporte').focus();
       }
     }
 
@@ -399,7 +389,7 @@ export class AdelantoLoteDialogo {
   //Define las columnas de la tabla
   public columnas: string[] = ['numeroLegajo', 'personal', 'motivo'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Constructor
   constructor(public dialogRef: MatDialogRef<AdelantoLoteDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente

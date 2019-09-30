@@ -651,9 +651,7 @@ export class ClienteComponent implements OnInit {
           this.establecerValoresPorDefecto();
           this.establecerSituacionCliente();
           this.establecerCondicionVenta();
-          setTimeout(function () {
             document.getElementById('idRazonSocial').focus();
-          }, 20);
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
