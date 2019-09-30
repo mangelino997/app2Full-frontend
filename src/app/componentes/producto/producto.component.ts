@@ -36,6 +36,8 @@ export class ProductoComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario listar para validaciones de campos
+  public formularioListar: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista completa de rubros
@@ -97,6 +99,10 @@ export class ProductoComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.producto.formulario;
+    this.formularioListar = new FormGroup({
+      rubroProducto: new FormControl(),
+      marcaProducto: new FormControl(),
+    });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece valores por defecto
@@ -211,6 +217,7 @@ export class ProductoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
+          //this.formularioListar.reset();
           this.listaCompleta = new MatTableDataSource([]);
           setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
@@ -392,7 +399,7 @@ export class ProductoComponent implements OnInit {
     }
   }
   //Obtiene la lista por rubro y marca
-  public listarPorRubroYMarcaLista(rubro, marca) {
+  /* public listarPorRubroYMarcaLista(rubro, marca) {
     this.loaderService.show();
     this.servicio.listarPorRubroYMarca(rubro.value.id, marca.value.id).subscribe(res => {
       this.listaCompleta = new MatTableDataSource(res.json());
@@ -400,6 +407,23 @@ export class ProductoComponent implements OnInit {
       this.listaCompleta.paginator = this.paginator;
       this.loaderService.hide();
     });
+  } */
+  public listarPorRubroYMarcaLista() {
+    this.loaderService.show();
+    let rubroProducto = this.formularioListar.get('rubroProducto').value;
+    let marcaProducto = this.formularioListar.get('marcaProducto').value;
+    rubroProducto = rubroProducto.id;
+    marcaProducto = marcaProducto == '1' ? 0 : marcaProducto.id;
+    this.servicio.listarPorRubroYMarca(rubroProducto, marcaProducto).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+      },
+      err => {
+        this.loaderService.hide();
+      });
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);

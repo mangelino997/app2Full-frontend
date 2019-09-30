@@ -148,12 +148,12 @@
         </div>
       </div>
       <br>
+      <form [formGroup]="formularioListar">
       <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idRubro" class="tamanio-label">Rubro *</label>
-              <mat-select id="idRubro" class="form-control form-control-sm" [formControl]="rubro"
-                [compareWith]="compareFn">
+              <mat-select id="idRubro" class="form-control form-control-sm" formControlName="rubroProducto">
                 <mat-option *ngFor="let itemRubro of rubros" [value]="itemRubro">
                   {{itemRubro.nombre}}
                 </mat-option>
@@ -163,8 +163,8 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idMarca" class="tamanio-label">Marca *</label>
-              <mat-select id="idMarca" class="form-control form-control-sm" [formControl]="marca"
-                [compareWith]="compareFn">
+              <mat-select id="idMarca" class="form-control form-control-sm" formControlName="marcaProducto">
+                <mat-option [value]="1">TODAS</mat-option>
                 <mat-option *ngFor="let itemMarca of marcas" [value]="itemMarca">
                   {{itemMarca.nombre}}
                 </mat-option>
@@ -173,11 +173,12 @@
           </div>
           <div class="col-md-2">
             <button id="idBoton" mat-raised-button color="primary" formnovalidate
-              (click)="listarPorRubroYMarcaLista(rubro, marca)">
+              (click)="listarPorRubroYMarcaLista()">
               Buscar
             </button>
           </div>
         </div>
+      </form>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="ID" sticky>

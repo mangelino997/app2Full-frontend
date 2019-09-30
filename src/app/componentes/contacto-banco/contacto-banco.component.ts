@@ -240,8 +240,8 @@ export class ContactoBancoComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
-          var guardarCampo = this.formulario.value.sucursalBanco;
-          console.log(guardarCampo);
+          //var guardarCampo = this.formulario.value.sucursalBanco;
+          //console.log(guardarCampo);
           this.reestablecerFormulario();
           setTimeout(function () {
             document.getElementById('idSucursalBanco').focus();
@@ -309,6 +309,7 @@ export class ContactoBancoComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario() {
     //this.formulario.get('idSucursalBanco').setValue(this.guardarCampo);
+    //console.log(this.guardarCampo);
     this.formulario.reset();
     this.autocompletado.setValue(undefined);
     this.vaciarListas();

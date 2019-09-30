@@ -3,7 +3,7 @@ import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehi
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
 import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
@@ -35,6 +35,8 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario listar para validaciones de campos
+  public formularioListar: FormGroup;
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define la lista completa de registros
@@ -89,6 +91,10 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     this.formulario = this.configuracionVehiculo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
+    //Define el formulario listar
+    this.formularioListar = new FormGroup({
+      marcaVehiculo: new FormControl('', Validators.required)
+    });
     //Obtiene la lista completa de registros
     //this.listar();
     //Obtiene la lista de tipos de vehiculos
@@ -170,6 +176,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idTipoVehiculo');
         break;
       case 5:
+        this.formularioListar.reset();
         this.marcaVehiculo.reset();
         setTimeout(function() {
           document.getElementById('idMarcaVehiculo').focus();
@@ -237,20 +244,20 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       )
     }
   }
-  //Obtiene una lista por marca de vehiculo
-  public listarPorMarcaVehiculo(): void {
+  public listarPorMarcaVehiculo() {
     this.loaderService.show();
-    let marcaVehiculo = this.marcaVehiculo.value;
-    this.servicio.listarPorMarcaVehiculo(marcaVehiculo.id).subscribe(
+    let marcaVehiculo = this.formularioListar.get('marcaVehiculo').value;
+    marcaVehiculo = marcaVehiculo == '1' ? 0 : marcaVehiculo.id;
+    this.servicio.listarPorMarcaVehiculo(marcaVehiculo).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
         this.loaderService.hide();
-      }
-    );
+      });
   }
   //Agrega un registro
   private agregar() {

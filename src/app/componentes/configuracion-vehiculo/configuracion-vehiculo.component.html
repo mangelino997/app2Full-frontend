@@ -147,19 +147,25 @@
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
     <div class="col-md-10">
       <br>
+      <form [formGroup]="formularioListar">
       <div class="row">
         <div class="col-md-3">
           <div class="form-group has-float-label">
             <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
-            <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" [formControl]="marcaVehiculo"
-              [compareWith]="compareFn" (selectionChange)="listarPorMarcaVehiculo()">
+            <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo">
+                <mat-option [value]="1">TODOS</mat-option>
               <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                 {{itemMarcaVehiculo.nombre}}
               </mat-option>
             </mat-select>
           </div>
         </div>
+        <div class="col-md-1">
+            <button mat-raised-button color="primary" [disabled]="!formularioListar.valid"
+              (click)="listarPorMarcaVehiculo()">Buscar</button>
+          </div>
       </div>
+      </form>
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
