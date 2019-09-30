@@ -48,16 +48,16 @@ export class AfipCondicionIvaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: AfipCondicionIvaService, private afipCondicionIva: AfipCondicionIva, private loaderService: LoaderService,
-    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService, 
+    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private toastr: ToastrService,
     private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -180,9 +180,7 @@ export class AfipCondicionIvaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -207,9 +205,7 @@ export class AfipCondicionIvaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -235,9 +231,7 @@ export class AfipCondicionIvaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -308,12 +302,12 @@ export class AfipCondicionIvaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          abreviatura: elemento.abreviatura
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        abreviatura: elemento.abreviatura
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -328,5 +322,5 @@ export class AfipCondicionIvaComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

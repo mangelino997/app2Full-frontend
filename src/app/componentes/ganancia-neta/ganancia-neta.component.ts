@@ -351,11 +351,11 @@ export class GananciaNetaComponent implements OnInit {
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.idMod = elemento.id;
-    if (this.indiceSeleccionado == 3)
-      this.formulario.enable();
+    this.formulario.enable();
     this.formulario.patchValue(elemento);
     this.establecerDecimales(this.formulario.get('importe'), 2);
     this.establecerDecimales(this.formulario.get('importeFijo'), 2);
+    console.log(this.listaCompleta.data);
   }
   //elimina el registro seleccionado
   public activarEliminar(idElemento) {
