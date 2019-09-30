@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Inject, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { ClienteService } from '../../servicios/cliente.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { RolOpcionService } from '../../servicios/rol-opcion.service';
@@ -276,6 +276,9 @@ export class ClienteComponent implements OnInit {
         elemento.cuentaBancaria.numeroCuenta = resultado.numeroCuenta;
         elemento.cuentaBancaria.cbu = resultado.cbu;
         elemento.cuentaBancaria.aliasCBU = resultado.aliasCBU;
+        if(this.indiceSeleccionado == 3) {
+          // this.clienteCuen
+        }
       }
     });
   }
@@ -290,7 +293,7 @@ export class ClienteComponent implements OnInit {
       maxWidth: '95%',
       data: {
         empresa: elemento.empresa,
-        clienteVtoPago: this.formulario.get('clienteVtosPagos').value[indice]
+        clienteVtoPago: this.formulario.get('clienteVtosPagos').value ? this.formulario.get('clienteVtosPagos').value[indice] : this.formulario.get('clienteVtosPagos').value
       },
     });
     dialogRef.afterClosed().subscribe(resultado => {

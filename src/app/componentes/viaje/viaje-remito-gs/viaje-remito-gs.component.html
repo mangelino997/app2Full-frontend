@@ -94,7 +94,7 @@
     </div>
   </div>
   <div class="row">
-    <div *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
+    <div *ngIf="indiceSeleccionado != 2 && indiceSeleccionado != 4">
       <button mat-raised-button color="primary" (click)="asignarRemitos()" *ngIf="!tipoRemitos" 
         [disabled]="listaCompleta.data.length == 0">Asignar</button>
       <button mat-raised-button color="primary" (click)="quitarRemitos()" *ngIf="tipoRemitos" 
