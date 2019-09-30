@@ -5,7 +5,7 @@ textarea {
   width: 100%;
 }
 th {
-  position: -webkit-sticky;
+  /* position: -webkit-sticky; */
   position: sticky;
   top: 0; 
   background-color: #FFF;
@@ -31,7 +31,7 @@ input {
   background-color:#50A8FA !important;
 } */
 th {
-  position: -webkit-sticky;
+  /* position: -webkit-sticky; */
   position: sticky;
   top: 0; 
   background-color: #FFF;

@@ -244,7 +244,7 @@ button.toast-close-button {
   cursor:text;
   font-size:75%;
   opacity:1;
-  -webkit-transition:all .2s;
+  // -webkit-transition:all .2s;
   transition:all .2s;
   top:-.5em;
   left:0.70rem;
@@ -265,7 +265,7 @@ button.toast-close-button {
 }
 .has-float-label .form-control::-webkit-input-placeholder {
   opacity:1;
-  -webkit-transition:all .2s;
+  // -webkit-transition:all .2s;
   transition:all .2s
 }
 .has-float-label .form-control:placeholder-shown:not(:focus)::-webkit-input-placeholder {
@@ -303,7 +303,7 @@ button.toast-close-button {
   cursor:text;
   font-size:75%;
   opacity:1;
-  -webkit-transition:all .2s;
+  // -webkit-transition:all .2s;
   transition:all .2s;
   top:-.5em;
   left:2.10rem;
@@ -324,7 +324,7 @@ button.toast-close-button {
 }
 .has-float-label-icon .form-control::-webkit-input-placeholder {
   opacity:1;
-  -webkit-transition:all .2s;
+  // -webkit-transition:all .2s;
   transition:all .2s
 }
 .has-float-label-icon .form-control:placeholder-shown:not(:focus)::-webkit-input-placeholder{
@@ -456,10 +456,10 @@ input[type=number] {
   text-align:right;
   -moz-appearance:textfield;
 }
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-}
+// input::-webkit-outer-spin-button,
+// input::-webkit-inner-spin-button {
+//     -webkit-appearance: none;
+// }
 /* Define campos siempre en uppercase */
 .upper-case {
   text-transform: uppercase;
@@ -500,7 +500,7 @@ mat-select {
   min-width: 112px;
   max-width: none !important;
   overflow: auto;
-  -webkit-overflow-scrolling: touch;
+  // -webkit-overflow-scrolling: touch;
   max-height: calc(100vh - 48px);
   border-radius: 2px;
   outline: 0;
@@ -550,7 +550,7 @@ mat-select {
   padding: 0 0px 0px 5px !important;
 }
 th {
-  position: -webkit-sticky;
+  // position: -webkit-sticky;
   position: sticky;
   top: 0; 
   background-color: #FFF;
