@@ -18,47 +18,20 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
   styleUrls: ['./moneda-cotizacion.component.css']
 })
 export class MonedaCotizacionComponent implements OnInit {
-  //Define la pestania activa
-  public activeLink: any = null;
-  //Define el indice seleccionado de pestania
-  public indiceSeleccionado: number = null;
-  //Define la pestania actual seleccionada
-  public pestaniaActual: string = null;
-  //Define el nombre del Boton
-  public nombreBtn: string = null;
-  //Define si mostrar el autocompletado
-  public mostrarAutocompletado: boolean = null;
-  //Define si el campo es de solo lectura
-  public soloLectura: boolean = false;
-  //Define si mostrar el boton
-  public mostrarBoton: boolean = null;
   //Define si mostrar el boton
   public mostrarAgregar: boolean = null;
-  //Define la lista de pestanias
-  public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta: Array<any> = [];
+  public listaCompleta = new MatTableDataSource([]);
   //Define la lista completa de Monedas
   public listaMonedas: Array<any> = [];
-  //Define la lista completa de Monedas
-  public listaMonedaCotizacion = new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define las columnas seleccionadas
-
   public elegirColumna: FormControl = new FormControl();
-  //Define el id que se muestra en el campo Codigo
-  public id: FormControl = new FormControl();
-  //Define empresa para las busquedas
-  public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
-  //Define la lista de resultados de busqueda companias seguros
-  public resultadosCompaniasSeguros: Array<any> = [];
-  //Defien la lista de empresas
-  public empresas: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['MONEDA', 'FECHA', 'VALOR', 'EDITAR'];
   //Define la matSort
@@ -75,7 +48,7 @@ export class MonedaCotizacionComponent implements OnInit {
     private reporteServicio: ReporteService) {
     //Actualiza en tiempo real la tabla
     this.monedaCotizacionServicio.listaCompleta.subscribe(res => {
-      this.listaMonedaCotizacion = res;
+      this.listaCompleta = res;
     });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
@@ -108,7 +81,8 @@ export class MonedaCotizacionComponent implements OnInit {
         this.formulario.get('fecha').setValue(res.json());
       },
       err => {
-        this.toastr.error(err.mensaje);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
       }
     );
   }
@@ -119,6 +93,8 @@ export class MonedaCotizacionComponent implements OnInit {
         this.listaMonedas = res.json();
       },
       err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
       }
     );
   }
@@ -130,8 +106,8 @@ export class MonedaCotizacionComponent implements OnInit {
     this.monedaCotizacionServicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
+        this.cambioSeleccionado();
         this.reestablecerFormulario(respuesta.id);
-        document.getElementById('idNombre').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -147,8 +123,8 @@ export class MonedaCotizacionComponent implements OnInit {
     this.monedaCotizacionServicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
+        this.cambioSeleccionado();
         this.reestablecerFormulario(respuesta.id);
-        document.getElementById('idNombre').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -160,8 +136,8 @@ export class MonedaCotizacionComponent implements OnInit {
   //Carga la tabla con los datos de la moneda seleccionada
   public cambioSeleccionado() {
     this.monedaCotizacionServicio.listarPorMoneda(this.formulario.get('moneda').value.id).subscribe(res => {
-      this.listaMonedaCotizacion = new MatTableDataSource(res.json());
-      this.listaMonedaCotizacion.sort = this.sort;
+      this.listaCompleta = new MatTableDataSource(res.json());
+      this.listaCompleta.sort = this.sort;
     });
   }
   //Reestablece los campos formularios
@@ -172,6 +148,7 @@ export class MonedaCotizacionComponent implements OnInit {
     this.resultados = [];
     this.establecerFecha();
     this.mostrarAgregar = true;
+    document.getElementById('idNombre').focus();
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado() {
@@ -260,7 +237,7 @@ export class MonedaCotizacionComponent implements OnInit {
   }
   //Abre el dialogo de reporte
   public abrirReporte(): void {
-    let lista = this.prepararDatos(this.listaMonedaCotizacion.data);
+    let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
       nombre: 'Cotizaciones Monedas',
       empresa: this.appService.getEmpresa().razonSocial,

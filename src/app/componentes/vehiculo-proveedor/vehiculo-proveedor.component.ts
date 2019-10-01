@@ -16,6 +16,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { VehiculoProveedor } from 'src/app/modelos/vehiculoProveedor';
 
 @Component({
   selector: 'app-vehiculo-proveedor',
@@ -71,7 +72,7 @@ export class VehiculoProveedorComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: VehiculoProveedorService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private loaderService: LoaderService,
+    private toastr: ToastrService, private loaderService: LoaderService, private modelo: VehiculoProveedor,
     private tipoVehiculoServicio: TipoVehiculoService, private marcaVehiculoServicio: MarcaVehiculoService,
     private proveedorServicio: ProveedorService,
     private companiaSeguroServicio: CompaniaSeguroService, private choferProveedorServicio: ChoferProveedorService,
@@ -104,34 +105,7 @@ export class VehiculoProveedorComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      dominio: new FormControl('', [Validators.required, Validators.maxLength(10)]),
-      proveedor: new FormControl('', Validators.required),
-      tipoVehiculo: new FormControl('', Validators.required),
-      marcaVehiculo: new FormControl('', Validators.required),
-      choferProveedor: new FormControl(),
-      vehiculoRemolque: new FormControl(),
-      anioFabricacion: new FormControl('', [Validators.required, Validators.min(1), Validators.maxLength(4)]),
-      numeroMotor: new FormControl('', Validators.maxLength(25)),
-      numeroChasis: new FormControl('', Validators.maxLength(25)),
-      companiaSeguro: new FormControl('', Validators.required),
-      numeroPoliza: new FormControl('', [Validators.required, Validators.maxLength(15)]),
-      vtoPoliza: new FormControl('', Validators.required),
-      vtoRTO: new FormControl('', Validators.required),
-      numeroRuta: new FormControl('', Validators.required),
-      vtoRuta: new FormControl('', Validators.required),
-      vtoSenasa: new FormControl(),
-      vtoHabBromatologica: new FormControl(),
-      usuarioAlta: new FormControl(),
-      fechaAlta: new FormControl(),
-      usuarioBaja: new FormControl(),
-      fechaBaja: new FormControl(),
-      usuarioMod: new FormControl(),
-      fechaUltimaMod: new FormControl(),
-      alias: new FormControl('', Validators.maxLength(100))
-    });
+    this.formulario = this.modelo.formulario;
     //Autocompletado Proveedor - Buscar por alias
     this.formulario.get('proveedor').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -165,13 +139,11 @@ export class VehiculoProveedorComponent implements OnInit {
       }
     })
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de tipos de vehiculos
     this.listarTiposVehiculos();
     //Obtiene la lista de marcas de vehiculos
     this.listarMarcasVehiculos();
-    //Obtiene la lista completa de registros
-    // this.listar();
   }
   //Obtiene la lista de tipos de vehiculos
   private listarTiposVehiculos() {
@@ -233,14 +205,10 @@ export class VehiculoProveedorComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -425,13 +393,13 @@ export class VehiculoProveedorComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
@@ -471,9 +439,9 @@ export class VehiculoProveedorComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

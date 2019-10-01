@@ -37,16 +37,8 @@ export class MonedaComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
-  //Define el id que se muestra en el campo Codigo
-  public id: FormControl = new FormControl();
-  //Define empresa para las busquedas
-  public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
-  //Define la lista de resultados de busqueda companias seguros
-  public resultadosCompaniasSeguros: Array<any> = [];
-  //Defien la lista de empresas
-  public empresas: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'ESTA_ACTIVO', 'MONEDA_PRINCIPAL', 'CODIGO_AFIP', 'SIMBOLO', 'EDITAR'];
   //Define la matSort
@@ -58,7 +50,7 @@ export class MonedaComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private moneda: Moneda, private monedaServicio: MonedaService,
+  constructor(private moneda: Moneda, private servicio: MonedaService,
     private subopcionPestaniaService: SubopcionPestaniaService, private appService: AppService,
     private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
@@ -74,7 +66,7 @@ export class MonedaComponent implements OnInit {
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.monedaServicio.listarPorNombre(data).subscribe(res => {
+        this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res.json();
         })
       }
@@ -90,7 +82,7 @@ export class MonedaComponent implements OnInit {
     //Define el formulario y validaciones
     this.formulario = this.moneda.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -103,15 +95,10 @@ export class MonedaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.resultados = [];
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -167,7 +154,7 @@ export class MonedaComponent implements OnInit {
   }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
-    this.monedaServicio.obtenerSiguienteId().subscribe(
+    this.servicio.obtenerSiguienteId().subscribe(
       res => {
         this.formulario.get('id').setValue(res.json());
       },
@@ -178,7 +165,7 @@ export class MonedaComponent implements OnInit {
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
-    this.monedaServicio.listar().subscribe(
+    this.servicio.listar().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -193,28 +180,44 @@ export class MonedaComponent implements OnInit {
     );
   }
   //Agrega un registro
-  private verificarPrincipal(opcion) {
-    if (this.formulario.get('porDefecto').value == "true") {
-      this.monedaServicio.obtenerPorDefecto().subscribe(
+  private verificarPrincipal(opcionPestania) {
+    let elemento = this.formulario.value;
+    this.listar();
+    console.log(opcionPestania, this.listaCompleta.data);
+    if (elemento.porDefecto && this.listaCompleta.data.length > 0) {
+      this.servicio.obtenerPorDefecto().subscribe(
         res => {
-          var respuesta = res.json();
-          //open modal reemplazar moneda
-          this.cambiarPrincipal(respuesta, this.formulario.value, opcion);
+          let respuesta = res.json(); //moneda porDefecto=true (monedaPrincipal)
+          console.log(respuesta);
+          if (elemento.id == respuesta.id) // Si el cobrador principal es el mismo que se quiere actualizar saltea el modal 'cambiarPrincipal'
+            this.controlaAccionPestania(opcionPestania);
+          else
+            this.cambiarPrincipal(respuesta, elemento, opcionPestania);
+        },
+        err => {
+          this.toastr.warning("No hay Moneda por defecto.");
+          this.controlaAccionPestania(opcionPestania);
         }
       );
     }
     else {
-      if (opcion == 1)
-        this.agregar(this.formulario.value);
-      if (opcion == 3)
-        this.actualizar(this.formulario.value);
+      this.controlaAccionPestania(opcionPestania);
+    }
+  }
+  //Controlar acción pestaña - Si el usuario está en la pestaña 'Agregar' o en 'Actualizar' llama a su método correspondiente.
+  private controlaAccionPestania(opcionPestania) {
+    if (opcionPestania == 1) {
+      this.agregar(this.formulario.value);
+    }
+    if (opcionPestania == 3) {
+      this.actualizar(this.formulario.value);
     }
   }
   //Metodo Agregar Moneda
   private agregar(moneda) {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    this.monedaServicio.agregar(moneda).subscribe(
+    this.servicio.agregar(moneda).subscribe(
       res => {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
@@ -231,7 +234,7 @@ export class MonedaComponent implements OnInit {
   //Actualiza un registro
   private actualizar(moneda) {
     this.loaderService.show();
-    this.monedaServicio.actualizar(moneda).subscribe(
+    this.servicio.actualizar(moneda).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
@@ -251,7 +254,7 @@ export class MonedaComponent implements OnInit {
   private eliminar() {
     this.loaderService.show();
     let formulario = this.formulario.value;
-    this.monedaServicio.eliminar(formulario.id).subscribe(
+    this.servicio.eliminar(formulario.id).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
@@ -287,10 +290,8 @@ export class MonedaComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.resultados = [];
-    document.getElementById('idNombre').focus();
-    this.obtenerSiguienteId();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -305,13 +306,13 @@ export class MonedaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
@@ -320,18 +321,22 @@ export class MonedaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
-  //Abre ventana Dialog nueva Moneda Principal
-  //opcion define la accion a ejecutar (agregar==1/actualizar==3)
+  /*Abre ventana Dialog nueva Moneda Principal
+    *opcion define la accion a ejecutar (agregar==1/actualizar==3)
+  */
   public cambiarPrincipal(monedaPrincipal, monedaAgregar, opcion): void {
     const dialogRef = this.dialog.open(CambiarMonedaPrincipalDialogo, {
       width: '750px',
-      data: { monedaPrincipal: monedaPrincipal, monedaAgregar: monedaAgregar },
+      data: { 
+        monedaPrincipal: monedaPrincipal, 
+        monedaAgregar: monedaAgregar 
+      },
     });
     dialogRef.afterClosed().subscribe(result => {
       this.formulario.get('porDefecto').setValue(result);
@@ -407,7 +412,7 @@ export class CambiarMonedaPrincipalDialogo {
   //Define la moneda principal actual
   public monedaPrincipal: string;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<CambiarMonedaPrincipalDialogo>, @Inject(MAT_DIALOG_DATA) public data, private monedaServicio: MonedaService) { }
+  constructor(public dialogRef: MatDialogRef<CambiarMonedaPrincipalDialogo>, @Inject(MAT_DIALOG_DATA) public data, private servicio: MonedaService) { }
   //Al inicializarse el componente
   ngOnInit() {
     this.monedaAgregar = this.data.monedaAgregar;

@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CONDICIÓN COMPRA</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -89,9 +89,9 @@
       </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID_CODIGO" sticky>
+        <ng-container matColumnDef="ID_CODIGO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
         </ng-container>
         <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
@@ -103,11 +103,11 @@
         </ng-container>
         <ng-container matColumnDef="CUOTAS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuotas</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.cuotas}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.cuotas}}</td>
         </ng-container>
         <ng-container matColumnDef="DIAS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Días entre Cuotas para Vto.</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.dias}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.dias}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
           <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"

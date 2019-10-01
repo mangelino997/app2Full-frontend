@@ -11,6 +11,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { ContactoBanco } from 'src/app/modelos/contactoBanco';
 
 @Component({
   selector: 'app-contacto-banco',
@@ -62,7 +63,7 @@ export class ContactoBancoComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: ContactoBancoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appServicio: AppService, private toastr: ToastrService,
+    private appServicio: AppService, private toastr: ToastrService, private modelo: ContactoBanco,
     private sucursalBancoServicio: SucursalBancoService, private tipoContactoServicio: TipoContactoService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -84,18 +85,7 @@ export class ContactoBancoComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      sucursalBanco: new FormControl('', Validators.required),
-      tipoContacto: new FormControl('', Validators.required),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      telefonoFijo: new FormControl('', Validators.maxLength(45)),
-      telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      correoelectronico: new FormControl('', Validators.maxLength(60)),
-      usuarioAlta: new FormControl(),
-      usuarioMod: new FormControl()
-    });
+    this.formulario = this.modelo.formulario;
     //Autocompletado Sucursal Banco - Buscar por nombre
     this.formulario.get('sucursalBanco').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {

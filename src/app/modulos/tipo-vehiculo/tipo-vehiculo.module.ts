@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TipoVehiculoComponent } from 'src/app/componentes/tipo-vehiculo/tipo-vehiculo.component';
 import { TipoVehiculoService } from 'src/app/servicios/tipo-vehiculo.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { TipoVehiculo } from 'src/app/modelos/tipoVehiculo';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   ],
   providers: [
     TipoVehiculoService,
-    SubopcionPestaniaService
+    SubopcionPestaniaService,
+    TipoVehiculo
   ]
 })
 export class TipoVehiculoModule { }

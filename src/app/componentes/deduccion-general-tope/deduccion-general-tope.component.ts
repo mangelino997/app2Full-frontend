@@ -41,26 +41,18 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
   public anio: FormControl = new FormControl();
-  //Define el id que se muestra en el campo Codigo
-  public id: FormControl = new FormControl();
-  //Define empresa para las busquedas
-  public empresaBusqueda: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de Años Fiscales
   public anioFiscal: Array<any> = [];
   //Define la lista de Deduccion General
   public deduccionesGenerales: Array<any> = [];
-  //Define la lista de resultados de busqueda companias seguros
-  public resultadosCompaniasSeguros: Array<any> = [];
-  //Defien la lista de empresas
-  public empresas: Array<any> = [];
   //Define las columnas de la tabla
   public columnas: string[] = ['ANIO', 'DEDUCCION_GENERAL', 'DESCRIPCION', 'IMPORTE', 'PORCENTAJE_GANANCIA_NETA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -154,9 +146,9 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
-    if(indice == 1)
+    if (indice == 1)
       this.agregar();
-      else
+    else
       this.actualizar();
   }
   //Obtiene el listado de registros
@@ -246,12 +238,12 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.anio.reset();
     this.condicion = false;
     this.listaCompleta = new MatTableDataSource([]);
-    this.indiceSeleccionado == 3? this.formulario.disable() : this.formulario.enable();
+    this.indiceSeleccionado == 3 ? this.formulario.disable() : this.formulario.enable();
   }
   //Controla el cambio en el campo "anio"
   public cambioAnio() {
     let anio = this.anio.value;
-    if(!anio)
+    if (!anio)
       this.listaCompleta = new MatTableDataSource([]);
   }
   //Manejo de colores de campos y labels
@@ -272,7 +264,7 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.habilitarCamposActualizar(elemento);
   }
   //Habilita los campos del formulario en el Actualizar luego de seleccionar un registro y setea sus valores
-  private habilitarCamposActualizar(elemento){
+  private habilitarCamposActualizar(elemento) {
     this.formulario.enable();
     this.formulario.get('afipDeduccionGeneral').disable();
     this.formulario.patchValue(elemento);

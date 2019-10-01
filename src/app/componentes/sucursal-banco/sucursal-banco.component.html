@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>SUCURSAL BANCO</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -34,11 +34,11 @@
           </mat-select>
         </div>
         <div class="form-group has-float-label">
-          <label for="idCodigo" class="tamanio-label-titulo">Código</label>
+          <label for="idCodigo" class="tamanio-label">Código</label>
           <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
         </div>
         <div class="form-group has-float-label">
-          <label id="labelNombre" for="idNombre" class="tamanio-label-titulo">Nombre *</label>
+          <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
           <input id="idNombre" type="text" formControlName="nombre" autocomplete="off"
             class="form-control form-control-sm" [readonly]="soloLectura"
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="45">
@@ -56,7 +56,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-6">
+    <div class="col-md-8">
       <br>
       <div class="form-group has-float-label">
         <label for="idBanco" class="tamanio-label">Banco *</label>
@@ -78,7 +78,7 @@
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
         </ng-container>
         <ng-container matColumnDef="BANCO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Banco</th>

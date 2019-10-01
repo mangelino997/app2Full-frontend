@@ -129,13 +129,9 @@ export class MonedaCuentaContableComponent implements OnInit {
     //Define el formulario y validaciones
     this.formulario = this.monedaCuentaContable.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
-    //Lista las Monedas Cuentas Contables
-    // this.listar();
+    this.seleccionarPestania(1, 'Agregar');
     //Carga select con la lista de Monedas
     this.listarMonedas();
-    //Obtiene la empresa del Login
-    this.obtenerEmpresa();
   }
   //Obtiene el listado de registros
   private listar() {
@@ -149,6 +145,8 @@ export class MonedaCuentaContableComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -192,22 +190,16 @@ export class MonedaCuentaContableComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
-    this.autocompletado.reset();
-    this.obtenerEmpresa();
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario();
     /*
-    * Se vacia el formulario solo cuando se cambia de pestania, no cuando
-    * cuando se hace click en ver o mod de la pestania lista
+    * Se vacia el formulario solo cuando se cambia de pestania, no
+    * cuando se hace click en ver o mod de la pestania listar
     */
-    if (opcion == 0) {
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
-        // this.obtenerSiguienteId();
         this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idMoneda');
         break;
@@ -299,7 +291,9 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Reestablece los campos formularios
   private reestablecerFormulario() {
     this.formulario.reset();
+    this.autocompletado.reset();
     this.resultados = [];
+    this.obtenerEmpresa();
   }
   //Establece el formulario
   public establecerFormulario(): void {
@@ -314,14 +308,14 @@ export class MonedaCuentaContableComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.formulario.patchValue(elemento);
     this.autocompletado.setValue(elemento);
     this.empresa.setValue(this.formulario.get('empresa').value.razonSocial);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.formulario.patchValue(elemento);
     this.autocompletado.setValue(elemento);
     this.empresa.setValue(this.formulario.get('empresa').value.razonSocial);
@@ -331,9 +325,9 @@ export class MonedaCuentaContableComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

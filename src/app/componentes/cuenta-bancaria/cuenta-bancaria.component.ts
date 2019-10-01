@@ -35,21 +35,15 @@ export class CuentaBancariaComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
-  //Define la lista de opciones
-  public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
-  //Define la opcion seleccionada
-  public opcionSeleccionada: number = null;
-  //Define las listas de Empresas, Bancos, Sucursales, Tipo Cuenta Bancaria, Monedas
-  public empresas: Array<any> = [];
+  //Define las listas de Bancos, Sucursales, Tipo Cuenta Bancaria, Monedas
   public sucursales: Array<any> = [];
   public tiposCuentaBancarias: Array<any> = [];
   public monedas: Array<any> = [];
   public cuentasBancarias: Array<any> = [];
-  //Define el form control para las busquedas
   public bancos: Array<any> = [];
   //Define  el autocompletado como FormControl
   public autocompletado: FormControl = new FormControl();

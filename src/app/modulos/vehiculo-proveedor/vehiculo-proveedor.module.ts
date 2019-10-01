@@ -16,6 +16,7 @@ import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { CompaniaSeguroService } from 'src/app/servicios/compania-seguro.service';
 import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
 import { ConfiguracionVehiculoService } from 'src/app/servicios/configuracion-vehiculo.service';
+import { VehiculoProveedor } from 'src/app/modelos/vehiculoProveedor';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { ConfiguracionVehiculoService } from 'src/app/servicios/configuracion-ve
     ProveedorService,
     CompaniaSeguroService,
     ChoferProveedorService,
-    ConfiguracionVehiculoService
+    ConfiguracionVehiculoService,
+    VehiculoProveedor
   ]
 })
 export class VehiculoProveedorModule { }

@@ -232,7 +232,7 @@ export class PersonalComponent implements OnInit {
       this.resultadosAfipSituaciones = response.json();
     })
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(15, 0);
     //Obtiene la lista de sexos
@@ -523,14 +523,10 @@ export class PersonalComponent implements OnInit {
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -742,8 +738,9 @@ export class PersonalComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.formulario.get('foto').setValue(foto);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.nacionalidadNacimiento.setValue(undefined);
+    this.resultados = [];
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -1002,13 +999,13 @@ export class PersonalComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.obtenerPorId(elemento.id);
     this.autocompletado.setValue(elemento);
   }
@@ -1115,9 +1112,9 @@ export class PersonalComponent implements OnInit {
     var opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     } else if (keycode == 115) {
       if (opcion < this.opciones[(this.opciones.length - 1)].id) {

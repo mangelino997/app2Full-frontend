@@ -198,6 +198,7 @@ export class ChoferProveedorComponent implements OnInit {
     this.tipoDocumentoServicio.listar().subscribe(
       res => {
         this.tiposDocumentos = res.json();
+        this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[0]);
       },
       err => {
       }

@@ -10,12 +10,12 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
     <div class="col-md-5 text-center">
-      <h5>{{pestaniaActual}} Póliza de Compañia de Seguro</h5>
+      <h5>{{pestaniaActual}} Póliza de Compañía de Seguro</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row justify-content-center">
           <div class="col-md-12">
             <div class="form-group has-float-label">
-              <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
+              <label for="idCompaniaSeguro" class="tamanio-label">Compañía de Seguro</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
                 autocomplete="off" [readonly]="soloLectura"
@@ -111,7 +111,7 @@
         <div class="col-md-8">
           <form [formGroup]="formulario" class="contenedor">
             <div class="form-group has-float-label">
-              <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro</label>
+              <label for="idCompaniaSeguro" class="tamanio-label">Compañía de Seguro</label>
               <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
                 [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
                 autocomplete="off">

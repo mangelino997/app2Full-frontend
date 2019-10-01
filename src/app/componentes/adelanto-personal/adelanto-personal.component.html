@@ -40,7 +40,7 @@
             <div class="form-group has-float-label">
               <label id="labelApellido" for="idApellido" class="tamanio-label">Apellido *</label>
               <input id="idApellido" type="text" [formControl]="formularioDatosPersonal.get('apellido')" readonly
-                class="form-control form-control-sm ">
+                class="form-control form-control-sm number-right">
             </div>
           </div>
           <div class="col-md-5">
@@ -344,12 +344,16 @@
                   </td>
                 </ng-container>
                 <ng-container matColumnDef="EDITAR" stickyEnd>
-                  <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                      (click)="abrirReporte()">Reporte</button></th>
-                  <td mat-cell *matCellDef="let elemento">
+                  <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button
+                      color="primary" (click)="abrirReporte()">Reporte</button></th>
+                  <td mat-cell *matCellDef="let elemento; let i=index;">
                     <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                       matTooltip="Consultar" matTooltipPosition="above">
                       <mat-icon>search</mat-icon>
+                    </button>
+                    <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                      (click)="activarActualizar(elemento, i)" matTooltip="Editar" matTooltipPosition="above">
+                      <mat-icon>edit</mat-icon>
                     </button>
                   </td>
                 </ng-container>

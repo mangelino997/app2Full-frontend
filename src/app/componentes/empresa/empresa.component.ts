@@ -163,9 +163,9 @@ export class EmpresaComponent implements OnInit {
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerFormulario(undefined);
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -245,7 +245,7 @@ export class EmpresaComponent implements OnInit {
         }
       },
       err => {
-        this.lanzarError(err);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -264,7 +264,7 @@ export class EmpresaComponent implements OnInit {
         }
       },
       err => {
-        this.lanzarError(err);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
