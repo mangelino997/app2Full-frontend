@@ -149,8 +149,8 @@ export class ViajeComponent implements OnInit {
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
     //Establece validaciones de formulario
-    // this.cambioTipoViaje();
-    // this.cambioTipoRemolque();
+    this.cambioTipoViaje();
+    this.cambioTipoRemolque();
     //Autocompletado Vehiculo - Buscar por alias
     this.formularioViaje.get('vehiculo').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -322,7 +322,9 @@ export class ViajeComponent implements OnInit {
       res => {
         this.sucursales = res.json();
         this.render = true;
-        document.getElementById('idFecha').focus();
+        setTimeout(function() {
+          document.getElementById('idFecha').focus();
+        });
         this.establecerValoresPorDefecto();
       },
       err => {
