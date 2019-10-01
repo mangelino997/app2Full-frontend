@@ -3,7 +3,7 @@ import { ConfiguracionVehiculoService } from '../../servicios/configuracion-vehi
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { TipoVehiculoService } from '../../servicios/tipo-vehiculo.service';
 import { MarcaVehiculoService } from '../../servicios/marca-vehiculo.service';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { AppService } from 'src/app/servicios/app.service';
@@ -35,6 +35,8 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario listar para validaciones de campos
+  public formularioListar: FormGroup;
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define la lista completa de registros
@@ -45,18 +47,18 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   public tiposVehiculos: Array<any> = [];
   //Define la lista de marcas de vehiculos
   public marcasVehiculos: Array<any> = [];
-   //Define las columnas de la tabla
-   public columnas: string[] = ['ID', 'TIPO_VEHICULO', 'MARCA_VEHICULO', 'MODELO', 'CANTIDAD_EJES', 'CAPACIDAD_CARGA', 'EDITAR'];
+  //Define las columnas de la tabla
+  public columnas: string[] = ['ID', 'TIPO_VEHICULO', 'MARCA_VEHICULO', 'MODELO', 'CANTIDAD_EJES', 'CAPACIDAD_CARGA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define la marca de vehiculo
-  public marcaVehiculo:FormControl = new FormControl();
+  public marcaVehiculo: FormControl = new FormControl();
   //Constructor
   constructor(private servicio: ConfiguracionVehiculoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private appService: AppService,
@@ -70,13 +72,8 @@ export class ConfiguracionVehiculoComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -89,6 +86,10 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     this.formulario = this.configuracionVehiculo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
+    //Define el formulario listar
+    this.formularioListar = new FormGroup({
+      marcaVehiculo: new FormControl('', Validators.required)
+    });
     //Obtiene la lista completa de registros
     //this.listar();
     //Obtiene la lista de tipos de vehiculos
@@ -114,7 +115,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.tiposVehiculos = res.json();
       },
       err => {
-        console.log(err);
       }
     )
   }
@@ -124,7 +124,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.marcasVehiculos = res.json();
       },
       err => {
-        console.log(err);
       }
     )
   }
@@ -170,8 +169,9 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idTipoVehiculo');
         break;
       case 5:
+        this.formularioListar.reset();
         this.marcaVehiculo.reset();
-        setTimeout(function() {
+        setTimeout(function () {
           document.getElementById('idMarcaVehiculo').focus();
         }, 20);
         break;
@@ -202,7 +202,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -217,7 +216,6 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -232,25 +230,24 @@ export class ConfiguracionVehiculoComponent implements OnInit {
           this.configuraciones = res.json();
         },
         err => {
-          console.log(err);
         }
       )
     }
   }
-  //Obtiene una lista por marca de vehiculo
-  public listarPorMarcaVehiculo(): void {
+  public listarPorMarcaVehiculo() {
     this.loaderService.show();
-    let marcaVehiculo = this.marcaVehiculo.value;
-    this.servicio.listarPorMarcaVehiculo(marcaVehiculo.id).subscribe(
+    let marcaVehiculo = this.formularioListar.get('marcaVehiculo').value;
+    marcaVehiculo = marcaVehiculo == '1' ? 0 : marcaVehiculo.id;
+    this.servicio.listarPorMarcaVehiculo(marcaVehiculo).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
       err => {
         this.loaderService.hide();
-      }
-    );
+      });
   }
   //Agrega un registro
   private agregar() {
@@ -261,9 +258,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idTipoVehiculo').focus();
-          }, 20);
+          document.getElementById('idTipoVehiculo').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -283,9 +278,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idTipoVehiculo').focus();
-          }, 20);
+          document.getElementById('idTipoVehiculo').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -304,7 +297,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     this.servicio.eliminar(formulario.id).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           this.toastr.success(respuesta.mensaje);
         }
@@ -350,7 +343,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   //Formatea el numero a x decimales
   public setDecimales(formulario, cantidad) {
     let valor = formulario.value;
-    if(valor != '') {
+    if (valor != '') {
       formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
@@ -407,15 +400,15 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          tipo_vehiculo: elemento.tipoVehiculo.nombre,
-          marca_vehiculo: elemento.marcaVehiculo.nombre,
-          modelo: elemento.modelo,
-          cantidad_ejes: elemento.cantidadEjes,
-          capacidad_carga: elemento.capacidadCarga
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        tipo_vehiculo: elemento.tipoVehiculo.nombre,
+        marca_vehiculo: elemento.marcaVehiculo.nombre,
+        modelo: elemento.modelo,
+        cantidad_ejes: elemento.cantidadEjes,
+        capacidad_carga: elemento.capacidadCarga
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -430,5 +423,5 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

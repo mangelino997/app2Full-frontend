@@ -63,7 +63,6 @@ export class ReporteDialogoComponent implements OnInit {
           + "/" + fecha.getFullYear();
       },
       err => {
-        console.log(err);
       }
     );
   }

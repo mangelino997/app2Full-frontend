@@ -71,11 +71,11 @@
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuota</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.cuota}}</td>
                 </ng-container>
-                <ng-container matColumnDef="fechaVencimiento" sticky>
+                <ng-container matColumnDef="fechaVencimiento">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Vencimiento</th>
                   <td mat-cell *matCellDef="let elemento">{{elemento.fechaVto | date: 'dd/MM/yyyy'}}</td>
                 </ng-container>
-                <ng-container matColumnDef="importe" sticky>
+                <ng-container matColumnDef="importe">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
                   <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
                 </ng-container>

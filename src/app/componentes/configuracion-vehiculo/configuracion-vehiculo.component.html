@@ -147,19 +147,25 @@
   <div class="row justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
     <div class="col-md-10">
       <br>
+      <form [formGroup]="formularioListar">
       <div class="row">
         <div class="col-md-3">
           <div class="form-group has-float-label">
             <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
-            <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" [formControl]="marcaVehiculo"
-              [compareWith]="compareFn" (selectionChange)="listarPorMarcaVehiculo()">
+            <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo">
+                <mat-option [value]="1">TODOS</mat-option>
               <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
                 {{itemMarcaVehiculo.nombre}}
               </mat-option>
             </mat-select>
           </div>
         </div>
+        <div class="col-md-1">
+            <button mat-raised-button color="primary" [disabled]="!formularioListar.valid"
+              (click)="listarPorMarcaVehiculo()">Buscar</button>
+          </div>
       </div>
+      </form>
       <div class="row" *ngIf="show">
         <div class="col text-center">
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -170,23 +176,23 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="TIPO_VEHICULO" sticky>
+        <ng-container matColumnDef="TIPO_VEHICULO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Vehículo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.tipoVehiculo.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="MARCA_VEHICULO" sticky>
+        <ng-container matColumnDef="MARCA_VEHICULO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca Vehículo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.marcaVehiculo.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="MODELO" sticky>
+        <ng-container matColumnDef="MODELO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Modelo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.modelo}}</td>
         </ng-container>
-        <ng-container matColumnDef="CANTIDAD_EJES" sticky>
+        <ng-container matColumnDef="CANTIDAD_EJES">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad Ejes</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.cantidadEjes}}</td>
         </ng-container>
-        <ng-container matColumnDef="CAPACIDAD_CARGA" sticky>
+        <ng-container matColumnDef="CAPACIDAD_CARGA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Capacidad Carga</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.capacidadCarga}}</td>
         </ng-container>

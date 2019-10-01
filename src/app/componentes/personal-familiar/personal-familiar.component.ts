@@ -110,7 +110,6 @@ export class PersonalFamiliarComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-          console.log(err);
         }
       );
     let empresa = this.appServicio.getEmpresa();
@@ -174,7 +173,6 @@ export class PersonalFamiliarComponent implements OnInit {
         this.familiares = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -185,7 +183,6 @@ export class PersonalFamiliarComponent implements OnInit {
         this.sexos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -197,7 +194,6 @@ export class PersonalFamiliarComponent implements OnInit {
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -338,17 +334,6 @@ export class PersonalFamiliarComponent implements OnInit {
         break;
     }
   }
-  //Obtiene la lista de contactos de un cliente
-  // public listarPorPersonal() {
-  //   this.servicio.listarPorPersonal(elemento.id).subscribe(res => {
-  //     if(this.indiceSeleccionado == 5) {
-  //       this.listaCompleta = new MatTableDataSource(res.json());
-  //       this.listaCompleta.sort = this.sort;
-  //     } else {
-  //       this.personales = res.json();
-  //     }
-  //   })
-  // }
   //Obtiene el siguiente id
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
@@ -356,7 +341,6 @@ export class PersonalFamiliarComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -372,25 +356,21 @@ export class PersonalFamiliarComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
   }
   //Agrega un registro
   private agregar() {
-    // this.formulario.get('mesAltaImpGan').setValue(this.formulario.value.mesAltaImpGan.numero);
-    // this.formulario.get('mesBajaImpGan').setValue(this.formulario.value.mesBajaImpGan.numero);
     this.loaderService.show();
-    // this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
-        setTimeout(function () {
           document.getElementById('idApellido').focus();
-        }, 20);
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -409,9 +389,7 @@ export class PersonalFamiliarComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
             document.getElementById('idAutocompletado').focus();
-          }, 20);
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -439,7 +417,6 @@ export class PersonalFamiliarComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {

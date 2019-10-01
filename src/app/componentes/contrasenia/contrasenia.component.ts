@@ -93,9 +93,7 @@ export class ContraseniaComponent implements OnInit {
             this.router.navigate(['login'], { replaceUrl: true });
           } else {
             this.reestablecerFormulario();
-            setTimeout(function () {
-              document.getElementById('idAutocompletado').focus();
-            }, 20);
+            document.getElementById('idAutocompletado').focus();
           }
           this.toastr.success(respuesta.mensaje);
         }

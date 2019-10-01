@@ -23,9 +23,9 @@ export class EscalaTarifaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['HASTA', 'VALOR', 'ELIMINAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator,{static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -70,7 +70,8 @@ export class EscalaTarifaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -84,9 +85,7 @@ export class EscalaTarifaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idValor').focus();
-          }, 20);
+          document.getElementById('idValor').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
           this.listar();
@@ -112,9 +111,7 @@ export class EscalaTarifaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idValor').focus();
-          }, 20);
+          document.getElementById('idValor').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
           this.listar();
@@ -159,11 +156,11 @@ export class EscalaTarifaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          hasta: 'Hasta',
-          valor: this.returnDecimales(elemento.valor, 2)
-        }
-        datos.push(f);
+      let f = {
+        hasta: 'Hasta',
+        valor: this.returnDecimales(elemento.valor, 2)
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -178,5 +175,5 @@ export class EscalaTarifaComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

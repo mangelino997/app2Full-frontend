@@ -50,9 +50,9 @@ export class MonedaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'ESTA_ACTIVO', 'MONEDA_PRINCIPAL', 'CODIGO_AFIP', 'SIMBOLO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -69,7 +69,6 @@ export class MonedaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
     //Controla el autocompletado
@@ -77,14 +76,9 @@ export class MonedaComponent implements OnInit {
       if (typeof data == 'string' && data.length > 2) {
         this.monedaServicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res.json();
-          console.log(res.json());
         })
       }
     });
-    //Se subscribe al servicio de lista de registros
-    // this.monedaServicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
   }
   //Al inicializarse el componente
   ngOnInit() {
@@ -97,8 +91,6 @@ export class MonedaComponent implements OnInit {
     this.formulario = this.moneda.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Cargamos la lista de Monedas
-    // this.listar();
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -180,7 +172,6 @@ export class MonedaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -195,7 +186,8 @@ export class MonedaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -212,10 +204,10 @@ export class MonedaComponent implements OnInit {
       );
     }
     else {
-      if(opcion==1)
+      if (opcion == 1)
         this.agregar(this.formulario.value);
-      if(opcion==3)
-      this.actualizar(this.formulario.value);
+      if (opcion == 3)
+        this.actualizar(this.formulario.value);
     }
   }
   //Metodo Agregar Moneda
@@ -226,9 +218,7 @@ export class MonedaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
-        setTimeout(function () {
-          document.getElementById('idNombre').focus();
-        }, 20);
+        document.getElementById('idNombre').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -246,9 +236,7 @@ export class MonedaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -268,9 +256,7 @@ export class MonedaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -303,9 +289,7 @@ export class MonedaComponent implements OnInit {
     this.formulario.get('id').setValue(id);
     this.autocompletado.setValue(undefined);
     this.resultados = [];
-    setTimeout(function () {
-      document.getElementById('idNombre').focus();
-    }, 20);
+    document.getElementById('idNombre').focus();
     this.obtenerSiguienteId();
   }
   //Manejo de colores de campos y labels
@@ -351,12 +335,10 @@ export class MonedaComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.formulario.get('porDefecto').setValue(result);
-      if(opcion==1){
-        console.log("agregar");
+      if (opcion == 1) {
         this.agregar(this.formulario.value);
       }
-      if(opcion==3){
-        console.log("actualizar");
+      if (opcion == 3) {
         this.actualizar(this.formulario.value);
       }
     });
@@ -381,21 +363,21 @@ export class MonedaComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  } 
+  }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          esta_activo: elemento.estaActivo ? 'Si' : 'No',
-          moneda_principal: elemento.porDefecto ? 'Si' : 'No',
-          codigo_afip: elemento.codigoAfip,
-          simbolo: elemento.simbolo
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        esta_activo: elemento.estaActivo ? 'Si' : 'No',
+        moneda_principal: elemento.porDefecto ? 'Si' : 'No',
+        codigo_afip: elemento.codigoAfip,
+        simbolo: elemento.simbolo
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -410,7 +392,7 @@ export class MonedaComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }
 //Componente Cambiar Moneda Principal Dialogo
 @Component({
@@ -435,5 +417,5 @@ export class CambiarMonedaPrincipalDialogo {
   onNoClick(): void {
     this.dialogRef.close();
   }
-   
+
 }

@@ -85,13 +85,8 @@ export class PuntoVentaComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -129,7 +124,6 @@ export class PuntoVentaComponent implements OnInit {
         this.sucursales = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -140,7 +134,6 @@ export class PuntoVentaComponent implements OnInit {
         this.empresas = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -151,7 +144,6 @@ export class PuntoVentaComponent implements OnInit {
         this.tipoComprobantes = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -288,7 +280,6 @@ export class PuntoVentaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -375,7 +366,6 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {

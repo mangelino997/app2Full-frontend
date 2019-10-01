@@ -47,9 +47,9 @@ export class EjercicioComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'ANIO', 'MES', 'CANTIDAD_MESES', 'PREDETERMINADO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -183,7 +183,6 @@ export class EjercicioComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -199,7 +198,8 @@ export class EjercicioComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -211,7 +211,6 @@ export class EjercicioComponent implements OnInit {
         this.anios = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -222,7 +221,6 @@ export class EjercicioComponent implements OnInit {
         this.meses = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -237,9 +235,7 @@ export class EjercicioComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -265,9 +261,7 @@ export class EjercicioComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -286,7 +280,6 @@ export class EjercicioComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
@@ -302,12 +295,9 @@ export class EjercicioComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    console.log(elemento);
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
-    console.log(this.formulario.value);
-    console.log(this.anios);
 
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
@@ -325,7 +315,7 @@ export class EjercicioComponent implements OnInit {
       return elemento;
     }
   }
-  
+
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFa.bind(this);
   private compararFa(a, b) {
@@ -356,21 +346,21 @@ export class EjercicioComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          anio: elemento.anioInicio,
-          mes: elemento.mesInicio.nombre,
-          cantidad_meses: elemento.cantidadMeses,
-          predeterminado: elemento.porDefecto ? 'Sí' : 'No'
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        anio: elemento.anioInicio,
+        mes: elemento.mesInicio.nombre,
+        cantidad_meses: elemento.cantidadMeses,
+        predeterminado: elemento.porDefecto ? 'Sí' : 'No'
+      }
+      datos.push(f);
     });
     return datos;
   }

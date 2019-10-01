@@ -1595,7 +1595,6 @@ export class DetalleVencimientosDialogo {
   //Calcula la diferencia entre el total comprobante y la suma de los importes de las cuotas
   private calcularDiferenciaImporte() {
     let diferencia = 0;
-    console.log(this.listaCompleta);
     this.servicio.obtenerDiferenciaImportes(this.listaCompleta.data).subscribe(
       res => {
         diferencia = res.json();

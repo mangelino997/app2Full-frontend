@@ -46,9 +46,9 @@ export class ViajeTipoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'ABREVIATURA', 'COSTO_POR_KM_PROPIO', 'COSTO_POR_KM_TERCERO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private viajeTipoServicio: ViajeTipoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private loaderService: LoaderService, private toastr: ToastrService, private viajeTipo: ViajeTipo,
@@ -61,7 +61,6 @@ export class ViajeTipoComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
     //Autocompletado - Buscar por nombre
@@ -154,7 +153,6 @@ export class ViajeTipoComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -169,7 +167,8 @@ export class ViajeTipoComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -183,9 +182,7 @@ export class ViajeTipoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -210,9 +207,7 @@ export class ViajeTipoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -238,9 +233,7 @@ export class ViajeTipoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -333,14 +326,14 @@ export class ViajeTipoComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          abreviatura: elemento.abreviatura,
-          costo_por_km_propio: elemento.costoPorKmPropio,
-          costo_por_km_tercero: elemento.costoPorKmTercero
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        abreviatura: elemento.abreviatura,
+        costo_por_km_propio: elemento.costoPorKmPropio,
+        costo_por_km_tercero: elemento.costoPorKmTercero
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -355,5 +348,5 @@ export class ViajeTipoComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

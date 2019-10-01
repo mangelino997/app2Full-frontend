@@ -49,11 +49,11 @@ export class ContactoClienteComponent implements OnInit {
   //Define la lista de resultados de busqueda sucursales clientes
   public resultadosClientes: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID', 'TIPO_CONTACTO', 'NOMBRE_CONTACTO', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'CORREO_ELECTRONICO', 'EDITAR'];
+  public columnas: string[] = ['ID', 'TIPO_CONTACTO', 'NOMBRE_CONTACTO', 'TELEFONO_FIJO', 'TELEFONO_MOVIL', 'CORREO_ELECTRONICO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -71,7 +71,6 @@ export class ContactoClienteComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
   }
@@ -119,7 +118,6 @@ export class ContactoClienteComponent implements OnInit {
         this.tiposContactos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -206,7 +204,7 @@ export class ContactoClienteComponent implements OnInit {
   public listarPorCliente() {
     let elemento = this.formulario.get('cliente').value;
     this.servicio.listarPorCliente(elemento.id).subscribe(res => {
-      if(this.indiceSeleccionado == 5) {
+      if (this.indiceSeleccionado == 5) {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.paginator = this.paginator;
         this.listaCompleta.sort = this.sort;
@@ -222,7 +220,6 @@ export class ContactoClienteComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -236,9 +233,7 @@ export class ContactoClienteComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idCliente').focus();
-          }, 20);
+          document.getElementById('idCliente').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -258,9 +253,7 @@ export class ContactoClienteComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idCliente').focus();
-          }, 20);
+          document.getElementById('idCliente').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -280,9 +273,7 @@ export class ContactoClienteComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -367,21 +358,21 @@ export class ContactoClienteComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          tipo_contacto: elemento.tipoContacto.nombre,
-          nombre_contacto: elemento.nombre,
-          telefono_fijo: elemento.telefonoFijo,
-          telefono_movil: elemento.telefonoMovil,
-          correo_electronico: elemento.correoelectronico
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        tipo_contacto: elemento.tipoContacto.nombre,
+        nombre_contacto: elemento.nombre,
+        telefono_fijo: elemento.telefonoFijo,
+        telefono_movil: elemento.telefonoMovil,
+        correo_electronico: elemento.correoelectronico
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -396,5 +387,5 @@ export class ContactoClienteComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

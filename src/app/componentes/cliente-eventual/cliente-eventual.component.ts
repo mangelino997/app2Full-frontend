@@ -34,7 +34,7 @@ export class ClienteEventualComponent implements OnInit {
   //Define la lista de resultados de busqueda de barrio
   public resultadosLocalidades: Array<any> = [];
   //Define la lista de resultados de busqueda de cobrador
-  public cobrador: FormControl= new FormControl();
+  public cobrador: FormControl = new FormControl();
   //Define la lista de resultados de busqueda de zona
   public zonas: Array<any> = [];
   //Define la lista de resultados de busqueda de rubro
@@ -99,8 +99,8 @@ export class ClienteEventualComponent implements OnInit {
     //Obtiene la lista de sucursales de pagos
     this.listarSucursales();
   }
-   //Obtiene la lista de sucursales
-   private listarSucursales(): void {
+  //Obtiene la lista de sucursales
+  private listarSucursales(): void {
     this.sucursalServicio.listar().subscribe(res => {
       this.sucursalesPago = res.json();
     });
@@ -113,7 +113,6 @@ export class ClienteEventualComponent implements OnInit {
         this.formulario.get('cobrador').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -124,7 +123,6 @@ export class ClienteEventualComponent implements OnInit {
         this.zonas = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -135,7 +133,6 @@ export class ClienteEventualComponent implements OnInit {
         this.rubros = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -154,7 +151,6 @@ export class ClienteEventualComponent implements OnInit {
         this.condicionesIva = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -165,12 +161,11 @@ export class ClienteEventualComponent implements OnInit {
         this.tiposDocumentos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
   //Cierra el mat dialog
-  private closeDialog(){
+  private closeDialog() {
     this.dialogRef.close(this.data.formulario);
   }
   //Obtiene el siguiente id
@@ -180,7 +175,6 @@ export class ClienteEventualComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -210,7 +204,7 @@ export class ClienteEventualComponent implements OnInit {
     )
   }
   //Cierra el modal
-  public cerrarDialog(){
+  public cerrarDialog() {
     this.closeDialog();
   }
   //Verifica si se selecciono un elemento del autocompletado
@@ -267,9 +261,9 @@ export class ClienteEventualComponent implements OnInit {
   }
   //Maneja el cambio en Condicion Iva
   public cambioCondicionIva() {
-    if(this.formulario.value.afipCondicionIva.nombre == 'Consumidor Final'){
+    if (this.formulario.value.afipCondicionIva.nombre == 'Consumidor Final') {
       this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]); //la posicion 7 pertenece a DNI
-    }else{
+    } else {
       this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[0]); //la posicion 7 pertenece a CUIT
     }
   }

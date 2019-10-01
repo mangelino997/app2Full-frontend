@@ -85,8 +85,6 @@ export class AfipCondicionIvaComponent implements OnInit {
     this.formulario = this.afipCondicionIva.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    // this.listar();
   }
   //Obtiene el listado de registros
   private listar() {
@@ -99,7 +97,8 @@ export class AfipCondicionIvaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -151,7 +150,6 @@ export class AfipCondicionIvaComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }

@@ -71,19 +71,19 @@
       </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID" sticky>
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" sticky>
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="POR ESCALA" sticky>
+        <ng-container matColumnDef="POR ESCALA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Escala</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.porEscala? 'Si': 'No'}}</td>
         </ng-container>
-        <ng-container matColumnDef="POR PORCENTAJE" sticky>
+        <ng-container matColumnDef="POR PORCENTAJE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Porcentaje</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.porPorcentaje? 'Si': 'No'}}</td>
         </ng-container>

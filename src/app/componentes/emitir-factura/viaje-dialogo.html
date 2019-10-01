@@ -17,88 +17,56 @@
             <div class="row">
                 <div style="width: 100%; height: 150px; overflow-y: scroll; overflow-x: scroll;">
                     <table mat-table [dataSource]="resultadosTramos" matSort class="mat-elevation-z1">
-                        <ng-container matColumnDef="tramo" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            Origen: {{tramo.origen.nombre}} - Destino: {{tramo.destino.nombre}}
-                        </td>
+                        <ng-container matColumnDef="tramo">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tramo</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                Origen: {{tramo.origen.nombre}} - Destino: {{tramo.destino.nombre}}
+                            </td>
                         </ng-container>
-                        <ng-container matColumnDef="id" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Remito</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                        <ng-container matColumnDef="id">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Remito</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
                         </ng-container>
-                        <ng-container matColumnDef="bultos" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.bultos}}</td>
+                        <ng-container matColumnDef="bultos">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.bultos}}</td>
                         </ng-container>
-                        <ng-container matColumnDef="fecha" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.fecha}}</td>
+                        <ng-container matColumnDef="fecha">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.fecha}}</td>
                         </ng-container>
-                        <ng-container matColumnDef="numeroViaje" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Viaje</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.numero}}</td>
+                        <ng-container matColumnDef="numeroViaje">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Viaje</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.numero}}</td>
                         </ng-container>
-                        <ng-container matColumnDef="remitente" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Remitente</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.clienteRemitente.alias}}</td>
+                        <ng-container matColumnDef="remitente">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Remitente</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.clienteRemitente.alias}}</td>
                         </ng-container>
-                        <ng-container matColumnDef="destinatario" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Destinatario</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.clienteDestinatario.razonSocial}}</td>
+                        <ng-container matColumnDef="destinatario">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Destinatario</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.clienteDestinatario.razonSocial}}</td>
                         </ng-container>
-                        <ng-container matColumnDef="sucursalDestino" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Suc. Entrega</th>
-                        <td mat-cell *matCellDef="let elemento">{{elemento.sucursalDestino.domicilio}}</td>
+                        <ng-container matColumnDef="sucursalDestino">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Suc. Entrega</th>
+                            <td mat-cell *matCellDef="let elemento">{{elemento.sucursalDestino.domicilio}}</td>
                         </ng-container>
-                        <ng-container matColumnDef="observaciones" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Obervaciones</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <span *ngIf="elemento.observaciones">
-                                <a (click)="verObservaciones(elemento.observaciones)" style="font-weight: 700; color:red;">Ver</a>
-                            </span>
-                            <span *ngIf="!elemento.observaciones">
-                                --
-                            </span>
-                        </td>
+                        <ng-container matColumnDef="observaciones">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Obervaciones</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span *ngIf="elemento.observaciones">
+                                    <a (click)="verObservaciones(elemento.observaciones)"
+                                        style="font-weight: 700; color:red;">Ver</a>
+                                </span>
+                                <span *ngIf="!elemento.observaciones">
+                                    --
+                                </span>
+                            </td>
                         </ng-container>
                         <tr mat-header-row *matHeaderRowDef="columnasRemitos"></tr>
-                        <tr mat-row *matRowDef="let row; columns: columnasRemitos; let i=index;" (click)="cambioRemito(i, row)"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnasRemitos; let i=index;"
+                            (click)="cambioRemito(i, row)"></tr>
                     </table>
-                    <!-- <table class="table table-bordered table-striped table-condensed">
-                        <thead>
-                            <tr>
-                                <th class="text-center">Tramo</th>
-                                <th class="text-center">N° de Remito</th>
-                                <th class="text-center">Bultos</th>
-                                <th class="text-center">Fecha</th>
-                                <th class="text-center">N° de Viaje</th>
-                                <th class="text-center">Remitente</th>
-                                <th class="text-center">Destinatario</th>
-                                <th class="text-center">Suc. Entrega</th>
-                                <th class="text-center">Observaciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let remito of resultadosTramos; let i=index" id="fila{{i}}"
-                                class="planilla-no-seleccionada" (click)="cambioRemito(i, remito)">
-                                <td align="center">Origen: {{tramo.origen.nombre}} - Destino: {{tramo.destino.nombre}}
-                                </td>
-                                <td align="center">{{remito.id}}</td>
-                                <td align="center">{{remito.bultos}}</td>
-                                <td align="center">{{remito.fecha}}</td>
-                                <td align="center">{{remito.numero}}</td>
-                                <td align="center">{{remito.clienteRemitente.alias}}</td>
-                                <td align="center">{{remito.clienteDestinatario.razonSocial}}</td>
-                                <td align="center">{{remito.sucursalDestino.domicilio}}</td>
-                                <td *ngIf="remito.observaciones!=null" align="center">
-                                    <a (click)="verObservaciones(remito.observaciones)"
-                                        style="font-weight: 700; color:red;">Ver</a>
-                                </td>
-                                <td *ngIf="remito.observaciones==null" align="center"></td>
-                            </tr>
-                        </tbody>
-                    </table> -->
                 </div>
             </div>
             <div class="row">

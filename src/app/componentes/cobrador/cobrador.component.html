@@ -83,19 +83,19 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="NOMBRE" sticky>
+        <ng-container matColumnDef="NOMBRE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="CUENTA_HABILITADA" sticky>
+        <ng-container matColumnDef="CUENTA_HABILITADA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Habilitada</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.estaActivo ? 'Si' : 'No'}}</td>
         </ng-container>
-        <ng-container matColumnDef="CORREO_ELECTRONICO" sticky>
+        <ng-container matColumnDef="CORREO_ELECTRONICO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Correo Electrónico</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.correoElectronico? elemento.correoElectronico : '-'}}</td>
         </ng-container>
-        <ng-container matColumnDef="POR_DEFECTO_EN_CLIENTE_EVENTUAL" sticky>
+        <ng-container matColumnDef="POR_DEFECTO_EN_CLIENTE_EVENTUAL">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Por Defecto en Cliente Eventual</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.porDefectoClienteEventual ? 'Si' : 'No'}}</td>
         </ng-container>

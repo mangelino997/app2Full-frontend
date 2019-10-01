@@ -78,9 +78,9 @@ export class OrdenRecoleccionComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'FECHA_EMISION', 'CLIENTE', 'DOMICILIO', 'HORA_DESDE', 'HORA_HASTA', 'BULTOS', 'KG_EFECTIVO', 'PAGO_EN_ORIGEN', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator; 
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -231,9 +231,7 @@ export class OrdenRecoleccionComponent implements OnInit {
       this.formulario.get('localidad').disable();
       this.formulario.get('barrio').disable();
       this.formulario.get('cliente').disable();
-      setTimeout(function () {
-        document.getElementById('btnAgregar').setAttribute("disabled", "disabled");
-      }, 20);
+      document.getElementById('btnAgregar').setAttribute("disabled", "disabled");
     } else {
       this.formulario.get('entregarEnDomicilio').enable();
       this.formulario.get('pagoEnOrigen').enable();
@@ -305,9 +303,7 @@ export class OrdenRecoleccionComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idCliente').focus();
-          }, 20);
+          document.getElementById('idCliente').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -331,9 +327,7 @@ export class OrdenRecoleccionComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -350,7 +344,6 @@ export class OrdenRecoleccionComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Abre el dialogo para agregar un cliente eventual
   public agregarClienteEventual(): void {
@@ -374,9 +367,7 @@ export class OrdenRecoleccionComponent implements OnInit {
     if (this.formulario.get('fecha').value < this.fechaEmisionFormatoOrig.value) {
       this.formulario.get('fecha').reset();
       this.toastr.error("La Fecha de recolección no puede ser menor a la fecha actual");
-      setTimeout(function () {
-        document.getElementById('idFecha').focus();
-      }, 20);
+      document.getElementById('idFecha').focus();
     }
   }
   //Verifica que el formato de las horas sea el correcto
@@ -388,16 +379,12 @@ export class OrdenRecoleccionComponent implements OnInit {
     //Si el array del horario es vacio significa que en el front no es correcto (--:00 || 00:-- || --:--)
     if (splitHoraDesde[0] == "") {
       this.toastr.error("El formato del horario no es el adecuado. No puede haber '--'");
-      setTimeout(function () {
-        document.getElementById('idHoraDesde').focus();
-      }, 20);
+      document.getElementById('idHoraDesde').focus();
       return false;
     }
     else if (splitHoraHasta[0] == "") {
       this.toastr.error("El formato del horario no es el adecuado. No puede haber '--'");
-      setTimeout(function () {
-        document.getElementById('idHoraHasta').focus();
-      }, 20);
+      document.getElementById('idHoraHasta').focus();
       return false
     }
     else {
@@ -545,35 +532,35 @@ export class OrdenRecoleccionComponent implements OnInit {
     }
   }
   //Prepara los datos para exportar
-private prepararDatos(listaCompleta): Array<any> {
-  let lista = listaCompleta;
-  let datos = [];
-  lista.forEach(elemento => {
+  private prepararDatos(listaCompleta): Array<any> {
+    let lista = listaCompleta;
+    let datos = [];
+    lista.forEach(elemento => {
       let f = {
         id: elemento.id,
-        fecha_emision: elemento.fechaEmision.dayOfMonth +' - '+ elemento.fechaEmision.monthValue +' - '+ elemento.fechaEmision.year,
+        fecha_emision: elemento.fechaEmision.dayOfMonth + ' - ' + elemento.fechaEmision.monthValue + ' - ' + elemento.fechaEmision.year,
         cliente: elemento.cliente.razonSocial,
         domicilio: elemento.domicilio,
         hora_desde: elemento.horaDesde,
         hora_hasta: elemento.horaHasta,
         bultos: elemento.bultos,
         kg_efectivo: elemento.kilosEfectivo,
-        pago_en_origen: elemento.pagoEnOrigen? 'Sí': 'No',
+        pago_en_origen: elemento.pagoEnOrigen ? 'Sí' : 'No',
       }
       datos.push(f);
-  });
-  return datos;
-}
-//Abre el dialogo de reporte
-public abrirReporte(): void {
-  let lista = this.prepararDatos(this.listaCompleta.data);
-  let datos = {
-    nombre: 'Ordenes Recolecciones',
-    empresa: this.appService.getEmpresa().razonSocial,
-    usuario: this.appService.getUsuario().nombre,
-    datos: lista,
-    columnas: this.columnas
+    });
+    return datos;
   }
-  this.reporteServicio.abrirDialogo(datos);
-}
+  //Abre el dialogo de reporte
+  public abrirReporte(): void {
+    let lista = this.prepararDatos(this.listaCompleta.data);
+    let datos = {
+      nombre: 'Ordenes Recolecciones',
+      empresa: this.appService.getEmpresa().razonSocial,
+      usuario: this.appService.getUsuario().nombre,
+      datos: lista,
+      columnas: this.columnas
+    }
+    this.reporteServicio.abrirDialogo(datos);
+  }
 }

@@ -54,9 +54,9 @@ export class EmpresaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'RAZON_SOCIAL', 'DOMICILIO', 'BARRIO', 'LOCALIDAD', 'CUIT', 'INICIO_ACTIVIDAD', 'ESTA_ACTIVA', 'USUARIOS', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -239,9 +239,7 @@ export class EmpresaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idRazonSocial').focus();
-          }, 20);
+          document.getElementById('idRazonSocial').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -260,9 +258,7 @@ export class EmpresaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -312,7 +308,7 @@ export class EmpresaComponent implements OnInit {
     this.formulario.patchValue(elemento);
   }
   //Valida el CUIT
-  public validarCUIT(){
+  public validarCUIT() {
     let cuit = this.formulario.get('cuit').value;
     if (cuit) {
       let respuesta = this.appService.validarCUIT(cuit + '');
@@ -370,7 +366,7 @@ export class EmpresaComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
   //Abre un Modal con la lista de Usuarios de la Empresa seleccionada
   public verActivos(empresa) {
     const dialogRef = this.dialog.open(ListaUsuariosDialogo, {
@@ -388,18 +384,18 @@ export class EmpresaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          razon_social: elemento.razonSocial,
-          domicilio: elemento.domicilio,
-          barrio: elemento.barrio ? elemento.barrio.nombre : '',
-          localidad: elemento.localidad.nombre + elemento.localidad.provincia.nombre,
-          cuit: elemento.cuit,
-          inicio_actividad: elemento.inicioActividad,
-          esta_activa: elemento.estaActiva ? 'Si' : 'No',
-          usuarios: elemento.usuarios
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        razon_social: elemento.razonSocial,
+        domicilio: elemento.domicilio,
+        barrio: elemento.barrio ? elemento.barrio.nombre : '',
+        localidad: elemento.localidad.nombre + elemento.localidad.provincia.nombre,
+        cuit: elemento.cuit,
+        inicio_actividad: elemento.inicioActividad,
+        esta_activa: elemento.estaActiva ? 'Si' : 'No',
+        usuarios: elemento.usuarios
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -468,6 +464,6 @@ export class ListaUsuariosDialogo {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
 
 }

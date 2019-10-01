@@ -212,7 +212,6 @@ export class ViajeTramoComponent implements OnInit {
         this.empresas = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -223,7 +222,6 @@ export class ViajeTramoComponent implements OnInit {
         this.unidadesNegocios = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -234,7 +232,6 @@ export class ViajeTramoComponent implements OnInit {
         this.viajesTiposCargas = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -245,7 +242,6 @@ export class ViajeTramoComponent implements OnInit {
         this.viajesTipos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -257,7 +253,6 @@ export class ViajeTramoComponent implements OnInit {
         this.establecerViajeTarifaPorDefecto();
       },
       err => {
-        console.log(err);
       }
     );
   }

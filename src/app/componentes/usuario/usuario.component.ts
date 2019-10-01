@@ -54,15 +54,15 @@ export class UsuarioComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'NOMBRE', 'USERNAME', 'ROL', 'ROL_SECUNDARIO', 'SUCURSAL', 'CUENTA_HABILITADA', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el estado de contraseña y repetir contraseña
-  public estadoContrasenia:boolean = false;
+  public estadoContrasenia: boolean = false;
   //Constructor
   constructor(private servicio: UsuarioService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
-    private rolServicio: RolService, private sucursalServicio: SucursalService, private usuario: Usuario,  
+    private rolServicio: RolService, private sucursalServicio: SucursalService, private usuario: Usuario,
     private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -72,13 +72,8 @@ export class UsuarioComponent implements OnInit {
           this.activeLink = this.pestanias[0].nombre;
         },
         err => {
-          console.log(err);
         }
       );
-    // //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -94,8 +89,6 @@ export class UsuarioComponent implements OnInit {
     this.formulario = this.usuario.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    // this.listar();
     //Obtiene la lista de roles
     this.listarRoles();
     //Obtiene la lista de sucursales
@@ -199,7 +192,6 @@ export class UsuarioComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -213,7 +205,8 @@ export class UsuarioComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         this.loaderService.hide();
       }
     );
@@ -223,7 +216,7 @@ export class UsuarioComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     let rolSecundario = this.formulario.get('rolSecundario').value;
-    if(rolSecundario == '0') {
+    if (rolSecundario == '0') {
       this.formulario.get('rolSecundario').setValue(null);
     }
     this.servicio.agregar(this.formulario.value).subscribe(
@@ -232,9 +225,7 @@ export class UsuarioComponent implements OnInit {
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.passwordRepeat.reset();
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -255,7 +246,7 @@ export class UsuarioComponent implements OnInit {
   private actualizar() {
     this.loaderService.show();
     let rolSecundario = this.formulario.get('rolSecundario').value;
-    if(rolSecundario == '0') {
+    if (rolSecundario == '0') {
       this.formulario.get('rolSecundario').setValue(null);
     }
     this.servicio.actualizar(this.formulario.value).subscribe(
@@ -263,9 +254,7 @@ export class UsuarioComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -284,11 +273,10 @@ export class UsuarioComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
-    console.log();
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }
@@ -296,8 +284,8 @@ export class UsuarioComponent implements OnInit {
   public cambioRepetirContrasenia(): void {
     let contrasenia = this.formulario.get('password').value;
     let contraseniaRepetida = this.passwordRepeat.value;
-    if(contrasenia && contraseniaRepetida) {
-      if(contrasenia == contraseniaRepetida) {
+    if (contrasenia && contraseniaRepetida) {
+      if (contrasenia == contraseniaRepetida) {
         this.estadoContrasenia = true;
       } else {
         this.estadoContrasenia = false;
@@ -310,8 +298,8 @@ export class UsuarioComponent implements OnInit {
   public verificarContrasenia(): void {
     let contrasenia = this.formulario.get('password').value;
     let contraseniaRepetida = this.passwordRepeat.value;
-    if(contrasenia && contraseniaRepetida) {
-      if(contrasenia != contraseniaRepetida) {
+    if (contrasenia && contraseniaRepetida) {
+      if (contrasenia != contraseniaRepetida) {
         this.estadoContrasenia = false;
         document.getElementById('labelPasswordRepeat').classList.add('label-error');
         document.getElementById('idPasswordRepeat').classList.add('is-invalid');
@@ -324,7 +312,7 @@ export class UsuarioComponent implements OnInit {
   }
   //Habilita el boton agregar si el formulario es valido
   public habilitarBoton(): boolean {
-    if(this.indiceSeleccionado == 1) {
+    if (this.indiceSeleccionado == 1) {
       return !this.formulario.valid || !this.passwordRepeat.valid || !this.estadoContrasenia;
     } else {
       return !this.formulario.valid;
@@ -385,18 +373,17 @@ export class UsuarioComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id: elemento.id,
-          nombre: elemento.nombre,
-          username: elemento.username,
-          rol: elemento.rol.nombre,
-          rol_secundario: elemento.rolSecundario ? elemento.rolSecundario.nombre : null,
-          sucursal: elemento.sucursal.nombre,
-          cuenta_habilitada: elemento.cuentaHabilitada?'Sí':'No'
-        }
-        datos.push(f);
+      let f = {
+        id: elemento.id,
+        nombre: elemento.nombre,
+        username: elemento.username,
+        rol: elemento.rol.nombre,
+        rol_secundario: elemento.rolSecundario ? elemento.rolSecundario.nombre : null,
+        sucursal: elemento.sucursal.nombre,
+        cuenta_habilitada: elemento.cuentaHabilitada ? 'Sí' : 'No'
+      }
+      datos.push(f);
     });
-    console.log(datos);
     return datos;
   }
   //Abre el dialogo de reporte

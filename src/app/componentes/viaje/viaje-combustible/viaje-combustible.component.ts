@@ -131,7 +131,6 @@ export class ViajeCombustibleComponent implements OnInit {
         this.insumos = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -143,7 +142,6 @@ export class ViajeCombustibleComponent implements OnInit {
         this.formularioViajeCombustible.get('precioUnitario').setValue(res.text());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -178,7 +176,6 @@ export class ViajeCombustibleComponent implements OnInit {
         this.calcularImporte(formulario);
       },
       err => {
-        console.log(err);
       }
     );
   }

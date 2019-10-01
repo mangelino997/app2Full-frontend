@@ -61,9 +61,9 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['CODIGO', 'NOMBRE', 'RUBRO', 'MARCA', 'UNIDAD_MEDIDA', 'MODELO', 'PRECIO_UNITARIO_VIAJE', 'PRECIO_UNITARIO_VENTA', 'ITC_POR_LITRO', 'ITC_NETO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define la lista de personales
   public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso
@@ -175,24 +175,18 @@ export class CostosInsumosProductoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 5:
-          this.listaCompleta = new MatTableDataSource([]);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+        this.listaCompleta = new MatTableDataSource([]);
+        setTimeout(function () {
+          document.getElementById('idAutocompletado').focus();
+        }, 20);
         break;
       default:
         break;
     }
   }
   //Funcion para determina que accion se requiere (Agregar, Actualizar, Eliminar)
-  public accion(indice) {
-    switch (indice) {
-      case 3:
-        this.actualizar();
-        break;
-      default:
-        break;
-    }
+  public accion() {
+    this.actualizar();
   }
   //Actualiza un registro
   private actualizar() {
@@ -204,9 +198,7 @@ export class CostosInsumosProductoComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }

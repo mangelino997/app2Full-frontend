@@ -37,7 +37,7 @@ export class CondicionCompraComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define la lista completa de registros
-  public listaCompleta=new MatTableDataSource([]);
+  public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
   //Define empresa para las busquedas
@@ -49,18 +49,18 @@ export class CondicionCompraComponent implements OnInit {
   //Defien la lista de empresas
   public empresas: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas:string[] = ['ID_CODIGO', 'NOMBRE', 'ES_CONTADO','CUOTAS','DIAS', 'EDITAR'];
+  public columnas: string[] = ['ID_CODIGO', 'NOMBRE', 'ES_CONTADO', 'CUOTAS', 'DIAS', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: CondicionCompraService, private condicionCompra: CondicionCompra,
-    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, 
+    private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService,
     private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestanias
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -70,7 +70,7 @@ export class CondicionCompraComponent implements OnInit {
       });
     //Controla el autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.servicio.listarPorNombre(data).subscribe(res => {
           this.resultados = res;
         })
@@ -102,7 +102,6 @@ export class CondicionCompraComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err);
         this.loaderService.hide();
       }
     );
@@ -113,9 +112,7 @@ export class CondicionCompraComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    setTimeout(function () {
-      document.getElementById(componente).focus();
-    }, 20);
+    document.getElementById(componente).focus();
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
@@ -167,7 +164,6 @@ export class CondicionCompraComponent implements OnInit {
         this.formulario.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -196,9 +192,7 @@ export class CondicionCompraComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -223,9 +217,7 @@ export class CondicionCompraComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario('');
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -251,9 +243,7 @@ export class CondicionCompraComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
-          setTimeout(function () {
-            document.getElementById('idNombre').focus();
-          }, 20);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
         }
         this.loaderService.hide();
@@ -317,7 +307,7 @@ export class CondicionCompraComponent implements OnInit {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
-  }  
+  }
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
     if (elemento != undefined) {
@@ -327,35 +317,33 @@ export class CondicionCompraComponent implements OnInit {
     }
   }
   public mascararEnteros(cant) {
-  return this.appService.mascararEnteros(cant);
+    return this.appService.mascararEnteros(cant);
   }
   public cambioEsContado() {
     let esContado = this.formulario.get('esContado').value;
-    console.log(esContado);
-    if(!this.formulario.get('esContado').value) {
-      this.soloLecturaCuota=false;
-      
+    if (!this.formulario.get('esContado').value) {
+      this.soloLecturaCuota = false;
+
     }
-    if(this.formulario.get('esContado').value){
-      this.soloLecturaCuota=true;
+    if (this.formulario.get('esContado').value) {
+      this.soloLecturaCuota = true;
       this.formulario.get('cuotas').setValue(0);
       this.formulario.get('dias').setValue(0);
     }
-    console.log(this.soloLecturaCuota);
   }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          id_codigo: elemento.id,
-          nombre: elemento.nombre,
-          es_contado: elemento.esContado ? 'Si' : 'No',
-          cuotas: elemento.cuotas,
-          dias: elemento.dias
-        }
-        datos.push(f);
+      let f = {
+        id_codigo: elemento.id,
+        nombre: elemento.nombre,
+        es_contado: elemento.esContado ? 'Si' : 'No',
+        cuotas: elemento.cuotas,
+        dias: elemento.dias
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -370,5 +358,5 @@ export class CondicionCompraComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

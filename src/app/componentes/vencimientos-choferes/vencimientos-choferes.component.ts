@@ -53,9 +53,9 @@ export class VencimientosChoferesComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['LEGAJO', 'NOMBRE', 'CHOFER_LARGA_DISTANCIA', 'VTO_LICENCIA', 'VTO_CURSO', 'VTO_CURSO_CARGA_PELIGROSA', 'VTO_CURSO_LINTI', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
   //Define el form control para las busquedas
@@ -84,8 +84,8 @@ export class VencimientosChoferesComponent implements OnInit {
   public btnPdfAltaTemprana: boolean = null;
   public listaChoferes: Array<any> = [];
   //Constructor
-  constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService, 
-    public dialog: MatDialog, private appService: AppService, private personal: Personal, private toastr: ToastrService, 
+  constructor(private personalServicio: PersonalService, private subopcionPestaniaService: SubopcionPestaniaService,
+    public dialog: MatDialog, private appService: AppService, private personal: Personal, private toastr: ToastrService,
     private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, private reporteServicio: ReporteService) {
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
@@ -112,7 +112,6 @@ export class VencimientosChoferesComponent implements OnInit {
           this.loaderService.hide();
         },
         err => {
-          console.log(err);
         }
       );
     //Define el Formulario
@@ -136,7 +135,6 @@ export class VencimientosChoferesComponent implements OnInit {
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -252,7 +250,6 @@ export class VencimientosChoferesComponent implements OnInit {
         this.establecerFotoYPdfs(elemento);
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -410,9 +407,7 @@ export class VencimientosChoferesComponent implements OnInit {
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
-          setTimeout(function () {
-            document.getElementById('idVtoCurso').focus();
-          }, 20);
+          document.getElementById('idVtoCurso').focus();
           this.toastr.success('Registro actualizado con éxito');
           this.resultados = [];
         }
@@ -483,16 +478,16 @@ export class VencimientosChoferesComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          legajo: elemento.id,
-          nombre: elemento.nombreCompleto,
-          chofer_larga_distancia: elemento.esChoferLargaDistancia ? 'Si' : 'No',
-          vto_licencia: elemento.vtoLicenciaConducir ? elemento.vtoLicenciaConducir : '--',
-          vto_curso: elemento.vtoCurso ? elemento.vtoCurso : '--',
-          vto_curso_carga_peligrosa: elemento.vtoCursoCargaPeligrosa ? elemento.vtoCursoCargaPeligrosa : '--',
-          vto_curso_linti: elemento.vtoLibretaSanidad ? elemento.vtoLibretaSanidad : '--'
-        }
-        datos.push(f);
+      let f = {
+        legajo: elemento.id,
+        nombre: elemento.nombreCompleto,
+        chofer_larga_distancia: elemento.esChoferLargaDistancia ? 'Si' : 'No',
+        vto_licencia: elemento.vtoLicenciaConducir ? elemento.vtoLicenciaConducir : '--',
+        vto_curso: elemento.vtoCurso ? elemento.vtoCurso : '--',
+        vto_curso_carga_peligrosa: elemento.vtoCursoCargaPeligrosa ? elemento.vtoCursoCargaPeligrosa : '--',
+        vto_curso_linti: elemento.vtoLibretaSanidad ? elemento.vtoLibretaSanidad : '--'
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -507,5 +502,5 @@ export class VencimientosChoferesComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

@@ -62,9 +62,9 @@ export class MonedaCotizacionComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['MONEDA', 'FECHA', 'VALOR', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -82,7 +82,6 @@ export class MonedaCotizacionComponent implements OnInit {
       if (typeof data == 'string' && data.length > 2) {
         this.monedaCotizacionServicio.listarPorMoneda(data).subscribe(res => {
           this.resultados = res.json();
-          console.log(res.json());
         })
       }
     });
@@ -120,7 +119,6 @@ export class MonedaCotizacionComponent implements OnInit {
         this.listaMonedas = res.json();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -133,9 +131,7 @@ export class MonedaCotizacionComponent implements OnInit {
       res => {
         let respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
-        setTimeout(function () {
-          document.getElementById('idNombre').focus();
-        }, 20);
+        document.getElementById('idNombre').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -152,9 +148,7 @@ export class MonedaCotizacionComponent implements OnInit {
       res => {
         let respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
-        setTimeout(function () {
-          document.getElementById('idNombre').focus();
-        }, 20);
+        document.getElementById('idNombre').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
@@ -255,12 +249,12 @@ export class MonedaCotizacionComponent implements OnInit {
     let lista = listaMonedaCotizacion;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          moneda: elemento.moneda.nombre,
-          fecha: elemento.fecha,
-          valor: '$' + this.returnDecimales(elemento.valor, 2)
-        }
-        datos.push(f);
+      let f = {
+        moneda: elemento.moneda.nombre,
+        fecha: elemento.fecha,
+        valor: '$' + this.returnDecimales(elemento.valor, 2)
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -275,5 +269,5 @@ export class MonedaCotizacionComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

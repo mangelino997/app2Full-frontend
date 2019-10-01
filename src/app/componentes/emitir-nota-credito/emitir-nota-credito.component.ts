@@ -167,9 +167,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
     this.formulario.get('provincia').setValue(this.appComponent.getUsuario().sucursal['localidad']['provincia']);
     this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    setTimeout(function () {
-      document.getElementById('idFecha').focus();
-    }, 20);
+    document.getElementById('idFecha').focus();
   }
   //Obtiene una lista de Conceptos Varios
   public listarItemsTipo() {
@@ -237,9 +235,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
       this.formulario.get('cliente').setValue(null);
       this.resultadosClientes = [];
       this.toastr.error('Debe seleccionar un PUNTO DE VENTA');
-      setTimeout(function () {
-        document.getElementById('idPuntoVenta').focus();
-      }, 20);
+      document.getElementById('idPuntoVenta').focus();
     }
 
     if (this.formulario.get('numero').value > 0) {
@@ -285,18 +281,14 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.comprobanteSeleccionado = indice;
     this.formularioComprobante.patchValue(comprobante);
     this.subtotalCIVA = this.formularioComprobante.get('importeTotal').value;
-    setTimeout(function () {
-      document.getElementById('idMotivo').focus();
-    }, 20);
+    document.getElementById('idMotivo').focus();
   }
   //Controla el cambio de estilos al seleccionar un Comprobante de la tabla
   public seleccionarCuenta(indice, comprobante) {
     this.cuentaSeleccionada = indice;
     this.formularioCuenta.patchValue(comprobante);
     this.subtotalCIVA = this.formularioCuenta.get('importeTotal').value;
-    setTimeout(function () {
-      document.getElementById('idMotivo').focus();
-    }, 20);
+    document.getElementById('idMotivo').focus();
   }
   //Elimina una cuenta de la lista (tabla)
   public eliminarCuenta(indice) {
@@ -414,9 +406,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
   //Calcula el campo SubtotalNC del comprobante que se modifica
   public calcularSubtotalNC() {
     if (this.subtotalCIVA < this.formularioComprobante.get('importeTotal').value) {
-      setTimeout(function () {
-        document.getElementById('idSubtotalCIVA').focus();
-      }, 20);
+      document.getElementById('idSubtotalCIVA').focus();
       this.toastr.error("El SUBTOTAL C/IVA ingresado debe ser MENOR");
     }
     let iva = String(this.formularioComprobante.get('alicuotaIva').value).split('.');

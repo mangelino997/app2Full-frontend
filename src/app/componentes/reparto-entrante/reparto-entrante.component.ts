@@ -141,7 +141,6 @@ export class RepartoEntranteComponent implements OnInit {
   //     case 1:
   //       this.repartoPropioService.listarPorEstaCerrada(false).subscribe(
   //         res=>{
-  //           console.log(res.json());
   //           this.planillasPendientesTercero = [];
   //           this.planillasPendientesDeposito = [];
   //           this.planillasPendientesPropio = res.json();
@@ -156,7 +155,6 @@ export class RepartoEntranteComponent implements OnInit {
   //     case 2:
   //       this.repartoTerceroService.listarPorEstaCerrada(false).subscribe(
   //         res=>{
-  //           console.log(res.json());
   //           this.planillasPendientesPropio = [];
   //           this.planillasPendientesDeposito = [];
   //           this.planillasPendientesTercero = res.json();
@@ -171,7 +169,6 @@ export class RepartoEntranteComponent implements OnInit {
   //     case 3:
   //       this.retiroDepositoService.listarPorEstaCerrada(false).subscribe(
   //         res=>{
-  //           console.log(res.json());
   //           this.planillasPendientesPropio = [];
   //           this.planillasPendientesTercero = [];
   //           this.planillasPendientesDeposito = res.json();
@@ -200,11 +197,9 @@ export class RepartoEntranteComponent implements OnInit {
   //     case 1:
   //       for(let i=0; i< this.planillasPendientesPropio.length;i++){
   //         if(id==i){
-  //           console.log(this.planillasPendientesPropio[i].id);
   //           this.idPlanillaSeleciconada = this.planillasPendientesPropio[i].id;
   //           this.repartoPropioComp.listarComprobantes(this.planillasPendientesPropio[i].id).subscribe(
   //             res=>{
-  //               console.log(res.json());
   //               this.comprobantesPropio = res.json();
   //               this.comprobantesTercero = [];
   //               this.comprobantesDeposito = [];

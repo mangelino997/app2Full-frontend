@@ -32,13 +32,13 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
 })
 export class ViajeComponent implements OnInit {
   //Define los componentes hijos
-  @ViewChild(ViajeTramoComponent,{static: false}) viajeTramoComponente;
-  @ViewChild(ViajeCombustibleComponent, {static: false}) viajeCombustibleComponente;
-  @ViewChild(ViajeEfectivoComponent, {static: false}) viajeEfectivoComponente;
-  @ViewChild(ViajeGastoComponent, {static: false}) viajeGastoComponente;
-  @ViewChild(ViajeInsumoComponent, {static: false}) viajeInsumoComponente;
-  @ViewChild(ViajePeajeComponent, {static: false}) viajePeajeComponente;
-  @ViewChild(ViajeRemitoGSComponent, {static: false}) viajeRemitoGSComponente;
+  @ViewChild(ViajeTramoComponent, { static: false }) viajeTramoComponente;
+  @ViewChild(ViajeCombustibleComponent, { static: false }) viajeCombustibleComponente;
+  @ViewChild(ViajeEfectivoComponent, { static: false }) viajeEfectivoComponente;
+  @ViewChild(ViajeGastoComponent, { static: false }) viajeGastoComponente;
+  @ViewChild(ViajeInsumoComponent, { static: false }) viajeInsumoComponente;
+  @ViewChild(ViajePeajeComponent, { static: false }) viajePeajeComponente;
+  @ViewChild(ViajeRemitoGSComponent, { static: false }) viajeRemitoGSComponente;
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -106,9 +106,9 @@ export class ViajeComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['ID', 'EMPRESA_EMISION', 'SUCURSAL', 'FECHA', 'VEHICULO', 'CHOFER', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ViajeService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private fechaServicio: FechaService,
@@ -212,7 +212,7 @@ export class ViajeComponent implements OnInit {
     this.resultadosVehiculos = [];
     this.resultadosChoferes = [];
     let tipoViaje = this.formularioViaje.get('esViajePropio').value;
-    if(tipoViaje) {
+    if (tipoViaje) {
       this.formularioViaje.get('vehiculo').setValidators(Validators.required);
       this.formularioViaje.get('vehiculo').updateValueAndValidity();
       this.formularioViaje.get('personal').setValidators(Validators.required);
@@ -238,7 +238,7 @@ export class ViajeComponent implements OnInit {
     this.formularioViaje.get('vehiculoRemolqueProveedor').reset();
     this.resultadosVehiculosRemolques = [];
     let tipoRemolque = this.formularioViaje.get('esRemolquePropio').value;
-    if(tipoRemolque) {
+    if (tipoRemolque) {
       this.formularioViaje.get('vehiculoRemolque').setValidators(Validators.required);
       this.formularioViaje.get('vehiculoRemolque').updateValueAndValidity();
       this.formularioViaje.get('vehiculoRemolqueProveedor').setValidators([]);
@@ -322,13 +322,10 @@ export class ViajeComponent implements OnInit {
       res => {
         this.sucursales = res.json();
         this.render = true;
-        setTimeout(function () {
-          document.getElementById('idFecha').focus();
-        }, 50);
+        document.getElementById('idFecha').focus();
         this.establecerValoresPorDefecto();
       },
       err => {
-        console.log(err);
       }
     );
   }
@@ -455,7 +452,6 @@ export class ViajeComponent implements OnInit {
         this.formularioViaje.get('id').setValue(res.json());
       },
       err => {
-        console.log(err);
       }
     );
   }
