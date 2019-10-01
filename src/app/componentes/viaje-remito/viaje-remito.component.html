@@ -14,7 +14,6 @@
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
           <div class="col-md-12">
-            <!-- Autocompletado -->
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Buscar Remito</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
@@ -32,7 +31,6 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <!-- Fecha -->
             <div class="form-group has-float-label">
               <label for="idFecha" class="tamanio-label">Fecha *</label>
               <input id="idFecha" type="date" formControlName="fecha" autocomplete="off"
@@ -40,7 +38,6 @@
             </div>
           </div>
           <div class="col-md-4">
-            <!-- Numero de Camion -->
             <div class="form-group has-float-label">
               <label for="idNumeroCamion" class="tamanio-label">Número de Camión *</label>
               <input id="idNumeroCamion" [textMask]="mascararEnteros(3)" type="text" formControlName="numeroCamion"
@@ -48,7 +45,6 @@
             </div>
           </div>
           <div class="col-md-4">
-            <!-- Sucursal Destino -->
             <div class="form-group has-float-label">
               <label for="idSucursalDestino" class="tamanio-label">Sucursal Destino *</label>
               <mat-select id="idSucursalDestino" class="form-control form-control-sm" formControlName="sucursalDestino"
@@ -61,7 +57,6 @@
         </div>
         <div class="row">
           <div class="col-md-3">
-            <!-- Tipo Comprobante -->
             <div class="form-group has-float-label">
               <label for="idTipoComprobante" class="tamanio-label">Tipo de Comprobante *</label>
               <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
@@ -72,7 +67,6 @@
             </div>
           </div>
           <div class="col-md-3">
-            <!-- Punto de Venta -->
             <div class="form-group has-float-label">
               <label for="idPuntoVenta" class="tamanio-label">Punto de Venta *</label>
               <input id="idPuntoVenta" [textMask]="mascararEnteros(5)" type="text" formControlName="puntoVenta"
@@ -81,13 +75,11 @@
             </div>
           </div>
           <div class="col-md-3">
-            <!-- Letra (Remito) -->
             <div class="form-group has-float-label" *ngIf="!estadoLetra">
               <label for="idLetra" class="tamanio-label">Letra *</label>
               <input id="idLetra" type="text" formControlName="letra" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="true" maxlength="1">
             </div>
-            <!-- Letra (Factura) -->
             <div class="form-group has-float-label" *ngIf="estadoLetra">
               <label for="idLetra" class="tamanio-label">Letra *</label>
               <mat-select id="idLetra" class="form-control form-control-sm" formControlName="letra">
@@ -98,7 +90,6 @@
             </div>
           </div>
           <div class="col-md-3">
-            <!-- Numero de Comprobante -->
             <div class="form-group has-float-label">
               <label for="idNumero" class="tamanio-label">N° Comprobante *</label>
               <input id="idNumero" [textMask]="mascararEnteros(8)" type="text" formControlName="numero"
@@ -109,7 +100,6 @@
         </div>
         <div class="row">
           <div class="col-md-5 input-button">
-            <!-- Remitente -->
             <div class="form-group has-float-label">
               <label for="idClienteRemitente" class="tamanio-label">Remitente *</label>
               <input id="idClienteRemitente" class="form-control form-control-sm" type="text" matInput
@@ -125,8 +115,7 @@
           <div class="col-md-1 button-input">
             <button mat-raised-button (click)="agregarCliente(1)" [disabled]="!mostrarBoton">+</button>
           </div>
-          <div class="col-md-5 input-button">
-            <!-- Destinatario -->
+          <div class="col-md-5 button-input">
             <div class="form-group has-float-label">
               <label for="idClienteDestinatario" class="tamanio-label">Destinatario *</label>
               <input id="idClienteDestinatario" class="form-control form-control-sm" type="text" matInput
@@ -159,7 +148,6 @@
         <br style="padding-top: 70px;">
         <div class="row">
           <div class="col-md-4">
-            <!-- Bultos -->
             <div class="form-group has-float-label">
               <label for="idBultos" class="tamanio-label">Bultos *</label>
               <input id="idBultos" [textMask]="mascararEnterosSinDecimales(5)" type="text" formControlName="bultos"
@@ -168,7 +156,6 @@
             </div>
           </div>
           <div class="col-md-4">
-            <!-- M3 -->
             <div class="form-group has-float-label">
               <label for="idM3" class="tamanio-label">M3</label>
               <input id="idM3" [textMask]="mascararEnterosConDecimales(3)" type="text" formControlName="m3"
@@ -177,7 +164,6 @@
             </div>
           </div>
           <div class="col-md-4">
-            <!-- Valor Declarado -->
             <div class="form-group has-float-label">
               <label for="idValorDeclarado" class="tamanio-label">Valor Declarado</label>
               <input id="idValorDeclarado" [textMask]="mascararEnterosConDecimales(8)" type="text"
@@ -189,7 +175,6 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <!-- Kilos Efectivo -->
             <div class="form-group has-float-label">
               <label for="idKilosEfectivo" class="tamanio-label">Kg Efectivo</label>
               <input id="idKilosEfectivo" [textMask]="mascararEnterosConDecimales(8)" type="text"
@@ -199,7 +184,6 @@
             </div>
           </div>
           <div class="col-md-3 input-button">
-            <!-- Kilos Aforado -->
             <div class="form-group has-float-label">
               <label for="idKilosAforado" class="tamanio-label">Kg Aforado</label>
               <input id="idKilosAforado" [textMask]="mascararEnterosConDecimales(8)" type="text"
@@ -214,7 +198,6 @@
         </div>
         <div class="row">
           <div class="col-md-4">
-            <!-- Flete por Retiro -->
             <div class="form-group has-float-label">
               <label for="idImporteRetiro" class="tamanio-label">Flete por Retiro</label>
               <input id="idImporteRetiro" [textMask]="mascararEnterosConDecimales(10)" type="text"
@@ -224,7 +207,6 @@
             </div>
           </div>
           <div class="col-md-4">
-            <!-- Flete por Entrega -->
             <div class="form-group has-float-label">
               <label for="idImporteEntrega" class="tamanio-label">Flete por Entrega</label>
               <input id="idImporteEntrega" [textMask]="mascararEnterosConDecimales(10)" type="text"
@@ -236,7 +218,6 @@
         </div>
         <div class="row">
           <div class="col-md-8">
-            <!-- Observaciones -->
             <div class="form-group has-float-label">
               <label for="idObservaciones" class="tamanio-label">Observaciones</label>
               <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones"
