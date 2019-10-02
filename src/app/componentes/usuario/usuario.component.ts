@@ -194,7 +194,7 @@ export class UsuarioComponent implements OnInit {
   //Obtiene el listado de registros
   private listar() {
     this.loaderService.show();
-    this.servicio.listar().subscribe(
+    this.servicio.listarPorEmpresa(this.appService.getEmpresa().id).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -233,6 +233,8 @@ export class UsuarioComponent implements OnInit {
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
           this.toastr.error(respuesta.mensaje);
+        } else {
+          this.toastr.error(respuesta.mensaje);
         }
         this.loaderService.hide();
       }
@@ -261,6 +263,8 @@ export class UsuarioComponent implements OnInit {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
+          this.toastr.error(respuesta.mensaje);
+        } else {
           this.toastr.error(respuesta.mensaje);
         }
         this.loaderService.hide();

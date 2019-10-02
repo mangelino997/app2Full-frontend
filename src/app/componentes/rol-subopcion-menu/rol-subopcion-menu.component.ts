@@ -1,11 +1,11 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { FormGroup, FormBuilder, FormControl, FormArray } from '@angular/forms';
 import { RolSubopcionService } from 'src/app/servicios/rol-subopcion.service';
 import { RolService } from 'src/app/servicios/rol.service';
 import { ModuloService } from 'src/app/servicios/modulo.service';
 import { SubmoduloService } from 'src/app/servicios/submodulo.service';
 import { ToastrService } from 'ngx-toastr';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatTableDataSource, MatSort } from '@angular/material';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { AppService } from 'src/app/servicios/app.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
@@ -176,12 +176,12 @@ export class RolSubopcionMenuComponent implements OnInit {
     //Obtiene la lista de usuario por rol
     this.usuarioServicio.listarPorRol(rol.id).subscribe(res => {
       let listaUsuarios = res.json();
-      if(listaUsuarios.length != 0) {
+      if (listaUsuarios.length != 0) {
         this.botonActivo = true;
       } else {
         this.usuarioServicio.listarPorRolSecundario(rol.id).subscribe(res => {
           let lista = res.json();
-          if(lista.length != 0) {
+          if (lista.length != 0) {
             this.botonActivo = true;
           } else {
             this.botonActivo = false;
@@ -199,7 +199,7 @@ export class RolSubopcionMenuComponent implements OnInit {
       maxWidth: '80%',
       data: { rol: this.formulario.get('rol') }
     });
-    dialogRef.afterClosed().subscribe(result => {});
+    dialogRef.afterClosed().subscribe(result => { });
   }
   //Abre el dialogo vista previa para visualizar el menu del rol
   public verVistaPrevia(): void {
@@ -208,7 +208,7 @@ export class RolSubopcionMenuComponent implements OnInit {
       maxWidth: '95%',
       data: { rol: this.formulario.get('rol') }
     });
-    dialogRef.afterClosed().subscribe(result => {});
+    dialogRef.afterClosed().subscribe(result => { });
   }
   //Abre el dialogo vista previa para visualizar el menu del rol
   public verPestaniasDialogo(subopcion, pestanias): void {
@@ -221,7 +221,7 @@ export class RolSubopcionMenuComponent implements OnInit {
         pestanias: pestanias
       }
     });
-    dialogRef.afterClosed().subscribe(result => {});
+    dialogRef.afterClosed().subscribe(result => { });
   }
   //Visualiza las pestanias de una subopcion para actualizar estado
   public verPestanias(subopcion): void {
@@ -239,8 +239,8 @@ export class RolSubopcionMenuComponent implements OnInit {
     }
   }
   //Establece el control de subopcion para checkbox
-  get controlSubopciones() { 
-    return <FormArray>this.formulario.get('subopciones'); 
+  get controlSubopciones() {
+    return <FormArray>this.formulario.get('subopciones');
   }
 }
 //Componente Usuarios
@@ -253,6 +253,12 @@ export class UsuarioDialogo {
   public nombreRol: string;
   //Define la lista de usuario del rol
   public listaUsuarios: Array<any> = [];
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define las columnas de la tabla
+  public columnas: string[] = ['ID', 'NOMBRE', 'USUARIO'];
+  //Define la matSort
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -266,19 +272,20 @@ export class UsuarioDialogo {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-    this.loaderService.show();
     let rol = this.data.rol.value;
     //Establece el nombre del rol
     this.nombreRol = rol.nombre;
     //Obtiene la lista de usuario por rol
     this.usuarioServicio.listarPorRol(rol.id).subscribe(
       res => {
-        this.listaUsuarios = res.json();
-        if(this.listaUsuarios.length == 0) {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        if (this.listaCompleta.data.length == 0) {
           this.usuarioServicio.listarPorRolSecundario(rol.id).subscribe(
             res => {
-              this.listaUsuarios = res.json();
-              if(this.listaUsuarios.length == 0) {
+              this.listaCompleta = new MatTableDataSource(res.json());
+              this.listaCompleta.sort = this.sort;
+              if (this.listaCompleta.data.length == 0) {
                 this.toastr.warning('El rol seleccionado no tiene usuarios asignados.');
                 this.dialogRef.close();
               }
@@ -329,7 +336,6 @@ export class VistaPreviaDialogo {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
-    this.loaderService.show();
     this.rol = this.data.rol.value;
     this.nombreRol = this.rol.nombre;
     this.appServicio.obtenerMenu(this.rol.id, localStorage.getItem('token')).subscribe(
@@ -373,7 +379,7 @@ export class PestaniaDialogo {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define el tema
-  public tema:string;
+  public tema: string;
   //Constructor
   constructor(public dialogRef: MatDialogRef<PestaniaDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private fb: FormBuilder, private servicio: SubopcionPestaniaService, private toastr: ToastrService,
@@ -436,7 +442,7 @@ export class PestaniaDialogo {
     )
   }
   //Establece control para lista pestania con checkbox
-  get controlPestanias() { 
-    return <FormArray>this.formulario.get('pestanias'); 
+  get controlPestanias() {
+    return <FormArray>this.formulario.get('pestanias');
   }
 }
