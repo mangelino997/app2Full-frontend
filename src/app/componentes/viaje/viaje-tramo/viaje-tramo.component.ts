@@ -71,7 +71,7 @@ export class ViajeTramoComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'fecha', 'tramo', 'km', 'empresa', 'tipoCarga', 'tipoViaje', 'tarifa', 'destinatario', 'unidadNegocio', 'obs', 'editar'];
+  public columnas: string[] = ['id', 'fecha', 'tramo', 'km', 'empresa', 'tipoViaje', 'tipoCarga', 'tarifa', 'destinatario', 'unidadNegocio', 'obs', 'editar'];
   //Define la matSort
   @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Constructor
@@ -722,6 +722,8 @@ export class DadorDestinatarioDialogo {
 export class DadorDestTablaDialogo {
   //Define el tema
   public tema: string;
+  //Define el tramo actual
+  public tramoActual:string = null;
   //Define las columnas de la tabla
   public columnas: string[] = ['dador', 'destinatario'];
   //Define la lista de dadores-destinatarios
@@ -733,6 +735,10 @@ export class DadorDestTablaDialogo {
   ngOnInit() {
     //Establece el tema
     this.tema = this.data.tema;
+    let tramo = this.data.elemento.tramo;
+    //Establece el tramo actual
+    this.tramoActual = tramo.origen.nombre + ', ' + tramo.origen.provincia.nombre
+                        + ' --> ' + tramo.destino.nombre + ', ' + tramo.destino.provincia.nombre;  
     //Establece la lista de dadores-destinatarios
     let listaDadorDestinatario = this.data.elemento.viajeTramoClientes;
     if (listaDadorDestinatario.length > 0) {

@@ -42,3 +42,16 @@
 .margin-left-3 {
     margin-left: 3px !important;
 }
+.tabla {
+    width: 1920px;
+    overflow: auto;
+}
+table {
+    width: 1920px;
+}
+.mat-table-sticky:first-child {
+    border-right: 1px solid #e0e0e0;
+}
+.mat-table-sticky:last-child {
+    border-left: 1px solid #e0e0e0;
+}
