@@ -286,7 +286,7 @@ export class EmpresaComponent implements OnInit {
     } else if (respuesta.codigo == 11007) {
       document.getElementById("labelCUIT").classList.add('label-error');
       document.getElementById("idCUIT").classList.add('is-invalid');
-      document.getElementById("idCUIT").focus();
+      this.formulario.get('cuit').reset();
     }
     this.toastr.error(respuesta.mensaje);
   }

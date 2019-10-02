@@ -64,9 +64,9 @@ export class PuntoVentaComponent implements OnInit {
   public columnas: string[] = ['SUCURSAL', 'EMPRESA', 'PUNTO_VENTA', 'FE', 'FE_LINEA',
     'CAE', 'CUENTA_ORDEN', 'NUMERO', 'COPIA', 'IMPRIME', 'HABILITADA', 'DEFECTO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -76,7 +76,7 @@ export class PuntoVentaComponent implements OnInit {
     private toastr: ToastrService, private puntoVenta: PuntoVenta,
     private sucursalServicio: SucursalService, private empresaServicio: EmpresaService,
     private afipComprobanteService: AfipComprobanteService, private tipoComprobanteService: TipoComprobanteService,
-    private appService: AppService, private loaderService: LoaderService,  private reporteServicio: ReporteService) {
+    private appService: AppService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -105,8 +105,6 @@ export class PuntoVentaComponent implements OnInit {
     this.listarEmpresas();
     //Obtiene la lista de tipos de comprobantes
     this.listarTiposComprobantes();
-    //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
   }
   //Obtiene la mascara de enteros
   public obtenerMascaraEnteros(intLimite) {
@@ -212,9 +210,9 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario();
     if (opcion == 0) {
       this.tipoComprobante.reset();
       this.autocompletado.setValue(undefined);
@@ -325,11 +323,8 @@ export class PuntoVentaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          this.establecerValoresPorDefecto();
           this.establecerEstadoCampos(true);
-          setTimeout(function () {
-            document.getElementById('idSucursal').focus();
-          }, 20);
+          document.getElementById('idSucursal').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -349,11 +344,8 @@ export class PuntoVentaComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
-          this.establecerValoresPorDefecto();
           this.establecerEstadoCamposActualizar();
-          setTimeout(function () {
-            document.getElementById('idSucursal').focus();
-          }, 20);
+          document.getElementById('idSucursal').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -366,6 +358,23 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          this.establecerEstadoCamposActualizar();
+          document.getElementById('idSucursal').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        this.lanzarError(err);
+        this.loaderService.hide();
+      }
+    )
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
@@ -373,9 +382,11 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario() {
-    this.autocompletado.setValue(undefined);
     this.formulario.reset();
+    this.autocompletado.reset();
+    this.tipoComprobante.reset();
     this.afipComprobantes = [];
+    this.establecerValoresPorDefecto();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
@@ -391,6 +402,10 @@ export class PuntoVentaComponent implements OnInit {
   public cambioCampo(id, label) {
     document.getElementById(id).classList.remove('is-invalid');
     document.getElementById(label).classList.remove('label-error');
+  }
+  //Marcarar enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
@@ -463,21 +478,21 @@ export class PuntoVentaComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          sucursal: elemento.sucursal.nombre,
-          empresa: elemento.empresa.razonSocial,
-          punto_venta: this.displayFb(elemento),
-          fe: elemento.fe ? 'Si' : 'No',
-          fe_linea: elemento.feEnLinea ? 'Si' : 'No',
-          cae: elemento.feCAEA ? 'Si' : 'No',
-          cuenta_orden: elemento.esCuentaOrden ? 'Si' : 'No',
-          numero: elemento.ultimoNumero,
-          copia: elemento.copias,
-          imprime: elemento.imprime ? 'Si' : 'No',
-          habilitada: elemento.estaHabilitado ? 'Si' : 'No',
-          defecto: elemento.porDefecto ? 'Si' : 'No'
-        }
-        datos.push(f);
+      let f = {
+        sucursal: elemento.sucursal.nombre,
+        empresa: elemento.empresa.razonSocial,
+        punto_venta: this.displayFb(elemento),
+        fe: elemento.fe ? 'Si' : 'No',
+        fe_linea: elemento.feEnLinea ? 'Si' : 'No',
+        cae: elemento.feCAEA ? 'Si' : 'No',
+        cuenta_orden: elemento.esCuentaOrden ? 'Si' : 'No',
+        numero: elemento.ultimoNumero,
+        copia: elemento.copias,
+        imprime: elemento.imprime ? 'Si' : 'No',
+        habilitada: elemento.estaHabilitado ? 'Si' : 'No',
+        defecto: elemento.porDefecto ? 'Si' : 'No'
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -492,5 +507,5 @@ export class PuntoVentaComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

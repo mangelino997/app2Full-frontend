@@ -6,7 +6,7 @@
             <div class="tabla">
                 <div class="tabla-ancho">
                     <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                        <ng-container matColumnDef="id">
+                        <ng-container matColumnDef="id" sticky>
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
                             <td mat-cell *matCellDef="let elemento;">{{elemento.id}}</td>
                         </ng-container>

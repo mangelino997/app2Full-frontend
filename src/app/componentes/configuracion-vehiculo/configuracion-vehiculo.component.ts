@@ -147,9 +147,9 @@ export class ConfiguracionVehiculoComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-    this.reestablecerFormulario();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario();
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -315,6 +315,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     this.autocompletado.setValue(undefined);
     this.formulario.reset();
     this.configuraciones = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {

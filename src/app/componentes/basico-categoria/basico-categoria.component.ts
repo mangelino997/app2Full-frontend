@@ -99,7 +99,7 @@ export class BasicoCategoriaComponent implements OnInit {
       anio: new FormControl('', Validators.required)
     });
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de categorias
     this.listarCategorias();
     //Obtiene la lista de meses
@@ -163,14 +163,10 @@ export class BasicoCategoriaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -191,7 +187,7 @@ export class BasicoCategoriaComponent implements OnInit {
         break;
       case 5:
         this.formularioListar.reset();
-        this.vaciarLista();
+        this.vaciarListas();
         break;
       default:
         break;
@@ -293,15 +289,16 @@ export class BasicoCategoriaComponent implements OnInit {
     })
   }
   //Vacia la lista
-  public vaciarLista(): void {
+  public vaciarListas(): void {
     this.listaCompleta = new MatTableDataSource([]);
+    this.resultados = [];
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.autocompletado.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
-    this.resultados = [];
+    this.vaciarListas();
   }
   //Formatea el numero a x decimales
   public establecerDecimales(formulario, cantidad) {
@@ -323,13 +320,13 @@ export class BasicoCategoriaComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.cambioAutocompletado(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.cambioAutocompletado(elemento);
   }
@@ -354,9 +351,9 @@ export class BasicoCategoriaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

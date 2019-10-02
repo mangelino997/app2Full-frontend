@@ -11,6 +11,7 @@ import { TextMaskModule } from 'angular2-text-mask';
 import { TramoService } from 'src/app/servicios/tramo.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { OrigenDestinoService } from 'src/app/servicios/origen-destino.service';
+import { Tramo } from 'src/app/modelos/tramo';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { OrigenDestinoService } from 'src/app/servicios/origen-destino.service';
   providers: [
     TramoService,
     SubopcionPestaniaService,
-    OrigenDestinoService
+    OrigenDestinoService,
+    Tramo
   ]
 })
 export class TramoModule { }

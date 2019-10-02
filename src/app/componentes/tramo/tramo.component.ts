@@ -10,6 +10,7 @@ import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { Tramo } from 'src/app/modelos/tramo';
 
 @Component({
   selector: 'app-tramo',
@@ -62,7 +63,7 @@ export class TramoComponent implements OnInit {
   public resultadosDestinoListar: Array<any> = [];
   //Constructor
   constructor(private servicio: TramoService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private origenDestinoServicio: OrigenDestinoService,
+    private appService: AppService, private origenDestinoServicio: OrigenDestinoService, private modelo: Tramo,
     private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -118,16 +119,7 @@ export class TramoComponent implements OnInit {
   //Al iniciarse el componente
   ngOnInit() {
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      origen: new FormControl('', Validators.required),
-      destino: new FormControl('', Validators.required),
-      km: new FormControl(),
-      estaActivo: new FormControl('', Validators.required),
-      excluirLiqChofer: new FormControl('', Validators.required),
-      rutaAlternativa: new FormControl('', Validators.maxLength(20))
-    });
+    this.formulario = this.modelo.formulario;
     //Autocompletado Origen - Buscar por nombre
     this.formulario.get('origen').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -169,6 +161,7 @@ export class TramoComponent implements OnInit {
   public vaciarListas() {
     this.resultados = [];
     this.resultadosOrigenesDestinos = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(): void {
@@ -285,7 +278,7 @@ export class TramoComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -300,6 +293,23 @@ export class TramoComponent implements OnInit {
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        let error = err.json();
+        this.toastr.error(error.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -321,9 +331,15 @@ export class TramoComponent implements OnInit {
     let origen = this.autocompletadoOrigenListar.value;
     let destino = this.autocompletadoDestinoListar.value;
     this.servicio.listarPorFiltro(origen ? origen.id : 0, destino ? destino.id : 0).subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res.json());
-      this.listaCompleta.sort = this.sort;
-      this.listaCompleta.paginator = this.paginator;
+      let respuesta = res.json();
+      if(respuesta.length > 0){
+        this.listaCompleta = new MatTableDataSource(respuesta);
+        this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
+      }else{
+        this.listaCompleta = new MatTableDataSource(respuesta);
+        this.toastr.error("Sin datos para mostrar.");
+      }
     })
   }
   //Reestablece el formulario

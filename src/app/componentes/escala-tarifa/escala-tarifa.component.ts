@@ -146,10 +146,17 @@ export class EscalaTarifaComponent implements OnInit {
       this.formulario.get('descripcion').setValue(undefined);
     }
   }
+  //Obtiene la mascara de enteros CON decimales
+  public obtenerMascaraEnteroConDecimales(intLimite) {
+    return this.appService.mascararEnterosConDecimales(intLimite);
+  }
   //Formatea el numero a x decimales
-  public setDecimales(valor, cantidad) {
-    valor.target.value = this.appServicio.setDecimales(valor.target.value, cantidad);
-    this.formulario.get('descripcion').setValue('Hasta ' + valor.target.value);
+  public setDecimales(formulario, cantidad) {
+    let valor = formulario.value;
+    if (valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+      this.formulario.get('descripcion').setValue('Hasta ' + formulario.value);
+    }
   }
   //Prepara los datos para exportar
   private prepararDatos(listaCompleta): Array<any> {

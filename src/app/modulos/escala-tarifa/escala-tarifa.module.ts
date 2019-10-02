@@ -8,6 +8,7 @@ import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModul
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EscalaTarifaComponent } from 'src/app/componentes/escala-tarifa/escala-tarifa.component';
 import { EscalaTarifaService } from 'src/app/servicios/escala-tarifa.service';
+import { TextMaskModule } from 'angular2-text-mask';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { EscalaTarifaService } from 'src/app/servicios/escala-tarifa.service';
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    TextMaskModule
   ],
   providers: [
     EscalaTarifaService

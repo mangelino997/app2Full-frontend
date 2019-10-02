@@ -232,7 +232,7 @@
             <table mat-table [dataSource]="listaCompleta" matSort class="matmat-table-elevation-z1">
                 <ng-container matColumnDef="ID">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                    <td mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+                    <td mat-cell *matCellDef="let elemento; let i=index" class="number-right">{{i + 1}}</td>
                 </ng-container>
                 <ng-container matColumnDef="EMPRESA_EMISION">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Empresa Emisión</th>

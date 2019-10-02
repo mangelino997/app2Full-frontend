@@ -4,10 +4,10 @@
     overflow: auto !important;
 }
 .tabla-ancho {
-    width: 1890px !important;
+    width: 1950px !important;
 }
-.mat-cell {
+/* .mat-cell {
     font-size: 14px;
     min-height: 40px;
     border-right: 1px solid lightgray;
-}
+} */

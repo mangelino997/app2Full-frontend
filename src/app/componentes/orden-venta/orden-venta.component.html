@@ -182,7 +182,7 @@
             <table mat-table [dataSource]="listaTarifasDeOrdVta" matSort class="mat-elevation-z1">
               <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                <td class="mat-cell-left" mat-cell *matCellDef="let elemento; let i=index">{{i + 1}}</td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento; let i=index" class="number-right">{{i + 1}}</td>
               </ng-container>
               <ng-container matColumnDef="tarifa">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
@@ -296,7 +296,7 @@
               </ng-container>
               <ng-container matColumnDef="ID">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
               </ng-container>
               <ng-container matColumnDef="DESCRIPCION">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripción</th>

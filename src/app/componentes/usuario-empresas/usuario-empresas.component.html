@@ -24,7 +24,7 @@
             </div>
           </div>
           <div class="col-md-2">
-            <button mat-raised-button color="primary" (click)="obtenerEmpresas()">Obtener Empresas</button>
+            <button mat-raised-button color="primary" (click)="obtenerEmpresas()" [disabled]="!formulario.valid">Obtener Empresas</button>
           </div>
         </div>
         <div formArrayName="empresas" class="row">
@@ -68,9 +68,4 @@
       </form>
     </div>
   </div>
-  <!-- <div class="row" *ngIf="indiceSeleccionado == 2">
-    <div class="col-md-10">
-
-    </div>
-  </div> -->
 </div>

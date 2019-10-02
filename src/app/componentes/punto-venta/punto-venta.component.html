@@ -121,7 +121,7 @@
         <div class="row">
           <div class="col-md-3">
             <div class="form-group has-float-label">
-              <label for="idUltimoNumero" class="tamanio-label">Ultimo Número *</label>
+              <label for="idUltimoNumero" class="tamanio-label">Último Número *</label>
               <input id="idUltimoNumero" type="text" [textMask]="obtenerMascaraEnteros(8)"
                 formControlName="ultimoNumero" autocomplete="off" class="form-control form-control-sm number-right"
                 [readonly]="soloLectura">
@@ -130,7 +130,7 @@
           <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idCopias" class="tamanio-label">Copias *</label>
-              <input id="idCopias" type="text" formControlName="copias" autocomplete="off"
+              <input id="idCopias" type="text" formControlName="copias" autocomplete="off" [textMask]="mascararEnteros(1)"
                 class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
@@ -237,18 +237,18 @@
             </ng-container>
             <ng-container matColumnDef="NUMERO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Último Número</th>
-              <td mat-cell *matCellDef="let elemento">{{elemento.ultimoNumero}}</td>
+              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.ultimoNumero}}</td>
             </ng-container>
             <ng-container matColumnDef="COPIA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Copias</th>
-              <td mat-cell *matCellDef="let elemento">{{elemento.copias}}</td>
+              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.copias}}</td>
             </ng-container>
             <ng-container matColumnDef="IMPRIME">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Imprime</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.imprime ? 'Si' : 'No'}}</td>
             </ng-container>
             <ng-container matColumnDef="HABILITADA">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header>Esta Habilitado</th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header>Está Habilitado</th>
               <td mat-cell *matCellDef="let elemento">{{elemento.estaHabilitado ? 'Si' : 'No'}}</td>
             </ng-container>
             <ng-container matColumnDef="DEFECTO">

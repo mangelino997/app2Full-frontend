@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
-import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
+import { FormGroup, FormBuilder, FormArray, FormControl, Validators } from '@angular/forms';
 import { UsuarioService } from 'src/app/servicios/usuario.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -42,7 +42,7 @@ export class UsuarioEmpresasComponent implements OnInit {
     this.formulario = this.fb.group({
       id: new FormControl(),
       version: new FormControl(),
-      usuario: new FormControl(),
+      usuario: new FormControl('', Validators.required),
       empresas: this.fb.array([])
     })
     //Establece la pestania actual activa por defecto
