@@ -102,7 +102,8 @@
     </div>
     <span class="spacer"></span>
     <button mat-raised-button [color]="tipoRemitos ? 'accent' : 'primary'" (click)="verPendientes()">Pendientes</button>
-    <button class="margin-left-3" mat-raised-button [color]="tipoRemitos ? 'primary' : 'accent'" (click)="verAsignados()">Asignados</button>
+    <button class="margin-left-3" mat-raised-button [color]="tipoRemitos ? 'primary' : 'accent'" (click)="verAsignados()"
+      [disabled]="!formularioViajeRemito.get('tramo').valid">Asignados</button>
   </div>
   <br>
 </form>

@@ -13,29 +13,69 @@
     </div>
     <div class="contenedor" *ngIf="indiceSeleccionado < 5">
         <mat-card style="background-color: #F8F9FA">
+            <div *ngIf="mostrarAutocompletado && !show">
+                <form [formGroup]="formularioFiltros">
+                    <div class="row">
+                        <div class="col-md-1">
+                            <div class="form-group has-float-label">
+                                <label for="idViaje" class="tamanio-label">N° Viaje</label>
+                                <input id="idViaje" type="number" formControlName="idViaje"
+                                    class="form-control form-control-sm" placeholder="N° Guía de Servicio">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idFechaDesde" class="tamanio-label">Fecha Desde</label>
+                                <input id="idFechaDesde" type="date" formControlName="fechaDesde"
+                                    class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group has-float-label">
+                                <label for="idFechaHasta" class="tamanio-label">Fecha Hasta</label>
+                                <input id="idFechaHasta" type="date" formControlName="fechaHasta"
+                                    class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group has-float-label">
+                                <label for="idPersonal" class="tamanio-label">Chofer</label>
+                                <input id="idPersonal" class="form-control form-control-sm" type="text"
+                                    [formControl]="formularioFiltros.get('personal')" [matAutocomplete]="autoPersonal"
+                                    autocomplete="off" placeholder="Buscar por N° Legajo, Nombre o Num. Doc.">
+                                <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                                    <mat-option *ngFor="let itemPersonal of resultadosPersonales" [value]="itemPersonal">
+                                        {{itemPersonal.alias}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group has-float-label">
+                                <label for="idPersonal" class="tamanio-label">Fletero</label>
+                                <input id="idPersonal" class="form-control form-control-sm" type="text"
+                                    [formControl]="formularioFiltros.get('proveedor')" [matAutocomplete]="autoProveedor"
+                                    autocomplete="off" placeholder="Buscar por Id, Razón Social, Tipo Documento o Num. Documento">
+                                <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayFn.bind(this)">
+                                    <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
+                                        {{itemProveedor.alias}}
+                                    </mat-option>
+                                </mat-autocomplete>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <button mat-raised-button color="primary" (click)="listarViajesPorFiltros()">Buscar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row" *ngIf="show">
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
+            <hr *ngIf="mostrarAutocompletado" style="margin-top: -8px !important; margin-bottom: 18px !important;">
             <div class="row">
                 <div class="col">
                     <form [formGroup]="formularioViaje">
-                        <div class="row" *ngIf="mostrarAutocompletado">
-                            <div class="col-md-4">
-                                <div class="form-group has-float-label">
-                                    <label for="idAutocompletado" class="tamanio-label">Buscar Guía de Servicio</label>
-                                    <input id="idAutocompletado" class="form-control form-control-sm color-busqueda"
-                                        autocomplete="off" type="text" matInput [formControl]="autocompletado"
-                                        [matAutocomplete]="auto"
-                                        placeholder="Buscar por N° GS, Fecha, Empresa o Chofer">
-                                    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
-                                        (optionSelected)="cambioAutocompletado()">
-                                        <mat-option *ngFor="let item of resultados" [value]="item">
-                                            {{item.alias}}
-                                        </mat-option>
-                                    </mat-autocomplete>
-                                </div>
-                            </div>
-                            <div class="col text-center" *ngIf="show">
-                                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                            </div>
-                        </div>
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group has-float-label">
@@ -55,7 +95,8 @@
                                 <div class="form-group has-float-label">
                                     <label for="idEsPropio" class="tamanio-label-titulo">Tipo de Viaje *</label>
                                     <mat-select id="idEsPropio" class="form-control form-control-sm"
-                                        [formControl]="formularioViaje.get('esViajePropio')" (selectionChange)="cambioTipoViaje()">
+                                        [formControl]="formularioViaje.get('esViajePropio')"
+                                        (selectionChange)="cambioTipoViaje()">
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>
@@ -66,7 +107,8 @@
                                     <label for="idEsRemolquePropio" class="tamanio-label-titulo">Tipo de Remolque
                                         *</label>
                                     <mat-select id="idEsRemolquePropio" class="form-control form-control-sm"
-                                        [formControl]="formularioViaje.get('esRemolquePropio')" (selectionChange)="cambioTipoRemolque()">
+                                        [formControl]="formularioViaje.get('esRemolquePropio')"
+                                        (selectionChange)="cambioTipoRemolque()">
                                         <mat-option [value]="false">Tercerizado</mat-option>
                                         <mat-option [value]="true">Propio</mat-option>
                                     </mat-select>
@@ -95,7 +137,7 @@
                             <div class="col-md-3">
                                 <div class="form-group has-float-label">
                                     <label for="idVehiculo" class="tamanio-label-titulo">Vehículo *</label>
-                                    <input id="idVehiculo" class="form-control form-control-sm" type="text" 
+                                    <input id="idVehiculo" class="form-control form-control-sm" type="text"
                                         [formControl]="tipoViaje.value ? formularioViaje.get('vehiculo') : formularioViaje.get('vehiculoProveedor')"
                                         [matAutocomplete]="autoVehiculo" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
@@ -142,7 +184,7 @@
                             <div class="col-md-3">
                                 <div class="form-group has-float-label">
                                     <label for="idPersonal" class="tamanio-label-titulo">Chofer *</label>
-                                    <input id="idPersonal" class="form-control form-control-sm" type="text" 
+                                    <input id="idPersonal" class="form-control form-control-sm" type="text"
                                         [formControl]="tipoViaje.value ? formularioViaje.get('personal') : formularioViaje.get('choferProveedor')"
                                         [matAutocomplete]="autoChofer" autocomplete="off"
                                         [readonly]="soloLecturaCabecera"
@@ -257,19 +299,19 @@
                         {{elemento.personal? elemento.personal.nombreCompleto : '--'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="EDITAR" stickyEnd>
-                    <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                        (click)="abrirReporte()">Reporte</button></th>
+                    <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button
+                            color="primary" (click)="abrirReporte()">Reporte</button></th>
                     <td mat-cell *matCellDef="let elemento">
-                      <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
-                        matTooltip="Consultar" matTooltipPosition="above">
-                        <mat-icon>search</mat-icon>
-                      </button>
-                      <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                        (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
-                        <mat-icon>edit</mat-icon>
-                      </button>
+                        <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+                            matTooltip="Consultar" matTooltipPosition="above">
+                            <mat-icon>search</mat-icon>
+                        </button>
+                        <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                            (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+                            <mat-icon>edit</mat-icon>
+                        </button>
                     </td>
-                  </ng-container>
+                </ng-container>
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
             </table>

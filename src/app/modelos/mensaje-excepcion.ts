@@ -17,6 +17,8 @@ export class MensajeExcepcion {
 
     public static NO_LISTO = "No se obtener la lista de registros";
 
+    public static SIN_REGISTROS = "Sin registros";
+
 
     /*
     * FIN ERRORES GENERALES

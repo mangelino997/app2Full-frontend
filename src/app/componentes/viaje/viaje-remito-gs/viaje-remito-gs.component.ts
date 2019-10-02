@@ -34,6 +34,8 @@ export class ViajeRemitoGSComponent implements OnInit {
   public tipoRemitos: boolean = false;
   //Defiene la lista de sucursales
   public sucursales: Array<any> = [];
+  //Define el id viaje actual
+  public ID_VIAJE:number = 0;
   //Define las columnas de la tabla
   public columnas: string[] = ['check', 'fecha', 'tipoComprobante', 'puntoVenta', 'numeroComprobante', 'remitente', 'destinatario'];
   //Define la matSort
@@ -50,6 +52,10 @@ export class ViajeRemitoGSComponent implements OnInit {
     this.formularioViajeTramo = this.ViajeTramo.formulario;
     //Obtiene la lista de sucursales
     this.listarSucursales();
+  }
+  //Establece el id viaje actual
+  public establecerIdViaje(idViaje): void {
+    this.ID_VIAJE = idViaje;
   }
   public estanTodosSeleccionados() {
     const numSelected = this.seleccionCheck.selected.length;
@@ -80,7 +86,7 @@ export class ViajeRemitoGSComponent implements OnInit {
   public verAsignados() {
     if (!this.tipoRemitos) {
       this.tipoRemitos = true;
-      this.listarAsignadosPorFiltro();
+      this.listarAsignadosPorViajeTramo();
     }
   }
   //Obtiene el listado de sucursales
@@ -91,12 +97,14 @@ export class ViajeRemitoGSComponent implements OnInit {
   }
   //Establece la lista de tramos (se establece de componente padre)
   public establecerTramos(tramos) {
+    this.formularioViajeRemito.reset();
+    this.reestablecerFormulario(true);
     this.listaTramos = tramos;
   }
   //Obtiene la lista de remitos pendiente por filtro (sucursal, sucursal destino y numero de camion)
   public listarPendientesPorFiltro(): void {
     this.loaderService.show();
-    this.reestablecerFormulario();
+    this.reestablecerFormulario(false);
     let sucursal = this.appService.getUsuario().sucursal;
     let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
     let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
@@ -127,28 +135,22 @@ export class ViajeRemitoGSComponent implements OnInit {
     }
   }
   //Obtiene la lista de remitos pendiente por filtro (sucursal, sucursal destino y numero de camion)
-  public listarAsignadosPorFiltro(): void {
+  public listarAsignadosPorViajeTramo(): void {
     this.loaderService.show();
-    this.reestablecerFormulario();
-    let sucursal = this.appService.getUsuario().sucursal;
-    let sucursalDestino = this.formularioViajeRemito.get('sucursalDestino').value;
-    let numeroCamion = this.formularioViajeRemito.get('numeroCamion').value;
-    let tramo = this.formularioViajeRemito.get('tramo').value;
-    if (sucursal && sucursalDestino && numeroCamion) {
-      this.viajeRemitoServicio.listarAsignadosPorFiltro(sucursal.id, sucursalDestino.id, numeroCamion).subscribe(
+    this.reestablecerFormulario(false);
+    let viajeTramo = this.formularioViajeRemito.get('tramo').value;
+    if (viajeTramo) {
+      this.viajeRemitoServicio.listarAsignadosPorViajeTramo(viajeTramo.id).subscribe(
         res => {
           let listaRemitosAsignados = res.json();
           if (listaRemitosAsignados.length > 0) {
             for (var i = 0; i < listaRemitosAsignados.length; i++) {
-              listaRemitosAsignados[i].viajeTramo = tramo;
+              listaRemitosAsignados[i].viajeTramo = viajeTramo;
               this.remitos = this.formularioViajeRemito.get('remitos') as FormArray;
               this.remitos.push(this.viajeRemito.crearRemitos(listaRemitosAsignados[i]));
             }
             this.establecerRemitos(this.remitos);
-          } 
-          // else {
-          //   this.toastr.warning("Remitos inexistentes");
-          // }
+          }
           this.loaderService.hide();
         },
         err => {
@@ -188,7 +190,7 @@ export class ViajeRemitoGSComponent implements OnInit {
     let tramo = this.formularioViajeRemito.get('tramo').value;
     this.viajeRemitoServicio.quitar(this.listaCompleta.data, tramo.id).then(
       res => {
-        this.listarAsignadosPorFiltro();
+        this.listarAsignadosPorViajeTramo();
         document.getElementById('idTramoRG').focus();
         this.toastr.success("Registros quitados con éxito");
         this.loaderService.hide();
@@ -212,7 +214,10 @@ export class ViajeRemitoGSComponent implements OnInit {
     this.indiceSeleccionado = indice;
   }
   //Reestablece el formulario
-  private reestablecerFormulario(): void {
+  private reestablecerFormulario(opcion): void {
+    if(opcion) {
+      this.tipoRemitos = false;
+    }
     this.listaCompleta = new MatTableDataSource([]);
     if (this.remitos) {
       while (this.remitos.length != 0) {
@@ -223,10 +228,6 @@ export class ViajeRemitoGSComponent implements OnInit {
   //Envia la lista de tramos a Viaje
   public enviarDatos(): void {
     this.dataEvent.emit();
-  }
-  //Establece la lista de tramos cargada en ViajeTramo
-  public establecerListaTramos(tramos): void {
-    this.listaTramos = tramos;
   }
   //Establece el foco en fecha
   public establecerFoco(): void {

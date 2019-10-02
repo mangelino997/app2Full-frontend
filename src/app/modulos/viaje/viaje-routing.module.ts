@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { ViajeComponent } from 'src/app/componentes/viaje/viaje.component';
+import { ViajeComponent, ListarViajesDialogo } from 'src/app/componentes/viaje/viaje.component';
 import { ViajeTramoComponent, DadorDestinatarioDialogo, DadorDestTablaDialogo } from 'src/app/componentes/viaje/viaje-tramo/viaje-tramo.component';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatProgressSpinnerModule, MatCardModule, MatStepperModule, MatIconModule, MatCheckboxModule, MatButtonModule, MatTooltipModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -68,7 +68,8 @@ const routes: Routes = [
     ObservacionesDialogo,
     AnularDialogo,
     NormalizarDialogo,
-    DadorDestTablaDialogo
+    DadorDestTablaDialogo,
+    ListarViajesDialogo
   ],
   imports: [
     CommonModule,
@@ -133,7 +134,8 @@ const routes: Routes = [
     ObservacionesDialogo,
     AnularDialogo,
     NormalizarDialogo,
-    DadorDestTablaDialogo
+    DadorDestTablaDialogo,
+    ListarViajesDialogo
   ],
   exports: [RouterModule]
 })

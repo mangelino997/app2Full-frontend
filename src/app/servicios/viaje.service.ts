@@ -50,13 +50,16 @@ export class ViajeService {
   public obtenerPorId(id) {
     return this.http.get(this.url + '/obtenerPorId/' + id, this.options);
   }
-  //Obtiene una lista de registros por alias
-  public listarPorAlias(alias) {
-    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
+  //Obtiene una lista de registros por filtros
+  public listarPorFiltros(elemento) {
+    let formulario = {
+      idViaje: elemento.idViaje,
+      fechaDesde: elemento.fechaDesde,
+      fechaHasta: elemento.fechaHasta,
+      idPersonal: elemento.personal ? elemento.personal.id : null,
+      idProveedor: elemento.proveedor ? elemento.proveedor.id : null
+    }
+    return this.http.post(this.url + '/listarPorFiltros', formulario, this.options);
   }
   //Obtiene la lista de registros
   public listar() {

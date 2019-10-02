@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { FechaService } from '../../servicios/fecha.service';
 import { SucursalService } from '../../servicios/sucursal.service';
@@ -21,7 +21,7 @@ import { Subscription } from 'rxjs';
 import { Viaje } from 'src/app/modelos/viaje';
 import { ViajeService } from 'src/app/servicios/viaje.service';
 import { VehiculoProveedorService } from 'src/app/servicios/vehiculo-proveedor.service';
-import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
+import { MatSort, MatTableDataSource, MatPaginator, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 
@@ -53,6 +53,8 @@ export class ViajeComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
+  //Define el formulario para filtros
+  public formularioFiltros: FormGroup;
   //Define un formulario viaje propio para validaciones de campos
   public formularioViaje: FormGroup;
   //Define un formulario viaje  tramo para validaciones de campos
@@ -79,8 +81,6 @@ export class ViajeComponent implements OnInit {
   public opcionSeleccionada: number = null;
   //Define la opcion activa
   public botonOpcionActivo: boolean = null;
-  //Define el form control para las busquedas
-  public autocompletado: FormControl = new FormControl();
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de vehiculos
@@ -89,6 +89,10 @@ export class ViajeComponent implements OnInit {
   public resultadosVehiculosRemolques: Array<any> = [];
   //Define la lista de resultados de choferes
   public resultadosChoferes: Array<any> = [];
+  //Define la lista de resultados de personales
+  public resultadosPersonales: Array<any> = [];
+  //Define la lista de resultados de proveedores
+  public resultadosProveedores: Array<any> = [];
   //Define el tipo de viaje (Propio o Tercero)
   public tipoViaje: FormControl = new FormControl();
   //Define el nombre del usuario logueado
@@ -113,7 +117,7 @@ export class ViajeComponent implements OnInit {
   constructor(private servicio: ViajeService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private fechaServicio: FechaService,
     private sucursalServicio: SucursalService, private vehiculoServicio: VehiculoService, private vehiculoProveedorService: VehiculoProveedorService,
-    private personalServicio: PersonalService, private viajePropioModelo: Viaje,
+    private personalServicio: PersonalService, private viajePropioModelo: Viaje, private dialog: MatDialog,
     private choferProveedorServicio: ChoferProveedorService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -124,14 +128,6 @@ export class ViajeComponent implements OnInit {
         },
         err => { }
       );
-    //Autocompletado - Buscar por alias
-    this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
-      }
-    })
   }
   //Al iniciarse el componente
   ngOnInit() {
@@ -140,6 +136,14 @@ export class ViajeComponent implements OnInit {
       .subscribe((state: LoaderState) => {
         this.show = state.show;
       });
+    //Establece el formulario para filtros
+    this.formularioFiltros = new FormGroup({
+      idViaje: new FormControl(),
+      fechaDesde: new FormControl(),
+      fechaHasta: new FormControl(),
+      personal: new FormControl(),
+      proveedor: new FormControl()
+    });
     //Establece el formulario viaje propio
     this.formularioViaje = this.viajePropioModelo.formulario;
     //Establece la primera opcion seleccionada
@@ -202,6 +206,22 @@ export class ViajeComponent implements OnInit {
         }
       }
     })
+    //Autocompletado Personal - Buscar por alias - Filtros
+    this.formularioFiltros.get('personal').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.personalServicio.listarChoferesPorDistanciaPorAlias(data, true).subscribe(res => {
+          this.resultadosPersonales = res.json();
+        })
+      }
+    })
+    //Autocompletado Proveedor - Buscar por alias - Filtros
+    this.formularioFiltros.get('proveedor').valueChanges.subscribe(data => {
+      if (typeof data == 'string' && data.length > 2) {
+        this.personalServicio.listarPorAlias(data).subscribe(res => {
+          this.resultadosProveedores = res.json();
+        })
+      }
+    })
   }
   //Establece validaciones de formulario al cambiar tipo de viaje
   public cambioTipoViaje(): void {
@@ -257,6 +277,7 @@ export class ViajeComponent implements OnInit {
     this.viajeInsumoComponente.establecerIdViaje(idViaje);
     this.viajeGastoComponente.establecerIdViaje(idViaje);
     this.viajePeajeComponente.establecerIdViaje(idViaje);
+    this.viajeRemitoGSComponente.establecerIdViaje(idViaje);
   }
   //Reestablece el formulario
   private reestablecerFormulario() {
@@ -270,20 +291,52 @@ export class ViajeComponent implements OnInit {
     this.formularioViajePeaje.reset();
     this.estadoFormulario = true;
   }
-  //Establece el formulario y listas al seleccionar un elemento del autocompletado
-  public cambioAutocompletado(): void {
+  //Obtiene la lista de viajes por filtros
+  public listarViajesPorFiltros(): void {
     this.loaderService.show();
-    let viaje = this.autocompletado.value;
-    this.servicio.obtenerPorId(viaje.id).subscribe(
+    this.servicio.listarPorFiltros(this.formularioFiltros.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(respuesta.length == 0) {
+          this.toastr.warning(MensajeExcepcion.SIN_REGISTROS);
+          this.loaderService.hide();
+        } else if(respuesta.length == 1) {
+          this.loaderService.hide();
+          this.establecerViaje(respuesta[0].id);
+        } else {
+          this.loaderService.hide();
+          const dialogRef = this.dialog.open(ListarViajesDialogo, {
+            width: '95%',
+            maxWidth: '95%',
+            data: {
+              lista: respuesta
+            }
+          });
+          dialogRef.afterClosed().subscribe(resultado => { 
+            if(resultado) {
+              this.establecerViaje(resultado);
+            }
+          });
+        }
+      },
+      err => {
+
+      }
+    );
+  }
+  //Establece el formulario y listas al buscar por filtros
+  public establecerViaje(id): void {
+    this.loaderService.show();
+    this.servicio.obtenerPorId(id).subscribe(
       res => {
         let respuesta = res.json();
         this.formularioViaje.patchValue(respuesta);
-        this.viajeTramoComponente.establecerLista(viaje.viajeTramos, viaje.id, this.indiceSeleccionado);
-        this.viajeCombustibleComponente.establecerLista(viaje.viajeCombustibles, viaje.id, this.indiceSeleccionado);
-        this.viajeEfectivoComponente.establecerLista(viaje.viajeEfectivos, viaje.id, this.indiceSeleccionado);
-        this.viajeInsumoComponente.establecerLista(viaje.viajeInsumos, viaje.id, this.indiceSeleccionado);
-        this.viajeGastoComponente.establecerLista(viaje.viajeGastos, viaje.id, this.indiceSeleccionado);
-        this.viajePeajeComponente.establecerLista(viaje.viajePeajes, viaje.id, this.indiceSeleccionado);
+        this.viajeTramoComponente.establecerLista(respuesta.viajeTramos, respuesta.id, this.indiceSeleccionado);
+        this.viajeCombustibleComponente.establecerLista(respuesta.viajeCombustibles, respuesta.id, this.indiceSeleccionado);
+        this.viajeEfectivoComponente.establecerLista(respuesta.viajeEfectivos, respuesta.id, this.indiceSeleccionado);
+        this.viajeInsumoComponente.establecerLista(respuesta.viajeInsumos, respuesta.id, this.indiceSeleccionado);
+        this.viajeGastoComponente.establecerLista(respuesta.viajeGastos, respuesta.id, this.indiceSeleccionado);
+        this.viajePeajeComponente.establecerLista(respuesta.viajePeajes, respuesta.id, this.indiceSeleccionado);
         this.loaderService.hide();
       },
       err => {
@@ -386,7 +439,6 @@ export class ViajeComponent implements OnInit {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
       this.resultados = [];
     }
     switch (id) {
@@ -484,7 +536,6 @@ export class ViajeComponent implements OnInit {
   //Finaliza un viaje
   public finalizar(): void {
     this.reestablecerFormulario();
-    this.autocompletado.reset();
     this.obtenerSiguienteId();
     this.establecerValoresPorDefecto();
     this.viajeTramoComponente.finalizar();
@@ -559,19 +610,17 @@ export class ViajeComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.autocompletado.setValue(elemento);
     this.formularioViaje.patchValue(elemento);
     this.establecerValoresPorDefecto();
-    this.cambioAutocompletado();
+    this.establecerViaje(elemento.id);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     // this.appService.setViajeCabecera(elemento);
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.autocompletado.setValue(elemento);
     this.formularioViaje.patchValue(elemento);
     this.establecerValoresPorDefecto();
-    this.cambioAutocompletado();
+    this.establecerViaje(elemento.id);
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
@@ -628,12 +677,38 @@ export class ViajeComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Guias de Servicio',
+      nombre: 'Guías de Servicio',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
+  }
+}
+// Componente ListarViajesDialogo
+@Component({
+  selector: 'listar-viajes-dialogo',
+  templateUrl: './listar-viajes-dialogo.component.html',
+  styleUrls: ['./viaje.component.css']
+})
+export class ListarViajesDialogo {
+  //Define las columnas de la tabla
+  public columnas: string[] = ['id', 'empresa', 'sucursal', 'fecha', 'vehiculo', 'remolque', 'chofer', 'seleccionar'];
+  //Define la lista de dadores-destinatarios
+  public listaCompleta = new MatTableDataSource([]);
+  //Define el ordenador
+  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  //Define el paginador
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<ListarViajesDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  ngOnInit() {
+    this.listaCompleta = new MatTableDataSource(this.data.lista);
+    this.listaCompleta.sort = this.sort;
+    this.listaCompleta.paginator = this.paginator;
+  }
+  public cerrar(): void {
+    this.dialogRef.close();
   }
 }
