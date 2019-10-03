@@ -185,7 +185,7 @@
                         <div class="col-md-2">
                             <div class="form-group has-float-label">
                                 <label for="idAlicuotaIva" class="tamanio-label">Alícuota IVA</label>
-                                <mat-select id="idAlicuotaIva" class="form-control form-control-sm"
+                                <mat-select id="idAlicuotaIva" class="form-control form-control-sm number-right"
                                     formControlName="alicuotaIva" [compareWith]="compareFn"
                                     (blur)="calcularImporteIVA()">
                                     <mat-option *ngFor="let item of afipAlicuotasIva" [value]="item"

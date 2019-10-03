@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>AREA</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -24,7 +24,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idCodigo" class="tamanio-label">Código</label>
-          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
+          <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm number-right" readonly>
         </div>
         <div class="form-group has-float-label">
           <label id="labelNombre" for="idNombre" class="tamanio-label">Nombre *</label>
@@ -32,7 +32,7 @@
             class="form-control form-control-sm" [readonly]="soloLectura"
             (ngModelChange)="cambioCampo('idNombre', 'labelNombre')" maxlength="45">
         </div>
-        <button id="idBoton" *ngIf="mostrarBoton && !show" class="btn btn-primary" type="button" formnovalidate
+        <button id="idBoton" *ngIf="mostrarBoton && !show" class="btn btn-primary btn-sm" type="button" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
           {{pestaniaActual}}
         </button>

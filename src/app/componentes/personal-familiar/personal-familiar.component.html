@@ -4,7 +4,7 @@
             <nav mat-tab-nav-bar>
                 <a mat-tab-link disabled>FAMILIAR PERSONAL</a>
                 <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-                    (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+                    (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
             </nav>
         </div>
     </div>
@@ -20,7 +20,8 @@
                                 <input id="idPersonal" class="form-control form-control-sm color-busqueda" type="text"
                                     matInput [formControl]="formulario.get('personal')" [matAutocomplete]="autoPersonal"
                                     autocomplete="off" (blur)="verificarSeleccion(formulario.get('personal'))">
-                                <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)">
+                                <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayF.bind(this)"
+                                (optionSelected)="cambioAutocompletado()">
                                     <mat-option *ngFor="let item of resultadosPersonal" [value]="item">
                                         {{item.alias}}
                                     </mat-option>
@@ -38,9 +39,9 @@
                             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
                                 <label for="idAutocompletado" class="tamanio-label">Familiar Personal</label>
                                 <mat-select id="idAutocompletado" class="form-control form-control-sm"
-                                    [formControl]="familiar" [compareWith]="compareFn">
+                                    [formControl]="familiar" [compareWith]="compareFn" (selectionChange)="cambioFamiliarPersonal()">
                                     <mat-option *ngFor="let item of personasFamiliares" [value]="item"
-                                        (onSelectionChange)="formulario.patchValue(item)">
+                                        >
                                         {{item.nombre}}
                                     </mat-option>
                                 </mat-select>
@@ -264,7 +265,7 @@
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="LEGAJO">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Legajo-Personal</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                    <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
                 </ng-container>
                 <ng-container matColumnDef="FAMILIAR">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Familiar</th>
@@ -284,7 +285,7 @@
                 </ng-container>
                 <ng-container matColumnDef="CUIL">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuil</th>
-                    <td mat-cell *matCellDef="let elemento">{{elemento.cuil}}</td>
+                    <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.cuil}}</td>
                 </ng-container>
                 <ng-container matColumnDef="LUGAR_NACIMIENTO">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Lugar de Nacimiento</th>

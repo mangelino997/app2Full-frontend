@@ -156,7 +156,7 @@
             <ng-container matColumnDef="PDF">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>PDF</th>
               <td mat-cell *matCellDef="let elemento" (click)="verPDFTabla(elemento)">
-                <span class="cursor-color">{{(elemento.pdf?elemento.pdf.nombre:'-')}}</span></td>
+                <span class="cursor-color">{{(elemento.pdf? elemento.pdf.nombre:'-')}}</span></td>
             </ng-container>
             <ng-container matColumnDef="EDITAR" stickyEnd>
               <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"

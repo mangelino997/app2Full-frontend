@@ -40,12 +40,8 @@ export class VencimientosChoferesComponent implements OnInit {
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
-  //Define la opcion seleccionada
-  public opcionSeleccionada: number = null;
   //Define la lista de tipos de documentos
   public tiposDocumentos: Array<any> = [];
-  //Define la opcion activa
-  public botonOpcionActivo: boolean = null;
   //Define la lista de resultados de busqueda
   public resultados: Array<any> = [];
   //Define la lista de resultados de busqueda para el campo Personal
@@ -60,16 +56,8 @@ export class VencimientosChoferesComponent implements OnInit {
   public autocompletado: FormControl = new FormControl();
   //Define el form control para las busquedas
   public tipoDocumento: FormControl = new FormControl();
-  //Define la nacionalidad de nacimiento
-  public nacionalidadNacimiento: FormControl = new FormControl();
-  //Define la lista de personales
-  public personales: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
-  //Define si es o no chofer 
-  public chofer: string = '';
-  //Define si es o no chofer larga distancia
-  public choferLargaDistancia: string = '';
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define la lista de tipos de imagenes
@@ -109,7 +97,6 @@ export class VencimientosChoferesComponent implements OnInit {
         res => {
           this.pestanias = res.json();
           this.activeLink = this.pestanias[0].nombre;
-          this.loaderService.hide();
         },
         err => {
         }
@@ -117,11 +104,9 @@ export class VencimientosChoferesComponent implements OnInit {
     //Define el Formulario
     this.formulario = this.personal.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Actualizar', 0);
+    this.seleccionarPestania(1, 'Actualizar');
     //Obtiene la lista de tipos de documentos
     this.listarTiposDocumentos();
-    //Obtiene la lista de Choferes
-    this.listar();
     //Deshabilita los campos de es chofer y es chofer larga distancia 
     this.formulario.get('esChofer').disable();
     this.formulario.get('esChoferLargaDistancia').disable();
@@ -161,22 +146,16 @@ export class VencimientosChoferesComponent implements OnInit {
     );
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.listar();
-    this.reestablecerFormulario(undefined);
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
+    this.listar();
     switch (id) {
-      case 1:
-        this.establecerEstadoCampos(false, 2);
+      case 2:
         this.establecerValoresPestania(nombre, true, true, false);
         break;
-      case 2:
-        this.establecerEstadoCampos(true, 3);
+      case 3:
         this.establecerValoresPestania(nombre, true, false, true);
         break;
       case 5:
@@ -189,27 +168,9 @@ export class VencimientosChoferesComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
-    this.autocompletadoListar.setValue(undefined);
+    this.autocompletado.reset();
+    this.autocompletadoListar.reset();
     this.vaciarListas();
-  }
-  //Establece el estado de los campos
-  private establecerEstadoCampos(estado, opcionPestania) {
-    if (estado) {
-      this.formulario.get('vtoPsicoFisico').enable();
-      this.formulario.get('vtoCurso').enable();
-      this.formulario.get('vtoCursoCargaPeligrosa').enable();
-      this.formulario.get('vtoLicenciaConducir').enable();
-      this.formulario.get('vtoLINTI').enable();
-      this.formulario.get('vtoLibretaSanidad').enable();
-    } else {
-      this.formulario.get('vtoPsicoFisico').disable();
-      this.formulario.get('vtoCurso').disable();
-      this.formulario.get('vtoCursoCargaPeligrosa').disable();
-      this.formulario.get('vtoLicenciaConducir').disable();
-      this.formulario.get('vtoLINTI').disable();
-      this.formulario.get('vtoLibretaSanidad').disable();
-    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton) {
@@ -217,15 +178,7 @@ export class VencimientosChoferesComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarListas();
-    if (soloLectura) {
-      this.formulario.get('vtoPsicoFisico').disable();
-      this.formulario.get('vtoCurso').disable();
-      this.formulario.get('vtoCursoCargaPeligrosa').disable();
-      this.formulario.get('vtoLicenciaConducir').disable();
-      this.formulario.get('vtoLINTI').disable();
-      this.formulario.get('vtoLibretaSanidad').disable();
-    }
+    soloLectura? this.formulario.disable() : this.formulario.enable();
     setTimeout(function () {
       document.getElementById('idAutocompletado').focus();
     }, 20);
@@ -246,34 +199,22 @@ export class VencimientosChoferesComponent implements OnInit {
     this.personalServicio.obtenerPorId(id).subscribe(
       res => {
         let elemento = res.json();
-        this.formulario.setValue(elemento);
+        this.formulario.patchValue(elemento);
         this.establecerFotoYPdfs(elemento);
       },
       err => {
       }
     );
   }
-  //Establece la foto y pdf (activar consultar/actualizar)
+  //Establece la foto y pdf (actilet consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
-    this.autocompletado.setValue(elemento);
-    if (elemento.foto) {
-      this.formulario.get('foto.datos').setValue(atob(elemento.foto.datos));
-    }
-    if (elemento.pdfLicConducir) {
-      this.formulario.get('pdfLicConducir.datos').setValue(atob(elemento.pdfLicConducir.datos));
-    }
-    if (elemento.pdfLinti) {
-      this.formulario.get('pdfLinti.datos').setValue(atob(elemento.pdfLinti.datos));
-    }
-    if (elemento.pdfLibSanidad) {
-      this.formulario.get('pdfLibSanidad.datos').setValue(atob(elemento.pdfLibSanidad.datos));
-    }
-    if (elemento.pdfDni) {
-      this.formulario.get('pdfDni.datos').setValue(atob(elemento.pdfDni.datos));
-    }
-    if (elemento.pdfAltaTemprana) {
-      this.formulario.get('pdfAltaTemprana.datos').setValue(atob(elemento.pdfAltaTemprana.datos));
-    }
+    elemento.foto? elemento.foto.datos = atob(elemento.foto.datos): '';
+    elemento.pdfLicConducir? elemento.pdfLicConducir.datos = atob(elemento.pdfLicConducir.datos): '';
+    elemento.pdfLinti? elemento.pdfLinti.datos = atob(elemento.pdfLinti.datos): '';
+    elemento.pdfLibSanidad? elemento.pdfLibSanidad.datos = atob(elemento.pdfLibSanidad.datos): '';
+    elemento.pdfDni? elemento.pdfDni.datos = atob(elemento.pdfDni.datos): '';
+    elemento.pdfAltaTemprana? elemento.pdfAltaTemprana.datos = atob(elemento.pdfAltaTemprana.datos): '';
+    this.formulario.patchValue(elemento);
     this.cambioEsChofer();
   }
   //Al cambiar elemento de select esChofer
@@ -389,19 +330,10 @@ export class VencimientosChoferesComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(resultado => { });
   }
-  //Funcion para determina que accion se requiere (Actualizar)
-  public accion(indice) {
-    switch (indice) {
-      case 3:
-        this.actualizar();
-        break;
-      default:
-        break;
-    }
-  }
   //Actualiza un registro
-  private actualizar() {
+  public actualizar() {
     this.loaderService.show();
+    this.formulario.enable();
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.personalServicio.actualizar(this.formulario.value).then(
       res => {
@@ -414,8 +346,8 @@ export class VencimientosChoferesComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        this.toastr.error(respuesta.mensaje);
+        let error = err.json();
+        this.toastr.error(error.mensaje);
         document.getElementById("idVtoCurso").focus();
         this.loaderService.hide();
       }
@@ -423,13 +355,15 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(1, this.pestanias[0].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.obtenerPorId(elemento.id);
+    this.autocompletado.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.obtenerPorId(elemento.id);
+    this.autocompletado.setValue(elemento);
   }
 
   //Define el mostrado de datos y comparacion en campo select
@@ -464,12 +398,12 @@ export class VencimientosChoferesComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

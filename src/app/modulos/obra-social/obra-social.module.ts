@@ -9,6 +9,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ObraSocialComponent } from 'src/app/componentes/obra-social/obra-social.component';
 import { ObraSocialService } from 'src/app/servicios/obra-social.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { TextMaskModule } from 'angular2-text-mask';
+import { ObraSocial } from 'src/app/modelos/obraSocial';
 
 @NgModule({
   declarations: [
@@ -27,11 +29,13 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    TextMaskModule
   ],
   providers: [
     ObraSocialService,
-    SubopcionPestaniaService
+    SubopcionPestaniaService,
+    ObraSocial
   ]
 })
 export class ObraSocialModule { }

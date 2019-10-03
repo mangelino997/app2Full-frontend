@@ -76,9 +76,9 @@ export class PersonalFamiliarComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['LEGAJO', 'FAMILIAR', 'APELLIDO', 'NOMBRE', 'FECHA_NACIMIENTO', 'CUIL', 'LUGAR_NACIMIENTO', 'NACIONALIDAD', 'SEXO', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define la lista de personales
   public personales: Array<any> = [];
   //Define la lista para los Familiares del Personal que se seleccione
@@ -88,12 +88,12 @@ export class PersonalFamiliarComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Constructor
-  constructor(private servicio: PersonalFamiliarService, private personalServicio: PersonalService, 
+  constructor(private servicio: PersonalFamiliarService, private personalServicio: PersonalService,
     private subopcionPestaniaService: SubopcionPestaniaService,
     private personalFamiliar: PersonalFamiliar, private appServicio: AppService,
     private toastr: ToastrService, private localidadServicio: LocalidadService, private sexoServicio: SexoService,
-    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService, 
-    private anio: FechaService, private mes: MesService, private tipoFamiliar: TipoFamiliarService, 
+    private loaderService: LoaderService, private tipoDocumentoServicio: TipoDocumentoService,
+    private anio: FechaService, private mes: MesService, private tipoFamiliar: TipoFamiliarService,
     private reporteServicio: ReporteService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -144,7 +144,7 @@ export class PersonalFamiliarComponent implements OnInit {
       }
     })
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(15, 0);
     //Obtiene la lista de sexos
@@ -250,12 +250,19 @@ export class PersonalFamiliarComponent implements OnInit {
   public mascararEnteros(intLimite) {
     return this.appServicio.mascararEnteros(intLimite);
   }
-  //Cambio en elemento autocompletado
+  //Maneja el cambio en el autocompletado
   public cambioAutocompletado() {
-    let elemAutocompletado = this.autocompletado.value;
-    this.formulario.setValue(elemAutocompletado);
-    this.nacionalidadNacimiento.setValue(elemAutocompletado.localidadNacimiento.provincia.pais.nombre);
-    this.formulario.get('fechaNacimiento').setValue(elemAutocompletado.fechaNacimiento.substring(0, 10));
+    // let elemento = this.autocompletado.value;
+    // this.formulario.patchValue(elemento);
+    // this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
+    // this.formulario.get('fechaNacimiento').setValue(elemento.fechaNacimiento.substring(0, 10));
+    if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 3 || this.indiceSeleccionado == 4) {
+      this.obtenerFamiliaresPersonal();
+    }
+  }
+  //Maneja el cambio en el campo Familiar Personal
+  public cambioFamiliarPersonal(){
+    this.formulario.patchValue(this.familiar.value);
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -269,14 +276,10 @@ export class PersonalFamiliarComponent implements OnInit {
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -367,17 +370,18 @@ export class PersonalFamiliarComponent implements OnInit {
     this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
+        console.log(res.json());
         var respuesta = res.json();
         this.reestablecerFormulario(respuesta.id);
         this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
-          document.getElementById('idApellido').focus();
+        document.getElementById('idApellido').focus();
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
       err => {
         let error = err;
-        document.getElementById("idApellido").focus();
-        this.toastr.error(error.mensaje);
+        this.lanzarError(error);
+        this.loaderService.hide();
       }
     );
   }
@@ -388,43 +392,43 @@ export class PersonalFamiliarComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
-            document.getElementById('idAutocompletado').focus();
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
         let error = err;
-        if (error.codigo == 11007) {
-          this.toastr.error(error.mensaje);
-          setTimeout(function () {
-            document.getElementById("labelCuil").classList.add('label-error');
-            document.getElementById("idCuil").classList.add('is-invalid');
-            document.getElementById("idCuil").focus();
-          }, 20);
-        }
-        if (error.codigo == 11012) {
-          this.toastr.error(error.mensaje);
-          setTimeout(function () {
-            document.getElementById("labelCuil").classList.add('label-error');
-            document.getElementById("idCuil").classList.add('is-invalid');
-            document.getElementById("idCuil").focus();
-          }, 20);
-        }
+        this.lanzarError(error);
+        this.loaderService.hide();
       }
     );
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        let error = err;
+        this.lanzarError(error);
+        this.loaderService.hide();
+      }
+    );
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
-    }
-    if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 3 || this.indiceSeleccionado == 4) {
-      this.obtenerFamiliaresPersonal();
     }
   }
   //Obtiene una lista de familiares del Personal seleccionado
@@ -441,14 +445,15 @@ export class PersonalFamiliarComponent implements OnInit {
       }
     )
   }
+
   //Reestablece los campos agregar
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.familiar.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
-    this.autocompletadoListar.setValue(undefined);
-    this.nacionalidadNacimiento.setValue(undefined);
+    this.autocompletado.reset();
+    this.autocompletadoListar.reset();
+    this.nacionalidadNacimiento.reset();
     this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
@@ -464,10 +469,17 @@ export class PersonalFamiliarComponent implements OnInit {
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
     var respuesta = err;
-    this.formulario.get('cuil').setValue(null);
-    document.getElementById("labelCuil").classList.add('label-error');
-    document.getElementById("idCuil").classList.add('is-invalid');
-    document.getElementById("idCuil").focus();
+    try {
+      if (respuesta.codigo == 11010) {
+        document.getElementById("labelNumeroDocumento").classList.add('label-error');
+        document.getElementById("idNumeroDocumento").classList.add('is-invalid');
+        document.getElementById("idNumeroDocumento").focus();
+      } else if (respuesta.codigo == 11012 || respuesta.codigo == 11007) {
+        document.getElementById("labelCuil").classList.add('label-error');
+        document.getElementById("idCuil").classList.add('is-invalid');
+        document.getElementById("idCuil").focus();
+      }
+    } catch (e) { }
     this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels
@@ -519,14 +531,14 @@ export class PersonalFamiliarComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
     this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
     this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
@@ -589,9 +601,9 @@ export class PersonalFamiliarComponent implements OnInit {
     var opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     } else if (keycode == 115) {
       if (opcion < this.opciones[(this.opciones.length - 1)].id) {
@@ -606,18 +618,18 @@ export class PersonalFamiliarComponent implements OnInit {
     let lista = listaCompleta;
     let datos = [];
     lista.forEach(elemento => {
-        let f = {
-          legajo: elemento.id,
-          familiar: elemento.tipoFamiliar.nombre,
-          apellido: elemento.apellido,
-          nombre: elemento.nombre,
-          fecha_nacimiento: elemento.fechaNacimiento,
-          cuil: elemento.cuil,
-          lugar_nacimiento: elemento.localidadNacimiento.nombre,
-          nacionalidad: elemento.localidadNacimiento.provincia.pais.nombre,
-          sexo: elemento.sexo.nombre
-        }
-        datos.push(f);
+      let f = {
+        legajo: elemento.id,
+        familiar: elemento.tipoFamiliar.nombre,
+        apellido: elemento.apellido,
+        nombre: elemento.nombre,
+        fecha_nacimiento: elemento.fechaNacimiento,
+        cuil: elemento.cuil,
+        lugar_nacimiento: elemento.localidadNacimiento.nombre,
+        nacionalidad: elemento.localidadNacimiento.provincia.pais.nombre,
+        sexo: elemento.sexo.nombre
+      }
+      datos.push(f);
     });
     return datos;
   }
@@ -632,5 +644,5 @@ export class PersonalFamiliarComponent implements OnInit {
       columnas: this.columnas
     }
     this.reporteServicio.abrirDialogo(datos);
-  } 
+  }
 }

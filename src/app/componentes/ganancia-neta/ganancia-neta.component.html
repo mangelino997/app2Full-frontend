@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-    <div class="col-md-12 text-center">
+    <div class="col-md-9 text-center">
       <h5>{{pestaniaActual}} Ganancia Neta</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row" *ngIf="indiceSeleccionado > 1">
@@ -28,7 +28,7 @@
           </div>
         </div>
         <div class="row" [hidden]="indiceSeleccionado == 2 || indiceSeleccionado == 5">
-          <div class="col-md-2" *ngIf="indiceSeleccionado == 1">
+          <div class="col" *ngIf="indiceSeleccionado == 1">
             <div class="form-group has-float-label">
               <label for="idAnioFiscal" class="tamanio-label">Año Fiscal *</label>
               <mat-select id="idAnioFiscal" class="form-control form-control-sm" formControlName="anio"
@@ -39,7 +39,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="labelImporte" for="idImporte" class="descripcion-label">Ganancia Neta Acumulada *</label>
               <input id="idImporte" type="text" formControlName="importe" autocomplete="off"
@@ -47,7 +47,7 @@
                 [textMask]="mascararImporte(10)" (blur)="controlImporte()" placeholder="$0.00">
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col">
             <div class="form-group has-float-label">
               <label id="labelImporteFijo" for="idImporteFijo" class="descripcion-label">Importe Fijo a Pagar *</label>
               <input id="idImporteFijo" type="text" formControlName="importeFijo" autocomplete="off"
@@ -66,19 +66,19 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-1" *ngIf="mostrarBoton && !show && !idMod">
+          <div class="col" *ngIf="mostrarBoton && !show && !idMod">
             <button id="idBotonPestania" mat-raised-button color="primary" formnovalidate
               (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid" style="width: 100%;">
               {{pestaniaActual}}
             </button>
           </div>
-          <div class="col-md-1" *ngIf="idMod">
+          <div class="col" *ngIf="idMod">
             <button id="idBotonActualizar" mat-raised-button color="primary" formnovalidate (click)="actualizar()"
               [disabled]="!formulario.valid" style="width: 100%;">
               Actualizar
             </button>
           </div>
-          <div class="col-md-1" *ngIf="idMod">
+          <div class="col" *ngIf="idMod">
             <button id="idBotonCancelar" mat-raised-button formnovalidate (click)="cancelar()" style="width: 100%;">
               Cancelar
             </button>
@@ -94,19 +94,19 @@
               </ng-container>
               <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
               </ng-container>
               <ng-container matColumnDef="gananciaNetaAcumulada">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Ganancia Neta Acumulada</th>
-                <td mat-cell *matCellDef="let elemento">$ {{elemento.importe | number: '1.2-2'}}</td>
+                <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.importe | number: '1.2-2'}}</td>
               </ng-container>
               <ng-container matColumnDef="importeFijo">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Fijo a Pagar</th>
-                <td mat-cell *matCellDef="let elemento">$ {{elemento.importeFijo | number: '1.2-2'}}</td>
+                <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.importeFijo | number: '1.2-2'}}</td>
               </ng-container>
               <ng-container matColumnDef="alicuotaSinExcedente">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Alicuota a Pagar s/Exced.</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.afipAlicuotaGanancia.alicuota | number: '1.2-2'}}%
+                <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.afipAlicuotaGanancia.alicuota | number: '1.2-2'}}%
                 </td>
               </ng-container>
               <ng-container matColumnDef="mod">
@@ -141,15 +141,19 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-12">
+    <div class="col-md-9">
       <form [formGroup]="formularioFiltro" class="contenedor">
         <br>
         <div class="row">
           <div class="col-md-2">
             <div class="form-group has-float-label">
-              <label id="labelAnioListar" for="idAnioListar" class="descripcion-label">Año Fiscal *</label>
-              <input id="idAnioListar" type="number" formControlName="anio" autocomplete="off"
-                class="form-control form-control-sm" (blur)="cambioAnioFiltro()">
+              <label for="labelAnioListar" for="idAnioListar" class="tamanio-label">Año Fiscal *</label>
+              <mat-select id="idAnioListar" class="form-control form-control-sm number-right" formControlName="anio"
+                [compareWith]="compareF" (selectionChange)="cambioAnioFiltro()">
+                <mat-option *ngFor="let item of anioFiscal" [value]="item">
+                  {{item}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
           <div class="col-md-2">
@@ -186,14 +190,6 @@
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
-      <br>
-      <div class="row">
-        <div class="col-md-10"></div>
-        <div class="col-md-1">
-          <button mat-raised-button color="primary" (click)="abrirReporte()" style="width: 100%;">Reporte</button>
-        </div>
-      </div>
-      <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="ANIO_MES">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
@@ -205,29 +201,35 @@
         </ng-container>
         <ng-container matColumnDef="GANANCIA_NETA_DE_MAS">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Ganancia Neta de más de $</th>
-          <td mat-cell *matCellDef="let elemento; let i=index">
+          <td mat-cell *matCellDef="let elemento; let i=index" class="number-right">
             <span *ngIf="i == 0">$0.00</span>
             <span *ngIf="i > 0">${{resultadosPorFiltro[i-1].importe | number: '1.2-2'}}</span>
           </td>
         </ng-container>
         <ng-container matColumnDef="GANANCIA_NETA_A">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Ganancia Neta A $</th>
-          <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}</td>
         </ng-container>
         <ng-container matColumnDef="IMPORTE_FIJO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Fijo a Pagar</th>
-          <td mat-cell *matCellDef="let elemento">${{elemento.importeFijo | number: '1.2-2'}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importeFijo | number: '1.2-2'}}</td>
         </ng-container>
         <ng-container matColumnDef="ALICUOTA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Alicuota a Pagar s/Exced.</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.afipAlicuotaGanancia.alicuota}}%</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.afipAlicuotaGanancia.alicuota}}%</td>
         </ng-container>
         <ng-container matColumnDef="EXCEDENTE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Excedente de $</th>
-          <td mat-cell *matCellDef="let elemento; let i=index">
+          <td mat-cell *matCellDef="let elemento; let i=index" class="number-right">
             <span *ngIf="i == 0">$0.00</span>
             <span *ngIf="i > 0">${{resultadosPorFiltro[i-1].importe | number: '1.2-2'}}</span>
           </td>
+        </ng-container>
+        <ng-container matColumnDef="EDITAR" stickyEnd>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>
+            <button mat-raised-button color="primary" (click)="abrirReporte()" style="width: 100%;">Reporte</button>
+          </th>
+          <td mat-cell *matCellDef="let elemento" class="last-col-end"></td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columnasListar"></tr>
         <tr mat-row *matRowDef="let row; columns: columnasListar;"></tr>

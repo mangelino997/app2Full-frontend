@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>PERSONAL</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -173,13 +173,13 @@
               <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLicConducir')"
                 #fileInputLicCond />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInputLicCond.click()"
-                [disabled]="!btnPdfLicConducir || indiceSeleccionado == 1" matTooltip="Adjuntar Licencia de Conducir">
+                [disabled]="!btnPdfLicConducir || indiceSeleccionado == 2" matTooltip="Adjuntar Licencia de Conducir">
                 <i class="material-icons" *ngIf="!formulario.get('pdfLicConducir.nombre').value">cloud_upload</i>
                 <i class="material-icons" *ngIf="formulario.get('pdfLicConducir.nombre').value"
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLicConducir.nombre')"
-                [disabled]="!btnPdfLicConducir || !formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 1"
+                [disabled]="!btnPdfLicConducir || !formulario.get('pdfLicConducir.nombre').value || indiceSeleccionado == 2"
                 style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
@@ -203,13 +203,13 @@
             <div class="row justify-content-center">
               <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLinti')" #fileInputLINTI />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInputLINTI.click()"
-                [disabled]="!btnPdflinti || indiceSeleccionado == 1 " matTooltip="Adjuntar LINTI">
+                [disabled]="!btnPdflinti || indiceSeleccionado == 2 " matTooltip="Adjuntar LINTI">
                 <i class="material-icons" *ngIf="!formulario.get('pdfLinti.nombre').value">cloud_upload</i>
                 <i class="material-icons" *ngIf="formulario.get('pdfLinti.nombre').value"
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLinti.nombre')"
-                [disabled]="!btnPdflinti || !formulario.get('pdfLinti.nombre').value || indiceSeleccionado == 1"
+                [disabled]="!btnPdflinti || !formulario.get('pdfLinti.nombre').value || indiceSeleccionado == 2"
                 style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
@@ -234,13 +234,13 @@
               <input style="display: none;" type="file" (change)="readPdfURL($event, 'pdfLibSanidad')"
                 #fileInputLibSanidad />
               <button class="btn-height" mat-raised-button color="primary" (click)="fileInputLibSanidad.click()"
-                [disabled]="!btnPdfLibSanidad || indiceSeleccionado == 1" matTooltip="Adjuntar Libreta de Sanidad">
+                [disabled]="!btnPdfLibSanidad || indiceSeleccionado == 2" matTooltip="Adjuntar Libreta de Sanidad">
                 <i class="material-icons" *ngIf="!formulario.get('pdfLibSanidad.nombre').value">cloud_upload</i>
                 <i class="material-icons" *ngIf="formulario.get('pdfLibSanidad.nombre').value"
                   style="color: lightgreen">cloud_done</i>
               </button>
               <button class="btn-height" mat-raised-button color="warn" (click)="eliminarPdf('pdfLibSanidad.nombre')"
-                [disabled]="!btnPdfLibSanidad || !formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 1"
+                [disabled]="!btnPdfLibSanidad || !formulario.get('pdfLibSanidad.nombre').value || indiceSeleccionado == 2"
                 style="width: 60px;" matTooltip="Quitar">
                 <i class="material-icons">close</i>
               </button>
@@ -255,7 +255,7 @@
         <div class="row">
           <div class="centrar">
             <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+              (click)="actualizar()" [disabled]="!formulario.valid">
               {{pestaniaActual}}
             </button>
             <div class="row" *ngIf="show">

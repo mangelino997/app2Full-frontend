@@ -309,7 +309,7 @@
                 </ng-container>
                 <ng-container matColumnDef="IMPORTE">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                  <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="OBSERVACIONES">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>

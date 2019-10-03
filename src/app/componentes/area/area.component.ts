@@ -86,9 +86,8 @@ export class AreaComponent implements OnInit {
       nombre: new FormControl('', [Validators.required, Validators.maxLength(45)])
     });
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista completa de registros
-    // this.listar();
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado(elemento) {
@@ -113,18 +112,14 @@ export class AreaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario(undefined);
     /*
     * Se vacia el formulario solo cuando se cambia de pestania, no cuando
     * cuando se hace click en ver o mod de la pestania lista
     */
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -209,9 +204,9 @@ export class AreaComponent implements OnInit {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
     );
   }
@@ -234,20 +229,42 @@ export class AreaComponent implements OnInit {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
           document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
       }
     );
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        var respuesta = err.json();
+        if (respuesta.codigo == 11002) {
+          document.getElementById("labelNombre").classList.add('label-error');
+          document.getElementById("idNombre").classList.add('is-invalid');
+          document.getElementById("idNombre").focus();
+        }
+        this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
+      }
+    );
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.resultados = [];
   }
   //Manejo de colores de campos y labels
@@ -257,13 +274,13 @@ export class AreaComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
@@ -272,9 +289,9 @@ export class AreaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

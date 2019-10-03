@@ -110,9 +110,9 @@ export class PersonalComponent implements OnInit {
   //Define la lista de tipos de imagenes
   private tiposImagenes = ['image/png', 'image/jpg', 'image/jpeg'];
   //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -654,9 +654,7 @@ export class PersonalComponent implements OnInit {
           respuesta.then(data => {
             this.reestablecerFormulario(data.id);
             this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
-            setTimeout(function () {
-              document.getElementById('idApellido').focus();
-            }, 20);
+            document.getElementById('idApellido').focus();
             this.toastr.success(data.mensaje);
           },
             err => {
@@ -689,10 +687,8 @@ export class PersonalComponent implements OnInit {
         var respuesta = res.json();
         if (res.status == 200) {
           respuesta.then(data => {
-            this.reestablecerFormulario(data.id);
-            setTimeout(function () {
-              document.getElementById('idAutocompletado').focus();
-            }, 20);
+            this.reestablecerFormulario(undefined);
+            document.getElementById('idAutocompletado').focus();
             this.toastr.success(data.mensaje);
             this.loaderService.hide();
           })
@@ -713,9 +709,7 @@ export class PersonalComponent implements OnInit {
         if (res.status == 200) {
           this.reestablecerFormulario(undefined);
           this.toastr.success(respuesta.mensaje);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
+          document.getElementById('idAutocompletado').focus();
         }
         this.loaderService.hide();
       },
@@ -734,12 +728,9 @@ export class PersonalComponent implements OnInit {
   }
   //Reestablece los campos agregar
   private reestablecerFormulario(id) {
-    let foto = this.formulario.get('foto').value;
     this.formulario.reset();
-    this.formulario.get('id').setValue(id);
-    this.formulario.get('foto').setValue(foto);
     this.autocompletado.reset();
-    this.nacionalidadNacimiento.setValue(undefined);
+    this.nacionalidadNacimiento.reset();
     this.resultados = [];
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
@@ -1011,24 +1002,12 @@ export class PersonalComponent implements OnInit {
   }
   //Establece la foto y pdf (activar consultar/actualizar)
   private establecerFotoYPdfs(elemento): void {
-    if (elemento.foto) {
-      elemento.foto.datos = atob(elemento.foto.datos);
-    }
-    if (elemento.pdfLicConducir) {
-      elemento.pdfLicConducir.datos = atob(elemento.pdfLicConducir.datos);
-    }
-    if (elemento.pdfLinti) {
-      elemento.pdfLinti.datos = atob(elemento.pdfLinti.datos);
-    }
-    if (elemento.pdfLibSanidad) {
-      elemento.pdfLibSanidad.datos = atob(elemento.pdfLibSanidad.datos);
-    }
-    if (elemento.pdfDni) {
-      elemento.pdfDni.datos = atob(elemento.pdfDni.datos);
-    }
-    if (elemento.pdfAltaTemprana) {
-      elemento.pdfAltaTemprana.datos = atob(elemento.pdfAltaTemprana.datos);
-    }
+    elemento.foto ? elemento.foto.datos = atob(elemento.foto.datos) : '';
+    elemento.pdfLicConducir ? elemento.pdfLicConducir.datos = atob(elemento.pdfLicConducir.datos) : '';
+    elemento.pdfLinti ? elemento.pdfLinti.datos = atob(elemento.pdfLinti.datos) : '';
+    elemento.pdfLibSanidad ? elemento.pdfLibSanidad.datos = atob(elemento.pdfLibSanidad.datos) : '';
+    elemento.pdfDni ? elemento.pdfDni.datos = atob(elemento.pdfDni.datos) : '';
+    elemento.pdfAltaTemprana ? elemento.pdfAltaTemprana.datos = atob(elemento.pdfAltaTemprana.datos) : '';
     this.formulario.patchValue(elemento);
     this.establecerValoresPersonal();
     this.cambioEsChofer();

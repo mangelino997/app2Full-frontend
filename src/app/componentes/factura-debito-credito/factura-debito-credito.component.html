@@ -242,15 +242,15 @@
                 </ng-container>
                 <ng-container matColumnDef="cantidad">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.cantidad | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.cantidad | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="precioUnitario">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>P.U</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento.precioUnitario | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.precioUnitario | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="importeNetoGravado">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Neto Gravado</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeNetoGravado | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.importeNetoGravado | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="alicuotaIva">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Alícuota IVA</th>
@@ -258,15 +258,15 @@
                 </ng-container>
                 <ng-container matColumnDef="IVA">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>IVA</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeIva | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.importeIva | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="importeNoGravado">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>No Gravado</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeNoGravado | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.importeNoGravado | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="importeExento">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Exento</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeExento | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.importeExento | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="impuestoInterno">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. Interno</th>
@@ -274,7 +274,7 @@
                 </ng-container>
                 <ng-container matColumnDef="importeITC">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Imp. ITC</th>
-                  <td mat-cell *matCellDef="let elemento">$ {{elemento.importeITC | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.importeITC | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="cuentaContable">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Cont.</th>
@@ -537,7 +537,7 @@
                 <ng-container matColumnDef="EDITAR" stickyEnd>
                   <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
                       (click)="abrirReporte()">Reporte</button></th>
-                  <td mat-cell *matCellDef="let elemento">
+                  <td mat-cell *matCellDef="let elemento" class="last-col-end">
                     <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
                       matTooltip="Consultar" matTooltipPosition="above">
                       <mat-icon>search</mat-icon>

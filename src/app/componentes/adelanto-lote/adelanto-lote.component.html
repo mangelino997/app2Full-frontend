@@ -149,19 +149,19 @@
                 </ng-container>
                 <ng-container matColumnDef="lote" >
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Lote</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.numeroLote}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.numeroLote}}</td>
                 </ng-container>
                 <ng-container matColumnDef="importeAdelanto" >
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Adelanto</th>
-                  <td mat-cell *matCellDef="let elemento">${{elemento.importe | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="totalLegajos" >
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Legajos</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.legajos}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.legajos}}</td>
                 </ng-container>
                 <ng-container matColumnDef="importeTotal" >
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Total</th>
-                  <td mat-cell *matCellDef="let elemento">${{(elemento.importe*elemento.legajos) | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">${{(elemento.importe*elemento.legajos) | number: '1.2-2'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="anular" sticky>
                   <th mat-header-cell *matHeaderCellDef>-</th>

@@ -225,7 +225,7 @@ export class BasicoCategoriaComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idCategoria').focus();
@@ -234,10 +234,8 @@ export class BasicoCategoriaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11017) {
-          this.toastr.error('Error Unicidad Categoría, Mes y Año', respuesta.mensaje + ' Categoría');
-        }
+        let error = err.json();
+        this.lanzarError(error);
         this.loaderService.hide();
       }
     );
@@ -248,7 +246,7 @@ export class BasicoCategoriaComponent implements OnInit {
     this.formulario.enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           this.establecerEstadoCampos(false);
@@ -258,16 +256,42 @@ export class BasicoCategoriaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11017) {
-          this.toastr.error('Error Unicidad Categoría, Mes y Año', respuesta.mensaje + ' Categoría');
-        }
+        let error = err.json();
+        this.lanzarError(error);
         this.loaderService.hide();
       }
     );
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.formulario.enable();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          this.establecerEstadoCampos(false);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        let error = err.json();
+        this.lanzarError(error);
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    let respuesta = err;
+    if (respuesta.codigo == 11017) {
+      this.toastr.error('Error Unicidad Categoría, Mes y Año', respuesta.mensaje + ' Categoría');
+    } else {
+      this.toastr.error(respuesta.mensaje);
+    }
   }
   //Obtiene una lista por categoria y anio
   public listarPorCategoriaYAnio(): void {
@@ -275,21 +299,25 @@ export class BasicoCategoriaComponent implements OnInit {
     let idCategoria = this.formularioListar.get('categoria').value.id;
     let anio = this.formularioListar.get('anio').value;
     this.servicio.listarPorCategoriaYAnio(idCategoria, anio).subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res.json());
-      this.listaCompleta.sortingDataAccessor = (item, property) => {
-        switch (property) {
-          case 'categoria': return item.categoria.nombre;
-          case 'mes': return item.mes.nombre;
-          default: return item[property];
-        }
-      };
+      if (res.json().length > 0) {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sortingDataAccessor = (item, property) => {
+          switch (property) {
+            case 'categoria': return item.categoria.nombre;
+            case 'mes': return item.mes.nombre;
+            default: return item[property];
+          }
+        };
+      } else {
+        this.toastr.error("Sin registros para mostrar.");
+      }
       this.listaCompleta.sort = this.sort;
       this.listaCompleta.paginator = this.paginator;
       this.loaderService.hide();
     })
   }
   //Vacia la lista
-  public vaciarListas(): void {
+  public vaciarListas() {
     this.listaCompleta = new MatTableDataSource([]);
     this.resultados = [];
   }
@@ -348,7 +376,7 @@ export class BasicoCategoriaComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

@@ -363,11 +363,11 @@ export class CuentaBancariaComponent implements OnInit {
     if(cbu){
       let respuesta = this.appService.validarCBU(cbu);
       if(!respuesta) {
-        let err = {codigo: 11010, mensaje: 'CBU Incorrecto!'};
         document.getElementById('idCBU').focus();
         document.getElementById("idCBU").classList.add('label-error');
         document.getElementById("idCBU").classList.add('is-invalid');
-        this.toastr.error(err.mensaje);
+        this.formulario.get('cbu').reset();
+        this.toastr.error("CBU Incorrecto!");
       }else{
         this.cambioCampo('idCBU', 'idCBU');
       }

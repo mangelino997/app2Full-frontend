@@ -662,3 +662,7 @@ tr.mat-footer-row, tr.mat-row {
 .col-id-width {
   max-width: 10px;
 }
+//Corre los elementos (lupa, lapiz) de la columna editar en tablas
+.last-col-end {
+  text-align: end;
+}

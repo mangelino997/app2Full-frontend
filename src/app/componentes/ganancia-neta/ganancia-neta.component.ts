@@ -57,7 +57,7 @@ export class GananciaNetaComponent implements OnInit {
   //Define las columnas de la tabla principal
   public columnas: string[] = ['anio', 'id', 'gananciaNetaAcumulada', 'importeFijo', 'alicuotaSinExcedente', 'mod', 'eliminar'];
   //Define las columnas de la tabla reporte
-  public columnasListar: string[] = ['ANIO_MES', 'GANANCIA_NETA_DE_MAS', 'GANANCIA_NETA_A', 'IMPORTE_FIJO', 'ALICUOTA', 'EXCEDENTE'];
+  public columnasListar: string[] = ['ANIO_MES', 'GANANCIA_NETA_DE_MAS', 'GANANCIA_NETA_A', 'IMPORTE_FIJO', 'ALICUOTA', 'EXCEDENTE', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
