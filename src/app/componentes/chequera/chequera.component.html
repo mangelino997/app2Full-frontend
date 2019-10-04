@@ -3,9 +3,9 @@
     <div class="col" class="centrar">
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CHEQUERA </a>
-        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre" 
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">
-            {{pestania.nombre}}
+        <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">
+          {{pestania.nombre}}
         </a>
       </nav>
     </div>
@@ -25,8 +25,8 @@
         </div>
         <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
           <label for="idChequerasAutocompletado" class="tamanio-label">Chequeras *</label>
-          <mat-select id="idChequerasAutocompletado" class="form-control form-control-sm" [formControl]="chequeraSeleccionada"
-            [compareWith]="compareFn" (selectionChange)="cambioChequera()">
+          <mat-select id="idChequerasAutocompletado" class="form-control form-control-sm"
+            [formControl]="chequeraSeleccionada" [compareWith]="compareFn" (selectionChange)="cambioChequera()">
             <mat-option *ngFor="let item of listaChequerasCuentaBancaria" [value]="item">
               {{item.tipoChequera.nombre}} - Desde: {{item.desde}} - Hasta: {{item.hasta}}
             </mat-option>
@@ -61,13 +61,14 @@
         </div>
         <div class="form-group has-float-label">
           <label id="labelDesde" for="idDesde" class="tamanio-label">Desde *</label>
-          <input id="idDesde" type="text" formControlName="desde" autocomplete="off" (blur)="establecerCerosIzq(formulario.get('desde'), '0000000', -8)"
-            class="form-control form-control-sm number-right" [readonly]="soloLectura">
+          <input id="idDesde" type="text" formControlName="desde" autocomplete="off"
+            (blur)="establecerCerosIzq(formulario.get('desde'), '0000000', -8)"
+            class="form-control form-control-sm number-right" [readonly]="soloLectura" [textMask]="mascararEnteros(8)">
         </div>
         <div class="form-group has-float-label">
           <label id="labelHasta" for="idHasta" class="tamanio-label">Hasta *</label>
           <input id="idHasta" type="text" formControlName="hasta" autocomplete="off" (blur)="validarMayor()"
-            class="form-control form-control-sm number-right" [readonly]="soloLectura">
+            class="form-control form-control-sm number-right" [readonly]="soloLectura" [textMask]="mascararEnteros(8)">
         </div>
         <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
           (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
@@ -101,8 +102,8 @@
         <ng-container matColumnDef="CUENTA_BANCARIA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuenta Bancaria</th>
           <td mat-cell *matCellDef="let elemento">
-            {{elemento.cuentaBancaria.sucursalBanco.banco.nombre}} 
-            - {{elemento.cuentaBancaria.sucursalBanco.nombre}} 
+            {{elemento.cuentaBancaria.sucursalBanco.banco.nombre}}
+            - {{elemento.cuentaBancaria.sucursalBanco.nombre}}
             - {{elemento.cuentaBancaria.numeroCuenta}}
           </td>
         </ng-container>
@@ -112,16 +113,16 @@
         </ng-container>
         <ng-container matColumnDef="DESDE">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Desde</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.desde}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{establecerCerosIzqEnVista(elemento.desde, '0000000', -8)}}</td>
         </ng-container>
         <ng-container matColumnDef="HASTA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Hasta</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.hasta}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{establecerCerosIzqEnVista(elemento.hasta, '0000000', -8)}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
           <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
               (click)="abrirReporte()">Reporte</button></th>
-          <td mat-cell *matCellDef="let elemento">
+          <td mat-cell *matCellDef="let elemento" class="last-col-end">
             <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
@@ -132,11 +133,6 @@
         <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
       </table>
       <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
-    </div>
-    <div class="row">
-      <div class="col-md-1">
-        <button mat-raised-button color="primary" (click)="abrirReporte()"  style="width: 100%;">Reporte</button>
-      </div>
     </div>
   </div>
 </div>

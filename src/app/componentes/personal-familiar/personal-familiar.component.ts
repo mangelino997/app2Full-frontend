@@ -261,7 +261,7 @@ export class PersonalFamiliarComponent implements OnInit {
     }
   }
   //Maneja el cambio en el campo Familiar Personal
-  public cambioFamiliarPersonal(){
+  public cambioFamiliarPersonal() {
     this.formulario.patchValue(this.familiar.value);
   }
   //Funcion para establecer los valores de las pestañas
@@ -370,17 +370,18 @@ export class PersonalFamiliarComponent implements OnInit {
     this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        console.log(res.json());
+        console.log(res);
         var respuesta = res.json();
-        this.reestablecerFormulario(respuesta.id);
-        this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
-        document.getElementById('idApellido').focus();
+        if (res.status == 201) {
+          this.reestablecerFormulario(respuesta.id);
+          this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
+          document.getElementById('idApellido').focus();
+        }
         this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
       err => {
-        let error = err;
-        this.lanzarError(error);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -399,8 +400,7 @@ export class PersonalFamiliarComponent implements OnInit {
         }
       },
       err => {
-        let error = err;
-        this.lanzarError(error);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -419,8 +419,7 @@ export class PersonalFamiliarComponent implements OnInit {
         }
       },
       err => {
-        let error = err;
-        this.lanzarError(error);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );

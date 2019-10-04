@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SeguridadSocialComponent } from 'src/app/componentes/seguridad-social/seguridad-social.component';
 import { SeguridadSocialService } from 'src/app/servicios/seguridad-social.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { SeguridadSocial } from 'src/app/modelos/seguridadSocial';
 
 @NgModule({
   declarations: [
@@ -27,11 +28,12 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
   ],
   providers: [
     SeguridadSocialService,
-    SubopcionPestaniaService
+    SubopcionPestaniaService,
+    SeguridadSocial
   ]
 })
 export class SeguridadSocialModule { }

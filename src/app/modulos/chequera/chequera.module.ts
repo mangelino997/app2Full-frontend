@@ -12,6 +12,7 @@ import { Chequera } from 'src/app/modelos/chequera';
 import { TipoChequeraService } from 'src/app/servicios/tipo-chequera.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service';
+import { TextMaskModule } from 'angular2-text-mask';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { CuentaBancariaService } from 'src/app/servicios/cuenta-bancaria.service
     MatSelectModule,
     MatProgressBarModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    TextMaskModule
   ],
   providers: [
     ChequeraService,

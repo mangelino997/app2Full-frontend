@@ -25,19 +25,19 @@ export class UsuarioEmpresasComponent implements OnInit {
   public listaEmpresas: Array<any> = [];
   //Define los elementos A de la primera tabla
   public empresas: FormArray;
- //Define el mostrar del circulo de progreso
- public show = false;
- //Define la subscripcion a loader.service
- private subscription: Subscription;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
-  constructor(private usuarioEmpresaServicio: UsuarioEmpresaService, private usuarioServicio: UsuarioService, 
+  constructor(private usuarioEmpresaServicio: UsuarioEmpresaService, private usuarioServicio: UsuarioService,
     private fb: FormBuilder, private toastr: ToastrService, private loaderService: LoaderService) { }
   ngOnInit() {
-   //Establece la subscripcion a loader
-   this.subscription = this.loaderService.loaderState
-     .subscribe((state: LoaderState) => {
-       this.show = state.show;
-     });
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario
     this.formulario = this.fb.group({
       id: new FormControl(),
@@ -49,16 +49,12 @@ export class UsuarioEmpresasComponent implements OnInit {
     this.seleccionarPestania(1, 'Actualizar');
     //Autocompleta Usuario - Buscar por nombre
     this.formulario.get('usuario').valueChanges.subscribe(data => {
-      if (typeof data == 'string'&& data.length>2) {
+      if (typeof data == 'string' && data.length > 2) {
         this.usuarioServicio.listarPorNombre(data).subscribe(res => {
           this.resultadosUsuarios = res;
         })
       }
     });
-    //Establece el foco en usuario
-    setTimeout(function() {
-      document.getElementById('idUsuario').focus();
-    }, 20);
   }
   //Crea el elemento B (form) para la segunda tabla
   private crearEmpresa(elemento): FormGroup {
@@ -77,9 +73,11 @@ export class UsuarioEmpresasComponent implements OnInit {
     //Establece la pestania activa
     this.pestaniaActiva = pestania;
     //Establece el foco
-    switch(indice) {
+    switch (indice) {
       case 0:
-        document.getElementById('idUsuario').focus();
+        setTimeout(function () {
+          document.getElementById('idUsuario').focus();
+        }, 20);
         break;
       default:
         break;
@@ -101,7 +99,7 @@ export class UsuarioEmpresasComponent implements OnInit {
   }
   //Actualiza la lista de empresas del usuario
   public actualizar(): void {
-   this.loaderService.show();
+    this.loaderService.show();
     let usuario = this.formulario.value.usuario;
     usuario.empresas = this.formulario.value.empresas;
     this.usuarioEmpresaServicio.actualizar(usuario).subscribe(
@@ -112,18 +110,18 @@ export class UsuarioEmpresasComponent implements OnInit {
         this.vaciarEmpresas();
         document.getElementById('idUsuario').focus();
         this.toastr.success(respuesta.mensaje);
-   			this.loaderService.hide();
+        this.loaderService.hide();
       },
       err => {
         let respuesta = err.json();
         this.toastr.success(respuesta.mensaje);
-   			this.loaderService.hide();
+        this.loaderService.hide();
       }
     )
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
-    if(typeof valor.value != 'object') {
+    if (typeof valor.value != 'object') {
       valor.setValue(null);
     }
   }

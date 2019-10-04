@@ -95,7 +95,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group has-float-label">
-              <label for="idEstaActivo" class="tamanio-label">Esta Activo *</label>
+              <label for="idEstaActivo" class="tamanio-label">Está Activo *</label>
               <mat-select id="idEstaActivo" class="form-control form-control-sm" formControlName="estaActivo">
                 <mat-option [value]="false">No</mat-option>
                 <mat-option [value]="true">Si</mat-option>
@@ -116,7 +116,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-10">
+    <div class="col-md-10" style="padding-top: 15px;">
       <div class="row">
         <div class="col-md-4">
           <div class="form-group has-float-label">
@@ -142,7 +142,7 @@
             </mat-autocomplete>
           </div>
         </div>
-        <div class="col-md-1">
+        <div class="col-md-1" style="margin-left: 10px;">
           <button id="idBoton" mat-raised-button color="primary" formnovalidate (click)="establecerTabla()">
             Buscar
           </button>
@@ -169,7 +169,7 @@
         </ng-container>
         <ng-container matColumnDef="KM">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Km</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.km}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.km}}</td>
         </ng-container>
         <ng-container matColumnDef="RUTA_ALTERNATIVA">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Ruta Alternativa</th>

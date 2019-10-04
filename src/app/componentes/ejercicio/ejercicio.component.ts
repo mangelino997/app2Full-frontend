@@ -68,10 +68,6 @@ export class EjercicioComponent implements OnInit {
         err => {
         }
       );
-    //Se subscribe al servicio de lista de registros
-    // this.servicio.listaCompleta.subscribe(res => {
-    //   this.listaCompleta = res;
-    // });
     let empresa = this.appService.getEmpresa();
     //Autocompletado - Buscar por nombre
     this.autocompletado.valueChanges.subscribe(data => {
@@ -92,9 +88,7 @@ export class EjercicioComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.ejercicio.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    //this.listar();
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista completa de años
     this.listarAnios();
     //Obtiene la lista completa de meses
@@ -111,14 +105,10 @@ export class EjercicioComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -241,13 +231,7 @@ export class EjercicioComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -260,33 +244,53 @@ export class EjercicioComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        this.lanzarError(err.json());
+        this.loaderService.hide();
+      }
+    );
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.resultados = [];
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    var respuesta = err;
+    if (respuesta.codigo == 11002) {
+      document.getElementById("labelNumeroDocumento").classList.add('label-error');
+      document.getElementById("idNumeroDocumento").classList.add('is-invalid');
+      document.getElementById("idNumeroDocumento").focus();
+    }
+    this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -295,14 +299,14 @@ export class EjercicioComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
 
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
 
@@ -335,9 +339,9 @@ export class EjercicioComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

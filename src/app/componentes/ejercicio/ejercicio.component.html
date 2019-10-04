@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>EJERCICIO</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -114,7 +114,7 @@
         </ng-container>
         <ng-container matColumnDef="CANTIDAD_MESES">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad de Meses</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.cantidadMeses}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.cantidadMeses}}</td>
         </ng-container>
         <ng-container matColumnDef="PREDETERMINADO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Predeterminado</th>
@@ -139,11 +139,5 @@
       </table>
       <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
     </div>
-    <div class="row">
-        <div class="col-md-11"></div>
-        <div class="col-md-1">
-          <button mat-raised-button color="primary" (click)="abrirReporte()"  style="width: 100%;">Reporte</button>
-        </div>
-      </div>
   </div>
 </div>

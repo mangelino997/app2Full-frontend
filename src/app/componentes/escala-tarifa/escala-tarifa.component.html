@@ -9,7 +9,7 @@
         <div id="divValor" class="form-group has-float-label">
           <label id="labelValor" for="idValor" class="tamanio-label">Valor *</label>
           <input id="idValor" type="text" formControlName="valor" autocomplete="off" placeholder="0.00"
-            class="form-control form-control-sm" (ngModelChange)="cambioCampo('idValor', 'labelValor')"
+            class="form-control form-control-sm number-right" (ngModelChange)="cambioCampo('idValor', 'labelValor')"
             [textMask]="obtenerMascaraEnteroConDecimales(10)" (blur)="setDecimales(formulario.get('valor'), 2)" >
         </div>
       </div>
@@ -33,7 +33,7 @@
       </div>
     </div>
     <div class="row justify-content-center contenedor">
-      <div class="col-md-6">
+      <div class="col-md-3">
         <br>
         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
           <ng-container matColumnDef="HASTA">
@@ -42,12 +42,12 @@
           </ng-container>
           <ng-container matColumnDef="VALOR">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>Valor</th>
-            <td mat-cell *matCellDef="let elemento">{{elemento.valor | number:'1.2-2'}}</td>
+            <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.valor | number:'1.2-2'}}</td>
           </ng-container>
           <ng-container matColumnDef="ELIMINAR" stickyEnd>
             <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
                 (click)="abrirReporte()">Reporte</button></th>
-            <td mat-cell *matCellDef="let elemento">
+            <td mat-cell *matCellDef="let elemento" class="last-col-end">
               <button mat-icon-button class="mat-icon-button-table" (click)="eliminar(elemento.id)"
                 matTooltip="Eliminar" matTooltipPosition="above">
                 <mat-icon>delete</mat-icon>

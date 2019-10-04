@@ -9,6 +9,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SindicatoComponent } from 'src/app/componentes/sindicato/sindicato.component';
 import { SindicatoService } from 'src/app/servicios/sindicato.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
+import { Sindicato } from 'src/app/modelos/sindicato';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
   ],
   providers: [
     SindicatoService,
-    SubopcionPestaniaService
+    SubopcionPestaniaService,
+    Sindicato
   ]
 })
 export class SindicatoModule { }

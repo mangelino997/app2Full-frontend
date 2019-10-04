@@ -9,6 +9,7 @@ import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { SeguridadSocial } from 'src/app/modelos/seguridadSocial';
 
 @Component({
   selector: 'app-seguridad-social',
@@ -50,7 +51,8 @@ export class SeguridadSocialComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: SeguridadSocialService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
+    private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService,
+    private modelo: SeguridadSocial) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -78,14 +80,9 @@ export class SeguridadSocialComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      sitioWeb: new FormControl('', Validators.maxLength(60))
-    });
+    this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -98,14 +95,10 @@ export class SeguridadSocialComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -175,7 +168,7 @@ export class SeguridadSocialComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
@@ -184,17 +177,7 @@ export class SeguridadSocialComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-        } else if (respuesta.codigo == 11008) {
-          document.getElementById("labelSitioweb").classList.add('label-error');
-          document.getElementById("idSitioWeb").classList.add('is-invalid');
-          document.getElementById("idSitioWeb").focus();
-        }
-        this.toastr.error(respuesta.mensaje);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -204,32 +187,38 @@ export class SeguridadSocialComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-        } else if (respuesta.codigo == 11008) {
-          document.getElementById("labelSitioweb").classList.add('label-error');
-          document.getElementById("idSitioWeb").classList.add('is-invalid');
-          document.getElementById("idSitioWeb").focus();
-        }
-        this.toastr.error(respuesta.mensaje);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        this.lanzarError(err.json());
+        this.loaderService.hide();
+      }
+    );
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -241,8 +230,22 @@ export class SeguridadSocialComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.resultados = [];
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    let respuesta = err;
+    if (respuesta.codigo == 11002) {
+      document.getElementById("labelNombre").classList.add('label-error');
+      document.getElementById("idNombre").classList.add('is-invalid');
+      document.getElementById("idNombre").focus();
+    } else if (respuesta.codigo == 11008) {
+      document.getElementById("labelSitioweb").classList.add('label-error');
+      document.getElementById("idSitioWeb").classList.add('is-invalid');
+      document.getElementById("idSitioWeb").focus();
+    }
+    this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels con error
   public cambioCampo(id, label) {
@@ -253,7 +256,7 @@ export class SeguridadSocialComponent implements OnInit {
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
     if (valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
+      let patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if (campo == 'sitioWeb') {
           document.getElementById("labelSitioWeb").classList.add('label-error');
@@ -265,15 +268,15 @@ export class SeguridadSocialComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.formulario.patchValue(elemento);
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {
@@ -285,12 +288,12 @@ export class SeguridadSocialComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

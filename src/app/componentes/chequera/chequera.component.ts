@@ -91,11 +91,9 @@ export class ChequeraComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.chequera.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Establece la empresa por defecto
     this.establecerEmpresa();
-    //Obtiene la lista completa de registros
-    this.listar();
     //Obtiene la lista de Cuentas Bancarias
     this.listarCuentasBancarias();
     //Obtiene las diferentes cuentas bancarias de la empresa para realizar la Consultas
@@ -174,16 +172,12 @@ export class ChequeraComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.establecerEmpresa();
-    this.reestablecerFormulario('');
+  public seleccionarPestania(id, nombre) {
+
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.cuentaSeleccionada.reset();
-      this.chequeraSeleccionada.reset();
-      this.listaChequerasCuentaBancaria = [];
-    }
+    this.establecerEmpresa();
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -256,7 +250,7 @@ export class ChequeraComponent implements OnInit {
     this.formulario.get('usuarioAlta').setValue(usuario);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idCuentaBancaria').focus();
@@ -266,9 +260,7 @@ export class ChequeraComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        this.empresaDatos.setValue(this.empresa.abreviatura);
-        this.toastr.error(respuesta.mensaje);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -279,9 +271,9 @@ export class ChequeraComponent implements OnInit {
     this.formulario.get('empresa').setValue(this.empresa);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.empresaDatos.setValue(this.empresa.abreviatura);
           this.toastr.success(respuesta.mensaje);
@@ -289,21 +281,51 @@ export class ChequeraComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        this.empresaDatos.setValue(this.empresa.abreviatura);
-        this.toastr.error(respuesta.mensaje);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
   }
   //Elimina un registro
   private eliminar() {
+    this.loaderService.show();
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
+          document.getElementById('idAutocompletado').focus();
+          this.empresaDatos.setValue(this.empresa.abreviatura);
+          this.toastr.success(respuesta.mensaje);
+          this.loaderService.hide();
+        }
+      },
+      err => {
+        this.lanzarError(err.json());
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    this.empresaDatos.setValue(this.empresa.abreviatura);
+    this.toastr.error(err.mensaje);
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
     if (elemento.value) {
       elemento.setValue((string + elemento.value).slice(cantidad));
     }
+  }
+  //Imprime la cantidad de ceros correspondientes a la izquierda del numero 
+  public establecerCerosIzqEnVista(elemento, string, cantidad) {
+    if (elemento) {
+     return elemento = ((string + elemento).slice(cantidad));
+    }
+  }
+  //Mascara enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
   }
   //Valida si el campo "Hasta" es mayor al campo "Desde"
   public validarMayor() {
@@ -331,6 +353,8 @@ export class ChequeraComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.cuentaSeleccionada.reset();
+    this.chequeraSeleccionada.reset();
+    this.listaChequerasCuentaBancaria = [];
   }
   //Manejo de colores de campos y labels con error
   public cambioCampo(id, label) {
@@ -341,7 +365,7 @@ export class ChequeraComponent implements OnInit {
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
     if (valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
+      let patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
 
       }
@@ -349,7 +373,7 @@ export class ChequeraComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.cuentaSeleccionada.setValue(elemento.cuentaBancaria);
     this.listarChequerasConsultas(this.cuentaSeleccionada.value.id)
     this.chequeraSeleccionada.setValue(elemento);
@@ -361,7 +385,7 @@ export class ChequeraComponent implements OnInit {
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.cuentaSeleccionada.setValue(elemento.cuentaBancaria);
     this.listarChequerasConsultas(this.cuentaSeleccionada.value.id)
     this.chequeraSeleccionada.setValue(elemento);
@@ -395,12 +419,12 @@ export class ChequeraComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

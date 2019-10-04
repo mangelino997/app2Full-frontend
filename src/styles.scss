@@ -660,7 +660,7 @@ tr.mat-footer-row, tr.mat-row {
 }
 //Establece el ancho máximo para la columna ID o # de las tablas
 .col-id-width {
-  max-width: 10px;
+  max-width: 10px !important;
 }
 //Corre los elementos (lupa, lapiz) de la columna editar en tablas
 .last-col-end {
