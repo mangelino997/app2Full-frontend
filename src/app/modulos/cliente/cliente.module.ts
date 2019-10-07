@@ -33,6 +33,7 @@ import { ClienteOrdenVentaService } from 'src/app/servicios/cliente-orden-venta.
 import { OrdenVentaTarifaService } from 'src/app/servicios/orden-venta-tarifa.service';
 import { ClienteVtoPago } from 'src/app/modelos/clienteVtoPago';
 import { ClienteCuentaBancariaService } from 'src/app/servicios/cliente-cuenta-bancaria.service';
+import { ClienteVtoPagoService } from 'src/app/servicios/cliente-vto-pago.service';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import { ClienteCuentaBancariaService } from 'src/app/servicios/cliente-cuenta-b
     ClienteOrdenVentaService,
     OrdenVentaTarifaService,
     ClienteVtoPago,
-    ClienteCuentaBancariaService
+    ClienteCuentaBancariaService,
+    ClienteVtoPagoService
   ],
   entryComponents: [
     CuentaBancariaDialogoComponent,

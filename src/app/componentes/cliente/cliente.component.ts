@@ -32,6 +32,7 @@ import { ReporteService } from 'src/app/servicios/reporte.service';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { ClienteVtoPago } from 'src/app/modelos/clienteVtoPago';
 import { ClienteCuentaBancariaService } from 'src/app/servicios/cliente-cuenta-bancaria.service';
+import { ClienteVtoPagoService } from 'src/app/servicios/cliente-vto-pago.service';
 
 @Component({
   selector: 'app-cliente',
@@ -125,7 +126,8 @@ export class ClienteComponent implements OnInit {
     private companiaSeguroServicio: CompaniaSeguroService, public dialog: MatDialog,
     private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente,
     private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService,
-    private reporteServicio: ReporteService, private clienteCuentaBancariaService: ClienteCuentaBancariaService) {
+    private reporteServicio: ReporteService, private clienteCuentaBancariaService: ClienteCuentaBancariaService,
+    private clienteVtoPagoService: ClienteVtoPagoService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -277,7 +279,23 @@ export class ClienteComponent implements OnInit {
         elemento.cuentaBancaria.cbu = resultado.cbu;
         elemento.cuentaBancaria.aliasCBU = resultado.aliasCBU;
         if(this.indiceSeleccionado == 3) {
-          // this.cliente
+          this.loaderService.show();
+          elemento.cliente = {
+            id: this.formulario.get('id').value,
+            version: this.formulario.get('version').value
+          }
+          this.clienteCuentaBancariaService.actualizar(elemento).subscribe(
+            res => {
+              if(res.status == 200) {
+                this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+              }
+              this.loaderService.hide();
+            },
+            err => {
+              this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+              this.loaderService.hide();
+            }
+          );
         }
       }
     });
@@ -320,12 +338,34 @@ export class ClienteComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
         let lista = this.formulario.get('clienteVtosPagos').value;
-        if(lista) {
-          lista.push(resultado);
+        if(this.indiceSeleccionado == 3) {
+          this.loaderService.show();
+          resultado.cliente = {
+            id: this.formulario.get('id').value,
+            version: this.formulario.get('version').value
+          }
+          this.clienteVtoPagoService.actualizar(resultado).subscribe(
+            res => {
+              let respuesta = res.json();
+              if(res.status == 200) {
+                lista[indice] = respuesta;
+                this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+              }
+              this.loaderService.hide();
+            },
+            err => {
+              this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+              this.loaderService.hide();
+            }
+          );
         } else {
-          lista = [];
-          lista.push(resultado);
-        };
+          if(lista) {
+            lista.push(resultado);
+          } else {
+            lista = [];
+            lista.push(resultado);
+          }
+        }
         this.formulario.get('clienteVtosPagos').setValue(lista);
       }
     });
@@ -333,7 +373,23 @@ export class ClienteComponent implements OnInit {
   //Elimina vencimientos de pagos
   public eliminarVtoPagos(indice): void {
     let lista = this.formulario.get('clienteVtosPagos').value;
-    lista.splice(indice, 1);
+    if(this.indiceSeleccionado == 3) {
+      this.loaderService.show();
+      this.clienteVtoPagoService.eliminar(lista[indice].id).subscribe(
+        res => {
+          let respuesta = res.json();
+          if(respuesta.codigo == 200) {
+            this.toastr.success(MensajeExcepcion.ELIMINADO);
+          }
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+          this.loaderService.hide();
+        }
+      );
+    }
+    lista[indice] = null;
   }
   //Obtiene el listado de cobradores
   private listarCobradores() {
@@ -673,6 +729,7 @@ export class ClienteComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
+    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
