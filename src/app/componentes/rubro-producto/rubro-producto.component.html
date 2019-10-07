@@ -86,11 +86,7 @@
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-6">
-      <div class="row" *ngIf="show">
-        <div class="col text-center">
-          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-        </div>
-      </div>
+      <mat-progress-bar mode="indeterminate" *ngIf="show"></mat-progress-bar>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
         <ng-container matColumnDef="ID">
