@@ -44,7 +44,7 @@
             <tbody *ngIf="planillasPendientesPropio.length>0">
               <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesPropio; let i=index"
                 id="fila{{i}}" (click)="cambioPlanilla(i)">
-                <td align="center">{{itemPlanilla.id}}</td>
+                <td class="number-right">{{itemPlanilla.id}}</td>
                 <td align="center">{{itemPlanilla.zona.nombre}}</td>
                 <td align="center">{{itemPlanilla.vehiculo.alias}}</td>
                 <td align="center">{{itemPlanilla.personal.alias}}</td>
@@ -56,7 +56,7 @@
             <tbody *ngIf="planillasPendientesTercero.length>0">
               <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesTercero; let i=index"
                 id="fila{{i}}" (click)="cambioPlanilla(i)">
-                <td align="center">{{itemPlanilla.id}}</td>
+                <td class="number-right">{{itemPlanilla.id}}</td>
                 <td align="center">{{itemPlanilla.zona.nombre}}</td>
                 <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza:
                   {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
@@ -69,7 +69,7 @@
             <tbody *ngIf="planillasPendientesDeposito.length>0">
               <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesDeposito; let i=index"
                 id="fila{{i}}" (click)="cambioPlanilla(i)">
-                <td align="center">{{itemPlanilla.id}}</td>
+                <td class="number-right">{{itemPlanilla.id}}</td>
                 <td align="center">{{itemPlanilla.zona.nombre}}</td>
                 <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza:
                   {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
@@ -104,16 +104,16 @@
             <tbody *ngIf="comprobantesPropio.length>0">
               <ng-container *ngFor="let itemComprobante of comprobantesPropio; let i=index">
                 <tr *ngIf="itemComprobante.ordenRecoleccion!=null">
-                  <td align="center">{{itemComprobante.ordenRecoleccion.tipoComprobante.nombre}}</td>
+                  <td class="number-right">{{itemComprobante.ordenRecoleccion.tipoComprobante.nombre}}</td>
                   <td align="center">{{itemComprobante.id}}</td>
                   <td align="center">{{itemComprobante.ordenRecoleccion.cliente.razonSocial}}</td>
                   <td align="center">{{itemComprobante.ordenRecoleccion.cliente.domicilio}}</td>
                   <td align="center">{{itemComprobante.ordenRecoleccion.empresa.razonSocial}}</td>
                   <td align="center"></td>
-                  <td align="center">{{itemComprobante.ordenRecoleccion.importeRetiro}}</td>
-                  <td align="center">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
+                  <td class="number-right">{{itemComprobante.ordenRecoleccion.importeRetiro}}</td>
+                  <td class="number-right">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
                   <td align="center"></td>
-                  <td align="center">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
+                  <td class="number-right">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
                   <td align="center" class="cursor-color" (click)="quitarComprobante('propio', itemComprobante.id)">
                     Quitar</td>
                 </tr>
@@ -124,10 +124,10 @@
                   <td align="center">{{itemComprobante.viajeRemito.clienteDestinatario.domicilio}}</td>
                   <td align="center">{{itemComprobante.viajeRemito.clienteRemitente.razonSocial}}</td>
                   <td align="center"></td>
-                  <td align="center">{{itemComprobante.viajeRemito.importeRetiro}}</td>
-                  <td align="center">{{itemComprobante.viajeRemito.bultos}}</td>
-                  <td align="center"></td>
-                  <td align="center">{{itemComprobante.viajeRemito.kilosEfectivo}}</td>
+                  <td class="number-right">{{itemComprobante.viajeRemito.importeRetiro}}</td>
+                  <td class="number-right">{{itemComprobante.viajeRemito.bultos}}</td>
+                  <td class="number-right"></td>
+                  <td class="number-right">{{itemComprobante.viajeRemito.kilosEfectivo}}</td>
                   <td align="center" class="cursor-color" (click)="quitarComprobante('propio', itemComprobante.id)">
                     Quitar</td>
                 </tr>
@@ -138,10 +138,10 @@
                   <td align="center">{{itemComprobante.ventaComprobante.clienteDestinatario.domicilio}}</td>
                   <td align="center">{{itemComprobante.ventaComprobante.clienteRemitente.razonSocial}}</td>
                   <td align="center">Si</td>
-                  <td align="center">{{itemComprobante.ventaComprobante.importeTotal}}</td>
-                  <td align="center">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.bultos}}</td>
+                  <td class="number-right">{{itemComprobante.ventaComprobante.importeTotal}}</td>
+                  <td class="number-right">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.bultos}}</td>
                   <td align="center">Si</td>
-                  <td align="center">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.kilosEfectivo}}</td>
+                  <td class="number-right">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.kilosEfectivo}}</td>
                   <td align="center" class="cursor-color" (click)="quitarComprobante('propio', itemComprobante.id)">
                     Quitar</td>
                 </tr>

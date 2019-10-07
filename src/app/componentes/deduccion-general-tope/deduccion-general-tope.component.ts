@@ -158,8 +158,12 @@ export class DeduccionGeneralTopeComponent implements OnInit {
     this.listaCompleta.paginator = this.paginator;
     this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
+        if (res.json().length > 0) {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+        } else {
+          this.toastr.error("Sin registros para mostrar.");
+        }
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
@@ -318,6 +322,10 @@ export class DeduccionGeneralTopeComponent implements OnInit {
   //Obtiene la mascara de importe
   public mascararImporte(intLimite) {
     return this.appService.mascararImporte(intLimite, 2);
+  }
+  //Mascara enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
   }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {

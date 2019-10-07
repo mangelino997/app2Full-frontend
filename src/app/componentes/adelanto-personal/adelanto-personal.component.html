@@ -33,7 +33,7 @@
             <div class="form-group has-float-label">
               <label id="labelLegajo" for="idLegajo" class="tamanio-label">N° de Legajo *</label>
               <input id="idLegajo" type="text" [formControl]="formularioDatosPersonal.get('legajo')" readonly
-                class="form-control form-control-sm ">
+                class="form-control form-control-sm number-right">
             </div>
           </div>
           <div class="col-md-5">
@@ -289,7 +289,7 @@
                 </ng-container>
                 <ng-container matColumnDef="NUM_ADELANTO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Adelanto</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.id}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
                 </ng-container>
                 <ng-container matColumnDef="ANULADO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
@@ -309,7 +309,8 @@
                 </ng-container>
                 <ng-container matColumnDef="IMPORTE">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                  <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}
+                  </td>
                 </ng-container>
                 <ng-container matColumnDef="OBSERVACIONES">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Observaciones</th>
@@ -325,15 +326,15 @@
                 </ng-container>
                 <ng-container matColumnDef="CUOTA">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Cuota</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.cuota}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.cuota}}</td>
                 </ng-container>
                 <ng-container matColumnDef="TOTAL_CUOTAS">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Total Cuotas</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.totalCuotas}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.totalCuotas}}</td>
                 </ng-container>
                 <ng-container matColumnDef="NUMERO_LOTE">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Lote</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.numeroLote}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.numeroLote}}</td>
                 </ng-container>
                 <ng-container matColumnDef="ANULAR">
                   <th mat-header-cell *matHeaderCellDef>-</th>

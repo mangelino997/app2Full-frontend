@@ -62,7 +62,7 @@ export class PersonalFamiliarComponent implements OnInit {
   public nacionalidadNacimiento: FormControl = new FormControl();
   //Define el form control para las busquedas
   public autocompletado: FormControl = new FormControl();
-  public autocompletadoListar: FormControl = new FormControl();
+  public autocompletadoFiltro: FormControl = new FormControl();
   //Define el Familiar seleccionado control para las busquedas
   public familiar: FormControl = new FormControl();
   //Define el form control para las busquedas
@@ -122,7 +122,7 @@ export class PersonalFamiliarComponent implements OnInit {
       }
     })
     //Autocompletado - Buscar personal por alias
-    this.autocompletadoListar.valueChanges.subscribe(data => {
+    this.autocompletadoFiltro.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.personalServicio.listarPorActivosAliasYEmpresa(data, empresa.id).subscribe(response => {
           this.resultadosPersonal = response;
@@ -220,30 +220,33 @@ export class PersonalFamiliarComponent implements OnInit {
     this.resultadosPersonal = [];
   }
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
-  private establecerEstadoCampos(estado, opcionPestania) {
+  private establecerEstadoCampos(estado) {
     if (estado) {
-      this.formulario.get('tipoFamiliar').enable();
-      // this.formulario.get('fechaNacimiento').enable();
-      this.formulario.get('localidadNacimiento').enable();
-      this.formulario.get('sexo').enable();
-      this.formulario.get('tipoDocumento').enable();
-      // this.formulario.get('numeroDocumento').enable();
-      this.formulario.get('mesBajaImpGan').enable();
-      this.formulario.get('mesAltaImpGan').enable();
-      this.formulario.get('anioBajaImpGan').enable();
-      this.formulario.get('anioAltaImpGan').enable();
+      this.formulario.enable();
+      this.familiar.enable();
+      // this.formulario.get('tipoFamiliar').enable();
+      // // this.formulario.get('fechaNacimiento').enable();
+      // this.formulario.get('localidadNacimiento').enable();
+      // this.formulario.get('sexo').enable();
+      // this.formulario.get('tipoDocumento').enable();
+      // // this.formulario.get('numeroDocumento').enable();
+      // this.formulario.get('mesBajaImpGan').enable();
+      // this.formulario.get('mesAltaImpGan').enable();
+      // this.formulario.get('anioBajaImpGan').enable();
+      // this.formulario.get('anioAltaImpGan').enable();
     } else {
-      this.formulario.get('tipoFamiliar').disable();
-      // this.formulario.get('fechaNacimiento').disable();
-      this.formulario.get('localidadNacimiento').disable();
-      this.formulario.get('sexo').disable();
-      this.formulario.get('tipoDocumento').disable();
-      // this.formulario.get('numeroDocumento').disable();
-      this.formulario.get('mesBajaImpGan').disable();
-      this.formulario.get('mesAltaImpGan').disable();
-      this.formulario.get('anioBajaImpGan').disable();
-      this.formulario.get('anioAltaImpGan').disable();
-
+      this.formulario.disable();
+      this.familiar.disable();
+      // this.formulario.get('tipoFamiliar').disable();
+      // // this.formulario.get('fechaNacimiento').disable();
+      // this.formulario.get('localidadNacimiento').disable();
+      // this.formulario.get('sexo').disable();
+      // this.formulario.get('tipoDocumento').disable();
+      // // this.formulario.get('numeroDocumento').disable();
+      // this.formulario.get('mesBajaImpGan').disable();
+      // this.formulario.get('mesAltaImpGan').disable();
+      // this.formulario.get('anioBajaImpGan').disable();
+      // this.formulario.get('anioAltaImpGan').disable();
     }
   }
   //Obtiene la mascara de enteros
@@ -252,10 +255,6 @@ export class PersonalFamiliarComponent implements OnInit {
   }
   //Maneja el cambio en el autocompletado
   public cambioAutocompletado() {
-    // let elemento = this.autocompletado.value;
-    // this.formulario.patchValue(elemento);
-    // this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
-    // this.formulario.get('fechaNacimiento').setValue(elemento.fechaNacimiento.substring(0, 10));
     if (this.indiceSeleccionado == 2 || this.indiceSeleccionado == 3 || this.indiceSeleccionado == 4) {
       this.obtenerFamiliaresPersonal();
     }
@@ -263,6 +262,9 @@ export class PersonalFamiliarComponent implements OnInit {
   //Maneja el cambio en el campo Familiar Personal
   public cambioFamiliarPersonal() {
     this.formulario.patchValue(this.familiar.value);
+    this.familiar.value.anioAltaImpGan == 0? this.formulario.get('anioAltaImpGan').setValue(null) : '';
+    this.familiar.value.anioBajaImpGan == 0? this.formulario.get('anioBajaImpGan').setValue(null) : '';
+
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -282,20 +284,19 @@ export class PersonalFamiliarComponent implements OnInit {
     this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
-        this.obtenerSiguienteId();
-        this.establecerEstadoCampos(true, 1);
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idPersonal');
         break;
       case 2:
-        this.establecerEstadoCampos(false, 2);
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idPersonal');
         break;
       case 3:
-        this.establecerEstadoCampos(true, 3);
+        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, true, true, 'idPersonal');
         break;
       case 4:
-        this.establecerEstadoCampos(false, 4);
+        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, false, true, 'idPersonal');
         break;
       case 5:
@@ -337,21 +338,12 @@ export class PersonalFamiliarComponent implements OnInit {
         break;
     }
   }
-  //Obtiene el siguiente id
-  private obtenerSiguienteId() {
-    this.servicio.obtenerSiguienteId().subscribe(
-      res => {
-        this.formulario.get('id').setValue(res.json());
-      },
-      err => {
-      }
-    );
-  }
   //Obtiene el listado de registros en la Pestaña Listar
   public listarPorPersonal() {
     this.loaderService.show();
-    this.servicio.listarPorPersonal(this.autocompletadoListar.value.id).subscribe(
+    this.servicio.listarPorPersonal(this.autocompletadoFiltro.value.id).subscribe(
       res => {
+        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
@@ -370,14 +362,14 @@ export class PersonalFamiliarComponent implements OnInit {
     this.loaderService.show();
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        console.log(res);
         var respuesta = res.json();
         if (res.status == 201) {
-          this.reestablecerFormulario(respuesta.id);
+          this.reestablecerFormulario(undefined);
+          this.formulario.get('personal').setValue(respuesta);
           this.formulario.get('tipoDocumento').setValue(this.tiposDocumentos[7]);
           document.getElementById('idApellido').focus();
+          this.toastr.success("Registro agregado con éxito.");
         }
-        this.toastr.success(respuesta.mensaje);
         this.loaderService.hide();
       },
       err => {
@@ -392,12 +384,12 @@ export class PersonalFamiliarComponent implements OnInit {
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
-        if (respuesta.codigo == 200) {
+        if (res.status == 200) {
           this.reestablecerFormulario(undefined);
-          document.getElementById('idAutocompletado').focus();
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
+          document.getElementById('idPersonal').focus();
         }
+        this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err.json());
@@ -408,15 +400,17 @@ export class PersonalFamiliarComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
+    this.formulario.enable();
     this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
         var respuesta = res.json();
-        if (respuesta.codigo == 200) {
+        if (res.status == 200) {
           this.reestablecerFormulario(undefined);
-          document.getElementById('idAutocompletado').focus();
-          this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
+          document.getElementById('idPersonal').focus();
         }
+        this.formulario.disable();
+        this.toastr.success(respuesta.mensaje);
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err.json());
@@ -451,7 +445,7 @@ export class PersonalFamiliarComponent implements OnInit {
     this.familiar.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.reset();
-    this.autocompletadoListar.reset();
+    this.autocompletadoFiltro.reset();
     this.nacionalidadNacimiento.reset();
     this.vaciarListas();
   }
@@ -531,15 +525,20 @@ export class PersonalFamiliarComponent implements OnInit {
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre);
-    this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
-    this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
+    this.establecerElemento(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
-    this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
+    this.establecerElemento(elemento);
+  }
+  //Establece los valores del registro seleccionado en pestaña consultar o actualizar
+  private establecerElemento(elemento){
+    this.formulario.patchValue(elemento);
+    this.obtenerFamiliaresPersonal();
+    this.familiar.setValue(elemento);
+    this.familiar.value.anioAltaImpGan == 0? this.formulario.get('anioAltaImpGan').setValue(null) : '';
+    this.familiar.value.anioBajaImpGan == 0? this.formulario.get('anioBajaImpGan').setValue(null) : '';
     this.nacionalidadNacimiento.setValue(elemento.localidadNacimiento.provincia.pais.nombre);
   }
   //Establece la nacionalidad

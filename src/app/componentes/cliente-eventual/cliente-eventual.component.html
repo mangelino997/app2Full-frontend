@@ -7,8 +7,8 @@
                 <div class="col-md-3">
                     <div class="form-group has-float-label">
                         <label for="idCodigo" class="tamanio-label-titulo">N° de Cuenta</label>
-                        <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
-                            readonly>
+                        <input id="idCodigo" type="number" formControlName="id"
+                            class="form-control form-control-sm number-right" readonly>
                     </div>
                 </div>
             </div>
@@ -16,8 +16,9 @@
                 <div class="col-md-3">
                     <div class="form-group has-float-label">
                         <label for="idCondicionIva" class="tamanio-label">Condición de Iva *</label>
-                        <mat-select id="idCondicionIva" class="form-control form-control-sm" (selectionChange)="cambioCondicionIva()"
-                            formControlName="afipCondicionIva" [compareWith]="compareFn">
+                        <mat-select id="idCondicionIva" class="form-control form-control-sm"
+                            (selectionChange)="cambioCondicionIva()" formControlName="afipCondicionIva"
+                            [compareWith]="compareFn">
                             <mat-option *ngFor="let itemCondicionIva of condicionesIva" [value]="itemCondicionIva">
                                 {{itemCondicionIva.nombre}}
                             </mat-option>
@@ -40,7 +41,7 @@
                         <label id="labelNumeroDocumento" for="idNumeroDocumento" class="tamanio-label">N° de Documento
                             *</label>
                         <input id="idNumeroDocumento" type="number" formControlName="numeroDocumento" autocomplete="off"
-                            class="form-control form-control-sm" (blur)="validarDocumento()"
+                            class="form-control form-control-sm number-right" (blur)="validarDocumento()"
                             (ngModelChange)="cambioCampo('idNumeroDocumento', 'labelNumeroDocumento')" maxlength="15">
                     </div>
                 </div>
@@ -125,10 +126,10 @@
                     <div class="form-group has-float-label">
                         <label for="idZona" class="tamanio-label">Zona *</label>
                         <mat-select id="idZona" class="form-control form-control-sm" [compareWith]="compareFn"
-                          formControlName="zona">
-                          <mat-option *ngFor="let itemZona of zonas" [value]="itemZona">
-                            {{itemZona.nombre}}
-                          </mat-option>
+                            formControlName="zona">
+                            <mat-option *ngFor="let itemZona of zonas" [value]="itemZona">
+                                {{itemZona.nombre}}
+                            </mat-option>
                         </mat-select>
                     </div>
                 </div>
@@ -136,18 +137,17 @@
                     <div class="form-group has-float-label">
                         <label for="idRubro" class="tamanio-label">Rubro *</label>
                         <mat-select id="idRubro" class="form-control form-control-sm" [compareWith]="compareFn"
-                          formControlName="rubro">
-                          <mat-option *ngFor="let itemRubro of rubros" [value]="itemRubro">
-                            {{itemRubro.nombre}}
-                          </mat-option>
+                            formControlName="rubro">
+                            <mat-option *ngFor="let itemRubro of rubros" [value]="itemRubro">
+                                {{itemRubro.nombre}}
+                            </mat-option>
                         </mat-select>
                     </div>
                 </div>
             </div>
             <div class="row" *ngIf="!show">
                 <div class="col-md-12 text-center">
-                    <button mat-raised-button color="primary" (click)="agregarClienteEventual()" >Agregar</button>
-                    <!-- <button mat-raised-button color="accent" [mat-dialog-close]="data.formulario">Cerrar</button> -->
+                    <button mat-raised-button color="primary" (click)="agregarClienteEventual()">Agregar</button>
                     <button mat-raised-button color="accent" (click)="cerrarDialog()">Cerrar</button>
                 </div>
             </div>

@@ -51,7 +51,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idAnio" class="tamanio-label">Año</label>
-              <mat-select id="idAnio" class="form-control form-control-sm" formControlName="anio"
+              <mat-select id="idAnio" class="form-control form-control-sm number-right" formControlName="anio"
                 [compareWith]="compareFn">
                 <mat-option *ngFor="let itemAnio of anios" [value]="itemAnio">
                   {{itemAnio}}
@@ -121,7 +121,7 @@
           <div class="col-md-5">
             <div class="form-group has-float-label">
               <label for="idAnio" class="tamanio-label">Año</label>
-              <mat-select id="idAnio" class="form-control form-control-sm" formControlName="anio"
+              <mat-select id="idAnio" class="form-control form-control-sm number-right" formControlName="anio"
                 [compareWith]="compareFn" (selectionChange)="vaciarListas()">
                 <mat-option *ngFor="let itemAnio of anios" [value]="itemAnio">
                   {{itemAnio}}
@@ -150,7 +150,7 @@
         </ng-container>
         <ng-container matColumnDef="ANIO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.anio}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.anio}}</td>
         </ng-container>
         <ng-container matColumnDef="BASICO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Básico</th>

@@ -8,8 +8,8 @@
                         <div class="col">
                             <div class="form-group has-float-label">
                                 <label for="idNumeroReparto">N° Reparto *</label>
-                                <input id="idNumeroReparto" type="number" class="form-control form-control-sm" readonly
-                                    [formControl]="id">
+                                <input id="idNumeroReparto" type="number"
+                                    class="form-control form-control-sm number-right" readonly [formControl]="id">
                             </div>
                         </div>
                         <div class="col">
@@ -152,7 +152,8 @@
                         <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                             <ng-container matColumnDef="numeroReparto">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Reparto</th>
-                                <td mat-cell *matCellDef="let elemento; let i=index">{{elemento.id}}</td>
+                                <td mat-cell *matCellDef="let elemento; let i=index" class="number-right">
+                                    {{elemento.id}}</td>
                             </ng-container>
                             <ng-container matColumnDef="fecha">
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>

@@ -1,34 +1,33 @@
-<div id="" class="container-fluid padd-20" >
-    <div class="row justify-content-center contenedor" >
-      <div class="col-md-6 text-center">
-        <h5 style="color: red;">Adelanto Sueldos no guardados para aquellos que se listan</h5>
-      </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="numeroLegajo" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Legajo</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.personal.id}}</td>
-                </ng-container>
-                <ng-container matColumnDef="personal" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.personal.nombreCompleto}}</td>
-                </ng-container>
-                <ng-container matColumnDef="motivo" >
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.observaciones}}</td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-            </table>
-        </div>
-    </div>
-    <br>
-    <div class="row">
-        <div class="col text-center">
-          <button id="idBoton" mat-raised-button color="secondary" [mat-dialog-close]="" 
-          >Cerrar</button> 
-        </div>
+<div id="" class="container-fluid padd-20">
+  <div class="row justify-content-center contenedor">
+    <div class="col-md-6 text-center">
+      <h5 style="color: red;">Adelanto Sueldos no guardados para aquellos que se listan</h5>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-12">
+      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+        <ng-container matColumnDef="numeroLegajo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Legajo</th>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.personal.id}}</td>
+        </ng-container>
+        <ng-container matColumnDef="personal">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.personal.nombreCompleto}}</td>
+        </ng-container>
+        <ng-container matColumnDef="motivo">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Motivo</th>
+          <td mat-cell *matCellDef="let elemento">{{elemento.observaciones}}</td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+      </table>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col text-center">
+      <button id="idBoton" mat-raised-button color="secondary" [mat-dialog-close]="">Cerrar</button>
+    </div>
+  </div>
+</div>

@@ -38,20 +38,24 @@ export class TalonarioReciboCobradorComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
-  //Define al cobrador como un formControl
-  public cobrador: FormControl = new FormControl('', Validators.required)
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
   public autocompletado: FormControl = new FormControl();
+  //Define al cobrador como un formControl
+  public cobrador: FormControl = new FormControl();
+  //Define el campo de seleccion para talonario recibo cobrador como un formControl
+  public talonarioReciboCobrador: FormControl = new FormControl();
   //Define los resultados del autocompletado
   public resultados: Array<any> = [];
   //Define los resultados de autocompletado localidad
   public resultadosLocalidades: Array<any> = [];
   //Define la lista de Cobradores
   public listaCobradores: Array<any> = [];
-  //Define la lista para Talonarios Recibos Lote
-  public listaTalRecLote: Array<any> = [];
+  //Define la lista de Talonarios Recibos Lote
+  public listaTalReciboLote: Array<any> = [];
+  //Define la lista de Talonarios Recibos Cobrador
+  public listaTalReciboCobrador: Array<any> = [];
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -111,15 +115,25 @@ export class TalonarioReciboCobradorComponent implements OnInit {
     );
   }
   //Obtiene la lista de Talonario Recibo Cobrador para un cobrador y la empresa 
-  public listarPorEmpresaYCobrador(){
+  public listarPorCobradorYEmpresa() {
+    this.loaderService.show();
     let idEmpresa = this.appService.getEmpresa().id;
-    
+    this.servicio.listarPorCobradorYEmpresa(this.cobrador.value.id, idEmpresa).subscribe(
+      res => {
+        this.listaTalReciboCobrador = res.json();
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
+      }
+    )
   }
   //Obtiene el listado de Talonario Recibo Lote
   private listarTalRecLote() {
     this.talonarioReciboLoteService.listarPorEmpresaYLoteEntregadoFalse(this.formulario.value.empresa.id).subscribe(
       res => {
-        this.listaTalRecLote = res;
+        this.listaTalReciboLote = res;
       }
     )
   }
@@ -133,6 +147,7 @@ export class TalonarioReciboCobradorComponent implements OnInit {
   public vaciarListas() {
     this.resultados = [];
     this.resultadosLocalidades = [];
+    this.listaTalReciboCobrador = [];
   }
   //Maneja el cambio en el select de Talonario Recibo Lote
   public cambioTalRecLote() {
@@ -140,16 +155,27 @@ export class TalonarioReciboCobradorComponent implements OnInit {
     this.formulario.get('letra').setValue(elemento.letra);
     this.formulario.get('puntoVenta').setValue(this.establecerCerosIzqEnVista(elemento.puntoVenta, '0000', -5));
   }
+  //Maneja el cambio en el select de Talonario Recibo Lote
+  public cambioTalReciboCobrador() {
+    let elemento = this.talonarioReciboCobrador.value;
+    this.formulario.patchValue(elemento);
+    this.formulario.get('letra').setValue(elemento.talonarioReciboLote.letra);
+    this.formulario.get('puntoVenta').setValue(this.establecerCerosIzqEnVista(elemento.talonarioReciboLote.puntoVenta, '0000', -5));
+    this.formulario.get('desde').setValue(this.establecerCerosIzqEnVista(elemento.desde, '0000000', -8));
+    this.formulario.get('hasta').setValue(this.establecerCerosIzqEnVista(elemento.hasta, '0000000', -8));
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    if(soloLectura){
+    if (soloLectura) {
       this.formulario.get('talonarioReciboLote').disable();
       this.formulario.get('cobrador').disable();
     }else{
+      this.formulario.get('talonarioReciboLote').enable();
+      this.formulario.get('cobrador').enable();
     }
     setTimeout(function () {
       document.getElementById(componente).focus();
@@ -170,13 +196,13 @@ export class TalonarioReciboCobradorComponent implements OnInit {
         this.establecerValoresPestania(nombre, false, false, true, 'idCobrador');
         break;
       case 2:
-        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, false, 'idCobradorConsultar');
         break;
       case 3:
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, false, true, 'idCobradorConsultar');
         break;
       case 4:
-        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
+        this.establecerValoresPestania(nombre, true, true, true, 'idCobradorConsultar');
         break;
       case 5:
         this.listar();
@@ -257,7 +283,7 @@ export class TalonarioReciboCobradorComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          document.getElementById('idAutocompletado').focus();
+          document.getElementById('idCobradorConsultar').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -277,7 +303,7 @@ export class TalonarioReciboCobradorComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
-          document.getElementById('idAutocompletado').focus();
+          document.getElementById('idCobradorConsultar').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
         }
@@ -294,13 +320,15 @@ export class TalonarioReciboCobradorComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.reset(undefined);
+    this.cobrador.reset();
+    this.talonarioReciboCobrador.reset();
     this.vaciarListas();
   }
   //Establece la cantidad de ceros correspondientes a la izquierda del numero
   public establecerCerosIzq(elemento, string, cantidad) {
     if (elemento.value) {
       elemento.setValue((string + elemento.value).slice(cantidad));
-    } 
+    }
   }
   //Imprime la cantidad de ceros correspondientes a la izquierda del numero 
   public establecerCerosIzqEnVista(elemento, string, cantidad) {
@@ -363,14 +391,16 @@ export class TalonarioReciboCobradorComponent implements OnInit {
     this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.establecerElemento(elemento);
   }
-  //Establece el elemento en el formulario
+  //Establece los valores del registro seleccionado en pestaña consultar o actualizar
   private establecerElemento(elemento) {
-    this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
+    this.cobrador.setValue(elemento.cobrador);
+    this.talonarioReciboCobrador.setValue(elemento.talonarioReciboLote);
     this.formulario.get('letra').setValue(elemento.talonarioReciboLote.letra);
     this.formulario.get('puntoVenta').setValue(this.establecerCerosIzqEnVista(elemento.talonarioReciboLote.puntoVenta, '0000', -5));
     this.formulario.get('desde').setValue(this.establecerCerosIzqEnVista(elemento.desde, '0000000', -8));
     this.formulario.get('hasta').setValue(this.establecerCerosIzqEnVista(elemento.hasta, '0000000', -8));
+    this.listarPorCobradorYEmpresa();
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {

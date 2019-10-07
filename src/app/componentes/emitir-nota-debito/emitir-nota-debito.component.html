@@ -14,8 +14,8 @@
             <div class="col-md-4">
               <div class="form-group has-float-label">
                 <label for="idPuntoVenta" class="tamanio-label">Punto de venta</label>
-                <mat-select id="idPuntoVenta" class="form-control form-control-sm" formControlName="puntoVenta"
-                  (selectionChange)="comprobarCodAfip()" [compareWith]="compareFn">
+                <mat-select id="idPuntoVenta" class="form-control form-control-sm number-right"
+                  formControlName="puntoVenta" (selectionChange)="comprobarCodAfip()" [compareWith]="compareFn">
                   <mat-option *ngFor="let itemPuntoVenta of resultadosPuntoVenta" [value]="itemPuntoVenta">
                     {{establecerCerosIzq(itemPuntoVenta.puntoVenta, "0000", -5)}}
                   </mat-option>
@@ -41,8 +41,8 @@
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idPuntoVenta" class="tamanio-label">Punto de Venta</label>
-                <input id="idPuntoVenta" type="text" [formControl]="puntoVenta" class="form-control form-control-sm"
-                  readonly>
+                <input id="idPuntoVenta" type="text" [formControl]="puntoVenta"
+                  class="form-control form-control-sm number-right" readonly>
               </div>
             </div>
             <div class="col-md-1">
@@ -54,15 +54,15 @@
             <div class="col-md-2">
               <div class="form-group has-float-label">
                 <label for="idNumero" class="tamanio-label">Número</label>
-                <input id="idNumero" type="number" formControlName="numero" class="form-control form-control-sm"
-                  readonly>
+                <input id="idNumero" type="number" formControlName="numero"
+                  class="form-control form-control-sm number-right" readonly>
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group has-float-label">
                 <label for="idCodigoAfip" class="tamanio-label">Código Afip</label>
-                <input id="idCodigoAfip" type="text" formControlName="codigoAfip" class="form-control form-control-sm"
-                  readonly>
+                <input id="idCodigoAfip" type="text" formControlName="codigoAfip"
+                  class="form-control form-control-sm number-right" readonly>
               </div>
             </div>
             <div class="col-md-3">
@@ -116,7 +116,7 @@
           <div class="form-group has-float-label col-md-3">
             <label for="idNumeroDocumento" class="tamanio-label">N° Documento</label>
             <input id="idNumeroDocumento" type="text" formControlName="numeroDocumento"
-              class="form-control form-control-sm" readonly>
+              class="form-control form-control-sm number-right" readonly>
           </div>
           <div class="form-group has-float-label col-md-3">
             <label for="idCondicionesVenta" class="tamanio-label">Condiciones de Venta</label>
@@ -147,15 +147,16 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idSubtotalNC" class="tamanio-label">Subtotal N.D.</label>
-              <input id="idSubtotalNC" type="number" formControlName="subtotalND" class="form-control form-control-sm"
-                (blur)="setDecimales($event, 2)" (change)="calcularSubtotalND()">
+              <input id="idSubtotalNC" type="number" formControlName="subtotalND"
+                class="form-control form-control-sm number-right" (blur)="setDecimales($event, 2)"
+                (change)="calcularSubtotalND()">
             </div>
           </div>
           <div class="col-md-1">
             <div class="form-group has-float-label">
               <label for="idAlicuotaIVA" class="tamanio-label">Alicuota IVA</label>
               <mat-select id="idAlicuota" type="number" formControlName="alicuotaIva"
-                class="form-control form-control-sm" (selectionChange)="calcularSubtotalND()">
+                class="form-control form-control-sm number-right" (selectionChange)="calcularSubtotalND()">
                 <mat-option *ngFor="let itemAlicuota of resultadosAlicuotasIva" [value]="itemAlicuota.alicuota">
                   {{appService.setDecimales(itemAlicuota.alicuota, 2)}}
                 </mat-option>
@@ -166,7 +167,7 @@
             <div class="form-group has-float-label">
               <label for="idSubtotalCIVA" class="tamanio-label">Subtotal c/IVA</label>
               <input id="idSubtotalCIVA" type="number" formControlName="importeTotal"
-                class="form-control form-control-sm" readonly>
+                class="form-control form-control-sm number-right" readonly>
             </div>
           </div>
           <div class="col-md-2">
@@ -217,10 +218,10 @@
                 <td align="center"><span class="cursor-color" (click)="seleccionarItem(i, item)">Mod</span></td>
                 <td align="center"><span class="cursor-color" (click)="eliminarItem(i)">X</span></td>
                 <td align="center">{{item.itemTipo.nombre}}</td>
-                <td align="center">{{appService.setDecimales(item.subtotalND, 2)}}</td>
-                <td align="center">{{item.alicuotaIva}}</td>
-                <td align="center">{{item.importeIva}}</td>
-                <td align="center">{{item.importeTotal}}</td>
+                <td class="number-right">{{appService.setDecimales(item.subtotalND, 2)}}</td>
+                <td class="number-right">{{item.alicuotaIva}}</td>
+                <td class="number-right">{{item.importeIva}}</td>
+                <td class="number-right">{{item.importeTotal}}</td>
               </tr>
             </tbody>
           </table>
@@ -237,23 +238,23 @@
         <div class="form-group has-float-label">
           <label for="idImporteNoGravado" class="tamanio-label">Importe No Grav/Exento ($)</label>
           <input id="idImporteNoGravado" type="text" formControlName="importeNoGravado"
-            class="form-control form-control-sm" style="width: 197px;">
+            class="form-control form-control-sm number-right" style="width: 197px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idImporteGravado" class="tamanio-label">Importe Neto Gravado ($)</label>
           <input id="idImporteGravado" type="text" formControlName="importeNetoGravado"
-            class="form-control form-control-sm" style="width: 182px;">
+            class="form-control form-control-sm number-right" style="width: 182px;">
         </div>
         <div class="form-group has-float-label">
           <label for="idImporteIva" class="tamanio-label">Importe IVA ($)</label>
-          <input id="idImporteIva" type="text" formControlName="importeIva" class="form-control form-control-sm"
-            style="width: 116px;">
+          <input id="idImporteIva" type="text" formControlName="importeIva"
+            class="form-control form-control-sm number-right" style="width: 116px;">
         </div>
         <div>
           <div class="form-group has-float-label">
             <label for="idImporteTotal" class="tamanio-label">Importe Total ($)</label>
-            <input id="idImporteTotal" type="text" formControlName="importeTotal" class="form-control form-control-sm"
-              style="width: 125px;">
+            <input id="idImporteTotal" type="text" formControlName="importeTotal"
+              class="form-control form-control-sm number-right" style="width: 125px;">
           </div>
           <button class="btn btn-primary" type="button" style="width: 125px;" (click)="emitir()">Emitir</button>
         </div>
