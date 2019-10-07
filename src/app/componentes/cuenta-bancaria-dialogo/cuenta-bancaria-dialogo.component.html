@@ -23,11 +23,11 @@
         </ng-container>
         <ng-container matColumnDef="numCuenta">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuenta</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.numeroCuenta}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.numeroCuenta}}</td>
         </ng-container>
         <ng-container matColumnDef="cbu">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>CBU</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.cbu}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.cbu}}</td>
         </ng-container>
         <ng-container matColumnDef="aliasCbu">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Alias CBU</th>

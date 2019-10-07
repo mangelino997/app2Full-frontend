@@ -6,13 +6,13 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class TalonarioReciboService {
+export class RubroProductoCuentaContableService {
   //Define la ruta al servicio web
-  private ruta: string = "/talonariorecibo";
+  private ruta:string = "/rubroproductocuentacontable";
   //Define la url base
-  private url: string = null;
+  private url:string = null;
   //Define la url para subcripcion a socket
-  private topic: string = null;
+  private topic:string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la lista obtenida por nombre
@@ -22,7 +22,7 @@ export class TalonarioReciboService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta: Subject<any> = new Subject<any>();
+  public listaCompleta:Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -33,7 +33,7 @@ export class TalonarioReciboService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({ headers: headers });
+    this.options = new RequestOptions({headers: headers});
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -50,9 +50,17 @@ export class TalonarioReciboService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene la lista de registros
-  public listarPorCobradorYEmpresa(idCobrador, idEmpresa) {
-    return this.http.get(this.url + '/listarPorCobradorYEmpresa/' + idCobrador + '/' + idEmpresa, this.options);
+  //Obtiene un listado por empresa
+  public listarPorEmpresa(idEmpresa) {
+    return this.http.get(this.url + '/listarPorEmpresa/' + idEmpresa, this.options);
+  }
+  //Obtiene un listado por plan de cuenta
+  public listarPorPlanCuenta(idPlanCuenta) {
+    return this.http.get(this.url + '/listarPorPlanCuenta/' + idPlanCuenta, this.options);
+  }
+  //Obtiene un listado por rubro producto
+  public listarPorRubroProducto(idRubroProducto) {
+    return this.http.get(this.url + '/listarPorRubroProducto/' + idRubroProducto, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

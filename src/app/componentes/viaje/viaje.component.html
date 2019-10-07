@@ -20,7 +20,7 @@
                             <div class="form-group has-float-label">
                                 <label for="idViaje" class="tamanio-label">N° Viaje</label>
                                 <input id="idViaje" type="number" formControlName="idViaje"
-                                    class="form-control form-control-sm" placeholder="N° Guía de Servicio" min="1">
+                                    class="form-control form-control-sm number-right" placeholder="N° Guía de Servicio" min="1">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -44,7 +44,8 @@
                                     [formControl]="formularioFiltros.get('personal')" [matAutocomplete]="autoPersonal"
                                     autocomplete="off" placeholder="Buscar por N° Legajo, Nombre o Num. Doc.">
                                 <mat-autocomplete #autoPersonal="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                                    <mat-option *ngFor="let itemPersonal of resultadosPersonales" [value]="itemPersonal">
+                                    <mat-option *ngFor="let itemPersonal of resultadosPersonales"
+                                        [value]="itemPersonal">
                                         {{itemPersonal.alias}}
                                     </mat-option>
                                 </mat-autocomplete>
@@ -55,9 +56,11 @@
                                 <label for="idPersonal" class="tamanio-label">Fletero</label>
                                 <input id="idPersonal" class="form-control form-control-sm" type="text"
                                     [formControl]="formularioFiltros.get('proveedor')" [matAutocomplete]="autoProveedor"
-                                    autocomplete="off" placeholder="Buscar por Id, Razón Social, Tipo Documento o Num. Documento">
+                                    autocomplete="off"
+                                    placeholder="Buscar por Id, Razón Social, Tipo Documento o Num. Documento">
                                 <mat-autocomplete #autoProveedor="matAutocomplete" [displayWith]="displayFn.bind(this)">
-                                    <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
+                                    <mat-option *ngFor="let itemProveedor of resultadosProveedores"
+                                        [value]="itemProveedor">
                                         {{itemProveedor.alias}}
                                     </mat-option>
                                 </mat-autocomplete>
@@ -81,7 +84,7 @@
                                 <div class="form-group has-float-label">
                                     <label for="idCodigo" class="tamanio-label-titulo">N° Guía Servicio</label>
                                     <input id="idCodigo" type="number" formControlName="id"
-                                        class="form-control form-control-sm" readonly>
+                                        class="form-control form-control-sm number-right" readonly>
                                 </div>
                             </div>
                             <div class="col-md-2">

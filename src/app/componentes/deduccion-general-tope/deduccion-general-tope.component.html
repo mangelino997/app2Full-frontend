@@ -28,7 +28,7 @@
           <div class="col-md-12">
             <div class="form-group has-float-label">
               <label for="idAnio" class="tamanio-label">Año Fiscal *</label>
-              <mat-select id="idAnio" class="form-control form-control-sm" formControlName="anio"
+              <mat-select id="idAnio" class="form-control form-control-sm number-right" formControlName="anio"
                 [compareWith]="compareFn">
                 <mat-option *ngFor="let item of anioFiscal" [value]="item">
                   {{item}}
@@ -65,8 +65,9 @@
             <div class="form-group has-float-label">
               <label id="labelImporte" for="idImporte" class="descripcion-label">Importe Tope</label>
               <input id="idImporte" type="text" formControlName="importe" autocomplete="off"
-                class="form-control form-control-sm number-right" [readonly]="soloLectura" [textMask]="mascararImporte(10)"
-                (blur)="establecerDecimales(formulario.get('importe'), 2)" placeholder="$0.00">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                [textMask]="mascararImporte(10)" (blur)="establecerDecimales(formulario.get('importe'), 2)"
+                placeholder="$0.00">
             </div>
           </div>
         </div>
@@ -106,8 +107,8 @@
           <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="labelAnioLista" for="idAnioLista" class="descripcion-label">Año Fiscal *</label>
-              <input id="idAnioLista" type="number" [formControl]="anio" autocomplete="off"
-                (blur)="cambioAnio()" class="form-control form-control-sm">
+              <input id="idAnioLista" type="text" [formControl]="anio" autocomplete="off" (blur)="cambioAnio()"
+                class="form-control form-control-sm number-right" [textMask]="mascararEnteros(4)" placeholder="2019">
             </div>
           </div>
           <div class="col-md-1">
@@ -140,8 +141,9 @@
             <div class="form-group has-float-label">
               <label id="labelImporte" for="idImporte" class="descripcion-label">Importe Tope</label>
               <input id="idImporte" type="text" formControlName="importe" autocomplete="off"
-                class="form-control form-control-sm number-right" [readonly]="soloLectura" [textMask]="mascararImporte(10)"
-                (blur)="establecerDecimales(formulario.get('importe'), 2)" placeholder="$0.00">
+                class="form-control form-control-sm number-right" [readonly]="soloLectura"
+                [textMask]="mascararImporte(10)" (blur)="establecerDecimales(formulario.get('importe'), 2)"
+                placeholder="$0.00">
             </div>
           </div>
           <div class="col-md-2">
@@ -175,7 +177,7 @@
           <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
             <ng-container matColumnDef="ANIO">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
-              <td mat-cell *matCellDef="let elemento">{{elemento.anio}}</td>
+              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.anio}}</td>
             </ng-container>
             <ng-container matColumnDef="DEDUCCION_GENERAL">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>Deducción General</th>
@@ -191,20 +193,20 @@
             </ng-container>
             <ng-container matColumnDef="PORCENTAJE_GANANCIA_NETA">
               <th mat-header-cell *matHeaderCellDef mat-sort-header>% Tope Ganancia Neta</th>
-              <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.porcentajeGananciaNeta | number: '1.2-2'}} %</td>
+              <td mat-cell *matCellDef="let elemento" class="number-right">
+                {{elemento.porcentajeGananciaNeta | number: '1.2-2'}} %</td>
             </ng-container>
             <ng-container matColumnDef="EDITAR" stickyEnd>
               <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
                   (click)="abrirReporte()">Reporte</button></th>
               <td mat-cell *matCellDef="let elemento" class="last-col-end">
                 <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                  (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above" 
+                  (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above"
                   *ngIf=" indiceSeleccionado == 3 || indiceSeleccionado == 5">
                   <mat-icon>edit</mat-icon>
                 </button>
                 <button mat-icon-button class="mat-icon-button-table" (click)="activarEliminar(elemento.id)"
-                  matTooltip="Eliminar" matTooltipPosition="above"
-                  *ngIf="indiceSeleccionado == 4">
+                  matTooltip="Eliminar" matTooltipPosition="above" *ngIf="indiceSeleccionado == 4">
                   <mat-icon>delete</mat-icon>
                 </button>
               </td>

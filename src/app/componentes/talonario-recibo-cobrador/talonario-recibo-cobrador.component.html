@@ -12,14 +12,26 @@
     <div class="col-md-6 text-center">
       <h5>{{pestaniaActual}} Talonario Recibo Cobrador</h5>
       <form [formGroup]="formulario" class="contenedor">
-        <div class="row">
+        <div class="row" [hidden]="indiceSeleccionado == 1 || indiceSeleccionado == 5">
           <div class="col-md-6">
             <div class="form-group has-float-label">
-              <label id="idCobrador" for="idCobrador" class="tamanio-label">Cobrador *</label>
+              <label id="idCobradorConsultar" for="idCobrador" class="tamanio-label">Cobrador</label>
               <mat-select class="form-control form-control-sm" [formControl]="cobrador" [compareWith]="compareFn"
-                (selectionChange)="listarPorEmpresaYCobrador()">
+                (selectionChange)="listarPorCobradorYEmpresa()">
                 <mat-option *ngFor="let item of listaCobradores" [value]="item">
                   {{item.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group has-float-label">
+              <label id="labelTalonarioReciboCobrador" for="labelTalonarioReciboCobrador" class="tamanio-label">Talonario Recibo</label>
+              <mat-select class="form-control form-control-sm" [formControl]="talonarioReciboCobrador"
+                (selectionChange)="cambioTalReciboCobrador()" [compareWith]="compareFn">
+                <mat-option *ngFor="let item of listaTalReciboCobrador" [value]="item">
+                  Desde: {{establecerCerosIzqEnVista(item.desde, '0000000', -8)}} -> Hasta:
+                  {{establecerCerosIzqEnVista(item.hasta, '0000000', -8)}}
                 </mat-option>
               </mat-select>
             </div>
@@ -77,7 +89,7 @@
                 Lote *</label>
               <mat-select class="form-control form-control-sm" formControlName="talonarioReciboLote"
                 (selectionChange)="cambioTalRecLote()" [compareWith]="compareFn">
-                <mat-option *ngFor="let item of listaTalRecLote" [value]="item">
+                <mat-option *ngFor="let item of listaTalReciboLote" [value]="item">
                   Punto de Venta: {{establecerCerosIzqEnVista(item.puntoVenta, '0000', -5)}} -
                   Letra: {{item.letra}} -
                   Desde: {{establecerCerosIzqEnVista(item.desde, '0000000', -8)}} -> Hasta:

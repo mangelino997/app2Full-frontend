@@ -16,14 +16,14 @@
           <div class="col-md-2" *ngIf="indiceSeleccionado == 2 || indiceSeleccionado == 5">
             <div class="form-group has-float-label">
               <label id="labelAnio" for="idAnio" class="descripcion-label">Año Fiscal *</label>
-              <input id="idAnio" type="number" [formControl]="anio" autocomplete="off" (blur)="cambioAnio(undefined)"
-                class="form-control form-control-sm">
+              <input id="idAnio" type="text" [formControl]="anio" autocomplete="off" (blur)="cambioAnio(undefined)"
+                [textMask]="mascararEnteros(4)" placeholder="2019" class="form-control form-control-sm number-right" >
             </div>
           </div>
           <div class="col-md-2" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
             <div class="form-group has-float-label">
               <label for="idAnioFiscal" class="tamanio-label">Año Fiscal *</label>
-              <mat-select id="idAnioFiscal" class="form-control form-control-sm" formControlName="anio"
+              <mat-select id="idAnioFiscal" class="form-control form-control-sm number-right" formControlName="anio"
                 [compareWith]="compareFn">
                 <mat-option *ngFor="let item of anios" [value]="item" (blur)="cambioAnio(item)">
                   {{item}}
@@ -116,7 +116,7 @@
               <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
                 <ng-container matColumnDef="ANIO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.anio}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.anio}}</td>
                 </ng-container>
                 <ng-container matColumnDef="TIPO_BENEFICIO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo de Beneficio</th>
@@ -128,7 +128,8 @@
                 </ng-container>
                 <ng-container matColumnDef="IMPORTE_ACUMULADO">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe Acumulado</th>
-                  <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}</td>
+                  <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}
+                  </td>
                 </ng-container>
                 <ng-container matColumnDef="TIPO_IMPORTE">
                   <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Importe</th>
@@ -146,8 +147,8 @@
                   <td mat-cell *matCellDef="let elemento">{{elemento.mes? elemento.mes.nombre : '-'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="EDITAR" stickyEnd>
-                  <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                      (click)="abrirReporte()">Reporte</button></th>
+                  <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button
+                      color="primary" (click)="abrirReporte()">Reporte</button></th>
                   <td mat-cell *matCellDef="let elemento">
                     <button mat-icon-button class="mat-icon-button-table" (click)="activarEliminar(elemento)"
                       matTooltip="Consultar" matTooltipPosition="above" *ngIf="indiceSeleccionado ==  4">

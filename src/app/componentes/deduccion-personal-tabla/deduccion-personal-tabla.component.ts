@@ -400,6 +400,10 @@ export class DeduccionPersonalTablaComponent implements OnInit {
   public mascararImporte(intLimite) {
     return this.appService.mascararImporte(intLimite, 2);
   }
+  //Mascara enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
+  }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad): void {
     let valor = formulario.value;

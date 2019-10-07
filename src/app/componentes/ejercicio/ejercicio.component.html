@@ -34,7 +34,7 @@
         </div>
         <div class="form-group has-float-label">
           <label for="idAnioInicio" class="tamanio-label">Año de Inicio *</label>
-          <mat-select id="idAnioInicio" class="form-control form-control-sm" formControlName="anioInicio"
+          <mat-select id="idAnioInicio" class="form-control form-control-sm number-right" formControlName="anioInicio"
             [compareWith]="compareFn">
             <mat-option *ngFor="let anio of anios" [value]="anio">
               {{anio}}
@@ -52,7 +52,7 @@
         </div>
         <div class="form-group has-float-label">
           <label id="labelCantidad" for="idCantidad" class="tamanio-label">Cantidad de Meses *</label>
-          <mat-select id="idCantidad" class="form-control form-control-sm" formControlName="cantidadMeses">
+          <mat-select id="idCantidad" class="form-control form-control-sm number-right" formControlName="cantidadMeses">
             <mat-option [value]="1">1</mat-option>
             <mat-option [value]="2">2</mat-option>
             <mat-option [value]="3">3</mat-option>
@@ -106,7 +106,7 @@
         </ng-container>
         <ng-container matColumnDef="ANIO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Año de Inicio</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.anioInicio}}</td>
+          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.anioInicio}}</td>
         </ng-container>
         <ng-container matColumnDef="MES">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Mes de Inicio</th>

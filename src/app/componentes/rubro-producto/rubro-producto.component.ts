@@ -11,6 +11,8 @@ import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/m
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { PlanCuentaDialogo } from '../plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { RubroProductoCuentaContableService } from 'src/app/servicios/rubro-producto-cuenta-contable.service';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-rubro-producto',
@@ -57,7 +59,8 @@ export class RubroProductoComponent implements OnInit {
   //Constructor
   constructor(private servicio: RubroProductoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private appService: AppService, private toastr: ToastrService, private loaderService: LoaderService,
-    private usuarioEmpresaService: UsuarioEmpresaService, private dialog: MatDialog, private reporteServicio: ReporteService) {
+    private usuarioEmpresaService: UsuarioEmpresaService, private dialog: MatDialog, private reporteServicio: ReporteService,
+    private rubroProductoCuentaContableService: RubroProductoCuentaContableService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -153,12 +156,54 @@ export class RubroProductoComponent implements OnInit {
           nombre: resultado.nombre
         }
         elemento.planCuentaCompra = planCuenta;
+        if(this.indiceSeleccionado == 3) {
+          this.loaderService.show();
+          elemento.rubroProducto = {
+            id: this.formulario.get('id').value,
+            version: this.formulario.get('version').value
+          };
+          this.rubroProductoCuentaContableService.actualizar(elemento).subscribe(
+            res => {
+              let respuesta = res.json();
+              if(respuesta.codigo == 200) {
+                this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+              } else {
+                elemento.planCuentaCompra = null;
+              }
+              this.loaderService.hide();
+            },
+            err => {
+              elemento.planCuentaCompra = null;
+              this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+              this.loaderService.hide();
+            }
+          );
+        }
       }
     });
   }
   //Elimina la cuenta contable de la empresa
   public eliminarPlanCuenta(elemento) {
-    elemento.planCuentaCompra = null;
+    const id = elemento.id;
+    if(this.indiceSeleccionado == 3) {
+      this.loaderService.show();
+      this.rubroProductoCuentaContableService.eliminar(id).subscribe(
+        res => {
+          let respuesta = res.json();
+          if(respuesta.codigo == 200) {
+            elemento.planCuentaCompra = null;
+            this.toastr.success(MensajeExcepcion.ELIMINADO);
+          }
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+          this.loaderService.hide();
+        }
+      );
+    } else {
+      elemento.planCuentaCompra = null;
+    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -273,7 +318,7 @@ export class RubroProductoComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    this.formulario.get('rubrosProductosCuentasContables').setValue(this.planesCuentas.data);
+    this.formulario.get('rubrosProductosCuentasContables').setValue(null);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -344,15 +389,13 @@ export class RubroProductoComponent implements OnInit {
   public activarConsultar(elemento) {
     this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
-    this.planesCuentas = new MatTableDataSource(elemento.rubrosProductosCuentasContables);
+    this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
     this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
-    this.formulario.setValue(elemento);
-    this.planesCuentas = new MatTableDataSource(elemento.rubrosProductosCuentasContables);
+    this.establecerFormulario();
   }
   //Define como se muestra los datos en el autcompletado
   public displayFn(elemento) {

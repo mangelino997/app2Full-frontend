@@ -56,8 +56,8 @@
                     <div class="col-md-2">
                       <div class="form-group has-float-label">
                         <label for="idCodigo" class="tamanio-label-titulo">N° de Cuenta</label>
-                        <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm"
-                          readonly>
+                        <input id="idCodigo" type="number" formControlName="id"
+                          class="form-control form-control-sm number-right" readonly>
                       </div>
                     </div>
                     <div class="col-md-3">
@@ -410,31 +410,31 @@
       </div>
       <br>
       <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="ID" >
+        <ng-container matColumnDef="ID">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
           <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
         </ng-container>
-        <ng-container matColumnDef="RAZON_SOCIAL" >
+        <ng-container matColumnDef="RAZON_SOCIAL">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Razón Social</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.razonSocial}}</td>
         </ng-container>
-        <ng-container matColumnDef="TIPO_DOCUMENTO" >
+        <ng-container matColumnDef="TIPO_DOCUMENTO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Documento</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.tipoDocumento.nombre}}</td>
         </ng-container>
-        <ng-container matColumnDef="NUMERO_DOCUMENTO" >
+        <ng-container matColumnDef="NUMERO_DOCUMENTO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Documento</th>
           <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.numeroDocumento}}</td>
         </ng-container>
-        <ng-container matColumnDef="TELEFONO" >
+        <ng-container matColumnDef="TELEFONO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Teléfono</th>
           <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.telefono}}</td>
         </ng-container>
-        <ng-container matColumnDef="DOMICILIO" >
+        <ng-container matColumnDef="DOMICILIO">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.domicilio}}</td>
         </ng-container>
-        <ng-container matColumnDef="LOCALIDAD" >
+        <ng-container matColumnDef="LOCALIDAD">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Localidad</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.localidad.nombre}}, {{elemento.localidad.provincia.nombre}}
           </td>
@@ -447,8 +447,8 @@
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

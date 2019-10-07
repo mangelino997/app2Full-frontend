@@ -11,6 +11,8 @@ export class MensajeExcepcion {
 
     public static ACTUALIZADO = "Registro actualizado con éxito";
 
+    public static NO_ACTUALIZADO = "No se pudo actualizar el registro";
+
     public static ELIMINADO = "Registro eliminado con éxito";
 
     public static NO_ELIMINADO = "No se pudo eliminar el registro";

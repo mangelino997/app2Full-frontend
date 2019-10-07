@@ -17,7 +17,8 @@
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Buscar Empresa</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
+                [formControl]="autocompletado" [matAutocomplete]="auto" autocomplete="off"
+                (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
                 (optionSelected)="establecerFormulario()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
@@ -31,7 +32,8 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idCodigo" class="tamanio-label">N° de Cuenta</label>
-              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm" readonly>
+              <input id="idCodigo" type="number" formControlName="id" class="form-control form-control-sm number-right"
+                readonly>
             </div>
           </div>
           <div class="col-md-4">
@@ -109,7 +111,7 @@
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idNumeroIIBB" class="tamanio-label">N° de Ing. Brutos</label>
-              <input id="idNumeroIIBB" [textMask]="mascararEnteros(15)" type="text" formControlName="numeroIIBB" 
+              <input id="idNumeroIIBB" [textMask]="mascararEnteros(15)" type="text" formControlName="numeroIIBB"
                 autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura">
             </div>
           </div>
@@ -160,7 +162,7 @@
       <div class="row">
         <div class="col-md-11"></div>
         <div class="col-md-1">
-          <button mat-raised-button color="primary" (click)="abrirReporte()"  style="width: 100%;">Reporte</button>
+          <button mat-raised-button color="primary" (click)="abrirReporte()" style="width: 100%;">Reporte</button>
         </div>
       </div>
       <br>
@@ -210,8 +212,8 @@
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

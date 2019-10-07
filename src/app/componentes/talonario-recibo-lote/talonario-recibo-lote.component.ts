@@ -83,8 +83,6 @@ export class TalonarioReciboLoteComponent implements OnInit {
     this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
-    //Iniciliza los campos
-    this.inicializarCampos();
   }
   //Establece el formulario al seleccionar elemento de autocompletado
   public cambioAutocompletado(elemento) {
@@ -283,7 +281,7 @@ export class TalonarioReciboLoteComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.autocompletado.reset();
-    this.resultados = [];
+    this.inicializarCampos();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

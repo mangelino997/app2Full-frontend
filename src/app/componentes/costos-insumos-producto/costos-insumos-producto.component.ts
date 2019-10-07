@@ -108,7 +108,7 @@ export class CostosInsumosProductoComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.insumoProducto.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(2, 'Consultar', 0);
+    this.seleccionarPestania(2, 'Consultar');
     //Obtiene la lista de rubros de productos
     this.listarRubroProducto();
     //Obtiene la lista de marcas de productos
@@ -163,10 +163,10 @@ export class CostosInsumosProductoComponent implements OnInit {
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario();
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario();
     switch (id) {
       case 2:
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
@@ -177,7 +177,7 @@ export class CostosInsumosProductoComponent implements OnInit {
       case 5:
         this.listaCompleta = new MatTableDataSource([]);
         setTimeout(function () {
-          document.getElementById('idAutocompletado').focus();
+          document.getElementById('idRubro').focus();
         }, 20);
         break;
       default:
@@ -267,26 +267,32 @@ export class CostosInsumosProductoComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[0].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[0].nombre);
     this.autocompletado.patchValue(elemento);
     this.cambioAutocompletado();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[1].nombre);
     this.autocompletado.patchValue(elemento);
     this.cambioAutocompletado();
   }
   ////Controla que no haya valores en null/Nan
   private controlaValores(elemento) {
-    if (elemento.itcNeto == null || elemento.itcNeto == NaN)
-      this.formulario.get('itcNeto').setValue(0);
-    if (elemento.itcPorLitro == null || elemento.itcPorLitro == NaN)
-      this.formulario.get('itcPorLitro').setValue(0);
-    if (elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == "NaN")
-      this.formulario.get('precioUnitarioVenta').setValue(0);
-    if (elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == "NaN")
-      this.formulario.get('precioUnitarioViaje').setValue(0);
+    elemento.itcNeto == null || elemento.itcNeto == NaN ? this.formulario.get('itcNeto').setValue(0) : '';
+    elemento.itcPorLitro == null || elemento.itcPorLitro == NaN ? this.formulario.get('itcPorLitro').setValue(0) : '';
+    elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == NaN ? this.formulario.get('precioUnitarioVenta').setValue(0) : '';
+    elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == NaN ? this.formulario.get('precioUnitarioViaje').setValue(0) : '';
+
+
+    // if (elemento.itcNeto == null || elemento.itcNeto == NaN)
+    //   this.formulario.get('itcNeto').setValue(0);
+    // if (elemento.itcPorLitro == null || elemento.itcPorLitro == NaN)
+    //   this.formulario.get('itcPorLitro').setValue(0);
+    // if (elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == "NaN")
+    //   this.formulario.get('precioUnitarioVenta').setValue(0);
+    // if (elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == "NaN")
+    //   this.formulario.get('precioUnitarioViaje').setValue(0);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);
@@ -308,9 +314,9 @@ export class CostosInsumosProductoComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
