@@ -31,6 +31,7 @@ import { CuentaBancariaDialogoComponent } from '../cuenta-bancaria-dialogo/cuent
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { ClienteVtoPago } from 'src/app/modelos/clienteVtoPago';
+import { ClienteCuentaBancariaService } from 'src/app/servicios/cliente-cuenta-bancaria.service';
 
 @Component({
   selector: 'app-cliente',
@@ -124,7 +125,7 @@ export class ClienteComponent implements OnInit {
     private companiaSeguroServicio: CompaniaSeguroService, public dialog: MatDialog,
     private condicionVentaServicio: CondicionVentaService, private clienteModelo: Cliente,
     private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService,
-    private reporteServicio: ReporteService) {
+    private reporteServicio: ReporteService, private clienteCuentaBancariaService: ClienteCuentaBancariaService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
       .subscribe(
@@ -276,14 +277,35 @@ export class ClienteComponent implements OnInit {
         elemento.cuentaBancaria.cbu = resultado.cbu;
         elemento.cuentaBancaria.aliasCBU = resultado.aliasCBU;
         if(this.indiceSeleccionado == 3) {
-          // this.clienteCuen
+          // this.cliente
         }
       }
     });
   }
   //Elimina la cuenta bancaria
   public eliminarCuentaBancaria(elemento): void {
+    const id = elemento.id;
+    if(this.indiceSeleccionado == 3) {
+      this.eliminarCuentaBancariaPorId(id);
+    }
     elemento.cuentaBancaria = null;
+  }
+  //Elimina la cuenta bancaria seleccionada
+  private eliminarCuentaBancariaPorId(id) {
+    this.loaderService.show();
+    this.clienteCuentaBancariaService.eliminar(id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.toastr.success(MensajeExcepcion.ELIMINADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        this.loaderService.hide();
+      }
+    );
   }
   //Abre el dialogo de registro de vencimientos de pagos
   public registrarVtoPagos(elemento, indice) {

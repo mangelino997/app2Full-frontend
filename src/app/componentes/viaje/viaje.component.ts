@@ -289,6 +289,7 @@ export class ViajeComponent implements OnInit {
     this.formularioViajeRemito.reset();
     this.formularioViajeGasto.reset();
     this.formularioViajePeaje.reset();
+    this.formularioFiltros.reset();
     this.estadoFormulario = true;
   }
   //Obtiene la lista de viajes por filtros
@@ -544,7 +545,7 @@ export class ViajeComponent implements OnInit {
     this.viajeInsumoComponente.finalizar();
     this.viajeGastoComponente.finalizar();
     this.viajePeajeComponente.finalizar();
-    this.indiceSeleccionado == 1 ? document.getElementById('idFecha').focus() : document.getElementById('idAutocompletado').focus();
+    this.indiceSeleccionado == 1 ? document.getElementById('idFecha').focus() : document.getElementById('idViaje').focus();
     switch (this.indiceSeleccionado) {
       case 1:
         this.toastr.success(MensajeExcepcion.AGREGADO);
@@ -694,7 +695,7 @@ export class ViajeComponent implements OnInit {
 })
 export class ListarViajesDialogo {
   //Define las columnas de la tabla
-  public columnas: string[] = ['id', 'empresa', 'sucursal', 'fecha', 'vehiculo', 'remolque', 'chofer', 'seleccionar'];
+  public columnas: string[] = ['ID', 'empresa', 'sucursal', 'fecha', 'vehiculo', 'remolque', 'chofer', 'seleccionar'];
   //Define la lista de dadores-destinatarios
   public listaCompleta = new MatTableDataSource([]);
   //Define el ordenador

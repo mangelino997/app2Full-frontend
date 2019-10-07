@@ -456,10 +456,10 @@ input[type=number] {
   text-align:right;
   -moz-appearance:textfield;
 }
-// input::-webkit-outer-spin-button,
-// input::-webkit-inner-spin-button {
-//     -webkit-appearance: none;
-// }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
 /* Define campos siempre en uppercase */
 .upper-case {
   text-transform: uppercase;
