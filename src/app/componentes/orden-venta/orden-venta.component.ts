@@ -134,7 +134,7 @@ export class OrdenVentaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'tarifa', 'escala', 'porPorcentaje', 'ver', 'eliminar'];
   //Define las columnas de la tabla para la pestaña LISTAR
-  public columnasListar: string[] = ['EDITAR', 'ID', 'DESCRIPCION', 'VENDEDOR', 'SEGURO', 'CR', 'ES_CONTADO'];
+  public columnasListar: string[] = ['EDITAR', 'ID', 'DESCRIPCION', 'VENDEDOR', 'SEGURO', 'ES_CONTADO'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
@@ -323,6 +323,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioEscala.reset();
     this.formularioTramo.reset();
     this.formularioListar.reset();
+    this.elemAutocompletado = null;
     this.soloLectura = false;
     this.tipoOrdenVenta.enable();
     this.formulario.enable();
@@ -330,10 +331,10 @@ export class OrdenVentaComponent implements OnInit {
     this.cliente.reset();
     this.vaciarLista();
     this.ordenventa.reset();
-    this.empresa.reset();
     this.listaDeEscalas = [];
     this.listaDeTramos = [];
     this.btnOrdenVta = false;
+    this.empresa.reset();
     let empresa = this.appService.getEmpresa();
     this.formulario.value.empresas = [empresa];
     this.empresa.setValue(empresa.razonSocial);
@@ -372,12 +373,11 @@ export class OrdenVentaComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerCampos();
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerCampos();
     if (opcion == 0) {
-      this.elemAutocompletado = null;
-      this.resultados = new MatTableDataSource([]);
+      
     }
     switch (id) {
       case 1:
@@ -508,9 +508,7 @@ export class OrdenVentaComponent implements OnInit {
       if (!this.formulario.get('seguro').value) {
         this.formulario.get('seguro').setValue(this.appService.setDecimales('7', 2));
       }
-      if (!this.formulario.get('comisionCR').value) {
-        this.formulario.get('comisionCR').setValue(this.appService.setDecimales('0', 2));
-      }
+      this.formulario.get('comisionCR').setValue(0.00);
       this.servicio.agregar(this.formulario.value, usuarioAlta, empresa, this.cliente.value).then(
         res => {
           if (res.status == 201) {
@@ -528,7 +526,6 @@ export class OrdenVentaComponent implements OnInit {
                 document.getElementById('idTipoTarifa').focus();
               }
             );
-
           }
           this.loaderService.hide();
         },
@@ -575,9 +572,6 @@ export class OrdenVentaComponent implements OnInit {
     this.loaderService.show();
     if (!this.formulario.get('seguro').value) {
       this.formulario.get('seguro').setValue(this.appService.setDecimales('7', 2));
-    }
-    if (!this.formulario.get('comisionCR').value) {
-      this.formulario.get('comisionCR').setValue(this.appService.setDecimales('0', 2));
     }
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
@@ -783,7 +777,6 @@ export class OrdenVentaComponent implements OnInit {
   //Controla que los porcentajes queden bien establecidos
   private establecerPorcentajes(elemento) {
     this.formulario.get('seguro').setValue(this.appService.desenmascararPorcentajePorMil(elemento.seguro.toString(), 2));
-    this.formulario.get('comisionCR').setValue(this.appService.desenmascararPorcentaje(elemento.comisionCR.toString(), 2));
   }
   //Obtiene la mascara de importe
   public mascaraImporte(intLimite, decimalLimite) {
@@ -909,7 +902,6 @@ export class OrdenVentaComponent implements OnInit {
         descripcion: elemento.nombre,
         vendedor: elemento.vendedor.nombre,
         seguro: this.returnDecimales(elemento.seguro, 2) + '%',
-        cr: this.returnDecimales(elemento.comisionCR, 2) + '%',
         es_contado: elemento.esContado ? 'Si' : 'No'
       }
       datos.push(f);
@@ -1082,6 +1074,7 @@ export class VerTarifaDialogo {
       if (realizarAgregar == true) {
         this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
           res => {
+            console.log(res.json());
             if (res.status == 201) {
               this.listar();
               this.cancelar();

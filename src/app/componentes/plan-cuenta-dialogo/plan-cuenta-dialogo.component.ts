@@ -42,6 +42,7 @@ export class PlanCuentaDialogo {
         this.treeControl = new FlatTreeControl<Nodo>(this.getLevel, this.isExpandable);
         this.datos = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
         this.planCuentaServicio.obtenerPorEmpresaYGrupoCuentaContable(this.data.empresa.id, this.data.grupoCuentaContable).subscribe(res => {
+            console.log(res, this.data.empresa.id, this.data.grupoCuentaContable);
             let data = [];
             data.push(res.json());
             this.datos.data = data;

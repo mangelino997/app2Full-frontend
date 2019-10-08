@@ -805,6 +805,7 @@ export class PersonalComponent implements OnInit {
         case 1:
           let respuesta = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta) {
+            this.formulario.get('numeroDocumento').reset();
             let err = { codigo: 11007, mensaje: 'CUIT Incorrecto!' };
             this.lanzarError(err);
           }
@@ -812,6 +813,7 @@ export class PersonalComponent implements OnInit {
         case 2:
           let respuesta2 = this.appServicio.validarCUIT(documento.toString());
           if (!respuesta2) {
+            this.formulario.get('numeroDocumento').reset();
             let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
             this.lanzarError(err);
           }
@@ -819,6 +821,7 @@ export class PersonalComponent implements OnInit {
         case 8:
           let respuesta8 = this.appServicio.validarDNI(documento.toString());
           if (!respuesta8) {
+            this.formulario.get('numeroDocumento').reset();
             let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
             this.lanzarError(err);
           }
@@ -832,6 +835,7 @@ export class PersonalComponent implements OnInit {
     if (cuil) {
       let respuesta = this.appServicio.validarCUIT(cuil + '');
       if (!respuesta) {
+        this.formulario.get('cuil').reset();
         let err = { codigo: 11012, mensaje: 'CUIL Incorrecto!' };
         this.lanzarError(err);
       }

@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-    <div class="col-md-9 text-center">
+    <div class="col-md-10 text-center">
       <h5>{{pestaniaActual}} Ganancia Neta</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row" *ngIf="indiceSeleccionado > 1">
@@ -47,7 +47,7 @@
                 [textMask]="mascararImporte(10)" (blur)="controlImporte()" placeholder="$0.00">
             </div>
           </div>
-          <div class="col">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="labelImporteFijo" for="idImporteFijo" class="descripcion-label">Importe Fijo a Pagar *</label>
               <input id="idImporteFijo" type="text" formControlName="importeFijo" autocomplete="off"
@@ -66,34 +66,34 @@
               </mat-select>
             </div>
           </div>
-          <div class="col" *ngIf="mostrarBoton && !show && !idMod">
+          <div *ngIf="mostrarBoton && !show && !idMod">
             <button id="idBotonPestania" mat-raised-button color="primary" formnovalidate
-              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid" style="width: 100%;">
+              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid" style="max-width: fit-content;">
               {{pestaniaActual}}
             </button>
           </div>
-          <div class="col" *ngIf="idMod">
+          <div *ngIf="idMod">
             <button id="idBotonActualizar" mat-raised-button color="primary" formnovalidate (click)="actualizar()"
-              [disabled]="!formulario.valid" style="width: 100%;">
+              [disabled]="!formulario.valid" style="max-width: fit-content;">
               Actualizar
             </button>
           </div>
-          <div class="col" *ngIf="idMod">
-            <button id="idBotonCancelar" mat-raised-button formnovalidate (click)="cancelar()" style="width: 100%;">
+          <div *ngIf="idMod">
+            <button id="idBotonCancelar" mat-raised-button formnovalidate (click)="cancelar()"
+              style="max-width: fit-content;">
               Cancelar
             </button>
           </div>
         </div>
-
         <div class="row ">
           <div class="col-md-12">
             <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
               <ng-container matColumnDef="anio">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Año</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 10px;">Año</th>
                 <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.anio}}</td>
               </ng-container>
               <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 10px;">#</th>
                 <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
               </ng-container>
               <ng-container matColumnDef="gananciaNetaAcumulada">
@@ -144,7 +144,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
-    <div class="col-md-9">
+    <div class="col-md-10">
       <form [formGroup]="formularioFiltro" class="contenedor">
         <br>
         <div class="row">

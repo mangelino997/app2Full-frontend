@@ -118,7 +118,7 @@
           </div>
         </div>
         <div class="row" *ngIf="indiceSeleccionado == 3">
-          <div class="col-md-4">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idDeduccionGeneral" class="tamanio-label">Deducción General *</label>
               <mat-select id="idDeduccionGeneral" class="form-control form-control-sm"
@@ -129,7 +129,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label id="labelDescripcion" for="idDescripcion" class="descripcion-label">Descripción </label>
               <input id="idDescripcion" type="text" formControlName="descripcion" autocomplete="off"
@@ -137,7 +137,7 @@
                 (ngModelChange)="cambioCampo('idDescripcion', 'labelDescripcion')" maxlength="60">
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col">
             <div class="form-group has-float-label">
               <label id="labelImporte" for="idImporte" class="descripcion-label">Importe Tope</label>
               <input id="idImporte" type="text" formControlName="importe" autocomplete="off"
@@ -156,7 +156,7 @@
                 [textMask]="mascararPorcentaje()" placeholder="00.00%">
             </div>
           </div>
-          <div class="col-md-1">
+          <div class="col">
             <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
               (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid || !condicion">
               {{pestaniaActual}}

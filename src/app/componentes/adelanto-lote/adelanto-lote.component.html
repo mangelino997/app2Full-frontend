@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>ADEL. SUELDOS EN LOTE</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -75,11 +75,13 @@
             </div>
           </div>
         </div>
-        <div class="row text-center">
-          <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-            (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
-            {{pestaniaActual}}
-          </button>
+        <div class="row justify-content-center">
+          <div class="col-md-2 ">
+            <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
+              (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+              {{pestaniaActual}}
+            </button>
+          </div>
         </div>
         <div class="row" *ngIf="show">
           <div class="col text-center">
@@ -107,28 +109,28 @@
               <input id="idFechaHasta" type="date" [formControl]="fechaHasta" class="form-control form-control-sm">
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-1">
             <button id="idBoton" mat-raised-button color="primary" formnovalidate
-              [disabled]="!fechaDesde || !fechaHasta" (click)="buscar()">
+              [disabled]="!fechaDesde.value || !fechaHasta.value" (click)="buscarAdelantoLotes()">
               Buscar
             </button>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-1">
+          <div class="col-md-2">
             <div class="form-group has-float-label">
               <label id="labelLote" for="idLote" class="tamanio-label">N° Lote </label>
               <input id="idLote" type="text" [formControl]="numeroLote" readonly
                 class="form-control form-control-sm number-right">
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-5">
             <div class="form-group has-float-label">
               <label id="labelObervaciones for=" idObervaciones class="tamanio-label">Obervaciones *</label>
               <input id="idObervaciones" type="text" [formControl]="observacion" class="form-control form-control-sm">
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-1">
             <button id="idBoton" mat-raised-button color="primary" formnovalidate [disabled]="!observacion.valid"
               (click)="anular()">
               Anular

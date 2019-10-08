@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
@@ -38,6 +38,8 @@ export class CostosInsumosProductoComponent implements OnInit {
   public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
+  //Define un formulario para validaciones de campos en pestaña Listar
+  public formularioFiltro: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la opcion seleccionada
@@ -107,6 +109,11 @@ export class CostosInsumosProductoComponent implements OnInit {
   ngOnInit() {
     //Define los campos para validaciones
     this.formulario = this.insumoProducto.formulario;
+    //Define los campos para validaciones en el formulario que filtra y obtiene registros
+    this.formularioFiltro = new FormGroup({
+      rubro: new FormControl('', Validators.required),
+      marca: new FormControl('', Validators.required)
+    });
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(2, 'Consultar');
     //Obtiene la lista de rubros de productos
@@ -175,10 +182,7 @@ export class CostosInsumosProductoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 5:
-        this.listaCompleta = new MatTableDataSource([]);
-        setTimeout(function () {
-          document.getElementById('idRubro').focus();
-        }, 20);
+        this.establecerValoresPestania(nombre, true, false, true, 'idRubro');
         break;
       default:
         break;
@@ -213,8 +217,10 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Reestablece los campos agregar
   private reestablecerFormulario() {
     this.formulario.reset();
+    this.formularioFiltro.reset();
     this.autocompletado.setValue(undefined);
     this.resultados = [];
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Cambio en elemento autocompletado
   public cambioAutocompletado() {
@@ -231,11 +237,16 @@ export class CostosInsumosProductoComponent implements OnInit {
 
   }
   //Obtiene la lista por rubro y marca
-  public listarPorRubroYMarcaLista(rubro, marca) {
+  public listarPorRubroYMarcaLista() {
     this.loaderService.show();
-    this.servicio.listarPorRubroYMarca(rubro.value.id, marca.value.id).subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res.json());
-      this.listaCompleta.sort = this.sort;
+    this.servicio.listarPorRubroYMarca(this.formularioFiltro.value.rubro.id, this.formularioFiltro.value.marca.id).subscribe(res => {
+      if(res.json().length > 0){
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+      }else{
+        this.toastr.error("Sin registros para mostrar.");
+        this.listaCompleta = new MatTableDataSource([]);
+      }
       this.listaCompleta.paginator = this.paginator;
       this.loaderService.hide();
     });
@@ -283,16 +294,6 @@ export class CostosInsumosProductoComponent implements OnInit {
     elemento.itcPorLitro == null || elemento.itcPorLitro == NaN ? this.formulario.get('itcPorLitro').setValue(0) : '';
     elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == NaN ? this.formulario.get('precioUnitarioVenta').setValue(0) : '';
     elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == NaN ? this.formulario.get('precioUnitarioViaje').setValue(0) : '';
-
-
-    // if (elemento.itcNeto == null || elemento.itcNeto == NaN)
-    //   this.formulario.get('itcNeto').setValue(0);
-    // if (elemento.itcPorLitro == null || elemento.itcPorLitro == NaN)
-    //   this.formulario.get('itcPorLitro').setValue(0);
-    // if (elemento.precioUnitarioVenta == null || elemento.precioUnitarioVenta == "NaN")
-    //   this.formulario.get('precioUnitarioVenta').setValue(0);
-    // if (elemento.precioUnitarioViaje == null || elemento.precioUnitarioViaje == "NaN")
-    //   this.formulario.get('precioUnitarioViaje').setValue(0);
   }
   //Define el mostrado de datos y comparacion en campo select
   public compareFn = this.compararFn.bind(this);

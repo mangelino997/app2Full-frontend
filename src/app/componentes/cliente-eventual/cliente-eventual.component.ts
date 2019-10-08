@@ -222,6 +222,7 @@ export class ClienteEventualComponent implements OnInit {
         case 1:
           let respuesta = this.appService.validarCUIT(documento.toString());
           if (!respuesta) {
+            this.formulario.get('numeroDocumento').reset();
             let err = { codigo: 11010, mensaje: 'CUIT Incorrecto!' };
             this.lanzarError(err);
           }
@@ -229,6 +230,7 @@ export class ClienteEventualComponent implements OnInit {
         case 2:
           let respuesta2 = this.appService.validarCUIT(documento.toString());
           if (!respuesta2) {
+            this.formulario.get('numeroDocumento').reset();
             let err = { codigo: 11010, mensaje: 'CUIL Incorrecto!' };
             this.lanzarError(err);
           }
@@ -236,6 +238,7 @@ export class ClienteEventualComponent implements OnInit {
         case 8:
           let respuesta8 = this.appService.validarDNI(documento.toString());
           if (!respuesta8) {
+            this.formulario.get('numeroDocumento').reset();
             let err = { codigo: 11010, mensaje: 'DNI Incorrecto!' };
             this.lanzarError(err);
           }

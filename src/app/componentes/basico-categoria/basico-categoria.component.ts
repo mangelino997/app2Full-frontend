@@ -309,6 +309,7 @@ export class BasicoCategoriaComponent implements OnInit {
           }
         };
       } else {
+        this.listaCompleta = new MatTableDataSource([]);
         this.toastr.error("Sin registros para mostrar.");
       }
       this.listaCompleta.sort = this.sort;

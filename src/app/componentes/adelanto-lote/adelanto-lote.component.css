@@ -4,3 +4,6 @@ tr.mat-row.ng-star-inserted:hover {
 .selected {
     background-color: #e9ecef;
 }
+button {
+    width: 100%;
+}

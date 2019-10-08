@@ -17,7 +17,8 @@
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Buscar </label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" autocomplete="off"
-                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" placeholder="">
+                type="text" matInput [formControl]="autocompletado" [matAutocomplete]="auto" placeholder=""
+                (blur)="verificarSeleccion(autocompletado)">
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)"
                 (optionSelected)="establecerFormulario()">
                 <mat-option *ngFor="let item of resultados" [value]="item">
@@ -51,7 +52,8 @@
         <div class="row justify-content-center">
           <div class="col-md-5">
             <button id="idBotonPlan" mat-raised-button color="primary" (click)="abrirPlanCuentaDialogo()"
-              [disabled]="!formulario.get('empresa').valid">Plan de Cuenta</button>
+              [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4" style="width: 100%;">Plan de
+              Cuenta</button>
           </div>
           <div class="col-md-7">
             <div class="form-group has-float-label">
@@ -104,8 +106,8 @@
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

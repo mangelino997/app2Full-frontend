@@ -173,7 +173,6 @@ export class ChequeraComponent implements OnInit {
   };
   //Establece valores al seleccionar una pestania
   public seleccionarPestania(id, nombre) {
-
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.establecerEmpresa();
@@ -320,7 +319,7 @@ export class ChequeraComponent implements OnInit {
   //Imprime la cantidad de ceros correspondientes a la izquierda del numero 
   public establecerCerosIzqEnVista(elemento, string, cantidad) {
     if (elemento) {
-     return elemento = ((string + elemento).slice(cantidad));
+      return elemento = ((string + elemento).slice(cantidad));
     }
   }
   //Mascara enteros
@@ -354,7 +353,9 @@ export class ChequeraComponent implements OnInit {
     this.formulario.get('id').setValue(id);
     this.cuentaSeleccionada.reset();
     this.chequeraSeleccionada.reset();
+    this.listaCuentasConChequeraEmpresa = [];
     this.listaChequerasCuentaBancaria = [];
+    this.listarCuentasConChequerasConsultas();
   }
   //Manejo de colores de campos y labels con error
   public cambioCampo(id, label) {

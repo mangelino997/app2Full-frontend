@@ -98,8 +98,8 @@
             <div class="form-group has-float-label">
               <label for="idPrecioUnViaje" class="tamanio-label">Precio Unitario Viaje</label>
               <input id="idPrecioUnViaje" type="text" formControlName="precioUnitarioViaje" autocomplete="off"
-                placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)" class="form-control form-control-sm number-right"
-                [readonly]="soloLectura" maxlength="45"
+                placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45"
                 (blur)="establecerDecimales(formulario.get('precioUnitarioViaje'), 2)">
             </div>
           </div>
@@ -107,8 +107,8 @@
             <div class="form-group has-float-label">
               <label for="idPrecioUnVenta" class="tamanio-label">Precio Unitario de Venta</label>
               <input id="idPrecioUnVenta" type="text" formControlName="precioUnitarioVenta" autocomplete="off"
-                placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)" class="form-control form-control-sm number-right"
-                [readonly]="soloLectura" maxlength="45"
+                placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45"
                 (blur)="establecerDecimales(formulario.get('precioUnitarioVenta'), 2)">
             </div>
           </div>
@@ -116,8 +116,8 @@
             <div class="form-group has-float-label">
               <label for="idCoeficienteITC" class="tamanio-label">ITC por Litro</label>
               <input id="idCoeficienteITC" type="text" formControlName="itcPorLitro" autocomplete="off"
-                placeholder="00.0000" [textMask]="mascararCoeficiente(2)" class="form-control form-control-sm number-right"
-                [readonly]="soloLectura" maxlength="45"
+                placeholder="00.0000" [textMask]="mascararCoeficiente(2)"
+                class="form-control form-control-sm number-right" [readonly]="soloLectura" maxlength="45"
                 (blur)="establecerDecimales(formulario.get('itcPorLitro'), 4)">
             </div>
           </div>
@@ -151,104 +151,107 @@
     </div>
   </div>
   <div class="row  justify-content-center contenedor" [hidden]="indiceSeleccionado != 5">
-    <div class="col-md-12">
-      <div class="row" *ngIf="show">
-        <div class="col text-center">
-          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <form [formGroup]="formularioFiltro" class="contenedor">
+      <div class="col-md-12">
+        <div class="row" *ngIf="show">
+          <div class="col text-center">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          </div>
         </div>
-      </div>
         <br>
         <div class="row">
-            <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idRubro" class="tamanio-label">Rubro *</label>
-                <mat-select id="idRubro" class="form-control form-control-sm" [formControl]="rubro"
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let itemRubro of rubros" [value]="itemRubro">
-                    {{itemRubro.nombre}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-3">
-              <div class="form-group has-float-label">
-                <label for="idMarca" class="tamanio-label">Marca *</label>
-                <mat-select id="idMarca" class="form-control form-control-sm" [formControl]="marca"
-                  [compareWith]="compareFn">
-                  <mat-option *ngFor="let itemMarca of marcas" [value]="itemMarca">
-                    {{itemMarca.nombre}}
-                  </mat-option>
-                </mat-select>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <button id="idBoton" mat-raised-button color="primary" formnovalidate
-                (click)="listarPorRubroYMarcaLista(rubro, marca)">
-                Buscar
-              </button>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idRubro" class="tamanio-label">Rubro *</label>
+              <mat-select id="idRubro" class="form-control form-control-sm" formControlName="rubro"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let itemRubro of rubros" [value]="itemRubro">
+                  {{itemRubro.nombre}}
+                </mat-option>
+              </mat-select>
             </div>
           </div>
-          <br>
-      <br>
-      <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-        <ng-container matColumnDef="CODIGO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
-          <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
-        </ng-container>
-        <ng-container matColumnDef="NOMBRE">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="RUBRO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Rubro</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.rubroProducto.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="MARCA">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.marcaProducto.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="UNIDAD_MEDIDA">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Unidad Medida</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.unidadMedida.nombre}}</td>
-        </ng-container>
-        <ng-container matColumnDef="MODELO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Modelo</th>
-          <td mat-cell *matCellDef="let elemento">{{elemento.modelo}}</td>
-        </ng-container>
-        <ng-container matColumnDef="PRECIO_UNITARIO_VIAJE">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Viaje</th>
-          <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.precioUnitarioViaje | number: '1.2-2'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="PRECIO_UNITARIO_VENTA">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Venta</th>
-          <td mat-cell *matCellDef="let elemento" class="number-right">$ {{elemento.precioUnitarioVenta | number: '1.2-2'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="ITC_POR_LITRO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>ITC por Litro</th>
-          <td mat-cell *matCellDef="let elemento" class="number-right"> {{elemento.itcPorLitro | number: '1.4-5'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="ITC_NETO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>ITC Neto</th>
-          <td mat-cell *matCellDef="let elemento" class="number-right">% {{elemento.itcNeto | number: '1.2-2'}}</td>
-        </ng-container>
-        <ng-container matColumnDef="EDITAR" stickyEnd>
-          <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-              (click)="abrirReporte()">Reporte</button></th>
-          <td mat-cell *matCellDef="let elemento" class="last-col-end">
-            <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
-              matTooltip="Consultar" matTooltipPosition="above">
-              <mat-icon>search</mat-icon>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idMarca" class="tamanio-label">Marca *</label>
+              <mat-select id="idMarca" class="form-control form-control-sm" formControlName="marca"
+                [compareWith]="compareFn">
+                <mat-option *ngFor="let itemMarca of marcas" [value]="itemMarca">
+                  {{itemMarca.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button id="idBoton" mat-raised-button color="primary" formnovalidate [disabled]="!this.formularioFiltro.valid"
+              (click)="listarPorRubroYMarcaLista()">
+              Buscar
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
-              <mat-icon>edit</mat-icon>
-            </button>
-          </td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-      </table>
-      <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
-    </div>
+          </div>
+        </div>
+        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+          <ng-container matColumnDef="CODIGO">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Código</th>
+            <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
+          </ng-container>
+          <ng-container matColumnDef="NOMBRE">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="RUBRO">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Rubro</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.rubroProducto.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="MARCA">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Marca</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.marcaProducto.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="UNIDAD_MEDIDA">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Unidad Medida</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.unidadMedida.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="MODELO">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Modelo</th>
+            <td mat-cell *matCellDef="let elemento">{{elemento.modelo}}</td>
+          </ng-container>
+          <ng-container matColumnDef="PRECIO_UNITARIO_VIAJE">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Viaje</th>
+            <td mat-cell *matCellDef="let elemento" class="number-right">$
+              {{elemento.precioUnitarioViaje | number: '1.2-2'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="PRECIO_UNITARIO_VENTA">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario Venta</th>
+            <td mat-cell *matCellDef="let elemento" class="number-right">$
+              {{elemento.precioUnitarioVenta | number: '1.2-2'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="ITC_POR_LITRO">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ITC por Litro</th>
+            <td mat-cell *matCellDef="let elemento" class="number-right"> {{elemento.itcPorLitro | number: '1.4-5'}}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="ITC_NETO">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>ITC Neto</th>
+            <td mat-cell *matCellDef="let elemento" class="number-right">% {{elemento.itcNeto | number: '1.2-2'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="EDITAR" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
+                (click)="abrirReporte()">Reporte</button></th>
+            <td mat-cell *matCellDef="let elemento" class="last-col-end">
+              <button mat-icon-button class="mat-icon-button-table" (click)="activarConsultar(elemento)"
+                matTooltip="Consultar" matTooltipPosition="above">
+                <mat-icon>search</mat-icon>
+              </button>
+              <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+                matTooltip="Editar" matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
+      </div>
+    </form>
   </div>
 </div>

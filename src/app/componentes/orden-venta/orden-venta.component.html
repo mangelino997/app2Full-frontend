@@ -65,14 +65,16 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-8">
             <div class="form-group has-float-label">
               <label for="idDescripcion" class="descripcion-label">Descripción *</label>
               <input id="idDescripcion" type="text" formControlName="nombre" autocomplete="off"
                 class="form-control form-control-sm" maxlength="45" [readonly]="soloLectura">
             </div>
           </div>
-          <div class="col-md-6">
+        </div>
+        <div class="row">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idVendedor" class="tamanio-label">Vendedor *</label>
               <mat-select id="idVendedor" class="form-control form-control-sm" formControlName="vendedor"
@@ -83,8 +85,6 @@
               </mat-select>
             </div>
           </div>
-        </div>
-        <div class="row">
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idSeguro" class="tamanio-label">Seguro *</label>
@@ -93,14 +93,14 @@
                 placeholder="‰ 7.00" (blur)="establecerPorcentajePorMil(formulario.get('seguro'), 2)">
             </div>
           </div>
-          <div class="col-md-4">
+          <!-- <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idComisionCR" class="tamanio-label">Comisión Contra Reembolso</label>
               <input id="idComisionCR" [textMask]="mascararPorcentaje()" type="text" formControlName="comisionCR"
                 autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
                 placeholder="% 00.00" (blur)="establecerPorcentaje(formulario.get('comisionCR'), 2)">
             </div>
-          </div>
+          </div> -->
           <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idEsContado" class="tamanio-label">Es Contado *</label>
@@ -182,7 +182,8 @@
             <table mat-table [dataSource]="listaTarifasDeOrdVta" matSort class="mat-elevation-z1">
               <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
-                <td class="mat-cell-left" mat-cell *matCellDef="let elemento; let i=index" class="number-right">{{i + 1}}</td>
+                <td class="mat-cell-left" mat-cell *matCellDef="let elemento; let i=index" class="number-right">
+                  {{i + 1}}</td>
               </ng-container>
               <ng-container matColumnDef="tarifa">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Tarifa</th>
@@ -281,8 +282,8 @@
             <br>
             <table mat-table [dataSource]="listaOrdenVenta" matSort class="mat-elevation-z1">
               <ng-container matColumnDef="EDITAR" stickyEnd>
-                <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button color="primary"
-                    (click)="abrirReporte()">Reporte</button></th>
+                <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button
+                    color="primary" (click)="abrirReporte()">Reporte</button></th>
                 <td mat-cell *matCellDef="let elemento">
                   <button mat-icon-button class="mat-icon-button-table" (click)="eliminar(elemento.id, false)"
                     matTooltip="Eliminar" matTooltipPosition="above">
@@ -295,7 +296,7 @@
                 </td>
               </ng-container>
               <ng-container matColumnDef="ID">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-id-width">#</th>
                 <td class="mat-cell-left" mat-cell *matCellDef="let elemento" class="number-right">{{elemento.id}}</td>
               </ng-container>
               <ng-container matColumnDef="DESCRIPCION">
@@ -313,13 +314,13 @@
                   <span *ngIf="elemento.seguro > 0">{{establecerDecimales(elemento.seguro, 2)}} % </span>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="CR">
+              <!-- <ng-container matColumnDef="CR">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Comision Contra Reembolso</th>
                 <td class="mat-cell-right" mat-cell *matCellDef="let elemento">
                   <span *ngIf="elemento.comisionCR == 0"></span>
                   <span *ngIf="elemento.comisionCR > 0">{{establecerDecimales(elemento.comisionCR, 2)}} %</span>
                 </td>
-              </ng-container>
+              </ng-container> -->
               <ng-container matColumnDef="ES_CONTADO">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Es Contado</th>
                 <td class="mat-cell-left" mat-cell *matCellDef="let elemento">{{elemento.esContado? 'Sí' : 'No'}}</td>

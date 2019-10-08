@@ -24,8 +24,6 @@ export class AdelantoLoteComponent implements OnInit {
   public sucursales: Array<any> = [];
   //Define la lista de categorias
   public categorias: Array<any> = [];
-  //Define el resultado
-  public resultados: Array<any> = [];
   //Define la pestania activa
   public activeLink: any = null;
   //Define el indice seleccionado de pestania
@@ -42,8 +40,6 @@ export class AdelantoLoteComponent implements OnInit {
   public mostrarBoton: boolean = null;
   //Define la lista de pestanias
   public pestanias: Array<any> = [];
-  //Define la lista de opciones
-  public opciones: Array<any> = [];
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define a empresa como un formControl
@@ -102,7 +98,7 @@ export class AdelantoLoteComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de Sucursales
     this.listarSucursales();
     //Obtiene la lista de Categorias
@@ -141,13 +137,10 @@ export class AdelantoLoteComponent implements OnInit {
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario(undefined);
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.establecerValoresPestania(nombre, false, false, true, 'idSucursal');
@@ -241,7 +234,7 @@ export class AdelantoLoteComponent implements OnInit {
         let respuesta = res.json();
         this.toastr.success(respuesta.mensaje);
         this.observacion.reset();
-        this.buscar();
+        this.buscarAdelantoLotes();
         this.loaderService.hide();
       },
       err => {
@@ -257,16 +250,18 @@ export class AdelantoLoteComponent implements OnInit {
     this.indiceElemento = indice;
     document.getElementById('idObervaciones').focus();
   }
-  //Carga la tabla con registros
-  public buscar() {
+  //Carga la tabla con los adelantos lotes para las fechas ingresadas
+  public buscarAdelantoLotes() {
     this.loaderService.show();
-    let fechaDesde = this.fechaDesde.value;
-    let fechaHasta = this.fechaHasta.value;
-    let empresa = this.appService.getEmpresa();
-    this.servicio.listarLotes(fechaDesde, fechaHasta, empresa.id).subscribe(
+    this.servicio.listarLotes(this.fechaDesde.value, this.fechaHasta.value, this.appService.getEmpresa().id).subscribe(
       res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
+        if(res.json().length > 0){
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+        }else{
+          this.listaCompleta = new MatTableDataSource([]);
+          this.toastr.error("Sin registros para mostrar.");
+        }
         this.loaderService.hide();
       },
       err => {
@@ -277,17 +272,16 @@ export class AdelantoLoteComponent implements OnInit {
   }
   //Reestablece el formulario
   private reestablecerFormulario(id) {
-    this.formulario.reset();
-    this.observacion.reset();
-    this.numeroLote.setValue(null);
-    this.indiceElemento = null,
-      this.fechaDesde.reset();
-    this.fechaHasta.reset();
-    this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
     this.topeMax.reset();
-    this.basicoCategoria.reset();
     this.categoria.reset();
+    this.formulario.reset();
+    this.fechaDesde.reset();
+    this.fechaHasta.reset();
+    this.observacion.reset();
+    this.indiceElemento = null,
+    this.basicoCategoria.reset();
+    this.numeroLote.setValue(null);
+    this.listaCompleta = new MatTableDataSource([]);
     this.fechaService.obtenerFecha().subscribe(
       res => {
         this.formulario.get('fechaEmision').setValue(res.json());
@@ -370,9 +364,9 @@ export class AdelantoLoteComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

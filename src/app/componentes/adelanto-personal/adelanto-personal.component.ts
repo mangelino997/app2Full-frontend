@@ -250,10 +250,13 @@ export class AdelantoPersonalComponent implements OnInit {
     //Consulta por filtro
     this.servicio.listarPorFiltros(obj).subscribe(
       res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        if (this.listaCompleta.data.length == 0)
+        if(res.json().length > 0){
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+        }else{
+          this.listaCompleta = new MatTableDataSource([]);
           this.toastr.warning("Sin registros para mostrar.");
+        }
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },

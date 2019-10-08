@@ -166,7 +166,12 @@ export class MonedaCuentaContableComponent implements OnInit {
     if (this.indiceSeleccionado > 1) {
       this.monedaCuentaContableServicio.obtenerPorMonedaYEmpresa(this.formulario.value.moneda.id, this.formulario.value.empresa.id).subscribe(
         res => {
-          this.formulario.get('planCuenta').setValue(res.json());
+          if(res.text()){
+            let respuesta = res.json();
+            this.formulario.get('planCuenta').setValue(respuesta.planCuenta);
+          }else{
+            this.formulario.get('planCuenta').reset();
+          }
         },
         err => {
         }
@@ -185,6 +190,7 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
+    soloLectura || this.indiceSeleccionado == 3 ? this.formulario.get('moneda').disable() : this.formulario.get('moneda').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -205,15 +211,15 @@ export class MonedaCuentaContableComponent implements OnInit {
         break;
       case 2:
         this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, false, 'idMoneda');
+        this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
         this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, true, false, true, 'idMoneda');
+        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
         break;
       case 4:
         this.establecerEstadoCampos(false);
-        this.establecerValoresPestania(nombre, true, true, true, 'idMoneda');
+        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
         this.listar();
@@ -224,11 +230,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
   private establecerEstadoCampos(estado) {
-    if (estado) {
-      this.formulario.get('moneda').enable();
-    } else {
-      this.formulario.get('moneda').disable();
-    }
+    estado ? this.formulario.get('moneda').enable() : this.formulario.get('moneda').disable();
   }
   //Funcion para determinar que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
@@ -269,7 +271,29 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Actualiza un registro
   private actualizar(): void {
     this.loaderService.show();
+    this.formulario.get('moneda').enable();
     this.monedaCuentaContableServicio.actualizar(this.formulario.value).subscribe(
+      res => {
+        let respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.reestablecerFormulario();
+          document.getElementById('idAutocompletado').focus();
+          this.toastr.success(respuesta.mensaje);
+          this.formulario.get('moneda').disable();
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        let respuesta = err.json();
+        this.toastr.error(respuesta.mensaje);
+        this.loaderService.hide();
+      }
+    );
+  }
+  //Elimina un registro
+  private eliminar() {
+    this.loaderService.show();
+    this.monedaCuentaContableServicio.eliminar(this.formulario.value.id).subscribe(
       res => {
         let respuesta = res.json();
         if (respuesta.codigo == 200) {
@@ -286,8 +310,6 @@ export class MonedaCuentaContableComponent implements OnInit {
       }
     );
   }
-  //Elimina un registro
-  private eliminar(): void { }
   //Reestablece los campos formularios
   private reestablecerFormulario() {
     this.formulario.reset();
@@ -298,6 +320,7 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Establece el formulario
   public establecerFormulario(): void {
     let elemento = this.autocompletado.value;
+    this.formulario.get('moneda').enable();
     this.formulario.patchValue(elemento);
     this.formulario.value.moneda = elemento.moneda;
   }
@@ -366,6 +389,8 @@ export class MonedaCuentaContableComponent implements OnInit {
   public verificarSeleccion(valor): void {
     if (typeof valor.value != 'object') {
       valor.setValue(null);
+      this.formulario.reset();
+      this.formulario.get('moneda').disable();
     }
   }
   //Abre el dialogo Plan de Cuenta

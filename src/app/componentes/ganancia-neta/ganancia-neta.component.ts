@@ -45,7 +45,7 @@ export class GananciaNetaComponent implements OnInit {
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define el autocompletado
-  public anio: FormControl = new FormControl();
+  public anio: FormControl = new FormControl('', Validators.required);
   //Define la lista de resultados de busqueda
   public resultadosPorFiltro: Array<any> = [];
   //Define la lista de Años Fiscales
@@ -188,9 +188,14 @@ export class GananciaNetaComponent implements OnInit {
     let anio = this.formularioFiltro.value.anio;
     this.servicio.listarPorFiltros(anio, mes).subscribe(
       res => {
-        this.resultadosPorFiltro = res.json();
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
+        if (res.json().length > 0) {
+          this.resultadosPorFiltro = res.json();
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+        } else {
+          this.listaCompleta = new MatTableDataSource([]);
+          this.toastr.error("Sin registros para mostrar.");
+        }
         this.loaderService.hide();
       },
       err => {
@@ -311,10 +316,11 @@ export class GananciaNetaComponent implements OnInit {
   private reestablecerFormulario() {
     this.formulario.reset();
     this.formularioFiltro.reset();
-    this.listaCompleta = new MatTableDataSource([]);
-    this.formularioFiltro.get('gananciaNeta').setValue(true);
-    this.anio.setValue(undefined);
+    this.formularioFiltro.get('gananciaNeta').setValue(false);
+    this.cambioGananciaNetaFiltro();
+    this.anio.reset();
     this.idMod = null;
+    this.listaCompleta = new MatTableDataSource([]);
   }
   //Controla que el campo "importe" (Ganancia Neta Acumulada) no sea menor o igual a cero
   public controlImporte() {
