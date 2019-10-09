@@ -88,7 +88,7 @@
       <div class="row justify-content-center">
         <div class="col-md-1 text-center">
           <button id="idBoton" *ngIf="mostrarBoton && !show" mat-raised-button color="primary" formnovalidate
-            (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid">
+            (click)="accion(indiceSeleccionado)" [disabled]="!formulario.valid" style="max-width: fit-content;">
             {{pestaniaActual}}</button>
         </div>
       </div>
@@ -131,7 +131,7 @@
           </div>
           <div class="col-md-2">
             <button mat-raised-button color="primary" (click)="listarPorCategoriaYAnio()"
-              [disabled]="!formularioListar.valid">Buscar</button>
+              style="max-width: fit-content;" [disabled]="!formularioListar.valid">Buscar</button>
           </div>
         </div>
       </form>

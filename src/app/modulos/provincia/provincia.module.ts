@@ -11,6 +11,7 @@ import { TextMaskModule } from 'angular2-text-mask';
 import { ProvinciaService } from 'src/app/servicios/provincia.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { PaisService } from 'src/app/servicios/pais.service';
+import { Provincia } from 'src/app/modelos/provincia';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { PaisService } from 'src/app/servicios/pais.service';
   providers: [
     ProvinciaService,
     SubopcionPestaniaService,
-    PaisService
+    PaisService,
+    Provincia
   ]
 })
 export class ProvinciaModule { }

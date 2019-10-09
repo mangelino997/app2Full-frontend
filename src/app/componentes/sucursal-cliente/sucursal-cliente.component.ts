@@ -12,6 +12,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { SucursalCliente } from 'src/app/modelos/sucursalCliente';
 
 @Component({
   selector: 'app-sucursal-cliente',
@@ -61,7 +62,7 @@ export class SucursalClienteComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: SucursalClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private appService: AppService, private toastr: ToastrService,
+    private appService: AppService, private toastr: ToastrService, private modelo: SucursalCliente,
     private clienteServicio: ClienteService, private barrioServicio: BarrioService,
     private localidadServicio: LocalidadService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -77,18 +78,15 @@ export class SucursalClienteComponent implements OnInit {
   }
   //Al iniciarse el componente
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      domicilio: new FormControl('', Validators.maxLength(60)),
-      barrio: new FormControl(),
-      telefonoFijo: new FormControl('', Validators.maxLength(45)),
-      telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      cliente: new FormControl('', Validators.required),
-      localidad: new FormControl('', Validators.required)
-    });
+    this.formulario = this.modelo.formulario;
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado - Buscar por alias cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -114,15 +112,6 @@ export class SucursalClienteComponent implements OnInit {
         })
       }
     })
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
-    //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
-    //Obtiene la lista completa de registros
-    // this.listar();
   }
   //Al cambiar el campo autocompletado, borra formulario y lista
   public cambioAutocompletado(elemento): void {
@@ -146,8 +135,9 @@ export class SucursalClienteComponent implements OnInit {
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
     this.resultados = [];
-    this.resultadosClientes = [];
+    this.sucursales = [];
     this.resultadosBarrios = [];
+    this.resultadosClientes = [];
     this.resultadosLocalidades = [];
   }
   //Funcion para establecer los valores de las pestañas
@@ -156,20 +146,15 @@ export class SucursalClienteComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarListas();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.vaciarListas();
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -185,8 +170,7 @@ export class SucursalClienteComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idCliente');
         break;
       case 5:
-        this.mostrarAutocompletado = true;
-        document.getElementById('idCliente').focus();
+        this.establecerValoresPestania(nombre, true, true, true, 'idCliente');
         break;
       default:
         break;
@@ -218,23 +202,6 @@ export class SucursalClienteComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.loaderService.show();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-        this.loaderService.hide();
-      }
-    );
-  }
   //Obtiene una lista por cliente
   public listarPorCliente() {
     if (this.mostrarAutocompletado) {
@@ -242,16 +209,27 @@ export class SucursalClienteComponent implements OnInit {
       this.loaderService.show();
       this.servicio.listarPorCliente(elemento.id).subscribe(
         res => {
-          if (this.indiceSeleccionado == 5) {
-            this.listaCompleta = new MatTableDataSource(res.json());
-            this.listaCompleta.paginator = this.paginator;
-            this.listaCompleta.sort = this.sort;
-          } else {
-            this.sucursales = res.json();
+          if (res.json().length > 0) {
+            if (this.indiceSeleccionado == 5) {
+              this.listaCompleta = new MatTableDataSource(res.json());
+              this.listaCompleta.paginator = this.paginator;
+              this.listaCompleta.sort = this.sort;
+            } else {
+              this.sucursales = res.json();
+            }
+          }else{
+            let cliente = this.formulario.value.cliente;
+            this.sucursales = [];
+            this.formulario.reset();
+            this.autocompletado.reset();
+            this.listaCompleta = new MatTableDataSource([]);
+            this.formulario.get('cliente').setValue(cliente);
+            this.toastr.error("El Cliente no tiene sucursales asignadas.");
           }
           this.loaderService.hide();
         },
         err => {
+          this.toastr.error(err.json().mensaje);
           this.loaderService.hide();
         }
       )
@@ -261,15 +239,17 @@ export class SucursalClienteComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
+    let cliente = this.formulario.value.cliente;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
-          document.getElementById('idCliente').focus();
+          this.formulario.get('cliente').setValue(cliente);
+          document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err);
@@ -284,11 +264,11 @@ export class SucursalClienteComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(undefined);
           document.getElementById('idCliente').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err);
@@ -379,15 +359,15 @@ export class SucursalClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.formulario.setValue(elemento);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.formulario.patchValue(elemento);
     this.listarPorCliente();
     this.autocompletado.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
-    this.formulario.setValue(elemento);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.formulario.patchValue(elemento);
     this.listarPorCliente();
     this.autocompletado.setValue(elemento);
   }
@@ -436,9 +416,9 @@ export class SucursalClienteComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
@@ -452,7 +432,7 @@ export class SucursalClienteComponent implements OnInit {
         cliente: elemento.cliente.razonSocial,
         nombre: elemento.nombre,
         domicilio: elemento.domicilio,
-        barrio: elemento.barrio.nombre,
+        barrio: elemento.barrio? elemento.barrio.nombre : '',
         localidad: elemento.localidad.nombre + ', ' + elemento.localidad.provincia.nombre,
         telefono_fijo: elemento.telefonoFijo,
         telefono_movil: elemento.telefonoMovil
@@ -464,13 +444,17 @@ export class SucursalClienteComponent implements OnInit {
   //Abre el dialogo de reporte
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
-    let datos = {
-      nombre: 'Sucursales Clientes',
-      empresa: this.appService.getEmpresa().razonSocial,
-      usuario: this.appService.getUsuario().nombre,
-      datos: lista,
-      columnas: this.columnas
+    if(this.formulario.value.cliente){
+      let datos = {
+        nombre: 'Sucursales - Cliente: ' + this.formulario.value.cliente.id + ' - ' + this.formulario.value.cliente.razonSocial,
+        empresa: this.appService.getEmpresa().razonSocial,
+        usuario: this.appService.getUsuario().nombre,
+        datos: lista,
+        columnas: this.columnas
+      }
+      this.reporteServicio.abrirDialogo(datos);
+    }else{
+      this.toastr.error("Complete el campo Cliente para filtrar los registros.");
     }
-    this.reporteServicio.abrirDialogo(datos);
   }
 }

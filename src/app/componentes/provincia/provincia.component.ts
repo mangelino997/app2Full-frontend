@@ -10,6 +10,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { Provincia } from 'src/app/modelos/provincia';
 
 @Component({
   selector: 'app-provincia',
@@ -55,7 +56,7 @@ export class ProvinciaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ProvinciaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private paisServicio: PaisService, private toastr: ToastrService,
+    private paisServicio: PaisService, private toastr: ToastrService, private modelo: Provincia,
     private appService: AppService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -84,16 +85,9 @@ export class ProvinciaComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      codigoIIBB: new FormControl('', [Validators.min(0), Validators.maxLength(10)]),
-      codigoAfip: new FormControl('', Validators.maxLength(3)),
-      pais: new FormControl('', Validators.required)
-    });
+    this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado Pais - Buscar por nombre
     this.formulario.get('pais').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -120,14 +114,10 @@ export class ProvinciaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario('');
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -143,9 +133,7 @@ export class ProvinciaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        setTimeout(function () {
-          document.getElementById('idPais').focus();
-        }, 20);
+        this.establecerValoresPestania(nombre, true, true, true, 'idPais');
         break;
       default:
         break;
@@ -177,18 +165,18 @@ export class ProvinciaComponent implements OnInit {
       }
     );
   }
-  //Obtiene el listado de registros
-  private listar() {
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
+  // //Obtiene el listado de registros
+  // private listar() {
+  //   this.servicio.listar().subscribe(
+  //     res => {
+  //       this.listaCompleta = new MatTableDataSource(res.json());
+  //       this.listaCompleta.sort = this.sort;
 
-      },
-      err => {
-      }
-    );
-  }
+  //     },
+  //     err => {
+  //     }
+  //   );
+  // }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
@@ -200,8 +188,8 @@ export class ProvinciaComponent implements OnInit {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         var respuesta = err.json();
@@ -222,11 +210,11 @@ export class ProvinciaComponent implements OnInit {
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
-          this.reestablecerFormulario('');
+          this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         var respuesta = err.json();
@@ -276,7 +264,7 @@ export class ProvinciaComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.vaciarListas();
   }
   //Obtiene la lista de provincias por pais
@@ -304,13 +292,13 @@ export class ProvinciaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
@@ -335,9 +323,9 @@ export class ProvinciaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

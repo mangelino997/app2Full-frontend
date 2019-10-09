@@ -10,6 +10,7 @@ import { AgendaTelefonicaComponent } from 'src/app/componentes/agenda-telefonica
 import { AgendaTelefonicaService } from 'src/app/servicios/agenda-telefonica.service';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { LocalidadService } from 'src/app/servicios/localidad.service';
+import { AgendaTelefonica } from 'src/app/modelos/agendaTelefonica';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
     AgendaTelefonicaService,
     AgendaTelefonicaService,
     SubopcionPestaniaService,
-    LocalidadService
+    LocalidadService,
+    AgendaTelefonica
   ]
 })
 export class AgendaTelefonicaModule { }

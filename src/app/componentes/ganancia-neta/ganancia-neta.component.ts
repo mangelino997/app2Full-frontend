@@ -139,8 +139,13 @@ export class GananciaNetaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.listarPorAnio(this.anio.value).subscribe(
       res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
+        if (res.json().length > 0) {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+        } else {
+          this.listaCompleta = new MatTableDataSource([]);
+          this.toastr.error("Sin registros para mostrar");
+        }
         this.listaCompleta.paginator = this.paginator;
         this.loaderService.hide();
       },
@@ -272,6 +277,7 @@ export class GananciaNetaComponent implements OnInit {
           this.toastr.success(respuesta.mensaje);
           this.listarPorAnio();
         }
+        document.getElementById('idGananciaNetaAcumulada').focus();
         this.loaderService.hide();
       },
       err => {
@@ -361,10 +367,12 @@ export class GananciaNetaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.eliminar(idElemento).subscribe(
       res => {
-        let respuesta = res.json();
-        this.toastr.success(respuesta.mensaje);
-        this.listarPorAnio();
-        this.loaderService.hide();
+        var respuesta = res.json();
+        if (respuesta.codigo == 200) {
+          this.toastr.success(respuesta.mensaje);
+          this.listarPorAnio();
+          this.loaderService.hide();
+        }
       },
       err => {
         let error = err.json();

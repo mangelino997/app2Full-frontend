@@ -13,7 +13,7 @@
       <h5>{{pestaniaActual}} Sucursal de Cliente</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-8">
             <div class="form-group has-float-label">
               <label for="idCliente" class="tamanio-label">Cliente *</label>
               <input id="idCliente" class="form-control form-control-sm" type="text" matInput
@@ -27,7 +27,7 @@
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-6">
+          <div class="col-md-4">
             <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
               <label for="idAutocompletado" class="tamanio-label">Lista de Sucursales de Cliente</label>
               <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="autocompletado"

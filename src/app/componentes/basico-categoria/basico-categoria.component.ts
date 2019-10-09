@@ -186,8 +186,6 @@ export class BasicoCategoriaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.formularioListar.reset();
-        this.vaciarListas();
         break;
       default:
         break;
@@ -326,6 +324,7 @@ export class BasicoCategoriaComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.autocompletado.reset();
+    this.formularioListar.reset();
     this.formulario.get('id').setValue(id);
     this.vaciarListas();
   }

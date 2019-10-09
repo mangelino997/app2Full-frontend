@@ -166,10 +166,10 @@ export class MonedaCuentaContableComponent implements OnInit {
     if (this.indiceSeleccionado > 1) {
       this.monedaCuentaContableServicio.obtenerPorMonedaYEmpresa(this.formulario.value.moneda.id, this.formulario.value.empresa.id).subscribe(
         res => {
-          if(res.text()){
+          if (res.text()) {
             let respuesta = res.json();
             this.formulario.get('planCuenta').setValue(respuesta.planCuenta);
-          }else{
+          } else {
             this.formulario.get('planCuenta').reset();
           }
         },
@@ -190,7 +190,7 @@ export class MonedaCuentaContableComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    soloLectura || this.indiceSeleccionado == 3 ? this.formulario.get('moneda').disable() : this.formulario.get('moneda').enable();
+    soloLectura ? this.formulario.get('moneda').disable() : this.formulario.get('moneda').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -206,19 +206,19 @@ export class MonedaCuentaContableComponent implements OnInit {
     */
     switch (id) {
       case 1:
-        this.establecerEstadoCampos(true);
+        // this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idMoneda');
         break;
       case 2:
-        this.establecerEstadoCampos(false);
+        // this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        this.establecerEstadoCampos(true);
-        this.establecerValoresPestania(nombre, true, false, true, 'idAutocompletado');
+        // this.establecerEstadoCampos(true);
+        this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 4:
-        this.establecerEstadoCampos(false);
+        // this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
@@ -229,9 +229,9 @@ export class MonedaCuentaContableComponent implements OnInit {
     }
   }
   //Habilita o deshabilita los campos dependiendo de la pestaña
-  private establecerEstadoCampos(estado) {
-    estado ? this.formulario.get('moneda').enable() : this.formulario.get('moneda').disable();
-  }
+  // private establecerEstadoCampos(estado) {
+  //   estado ? this.formulario.get('moneda').enable() : this.formulario.get('moneda').disable();
+  // }
   //Funcion para determinar que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
     switch (indice) {
@@ -320,9 +320,10 @@ export class MonedaCuentaContableComponent implements OnInit {
   //Establece el formulario
   public establecerFormulario(): void {
     let elemento = this.autocompletado.value;
-    this.formulario.get('moneda').enable();
     this.formulario.patchValue(elemento);
     this.formulario.value.moneda = elemento.moneda;
+    this.indiceSeleccionado == 2 || this.indiceSeleccionado == 4 ? this.formulario.get('moneda').disable() : this.formulario.get('moneda').enable();
+
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {

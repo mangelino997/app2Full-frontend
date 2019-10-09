@@ -11,6 +11,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { AppService } from 'src/app/servicios/app.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
+import { AgendaTelefonica } from 'src/app/modelos/agendaTelefonica';
 
 @Component({
   selector: 'app-agendatelefonica',
@@ -53,7 +54,7 @@ export class AgendaTelefonicaComponent implements OnInit {
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: AgendaTelefonicaService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private localidadServicio: LocalidadService, private appService: AppService,
+    private localidadServicio: LocalidadService, private appService: AppService, private modelo: AgendaTelefonica,
     private toastr: ToastrService, private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -74,16 +75,9 @@ export class AgendaTelefonicaComponent implements OnInit {
         this.show = state.show;
       });
     //Define el formulario y validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      domicilio: new FormControl('', Validators.maxLength(45)),
-      telefonoFijo: new FormControl('', Validators.maxLength(45)),
-      telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      correoelectronico: new FormControl('', Validators.maxLength(30)),
-      localidad: new FormControl('', Validators.required)
-    })
+    this.formulario = this.modelo.formulario;
+    //Establece los valores de la primera pestania activa
+    this.seleccionarPestania(1, 'Agregar');
     //Defiene autocompletado localidad
     this.formulario.get('localidad').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -92,10 +86,6 @@ export class AgendaTelefonicaComponent implements OnInit {
         })
       }
     })
-    //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
-    //Obtiene la lista completa de registros
-    // this.listar();
     //Defiene autocompletado
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -139,18 +129,14 @@ export class AgendaTelefonicaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario(undefined);
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
+    this.reestablecerFormulario(undefined);
     /*
     * Se vacia el formulario solo cuando se cambia de pestania, no cuando
     * cuando se hace click en ver o mod de la pestania lista
     */
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -221,22 +207,16 @@ export class AgendaTelefonicaComponent implements OnInit {
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11003) {
-          document.getElementById("labelCorreoelectronico").classList.add('label-error');
-          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-          document.getElementById("idCorreoelectronico").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -246,7 +226,7 @@ export class AgendaTelefonicaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
@@ -255,13 +235,7 @@ export class AgendaTelefonicaComponent implements OnInit {
         }
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -273,11 +247,11 @@ export class AgendaTelefonicaComponent implements OnInit {
     this.servicio.eliminar(id).subscribe(
       res => {
         let respuesta = res.json();
-        this.reestablecerFormulario(undefined);
-        document.getElementById('idAutocompletado').focus();
         if (respuesta.codigo == 200) {
+          this.reestablecerFormulario(undefined);
           this.toastr.success(MensajeExcepcion.ELIMINADO);
         }
+        document.getElementById('idAutocompletado').focus();
         this.loaderService.hide();
       },
       err => {
@@ -289,9 +263,24 @@ export class AgendaTelefonicaComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario(id) {
     this.formulario.reset();
+    this.autocompletado.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
     this.vaciarListas();
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
+    var respuesta = err;
+    if (respuesta.codigo == 11003) {
+      document.getElementById("labelCorreoelectronico").classList.add('label-error');
+      document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+      document.getElementById("idCorreoelectronico").focus();
+    } else if (respuesta.codigo == 11002) {
+      document.getElementById("labelNombre").classList.add('label-error');
+      document.getElementById("idNombre").classList.add('is-invalid');
+      document.getElementById("idNombre").focus();
+    }
+    this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -302,7 +291,7 @@ export class AgendaTelefonicaComponent implements OnInit {
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
     if (valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
+      let patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if (campo == 'telefonoFijo') {
           document.getElementById("labelTelefonoFijo").classList.add('label-error');
@@ -322,30 +311,30 @@ export class AgendaTelefonicaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
   //Establece el formulario al seleccionar elemento del autocompletado
   public cambioAutocompletado() {
-    var elemento = this.autocompletado.value;
+    let elemento = this.autocompletado.value;
     this.autocompletado.setValue(elemento);
     this.formulario.patchValue(elemento);
   }
@@ -377,7 +366,7 @@ export class AgendaTelefonicaComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Agenda',
+      nombre: 'Agenda Telefónica',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,

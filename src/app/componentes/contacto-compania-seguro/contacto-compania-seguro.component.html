@@ -4,12 +4,12 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CONTACTO COMPAÑIA SEGURO</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado < 5">
-    <div class="col-md-6 text-center">
+    <div class="col-md-8 text-center">
       <h5>{{pestaniaActual}} Contacto de Compañía de Seguro</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
@@ -83,6 +83,8 @@
                 Correo Electrónico</label>
               <input id="idCorreoelectronico" type="email" formControlName="correoelectronico" autocomplete="off"
                 class="form-control form-control-sm" [readonly]="soloLectura"
+                pattern="^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$"
+                (blur)="validarPatron('^[a-z]+[a-z0-9._]+@[a-z0-9]+\.[a-z.]+[a-z]$', 'correoelectronico')"
                 (ngModelChange)="cambioCampo('idCorreoelectronico', 'labelCorreoelectronico')" maxlength="60">
             </div>
           </div>
@@ -108,12 +110,12 @@
       </div>
       <br>
       <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-6">
           <div class="form-group has-float-label">
             <label for="idCompaniaSeguro" class="tamanio-label">Compañia de Seguro *</label>
             <input id="idCompaniaSeguro" class="form-control form-control-sm" type="text" matInput
-              [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro"
-              autocomplete="off" placeholder="Buscar por Compañia de Seguro">
+              [formControl]="formulario.get('companiaSeguro')" [matAutocomplete]="autoCompaniaSeguro" autocomplete="off"
+              placeholder="Buscar por Compañia de Seguro">
             <mat-autocomplete #autoCompaniaSeguro="matAutocomplete" [displayWith]="displayF.bind(this)"
               (optionSelected)="listarPorCompaniaSeguro()">
               <mat-option *ngFor="let itemCompaniaSeguro of resultadosCompaniasSeguros" [value]="itemCompaniaSeguro">
@@ -156,8 +158,8 @@
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>

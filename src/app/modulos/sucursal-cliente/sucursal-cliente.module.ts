@@ -12,6 +12,7 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { BarrioService } from 'src/app/servicios/barrio.service';
 import { LocalidadService } from 'src/app/servicios/localidad.service';
+import { SucursalCliente } from 'src/app/modelos/sucursalCliente';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { LocalidadService } from 'src/app/servicios/localidad.service';
     SubopcionPestaniaService,
     ClienteService,
     BarrioService,
-    LocalidadService
+    LocalidadService,
+    SucursalCliente
   ]
 })
 export class SucursalClienteModule { }

@@ -11,6 +11,7 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { ContactoCliente } from 'src/app/modelos/contactoCliente';
 
 @Component({
   selector: 'app-contacto-cliente',
@@ -36,8 +37,6 @@ export class ContactoClienteComponent implements OnInit {
   public formulario: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
-  //Define la opcion seleccionada
-  public opcionSeleccionada: number = null;
   //Define la lista de tipos de contactos
   public tiposContactos: Array<any> = [];
   //Define la lista de contactos
@@ -60,7 +59,7 @@ export class ContactoClienteComponent implements OnInit {
   private subscription: Subscription;
   //Constructor
   constructor(private servicio: ContactoClienteService, private subopcionPestaniaService: SubopcionPestaniaService,
-    private toastr: ToastrService, private appService: AppService,
+    private toastr: ToastrService, private appService: AppService, private modelo: ContactoCliente,
     private clienteServicio: ClienteService, private tipoContactoServicio: TipoContactoService,
     private loaderService: LoaderService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
@@ -82,20 +81,9 @@ export class ContactoClienteComponent implements OnInit {
         this.show = state.show;
       });
     //Define los campos para validaciones
-    this.formulario = new FormGroup({
-      id: new FormControl(),
-      version: new FormControl(),
-      cliente: new FormControl('', Validators.required),
-      tipoContacto: new FormControl('', Validators.required),
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
-      telefonoFijo: new FormControl('', Validators.maxLength(45)),
-      telefonoMovil: new FormControl('', Validators.maxLength(45)),
-      correoelectronico: new FormControl('', Validators.maxLength(60)),
-      usuarioAlta: new FormControl(),
-      usuarioMod: new FormControl()
-    });
+    this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de tipos de contactos
     this.listarTiposContactos();
     //Autocompletado Cliente - Buscar por alias
@@ -109,7 +97,7 @@ export class ContactoClienteComponent implements OnInit {
   }
   //Establecer el formulario al cambiar elemento de autocompletado
   public cambioAutocompletado() {
-    this.formulario.setValue(this.autocompletado.value);
+    this.formulario.patchValue(this.autocompletado.value);
   }
   //Obtiene el listado de tipos de proveedores
   private listarTiposContactos() {
@@ -130,9 +118,8 @@ export class ContactoClienteComponent implements OnInit {
   //Habilita o deshabilita los campos select dependiendo de la pestania actual
   private establecerEstadoCampos(estado) {
     if (estado) {
-      this.formulario.get('tipoContacto').enable();
     } else {
-      this.formulario.get('tipoContacto').disable();
+
     }
   }
   //Funcion para establecer los valores de las pestañas
@@ -141,20 +128,16 @@ export class ContactoClienteComponent implements OnInit {
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    this.vaciarListas();
+    soloLectura ? this.formulario.get('tipoContacto').disable() : this.formulario.get('tipoContacto').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.reestablecerFormulario();
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.vaciarListas();
-    }
+    this.reestablecerFormulario();
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -228,15 +211,17 @@ export class ContactoClienteComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
+    let cliente = this.formulario.value.cliente;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario();
-          document.getElementById('idCliente').focus();
+          this.formulario.get('cliente').setValue(cliente);
+          document.getElementById('idTipoContacto').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err);
@@ -250,13 +235,13 @@ export class ContactoClienteComponent implements OnInit {
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           document.getElementById('idCliente').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         this.lanzarError(err);
@@ -270,7 +255,7 @@ export class ContactoClienteComponent implements OnInit {
     let formulario = this.formulario.value;
     this.servicio.eliminar(formulario.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           document.getElementById('idNombre').focus();
@@ -279,7 +264,7 @@ export class ContactoClienteComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 500) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -293,12 +278,12 @@ export class ContactoClienteComponent implements OnInit {
   //Reestablece el formulario
   private reestablecerFormulario() {
     this.formulario.reset();
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.vaciarListas();
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    let respuesta = err.json();
     if (respuesta.codigo == 11003) {
       document.getElementById("labelCorreoelectronico").classList.add('label-error');
       document.getElementById("idCorreoelectronico").classList.add('is-invalid');
@@ -313,17 +298,17 @@ export class ContactoClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.formulario.get('cliente').setValue(elemento);
     this.listarPorCliente();
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.formulario.get('cliente').setValue(elemento);
     this.listarPorCliente();
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
     this.autocompletado.setValue(elemento);
     this.formulario.setValue(elemento);
   }
@@ -342,14 +327,36 @@ export class ContactoClienteComponent implements OnInit {
       return elemento;
     }
   }
+  //Manejo de colores de campos y labels con patron erroneo
+  public validarPatron(patron, campo) {
+    let valor = this.formulario.get(campo).value;
+    if (valor != undefined && valor != null && valor != '') {
+      let patronVerificador = new RegExp(patron);
+      if (!patronVerificador.test(valor)) {
+        if (campo == 'telefonoFijo') {
+          document.getElementById("labelTelefonoFijo").classList.add('label-error');
+          document.getElementById("idTelefonoFijo").classList.add('is-invalid');
+          this.toastr.error('Telefono Fijo Incorrecto');
+        } else if (campo == 'telefonoMovil') {
+          document.getElementById("labelTelefonoMovil").classList.add('label-error');
+          document.getElementById("idTelefonoMovil").classList.add('is-invalid');
+          this.toastr.error('Telefono Movil Incorrecto');
+        } else if (campo == 'correoelectronico') {
+          document.getElementById("labelCorreoelectronico").classList.add('label-error');
+          document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+          this.toastr.error('Correo Electronico Incorrecto');
+        }
+      }
+    }
+  }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
@@ -379,13 +386,17 @@ export class ContactoClienteComponent implements OnInit {
   //Abre el dialogo de reporte
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
-    let datos = {
-      nombre: 'Contactos - Cliente',
-      empresa: this.appService.getEmpresa().razonSocial,
-      usuario: this.appService.getUsuario().nombre,
-      datos: lista,
-      columnas: this.columnas
+    if (this.formulario.value.cliente) {
+      let datos = {
+        nombre: 'Contactos - Cliente: ' + this.formulario.value.cliente.id + ' - ' + this.formulario.value.cliente.razonSocial,
+        empresa: this.appService.getEmpresa().razonSocial,
+        usuario: this.appService.getUsuario().nombre,
+        datos: lista,
+        columnas: this.columnas
+      }
+      this.reporteServicio.abrirDialogo(datos);
+    }else{
+      this.toastr.error("Complete el campo Cliente para filtrar los registros.");
     }
-    this.reporteServicio.abrirDialogo(datos);
   }
 }
