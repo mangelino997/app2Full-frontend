@@ -17,8 +17,8 @@
             <div class="col-md-4">
                 <div class="form-group has-float-label">
                     <label for="idDiasFechaFactura" class="tamanio-label">Días Fecha Factura</label>
-                    <input id="idDiasFechaFactura" type="number" formControlName="diasFechaFactura"
-                        class="form-control form-control-sm number-right">
+                    <input id="idDiasFechaFactura" type="text" formControlName="diasFechaFactura"
+                        [textMask]="mascararEnteros(3)" class="form-control form-control-sm number-right">
                 </div>
             </div>
         </div>

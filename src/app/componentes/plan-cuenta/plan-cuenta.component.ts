@@ -5,7 +5,7 @@ import { PlanCuentaService } from 'src/app/servicios/plan-cuenta.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
-import { Subscription, TimeoutError } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { AppService } from 'src/app/servicios/app.service';
 import { TipoCuentaContableService } from 'src/app/servicios/tipo-cuenta-contable.service';
 import { GrupoCuentaContableService } from 'src/app/servicios/grupo-cuenta-contable.service';
@@ -98,7 +98,7 @@ export class PlanCuentaComponent implements OnInit {
       version: new FormControl(),
       empresa: new FormControl(),
       padre: new FormControl(),
-      nombre: new FormControl('', Validators.required),
+      nombre: new FormControl('', [Validators.required, Validators.maxLength(45)]),
       esImputable: new FormControl('', Validators.required),
       estaActivo: new FormControl('', Validators.required),
       usuarioAlta: new FormControl(),

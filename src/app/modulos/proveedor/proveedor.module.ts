@@ -21,6 +21,7 @@ import { CondicionCompraService } from 'src/app/servicios/condicion-compra.servi
 import { BancoService } from 'src/app/servicios/banco.service';
 import { TipoCuentaBancariaService } from 'src/app/servicios/tipo-cuenta-bancaria.service';
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
+import { ProveedorCuentaContableService } from 'src/app/servicios/proveedor-cuenta-contable.service';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,8 @@ import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service
     BancoService,
     TipoCuentaBancariaService,
     ProveedorService,
-    UsuarioEmpresaService
+    UsuarioEmpresaService,
+    ProveedorCuentaContableService
   ],
   entryComponents: []
 })
