@@ -21,6 +21,8 @@ import { MatSort, MatTableDataSource, MatDialog, MatPaginator } from '@angular/m
 import { UsuarioEmpresaService } from 'src/app/servicios/usuario-empresa.service';
 import { PlanCuentaDialogo } from '../plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { ProveedorCuentaContableService } from 'src/app/servicios/proveedor-cuenta-contable.service';
+import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 
 @Component({
   selector: 'app-proveedor',
@@ -95,7 +97,7 @@ export class ProveedorComponent implements OnInit {
     private condicionCompraServicio: CondicionCompraService, private bancoServicio: BancoService,
     private tipoCuentaBancariaServicio: TipoCuentaBancariaService, private proveedorModelo: Proveedor,
     private loaderService: LoaderService, private usuarioEmpresaService: UsuarioEmpresaService, private dialog: MatDialog,
-    private reporteServicio: ReporteService) {
+    private reporteServicio: ReporteService, private proveedorCuentaContableService: ProveedorCuentaContableService) {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
       .subscribe((state: LoaderState) => {
@@ -199,7 +201,7 @@ export class ProveedorComponent implements OnInit {
         for (let i = 0; i < empresas.length; i++) {
           formulario = {
             empresa: empresas[i],
-            planCuenta: null
+            planCuentaCompra: null
           }
           planesCuentas.push(formulario);
         }
@@ -229,13 +231,58 @@ export class ProveedorComponent implements OnInit {
           version: resultado.version,
           nombre: resultado.nombre
         }
-        elemento.planCuenta = planCuenta;
+        elemento.planCuentaCompra = planCuenta;
+        if(this.indiceSeleccionado == 3) {
+          elemento.proveedor = {
+            id: this.formulario.get('id').value,
+            version: this.formulario.get('version').value
+          }
+          this.actualizarCuentaContable(elemento);
+        }
       }
     });
   }
+  //Actualiza una cuenta contable
+  private actualizarCuentaContable(elemento) {
+    this.loaderService.show();
+    this.proveedorCuentaContableService.actualizar(elemento).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        this.loaderService.hide();
+      }
+    );
+  }
   //Elimina la cuenta contable de la empresa
   public eliminarPlanCuenta(elemento) {
-    elemento.planCuenta = null;
+    const id = elemento.id;
+    if(this.indiceSeleccionado == 3) {
+      this.eliminarCuentaContablePorId(id);
+    }
+    elemento.planCuentaCompra = null;
+  }
+  //Elimina la cuenta contable seleccionada
+  private eliminarCuentaContablePorId(id) {
+    this.loaderService.show();
+    this.proveedorCuentaContableService.eliminar(id).subscribe(
+      res => {
+        let respuesta = res.json();
+        if(respuesta.codigo == 200) {
+          this.toastr.success(MensajeExcepcion.ELIMINADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
+        this.loaderService.hide();
+      }
+    );
   }
   //Obtiene el listado de tipos de proveedores
   private listarTiposProveedores() {
@@ -446,7 +493,7 @@ export class ProveedorComponent implements OnInit {
   private actualizar() {
     this.loaderService.show();
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-    this.formulario.get('proveedorCuentasContables').setValue(this.planesCuentas.data);
+    this.formulario.get('proveedorCuentasContables').setValue(null);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();

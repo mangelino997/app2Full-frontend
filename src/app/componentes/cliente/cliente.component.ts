@@ -279,26 +279,30 @@ export class ClienteComponent implements OnInit {
         elemento.cuentaBancaria.cbu = resultado.cbu;
         elemento.cuentaBancaria.aliasCBU = resultado.aliasCBU;
         if(this.indiceSeleccionado == 3) {
-          this.loaderService.show();
           elemento.cliente = {
             id: this.formulario.get('id').value,
             version: this.formulario.get('version').value
           }
-          this.clienteCuentaBancariaService.actualizar(elemento).subscribe(
-            res => {
-              if(res.status == 200) {
-                this.toastr.success(MensajeExcepcion.ACTUALIZADO);
-              }
-              this.loaderService.hide();
-            },
-            err => {
-              this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
-              this.loaderService.hide();
-            }
-          );
+          this.actualizarCuentaBancaria(elemento);
         }
       }
     });
+  }
+  //Actualiza una cuenta bancaria
+  private actualizarCuentaBancaria(elemento) {
+    this.loaderService.show();
+    this.clienteCuentaBancariaService.actualizar(elemento).subscribe(
+      res => {
+        if(res.status == 200) {
+          this.toastr.success(MensajeExcepcion.ACTUALIZADO);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(MensajeExcepcion.NO_ACTUALIZADO);
+        this.loaderService.hide();
+      }
+    );
   }
   //Elimina la cuenta bancaria
   public eliminarCuentaBancaria(elemento): void {
@@ -360,7 +364,11 @@ export class ClienteComponent implements OnInit {
           );
         } else {
           if(lista) {
-            lista.push(resultado);
+            try {
+              lista[indice] = resultado;
+            } catch(e) {
+              lista.push(resultado);
+            }
           } else {
             lista = [];
             lista.push(resultado);
@@ -729,7 +737,7 @@ export class ClienteComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
-    console.log(this.formulario.value);
+    this.formulario.get('clienteCuentasBancarias').setValue(null);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -1545,7 +1553,7 @@ export class VtoPagosDialogo implements OnInit {
   public razonSocialEmpresa: FormControl = new FormControl();
   //Constructor
   constructor(public dialogRef: MatDialogRef<VtoPagosDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private clienteVtoPago: ClienteVtoPago) { }
+    private clienteVtoPago: ClienteVtoPago, private appService: AppService) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece el formulario
@@ -1557,6 +1565,10 @@ export class VtoPagosDialogo implements OnInit {
     if(this.data.clienteVtoPago) {
       this.formulario.patchValue(this.data.clienteVtoPago);
     }
+  }
+  //Obtiene la mascara de enteros
+  public mascararEnteros(limite) {
+    return this.appService.mascararEnteros(limite);
   }
   //Cierra el dialogo
   public cerrar(): void {
