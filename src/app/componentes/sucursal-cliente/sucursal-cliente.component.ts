@@ -242,7 +242,7 @@ export class SucursalClienteComponent implements OnInit {
     let cliente = this.formulario.value.cliente;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.formulario.get('cliente').setValue(cliente);
@@ -262,7 +262,7 @@ export class SucursalClienteComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idCliente').focus();
@@ -279,10 +279,9 @@ export class SucursalClienteComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    let formulario = this.formulario.value;
-    this.servicio.eliminar(formulario.id).subscribe(
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idNombre').focus();
@@ -291,7 +290,7 @@ export class SucursalClienteComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
+        let respuesta = err.json();
         if (respuesta.codigo == 500) {
           document.getElementById("labelNombre").classList.add('label-error');
           document.getElementById("idNombre").classList.add('is-invalid');
@@ -318,7 +317,7 @@ export class SucursalClienteComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    let respuesta = err.json();
     if (respuesta.codigo == 11002) {
       document.getElementById("labelNombre").classList.add('label-error');
       document.getElementById("idNombre").classList.add('is-invalid');
@@ -338,7 +337,7 @@ export class SucursalClienteComponent implements OnInit {
   public validarPatron(patron, campo) {
     let valor = this.formulario.get(campo).value;
     if (valor != undefined && valor != null && valor != '') {
-      var patronVerificador = new RegExp(patron);
+      let patronVerificador = new RegExp(patron);
       if (!patronVerificador.test(valor)) {
         if (campo == 'telefonoFijo') {
           document.getElementById("labelTelefonoFijo").classList.add('label-error');
@@ -413,7 +412,7 @@ export class SucursalClienteComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

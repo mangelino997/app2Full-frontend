@@ -134,28 +134,7 @@ export class GananciaNetaComponent implements OnInit {
       }
     )
   }
-  //Carga la tabla
-  public listarPorAnio() {
-    this.loaderService.show();
-    this.servicio.listarPorAnio(this.anio.value).subscribe(
-      res => {
-        if (res.json().length > 0) {
-          this.listaCompleta = new MatTableDataSource(res.json());
-          this.listaCompleta.sort = this.sort;
-        } else {
-          this.listaCompleta = new MatTableDataSource([]);
-          this.toastr.error("Sin registros para mostrar");
-        }
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.message);
-        this.loaderService.hide();
-      }
-    );
-  }
+  
   //Controla el cambio en el campo "anio"
   public cambioAnio(elemento) {
     if (elemento != undefined) {
@@ -263,13 +242,35 @@ export class GananciaNetaComponent implements OnInit {
         break;
     }
   }
+  //Carga la tabla
+  public listarPorAnio() {
+    this.loaderService.show();
+    this.servicio.listarPorAnio(this.anio.value).subscribe(
+      res => {
+        if (res.json().length > 0) {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+        } else {
+          this.listaCompleta = new MatTableDataSource([]);
+          this.toastr.error("Sin registros para mostrar");
+        }
+        this.listaCompleta.paginator = this.paginator;
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(err.json().message);
+        this.listaCompleta = new MatTableDataSource([]);
+        this.loaderService.hide();
+      }
+    );
+  }
   //Metodo Agregar 
   public agregar() {
     this.loaderService.show();
     let anio = this.formulario.value.anio;
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (res.status == 201) {
           this.reestablecerFormulario();
           this.anio.setValue(anio);
@@ -292,7 +293,7 @@ export class GananciaNetaComponent implements OnInit {
     let anio = this.formulario.value.anio;
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario();
           this.anio.setValue(anio);
@@ -310,7 +311,7 @@ export class GananciaNetaComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    let respuesta = err.json();
     if (respuesta.codigo == 11002) {
       document.getElementById("labelAnioFiscal").classList.add('label-error');
       document.getElementById("idAnioFiscal").classList.add('is-invalid');
@@ -367,7 +368,7 @@ export class GananciaNetaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.eliminar(idElemento).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.toastr.success(respuesta.mensaje);
           this.listarPorAnio();
@@ -389,7 +390,7 @@ export class GananciaNetaComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

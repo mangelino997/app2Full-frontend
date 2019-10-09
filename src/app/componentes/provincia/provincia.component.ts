@@ -88,6 +88,8 @@ export class ProvinciaComponent implements OnInit {
     this.formulario = this.modelo.formulario;
     //Establece los valores de la primera pestania activa
     this.seleccionarPestania(1, 'Agregar');
+    //Obtiene la lista de pais
+    this.listarPaises();
     //Autocompletado Pais - Buscar por nombre
     this.formulario.get('pais').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -103,12 +105,24 @@ export class ProvinciaComponent implements OnInit {
     this.resultadosPaises = [];
     this.listaCompleta = new MatTableDataSource([]);
   }
+  //Carga la lista de paises
+  private listarPaises() {
+    this.paisServicio.listar().subscribe(
+      res => {
+        this.paises = res.json();
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+      }
+    )
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
+    soloLectura ? this.formulario.get('pais').disable() : this.formulario.get('pais').enable();
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -133,7 +147,7 @@ export class ProvinciaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-        this.establecerValoresPestania(nombre, true, true, true, 'idPais');
+        this.establecerValoresPestania(nombre, true, false, true, 'idPais');
         break;
       default:
         break;
@@ -165,25 +179,13 @@ export class ProvinciaComponent implements OnInit {
       }
     );
   }
-  // //Obtiene el listado de registros
-  // private listar() {
-  //   this.servicio.listar().subscribe(
-  //     res => {
-  //       this.listaCompleta = new MatTableDataSource(res.json());
-  //       this.listaCompleta.sort = this.sort;
-
-  //     },
-  //     err => {
-  //     }
-  //   );
-  // }
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           document.getElementById('idNombre').focus();
@@ -192,13 +194,7 @@ export class ProvinciaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -208,7 +204,7 @@ export class ProvinciaComponent implements OnInit {
     this.loaderService.show();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
@@ -217,13 +213,7 @@ export class ProvinciaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -237,10 +227,9 @@ export class ProvinciaComponent implements OnInit {
   //Elimina un registro
   private eliminar() {
     this.loaderService.show();
-    let formulario = this.formulario.value;
-    this.servicio.eliminar(formulario.id).subscribe(
+    this.servicio.eliminar(this.formulario.value.id).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(null);
           document.getElementById('idNombre').focus();
@@ -249,13 +238,7 @@ export class ProvinciaComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        var respuesta = err.json();
-        if (respuesta.codigo == 500) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-        }
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -267,14 +250,33 @@ export class ProvinciaComponent implements OnInit {
     this.autocompletado.reset();
     this.vaciarListas();
   }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    let respuesta = err;
+    if (respuesta.codigo == 11002) {
+      document.getElementById("labelNombre").classList.add('label-error');
+      document.getElementById("idNombre").classList.add('is-invalid');
+      document.getElementById("idNombre").focus();
+    } else if (respuesta.codigo == 13077) {
+      document.getElementById("labelNombre").classList.add('label-error');
+      document.getElementById("idNombre").classList.add('is-invalid');
+      document.getElementById("idNombre").focus();
+    } 
+    this.toastr.error(respuesta.mensaje);
+  }
   //Obtiene la lista de provincias por pais
-  public listarPorPais(pais) {
+  public listarPorPais() {
     this.loaderService.show();
-    this.servicio.listarPorPais(pais.id).subscribe(
+    this.servicio.listarPorPais(this.formulario.get('pais').value.id).subscribe(
       res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
+        if (res.json().length > 0) {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.listaCompleta.paginator = this.paginator;
+        } else {
+          this.listaCompleta = new MatTableDataSource([]);
+          this.toastr.error("Sin registros para mostrar.");
+        }
         this.loaderService.hide();
       },
       err => {
@@ -318,9 +320,17 @@ export class ProvinciaComponent implements OnInit {
       return elemento;
     }
   }
+
+  //Funcion para comparar y mostrar elemento de campo select
+  public compareFn = this.compararFn.bind(this);
+  private compararFn(a, b) {
+    if (a != null && b != null) {
+      return a.id === b.id;
+    }
+  }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);

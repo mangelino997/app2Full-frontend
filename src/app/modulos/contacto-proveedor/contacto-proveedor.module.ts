@@ -11,6 +11,7 @@ import { ContactoProveedorService } from 'src/app/servicios/contacto-proveedor.s
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
+import { ContactoProveedor } from 'src/app/modelos/contactoProveedor';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { TipoContactoService } from 'src/app/servicios/tipo-contacto.service';
     ContactoProveedorService,
     SubopcionPestaniaService,
     ProveedorService,
-    TipoContactoService
+    TipoContactoService,
+    ContactoProveedor
   ]
 })
 export class ContactoProveedorModule { }

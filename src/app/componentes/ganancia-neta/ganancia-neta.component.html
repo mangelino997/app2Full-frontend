@@ -125,7 +125,7 @@
                 <th mat-header-cell *matHeaderCellDef>-</th>
                 <td mat-cell *matCellDef="let elemento">
                   <span class="cursor-color-rojo" (click)="activarEliminar(elemento.id)"
-                    *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
+                    [hidden]="indiceSeleccionado == 2">
                     x
                   </span>
                 </td>

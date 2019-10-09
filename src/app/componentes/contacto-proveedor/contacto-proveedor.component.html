@@ -4,7 +4,7 @@
       <nav mat-tab-nav-bar>
         <a mat-tab-link disabled>CONTACTO PROVEEDOR</a>
         <a mat-tab-link *ngFor="let pestania of pestanias" [active]="activeLink == pestania.nombre"
-          (click)="seleccionarPestania(pestania.id, pestania.nombre, 0)">{{pestania.nombre}}</a>
+          (click)="seleccionarPestania(pestania.id, pestania.nombre)">{{pestania.nombre}}</a>
       </nav>
     </div>
   </div>
@@ -13,7 +13,7 @@
       <h5>{{pestaniaActual}} Contacto de Proveedor</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-8">
             <div class="form-group has-float-label">
               <label for="idProveedor" class="tamanio-label">Proveedor *</label>
               <input id="idProveedor" class="form-control form-control-sm" type="text" matInput
@@ -27,7 +27,7 @@
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-6" *ngIf="mostrarAutocompletado">
+          <div class="col-md-4" *ngIf="mostrarAutocompletado">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Contactos *</label>
               <mat-select id="idAutocompletado" class="form-control form-control-sm" [formControl]="autocompletado"

@@ -206,19 +206,15 @@ export class MonedaCuentaContableComponent implements OnInit {
     */
     switch (id) {
       case 1:
-        // this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idMoneda');
         break;
       case 2:
-        // this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idAutocompletado');
         break;
       case 3:
-        // this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 4:
-        // this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
@@ -228,10 +224,6 @@ export class MonedaCuentaContableComponent implements OnInit {
         break;
     }
   }
-  //Habilita o deshabilita los campos dependiendo de la pestaña
-  // private establecerEstadoCampos(estado) {
-  //   estado ? this.formulario.get('moneda').enable() : this.formulario.get('moneda').disable();
-  // }
   //Funcion para determinar que accion se requiere (Agregar, Actualizar, Eliminar)
   public accion(indice) {
     switch (indice) {
