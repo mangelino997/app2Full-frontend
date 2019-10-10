@@ -145,7 +145,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
-          this.resultadosReminentes = res;
+          this.resultadosReminentes = res.json();
         })
       }
     });
@@ -153,7 +153,7 @@ export class EmitirFacturaComponent implements OnInit {
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
-          this.resultadosDestinatarios = res;
+          this.resultadosDestinatarios = res.json();
         })
       }
     });

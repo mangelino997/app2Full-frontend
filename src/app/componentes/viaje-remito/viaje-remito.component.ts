@@ -107,7 +107,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.autocompletadoRemitente.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClienteRemitente = response;
+          this.resultadosClienteRemitente = response.json();
         })
       }
     });
@@ -115,7 +115,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.autocompletadoDestinatario.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClienteDestinatario = response;
+          this.resultadosClienteDestinatario = response.json();
         })
       }
     });
@@ -149,7 +149,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.formulario.get('clienteRemitente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClienteRemitente = response;
+          this.resultadosClienteRemitente = response.json();
         })
       }
     })
@@ -157,7 +157,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClienteDestinatario = response;
+          this.resultadosClienteDestinatario = response.json();
         })
       }
     });

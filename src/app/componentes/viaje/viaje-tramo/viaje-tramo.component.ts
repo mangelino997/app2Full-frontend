@@ -646,7 +646,7 @@ export class DadorDestinatarioDialogo {
     this.formulario.get('clienteDador').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
+          this.resultadosClientes = response.json();
         })
       }
     })
@@ -654,7 +654,7 @@ export class DadorDestinatarioDialogo {
     this.formulario.get('clienteDestinatario').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
+          this.resultadosClientes = response.json();
         })
       }
     })

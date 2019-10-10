@@ -151,10 +151,17 @@ export class ClienteComponent implements OnInit {
       );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if(data == '*' || data.length > 2) {
+          this.servicio.listarPorAlias(data).subscribe(
+            res => {
+              this.resultados = res.json();
+            },
+            err => {
+              console.log('PASO');
+            });
+        }
       }
     })
   }
@@ -168,7 +175,7 @@ export class ClienteComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.clienteModelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
+    this.seleccionarPestania(1, 'Agregar', true);
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(1, 0);
     //Autocompletado Barrio - Buscar por nombre
@@ -190,8 +197,8 @@ export class ClienteComponent implements OnInit {
     //Autocompletado Cuenta Grupo - Buscar por nombre
     this.formulario.get('cuentaGrupo').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosCuentasGrupos = response;
+        this.servicio.listarPorAlias(data).subscribe(res => {
+          this.resultadosCuentasGrupos = res.json();
         })
       }
     })
@@ -278,7 +285,7 @@ export class ClienteComponent implements OnInit {
         elemento.cuentaBancaria.numeroCuenta = resultado.numeroCuenta;
         elemento.cuentaBancaria.cbu = resultado.cbu;
         elemento.cuentaBancaria.aliasCBU = resultado.aliasCBU;
-        if(this.indiceSeleccionado == 3) {
+        if (this.indiceSeleccionado == 3) {
           elemento.cliente = {
             id: this.formulario.get('id').value,
             version: this.formulario.get('version').value
@@ -293,7 +300,7 @@ export class ClienteComponent implements OnInit {
     this.loaderService.show();
     this.clienteCuentaBancariaService.actualizar(elemento).subscribe(
       res => {
-        if(res.status == 200) {
+        if (res.status == 200) {
           this.toastr.success(MensajeExcepcion.ACTUALIZADO);
         }
         this.loaderService.hide();
@@ -307,7 +314,7 @@ export class ClienteComponent implements OnInit {
   //Elimina la cuenta bancaria
   public eliminarCuentaBancaria(elemento): void {
     const id = elemento.id;
-    if(this.indiceSeleccionado == 3) {
+    if (this.indiceSeleccionado == 3) {
       this.eliminarCuentaBancariaPorId(id);
     }
     elemento.cuentaBancaria = null;
@@ -318,7 +325,7 @@ export class ClienteComponent implements OnInit {
     this.clienteCuentaBancariaService.eliminar(id).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.toastr.success(MensajeExcepcion.ELIMINADO);
         }
         this.loaderService.hide();
@@ -336,13 +343,14 @@ export class ClienteComponent implements OnInit {
       maxWidth: '95%',
       data: {
         empresa: elemento.empresa,
-        clienteVtoPago: this.formulario.get('clienteVtosPagos').value ? this.formulario.get('clienteVtosPagos').value[indice] : this.formulario.get('clienteVtosPagos').value
+        clienteVtoPago: this.formulario.get('clienteVtosPagos').value ? this.formulario.get('clienteVtosPagos').value[indice] : this.formulario.get('clienteVtosPagos').value,
+        indice: this.indiceSeleccionado
       },
     });
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
         let lista = this.formulario.get('clienteVtosPagos').value;
-        if(this.indiceSeleccionado == 3) {
+        if (this.indiceSeleccionado == 3) {
           this.loaderService.show();
           resultado.cliente = {
             id: this.formulario.get('id').value,
@@ -351,7 +359,7 @@ export class ClienteComponent implements OnInit {
           this.clienteVtoPagoService.actualizar(resultado).subscribe(
             res => {
               let respuesta = res.json();
-              if(res.status == 200) {
+              if (res.status == 200) {
                 lista[indice] = respuesta;
                 this.toastr.success(MensajeExcepcion.ACTUALIZADO);
               }
@@ -363,10 +371,10 @@ export class ClienteComponent implements OnInit {
             }
           );
         } else {
-          if(lista) {
+          if (lista) {
             try {
               lista[indice] = resultado;
-            } catch(e) {
+            } catch (e) {
               lista.push(resultado);
             }
           } else {
@@ -381,12 +389,12 @@ export class ClienteComponent implements OnInit {
   //Elimina vencimientos de pagos
   public eliminarVtoPagos(indice): void {
     let lista = this.formulario.get('clienteVtosPagos').value;
-    if(this.indiceSeleccionado == 3) {
+    if (this.indiceSeleccionado == 3) {
       this.loaderService.show();
       this.clienteVtoPagoService.eliminar(lista[indice].id).subscribe(
         res => {
           let respuesta = res.json();
-          if(respuesta.codigo == 200) {
+          if (respuesta.codigo == 200) {
             this.toastr.success(MensajeExcepcion.ELIMINADO);
           }
           this.loaderService.hide();
@@ -604,10 +612,12 @@ export class ClienteComponent implements OnInit {
     }
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
+  public seleccionarPestania(id, nombre, opcion) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    if(opcion) {
+      this.reestablecerFormulario(undefined);
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -738,6 +748,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.formulario.get('clienteCuentasBancarias').setValue(null);
+    this.formulario.get('clienteVtosPagos').setValue(null);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -761,7 +772,7 @@ export class ClienteComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.vaciarListas();
     this.establecerSituacionCliente();
     this.establecerCondicionVenta();
@@ -854,13 +865,13 @@ export class ClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.seleccionarPestania(2, this.pestanias[1].nombre, false);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.seleccionarPestania(3, this.pestanias[2].nombre, false);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario();
   }
@@ -1038,9 +1049,9 @@ export class ClienteComponent implements OnInit {
     var opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, true);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre);
+        this.seleccionarPestania(1, this.pestanias[0].nombre, true);
       }
     } else if (keycode == 115) {
       if (opcion < this.opciones.length) {
@@ -1173,8 +1184,8 @@ export class ListasDePreciosDialog {
     //Autocompletado - Buscar por nombre cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
+        this.clienteServicio.listarPorAlias(data).subscribe(res => {
+          this.resultadosClientes = res.json();
         })
       }
     });
@@ -1558,11 +1569,16 @@ export class VtoPagosDialogo implements OnInit {
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.clienteVtoPago.formulario;
+    this.formulario.enable();
     this.formulario.reset();
+    //Deshabilita el formulario si estamos en la pestania consultar
+    if(this.data.indice == 2) {
+      this.formulario.disable();
+    }
     //Establece la empresa
     this.formulario.get('empresa').setValue(this.data.empresa);
     this.razonSocialEmpresa.setValue(this.data.empresa.razonSocial);
-    if(this.data.clienteVtoPago) {
+    if (this.data.clienteVtoPago) {
       this.formulario.patchValue(this.data.clienteVtoPago);
     }
   }

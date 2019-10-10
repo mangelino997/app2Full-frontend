@@ -81,7 +81,7 @@ export class ActualizacionPreciosComponent implements OnInit {
     this.autocompletado.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
-          this.resultados = res;
+          this.resultados = res.json();
         })
       }
     })

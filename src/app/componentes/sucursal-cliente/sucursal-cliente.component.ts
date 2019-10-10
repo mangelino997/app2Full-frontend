@@ -92,7 +92,7 @@ export class SucursalClienteComponent implements OnInit {
       if (typeof data == 'string' && data.length > 2) {
         // this.cambioAutocompletado();
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
+          this.resultadosClientes = response.json();
         })
       }
     })
