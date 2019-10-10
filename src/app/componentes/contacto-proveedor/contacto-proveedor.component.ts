@@ -113,6 +113,7 @@ export class ContactoProveedorComponent implements OnInit {
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
+    this.contactos = [];
     this.resultados = [];
     this.resultadosProveedores = [];
     this.listaCompleta = new MatTableDataSource([]);
@@ -148,7 +149,10 @@ export class ContactoProveedorComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
         break;
       case 5:
-        this.establecerValoresPestania(nombre, true, true, true, 'idProveedor');
+        this.mostrarAutocompletado = true;
+        setTimeout(function () {
+          document.getElementById('idProveedor').focus();
+        }, 20);
       default:
         break;
     }

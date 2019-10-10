@@ -98,7 +98,7 @@ export class PuntoVentaComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.puntoVenta.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Obtiene la lista de sucursales
     this.listarSucursales();
     //Obtiene la lista de empresas
@@ -209,14 +209,10 @@ export class PuntoVentaComponent implements OnInit {
     }, 20);
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.reestablecerFormulario();
-    if (opcion == 0) {
-      this.tipoComprobante.reset();
-      this.autocompletado.setValue(undefined);
-    }
     this.establecerValoresPorDefecto();
     switch (id) {
       case 1:
@@ -409,14 +405,14 @@ export class PuntoVentaComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
     this.autocompletado.setValue(elemento);
     this.puntosVentas = this.listaCompleta.data;
     this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.autocompletado.setValue(elemento);
     this.puntosVentas = this.listaCompleta.data;
     this.establecerFormulario();
@@ -467,9 +463,9 @@ export class PuntoVentaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }

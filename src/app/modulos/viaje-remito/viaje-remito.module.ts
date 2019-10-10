@@ -75,7 +75,7 @@ import { SucursalClienteService } from 'src/app/servicios/sucursal-cliente.servi
   ],
   entryComponents: [
     ClienteEventualComponent,
-    AforoComponent
+    AforoComponent,
   ]
 })
 export class ViajeRemitoModule { }

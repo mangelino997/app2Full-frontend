@@ -111,6 +111,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
+    this.contactos = [];
     this.resultadosCompaniasSeguros = [];
     this.listaCompleta = new MatTableDataSource([]);
   }
@@ -145,7 +146,10 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
         break;
       case 5:
-        this.establecerValoresPestania(nombre, true, true, true, 'idCompaniaSeguro');
+        this.mostrarAutocompletado = true;
+        setTimeout(function () {
+          document.getElementById('idCompaniaSeguro').focus();
+        }, 20);
       default:
         break;
     }

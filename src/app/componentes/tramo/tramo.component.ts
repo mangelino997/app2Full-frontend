@@ -160,6 +160,8 @@ export class TramoComponent implements OnInit {
   //Vacia las listas de resultados
   public vaciarListas() {
     this.resultados = [];
+    this.resultadosOrigenListar = [];
+    this.resultadosOrigenListar = [];
     this.resultadosOrigenesDestinos = [];
     this.listaCompleta = new MatTableDataSource([]);
   }
@@ -213,6 +215,8 @@ export class TramoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
+        this.autocompletadoDestinoListar.reset();
+        this.autocompletadoOrigenListar.reset();
         setTimeout(function () {
           document.getElementById('idAutocompletadoOrigen').focus();
         }, 20);
@@ -259,8 +263,8 @@ export class TramoComponent implements OnInit {
           this.establecerValoresPorDefecto();
           document.getElementById('idOrigen').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         let respuesta = err.json();
@@ -281,8 +285,8 @@ export class TramoComponent implements OnInit {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         let error = err.json();
@@ -301,8 +305,8 @@ export class TramoComponent implements OnInit {
           this.reestablecerFormulario(undefined);
           document.getElementById('idAutocompletado').focus();
           this.toastr.success(respuesta.mensaje);
-          this.loaderService.hide();
         }
+        this.loaderService.hide();
       },
       err => {
         let error = err.json();
@@ -320,11 +324,7 @@ export class TramoComponent implements OnInit {
   //Limpia los autocompletados
   public limpiarAutocompletados(opcion): void {
     this.listaCompleta = new MatTableDataSource([]);
-    if (opcion) {
-      this.autocompletadoDestino.reset();
-    } else {
-      this.autocompletadoOrigen.reset();
-    }
+    opcion ? this.autocompletadoDestino.reset() : this.autocompletadoOrigen.reset();
   }
   //Establece la tabla al seleccion elemento de autocompletado
   public establecerTabla() {
@@ -332,13 +332,13 @@ export class TramoComponent implements OnInit {
     let destino = this.autocompletadoDestinoListar.value;
     this.servicio.listarPorFiltro(origen ? origen.id : 0, destino ? destino.id : 0).subscribe(res => {
       let respuesta = res.json();
-      if(respuesta.length > 0){
+      if (respuesta.length > 0) {
         this.listaCompleta = new MatTableDataSource(respuesta);
         this.listaCompleta.sort = this.sort;
         this.listaCompleta.paginator = this.paginator;
-      }else{
+      } else {
         this.listaCompleta = new MatTableDataSource(respuesta);
-        this.toastr.error("Sin datos para mostrar.");
+        this.toastr.error("Sin registros para mostrar.");
       }
     })
   }

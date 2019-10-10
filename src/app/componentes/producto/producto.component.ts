@@ -37,7 +37,7 @@ export class ProductoComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   //Define un formulario listar para validaciones de campos
-  public formularioListar: FormGroup;
+  public formularioFiltro: FormGroup;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define la lista completa de rubros
@@ -99,16 +99,14 @@ export class ProductoComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.producto.formulario;
-    this.formularioListar = new FormGroup({
+    this.formularioFiltro = new FormGroup({
       rubroProducto: new FormControl(),
       marcaProducto: new FormControl(),
     });
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
-    //Obtiene la lista completa de registros
-    // this.listar();
     //Obtiene los rubros
     this.listarRubros();
     //Obtiene las marcas
@@ -127,24 +125,9 @@ export class ProductoComponent implements OnInit {
     let elemento = this.autocompletado.value;
     if (elemento) {
       this.formulario.patchValue(elemento);
+      elemento.precioUnitarioVenta ? this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2)) : '';
+      elemento.coeficienteITC ? this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemento.coeficienteITC, 2)) : '';
     }
-  }
-  //Obtiene el listado de registros
-  private listar() {
-    this.loaderService.show();
-    this.servicio.listar().subscribe(
-      res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
-        this.loaderService.hide();
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-        this.loaderService.hide();
-      }
-    );
   }
   //Obtiene el listado de rubros
   private listarRubros() {
@@ -176,6 +159,11 @@ export class ProductoComponent implements OnInit {
       }
     );
   }
+  //Vacia la lista de resultados de autocompletados
+  public vaciarListas() {
+    this.resultados = [];
+    this.listaCompleta = new MatTableDataSource([]);
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
@@ -187,14 +175,10 @@ export class ProductoComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
-    this.formulario.reset();
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    if (opcion == 0) {
-      this.autocompletado.setValue(undefined);
-      this.resultados = [];
-    }
+    this.reestablecerFormulario(undefined);
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -214,14 +198,8 @@ export class ProductoComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, true, true, 'idAutocompletado');
         break;
       case 5:
-          //this.formularioListar.reset();
-          this.listaCompleta = new MatTableDataSource([]);
-          setTimeout(function () {
-            document.getElementById('idAutocompletado').focus();
-          }, 20);
-        this.listaCompleta = new MatTableDataSource([]);
         setTimeout(function () {
-          document.getElementById('idAutocompletado').focus();
+          document.getElementById('idRubro').focus();
         }, 20);
         break;
       default:
@@ -361,8 +339,8 @@ export class ProductoComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
-    this.resultados = [];
+    this.autocompletado.reset();
+    this.vaciarListas();
   }
   //Manejo de colores de campos y labels
   public cambioCampo(id, label) {
@@ -371,48 +349,48 @@ export class ProductoComponent implements OnInit {
   };
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre, 1);
-    this.autocompletado.setValue(elemento);
-    this.establecerAutocompletado();
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.establecerElemento(elemento);
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.establecerElemento(elemento);
+  }
+  //Establece los valores del registro seleccionado en pestaña consultar o actualizar
+  private establecerElemento(elemento) {
     this.autocompletado.setValue(elemento);
-    this.establecerAutocompletado();
+    elemento.precioUnitarioVenta ? this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2)) : '';
+    elemento.coeficienteITC ? this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemento.coeficienteITC, 2)) : '';
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
-  //Obtiene la lista por rubro y marca
-  /* public listarPorRubroYMarcaLista(rubro, marca) {
-    this.loaderService.show();
-    this.servicio.listarPorRubroYMarca(rubro.value.id, marca.value.id).subscribe(res => {
-      this.listaCompleta = new MatTableDataSource(res.json());
-      this.listaCompleta.sort = this.sort;
-      this.listaCompleta.paginator = this.paginator;
-      this.loaderService.hide();
-    });
-  } */
   public listarPorRubroYMarcaLista() {
     this.loaderService.show();
-    let rubroProducto = this.formularioListar.get('rubroProducto').value;
-    let marcaProducto = this.formularioListar.get('marcaProducto').value;
+    let rubroProducto = this.formularioFiltro.get('rubroProducto').value;
+    let marcaProducto = this.formularioFiltro.get('marcaProducto').value;
     rubroProducto = rubroProducto.id;
     marcaProducto = marcaProducto == '1' ? 0 : marcaProducto.id;
     this.servicio.listarPorRubroYMarca(rubroProducto, marcaProducto).subscribe(
       res => {
-        this.listaCompleta = new MatTableDataSource(res.json());
-        this.listaCompleta.sort = this.sort;
-        this.listaCompleta.paginator = this.paginator;
+        if(res.json().length >0){
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+          this.listaCompleta.paginator = this.paginator;
+        }else{
+          this.listaCompleta = new MatTableDataSource([]);
+          this.toastr.error("Sin registros para mostrar.");
+        }
+        
         this.loaderService.hide();
       },
       err => {
@@ -429,7 +407,7 @@ export class ProductoComponent implements OnInit {
   //Define como se muestra los datos en el autcompletado
   public displayF(elemento) {
     if (elemento != undefined) {
-      return elemento.nombre ? elemento.nombre : elemento;
+      return elemento.alias ? elemento.alias : elemento;
     } else {
       return elemento;
     }
@@ -437,6 +415,10 @@ export class ProductoComponent implements OnInit {
   //Mascara un numero con cuatro decimales
   public mascararCuatroDecimales(limit) {
     return this.appService.mascararEnterosCon4Decimales(limit);
+  }
+  //Obtiene la mascara de enteros CON decimales (sin signo de $)
+  public obtenerMascaraEnteroConDecimales(intLimite) {
+    return this.appService.mascararEnterosConDecimales(intLimite);
   }
   //Mascara enteros
   public mascararEnteros(limit) {
@@ -448,8 +430,9 @@ export class ProductoComponent implements OnInit {
   }
   //Establece los decimales
   public establecerDecimales(formulario, cantidad) {
-    if (formulario) {
-      formulario.setValue(this.appService.establecerDecimales(formulario.value, cantidad));
+    let valor = formulario.value;
+    if (valor != '') {
+      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
   //Prepara los datos para exportar

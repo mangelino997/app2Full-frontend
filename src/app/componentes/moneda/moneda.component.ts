@@ -183,12 +183,10 @@ export class MonedaComponent implements OnInit {
   private verificarPrincipal(opcionPestania) {
     let elemento = this.formulario.value;
     this.listar();
-    console.log(opcionPestania, this.listaCompleta.data);
     if (elemento.porDefecto && this.listaCompleta.data.length > 0) {
       this.servicio.obtenerPorDefecto().subscribe(
         res => {
           let respuesta = res.json(); //moneda porDefecto=true (monedaPrincipal)
-          console.log(respuesta);
           if (elemento.id == respuesta.id) // Si el cobrador principal es el mismo que se quiere actualizar saltea el modal 'cambiarPrincipal'
             this.controlaAccionPestania(opcionPestania);
           else

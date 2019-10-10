@@ -58,7 +58,7 @@ export class OrdenVentaComponent implements OnInit {
   //Define un formulario para validaciones de campos
   public formulario: FormGroup;
   public formularioTarifa: FormGroup;
-  public formularioListar: FormGroup;
+  public formularioFiltro: FormGroup;
   //Define un formulario para validaciones de campos
   public formularioEscala: FormGroup;
   //Define un formulario para validaciones de campos
@@ -134,7 +134,7 @@ export class OrdenVentaComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['id', 'tarifa', 'escala', 'porPorcentaje', 'ver', 'eliminar'];
   //Define las columnas de la tabla para la pestaña LISTAR
-  public columnasListar: string[] = ['EDITAR', 'ID', 'DESCRIPCION', 'VENDEDOR', 'SEGURO', 'ES_CONTADO'];
+  public columnasListar: string[] = ['ID', 'DESCRIPCION', 'VENDEDOR', 'SEGURO', 'ES_CONTADO', 'EDITAR'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
@@ -181,7 +181,7 @@ export class OrdenVentaComponent implements OnInit {
     //Define el formulario de orden venta tramo
     this.formularioTramo = this.ordenVentaTramo.formulario;
     //Define el formulario para la pestaña listar
-    this.formularioListar = new FormGroup({
+    this.formularioFiltro = new FormGroup({
       tipo: new FormControl('', Validators.required),
       cliente: new FormControl(),
       empresa: new FormControl()
@@ -191,7 +191,7 @@ export class OrdenVentaComponent implements OnInit {
     //Obtiene la lista de Vendedores
     this.listarVendedores();
     //Selecciona la pestania agregar por defecto
-    this.seleccionarPestania(1, 'Agregar', 0);
+    this.seleccionarPestania(1, 'Agregar');
     //Autocompletado - Buscar por nombre cliente
     this.cliente.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -201,7 +201,7 @@ export class OrdenVentaComponent implements OnInit {
       }
     });
     //Autocompletado - Buscar por nombre cliente - Pestania Listar
-    this.formularioListar.get('cliente').valueChanges.subscribe(data => {
+    this.formularioFiltro.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
           this.resultadosClientes = response;
@@ -267,21 +267,21 @@ export class OrdenVentaComponent implements OnInit {
   //Establece el tipo (empresa o cliente)
   public establecerTipoEnListar() {
     this.listaOrdenVenta = new MatTableDataSource([]);
-    let tipo = this.formularioListar.get('tipo').value;
+    let tipo = this.formularioFiltro.get('tipo').value;
     if (tipo == 'empresa') {
       let empresa = this.appService.getEmpresa();
       this.empresa.setValue(empresa.razonSocial);
-      this.formularioListar.get('empresa').setValue(empresa);
-      this.formularioListar.get('cliente').setValue(null);
-      this.formularioListar.get('cliente').setValidators([]);
-      this.formularioListar.get('empresa').setValidators(Validators.required);
-      this.formularioListar.get('cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
+      this.formularioFiltro.get('empresa').setValue(empresa);
+      this.formularioFiltro.get('cliente').setValue(null);
+      this.formularioFiltro.get('cliente').setValidators([]);
+      this.formularioFiltro.get('empresa').setValidators(Validators.required);
+      this.formularioFiltro.get('cliente').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
     }
     if (tipo == 'cliente') {
-      this.formularioListar.get('empresa').setValue(null);
-      this.formularioListar.get('empresa').setValidators([]);
-      this.formularioListar.get('cliente').setValidators(Validators.required);
-      this.formularioListar.get('empresa').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
+      this.formularioFiltro.get('empresa').setValue(null);
+      this.formularioFiltro.get('empresa').setValidators([]);
+      this.formularioFiltro.get('cliente').setValidators(Validators.required);
+      this.formularioFiltro.get('empresa').updateValueAndValidity();//Actualiza las validaciones en el Formulario de la pestaña listar
     }
   }
   //Lista las ordenes de ventas por Empresa o Cliente
@@ -322,7 +322,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioTarifa.reset();
     this.formularioEscala.reset();
     this.formularioTramo.reset();
-    this.formularioListar.reset();
+    this.formularioFiltro.reset();
     this.elemAutocompletado = null;
     this.soloLectura = false;
     this.tipoOrdenVenta.enable();
@@ -372,13 +372,10 @@ export class OrdenVentaComponent implements OnInit {
     }, 20);
   };
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre, opcion) {
+  public seleccionarPestania(id, nombre) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
     this.reestablecerCampos();
-    if (opcion == 0) {
-      
-    }
     switch (id) {
       case 1:
         //Obtiene el id para la orden venta
@@ -405,7 +402,7 @@ export class OrdenVentaComponent implements OnInit {
         this.listarOrdenesVentas('empresa', this.appService.getEmpresa().id);
         break;
       case 5:
-        this.formularioListar.get('tipo').setValue('empresa');
+        this.formularioFiltro.get('tipo').setValue('empresa');
         this.establecerTipoEnListar();
       default:
         break;
@@ -696,8 +693,8 @@ export class OrdenVentaComponent implements OnInit {
   //Obtiene la lista de resultados para la pestania Listar
   public buscarLista() {
     this.listaOrdenVenta = new MatTableDataSource([]);
-    if (this.formularioListar.value.tipo == 'empresa') {
-      this.servicio.listarPorEmpresa(this.formularioListar.value.empresa.id).subscribe(
+    if (this.formularioFiltro.value.tipo == 'empresa') {
+      this.servicio.listarPorEmpresa(this.formularioFiltro.value.empresa.id).subscribe(
         res => {
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
@@ -709,8 +706,8 @@ export class OrdenVentaComponent implements OnInit {
         }
       );
     }
-    if (this.formularioListar.value.tipo == 'cliente') {
-      this.servicio.listarPorCliente(this.formularioListar.value.cliente.id).subscribe(
+    if (this.formularioFiltro.value.tipo == 'cliente') {
+      this.servicio.listarPorCliente(this.formularioFiltro.value.cliente.id).subscribe(
         res => {
           this.listaOrdenVenta = new MatTableDataSource(res.json());
           this.listaOrdenVenta.sort = this.sort;
@@ -723,9 +720,21 @@ export class OrdenVentaComponent implements OnInit {
       );
     }
   }
+  //Muestra en la pestania buscar el elemento seleccionado de listar
+  public activarConsultar(elemento) {
+    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.soloLecturaMod = true;
+    this.ordenventa.setValue(elemento);
+    this.cambioTipoTarifa();
+    this.formulario.patchValue(elemento);
+    this.establecerPorcentajes(elemento);
+    this.establecerOrdenVentaCabecera(elemento.id);
+    this.listarTarifasOrdenVenta();
+    this.btnOrdenVta = true;
+  }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre, 1);
+    this.seleccionarPestania(3, this.pestanias[2].nombre);
     this.soloLecturaMod = true;
     this.ordenventa.setValue(elemento);
     this.cambioTipoTarifa();
@@ -798,7 +807,7 @@ export class OrdenVentaComponent implements OnInit {
   public setDecimales(formulario, cantidad) {
     let valor = formulario.value;
     if (valor) {
-      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+      formulario.patchValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
   //Formatea el numero a x decimales
@@ -809,15 +818,15 @@ export class OrdenVentaComponent implements OnInit {
   }
   //Establece los decimales de porcentaje
   public establecerPorcentaje(formulario, cantidad): void {
-    formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
+    formulario.patchValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
   }
   //Establece los decimales de porcentaje (por mil)
   public establecerPorcentajePorMil(formulario, cantidad): void {
-    formulario.setValue(this.appService.desenmascararPorcentajePorMil(formulario.value, cantidad));
+    formulario.patchValue(this.appService.desenmascararPorcentajePorMil(formulario.value, cantidad));
   }
   //Desenmascara km
   public establecerKm(formulario, cantidad): void {
-    formulario.setValue(this.appService.desenmascararKm(formulario.value));
+    formulario.patchValue(this.appService.desenmascararKm(formulario.value));
   }
   //Funcion para comparar y mostrar elemento de campo select
   public compareFn = this.compararFn.bind(this);
@@ -871,9 +880,9 @@ export class OrdenVentaComponent implements OnInit {
     var indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, 0);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre, 0);
+        this.seleccionarPestania(1, this.pestanias[0].nombre);
       }
     }
   }
@@ -1022,21 +1031,27 @@ export class VerTarifaDialogo {
   }
   //Contrala campos vacios
   public controlarCamposVaciosTramo(formulario) {
-    if (formulario.get('importeFijoSeco').value == 'NaN') {
-      formulario.get('importeFijo').setValue('0.00');
-    }
-    if (formulario.get('precioUnitarioSeco').value == 'NaN') {
-      formulario.get('precioUnitario').setValue('0.00');
-    }
-    if (formulario.get('importeFijoRef').value == 'NaN') {
-      formulario.get('minimo').setValue('0.00');
-    }
-    if (formulario.get('precioUnitarioRef').value == 'NaN') {
-      formulario.get('minimo').setValue('0.00');
-    }
-    if (formulario.get('kmPactado').value == 'NaN') {
-      formulario.get('minimo').setValue('0.00');
-    }
+    console.log("entra");
+    formulario.get('importeFijoSeco').value == 'NaN' ? formulario.get('importeFijo').setValue('0.00') : '';
+    formulario.get('precioUnitarioSeco').value == 'NaN' ? formulario.get('precioUnitario').setValue('0.00') : '';
+    formulario.get('importeFijoRef').value == 'NaN' ? formulario.get('minimo').setValue('0.00') : '';
+    formulario.get('precioUnitarioRef').value == 'NaN' ? formulario.get('minimo').setValue('0.00') : '';
+    formulario.get('kmPactado').value == 'NaN' ? formulario.get('minimo').setValue('0.00') : '';
+    // if (formulario.get('importeFijoSeco').value == 'NaN') {
+    //   formulario.get('importeFijo').setValue('0.00');
+    // }
+    // if (formulario.get('precioUnitarioSeco').value == 'NaN') {
+    //   formulario.get('precioUnitario').setValue('0.00');
+    // }
+    // if (formulario.get('importeFijoRef').value == 'NaN') {
+    //   formulario.get('minimo').setValue('0.00');
+    // }
+    // if (formulario.get('precioUnitarioRef').value == 'NaN') {
+    //   formulario.get('minimo').setValue('0.00');
+    // }
+    // if (formulario.get('kmPactado').value == 'NaN') {
+    //   formulario.get('minimo').setValue('0.00');
+    // }
   }
   //Cancela - Resetea el formulario correspondiente
   public cancelar() {
@@ -1074,7 +1089,6 @@ export class VerTarifaDialogo {
       if (realizarAgregar == true) {
         this.ordenVentaEscalaService.agregar(this.formularioEscala.value).subscribe(
           res => {
-            console.log(res.json());
             if (res.status == 201) {
               this.listar();
               this.cancelar();
@@ -1493,7 +1507,7 @@ export class VerTarifaDialogo {
   public setDecimales(formulario, cantidad) {
     let valor = formulario.value;
     if (valor) {
-      formulario.setValue(this.appService.establecerDecimales(valor, cantidad));
+      formulario.patchValue(this.appService.establecerDecimales(valor, cantidad));
     }
   }
   //Manejo de cambio de autocompletado tramo
@@ -1510,7 +1524,7 @@ export class VerTarifaDialogo {
   }
   //Establece los decimales de porcentaje
   public setPorcentaje(formulario, cantidad): void {
-    formulario.setValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
+    formulario.patchValue(this.appService.desenmascararPorcentaje(formulario.value, cantidad));
   }
   //Establece los decimales de porcentaje
   public establecerPorcentaje(valor, cantidad) {
@@ -1522,7 +1536,7 @@ export class VerTarifaDialogo {
   }
   //Desenmascara km
   public establecerKm(formulario, cantidad): void {
-    formulario.setValue(this.appService.desenmascararKm(formulario.value));
+    formulario.patchValue(this.appService.desenmascararKm(formulario.value));
   }
   //Obtiene la mascara de importe
   public mascaraImporte(intLimite, decimalLimite) {

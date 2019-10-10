@@ -17,6 +17,7 @@ import { Subscription } from 'rxjs';
 import { ReporteService } from 'src/app/servicios/reporte.service';
 import { ViajeRemitoGS } from 'src/app/modelos/viajeRemitoGS';
 import { SucursalClienteService } from 'src/app/servicios/sucursal-cliente.service';
+import { Aforo } from 'src/app/modelos/aforo';
 
 @Component({
   selector: 'app-viaje-remito',
@@ -40,6 +41,8 @@ export class ViajeRemitoComponent implements OnInit {
   public pestanias: Array<any> = [];
   //Define el formulario 
   public formulario: FormGroup;
+  //Define un formulario para guardar valores del ultimo aforo cargado
+  public formularioAforar: FormGroup;
   //Define el formulario para el listar
   public formularioFiltro: FormGroup;
   //Define la lista completa de registros
@@ -75,14 +78,14 @@ export class ViajeRemitoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['SUCURSAL_INGRESO', 'SUCURSAL_DESTINO', 'FECHA', 'PUNTO_VENTA', 'NUMERO', 'REMITENTE', 'DESTINATARIO', 'BULTOS', 'KG_EFECTIVO', 'VALOR_DECLARADO', 'OBSERVACIONES', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define la paginacion
-  @ViewChild(MatPaginator, {static: false}) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Constructor
   constructor(private servicio: ViajeRemitoService, private subopcionPestaniaService: SubopcionPestaniaService,
     private loaderService: LoaderService, private toastr: ToastrService, private modelo: ViajeRemitoGS,
     private sucursalServicio: SucursalService, private clienteServicio: ClienteService, private sucursalClienteService: SucursalClienteService,
-    private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog,
+    private tipoComprobanteServicio: TipoComprobanteService, public dialog: MatDialog, private aforo: Aforo,
     private fechaServicio: FechaService, private appService: AppService, private reporteServicio: ReporteService) {
     //Obtiene la lista de pestania por rol y subopcion
     this.subopcionPestaniaService.listarPorRolSubopcion(this.appService.getRol().id, this.appService.getSubopcion())
@@ -126,6 +129,8 @@ export class ViajeRemitoComponent implements OnInit {
       });
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
+    //Define los campos para validaciones del Aforo
+    this.formularioAforar = this.aforo.formulario;
     //Define el formulario para el Listar
     this.formularioFiltro = this.modelo.formularioFiltro;
     //Establece los valores de la primera pestania activa
@@ -430,6 +435,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.formulario.reset();
     this.autocompletado.reset();
     this.formularioFiltro.reset();
+    this.formularioAforar.reset();
     this.formulario.get('fecha').reset();
     this.formulario.get('id').setValue(id);
     this.vaciarListas();
@@ -503,10 +509,18 @@ export class ViajeRemitoComponent implements OnInit {
     const dialogRef = this.dialog.open(AforoComponent, {
       width: '80%',
       maxWidth: '80%',
-      data: {}
+      data: {
+        formularioAforar: this.formularioAforar.value
+      }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      this.formulario.get('kilosAforado').setValue(this.appService.setDecimales(resultado, 2));
+      if (resultado) {
+        this.formularioAforar.patchValue(resultado);
+        this.formulario.get('kilosAforado').setValue(this.appService.setDecimales(resultado.kiloAforadoTotal, 2));
+      }else{
+        this.formularioAforar.reset();
+        this.formulario.get('kilosAforado').setValue(this.appService.setDecimales('0.00', 2));
+      }
     });
   }
   //Funcion para comparar y mostrar elemento de campo select

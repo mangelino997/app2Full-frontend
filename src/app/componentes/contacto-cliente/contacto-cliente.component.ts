@@ -111,16 +111,10 @@ export class ContactoClienteComponent implements OnInit {
   }
   //Vacia la lista de resultados de autocompletados
   public vaciarListas() {
+    this.contactos = [];
     this.resultados = [];
     this.resultadosClientes = [];
     this.listaCompleta = new MatTableDataSource([]);
-  }
-  //Habilita o deshabilita los campos select dependiendo de la pestania actual
-  private establecerEstadoCampos(estado) {
-    if (estado) {
-    } else {
-
-    }
   }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
@@ -141,25 +135,18 @@ export class ContactoClienteComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, false, false, true, 'idCliente');
         break;
       case 2:
-        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, false, 'idCliente');
         break;
       case 3:
-        this.establecerEstadoCampos(true);
         this.establecerValoresPestania(nombre, true, false, true, 'idCliente');
         break;
       case 4:
-        this.establecerEstadoCampos(false);
         this.establecerValoresPestania(nombre, true, true, true, 'idCliente');
         break;
       case 5:
-        this.contactos = [];
-        this.autocompletado.reset();
-        this.formulario.reset();
         setTimeout(function () {
           document.getElementById('idCliente').focus();
         }, 20);

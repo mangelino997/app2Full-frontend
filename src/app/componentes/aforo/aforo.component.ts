@@ -23,12 +23,23 @@ export class AforoComponent implements OnInit {
   }
   ngOnInit() {
     this.formulario = this.aforo.formulario;
-    this.servicio.obtenerPorId(1).subscribe(
-      res => {
-        let aforo = res.json().aforo;
-        this.formulario.get('aforo').setValue(this.establecerDecimales(aforo, 2));
-      }
-    );
+    if (this.data.formularioAforar.kiloAforadoTotal) {
+      console.log(this.data.formularioAforar);
+      this.formulario.patchValue(this.data.formularioAforar);
+      this.data.formulario = this.formulario.value;
+    } else {
+      this.servicio.obtenerPorId(1).subscribe(
+        res => {
+          let aforo = res.json().aforo;
+          this.formulario.get('aforo').setValue(this.establecerDecimales(aforo, 2));
+        },
+        err => {
+          if (err.json().status == 500)
+            this.formulario.get('aforo').setValue(this.establecerDecimales('350', 2));
+        }
+      );
+    }
+
   }
   //calcula el aforo total 
   public calcularTotal() {
@@ -40,7 +51,7 @@ export class AforoComponent implements OnInit {
     let largo = this.formulario.get('largo').value ? this.formulario.get('largo').value : '0.00';
     total = aforo * cantidad * alto * ancho * largo;
     this.formulario.get('kiloAforadoTotal').setValue(this.establecerDecimales(total, 2));
-    this.data.formulario = this.formulario.get('kiloAforadoTotal').value;
+    this.data.formulario = this.formulario.value;
   }
   //Obtiene la mascara de enteros SIN decimales
   public obtenerMascaraEnteroSinDecimales(intLimite) {

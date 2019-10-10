@@ -180,7 +180,7 @@
           <td mat-cell *matCellDef="let elemento">{{elemento.excluirLiqChofer?'Sí':'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="ESTA_ACTIVO">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>esta Activo</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Está Activo</th>
           <td mat-cell *matCellDef="let elemento">{{elemento.estaActivo?'Sí': 'No'}}</td>
         </ng-container>
         <ng-container matColumnDef="EDITAR" stickyEnd>
@@ -191,8 +191,8 @@
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>
