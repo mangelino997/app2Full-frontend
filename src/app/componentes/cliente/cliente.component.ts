@@ -723,7 +723,6 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.formulario.get('clienteCuentasBancarias').setValue(this.cuentasBancarias.data);
-    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -749,6 +748,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.formulario.get('clienteCuentasBancarias').setValue(null);
+    this.formulario.get('clienteVtosPagos').setValue(null);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
