@@ -175,7 +175,7 @@ export class ClienteComponent implements OnInit {
     //Define los campos para validaciones
     this.formulario = this.clienteModelo.formulario;
     //Establece los valores de la primera pestania activa
-    this.seleccionarPestania(1, 'Agregar');
+    this.seleccionarPestania(1, 'Agregar', true);
     //Establece la primera opcion seleccionada
     this.seleccionarOpcion(1, 0);
     //Autocompletado Barrio - Buscar por nombre
@@ -343,7 +343,8 @@ export class ClienteComponent implements OnInit {
       maxWidth: '95%',
       data: {
         empresa: elemento.empresa,
-        clienteVtoPago: this.formulario.get('clienteVtosPagos').value ? this.formulario.get('clienteVtosPagos').value[indice] : this.formulario.get('clienteVtosPagos').value
+        clienteVtoPago: this.formulario.get('clienteVtosPagos').value ? this.formulario.get('clienteVtosPagos').value[indice] : this.formulario.get('clienteVtosPagos').value,
+        indice: this.indiceSeleccionado
       },
     });
     dialogRef.afterClosed().subscribe(resultado => {
@@ -611,10 +612,12 @@ export class ClienteComponent implements OnInit {
     }
   }
   //Establece valores al seleccionar una pestania
-  public seleccionarPestania(id, nombre) {
+  public seleccionarPestania(id, nombre, opcion) {
     this.indiceSeleccionado = id;
     this.activeLink = nombre;
-    this.reestablecerFormulario(undefined);
+    if(opcion) {
+      this.reestablecerFormulario(undefined);
+    }
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
@@ -720,6 +723,7 @@ export class ClienteComponent implements OnInit {
     this.formulario.get('esCuentaCorriente').setValue(true);
     this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.formulario.get('clienteCuentasBancarias').setValue(this.cuentasBancarias.data);
+    console.log(this.formulario.value);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
@@ -768,7 +772,7 @@ export class ClienteComponent implements OnInit {
   private reestablecerFormulario(id) {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
-    this.autocompletado.setValue(undefined);
+    this.autocompletado.reset();
     this.vaciarListas();
     this.establecerSituacionCliente();
     this.establecerCondicionVenta();
@@ -861,13 +865,13 @@ export class ClienteComponent implements OnInit {
   }
   //Muestra en la pestania buscar el elemento seleccionado de listar
   public activarConsultar(elemento) {
-    this.seleccionarPestania(2, this.pestanias[1].nombre);
+    this.seleccionarPestania(2, this.pestanias[1].nombre, false);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
-    this.seleccionarPestania(3, this.pestanias[2].nombre);
+    this.seleccionarPestania(3, this.pestanias[2].nombre, false);
     this.autocompletado.setValue(elemento);
     this.establecerFormulario();
   }
@@ -1045,9 +1049,9 @@ export class ClienteComponent implements OnInit {
     var opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
-        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
+        this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre, true);
       } else {
-        this.seleccionarPestania(1, this.pestanias[0].nombre);
+        this.seleccionarPestania(1, this.pestanias[0].nombre, true);
       }
     } else if (keycode == 115) {
       if (opcion < this.opciones.length) {
@@ -1565,7 +1569,12 @@ export class VtoPagosDialogo implements OnInit {
   ngOnInit() {
     //Establece el formulario
     this.formulario = this.clienteVtoPago.formulario;
+    this.formulario.enable();
     this.formulario.reset();
+    //Deshabilita el formulario si estamos en la pestania consultar
+    if(this.data.indice == 2) {
+      this.formulario.disable();
+    }
     //Establece la empresa
     this.formulario.get('empresa').setValue(this.data.empresa);
     this.razonSocialEmpresa.setValue(this.data.empresa.razonSocial);
