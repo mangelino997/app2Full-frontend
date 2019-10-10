@@ -91,7 +91,7 @@ export class EmitirNotaCreditoComponent implements OnInit {
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteService.listarPorAlias(data).subscribe(res => {
-          this.resultadosClientes = res;
+          this.resultadosClientes = res.json();
         })
       }
     });

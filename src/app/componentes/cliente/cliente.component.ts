@@ -151,10 +151,17 @@ export class ClienteComponent implements OnInit {
       );
     //Autocompletado - Buscar por alias
     this.autocompletado.valueChanges.subscribe(data => {
-      if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultados = response;
-        })
+      if (typeof data == 'string') {
+        data = data.trim();
+        if(data == '*' || data.length > 2) {
+          this.servicio.listarPorAlias(data).subscribe(
+            res => {
+              this.resultados = res.json();
+            },
+            err => {
+              console.log('PASO');
+            });
+        }
       }
     })
   }
@@ -190,8 +197,8 @@ export class ClienteComponent implements OnInit {
     //Autocompletado Cuenta Grupo - Buscar por nombre
     this.formulario.get('cuentaGrupo').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.servicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosCuentasGrupos = response;
+        this.servicio.listarPorAlias(data).subscribe(res => {
+          this.resultadosCuentasGrupos = res.json();
         })
       }
     })
@@ -278,7 +285,7 @@ export class ClienteComponent implements OnInit {
         elemento.cuentaBancaria.numeroCuenta = resultado.numeroCuenta;
         elemento.cuentaBancaria.cbu = resultado.cbu;
         elemento.cuentaBancaria.aliasCBU = resultado.aliasCBU;
-        if(this.indiceSeleccionado == 3) {
+        if (this.indiceSeleccionado == 3) {
           elemento.cliente = {
             id: this.formulario.get('id').value,
             version: this.formulario.get('version').value
@@ -293,7 +300,7 @@ export class ClienteComponent implements OnInit {
     this.loaderService.show();
     this.clienteCuentaBancariaService.actualizar(elemento).subscribe(
       res => {
-        if(res.status == 200) {
+        if (res.status == 200) {
           this.toastr.success(MensajeExcepcion.ACTUALIZADO);
         }
         this.loaderService.hide();
@@ -307,7 +314,7 @@ export class ClienteComponent implements OnInit {
   //Elimina la cuenta bancaria
   public eliminarCuentaBancaria(elemento): void {
     const id = elemento.id;
-    if(this.indiceSeleccionado == 3) {
+    if (this.indiceSeleccionado == 3) {
       this.eliminarCuentaBancariaPorId(id);
     }
     elemento.cuentaBancaria = null;
@@ -318,7 +325,7 @@ export class ClienteComponent implements OnInit {
     this.clienteCuentaBancariaService.eliminar(id).subscribe(
       res => {
         let respuesta = res.json();
-        if(respuesta.codigo == 200) {
+        if (respuesta.codigo == 200) {
           this.toastr.success(MensajeExcepcion.ELIMINADO);
         }
         this.loaderService.hide();
@@ -342,7 +349,7 @@ export class ClienteComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
         let lista = this.formulario.get('clienteVtosPagos').value;
-        if(this.indiceSeleccionado == 3) {
+        if (this.indiceSeleccionado == 3) {
           this.loaderService.show();
           resultado.cliente = {
             id: this.formulario.get('id').value,
@@ -351,7 +358,7 @@ export class ClienteComponent implements OnInit {
           this.clienteVtoPagoService.actualizar(resultado).subscribe(
             res => {
               let respuesta = res.json();
-              if(res.status == 200) {
+              if (res.status == 200) {
                 lista[indice] = respuesta;
                 this.toastr.success(MensajeExcepcion.ACTUALIZADO);
               }
@@ -363,10 +370,10 @@ export class ClienteComponent implements OnInit {
             }
           );
         } else {
-          if(lista) {
+          if (lista) {
             try {
               lista[indice] = resultado;
-            } catch(e) {
+            } catch (e) {
               lista.push(resultado);
             }
           } else {
@@ -381,12 +388,12 @@ export class ClienteComponent implements OnInit {
   //Elimina vencimientos de pagos
   public eliminarVtoPagos(indice): void {
     let lista = this.formulario.get('clienteVtosPagos').value;
-    if(this.indiceSeleccionado == 3) {
+    if (this.indiceSeleccionado == 3) {
       this.loaderService.show();
       this.clienteVtoPagoService.eliminar(lista[indice].id).subscribe(
         res => {
           let respuesta = res.json();
-          if(respuesta.codigo == 200) {
+          if (respuesta.codigo == 200) {
             this.toastr.success(MensajeExcepcion.ELIMINADO);
           }
           this.loaderService.hide();
@@ -1173,8 +1180,8 @@ export class ListasDePreciosDialog {
     //Autocompletado - Buscar por nombre cliente
     this.formulario.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
+        this.clienteServicio.listarPorAlias(data).subscribe(res => {
+          this.resultadosClientes = res.json();
         })
       }
     });
@@ -1562,7 +1569,7 @@ export class VtoPagosDialogo implements OnInit {
     //Establece la empresa
     this.formulario.get('empresa').setValue(this.data.empresa);
     this.razonSocialEmpresa.setValue(this.data.empresa.razonSocial);
-    if(this.data.clienteVtoPago) {
+    if (this.data.clienteVtoPago) {
       this.formulario.patchValue(this.data.clienteVtoPago);
     }
   }

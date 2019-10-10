@@ -196,7 +196,7 @@ export class OrdenVentaComponent implements OnInit {
     this.cliente.valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
+          this.resultadosClientes = response.json();
         })
       }
     });
@@ -204,7 +204,7 @@ export class OrdenVentaComponent implements OnInit {
     this.formularioListar.get('cliente').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
         this.clienteServicio.listarPorAlias(data).subscribe(response => {
-          this.resultadosClientes = response;
+          this.resultadosClientes = response.json();
         })
       }
     });
