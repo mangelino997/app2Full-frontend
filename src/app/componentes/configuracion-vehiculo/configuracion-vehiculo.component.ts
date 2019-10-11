@@ -88,6 +88,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
     this.seleccionarPestania(1, 'Agregar');
     //Define el formulario listar
     this.formularioListar = new FormGroup({
+      tipoVehiculo: new FormControl('', Validators.required),
       marcaVehiculo: new FormControl('', Validators.required)
     });
     //Obtiene la lista completa de registros
@@ -172,7 +173,7 @@ export class ConfiguracionVehiculoComponent implements OnInit {
         this.formularioListar.reset();
         this.marcaVehiculo.reset();
         setTimeout(function () {
-          document.getElementById('idMarcaVehiculo').focus();
+          document.getElementById('idTipoVehiculo').focus();
         }, 20);
         break;
       default:
@@ -234,11 +235,13 @@ export class ConfiguracionVehiculoComponent implements OnInit {
       )
     }
   }
-  public listarPorMarcaVehiculo() {
+  public listarPorFiltros() {
     this.loaderService.show();
+    let tipoVehiculo = this.formularioListar.get('tipoVehiculo').value;
     let marcaVehiculo = this.formularioListar.get('marcaVehiculo').value;
+    tipoVehiculo = tipoVehiculo == '1' ? 0 : tipoVehiculo.id;
     marcaVehiculo = marcaVehiculo == '1' ? 0 : marcaVehiculo.id;
-    this.servicio.listarPorMarcaVehiculo(marcaVehiculo).subscribe(
+    this.servicio.listarPorFiltros(tipoVehiculo, marcaVehiculo).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;

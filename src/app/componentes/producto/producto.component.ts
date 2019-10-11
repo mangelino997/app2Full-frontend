@@ -359,9 +359,10 @@ export class ProductoComponent implements OnInit {
   }
   //Establece los valores del registro seleccionado en pestaña consultar o actualizar
   private establecerElemento(elemento) {
+    elemento.precioUnitarioVenta = elemento.precioUnitarioVenta && elemento.precioUnitarioVenta != 0 ? this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2) : null;
+    elemento.coeficienteITC = elemento.coeficienteITC ? this.appService.establecerDecimales(elemento.coeficienteITC, 2) : null;
     this.autocompletado.setValue(elemento);
-    elemento.precioUnitarioVenta ? this.formulario.get('precioUnitarioVenta').setValue(this.appService.establecerDecimales(elemento.precioUnitarioVenta, 2)) : '';
-    elemento.coeficienteITC ? this.formulario.get('coeficienteITC').setValue(this.appService.establecerDecimales(elemento.coeficienteITC, 2)) : '';
+    this.formulario.patchValue(elemento);
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {

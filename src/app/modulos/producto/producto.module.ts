@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { ProductoRoutingModule } from './producto-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProductoComponent } from 'src/app/componentes/producto/producto.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -34,7 +34,8 @@ import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
     MatProgressBarModule,
     MatButtonModule,
     TextMaskModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   providers: [
     ProductoService,

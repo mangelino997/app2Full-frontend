@@ -134,7 +134,8 @@
               <label for="idPrecioUnitarioVenta" class="tamanio-label">Precio Unitario de Venta</label>
               <input id="idPrecioUnitarioVenta" type="text" formControlName="precioUnitarioVenta"
                 class="form-control form-control-sm number-right" [textMask]="mascararImporte(10, 2)"
-                (blur)="establecerDecimales(formulario.get('precioUnitarioVenta'), 2)" [readonly]="soloLectura">
+                (blur)="establecerDecimales(formulario.get('precioUnitarioVenta'), 2)" [readonly]="soloLectura"
+                placeholder="$ 0.00">
             </div>
           </div>
           <div class="col-md-4">
@@ -142,7 +143,8 @@
               <label for="idCoeficienteITC" class="tamanio-label">Coeficiente ITC</label>
               <input id="idCoeficienteITC" type="text" formControlName="coeficienteITC"
                 class="form-control form-control-sm number-right" [textMask]="obtenerMascaraEnteroConDecimales(10)"
-                (blur)="establecerDecimales(formulario.get('coeficienteITC'), 2)" [readonly]="soloLectura">
+                (blur)="establecerDecimales(formulario.get('coeficienteITC'), 2)" [readonly]="soloLectura"
+                placeholder="$ 0.00">
             </div>
           </div>
         </div>
