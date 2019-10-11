@@ -25,7 +25,7 @@ export class ViajeRemitoGS {
             numero: new FormControl('', [Validators.required, Validators.maxLength(8)]),
             clienteRemitente: new FormControl('', Validators.required),
             clienteDestinatario: new FormControl('', Validators.required),
-            clienteDestinatarioSuc: new FormControl(),
+            sucursalClienteDest: new FormControl(),
             bultos: new FormControl('', Validators.required),
             kilosEfectivo: new FormControl(),
             kilosAforado: new FormControl(),

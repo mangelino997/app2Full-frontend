@@ -9,7 +9,7 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 1">
-    <div class="col-md-10 text-center">
+    <div class="col-md-12 text-center">
       <h5>{{pestaniaActual}} Adelanto de Sueldos</h5>
       <form [formGroup]="formulario" class="contenedor">
         <div class="row">
@@ -122,8 +122,8 @@
                 [readonly]="btnPrestamoModal" placeholder="$0.00">
             </div>
           </div>
-          <div class="col-md-1">
-            <button id="idBotonPrestamo" mat-raised-button color="primary" formnovalidate [disabled]="!btnPrestamoModal"
+          <div class="col-md-2">
+            <button mat-raised-button color="primary" formnovalidate [disabled]="!btnPrestamoModal"
               (click)="abrirPrestamoModal()">
               Préstamo
             </button>
@@ -152,11 +152,11 @@
     </div>
   </div>
   <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado > 1">
-    <div class="col-md-10 text-center">
+    <div class="col-md-12 text-center">
       <h5>{{pestaniaActual}} Adelantos de Sueldos</h5>
       <form [formGroup]="formularioFiltro" class="contenedor">
         <div class="row">
-          <div class="col-md-2">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="labelSucursal" for="idSucursal" class="descripcion-label">Sucursal Emisión *</label>
               <mat-select id="idSucursal" class="form-control form-control-sm" formControlName="sucursal"
@@ -168,21 +168,21 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="labelFechaDesde" for="idFechaEmisionDesde" class="tamanio-label">Fecha Emisión Desde *</label>
               <input id="idFechaEmisionDesde" type="date" formControlName="fechaEmisionDesde"
                 (blur)="controlarFechaEmisionDesde()" class="form-control form-control-sm">
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="labelFechaHasta" for="idFechaEmisionHasta" class="tamanio-label">Fecha Emisión Hasta *</label>
               <input id="idFechaEmisionHasta" type="date" formControlName="fechaEmisionHasta"
                 (blur)="controlarFechaEmisionHasta()" class="form-control form-control-sm">
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label id="labelTipoAdelanto" for="idTipoAdelanto" class="descripcion-label">Tipo Adelanto *</label>
               <mat-select id="idTipoAdelanto" class="form-control form-control-sm" formControlName="adelanto"
@@ -216,7 +216,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Buscar Personal</label>
               <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
@@ -270,7 +270,7 @@
             </button>
           </div>
           <div class="col-md-1">
-            <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate [disabled]="!formulario.valid"
+            <button id="idBotonBuscar" mat-raised-button formnovalidate [disabled]="!formulario.valid"
               (click)="cancelar()">Cancelar
             </button>
           </div>
@@ -361,9 +361,9 @@
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
               </table>
-              <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
             </div>
           </div>
+          <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
         </div>
         <div class="row" *ngIf="show">
           <div class="col text-center">

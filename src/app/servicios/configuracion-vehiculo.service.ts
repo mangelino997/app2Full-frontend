@@ -53,9 +53,9 @@ export class ConfiguracionVehiculoService {
     return this.http.get(this.url + '/listarPorTipoVehiculoMarcaVehiculo/' + idTipo + '/' + idMarca,
       this.options);
   }
-  //Obtiene un listado por marca de vehiculo
-  public listarPorMarcaVehiculo(idMarca) {
-    return this.http.get(this.url + '/listarPorMarcaVehiculo/' + idMarca, this.options);
+  //Obtiene un listado por filtros
+  public listarPorFiltros(idTipo, idMarca) {
+    return this.http.get(this.url + '/listarPorFiltros/' + idTipo + '/' + idMarca, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

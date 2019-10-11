@@ -138,6 +138,7 @@ export class ViajeRemitoComponent implements OnInit {
     //Obtiene la fecha actual
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.fechaActual = res.json();
+      this.formulario.get('fecha').setValue(this.fechaActual);
     });
     //Obtiene la lista de condiciones de iva
     this.listarSucursales();
@@ -168,7 +169,7 @@ export class ViajeRemitoComponent implements OnInit {
       res => {
         this.sucursalesDestinatario = res.json();
         if (this.sucursalesDestinatario.length > 0)
-          this.formulario.get('clienteDestinatarioSuc').setValue(this.sucursalesDestinatario[0]);
+          this.formulario.get('sucursalClienteDest').setValue(this.sucursalesDestinatario[0]);
       }
     )
   }
@@ -219,8 +220,8 @@ export class ViajeRemitoComponent implements OnInit {
       this.formulario.get('importeRetiro').reset();
     elemento.importeEntrega ? this.formulario.get('importeEntrega').setValue(this.appService.establecerDecimales(elemento.importeEntrega, 2)) :
       this.formulario.get('importeEntrega').reset();
-    elemento.idClienteDestinatarioSuc ? this.formulario.get('clienteDestinatarioSuc').setValue(elemento.idClienteDestinatarioSuc) :
-      this.formulario.get('clienteDestinatarioSuc').setValue(null);
+    elemento.idSucursalClienteDest ? this.formulario.get('sucursalClienteDest').setValue(elemento.idSucursalClienteDest) :
+      this.formulario.get('sucursalClienteDest').setValue(null);
   }
   //Establece los valores por defecto
   private establecerValoresPorDefecto(numeroCamion, sucursalDestino) {
@@ -233,6 +234,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.resultados = [];
     this.resultadosClienteRemitente = [];
     this.resultadosClienteDestinatario = [];
+    this.sucursalesDestinatario = [];
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Obtiene el listado de sucursales

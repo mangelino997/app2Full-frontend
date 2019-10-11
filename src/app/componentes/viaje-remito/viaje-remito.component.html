@@ -133,11 +133,11 @@
             <button mat-raised-button (click)="agregarCliente(2)" [disabled]="!mostrarBoton">+</button>
           </div>
         </div>
-        <div class="row justify-content-end">
+        <div class="row justify-content-end" *ngIf="sucursalesDestinatario.length > 0">
           <div class="col-md-6">
-            <div class="form-group has-float-label" *ngIf="sucursalesDestinatario.length > 0">
-              <label for="idSucursalDestinatario" class="tamanio-label">Sucursal Destinatario </label>
-              <mat-select id="idSucursalDestinatario" class="form-control form-control-sm" formControlName="clienteDestinatarioSuc">
+            <div class="form-group has-float-label">
+              <label for="idSucursalDestinatario" class="tamanio-label">Sucursal Destinatario</label>
+              <mat-select id="idSucursalDestinatario" class="form-control form-control-sm" formControlName="sucursalClienteDest">
                 <div *ngFor="let item of sucursalesDestinatario">
                   <mat-option [value]="item">{{item.nombre}} - {{item.domicilio}} - {{item.localidad.nombre}}</mat-option>
                 </div>
@@ -241,26 +241,26 @@
       </form>
     </div>
   </div>
-  <div class="row justify-content-center contenedor" *ngIf="indiceSeleccionado == 5">
+  <div class="row contenedor" *ngIf="indiceSeleccionado == 5">
     <div class="col-md-12">
       <br>
       <form [formGroup]="formularioFiltro" class="contenedor">
         <div class="row">
-          <div class="col">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idFecha" class="tamanio-label">Fecha Desde *</label>
               <input id="idFecha" type="date" formControlName="fechaDesde" autocomplete="off"
                 class="form-control form-control-sm" required>
             </div>
           </div>
-          <div class="col">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idFecha" class="tamanio-label">Fecha Hasta *</label>
               <input id="idFecha" type="date" formControlName="fechaHasta" autocomplete="off"
                 class="form-control form-control-sm" required>
             </div>
           </div>
-          <div class="col">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idSucursalDestino" class="tamanio-label">Sucursal Ingreso</label>
               <mat-select id="idSucursalDestino" class="form-control form-control-sm"
@@ -271,7 +271,7 @@
               </mat-select>
             </div>
           </div>
-          <div class="col">
+          <div class="col-md-3">
             <div class="form-group has-float-label">
               <label for="idSucursalDestino" class="tamanio-label">Sucursal Destino</label>
               <mat-select id="idSucursalDestino" class="form-control form-control-sm"
@@ -282,7 +282,9 @@
               </mat-select>
             </div>
           </div>
-          <div class="col-md-2">
+        </div>
+        <div class="row">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Remitente</label>
               <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off" type="text" matInput
@@ -295,7 +297,7 @@
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col-md-2">
+          <div class="col-md-4">
             <div class="form-group has-float-label">
               <label for="idAutocompletado" class="tamanio-label">Destinatario</label>
               <input id="idAutocompletado" class="form-control form-control-sm" autocomplete="off" type="text" matInput
@@ -308,14 +310,14 @@
               </mat-autocomplete>
             </div>
           </div>
-          <div class="col">
+          <div class="col-md-2">
             <div class="form-group has-float-label">
               <label for="idNumeroCamion" class="tamanio-label">N° de Camión</label>
               <input id="idNumeroCamion" [textMask]="mascararEnteros(3)" type="text" formControlName="numeroCamion"
                 autocomplete="off" class="form-control form-control-sm number-right">
             </div>
           </div>
-          <div class="col">
+          <div class="col-md-2">
             <button mat-raised-button color="primary" (click)="listar()"
               [disabled]="!formularioFiltro.valid">Buscar</button>
           </div>
@@ -326,7 +328,6 @@
           <mat-progress-bar mode="indeterminate"></mat-progress-bar>
         </div>
       </div>
-      <br>
       <div class="tabla">
         <div class="tabla-ancho">
           <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">

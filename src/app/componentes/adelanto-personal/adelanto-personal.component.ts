@@ -684,8 +684,10 @@ export class PrestamoDialogo {
   public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla
   public columnas: string[] = ['numeroCuota', 'fechaVencimiento', 'importe', 'mod'];
-  //Define la matSort
+  //Define Ordenador
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //Define Paginador
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Se subscribe al loader
@@ -729,6 +731,7 @@ export class PrestamoDialogo {
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.listaCompleta.paginator = this.paginator;
         this.establecerTotalPrestamoACuotas();
         this.diferencia.setValue(this.appService.establecerDecimales('0.00', 2));
         this.btnAceptar = true;
@@ -831,7 +834,6 @@ export class PrestamoDialogo {
   }
 
 }
-
 //Componente 
 @Component({
   selector: 'detalle-adelanto-dialogo',

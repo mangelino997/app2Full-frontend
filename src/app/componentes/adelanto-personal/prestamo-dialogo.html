@@ -1,4 +1,4 @@
-<div id="" class="container-fluid">
+<div class="container-fluid">
   <div class="row justify-content-center contenedor">
     <div class="col-md-10 text-center">
       <h5>Detalle Préstamo</h5>
@@ -21,7 +21,7 @@
           </div>
           <div class="col-md-2">
             <button id="idBotonConfirmar" mat-raised-button color="primary" formnovalidate (click)="confirmar()"
-              [disabled]="!totalPrestamo.valid || !totalCuotas.valid" style="width: 100% !important;">
+              [disabled]="!totalPrestamo.valid || !totalCuotas.valid">
               Confirmar
             </button>
           </div>
@@ -52,43 +52,46 @@
           </div>
           <div class="col-md-2">
             <button id="idBotonActualizar" mat-raised-button color="primary" formnovalidate (click)="actualizar()"
-              [disabled]="!btnMostrar" style="width: 100% !important;">
+              [disabled]="!btnMostrar">
               Actualizar
             </button>
           </div>
           <div class="col-md-1">
             <button id="idBotonCancelar" mat-raised-button color="secondary" formnovalidate (click)="cancelar()"
-              [disabled]="!btnMostrar" style="width: 100% !important;">
+              [disabled]="!btnMostrar">
               Cancelar
             </button>
           </div>
         </div>
         <div class="row">
-          <div class="tabla-prestamo">
-            <div class="tabla-ancho-prestamo">
-              <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                <ng-container matColumnDef="numeroCuota" sticky>
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuota</th>
-                  <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.cuota}}</td>
-                </ng-container>
-                <ng-container matColumnDef="fechaVencimiento">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Vencimiento</th>
-                  <td mat-cell *matCellDef="let elemento">{{elemento.fechaVto | date: 'dd/MM/yyyy'}}</td>
-                </ng-container>
-                <ng-container matColumnDef="importe">
-                  <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
-                  <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}
-                  </td>
-                </ng-container>
-                <ng-container matColumnDef="mod" sticky>
-                  <th mat-header-cell *matHeaderCellDef>-</th>
-                  <td mat-cell *matCellDef="let elemento; let i=index" (click)="activarActualizar(elemento, i)"><span
-                      class="cursor-color">editar</span></td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-              </table>
-            </div>
+          <div class="col">
+            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+              <ng-container matColumnDef="numeroCuota">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>N° de Cuota</th>
+                <td mat-cell *matCellDef="let elemento" class="number-right">{{elemento.cuota}}</td>
+              </ng-container>
+              <ng-container matColumnDef="fechaVencimiento">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha de Vencimiento</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.fechaVto | date: 'dd/MM/yyyy'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="importe">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Importe</th>
+                <td mat-cell *matCellDef="let elemento" class="number-right">${{elemento.importe | number: '1.2-2'}}
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="mod">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let elemento; let i = index">
+                  <button mat-icon-button class="mat-icon-button-table" (click)="activarActualizar(i, elemento)" 
+                    matTooltip="Editar" matTooltipPosition="above">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+              <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+            </table>
+            <mat-paginator [pageSizeOptions]="[10]" showFirstLastButtons></mat-paginator>
           </div>
         </div>
         <br>

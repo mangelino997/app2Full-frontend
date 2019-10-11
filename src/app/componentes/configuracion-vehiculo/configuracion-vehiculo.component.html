@@ -148,23 +148,34 @@
     <div class="col-md-10">
       <br>
       <form [formGroup]="formularioListar">
-      <div class="row">
-        <div class="col-md-3">
-          <div class="form-group has-float-label">
-            <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
-            <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo">
+        <div class="row">
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idTipoVehiculo" class="tamanio-label">Tipo de Vehículo *</label>
+              <mat-select id="idTipoVehiculo" class="form-control form-control-sm" formControlName="tipoVehiculo">
                 <mat-option [value]="1">TODOS</mat-option>
-              <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
-                {{itemMarcaVehiculo.nombre}}
-              </mat-option>
-            </mat-select>
+                <mat-option *ngFor="let itemTipoVehiculo of tiposVehiculos" [value]="itemTipoVehiculo">
+                  {{itemTipoVehiculo.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="form-group has-float-label">
+              <label for="idMarcaVehiculo" class="tamanio-label">Marca de Vehículo *</label>
+              <mat-select id="idMarcaVehiculo" class="form-control form-control-sm" formControlName="marcaVehiculo">
+                <mat-option [value]="1">TODAS</mat-option>
+                <mat-option *ngFor="let itemMarcaVehiculo of marcasVehiculos" [value]="itemMarcaVehiculo">
+                  {{itemMarcaVehiculo.nombre}}
+                </mat-option>
+              </mat-select>
+            </div>
+          </div>
+          <div class="col-md-1">
+            <button mat-raised-button color="primary" [disabled]="!formularioListar.valid"
+              (click)="listarPorFiltros()">Buscar</button>
           </div>
         </div>
-        <div class="col-md-1">
-            <button mat-raised-button color="primary" [disabled]="!formularioListar.valid"
-              (click)="listarPorMarcaVehiculo()">Buscar</button>
-          </div>
-      </div>
       </form>
       <div class="row" *ngIf="show">
         <div class="col text-center">
@@ -204,8 +215,8 @@
               matTooltip="Consultar" matTooltipPosition="above">
               <mat-icon>search</mat-icon>
             </button>
-            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-              (click)="activarActualizar(elemento)" matTooltip="Editar" matTooltipPosition="above">
+            <button mat-icon-button class="mat-icon-button-table margin-left-3" (click)="activarActualizar(elemento)"
+              matTooltip="Editar" matTooltipPosition="above">
               <mat-icon>edit</mat-icon>
             </button>
           </td>
