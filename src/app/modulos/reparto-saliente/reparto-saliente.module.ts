@@ -24,6 +24,8 @@ import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
 import { ViajeEfectivo } from 'src/app/modelos/viajeEfectivo';
 import { ZonaService } from 'src/app/servicios/zona.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
+import { PlanillaCerradaComponent } from 'src/app/componentes/planilla-cerrada/planilla-cerrada.component';
+import { RepartoDTO } from 'src/app/modelos/repartoDTO';
 
 @NgModule({
   declarations: [
@@ -64,9 +66,11 @@ import { RepartoService } from 'src/app/servicios/reparto.service';
     ZonaService,
     RetiroDepositoComprobanteService,
     TipoComprobanteService,
+    RepartoDTO
   ],
   entryComponents: [
     AcompanianteDialogo,
+
   ]
 })
 export class RepartoSalienteModule { }

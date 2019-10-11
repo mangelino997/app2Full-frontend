@@ -1,5 +1,7 @@
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { Injectable } from '@angular/core';
 //Define la entidad de la base de datos.
+@Injectable()
 export class Reparto {
     //define un formulario FormGroup
     public formulario: FormGroup;
@@ -9,8 +11,8 @@ export class Reparto {
         this.formulario = new FormGroup({
             id: new FormControl(),
             version: new FormControl(),
-            empresaEmision: new FormControl(),
-            sucursal: new FormControl(),
+            empresaEmision: new FormControl('', Validators.required),
+            sucursal: new FormControl('', Validators.required),
             tipoComprobante: new FormControl(),
             fechaRegistracion: new FormControl(),
             fechaSalida: new FormControl(),
@@ -20,7 +22,6 @@ export class Reparto {
             personal: new FormControl(),
             zona: new FormControl('', Validators.required),
             observaciones: new FormControl(),
-            usuarioAlta: new FormControl(),
             estaCerrada: new FormControl(),
             fechaRegreso: new FormControl(),
             horaRegreso: new FormControl(),
@@ -29,8 +30,10 @@ export class Reparto {
             choferProveedor: new FormControl(),
             proveedor: new FormControl(),
             afipCondicionIvaProveedor: new FormControl(),
+            usuarioAlta: new FormControl('', Validators.required),
             usuarioMod: new FormControl(),
             acompaniantes: new FormControl(),
+            esRepartoPropio: new FormControl(),
         });
     }
 }

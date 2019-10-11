@@ -34,6 +34,7 @@ import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.compo
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { PlanCuentaDialogo } from './componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
+import { PlanillaCerradaComponent } from './componentes/planilla-cerrada/planilla-cerrada.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -56,7 +57,9 @@ const stompConfig: StompConfig = {
     OrdenCombustibleComponent,
     PdfDialogoComponent,
     PlanCuentaDialogo,
-    ConfirmarDialogoComponent
+    ConfirmarDialogoComponent,
+    PlanillaCerradaComponent
+
   ],
   imports: [
     FormsModule,
@@ -109,7 +112,8 @@ const stompConfig: StompConfig = {
     ObservacionDialogComponent,
     PdfDialogoComponent,
     PlanCuentaDialogo,
-    ConfirmarDialogoComponent
+    ConfirmarDialogoComponent,
+    PlanillaCerradaComponent
   ]
 })
 export class AppModule { }

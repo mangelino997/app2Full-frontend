@@ -17,6 +17,8 @@ import { Subscription } from 'rxjs';
 import { RepartoPersonal } from 'src/app/modelos/repartoPersonal';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { OrdenCombustibleComponent } from '../orden-combustible/orden-combustible.component';
+import { LoaderState } from 'src/app/modelos/loader';
+import { PlanillaCerradaComponent } from '../planilla-cerrada/planilla-cerrada.component';
 
 @Component({
   selector: 'app-reparto',
@@ -28,8 +30,6 @@ export class RepartoComponent implements OnInit {
   public formulario: FormGroup;
   //Define el formulario Comrpobante
   public formularioComprobante: FormGroup;
-  //Define el numero reparto como un formControl
-  public id: FormControl = new FormControl();
   //Define como un formControl
   public usuario: FormControl = new FormControl();
   //Define como un formControl
@@ -70,11 +70,16 @@ export class RepartoComponent implements OnInit {
   //Constructor
   constructor(private modelo: Reparto, private zonaService: ZonaService, private toastr: ToastrService, private appService: AppService,
     private appComponent: AppComponent, private vehiculoService: VehiculoService, private vehiculoProveedorService: VehiculoProveedorService,
-    private personalServie: PersonalService, private choferProveedorService: ChoferProveedorService, public dialog: MatDialog,
+    private personalService: PersonalService, private choferProveedorService: ChoferProveedorService, public dialog: MatDialog,
     private servicio: RepartoService, private fechaService: FechaService, private loaderService: LoaderService) {
   }
 
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Establece el formulario
     this.formulario = this.modelo.formulario;
     // this.formularioComprobante = this.modelo.formularioComprobante;
@@ -82,8 +87,6 @@ export class RepartoComponent implements OnInit {
     this.reestablecerFormulario(undefined);
     //Establece el N° de reparto
     this.obtenerSiguienteId();
-    //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
     //Obtiene un listado de Zonas
     this.listarZonas();
     //Obtiene la lista de repartos agregados
@@ -125,7 +128,7 @@ export class RepartoComponent implements OnInit {
     //Autocompletado chofer- Buscar por alias
     this.formulario.get('personal').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
-        this.personalServie.listarChoferesPorDistanciaPorAlias(data, false).subscribe(response => {
+        this.personalService.listarChoferesPorDistanciaPorAlias(data, false).subscribe(response => {
           this.resultadosChofer = response.json();
         })
       }
@@ -143,7 +146,7 @@ export class RepartoComponent implements OnInit {
   private obtenerSiguienteId() {
     this.servicio.obtenerSiguienteId().subscribe(
       res => {
-        this.id.setValue(res.json());
+        this.formulario.get('id').setValue(res.json());
       },
       err => {
       }
@@ -162,6 +165,7 @@ export class RepartoComponent implements OnInit {
   }
   //Controla el cambio en el select Tipo de Viaje
   public cambioTipoViaje() {
+    this.tipoViaje.value ? this.formulario.get('esRepartoPropio').setValue(true) : this.formulario.get('esRepartoPropio').setValue(false);
     this.formulario.get('vehiculo').reset();
     this.formulario.get('personal').reset();
     this.formulario.get('vehiculoProveedor').reset();
@@ -185,31 +189,29 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      if (resultado.length > 0)
-        this.formulario.get('acompaniantes').setValue(resultado);
-      else
-        this.formulario.get('acompaniantes').setValue([]);
+      resultado.length > 0 ? this.formulario.get('acompaniantes').setValue(resultado) : this.formulario.get('acompaniantes').setValue([]);
+      document.getElementById('idZona').focus();
     });
   }
   //Agrega un reparto a la tabla
   public agregar() {
     this.loaderService.show();
-    this.formulario.get('fechaRegistracion').setValue(null);
-    this.formulario.get('acompaniantes').setValue([]);
+    this.formulario.get('id').reset();
+    this.formulario.get('fechaRegistracion').reset();
+    // this.formulario.get('acompaniantes').setValue([]);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
         if (res.status == 201) {
-          document.getElementById('idTipoViaje').focus();
-          this.toastr.success("Registro agregado con éxito.");
           this.reestablecerFormulario(respuesta.id);
+          document.getElementById('idTipoViaje').focus();
+          this.toastr.success(respuesta.mensaje);
           this.listarRepartos();
         }
         this.loaderService.hide();
       },
       err => {
-        let error = err.json();
-        this.toastr.error(error.message);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     )
@@ -234,11 +236,43 @@ export class RepartoComponent implements OnInit {
     this.formulario.get('acompaniantes').setValue([]);
     this.tipoViaje.setValue(true);
     this.tipoRemolque.setValue(true);
+    this.formulario.get('esRepartoPropio').setValue(true);
     this.fechaService.obtenerFecha().subscribe(res => {
       this.formulario.get('fechaRegistracion').setValue(res.json());
     });
   }
-
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    console.log(err);
+    var respuesta = err;
+    if (respuesta.codigo == 16033) {
+      this.toastr.error("Empresa de Emisión no puede estar vacío.");
+    } else if (respuesta.codigo == 16070) {
+      this.toastr.error("Sucursal no puede estar vacío.");
+    } else if (respuesta.codigo == 16076) {
+      this.toastr.error("Tipo de Comprobante no puede estar vacío.");
+    } else if (respuesta.codigo == 16226) {
+      this.toastr.error("Fecha de Registración no puede estar vacío.");
+    } else if (respuesta.codigo == 16102) {
+      this.toastr.error("Zona no puede estar vacío.");
+    } else if (respuesta.codigo == 16087) {
+      this.toastr.error("Usuario de Alta no puede estar vacío.");
+    } else if (respuesta.codigo == 13039) {
+      this.toastr.error("Empresa de Emisión no existe.");
+    } else if (respuesta.codigo == 13096) {
+      this.toastr.error("Sucursal no existe.");
+    } else if (respuesta.codigo == 13105) {
+      this.toastr.error("TipoComprobante no existe.");
+    } else if (respuesta.codigo == 13146) {
+      this.toastr.error("Zona no existe.");
+    } else if (respuesta.codigo == 13117) {
+      this.toastr.error("usuarioAlta no existe.");
+    } else if (respuesta.codigo == 5001) {
+      this.toastr.error(" Fallo al sincronizar.");
+    } else if (respuesta.codigo == 500) {
+      this.toastr.error("Se produjo un error en el sistema.");
+    }
+  }
   //Reestablece el formulario completo
   public reestablecerFormulario(id) {
     this.resultadosChofer = [];
@@ -246,18 +280,28 @@ export class RepartoComponent implements OnInit {
     this.resultadosVehiculo = [];
     this.resultadosZona = [];
     this.formulario.reset();
-    this.listaCompleta = new MatTableDataSource([]);
-    this.listaCompleta.sort = this.sort;
+    this.formulario.get('id').setValue(id);
     this.establecerValoresPorDefecto();
-    if (id != undefined || id != null)
-      this.id.setValue(id);
     document.getElementById('idTipoViaje').focus();
+    this.listaCompleta = new MatTableDataSource([]);
+  }
+  //Abre el modal de Viaje Combustible
+  public abrirPlanillaCerrada() {
+    const dialogRef = this.dialog.open(PlanillaCerradaComponent, {
+      width: '95%',
+      maxWidth: '95%',
+      data: {
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
   }
   //Abre el modal de Viaje Combustible
   public abrirOrdenesCombustibles(elemento) {
     const dialogRef = this.dialog.open(OrdenCombustibleComponent, {
       width: '95%',
-      maxWidth: '100vw',
+      maxWidth: '95%',
       data: {
         elemento: elemento
       },
@@ -270,7 +314,7 @@ export class RepartoComponent implements OnInit {
   public abrirAdelantosEfectivo(elemento) {
     const dialogRef = this.dialog.open(OrdenCombustibleComponent, {
       width: '95%',
-      maxWidth: '100vw',
+      maxWidth: '95%',
       data: {
         elemento: elemento
       },
@@ -283,7 +327,7 @@ export class RepartoComponent implements OnInit {
   public abrirComprobantes(elemento) {
     const dialogRef = this.dialog.open(OrdenCombustibleComponent, {
       width: '95%',
-      maxWidth: '100vw',
+      maxWidth: '95%',
       data: {
         elemento: elemento
       },
@@ -363,23 +407,22 @@ export class AcompanianteDialogo {
   ngOnInit() {
     //Declara el formulario y las variables 
     this.formulario = this.modelo.formulario;
+    //Obtiene la lista de acompaniantes - completa el mat-select
+    this.listarAcompaniantes();
     //Inicializa la lista completa para la tabla
     if (this.data.listaAcompaniantesAgregados.length > 0) {
       this.listaCompleta = new MatTableDataSource(this.data.listaAcompaniantesAgregados);
       this.listaCompleta.sort = this.sort;
     } else {
       this.listaCompleta = new MatTableDataSource([]);
-      this.listaCompleta.sort = this.sort;
     }
-    //Obtiene la lista de acompaniantes - completa el mat-select
-    this.listarAcompaniantes();
+
   }
   //Carga la lista de acompaniantes
   private listarAcompaniantes() {
-    let empresa = this.appService.getEmpresa();
-    this.personalService.listarAcompaniantesPorEmpresa(empresa.id).subscribe(
+    this.personalService.listarAcompaniantes().subscribe(
       res => {
-        this.resultadosAcompaniante = res.json();
+        res.json().length > 0 ? this.resultadosAcompaniante = res.json() : this.toastr.error("Lista de Acompañantes vacía.");
       },
       err => {
         let error = err.json();
@@ -390,15 +433,15 @@ export class AcompanianteDialogo {
   //Agrega Acompañantes a una lista
   public agregar() {
     if (this.listaCompleta.data.length > 0) {
-      for (let i = 0; i < this.listaCompleta.data.length; i++) {
-        if (this.formulario.get('personal').value.id == this.listaCompleta.data[i].personal.id) {
+      this.listaCompleta.data.forEach(elemento => {
+        if (this.formulario.get('personal').value.id == elemento.personal.id) {
           this.formulario.reset();
           this.toastr.error("El acompañante seleccionado ya fue agregado a la lista.");
           document.getElementById('idAcompaniante').focus();
         } else {
           this.agregarAcompaniante();
         }
-      }
+      });
     } else {
       this.agregarAcompaniante();
     }
@@ -407,8 +450,8 @@ export class AcompanianteDialogo {
   private agregarAcompaniante() {
     this.listaCompleta.data.push(this.formulario.value);
     this.listaCompleta.sort = this.sort;
-    this.toastr.success("Acompañante agregado a la lista.");
     this.formulario.reset();
+    this.toastr.success("Acompañante agregado a la lista.");
     document.getElementById('idAcompaniante').focus();
   }
   //Quita un acompaniante de la lista

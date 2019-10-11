@@ -70,9 +70,9 @@ export class PersonalService {
   public listarChoferesPorEmpresa(idEmpresa) {
     return this.http.get(this.url + '/listarChoferesPorEmpresa/' + idEmpresa, this.options);
   }
-  //Obtiene la lista de acompaniantes de larga distancia por alias
-  public listarAcompaniantesPorEmpresa(idEmpresa) {
-    return this.http.get(this.url + '/listarAcompaniantesPorEmpresa/' + idEmpresa, this.options);
+  //Obtiene la lista de acompaniantes
+  public listarAcompaniantes() {
+    return this.http.get(this.url + '/listarAcompaniantes', this.options);
   }
 
   //Obtiene un listado por alias

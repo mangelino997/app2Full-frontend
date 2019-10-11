@@ -374,16 +374,16 @@ export class ViajeRemitoComponent implements OnInit {
   private agregar() {
     this.loaderService.show();
     this.formulario.get('id').setValue(null);
-    var tipoComprobante = this.formulario.get('tipoComprobante').value;
-    var numeroCamion = this.formulario.get('numeroCamion').value;
-    var sucursalDestino = this.formulario.get('sucursalDestino').value;
+    let tipoComprobante = this.formulario.get('tipoComprobante').value;
+    let numeroCamion = this.formulario.get('numeroCamion').value;
+    let sucursalDestino = this.formulario.get('sucursalDestino').value;
     this.formulario.get('letra').enable();
     this.formulario.get('sucursalIngreso').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
     this.formulario.get('usuario').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
           this.establecerValoresPorDefecto(numeroCamion, sucursalDestino);
@@ -406,7 +406,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.formulario.get('letra').enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
-        var respuesta = res.json();
+        let respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
           this.establecerTipoComprobantePorDefecto();
@@ -436,7 +436,6 @@ export class ViajeRemitoComponent implements OnInit {
     this.autocompletado.reset();
     this.formularioFiltro.reset();
     this.formularioAforar.reset();
-    this.formulario.get('fecha').reset();
     this.formulario.get('id').setValue(id);
     this.vaciarListas();
     //Establece valores por defecto
@@ -444,7 +443,7 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    var respuesta = err.json();
+    let respuesta = err.json();
     this.toastr.error(respuesta.mensaje);
   }
   //Manejo de colores de campos y labels
@@ -494,7 +493,7 @@ export class ViajeRemitoComponent implements OnInit {
     dialogRef.afterClosed().subscribe(resultado => {
       if (resultado) {
         this.clienteServicio.obtenerPorId(resultado).subscribe(res => {
-          var cliente = res.json();
+          let cliente = res.json();
           if (tipo == 1) {
             this.formulario.get('clienteRemitente').setValue(cliente);
           } else {
@@ -560,7 +559,7 @@ export class ViajeRemitoComponent implements OnInit {
   }
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
-    var indice = this.indiceSeleccionado;
+    let indice = this.indiceSeleccionado;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
