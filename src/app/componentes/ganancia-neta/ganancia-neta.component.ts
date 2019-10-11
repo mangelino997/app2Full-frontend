@@ -66,6 +66,7 @@ export class GananciaNetaComponent implements OnInit {
   public show = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
+  //Constructor
   constructor(private appService: AppService, private subopcionPestaniaService: SubopcionPestaniaService, private fechaService: FechaService,
     private toastr: ToastrService, private loaderService: LoaderService, private servicio: AfipGananciaNetaService,
     private modelo: AfipGananciaNeta, private alicuotaGananciaService: AfipAlicuotaGananciaService, private mesService: MesService,
@@ -81,6 +82,7 @@ export class GananciaNetaComponent implements OnInit {
         }
       );
   }
+  //Al incializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -111,6 +113,7 @@ export class GananciaNetaComponent implements OnInit {
         this.anioFiscal = res.json();
       },
       err => {
+        console.log(err);
       }
     )
   }
@@ -121,6 +124,7 @@ export class GananciaNetaComponent implements OnInit {
         this.alicuotasGanancia = res.json();
       },
       err => {
+        console.log(err);
       }
     )
   }
@@ -131,13 +135,14 @@ export class GananciaNetaComponent implements OnInit {
         this.meses = res.json();
       },
       err => {
+        console.log(err);
       }
     )
   }
   
   //Controla el cambio en el campo "anio"
   public cambioAnio(elemento) {
-    if (elemento != undefined) {
+    if (elemento) {
       this.anio.setValue(elemento);
     }
     this.listaCompleta = new MatTableDataSource([]);
@@ -332,12 +337,11 @@ export class GananciaNetaComponent implements OnInit {
   //Controla que el campo "importe" (Ganancia Neta Acumulada) no sea menor o igual a cero
   public controlImporte() {
     this.establecerDecimales(this.formulario.get('importe'), 2); //Quita la máscara
-    if (this.formulario.value.importe < 0 || this.formulario.value.importe == 0) {
+    if (this.formulario.value.importe <= 0) {
       this.formulario.get('importe').setValue(null);
       this.toastr.error("La Ganancia Neta Acumulada debe ser mayor a cero");
       document.getElementById('idImporte').focus();
     }
-
   }
   //Controla que el campo "importeFijo" no sea mayor a "importe" ni menor a cero (puede ser cero)
   public controlImporteFijo() {
