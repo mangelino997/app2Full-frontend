@@ -666,3 +666,7 @@ tr.mat-footer-row, tr.mat-row {
 .last-col-end {
   text-align: end;
 }
+//Centra el contenido de los encabezados de tablas
+.mat-sort-header-container {
+  justify-content: center !important;
+}

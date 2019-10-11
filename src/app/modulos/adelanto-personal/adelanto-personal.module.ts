@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { AdelantoPersonalRoutingModule } from './adelanto-personal-routing.module';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatDialog, MatButtonModule, MatDialogModule, MatIconModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatDialog, MatButtonModule, MatDialogModule, MatIconModule, MatTooltipModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AdelantoPersonalComponent, PrestamoDialogo, DetalleAdelantoDialogo } from 'src/app/componentes/adelanto-personal/adelanto-personal.component';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -38,7 +38,8 @@ import { SucursalService } from 'src/app/servicios/sucursal.service';
     TextMaskModule,
     MatButtonModule,
     MatDialogModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   providers: [
     SubopcionPestaniaService,
