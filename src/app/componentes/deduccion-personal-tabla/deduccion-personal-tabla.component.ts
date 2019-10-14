@@ -14,6 +14,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { AfipTipoBeneficioService } from 'src/app/servicios/afip-tipo-beneficio.service';
 import { AfipDeduccionPersonalService } from 'src/app/servicios/afip-deduccion-personal.service';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { ConfirmarDialogoComponent } from '../confirmar-dialogo/confirmar-dialogo.component';
 
 @Component({
   selector: 'app-deduccion-personal-tabla',
@@ -179,6 +180,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
         this.establecerValoresPestania(nombre, true, false, true, 'idAnioFiscal');
         break;
       case 4:
+        this.establecerValoresPestania(nombre, true, true, false, 'idAnioFiscal');
         break;
       case 5:
         this.establecerValoresPestania(nombre, false, false, false, 'idAnio');
@@ -311,7 +313,7 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.listaCompleta = new MatTableDataSource([]);
     this.formulario.get('anio').enable();
     this.formulario.get('afipTipoBeneficio').enable();
-    this.indiceSeleccionado == 3? this.formulario.get('afipDeduccionPersonal').disable() : this.formulario.get('afipDeduccionPersonal').enable();
+    this.indiceSeleccionado == 3 ? this.formulario.get('afipDeduccionPersonal').disable() : this.formulario.get('afipDeduccionPersonal').enable();
   }
   //Muestra en la pestania actualizar el elemento seleccionado de listar
   public activarActualizar(elemento) {
@@ -322,21 +324,29 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.establecerDecimales(this.formulario.get('importe'), 2);
   }
   //elimina el registro seleccionado
-  public activarEliminar(idElemento) {
-    this.loaderService.show();
-    this.servicio.eliminar(idElemento).subscribe(
-      res => {
-        let respuesta = res.json();
-        this.listar();
-        this.toastr.success(respuesta.mensaje);
-        this.loaderService.hide();
-      },
-      err => {
-        let error = err.json();
-        this.toastr.error(error.mensaje);
-        this.loaderService.hide();
+  public eliminar(id) {
+    const dialogRef = this.dialog.open(ConfirmarDialogoComponent, {
+      width: '60%',
+      data: {}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loaderService.show();
+        this.servicio.eliminar(id).subscribe(
+          res => {
+            let respuesta = res.json();
+            this.listar();
+            this.toastr.success(respuesta.mensaje);
+            this.loaderService.hide();
+          },
+          err => {
+            let error = err.json();
+            this.toastr.error(error.mensaje);
+            this.loaderService.hide();
+          }
+        );
       }
-    );
+    });
   }
   //Controla el cambio de seleccion
   public cambioTipoImporte() {
@@ -351,7 +361,8 @@ export class DeduccionPersonalTablaComponent implements OnInit {
     this.listaCompleta = new MatTableDataSource([]);
   }
   //Controla el cambio de seleccion
-  public cambioTipoBeneficio(elemento) {
+  public cambioTipoBeneficio() {
+    let elemento = this.formulario.get('afipTipoBeneficio').value;
     this.listaCompleta = new MatTableDataSource([]);
     this.tipoBeneficio.setValue(elemento);
   }

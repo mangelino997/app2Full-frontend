@@ -17,10 +17,10 @@
             <div class="form-group has-float-label">
               <label id="labelAnio" for="idAnio" class="descripcion-label">Año Fiscal *</label>
               <input id="idAnio" type="text" [formControl]="anio" autocomplete="off" (blur)="cambioAnio(undefined)"
-                [textMask]="mascararEnteros(4)" placeholder="2019" class="form-control form-control-sm number-right" >
+                [textMask]="mascararEnteros(4)" class="form-control form-control-sm number-right" >
             </div>
           </div>
-          <div class="col-md-2" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3">
+          <div class="col-md-2" *ngIf="indiceSeleccionado == 1 || indiceSeleccionado == 3 || indiceSeleccionado == 4">
             <div class="form-group has-float-label">
               <label for="idAnioFiscal" class="tamanio-label">Año Fiscal *</label>
               <mat-select id="idAnioFiscal" class="form-control form-control-sm number-right" formControlName="anio"
@@ -35,14 +35,14 @@
             <div class="form-group has-float-label">
               <label for="labelTipoBeneficio" class="tamanio-label">Tipo de Beneficio *</label>
               <mat-select id="labelTipoBeneficio" class="form-control form-control-sm"
-                formControlName="afipTipoBeneficio" [compareWith]="compareFn">
-                <mat-option *ngFor="let item of tiposBeneficios" [value]="item" (blur)="cambioTipoBeneficio(item)">
+                formControlName="afipTipoBeneficio" [compareWith]="compareFn" (selectionChange)="cambioTipoBeneficio()">
+                <mat-option *ngFor="let item of tiposBeneficios" [value]="item">
                   {{item.descripcion}}
                 </mat-option>
               </mat-select>
             </div>
           </div>
-          <div class="col-md-1" [hidden]="indiceSeleccionado == 1 || indiceSeleccionado == 4">
+          <div class="col-md-1" [hidden]="indiceSeleccionado == 1">
             <button id="idBotonBuscar" mat-raised-button color="primary" formnovalidate (click)="listar()"
               [disabled]="!tipoBeneficio.value || !anio.value">
               Buscar
@@ -147,10 +147,10 @@
                   <td mat-cell *matCellDef="let elemento">{{elemento.mes? elemento.mes.nombre : '-'}}</td>
                 </ng-container>
                 <ng-container matColumnDef="EDITAR" stickyEnd>
-                  <th mat-header-cell *matHeaderCellDef><button class="button-full-width" mat-raised-button
+                  <th mat-header-cell *matHeaderCellDef><button *ngIf="indiceSeleccionado == 5" class="button-full-width" mat-raised-button
                       color="primary" (click)="abrirReporte()">Reporte</button></th>
                   <td mat-cell *matCellDef="let elemento">
-                    <button mat-icon-button class="mat-icon-button-table" (click)="activarEliminar(elemento)"
+                    <button mat-icon-button class="mat-icon-button-table" (click)="eliminar(elemento.id)"
                       matTooltip="Consultar" matTooltipPosition="above" *ngIf="indiceSeleccionado ==  4">
                       <mat-icon>delete</mat-icon>
                     </button>
