@@ -259,13 +259,8 @@ export class CobradorComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-          this.loaderService.hide();
-        }
+        this.lanzarError(respuesta);
+        this.loaderService.hide();
       }
     );
   }
@@ -284,13 +279,7 @@ export class CobradorComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
-        if (respuesta.codigo == 11002) {
-          document.getElementById("labelNombre").classList.add('label-error');
-          document.getElementById("idNombre").classList.add('is-invalid');
-          document.getElementById("idNombre").focus();
-          this.toastr.error(respuesta.mensaje);
-          this.loaderService.hide();
-        }
+        this.lanzarError(respuesta);
         this.loaderService.hide();
       }
     );
@@ -310,6 +299,19 @@ export class CobradorComponent implements OnInit {
         document.getElementById('idAutocompletado').focus();
       }
     )
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(respuesta) {
+    if (respuesta.codigo == 11003) {
+      document.getElementById("labelCorreoelectronico").classList.add('label-error');
+      document.getElementById("idCorreoelectronico").classList.add('is-invalid');
+      document.getElementById("idCorreoelectronico").focus();
+    } else if (respuesta.codigo == 11002) {
+      document.getElementById("labelNombre").classList.add('label-error');
+      document.getElementById("idNombre").classList.add('is-invalid');
+      document.getElementById("idNombre").focus();
+    }
+    this.toastr.error(respuesta.mensaje);
   }
   //Reestablece los campos formularios
   private reestablecerFormulario(id) {
@@ -376,8 +378,8 @@ export class CobradorComponent implements OnInit {
       let f = {
         id: elemento.id,
         nombre: elemento.nombre,
-        cuenta_habilitada: elemento.estahabilitada ? 'Si' : 'No',
-        correo_electronico: elemento.correoElectronico ? elemento.correoElectronico : '-',
+        cuenta_habilitada: elemento.estaActivo ? 'Si' : 'No',
+        correo_electronico: elemento.correoElectronico ? elemento.correoElectronico : '',
         por_defecto_en_cliente_eventual: elemento.porDefectoClienteEventual ? 'Si' : 'No'
       }
       datos.push(f);
@@ -397,7 +399,6 @@ export class CobradorComponent implements OnInit {
     this.reporteServicio.abrirDialogo(datos);
   }
 }
-
 //Componente Cambiar Moneda Principal Dialogo
 @Component({
   selector: 'cobrador-principal-dialogo',
@@ -421,5 +422,4 @@ export class CambiarCobradorPrincipalDialogo {
   onNoClick(): void {
     this.dialogRef.close();
   }
-
 }

@@ -4,7 +4,7 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { CompaniaSeguroService } from '../../servicios/compania-seguro.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -182,10 +182,10 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
   }
   //Obtiene la lista por compania seguro
   public listarPorCompaniaSeguro() {
-    this.loaderService.show();
     let elemento = this.formulario.get('companiaSeguro').value;
     this.listaCompleta = new MatTableDataSource([]);
     if (this.mostrarAutocompletado) {
+      this.loaderService.show();
       this.servicio.listarPorCompaniaSeguro(elemento.id).subscribe(
         res => {
           if (res.json().length > 0) {
@@ -402,7 +402,7 @@ export class ContactoCompaniaSeguroComponent implements OnInit {
     let lista = this.prepararDatos(this.listaCompleta.data);
     if (this.formulario.value.companiaSeguro) {
       let datos = {
-        nombre: 'Contactos - Compania de Seguro: ' + this.formulario.value.companiaSeguro.nombre,
+        nombre: 'Contactos - Compañia de Seguro: ' + this.formulario.value.companiaSeguro.nombre,
         empresa: this.appServicio.getEmpresa().razonSocial,
         usuario: this.appServicio.getUsuario().nombre,
         datos: lista,
