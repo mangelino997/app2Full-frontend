@@ -4,7 +4,7 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { ProveedorService } from '../../servicios/proveedor.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';

@@ -4,7 +4,7 @@ import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.ser
 import { SucursalBancoService } from '../../servicios/sucursal-banco.service';
 import { TipoContactoService } from '../../servicios/tipo-contacto.service';
 import { AppService } from '../../servicios/app.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -336,7 +336,7 @@ export class ContactoBancoComponent implements OnInit {
   //Define como se muestra los datos en el autocompletado
   public displayF(elemento) {
     if (elemento != undefined) {
-      return elemento.nombre ? elemento.nombre + ' - ' + elemento.banco.nombre : elemento;
+      return elemento.nombre ? elemento.banco.nombre + ' - ' + elemento.nombre : elemento;
     } else {
       return elemento;
     }
@@ -360,7 +360,6 @@ export class ContactoBancoComponent implements OnInit {
   //Maneja los evento al presionar una tacla (para pestanias y opciones)
   public manejarEvento(keycode) {
     var indice = this.indiceSeleccionado;
-    var opcion = this.opcionSeleccionada;
     if (keycode == 113) {
       if (indice < this.pestanias.length) {
         this.seleccionarPestania(indice + 1, this.pestanias[indice].nombre);
@@ -396,7 +395,7 @@ export class ContactoBancoComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Contactos - Banco: ' + this.formulario.value.sucursalBanco.id + ' - ' + this.formulario.value.sucursalBanco.banco.nombre,
+      nombre: 'Contactos: ' + this.formulario.value.sucursalBanco.banco.nombre + ' - ' + this.formulario.value.sucursalBanco.nombre,
       empresa: this.appServicio.getEmpresa().razonSocial,
       usuario: this.appServicio.getUsuario().nombre,
       datos: lista,

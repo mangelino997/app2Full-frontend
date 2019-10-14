@@ -239,7 +239,9 @@ export class CostosInsumosProductoComponent implements OnInit {
   //Obtiene la lista por rubro y marca
   public listarPorRubroYMarcaLista() {
     this.loaderService.show();
-    this.servicio.listarPorRubroYMarca(this.formularioFiltro.value.rubro.id, this.formularioFiltro.value.marca.id).subscribe(res => {
+    let idMarca = this.formularioFiltro.value.marca;
+    idMarca = idMarca == 1 ? 0 : this.formularioFiltro.value.marca.id;
+    this.servicio.listarPorRubroYMarca(this.formularioFiltro.value.rubro.id, idMarca).subscribe(res => {
       if(res.json().length > 0){
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;

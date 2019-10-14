@@ -1,11 +1,21 @@
-<h1 mat-dialog-title>Tabla RolSubopcion</h1>
-<div mat-dialog-content>
-    <p>Está seguro que desea reestablecer la tabla desde cero?</p>
+<div class="container-fluid padd-20">
+    <div class="row">
+        <div class="col text-center">
+            <h3>Tabla RolSubopcion</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <p>¿Está seguro que desea reestablecer la tabla desde cero?</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col text-center">
+            <button mat-raised-button [disabled]="progresoActivo" (click)="cancelar()" cdkFocusInitial>Cancelar</button>
+            <button class="margin-left-3" mat-raised-button color="primary" [disabled]="progresoActivo" (click)="aceptar()">Aceptar</button>
+        </div>
+    </div>
+    <br><br>
+    <span *ngIf="progresoActivo">Reestableciendo...</span>
+    <mat-progress-bar *ngIf="progresoActivo" mode="indeterminate"></mat-progress-bar>
 </div>
-<div mat-dialog-actions>
-    <button mat-button [disabled]="progresoActivo" (click)="cancelar()" cdkFocusInitial>Cancelar</button>
-    <button mat-button [disabled]="progresoActivo" (click)="aceptar()">Aceptar</button>
-</div>
-<br><br>
-<span *ngIf="progresoActivo">Reestableciendo...</span>
-<mat-progress-bar *ngIf="progresoActivo" mode="indeterminate"></mat-progress-bar>

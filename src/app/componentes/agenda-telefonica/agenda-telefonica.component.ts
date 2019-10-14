@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AgendaTelefonicaService } from '../../servicios/agenda-telefonica.service';
 import { SubopcionPestaniaService } from '../../servicios/subopcion-pestania.service';
 import { LocalidadService } from '../../servicios/localidad.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatSort, MatTableDataSource, MatPaginator } from '@angular/material';
 import { Subscription } from 'rxjs';
@@ -269,7 +269,6 @@ export class AgendaTelefonicaComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    this.formulario.get('numeroDocumento').setErrors({ 'incorrect': true });
     var respuesta = err;
     if (respuesta.codigo == 11003) {
       document.getElementById("labelCorreoelectronico").classList.add('label-error');
@@ -296,15 +295,15 @@ export class AgendaTelefonicaComponent implements OnInit {
         if (campo == 'telefonoFijo') {
           document.getElementById("labelTelefonoFijo").classList.add('label-error');
           document.getElementById("idTelefonoFijo").classList.add('is-invalid');
-          this.toastr.error('Telefono Fijo Incorrecto');
+          this.toastr.error('Teléfono Fijo Incorrecto');
         } else if (campo == 'telefonoMovil') {
           document.getElementById("labelTelefonoMovil").classList.add('label-error');
           document.getElementById("idTelefonoMovil").classList.add('is-invalid');
-          this.toastr.error('Telefono Movil Incorrecto');
+          this.toastr.error('Teléfono Móvil Incorrecto');
         } else if (campo == 'correoelectronico') {
           document.getElementById("labelCorreoelectronico").classList.add('label-error');
           document.getElementById("idCorreoelectronico").classList.add('is-invalid');
-          this.toastr.error('Correo Electronico Incorrecto');
+          this.toastr.error('Correo Electrónico Incorrecto');
         }
       }
     }
