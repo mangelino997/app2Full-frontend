@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 import { ToastrService } from 'ngx-toastr';
 

@@ -4,14 +4,15 @@ import { CommonModule } from '@angular/common';
 import { SubopcionPestaniaRoutingModule } from './subopcion-pestania-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { SubopcionPestaniaComponent } from 'src/app/componentes/subopcion-pestania/subopcion-pestania.component';
+import { SubopcionPestaniaComponent, SubopcionPestaniaDialog } from 'src/app/componentes/subopcion-pestania/subopcion-pestania.component';
 import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.service';
 
 @NgModule({
   declarations: [
     SubopcionPestaniaComponent,
+    SubopcionPestaniaDialog
   ],
   imports: [
     CommonModule,
@@ -25,10 +26,14 @@ import { SubopcionPestaniaService } from 'src/app/servicios/subopcion-pestania.s
     MatSortModule,
     MatSelectModule,
     MatProgressBarModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogModule
   ],
   providers: [
     SubopcionPestaniaService
+  ],
+  entryComponents: [
+    SubopcionPestaniaDialog
   ]
 })
 export class SubopcionPestaniaModule { }
