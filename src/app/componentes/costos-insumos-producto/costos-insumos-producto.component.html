@@ -176,6 +176,7 @@
               <label for="idMarca" class="tamanio-label">Marca *</label>
               <mat-select id="idMarca" class="form-control form-control-sm" formControlName="marca"
                 [compareWith]="compareFn">
+                <mat-option [value]="1">TODAS</mat-option>
                 <mat-option *ngFor="let itemMarca of marcas" [value]="itemMarca">
                   {{itemMarca.nombre}}
                 </mat-option>

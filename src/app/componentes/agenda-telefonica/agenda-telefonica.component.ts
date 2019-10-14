@@ -365,7 +365,7 @@ export class AgendaTelefonicaComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Agendas Telefónicas',
+      nombre: 'Agenda Telefónica',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
