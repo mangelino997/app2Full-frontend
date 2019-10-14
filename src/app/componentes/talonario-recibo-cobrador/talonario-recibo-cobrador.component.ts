@@ -8,7 +8,7 @@ import { TalonarioReciboService } from 'src/app/servicios/talonario-recibo.servi
 import { AppService } from 'src/app/servicios/app.service';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { ToastrService } from 'ngx-toastr';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { TalonarioReciboLoteService } from 'src/app/servicios/talonario-recibo-lote.service';
 import { CobradorService } from 'src/app/servicios/cobrador.service';
 import { AppComponent } from 'src/app/app.component';
@@ -278,6 +278,7 @@ export class TalonarioReciboCobradorComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
+    console.log(this.formulario.value);
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
