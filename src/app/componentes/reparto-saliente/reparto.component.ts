@@ -278,7 +278,6 @@ export class RepartoComponent implements OnInit {
     this.resultadosChofer = [];
     this.resultadosRemolque = [];
     this.resultadosVehiculo = [];
-    this.resultadosZona = [];
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.establecerValoresPorDefecto();
@@ -333,6 +332,19 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
+    });
+  }
+  //Abre el modal de cerrar reparto
+  public activarCerrarReparto(elemento) {
+    const dialogRef = this.dialog.open(CerrarRepartoDialogo, {
+      width: '50%',
+      maxWidth: '50%',
+      data: {
+        elemento: elemento,
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      document.getElementById('idTipoViaje').focus();
     });
   }
   //Define el mostrado de datos y comparacion en campo select
@@ -475,6 +487,78 @@ export class AcompanianteDialogo {
     } else {
       return elemento;
     }
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+@Component({
+  selector: 'cerrar-reparto-dialogo',
+  templateUrl: 'cerrar-reparto-dialogo.html',
+})
+export class CerrarRepartoDialogo {
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define la fecha actual
+  public fechaActual: any;
+  //Constructor
+  constructor(private personalService: PersonalService, public dialogRef: MatDialogRef<AcompanianteDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private appService: AppService, private modelo: Reparto, private toastr: ToastrService, private fechaService: FechaService,
+    private servicio: RepartoService) {
+    dialogRef.disableClose = true;
+  }
+  ngOnInit() {
+    //Declara el formulario y las variables 
+    this.formulario = this.modelo.formulario;
+    //Reestablece el formulario
+    this.reestablecerFormulario();
+    //Establece el formulario
+    console.log(this.data.elemento);
+
+  }
+  //Reestablece el formulario y sus valores.
+  public reestablecerFormulario(){
+    this.formulario.reset();
+    this.formulario.patchValue(this.data.elemento);
+    this.fechaService.obtenerFecha().subscribe(
+      res=>{
+        console.log(res.json());
+        this.formulario.get('fechaSalida').setValue(res.json());
+        this.fechaActual = res.json();
+      }
+    );
+    this.fechaService.obtenerHora().subscribe(
+      res=>{
+        console.log(res.json());
+        this.formulario.get('horaSalida').setValue(res.json());
+      }
+    );
+  }
+  //Comprueba que la fecha de Recolección sea igual o mayor a la fecha actual 
+  public verificarFechaSalida() {
+    if (this.formulario.get('fechaSalida').value < this.fechaActual) {
+      this.formulario.get('fechaSalida').setValue(this.fechaActual);
+      document.getElementById('idFechaSalida').focus();
+      this.toastr.error("La Fecha Salida no puede ser menor a la Fecha Actual.");
+    }
+  }
+  //Cierra un reparto
+  public cerrarReparto() {
+    console.log(this.formulario.value);
+    this.servicio.cerrarReparto(this.formulario.value).subscribe(
+      res => {
+        res.json().codigo == 200 ? this.toastr.success(res.json().mensaje) : '';
+        this.dialogRef.close();
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.dialogRef.close();
+      }
+    )
+  }
+  //Obtiene la mascara de hora-minuto
+  public mascararHora() {
+    return this.appService.mascararHora();
   }
   onNoClick(): void {
     this.dialogRef.close();

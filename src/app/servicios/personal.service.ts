@@ -70,6 +70,14 @@ export class PersonalService {
   public listarChoferesPorEmpresa(idEmpresa) {
     return this.http.get(this.url + '/listarChoferesPorEmpresa/' + idEmpresa, this.options);
   }
+  //Obtiene un listado de choferes corta distancia por alias
+  public listarChoferesCortaDistanciaPorAlias(alias) {
+    return this.http.get(this.url + '/listarChoferesPorDistanciaPorAlias/' + alias + '/' + false, this.options).map(res => {
+      return res.json().map(data => {
+        return data;
+      })
+    })
+  }
   //Obtiene la lista de acompaniantes
   public listarAcompaniantes() {
     return this.http.get(this.url + '/listarAcompaniantes', this.options);

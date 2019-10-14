@@ -105,7 +105,7 @@
                                     [formControl]="tipoViaje.value ? formulario.get('personal') : formulario.get('choferProveedor')">
                                 <mat-autocomplete #autoChofer="matAutocomplete" [displayWith]="displayFn.bind(this)">
                                     <mat-option *ngFor="let itemChofer of resultadosChofer" [value]="itemChofer">
-                                        {{itemChofer.nombre}}
+                                        {{itemChofer.alias}}
                                     </mat-option>
                                 </mat-autocomplete>
                             </div>
@@ -218,7 +218,7 @@
                             <ng-container matColumnDef="cerrar" stickyEnd>
                                 <th mat-header-cell *matHeaderCellDef>-</th>
                                 <td mat-cell *matCellDef="let elemento; let i=index">
-                                    <span class="cursor-color" (click)="activarCerrar(i)">
+                                    <span class="cursor-color" (click)="activarCerrarReparto(elemento)">
                                         Cerrar
                                     </span>
                                 </td>

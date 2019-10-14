@@ -6,7 +6,7 @@ import { RepartoSalienteRoutingModule } from './reparto-saliente-routing.module'
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RepartoComponent, AcompanianteDialogo } from 'src/app/componentes/reparto-saliente/reparto.component';
+import { RepartoComponent, AcompanianteDialogo, CerrarRepartoDialogo } from 'src/app/componentes/reparto-saliente/reparto.component';
 import { Reparto } from 'src/app/modelos/reparto';
 import { TextMaskModule } from 'angular2-text-mask';
 import { VehiculoService } from 'src/app/servicios/vehiculo.service';
@@ -24,13 +24,13 @@ import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
 import { ViajeEfectivo } from 'src/app/modelos/viajeEfectivo';
 import { ZonaService } from 'src/app/servicios/zona.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
-import { PlanillaCerradaComponent } from 'src/app/componentes/planilla-cerrada/planilla-cerrada.component';
 import { RepartoDTO } from 'src/app/modelos/repartoDTO';
 
 @NgModule({
   declarations: [
     RepartoComponent,
     AcompanianteDialogo,
+    CerrarRepartoDialogo
   ],
   imports: [
     CommonModule,
@@ -70,6 +70,7 @@ import { RepartoDTO } from 'src/app/modelos/repartoDTO';
   ],
   entryComponents: [
     AcompanianteDialogo,
+    CerrarRepartoDialogo
 
   ]
 })

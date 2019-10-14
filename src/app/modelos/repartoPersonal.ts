@@ -9,7 +9,7 @@ export class RepartoPersonal {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
             id: new FormControl(),
-            reparto: new FormControl('', Validators.required),
+            reparto: new FormControl(null, Validators.required),
             personal: new FormControl(),
         });
     }

@@ -15,7 +15,7 @@ import { GuardiaService } from './servicios/guardia.service';
 
 //Modulos
 import { MatMenuModule, MatDividerModule, MatIconModule, MatToolbarModule, MatDialogModule, 
-  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule } from '@angular/material';
+  MatSelectModule, MatProgressSpinnerModule, MatCardModule, MatTableModule, MatButtonModule, MatPaginatorIntl, MatProgressBarModule, MatTreeModule, MatAutocompleteModule } from '@angular/material';
 import { ReporteService } from './servicios/reporte.service';
 import { HttpModule } from '@angular/http';
 
@@ -34,7 +34,7 @@ import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.compo
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { PlanCuentaDialogo } from './componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
-import { PlanillaCerradaComponent } from './componentes/planilla-cerrada/planilla-cerrada.component';
+import { PlanillaCerradaComponent, ReabrirRepartoDialogo } from './componentes/planilla-cerrada/planilla-cerrada.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -58,7 +58,8 @@ const stompConfig: StompConfig = {
     PdfDialogoComponent,
     PlanCuentaDialogo,
     ConfirmarDialogoComponent,
-    PlanillaCerradaComponent
+    PlanillaCerradaComponent,
+    ReabrirRepartoDialogo
 
   ],
   imports: [
@@ -81,6 +82,7 @@ const stompConfig: StompConfig = {
     MatTreeModule,
     MatProgressBarModule,
     PdfViewerModule,
+    MatAutocompleteModule,
     ToastrModule.forRoot({
       timeOut: 4000,
       positionClass: 'toast-bottom-right',
@@ -113,7 +115,9 @@ const stompConfig: StompConfig = {
     PdfDialogoComponent,
     PlanCuentaDialogo,
     ConfirmarDialogoComponent,
-    PlanillaCerradaComponent
+    PlanillaCerradaComponent,
+    ReabrirRepartoDialogo,
+    OrdenCombustibleComponent
   ]
 })
 export class AppModule { }

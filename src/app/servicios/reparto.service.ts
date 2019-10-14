@@ -64,8 +64,8 @@ export class RepartoService {
     return this.http.get(this.url + '/listarPorEstaCerradaYEmpresa/' + estado + '/' + idEmpresa, this.options);
   }
   //Obtiene la lista de registros
-  public listarPorFiltros(idEmpresa, tipoViaje, fechaDesde, fechaHasta, idChofer, estaCerrada) {
-    return this.http.get(this.url + '/listarPorFiltros/' +idEmpresa+ '/' +tipoViaje+ '/' +fechaDesde+ '/' +fechaHasta+ '/' +idChofer+ '/' +estaCerrada, this.options);
+  public listarPorFiltros(filtro) {
+    return this.http.put(this.url + '/listarPorFiltros', filtro, this.options);
   }
   //Obtiene la lista de registros
   public listar() {
@@ -80,8 +80,12 @@ export class RepartoService {
     return this.http.put(this.url, elemento, this.options);
   }
   //Actualiza un registro
-  public cerrarReparto(valor) {
-    return this.http.put(this.url + '/cerrarReparto/' + valor, this.options);
+  public cerrarReparto(reparto) {
+    return this.http.put(this.url + '/cerrarReparto', reparto, this.options);
+  }
+  //Actualiza un registro
+  public abrirReparto(idReparto) {
+    return this.http.put(this.url + '/abrirReparto', idReparto, this.options);
   }
   //Elimina un registro
   public eliminar(id) {

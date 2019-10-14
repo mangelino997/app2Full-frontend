@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlanillaCerradaComponent } from 'src/app/componentes/planilla-cerrada/planilla-cerrada.component';
+import { PlanillaCerradaComponent, ReabrirRepartoDialogo } from 'src/app/componentes/planilla-cerrada/planilla-cerrada.component';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FechaService } from 'src/app/servicios/fecha.service';
@@ -11,7 +11,8 @@ import { RepartoDTO } from 'src/app/modelos/repartoDTO';
 import { TextMaskModule } from 'angular2-text-mask';
 @NgModule({
   declarations: [
-    PlanillaCerradaModule
+    PlanillaCerradaModule,
+    ReabrirRepartoDialogo
   ],
   imports: [
     CommonModule,
@@ -35,6 +36,9 @@ import { TextMaskModule } from 'angular2-text-mask';
     FechaService,
     RetiroDepositoService,
     ChoferProveedorService
+  ],
+  entryComponents: [
+    ReabrirRepartoDialogo
   ]
 })
 export class PlanillaCerradaModule { }
