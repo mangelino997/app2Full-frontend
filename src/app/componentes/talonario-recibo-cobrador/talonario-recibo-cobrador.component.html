@@ -12,44 +12,36 @@
     <div class="col-md-6 text-center">
       <h5>{{pestaniaActual}} Talonario Recibo Cobrador</h5>
       <form [formGroup]="formulario" class="contenedor">
-        <div class="row" [hidden]="indiceSeleccionado == 1 || indiceSeleccionado == 5">
-          <div class="col-md-6">
-            <div class="form-group has-float-label">
-              <label id="idCobradorConsultar" for="idCobrador" class="tamanio-label">Cobrador</label>
-              <mat-select class="form-control form-control-sm" [formControl]="cobrador" [compareWith]="compareFn"
-                (selectionChange)="listarPorCobradorYEmpresa()">
-                <mat-option *ngFor="let item of listaCobradores" [value]="item">
-                  {{item.nombre}}
-                </mat-option>
-              </mat-select>
+        <div [hidden]="indiceSeleccionado == 1 || indiceSeleccionado == 5">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group has-float-label">
+                <label id="idCobradorConsultar" for="idCobrador" class="tamanio-label">Cobrador</label>
+                <mat-select class="form-control form-control-sm" [formControl]="cobrador" [compareWith]="compareFn"
+                  (selectionChange)="listarPorCobradorYEmpresa()">
+                  <mat-option *ngFor="let item of listaCobradores" [value]="item">
+                    {{item.nombre}}
+                  </mat-option>
+                </mat-select>
+              </div>
             </div>
           </div>
-          <div class="col-md-6">
-            <div class="form-group has-float-label">
-              <label id="labelTalonarioReciboCobrador" for="labelTalonarioReciboCobrador" class="tamanio-label">Talonario Recibo</label>
-              <mat-select class="form-control form-control-sm" [formControl]="talonarioReciboCobrador"
-                (selectionChange)="cambioTalReciboCobrador()" [compareWith]="compareFn">
-                <mat-option *ngFor="let item of listaTalReciboCobrador" [value]="item">
-                  Desde: {{establecerCerosIzqEnVista(item.desde, '0000000', -8)}} -> Hasta:
-                  {{establecerCerosIzqEnVista(item.hasta, '0000000', -8)}}
-                </mat-option>
-              </mat-select>
+          <div class="row">
+            <div class="col">
+              <div class="form-group has-float-label">
+                <label id="labelTalonarioReciboCobrador" for="labelTalonarioReciboCobrador"
+                  class="tamanio-label">Talonario Recibo</label>
+                <mat-select class="form-control form-control-sm" [formControl]="talonarioReciboCobrador"
+                  (selectionChange)="cambioTalReciboCobrador()" [compareWith]="compareFn">
+                  <mat-option *ngFor="let item of listaTalReciboCobrador" [value]="item">
+                    Punto Venta: {{establecerCerosIzqEnVista(item.talonarioReciboLote.puntoVenta, '0000', -5)}} |
+                    Desde: {{establecerCerosIzqEnVista(item.desde, '0000000', -8)}} -> Hasta:
+                    {{establecerCerosIzqEnVista(item.hasta, '0000000', -8)}}
+                  </mat-option>
+                </mat-select>
+              </div>
             </div>
           </div>
-          <!-- <div class="col-md-12">
-            <div class="form-group has-float-label" *ngIf="mostrarAutocompletado">
-              <input id="idAutocompletado" class="form-control form-control-sm color-busqueda" type="text" matInput
-                placeholder="Buscar por Id, Número documento o Nombre de Personal" [formControl]="autocompletado"
-                [matAutocomplete]="auto" autocomplete="off" (blur)="verificarSeleccion(autocompletado)">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn.bind(this)" (optionSelected)="cambioAutocompletado()">
-                <mat-option *ngFor="let item of resultados" [value]="item">
-                  Empresa: {{elemento.talonarioReciboLote.empresa.razonSocial}} -
-                  Cobrador: {{elemento.cobrador.nombre}} - 
-                  Punto de venta: {{establecerCerosIzqEnVista(item.puntoVenta, '0000', -5)}} 
-                </mat-option>
-              </mat-autocomplete>
-            </div>
-          </div> -->
         </div>
         <div class="row">
           <div class="col-md-6">

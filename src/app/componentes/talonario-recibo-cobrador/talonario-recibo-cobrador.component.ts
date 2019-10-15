@@ -164,19 +164,17 @@ export class TalonarioReciboCobradorComponent implements OnInit {
     this.formulario.get('desde').setValue(this.establecerCerosIzqEnVista(elemento.desde, '0000000', -8));
     this.formulario.get('hasta').setValue(this.establecerCerosIzqEnVista(elemento.hasta, '0000000', -8));
   }
+  //Establecer campos solo lectura
+  private establecerCamposSoloLectura(estado, estado2): void {
+    estado ? this.formulario.get('talonarioReciboLote').disable() : this.formulario.get('talonarioReciboLote').enable();
+    estado2 ? this.formulario.get('cobrador').disable() : this.formulario.get('cobrador').enable();
+  }
   //Funcion para establecer los valores de las pestañas
   private establecerValoresPestania(nombrePestania, autocompletado, soloLectura, boton, componente) {
     this.pestaniaActual = nombrePestania;
     this.mostrarAutocompletado = autocompletado;
     this.soloLectura = soloLectura;
     this.mostrarBoton = boton;
-    if (soloLectura) {
-      this.formulario.get('talonarioReciboLote').disable();
-      this.formulario.get('cobrador').disable();
-    }else{
-      this.formulario.get('talonarioReciboLote').enable();
-      this.formulario.get('cobrador').enable();
-    }
     setTimeout(function () {
       document.getElementById(componente).focus();
     }, 20);
@@ -193,15 +191,19 @@ export class TalonarioReciboCobradorComponent implements OnInit {
     switch (id) {
       case 1:
         this.obtenerSiguienteId();
+        this.establecerCamposSoloLectura(false, false);
         this.establecerValoresPestania(nombre, false, false, true, 'idCobrador');
         break;
       case 2:
+        this.establecerCamposSoloLectura(true, true);
         this.establecerValoresPestania(nombre, true, true, false, 'idCobradorConsultar');
         break;
       case 3:
+        this.establecerCamposSoloLectura(true, false);
         this.establecerValoresPestania(nombre, true, false, true, 'idCobradorConsultar');
         break;
       case 4:
+        this.establecerCamposSoloLectura(true, true);
         this.establecerValoresPestania(nombre, true, true, true, 'idCobradorConsultar');
         break;
       case 5:
@@ -255,6 +257,7 @@ export class TalonarioReciboCobradorComponent implements OnInit {
   //Agrega un registro
   private agregar() {
     this.loaderService.show();
+    this.formulario.enable();
     this.formulario.get('id').setValue(null);
     let usuario = this.appComponent.getUsuario();
     this.formulario.get('usuarioAlta').setValue(usuario);
@@ -263,6 +266,7 @@ export class TalonarioReciboCobradorComponent implements OnInit {
         var respuesta = res.json();
         if (respuesta.codigo == 201) {
           this.reestablecerFormulario(respuesta.id);
+          this.establecerCamposSoloLectura(false, false);
           document.getElementById('idCobrador').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -270,6 +274,7 @@ export class TalonarioReciboCobradorComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
+        this.establecerCamposSoloLectura(false, false);
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
       }
@@ -278,12 +283,13 @@ export class TalonarioReciboCobradorComponent implements OnInit {
   //Actualiza un registro
   private actualizar() {
     this.loaderService.show();
-    console.log(this.formulario.value);
+    this.formulario.enable();
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         var respuesta = res.json();
         if (respuesta.codigo == 200) {
           this.reestablecerFormulario(undefined);
+          this.establecerCamposSoloLectura(true, false);
           document.getElementById('idCobradorConsultar').focus();
           this.toastr.success(respuesta.mensaje);
           this.loaderService.hide();
@@ -291,6 +297,7 @@ export class TalonarioReciboCobradorComponent implements OnInit {
       },
       err => {
         var respuesta = err.json();
+        this.establecerCamposSoloLectura(true, false);
         this.toastr.error(respuesta.mensaje);
         this.loaderService.hide();
       }
