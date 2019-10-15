@@ -19,6 +19,10 @@ import { LoaderService } from 'src/app/servicios/loader.service';
 import { OrdenCombustibleComponent } from '../orden-combustible/orden-combustible.component';
 import { LoaderState } from 'src/app/modelos/loader';
 import { PlanillaCerradaComponent } from '../planilla-cerrada/planilla-cerrada.component';
+import { ViajeCombustibleComponent } from '../viaje/viaje-combustible/viaje-combustible.component';
+import { ViajeEfectivoComponent } from '../viaje/viaje-efectivo/viaje-efectivo.component';
+import { TipoComprobanteComponent } from '../tipo-comprobante/tipo-comprobante.component';
+import { RepartoComprobanteComponent } from '../reparto-comprobante/reparto-comprobante.component';
 
 @Component({
   selector: 'app-reparto',
@@ -198,7 +202,6 @@ export class RepartoComponent implements OnInit {
     this.loaderService.show();
     this.formulario.get('id').reset();
     this.formulario.get('fechaRegistracion').reset();
-    // this.formulario.get('acompaniantes').setValue([]);
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -298,24 +301,26 @@ export class RepartoComponent implements OnInit {
   }
   //Abre el modal de Viaje Combustible
   public abrirOrdenesCombustibles(elemento) {
-    const dialogRef = this.dialog.open(OrdenCombustibleComponent, {
+    const dialogRef = this.dialog.open(ViajeCombustibleComponent, {
       width: '95%',
       maxWidth: '95%',
       data: {
-        elemento: elemento
+        elemento: elemento,
+        btnCerrar: true
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-
+      console.log(result);
     });
   }
   //Abre el modal de viaje Efectivo
   public abrirAdelantosEfectivo(elemento) {
-    const dialogRef = this.dialog.open(OrdenCombustibleComponent, {
+    const dialogRef = this.dialog.open(ViajeEfectivoComponent, {
       width: '95%',
       maxWidth: '95%',
       data: {
-        elemento: elemento
+        elemento: elemento,
+        btnCerrar: true
       },
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -324,7 +329,7 @@ export class RepartoComponent implements OnInit {
   }
   //Abre el modal de Comprobantes
   public abrirComprobantes(elemento) {
-    const dialogRef = this.dialog.open(OrdenCombustibleComponent, {
+    const dialogRef = this.dialog.open(RepartoComprobanteComponent, {
       width: '95%',
       maxWidth: '95%',
       data: {
@@ -344,6 +349,7 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
+      this.listarRepartos();
       document.getElementById('idTipoViaje').focus();
     });
   }
@@ -502,7 +508,7 @@ export class CerrarRepartoDialogo {
   //Define la fecha actual
   public fechaActual: any;
   //Constructor
-  constructor(private personalService: PersonalService, public dialogRef: MatDialogRef<AcompanianteDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+  constructor(public dialogRef: MatDialogRef<AcompanianteDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private appService: AppService, private modelo: Reparto, private toastr: ToastrService, private fechaService: FechaService,
     private servicio: RepartoService) {
     dialogRef.disableClose = true;
@@ -517,20 +523,14 @@ export class CerrarRepartoDialogo {
 
   }
   //Reestablece el formulario y sus valores.
-  public reestablecerFormulario(){
+  public reestablecerFormulario() {
     this.formulario.reset();
     this.formulario.patchValue(this.data.elemento);
     this.fechaService.obtenerFecha().subscribe(
-      res=>{
+      res => {
         console.log(res.json());
         this.formulario.get('fechaSalida').setValue(res.json());
         this.fechaActual = res.json();
-      }
-    );
-    this.fechaService.obtenerHora().subscribe(
-      res=>{
-        console.log(res.json());
-        this.formulario.get('horaSalida').setValue(res.json());
       }
     );
   }
@@ -544,10 +544,10 @@ export class CerrarRepartoDialogo {
   }
   //Cierra un reparto
   public cerrarReparto() {
-    console.log(this.formulario.value);
+    this.formulario.get('repartoComprobantes').setValue([]);
     this.servicio.cerrarReparto(this.formulario.value).subscribe(
       res => {
-        res.json().codigo == 200 ? this.toastr.success(res.json().mensaje) : '';
+        this.toastr.success(res.json().mensaje);
         this.dialogRef.close();
       },
       err => {
@@ -559,6 +559,13 @@ export class CerrarRepartoDialogo {
   //Obtiene la mascara de hora-minuto
   public mascararHora() {
     return this.appService.mascararHora();
+  }
+  //Desenmascarar Hora
+  public desenmascararHora(formulario) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appService.desenmascararHora(valor));
+    }
   }
   onNoClick(): void {
     this.dialogRef.close();

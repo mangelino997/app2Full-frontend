@@ -429,4 +429,13 @@ export class AppService {
   public mascararHora() {
     return [/[0-2]/, /[0-9]/, ':', /[0-5]/, /[0-9]/, ' hs'];
   }
+  //Desenmascara el km
+  public desenmascararHora(valor) {
+    if(valor) {
+      valor = valor + "";
+      valor = valor.replace(' hs', ':00');
+      valor = valor.replace(/\,/g, '');
+    }
+    return valor;
+  }
 }

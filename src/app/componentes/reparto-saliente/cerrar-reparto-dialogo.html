@@ -8,6 +8,7 @@
             <h6 class="text-center" *ngIf="!data.elemento.esRepartoPropio">
                 Vehículo: {{data.elemento.vehiculoProveedor.dominio}} : {{data.elemento.vehiculoProveedor.numeroInterno}} - Chofer: {{data.elemento.proveedor.alias}}
             </h6>
+            <br>
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="form-group has-float-label">
@@ -21,8 +22,8 @@
                 <div class="col-md-6">
                     <div class="form-group has-float-label">
                         <label for="idHoraSalida">Hora Salida *</label>
-                        <input id="idHoraSalida" type="text" [textMask]="{mask: mascararHora()}" class="form-control form-control-sm" readonly
-                            formControlName="horaSalida" placeholder="00:00 hs">
+                        <input id="idHoraSalida" type="text" [textMask]="{mask: mascararHora()}" class="form-control form-control-sm" 
+                            formControlName="horaSalida" placeholder="00:00 hs" (blur)="desenmascararHora(formulario.get('horaSalida'))">
                     </div>
                 </div>
             </div>

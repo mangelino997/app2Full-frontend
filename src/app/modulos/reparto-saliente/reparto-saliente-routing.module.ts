@@ -8,6 +8,7 @@ const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
+  entryComponents: [],
   exports: [RouterModule]
 })
 export class RepartoSalienteRoutingModule { }

@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ViajeCombustibleService } from 'src/app/servicios/viaje-combustible';
 import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
-import { LoaderState } from 'src/app/modelos/loader';
+// import { LoaderState } from 'src/app/modelos/loader';
 import { PersonalService } from 'src/app/servicios/personal.service';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
 import { ToastrService } from 'ngx-toastr';
@@ -47,10 +47,10 @@ export class OrdenCombustibleComponent implements OnInit {
   }
   ngOnInit() {
     //Establece la subscripcion a loader
-    this.subscription = this.loaderService.loaderState
-      .subscribe((state: LoaderState) => {
-        this.show = state.show;
-      });
+    // this.subscription = this.loaderService.loaderState
+    //   .subscribe((state: LoaderState) => {
+    //     this.show = state.show;
+    //   });
     //Define los campos para validaciones
     this.formulario = this.modelo.formulario;
     //Reestablece el formulario

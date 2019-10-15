@@ -1,9 +1,9 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
-import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialog, MatSort, MatTableDataSource, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
@@ -47,19 +47,22 @@ export class ViajeCombustibleComponent implements OnInit {
   public ID_VIAJE: number;
   //Define el mostrar del circulo de progreso
   public show = false;
+  //Define si muestra el boton CERRAR 
+  public btnCerrar: boolean = false;
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   //Define las columnas de la tabla
   public columnas: string[] = ['orden', 'sucursal', 'fecha', 'proveedor', 'insumoProducto', 'cantidad', 'precioUnitario', 'observaciones', 'anulado', 'obsAnulado', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define estado de campo precio unitario
   public estadoPrecioUnitario: boolean = false;
   //Constructor
   constructor(private proveedorServicio: ProveedorService, private viajeCombustibleModelo: ViajeCombustible,
     private fechaServicio: FechaService, private appService: AppService,
     private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog, private appServicio: AppService,
-    private servicio: ViajeCombustibleService, private toastr: ToastrService, private loaderService: LoaderService) { }
+    private servicio: ViajeCombustibleService, private toastr: ToastrService, private loaderService: LoaderService,
+    public dialogRef: MatDialogRef<ViajeCombustibleComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicilizarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -83,6 +86,8 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listarInsumos();
     //Establece los valores por defecto del formulario viaje combustible
     this.establecerValoresPorDefecto(1);
+    //Obtiene la lista de registros (combustibles reparto) cuando el reparto viene en .data
+    this.data ? this.listarPorReparto(this.data.elemento.id) : '';
   }
   //Establece el id del viaje de Cabecera
   public establecerIdViaje(idViaje) {
@@ -115,6 +120,10 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Establece los valores por defecto del formulario viaje combustible
   public establecerValoresPorDefecto(opcion): void {
+    if (this.data) {
+      this.formularioViajeCombustible.get('reparto').patchValue(this.data.elemento);
+      this.btnCerrar = this.data.btnCerrar;
+    }
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajeCombustible.get('fecha').setValue(res.json());
     })
@@ -123,6 +132,20 @@ export class ViajeCombustibleComponent implements OnInit {
       this.totalAceite.setValue(this.appService.setDecimales('0.00', 2));
       this.totalUrea.setValue(this.appService.setDecimales('0.00', 2));
     }
+  }
+  //Obtiene los registros por idReparto
+  private listarPorReparto(idReparto) {
+    this.servicio.listarCombustiblesReparto(idReparto).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+        this.calcularTotalLitros();
+      },
+      err => {
+        this.toastr.error("Sin registros para mostrar.");
+        this.loaderService.hide();
+      }
+    )
   }
   //Obtiene el listado de insumos
   private listarInsumos() {
@@ -185,12 +208,12 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajeCombustible.get('tipoComprobante').setValue({ id: 15 });
     this.formularioViajeCombustible.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formularioViajeCombustible.get('usuarioAlta').setValue(this.appService.getUsuario());
-    this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
+    this.data ? this.formularioViajeCombustible.get('viaje').reset() : this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeCombustible.value).subscribe(
       res => {
         if (res.status == 201) {
           this.reestablecerFormulario();
-          this.listar();
+          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
           this.establecerValoresPorDefecto(0);
           document.getElementById('idProveedorOC').focus();
           this.toastr.success("Registro agregado con éxito");
@@ -198,8 +221,7 @@ export class ViajeCombustibleComponent implements OnInit {
         }
       },
       err => {
-        let resultado = err.json();
-        this.toastr.error(resultado.mensaje);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
@@ -208,12 +230,12 @@ export class ViajeCombustibleComponent implements OnInit {
   public modificarCombustible(): void {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeCombustible.value.usuarioMod = usuarioMod;
-    this.formularioViajeCombustible.value.viaje = { id: this.ID_VIAJE };
+    this.data ? this.formularioViajeCombustible.get('viaje').reset() : this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.actualizar(this.formularioViajeCombustible.value).subscribe(
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.listar();
+          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
           this.establecerValoresPorDefecto(0);
           this.btnCombustible = true;
           document.getElementById('idProveedorOC').focus();
@@ -222,11 +244,60 @@ export class ViajeCombustibleComponent implements OnInit {
         }
       },
       err => {
-        let resultado = err.json();
-        this.toastr.error(resultado.mensaje);
+        this.lanzarError(err.json());
         this.loaderService.hide();
       }
     );
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    console.log(err);
+    let mensajeNulo = " no puede estar vacio.";
+    let mensajeInexistente = " no es un registro válido.";
+    let mensajeLongitud = " excedió su longitud.";
+
+    var respuesta = err;
+    if (respuesta.codigo == 5001) {
+      this.toastr.error("Fallo al sincronizar.");
+    } else if (respuesta.codigo == 500) {
+      this.toastr.error("Se produjo un error en el sistema.");
+    } else if (respuesta.codigo == 16053) {
+      this.toastr.error("Campo proveedor" + mensajeNulo);
+    } else if (respuesta.codigo == 16070) {
+      this.toastr.error("Sucursal" + mensajeNulo);
+    } else if (respuesta.codigo == 16087) {
+      this.toastr.error("Usuario Alta del Registro" + mensajeNulo);
+    } else if (respuesta.codigo == 16076) {
+      this.toastr.error("Tipo Comprobante" + mensajeNulo);
+    } else if (respuesta.codigo == 16207) {
+      this.toastr.error("Campo Fecha" + mensajeNulo);
+    } else if (respuesta.codigo == 16381) {
+      this.toastr.error("Campo Insumo Combustible" + mensajeNulo);
+    } else if (respuesta.codigo == 16127) {
+      this.toastr.error("Campo cantidad" + mensajeNulo);
+    } else if (respuesta.codigo == 16318) {
+      this.toastr.error("Campo Precio Unitario" + mensajeNulo);
+    } else if (respuesta.codigo == 16380) {
+      this.toastr.error("Está Anulado" + mensajeNulo);
+    } else if (respuesta.codigo == 13076) {
+      this.toastr.error("Campo Proveedor" + mensajeInexistente);
+    } else if (respuesta.codigo == 13096) {
+      this.toastr.error("Sucursal" + mensajeInexistente);
+    } else if (respuesta.codigo == 16380) {
+      this.toastr.error("Usuario de Alta del registro" + mensajeInexistente);
+    } else if (respuesta.codigo == 13105) {
+      this.toastr.error("Tipo Comprobante" + mensajeInexistente);
+    } else if (respuesta.codigo == 13046) {
+      this.toastr.error("Campo Insumo Combustible" + mensajeInexistente);
+    } else if (respuesta.codigo == 12031) {
+      this.toastr.error("Campo observaciones" + mensajeLongitud);
+    } else if (respuesta.codigo == 12065) {
+      this.toastr.error("Campo Observaciones para Anular" + mensajeLongitud);
+    } else if (respuesta.codigo == 12078) {
+      this.toastr.error("Campo Cantidad" + mensajeLongitud);
+    } else if (respuesta.codigo == 12123) {
+      this.toastr.error("Campo Precio Unitario" + mensajeLongitud);
+    }
   }
   //Modifica un combustible de la tabla por indice
   public modCombustible(indice): void {
@@ -275,7 +346,7 @@ export class ViajeCombustibleComponent implements OnInit {
       }
     });
     dialogRef.afterClosed().subscribe(resultado => {
-      if(resultado) {
+      if (resultado) {
         this.loaderService.show();
         elemento.viaje = { id: this.ID_VIAJE };
         this.servicio.normalizarCombustible(elemento).subscribe(
@@ -319,7 +390,7 @@ export class ViajeCombustibleComponent implements OnInit {
   //Limpia el formulario
   public cancelar() {
     this.formularioViajeCombustible.reset();
-    this.formularioViajeCombustible.get('viaje').setValue({id: this.ID_VIAJE});
+    this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
     this.importe.reset();
     this.indiceCombustible = null;
     this.btnCombustible = true;
@@ -338,10 +409,10 @@ export class ViajeCombustibleComponent implements OnInit {
   public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
     this.recargarListaCompleta(lista);
-    this.formularioViajeCombustible.get('viaje').setValue({id: idViaje});
     this.establecerIdViaje(idViaje);
+    this.formularioViajeCombustible.get('viaje').setValue({ id: idViaje });
     this.establecerCamposSoloLectura(pestaniaViaje);
-    this.listar();
+    // this.listar();
   }
   //Establece los campos solo lectura
   public establecerCamposSoloLectura(indice): void {
@@ -389,7 +460,7 @@ export class ViajeCombustibleComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formularioViajeCombustible.reset();
-    this.formularioViajeCombustible.get('viaje').setValue({id: this.ID_VIAJE});
+    this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
     this.importe.reset();
     this.indiceCombustible = null;
     this.btnCombustible = true;

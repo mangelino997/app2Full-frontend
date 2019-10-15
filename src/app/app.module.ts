@@ -29,12 +29,26 @@ import { ObservacionDialogComponent } from './componentes/observacion-dialog/obs
 import { ReporteDialogoComponent } from './componentes/reporte-dialogo/reporte-dialogo.component';
 import { FechaService } from './servicios/fecha.service';
 import { getDutchPaginatorIntl } from './dutch-paginator-intl';
-import { OrdenCombustibleComponent } from './componentes/orden-combustible/orden-combustible.component';
 import { PdfDialogoComponent } from './componentes/pdf-dialogo/pdf-dialogo.component';
 import { PdfViewerModule } from 'ng2-pdf-viewer';
 import { PlanCuentaDialogo } from './componentes/plan-cuenta-dialogo/plan-cuenta-dialogo.component';
 import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
 import { PlanillaCerradaComponent, ReabrirRepartoDialogo } from './componentes/planilla-cerrada/planilla-cerrada.component';
+import { TextMaskModule } from 'angular2-text-mask';
+import { ViajeEfectivoComponent } from './componentes/viaje/viaje-efectivo/viaje-efectivo.component';
+import { ViajeCombustible } from './modelos/viajeCombustible';
+import { ViajeEfectivo } from './modelos/viajeEfectivo';
+import { Viaje } from './modelos/viaje';
+import { ViajeCombustibleService } from './servicios/viaje-combustible';
+import { ViajeEfectivoService } from './servicios/viaje-efectivo';
+import { InsumoProductoService } from './servicios/insumo-producto.service';
+import { ViajeCombustibleComponent } from './componentes/viaje/viaje-combustible/viaje-combustible.component';
+import { ProveedorService } from './servicios/proveedor.service';
+import { EmpresaService } from './servicios/empresa.service';
+import { ObservacionesDialogo } from './componentes/viaje/observaciones-dialogo.component';
+import { AnularDialogo } from './componentes/viaje/anular-dialogo.component';
+import { RepartoComprobanteComponent } from './componentes/reparto-comprobante/reparto-comprobante.component';
+
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -54,13 +68,16 @@ const stompConfig: StompConfig = {
     LoginComponent,
     ObservacionDialogComponent,
     ReporteDialogoComponent,
-    OrdenCombustibleComponent,
     PdfDialogoComponent,
     PlanCuentaDialogo,
     ConfirmarDialogoComponent,
     PlanillaCerradaComponent,
-    ReabrirRepartoDialogo
-
+    ReabrirRepartoDialogo,
+    ViajeEfectivoComponent,
+    ViajeCombustibleComponent,
+    ObservacionesDialogo,
+    AnularDialogo,
+    RepartoComprobanteComponent,
   ],
   imports: [
     FormsModule,
@@ -83,6 +100,7 @@ const stompConfig: StompConfig = {
     MatProgressBarModule,
     PdfViewerModule,
     MatAutocompleteModule,
+    TextMaskModule,
     ToastrModule.forRoot({
       timeOut: 4000,
       positionClass: 'toast-bottom-right',
@@ -102,6 +120,15 @@ const stompConfig: StompConfig = {
     ToastrService,
     FechaService,
     StompService,
+    ViajeCombustible,
+    ViajeCombustibleService,
+    InsumoProductoService,
+    ViajeEfectivo,
+    ViajeEfectivoService,
+    Viaje,
+    LoaderService,
+    ProveedorService,
+    EmpresaService,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -117,7 +144,10 @@ const stompConfig: StompConfig = {
     ConfirmarDialogoComponent,
     PlanillaCerradaComponent,
     ReabrirRepartoDialogo,
-    OrdenCombustibleComponent
+    ViajeCombustibleComponent,
+    ViajeEfectivoComponent,
+    ObservacionesDialogo,
+    AnularDialogo,
   ]
 })
 export class AppModule { }

@@ -1,8 +1,8 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialog, MatSort, MatTableDataSource, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { ObservacionesDialogo } from '../observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
@@ -13,6 +13,7 @@ import { ViajeEfectivo } from 'src/app/modelos/viajeEfectivo';
 import { ViajeEfectivoService } from 'src/app/servicios/viaje-efectivo';
 import { NormalizarDialogo } from '../normalizar-dialogo.component';
 import { AnularDialogo } from '../anular-dialogo.component';
+import { ViajeCombustibleComponent } from '../viaje-combustible/viaje-combustible.component';
 
 @Component({
   selector: 'app-viaje-efectivo',
@@ -41,6 +42,8 @@ export class ViajeEfectivoComponent implements OnInit {
   public indiceSeleccionado: number = 1;
   //Define el id del viaje
   public ID_VIAJE: number;
+  //Define si muestra el boton CERRAR 
+  public btnCerrar: boolean = false;
   //Define el mostrar del circulo de progreso
   public show = false;
   //Define la subscripcion a loader.service
@@ -48,12 +51,12 @@ export class ViajeEfectivoComponent implements OnInit {
   //Define las columnas de la tabla
   public columnas: string[] = ['adelanto', 'sucursal', 'fecha', 'empresa', 'importe', 'observaciones', 'anulado', 'obsAnulado', 'EDITAR'];
   //Define la matSort
-  @ViewChild(MatSort,{static: false}) sort: MatSort;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Constructor
   constructor(private viajeEfectivoModelo: ViajeEfectivo, private empresaServicio: EmpresaService,
     private fechaServicio: FechaService, public dialog: MatDialog,
     private appServicio: AppService, private toastr: ToastrService, private servicio: ViajeEfectivoService,
-    private loaderService: LoaderService) { }
+    private loaderService: LoaderService, public dialogRef: MatDialogRef<ViajeCombustibleComponent>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -69,6 +72,8 @@ export class ViajeEfectivoComponent implements OnInit {
     this.listarEmpresas();
     //Establece los valores por defecto del formulario viaje efectivo
     this.establecerValoresPorDefecto(1);
+    //Obtiene la lista de registros (combustibles reparto) cuando el reparto viene en .data
+    this.data ? this.listarPorReparto(this.data.elemento.id) : '';
   }
   //Establece el id del viaje
   public establecerIdViaje(idViaje) {
@@ -105,6 +110,10 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Establece los valores por defecto del formulario viaje adelanto efectivo
   public establecerValoresPorDefecto(opcion): void {
+    if (this.data) {
+      this.formularioViajeEfectivo.get('reparto').patchValue(this.data.elemento);
+      this.btnCerrar = this.data.btnCerrar;
+    }
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.fechaActual = res.json();
       this.formularioViajeEfectivo.get('fechaCaja').setValue(this.fechaActual);
@@ -113,21 +122,32 @@ export class ViajeEfectivoComponent implements OnInit {
       this.importeTotal.setValue(this.appServicio.setDecimales('0', 2));
     }
   }
+  //Obtiene los registros por idReparto
+  private listarPorReparto(idReparto) {
+    this.servicio.listarEfectivosReparto(idReparto).subscribe(
+      res => {
+        this.listaCompleta = new MatTableDataSource(res.json());
+        this.listaCompleta.sort = this.sort;
+      },
+      err => {
+        this.toastr.error("Sin registros para mostrar.");
+        this.loaderService.hide();
+      }
+    )
+  }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
     this.formularioViajeEfectivo.get('fecha').setValue(this.fechaActual);
     this.formularioViajeEfectivo.get('tipoComprobante').setValue({ id: 16 });
     this.formularioViajeEfectivo.get('sucursal').setValue(this.appServicio.getUsuario().sucursal);
     this.formularioViajeEfectivo.get('usuarioAlta').setValue(this.appServicio.getUsuario());
-    if (!this.formularioViajeEfectivo.value.importe) {
-      this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
-    }
-    this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
+    !this.formularioViajeEfectivo.value.importe ? this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2)) : '';
+    this.data ? this.formularioViajeEfectivo.get('viaje').reset() : this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeEfectivo.value).subscribe(
       res => {
         if (res.status == 201) {
           this.reestablecerFormulario();
-          this.listar();
+          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
           this.establecerValoresPorDefecto(0);
           document.getElementById('idFechaCajaAE').focus();
           this.toastr.success("Registro agregado con éxito");
@@ -145,15 +165,13 @@ export class ViajeEfectivoComponent implements OnInit {
   public modificarEfectivo(): void {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeEfectivo.value.usuarioMod = usuarioMod;
-    if (!this.formularioViajeEfectivo.value.importe) {
-      this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2));
-    }
-    this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
+    !this.formularioViajeEfectivo.value.importe ? this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2)) : '';
+    this.data ? this.formularioViajeEfectivo.get('viaje').reset() : this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.actualizar(this.formularioViajeEfectivo.value).subscribe(
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario();
-          this.listar();
+          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
           this.establecerValoresPorDefecto(0);
           this.btnEfectivo = true;
           document.getElementById('idFechaCajaAE').focus();
@@ -167,6 +185,50 @@ export class ViajeEfectivoComponent implements OnInit {
         this.loaderService.hide();
       }
     );
+  }
+  //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
+  private lanzarError(err) {
+    console.log(err);
+    let mensajeNulo = " no puede estar vacio.";
+    let mensajeInexistente = " no es un registro válido.";
+    let mensajeLongitud = " excedió su longitud.";
+
+    var respuesta = err;
+    if (respuesta.codigo == 5001) {
+      this.toastr.error("Fallo al sincronizar.");
+    } else if (respuesta.codigo == 500) {
+      this.toastr.error("Se produjo un error en el sistema.");
+    } else if (respuesta.codigo == 600) {
+      this.toastr.error("Fallo al actualizar.");
+    } else if (respuesta.codigo == 16032) {
+      this.toastr.error("Campo Caja Viajes" + mensajeNulo);
+    } else if (respuesta.codigo == 16070) {
+      this.toastr.error("Sucursal" + mensajeNulo);
+    } else if (respuesta.codigo == 16087) {
+      this.toastr.error("Usuario Alta del Registro" + mensajeNulo);
+    } else if (respuesta.codigo == 16076) {
+      this.toastr.error("Tipo Comprobante" + mensajeNulo);
+    } else if (respuesta.codigo == 16210) {
+      this.toastr.error("Campo Fecha Caja" + mensajeNulo);
+    } else if (respuesta.codigo == 16242) {
+      this.toastr.error("Campo Importe" + mensajeNulo);
+    } else if (respuesta.codigo == 16380) {
+      this.toastr.error("Está Anulado" + mensajeNulo);
+    } else if (respuesta.codigo == 13037) {
+      this.toastr.error("Campo Caja Viajes" + mensajeInexistente);
+    } else if (respuesta.codigo == 13096) {
+      this.toastr.error("Sucursal" + mensajeInexistente);
+    } else if (respuesta.codigo == 13117) {
+      this.toastr.error("Usuario de Alta del registro" + mensajeInexistente);
+    } else if (respuesta.codigo == 13105) {
+      this.toastr.error("Tipo Comprobante" + mensajeInexistente);
+    } else if (respuesta.codigo == 12031) {
+      this.toastr.error("Campo observaciones" + mensajeLongitud);
+    } else if (respuesta.codigo == 12065) {
+      this.toastr.error("Campo Observaciones para Anular" + mensajeLongitud);
+    } else if (respuesta.codigo == 12093) {
+      this.toastr.error("Campo Precio Unitario" + mensajeLongitud);
+    }
   }
   //Modifica un Efectivo de la tabla por indice
   public modEfectivo(indice): void {
@@ -239,7 +301,7 @@ export class ViajeEfectivoComponent implements OnInit {
   private calcularImporteTotal(): void {
     let total = 0;
     this.listaCompleta.data.forEach(item => {
-      if(!item.estaAnulado) {
+      if (!item.estaAnulado) {
         total += parseFloat(item.importe);
       }
     });
@@ -257,7 +319,7 @@ export class ViajeEfectivoComponent implements OnInit {
   public establecerLista(lista, idViaje, pestaniaViaje): void {
     this.establecerValoresPorDefecto(1);
     this.recargarListaCompleta(lista);
-    this.formularioViajeEfectivo.get('viaje').patchValue({id: idViaje});
+    this.formularioViajeEfectivo.get('viaje').patchValue({ id: idViaje });
     this.establecerIdViaje(idViaje);
     this.establecerCamposSoloLectura(pestaniaViaje);
     this.listar();
@@ -289,7 +351,7 @@ export class ViajeEfectivoComponent implements OnInit {
   //Limpia el formulario
   public cancelar() {
     this.formularioViajeEfectivo.reset();
-    this.formularioViajeEfectivo.get('viaje').setValue({id: this.ID_VIAJE});
+    this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.establecerValoresPorDefecto(0);
     this.indiceEfectivo = null;
     this.btnEfectivo = true;

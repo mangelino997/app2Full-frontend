@@ -34,6 +34,8 @@ export class Reparto {
             usuarioMod: new FormControl(),
             acompaniantes: new FormControl(),
             esRepartoPropio: new FormControl(),
+            repartoComprobantes: new FormControl(),
+
         });
     }
 }

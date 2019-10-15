@@ -1,4 +1,20 @@
-<form class="margin-top-10" [formGroup]="formularioViajeEfectivo">
+<form class="margin-top-10 padd-20" [formGroup]="formularioViajeEfectivo">
+  <div class="row" *ngIf="data">
+    <div class="col-md-3 text-center">
+      <h5>Adelantos de Efectivos</h5>
+    </div>
+    <div class="col-md-9 text-center">
+      <h6 class="text-center" *ngIf="data.elemento.esRepartoPropio">
+        Vehículo: {{data.elemento.vehiculo.dominio}} : {{data.elemento.vehiculo.numeroInterno}} - Chofer:
+        {{data.elemento.personal.alias}}
+      </h6>
+      <h6 class="text-center" *ngIf="!data.elemento.esRepartoPropio">
+        Vehículo: {{data.elemento.vehiculoProveedor.dominio}} : {{data.elemento.vehiculoProveedor.numeroInterno}} -
+        Chofer: {{data.elemento.proveedor.alias}}
+      </h6>
+    </div>
+  </div>
+  <br>
   <div class="row">
     <div class="col-md-3">
       <div class="form-group has-float-label">
@@ -133,6 +149,11 @@
         <input id="idImporteAE" [textMask]="mascararImporte(8,2)" type="text" [formControl]="importeTotal"
           autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="$ 0.00">
       </div>
+    </div>
+  </div>
+  <div class="row justify-content-center" *ngIf="btnCerrar">
+    <div class="col-md-1">
+      <button mat-raised-button color="accent" (click)="dialogRef.close()">Cerrar</button>
     </div>
   </div>
 </form>

@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { RepartoSalienteRoutingModule } from './reparto-saliente-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RepartoComponent, AcompanianteDialogo, CerrarRepartoDialogo } from 'src/app/componentes/reparto-saliente/reparto.component';
 import { Reparto } from 'src/app/modelos/reparto';
@@ -20,8 +20,6 @@ import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.servi
 import { RepartoComprobante } from 'src/app/modelos/repartoComprobante';
 import { RepartoPersonal } from 'src/app/modelos/repartoPersonal';
 import { Seguimiento } from 'src/app/modelos/seguimiento';
-import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
-import { ViajeEfectivo } from 'src/app/modelos/viajeEfectivo';
 import { ZonaService } from 'src/app/servicios/zona.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
 import { RepartoDTO } from 'src/app/modelos/repartoDTO';
@@ -30,7 +28,7 @@ import { RepartoDTO } from 'src/app/modelos/repartoDTO';
   declarations: [
     RepartoComponent,
     AcompanianteDialogo,
-    CerrarRepartoDialogo
+    CerrarRepartoDialogo,
   ],
   imports: [
     CommonModule,
@@ -48,14 +46,15 @@ import { RepartoDTO } from 'src/app/modelos/repartoDTO';
     MatDialogModule,
     MatDividerModule,
     TextMaskModule,
+    MatIconModule
   ],
   providers: [
     Reparto,
     RepartoComprobante,
     RepartoPersonal,
     Seguimiento,
-    ViajeCombustible,
-    ViajeEfectivo,
+    // ViajeCombustible,
+    // ViajeEfectivo,
     VehiculoService,
     VehiculoProveedorService,
     PersonalService,
