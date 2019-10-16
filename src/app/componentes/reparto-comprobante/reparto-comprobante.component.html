@@ -1,4 +1,4 @@
-<form class="margin-top-10 padd-20" [formGroup]="formularioComprobante">
+<form class="margin-top-10 padd-20" [formGroup]="formulario">
     <div class="row" *ngIf="data">
         <div class="col-md-3 text-center">
             <h5>Comprobantes</h5>
@@ -17,170 +17,185 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-2">
             <div class="form-group has-float-label">
                 <label for="idTipoComprobante" class="tamanio-label">Tipo Comprobante *</label>
-                <mat-select id="idTipoComprobante" class="form-control form-control-sm" formControlName="tipoComprobante"
-                    [compareWith]="compareFn">
-                    <mat-option *ngFor="let item of resultadosTipoComprobantes" [value]="itemProvincia">
+                <mat-select id="idTipoComprobante" class="form-control form-control-sm"
+                    formControlName="tipoComprobante" [compareWith]="compareFn"
+                    (selectionChange)="cambioTipoComprobante()">
+                    <mat-option *ngFor="let item of tipoComprobantes" [value]="item">
                         {{item.nombre}}
                     </mat-option>
                 </mat-select>
             </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-1">
             <div class="form-group has-float-label">
-                <label for="idFechaOC" class="tamanio-label">Fecha</label>
-                <input id="idFechaOC" type="date" formControlName="fecha" autocomplete="off"
-                    class="form-control form-control-sm" [readonly]="soloLectura">
+                <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Vta. *</label>
+                <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off"
+                    [readOnly]="soloLectura" [textMask]="mascararEnteros(5)"
+                    (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)"
+                    class="form-control form-control-sm number-right" required>
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-1">
             <div class="form-group has-float-label">
-                <label for="idInsumoOC" class="tamanio-label">Insumo Combustible *</label>
-                <mat-select id="idInsumoOC" class="form-control form-control-sm" formControlName="insumoProducto"
-                    [compareWith]="compareFn"
-                    (selectionChange)="establecerPrecioUnitario(formularioViajeCombustible, 'insumoProducto')">
-                    <mat-option *ngFor="let itemInsumos of insumos" [value]="itemInsumos">
-                        {{itemInsumos.nombre}}
+                <label id="labelLetra" for="idLetra" class="descripcion-label">Letra *</label>
+                <mat-select id="idLetra" class="form-control form-control-sm" formControlName="letra"
+                    [compareWith]="compareFn" (selectionChange)="cambioLetra()" required>
+                    <mat-option *ngFor="let item of letras" [value]="item">
+                        {{item}}
                     </mat-option>
                 </mat-select>
             </div>
         </div>
         <div class="col-md-2">
             <div class="form-group has-float-label">
-                <label for="idCantidadOC" class="tamanio-label">Cantidad *</label>
-                <input id="idCantidadOC" [textMask]="mascararDecimales(6)" type="text" formControlName="cantidad"
-                    autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
-                    (blur)="calcularImporte(formularioViajeCombustible)" placeholder="0.00">
+                <label id="labelNumeroComprobante" for="idNumeroComprobante" class="descripcion-label">Número
+                    Comprobante *</label>
+                <input id="idNumeroComprobante" type="text" formControlName="numero" autocomplete="off"
+                    [readOnly]="soloLectura" [textMask]="mascararEnteros(8)"
+                    class="form-control form-control-sm number-right">
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="form-group has-float-label">
-                <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
-                <input id="idPrecioUnitarioOC" type="text" formControlName="precioUnitario" autocomplete="off"
-                    (blur)="calcularImporte(formularioViajeCombustible)"
-                    class="form-control form-control-sm number-right" placeholder="$ 0.00"
-                    [textMask]="mascararImporte(8, 2)" [readonly]="estadoPrecioUnitario">
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="form-group has-float-label">
-                <label for="idImporteOC" class="tamanio-label">Importe *</label>
-                <input id="idImporteOC" [textMask]="mascararImporte(8, 2)" type="text" [formControl]="importe"
-                    autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true"
-                    placeholder="$ 0.00">
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="form-group has-float-label">
-                <label for="idObservaciones" class="tamanio-label">Observaciones</label>
-                <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones"
-                    rows="2" [readonly]="soloLectura"></textarea>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarCombustible()"
-                *ngIf="btnCombustible" [disabled]="!formularioViajeCombustible.valid">Agregar
+        <div class="col-md-1">
+            <button id="idBotonAgregarItem" mat-raised-button color="primary" (click)="agregar()"
+                [disabled]="!formulario.valid">
+                Agregar
             </button>
-            <button class="margin-left-3" mat-raised-button color="primary" (click)="modificarCombustible()"
-                [disabled]="!formularioViajeCombustible.valid" *ngIf="!btnCombustible">Actualizar
-            </button>
-            <button class="margin-left-3" mat-raised-button (click)="cancelar()"
-                [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnCombustible">Cancelar</button>
+        </div>
+        <div class="col"></div>
+        <div class="col-md-2">
+            <button style="height: 30px;" mat-raised-button>Seleccionar Comprobantes</button>
         </div>
     </div>
     <div class="row">
         <div class="tabla">
             <div class="tabla-ancho">
                 <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                    <ng-container matColumnDef="orden" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
-                        <td mat-cell *matCellDef="let elemento; let i=index"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}
+                    <ng-container matColumnDef="TIPOCPTE" sticky>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte. </th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.tipoComprobante.nombre : ''}}
+                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.tipoComprobante.nombre : ''}}
+                                {{elemento.viajeRemito? elemento.viajeRemito.tipoComprobante.nombre : ''}}
+                            </span>
                         </td>
                     </ng-container>
-                    <ng-container matColumnDef="sucursal">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
-                        <td mat-cell *matCellDef="let elemento"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-                            {{elemento.sucursal.nombre}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="fecha">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
-                        <td mat-cell *matCellDef="let elemento"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-                            {{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="proveedor">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
-                        <td mat-cell *matCellDef="let elemento"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-                            {{elemento.proveedor.razonSocial}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="insumoProducto">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo Producto</th>
-                        <td mat-cell *matCellDef="let elemento"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-                            {{elemento.insumoProducto.nombre}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="cantidad">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
-                        <td mat-cell *matCellDef="let elemento"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-                            {{elemento.cantidad}} Lt.
+                    <ng-container matColumnDef="PUNTOVENTA">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Vta.</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.puntoVenta: ''}}
+                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.puntoVenta : ''}}
+                                {{elemento.viajeRemito? elemento.viajeRemito.puntoVenta : ''}}
+                            </span>
                         </td>
                     </ng-container>
-                    <ng-container matColumnDef="precioUnitario">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
-                        <td mat-cell *matCellDef="let elemento"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">$
-                            {{establecerCerosTabla(elemento.precioUnitario)}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="observaciones">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs.</th>
-                        <td mat-cell *matCellDef="let elemento"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-                            <span class="cursor-color"
-                                (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+                    <ng-container matColumnDef="LETRA">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.letra: ''}}
+                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.letra : ''}}
+                                {{elemento.viajeRemito? elemento.viajeRemito.letra : ''}}
+                            </span>
                         </td>
                     </ng-container>
-                    <ng-container matColumnDef="anulado">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
-                        <td mat-cell *matCellDef="let elemento"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-                            {{elemento.estaAnulado? 'Sí': 'No'}}</td>
-                    </ng-container>
-                    <ng-container matColumnDef="obsAnulado">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
-                        <td mat-cell *matCellDef="let elemento"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-                            <span class="cursor-color"
-                                (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
+                    <ng-container matColumnDef="COMPROBANTE">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Comprobante</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.numero: ''}}
+                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.numero : ''}}
+                                {{elemento.viajeRemito? elemento.viajeRemito.numero : ''}}
+                            </span>
                         </td>
                     </ng-container>
-                    <ng-container matColumnDef="EDITAR" stickyEnd>
+                    <ng-container matColumnDef="DESTINATARIO">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Destinatario</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.alias: ''}}
+                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.clienteDestinatario.alias: ''}}
+                                {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.alias: ''}}
+                            </span></td>
+                    </ng-container>
+                    <ng-container matColumnDef="DOMICILIO">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.domicilio : ''}}
+                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.clienteDestinatario.domicilio : ''}}
+                                {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.domicilio : ''}}
+                            </span> Lt.
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="REMITENTE">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Remitente</th>
+                        <td mat-cell *matCellDef="let elemento">$
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.clienteRemitente.alias : ''}}
+                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.clienteRemitente.alias : ''}}
+                                {{elemento.viajeRemito? elemento.viajeRemito.clienteRemitente.alias : ''}}
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="CTACTE">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Cta Cte.</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.condicionVenta != 1? 
+                                    elemento.ventaComprobante.importe : '' : ''}}
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="CONTADO">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Contado</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.condicionVenta == 1? 
+                                        elemento.ventaComprobante.importe : '' : ''}}
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="BULTOS">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? sumaBultosVentaCpte(elemento.ventaComprobante.ventaComprobanteItemFAs) : ''}}
+                                {{elemento.ordenRecoleccion?  elemento.ordenRecoleccion.bultos: ''}}
+                                {{elemento.viajeRemito? elemento.viajeRemito.bultos : ''}}
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="CONTRAREEMBOLSO">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Contrareembolso</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? elemento.ventaComprobante.ventaComprobanteItemCR.importe: ''}}
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="KG">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg</th>
+                        <td mat-cell *matCellDef="let elemento">
+                            <span>
+                                {{elemento.ventaComprobante? sumaKiloEfectivoVentaCpte(elemento.ventaComprobante.ventaComprobanteItemFAs) : ''}}
+                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.kilosAforado != null? 
+                                    elemento.ordenRecoleccion.kilosAforado : elemento.ordenRecoleccion.kilosEfectivo : ''}}
+                                {{elemento.viajeRemito? elemento.viajeRemito.condicionVenta == 1? 
+                                    elemento.viajeRemito.kilosAforado : elemento.viajeRemito.kilosEfectivo : ''}}
+                            </span>
+                        </td>
+                    </ng-container>
+                    <ng-container matColumnDef="ELIMINAR" stickyEnd>
                         <th mat-header-cell *matHeaderCellDef></th>
-                        <td mat-cell *matCellDef="let elemento; let i = index"
-                            [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
-                            <button mat-icon-button class="mat-icon-button-table"
-                                *ngIf="!soloLectura && !elemento.estaAnulado" (click)="modCombustible(i, elemento)"
-                                matTooltip="Editar" matTooltipPosition="above">
-                                <mat-icon>edit</mat-icon>
-                            </button>
+                        <td mat-cell *matCellDef="let elemento; let i = index">
                             <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                                *ngIf="!soloLectura && !elemento.estaAnulado" (click)="anularCombustible(elemento)"
-                                matTooltip="Anular" matTooltipPosition="above">
+                                (click)="activarEliminarCpteReparto(elemento)" matTooltip="Anular" matTooltipPosition="above">
                                 <mat-icon>close</mat-icon>
-                            </button>
-                            <button mat-icon-button class="mat-icon-button-table"
-                                *ngIf="!soloLectura && elemento.estaAnulado" (click)="normalizarCombustible(elemento)"
-                                matTooltip="Normalizar" matTooltipPosition="above">
-                                <mat-icon>open_in_browser</mat-icon>
                             </button>
                         </td>
                     </ng-container>
@@ -191,32 +206,6 @@
         </div>
     </div>
     <br>
-    <div class="row justify-content-end">
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idTotalCombustibleOC" class="tamanio-label">Total Gasoil</label>
-                <input id="idTotalCombustibleOC" [textMask]="mascararLitros(8)" type="text"
-                    [formControl]="totalCombustible" autocomplete="off"
-                    class="form-control form-control-sm number-right" [readonly]="true" placeholder="0.00 lt.">
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idTotalAceiteOC" class="tamanio-label">Total Aceite</label>
-                <input id="idTotalAceiteOC" [textMask]="mascararLitros(8)" type="text" [formControl]="totalAceite"
-                    autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true"
-                    placeholder="0.00 lt.">
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idTotalUreaOC" class="tamanio-label">Total Urea</label>
-                <input id="idTotalUreaOC" [textMask]="mascararLitros(8)" type="text" [formControl]="totalUrea"
-                    autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true"
-                    placeholder="0.00 lt">
-            </div>
-        </div>
-    </div>
     <div class="row justify-content-center" *ngIf="btnCerrar">
         <div class="col-md-1">
             <button mat-raised-button color="accent" (click)="dialogRef.close()">Cerrar</button>

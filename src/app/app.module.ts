@@ -148,6 +148,7 @@ const stompConfig: StompConfig = {
     ViajeEfectivoComponent,
     ObservacionesDialogo,
     AnularDialogo,
+    RepartoComprobanteComponent
   ]
 })
 export class AppModule { }

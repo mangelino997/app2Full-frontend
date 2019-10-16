@@ -6,13 +6,13 @@ import { Message } from '@stomp/stompjs';
 import { StompService } from '@stomp/ng2-stompjs';
 
 @Injectable()
-export class VentaComprobanteService {
+export class RepartoComprobanteService {
   //Define la ruta al servicio web
-  private ruta:string = "/ventacomprobante";
+  private ruta: string = "/repartocomprobante";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la lista obtenida por nombre
@@ -22,7 +22,7 @@ export class VentaComprobanteService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -33,7 +33,7 @@ export class VentaComprobanteService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -46,33 +46,33 @@ export class VentaComprobanteService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
-  //Obtiene por tipo Comprobante, puntoVenta, letra, numero, 
-  public obtener(punto, letra, numero, idTipoComprobante) {
-    return this.http.get(this.url + '/obtener/' + punto + '/' + letra + '/' + numero + '/' + idTipoComprobante, this.options);
-  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
   }
-  //Obtiene la lista de letras
-  public listarLetras() {
-    return this.http.get(this.url + '/listarLetras', this.options);
+  //Obtiene una lista por idReparto
+  public listarComprobantes(idReparto) {
+    return this.http.get(this.url + '/listarComprobantes/' + idReparto, this.options);
   }
-  //Obtiene la lista de registros
-  public listarPorClienteYEmpresa(idCliente, idEmpresa) {
-    return this.http.get(this.url + '/listarPorClienteYEmpresa/'+ idCliente + '/' + idEmpresa, this.options);
+  //Quita comprobante por id
+  public quitarComprobante(idComprobante) {
+    return this.http.get(this.url + '/quitarComprobante/' + idComprobante, this.options);
   }
-  //Obtiene un listado por alias
-  public listarPorAlias(alias) {
-    return this.http.get(this.url + '/listarPorAlias/' + alias, this.options).map(res => {
-      return res.json().map(data => {
-        return data;
-      })
-    })
+  //Agrega un listado de registros
+  public agregarComprobantes(listaComprobantes) {
+    return this.http.post(this.url + '/agregarComprobantes', listaComprobantes, this.options);
   }
   //Agrega un registro
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
+  }
+  //Conforma que un registro 
+  public conformarComprobantes(listaComprobantes) {
+    return this.http.put(this.url + '/conformarComprobantes', listaComprobantes, this.options);
+  }
+  //Conforma que un registro 
+  public conformarComprobante(elemento) {
+    return this.http.put(this.url + '/conformarComprobante', elemento, this.options);
   }
   //Actualiza un registro
   public actualizar(elemento) {

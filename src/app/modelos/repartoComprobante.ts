@@ -8,10 +8,10 @@ export class RepartoComprobante {
         // crear el formulario para la seccion de modulos
         this.formulario = new FormGroup({
             id: new FormControl(),
-            reparto: new FormControl('', Validators.required),
+            reparto: new FormControl(),
             ventaComprobante: new FormControl(),
             ordenRecoleccion: new FormControl(),
-            viajeRemito: new FormControl('', Validators.required)
+            viajeRemito: new FormControl()
         });
     }
 }

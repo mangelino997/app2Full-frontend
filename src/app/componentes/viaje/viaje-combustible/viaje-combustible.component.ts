@@ -133,7 +133,7 @@ export class ViajeCombustibleComponent implements OnInit {
       this.totalUrea.setValue(this.appService.setDecimales('0.00', 2));
     }
   }
-  //Obtiene los registros por idReparto
+  //Obtiene los registros, para mostrar en la tabla, por idReparto
   private listarPorReparto(idReparto) {
     this.servicio.listarCombustiblesReparto(idReparto).subscribe(
       res => {

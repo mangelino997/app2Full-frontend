@@ -508,7 +508,7 @@ export class CerrarRepartoDialogo {
   //Define la fecha actual
   public fechaActual: any;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<AcompanianteDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+  constructor(public dialogRef: MatDialogRef<CerrarRepartoDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private appService: AppService, private modelo: Reparto, private toastr: ToastrService, private fechaService: FechaService,
     private servicio: RepartoService) {
     dialogRef.disableClose = true;

@@ -23,12 +23,22 @@ import { Seguimiento } from 'src/app/modelos/seguimiento';
 import { ZonaService } from 'src/app/servicios/zona.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
 import { RepartoDTO } from 'src/app/modelos/repartoDTO';
+import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.service';
+import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
+import { RepartoComprobanteService } from 'src/app/servicios/reparto-comprobante.service';
+import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
+import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
+import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
+import { SeguimientoViajeRemitoService } from 'src/app/servicios/seguimiento-viaje-remito.service';
+import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimiento-venta-comprobante.service';
+import { EliminarRepartoCpteDialogo } from 'src/app/componentes/reparto-comprobante/reparto-comprobante.component';
 
 @NgModule({
   declarations: [
     RepartoComponent,
     AcompanianteDialogo,
     CerrarRepartoDialogo,
+    EliminarRepartoCpteDialogo
   ],
   imports: [
     CommonModule,
@@ -65,11 +75,21 @@ import { RepartoDTO } from 'src/app/modelos/repartoDTO';
     ZonaService,
     RetiroDepositoComprobanteService,
     TipoComprobanteService,
-    RepartoDTO
+    RepartoDTO,
+    OrdenRecoleccionService,
+    ViajeRemitoService,
+    RepartoComprobanteService,
+    VentaComprobanteService,
+    AfipComprobanteService,
+    SeguimientoOrdenRecoleccionService,
+    SeguimientoViajeRemitoService,
+    SeguimientoVentaComprobanteService,
+    
   ],
   entryComponents: [
     AcompanianteDialogo,
-    CerrarRepartoDialogo
+    CerrarRepartoDialogo,
+    EliminarRepartoCpteDialogo
 
   ]
 })

@@ -8,11 +8,11 @@ import { StompService } from '@stomp/ng2-stompjs';
 @Injectable()
 export class ViajeRemitoService {
   //Define la ruta al servicio web
-  private ruta:string = "/viajeremito";
+  private ruta: string = "/viajeremito";
   //Define la url base
-  private url:string = null;
+  private url: string = null;
   //Define la url para subcripcion a socket
-  private topic:string = null;
+  private topic: string = null;
   //Define el headers y token de autenticacion
   private options = null;
   //Define la lista obtenida por nombre
@@ -22,7 +22,7 @@ export class ViajeRemitoService {
   //Define el mensaje de respuesta a la subcripcion
   private mensaje: Observable<Message>;
   //Define la lista completa
-  public listaCompleta:Subject<any> = new Subject<any>();
+  public listaCompleta: Subject<any> = new Subject<any>();
   //Constructor
   constructor(private http: Http, private appService: AppService, private stompService: StompService) {
     //Establece la url base
@@ -33,7 +33,7 @@ export class ViajeRemitoService {
     const headers: Headers = new Headers();
     headers.append('Content-Type', 'application/json');
     headers.append('Authorization', localStorage.getItem('token'));
-    this.options = new RequestOptions({headers: headers});
+    this.options = new RequestOptions({ headers: headers });
     //Subcribe al usuario a la lista completa
     this.mensaje = this.stompService.subscribe(this.topic + this.ruta + '/lista');
     this.subcripcion = this.mensaje.subscribe(this.subscribirse);
@@ -46,13 +46,21 @@ export class ViajeRemitoService {
   public obtenerSiguienteId() {
     return this.http.get(this.url + '/obtenerSiguienteId', this.options);
   }
+  //Obtiene un registro por puntoventa letra y numero
+  public obtener(puntoVenta, letra, numero) {
+    return this.http.get(this.url + '/obtener/' + puntoVenta + '/' + letra + '/' + numero, this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene la lista de letras
+  public listarLetras() {
+    return this.http.get(this.url + '/listarLetras', this.options);
+  }
   //Obtiene la lista de Remito por idTramo y Item
   public listarRemitos(idTramo, idItem) {
-    return this.http.get(this.url + '/listarRemitos/' + idTramo +'/' + idItem, this.options);
+    return this.http.get(this.url + '/listarRemitos/' + idTramo + '/' + idItem, this.options);
   }
   //Obtiene una lista por alias
   public listarPorAlias(alias) {
