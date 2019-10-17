@@ -218,7 +218,10 @@
                             <ng-container matColumnDef="cerrar" stickyEnd>
                                 <th mat-header-cell *matHeaderCellDef>-</th>
                                 <td mat-cell *matCellDef="let elemento; let i=index">
-                                    <span class="cursor-color" (click)="activarCerrarReparto(elemento)">
+                                    <span class="cursor-color" (click)="activarCerrarReparto(elemento)" *ngIf="elemento.repartoComprobantes.length > 0">
+                                        Cerrar
+                                    </span>
+                                    <span *ngIf="elemento.repartoComprobantes.length == 0">
                                         Cerrar
                                     </span>
                                 </td>
@@ -226,7 +229,7 @@
                             <ng-container matColumnDef="eliminar" stickyEnd>
                                 <th mat-header-cell *matHeaderCellDef>-</th>
                                 <td mat-cell *matCellDef="let elemento; let i=index">
-                                    <span class="cursor-color-rojo" (click)="activarEliminar(i)">
+                                    <span class="cursor-color-rojo" (click)="activarEliminarReparto(elemento)">
                                         x
                                     </span>
                                 </td>

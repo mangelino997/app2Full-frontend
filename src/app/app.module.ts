@@ -47,7 +47,10 @@ import { ProveedorService } from './servicios/proveedor.service';
 import { EmpresaService } from './servicios/empresa.service';
 import { ObservacionesDialogo } from './componentes/viaje/observaciones-dialogo.component';
 import { AnularDialogo } from './componentes/viaje/anular-dialogo.component';
-import { RepartoComprobanteComponent } from './componentes/reparto-comprobante/reparto-comprobante.component';
+import { SeguimientoVentaComprobante } from './modelos/seguimientoVentaComprobante';
+import { SeguimientoViajeRemito } from './modelos/seguimientoViajeRemito';
+import { SeguimientoOrdenRecoleccion } from './modelos/seguimientoOrdenRecoleccion';
+// import { RepartoComprobanteComponent } from './componentes/reparto-comprobante/reparto-comprobante.component';
 
 
 const stompConfig: StompConfig = {
@@ -77,7 +80,6 @@ const stompConfig: StompConfig = {
     ViajeCombustibleComponent,
     ObservacionesDialogo,
     AnularDialogo,
-    RepartoComprobanteComponent,
   ],
   imports: [
     FormsModule,
@@ -129,6 +131,9 @@ const stompConfig: StompConfig = {
     LoaderService,
     ProveedorService,
     EmpresaService,
+    SeguimientoVentaComprobante,
+    SeguimientoViajeRemito,
+    SeguimientoOrdenRecoleccion,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -148,7 +153,6 @@ const stompConfig: StompConfig = {
     ViajeEfectivoComponent,
     ObservacionesDialogo,
     AnularDialogo,
-    RepartoComprobanteComponent
   ]
 })
 export class AppModule { }

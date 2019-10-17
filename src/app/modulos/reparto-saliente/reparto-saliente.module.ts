@@ -6,7 +6,7 @@ import { RepartoSalienteRoutingModule } from './reparto-saliente-routing.module'
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RepartoComponent, AcompanianteDialogo, CerrarRepartoDialogo } from 'src/app/componentes/reparto-saliente/reparto.component';
+import { RepartoComponent, AcompanianteDialogo, CerrarRepartoDialogo, EliminarRepartoDialogo } from 'src/app/componentes/reparto-saliente/reparto.component';
 import { Reparto } from 'src/app/modelos/reparto';
 import { TextMaskModule } from 'angular2-text-mask';
 import { VehiculoService } from 'src/app/servicios/vehiculo.service';
@@ -31,14 +31,16 @@ import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.servi
 import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
 import { SeguimientoViajeRemitoService } from 'src/app/servicios/seguimiento-viaje-remito.service';
 import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimiento-venta-comprobante.service';
-import { EliminarRepartoCpteDialogo } from 'src/app/componentes/reparto-comprobante/reparto-comprobante.component';
+import { EliminarRepartoCpteDialogo, RepartoComprobanteComponent } from 'src/app/componentes/reparto-comprobante/reparto-comprobante.component';
 
 @NgModule({
   declarations: [
     RepartoComponent,
     AcompanianteDialogo,
     CerrarRepartoDialogo,
-    EliminarRepartoCpteDialogo
+    EliminarRepartoCpteDialogo,
+    EliminarRepartoDialogo,
+    RepartoComprobanteComponent
   ],
   imports: [
     CommonModule,
@@ -89,7 +91,9 @@ import { EliminarRepartoCpteDialogo } from 'src/app/componentes/reparto-comproba
   entryComponents: [
     AcompanianteDialogo,
     CerrarRepartoDialogo,
-    EliminarRepartoCpteDialogo
+    // EliminarRepartoCpteDialogo,
+    EliminarRepartoDialogo,
+    RepartoComprobanteComponent
 
   ]
 })

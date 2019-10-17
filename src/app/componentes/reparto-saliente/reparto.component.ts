@@ -221,8 +221,7 @@ export class RepartoComponent implements OnInit {
   }
   //Carga la tabla con la lista de repartos agregados
   private listarRepartos() {
-    let empresa = this.appComponent.getEmpresa();
-    this.servicio.listarPorEstaCerradaYEmpresa(false, empresa.id).subscribe(
+    this.servicio.listarAbiertosPropios().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
@@ -246,7 +245,6 @@ export class RepartoComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    console.log(err);
     var respuesta = err;
     if (respuesta.codigo == 16033) {
       this.toastr.error("Empresa de Emisión no puede estar vacío.");
@@ -310,7 +308,6 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
     });
   }
   //Abre el modal de viaje Efectivo
@@ -333,15 +330,32 @@ export class RepartoComponent implements OnInit {
       width: '95%',
       maxWidth: '95%',
       data: {
-        elemento: elemento
+        elemento: elemento,
+        btnCerrar: true
       },
     });
     dialogRef.afterClosed().subscribe(result => {
+      this.listarRepartos();
+      document.getElementById('idTipoViaje').focus();
     });
   }
   //Abre el modal de cerrar reparto
   public activarCerrarReparto(elemento) {
     const dialogRef = this.dialog.open(CerrarRepartoDialogo, {
+      width: '50%',
+      maxWidth: '50%',
+      data: {
+        elemento: elemento,
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.listarRepartos();
+      document.getElementById('idTipoViaje').focus();
+    });
+  }
+  //Abre el modal de eliminar reparto
+  public activarEliminarReparto(elemento) {
+    const dialogRef = this.dialog.open(EliminarRepartoDialogo, {
       width: '50%',
       maxWidth: '50%',
       data: {
@@ -518,8 +532,6 @@ export class CerrarRepartoDialogo {
     this.formulario = this.modelo.formulario;
     //Reestablece el formulario
     this.reestablecerFormulario();
-    //Establece el formulario
-    console.log(this.data.elemento);
 
   }
   //Reestablece el formulario y sus valores.
@@ -528,7 +540,6 @@ export class CerrarRepartoDialogo {
     this.formulario.patchValue(this.data.elemento);
     this.fechaService.obtenerFecha().subscribe(
       res => {
-        console.log(res.json());
         this.formulario.get('fechaSalida').setValue(res.json());
         this.fechaActual = res.json();
       }
@@ -566,6 +577,44 @@ export class CerrarRepartoDialogo {
     if (valor) {
       formulario.setValue(this.appService.desenmascararHora(valor));
     }
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
+  }
+}
+
+@Component({
+  selector: 'eliminar-reparto-dialogo',
+  templateUrl: 'eliminar-reparto-dialogo.html',
+})
+export class EliminarRepartoDialogo {
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<EliminarRepartoDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private servicio: RepartoService, private toastr: ToastrService) {
+    dialogRef.disableClose = true;
+  }
+  ngOnInit() {
+  }
+  //Elimina un reparto
+  public eliminarReparto() {
+    this.servicio.eliminar(this.data.elemento.id).subscribe(
+      res => {
+        if (res.status == 200) {
+          this.toastr.success("Registro quitado exitosamente.");
+          this.dialogRef.close();
+        }
+      },
+      err => {
+        if (err.status == 500) {
+          this.toastr.success("Se produjo un error en el sistema.");
+          this.dialogRef.close();
+        }
+        else if (err.status == 13079) {
+          this.toastr.success("Registro quitado exitosamente.");
+          this.dialogRef.close();
+        }
+      }
+    )
   }
   onNoClick(): void {
     this.dialogRef.close();

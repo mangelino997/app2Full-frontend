@@ -3,13 +3,15 @@
     <div class="col-md-3 text-center">
       <h5>Órdenes Combustibles</h5>
     </div>
-    <div class="col-md-9 text-center" >
+    <div class="col-md-9 text-center">
       <h6 class="text-center" *ngIf="data.elemento.esRepartoPropio">
-        Vehículo: {{data.elemento.vehiculo.dominio}} : {{data.elemento.vehiculo.numeroInterno}} - Chofer:
+        Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculo.dominio}} :
+        {{data.elemento.vehiculo.numeroInterno}} - Chofer:
         {{data.elemento.personal.alias}}
       </h6>
       <h6 class="text-center" *ngIf="!data.elemento.esRepartoPropio">
-        Vehículo: {{data.elemento.vehiculoProveedor.dominio}} : {{data.elemento.vehiculoProveedor.numeroInterno}} -
+        Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculoProveedor.dominio}} :
+        {{data.elemento.vehiculoProveedor.numeroInterno}} -
         Chofer: {{data.elemento.proveedor.alias}}
       </h6>
     </div>

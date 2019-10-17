@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PlanillaCerradaComponent, ReabrirRepartoDialogo } from 'src/app/componentes/planilla-cerrada/planilla-cerrada.component';
+import { ReabrirRepartoDialogo } from 'src/app/componentes/planilla-cerrada/planilla-cerrada.component';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FechaService } from 'src/app/servicios/fecha.service';

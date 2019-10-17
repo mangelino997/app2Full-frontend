@@ -5,11 +5,12 @@
         </div>
         <div class="col-md-9 text-center">
             <h6 class="text-center" *ngIf="data.elemento.esRepartoPropio">
-                Vehículo: {{data.elemento.vehiculo.dominio}} : {{data.elemento.vehiculo.numeroInterno}} - Chofer:
+                Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculo.dominio}} :
+                {{data.elemento.vehiculo.numeroInterno}} - Chofer:
                 {{data.elemento.personal.alias}}
             </h6>
             <h6 class="text-center" *ngIf="!data.elemento.esRepartoPropio">
-                Vehículo: {{data.elemento.vehiculoProveedor.dominio}} :
+                Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculoProveedor.dominio}} :
                 {{data.elemento.vehiculoProveedor.numeroInterno}} -
                 Chofer: {{data.elemento.proveedor.alias}}
             </h6>
@@ -42,7 +43,7 @@
             <div class="form-group has-float-label">
                 <label id="labelLetra" for="idLetra" class="descripcion-label">Letra *</label>
                 <mat-select id="idLetra" class="form-control form-control-sm" formControlName="letra"
-                    [compareWith]="compareFn" (selectionChange)="cambioLetra()" required>
+                    [compareWith]="compareFn" required>
                     <mat-option *ngFor="let item of letras" [value]="item">
                         {{item}}
                     </mat-option>
@@ -194,7 +195,8 @@
                         <th mat-header-cell *matHeaderCellDef></th>
                         <td mat-cell *matCellDef="let elemento; let i = index">
                             <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                                (click)="activarEliminarCpteReparto(elemento)" matTooltip="Anular" matTooltipPosition="above">
+                                (click)="activarEliminarCpteReparto(elemento)" matTooltip="Anular"
+                                matTooltipPosition="above">
                                 <mat-icon>close</mat-icon>
                             </button>
                         </td>

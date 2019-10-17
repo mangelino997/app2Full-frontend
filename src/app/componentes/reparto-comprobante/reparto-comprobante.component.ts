@@ -16,7 +16,9 @@ import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimient
 import { SeguimientoViajeRemitoService } from 'src/app/servicios/seguimiento-viaje-remito.service';
 import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimiento-venta-comprobante.service';
 import { RepartoComprobanteService } from 'src/app/servicios/reparto-comprobante.service';
-import { Seguimiento } from 'src/app/modelos/seguimiento';
+import { SeguimientoVentaComprobante } from 'src/app/modelos/seguimientoVentaComprobante';
+import { SeguimientoOrdenRecoleccion } from 'src/app/modelos/seguimientoOrdenRecoleccion';
+import { SeguimientoViajeRemito } from 'src/app/modelos/seguimientoViajeRemito';
 
 @Component({
   selector: 'app-reparto-comprobante',
@@ -28,8 +30,12 @@ export class RepartoComprobanteComponent implements OnInit {
   public formulario: FormGroup;
   //Define el formulario para Comprobante
   public formularioComprobante: FormGroup;
-  //Define el formulario para Comprobante
-  public formularioSeguimiento: FormGroup;
+  //Define el formulario para Seguimiento Venta Comprobante
+  public formularioSegVtaCpte: FormGroup;
+  //Define el formulario para Seguimiento Viaje Remito
+  public formularioSegViajeRemito: FormGroup;
+  //Define el formulario para Seguimiento Recoleccion
+  public formularioSegOrdenRecoleccion: FormGroup;
   //Define el array para tipos de comprobantes
   public tipoComprobantes: Array<any> = [];
   //Define si muestra el boton CERRAR 
@@ -51,9 +57,10 @@ export class RepartoComprobanteComponent implements OnInit {
     private modelo: RepartoComprobante, private tipoComprobanteService: TipoComprobanteService, private appService: AppService,
     private ordenRecoleccionService: OrdenRecoleccionService, private viajeRemitoService: ViajeRemitoService, private servicio: RepartoComprobanteService,
     private ventaComprobanteService: VentaComprobanteService, private loaderService: LoaderService, private toastr: ToastrService,
-    private afipComprobanteService: AfipComprobanteService, private seguimientoOrdenRecoleccionService: SeguimientoOrdenRecoleccionService,
+    private seguimientoOrdenRecoleccionService: SeguimientoOrdenRecoleccionService,
     private seguimientoViajeRemitoService: SeguimientoViajeRemitoService, private seguimientoVentaCpteService: SeguimientoVentaComprobanteService,
-    private seguimiento: Seguimiento, public dialogRef: MatDialogRef<RepartoComprobanteComponent>, @Inject(MAT_DIALOG_DATA) public data) {
+    private seguimientoVentaComprobante: SeguimientoVentaComprobante, private seguimientoOrdenRecoleccion: SeguimientoOrdenRecoleccion,
+    private seguimientoViajeRemito: SeguimientoViajeRemito, public dialogRef: MatDialogRef<RepartoComprobanteComponent>, @Inject(MAT_DIALOG_DATA) public data) {
 
   }
 
@@ -70,19 +77,24 @@ export class RepartoComprobanteComponent implements OnInit {
       letra: new FormControl(),
       numero: new FormControl('', Validators.required),
     });
-    //Define el formulario y validaciones
+    //Define el formulario Comprobante y validaciones
     this.formularioComprobante = this.modelo.formulario;
-    //Define el formulario y validaciones
-    this.formularioSeguimiento = this.seguimiento.formulario;
+    //Define el formulario Seg. Vta. Cpte. y validaciones
+    this.formularioSegVtaCpte = this.seguimientoVentaComprobante.formulario;
+    //Define el formulario Seg. Orden Recoleccion y validaciones
+    this.formularioSegOrdenRecoleccion = this.seguimientoOrdenRecoleccion.formulario;
+    //Define el formulario Seg. Viaje Remito y validaciones
+    this.formularioSegViajeRemito = this.seguimientoViajeRemito.formulario;
     //Obtiene la lista de tipo de comprobantes
     this.listarTipoComprobantes();
+    //Establece valores por defecto
+    this.establecerValoresPorDefecto();
   }
 
   //Carga la lista para tipo de comprobantes
   private listarTipoComprobantes() {
     this.tipoComprobanteService.listarActivosReparto().subscribe(
       res => {
-        console.log(res.json());
         this.tipoComprobantes = res.json();
         this.formulario.get('tipoComprobante').setValue(this.tipoComprobantes[0]);
         this.cambioTipoComprobante();
@@ -95,11 +107,9 @@ export class RepartoComprobanteComponent implements OnInit {
     this.formulario.reset();
     this.formulario.enable();
     this.formulario.get('tipoComprobante').setValue(tipoComprobante);
-    console.log(this.formulario.value);
     if (tipoComprobante.id == 1) {
       this.ventaComprobanteService.listarLetras().subscribe(
         res => {
-          console.log(res.json());
           this.letras = res.json();
         },
         err => {
@@ -109,7 +119,6 @@ export class RepartoComprobanteComponent implements OnInit {
     } else if (tipoComprobante.id == 5) {
       this.viajeRemitoService.listarLetras().subscribe(
         res => {
-          console.log(res.json());
           this.letras = res.json();
         },
         err => {
@@ -126,21 +135,17 @@ export class RepartoComprobanteComponent implements OnInit {
   public agregar() {
     let tipoComprobante = this.formulario.get('tipoComprobante').value;
     let numero = this.formulario.get('numero').value;
-    console.log(tipoComprobante, numero);
     if (tipoComprobante.id == 13) {
       this.ordenRecoleccionService.obtenerPorId(numero).subscribe(
         res => {
-          this.formularioSeguimiento.get('ordenRecoleccion').setValue(res.json());
-          this.formularioSeguimiento.get('sucursal').setValue(this.appService.getEmpresa().sucursal);
-          console.log(this.formularioSeguimiento.value);
-          this.seguimientoOrdenRecoleccionService.agregar(this.formularioSeguimiento.value).subscribe(
+          this.formularioSegOrdenRecoleccion.get('ordenRecoleccion').setValue({ id: res.json().id });
+          this.formularioSegOrdenRecoleccion.get('sucursal').setValue({ id: this.appService.getUsuario().sucursal.id });
+          this.seguimientoOrdenRecoleccionService.agregar(this.formularioSegOrdenRecoleccion.value).subscribe(
             res => {
               if (res.status == 201) {
-                this.formularioComprobante.get('ordenRecoleccion').setValue(this.formularioSeguimiento.value);
-                this.reestablecerFormulario();
-                this.listarPorReparto(this.data.elemento.id);
-                this.establecerValoresPorDefecto();
-                this.toastr.success("Registro agregado con éxito");
+                this.formularioComprobante.get('ordenRecoleccion').setValue(this.formularioSegOrdenRecoleccion.value.ordenRecoleccion);
+                this.agregarComprobanteReparto(this.formularioComprobante.value);
+                this.toastr.success("Seguimiento Orden Recolección: " + res.json().mensaje);
               }
               this.loaderService.hide();
             },
@@ -156,17 +161,14 @@ export class RepartoComprobanteComponent implements OnInit {
       this.viajeRemitoService.obtener(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
         this.formulario.get('numero').value).subscribe(
           res => {
-            this.formularioSeguimiento.get('viajeRemito').setValue(res.json);
-            this.formularioSeguimiento.get('sucursal').setValue(this.appService.getEmpresa().sucursal);
-            console.log(this.formularioSeguimiento.value);
-            this.seguimientoViajeRemitoService.agregar(this.formularioSeguimiento.value).subscribe(
+            this.formularioSegViajeRemito.get('viajeRemito').setValue({ id: res.json().id });
+            this.formularioSegViajeRemito.get('sucursal').setValue({ id: this.appService.getUsuario().sucursal.id });
+            this.seguimientoViajeRemitoService.agregar(this.formularioSegViajeRemito.value).subscribe(
               res => {
                 if (res.status == 201) {
-                  this.formularioComprobante.get('viajeRemito').setValue(this.formularioSeguimiento.value);
-                  this.reestablecerFormulario();
-                  this.listarPorReparto(this.data.elemento.id);
-                  this.establecerValoresPorDefecto();
-                  this.toastr.success("Registro agregado con éxito");
+                  this.formularioComprobante.get('viajeRemito').setValue(this.formularioSegViajeRemito.value.viajeRemito);
+                  this.agregarComprobanteReparto(this.formularioComprobante.value);
+                  this.toastr.success("Seguimiento Viaje Remito: " + res.json().mensaje);
                 }
                 this.loaderService.hide();
               },
@@ -182,17 +184,16 @@ export class RepartoComprobanteComponent implements OnInit {
       this.ventaComprobanteService.obtener(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
         this.formulario.get('numero').value, tipoComprobante.id).subscribe(
           res => {
-            this.formularioSeguimiento.get('ventaComprobante').setValue(res.json());
-            this.formularioSeguimiento.get('sucursal').setValue(this.appService.getEmpresa().sucursal);
-            console.log(this.formularioSeguimiento.value);
-            this.seguimientoVentaCpteService.agregar(this.formularioSeguimiento.value).subscribe(
+            this.formularioSegVtaCpte.get('ventaComprobante').setValue({ id: res.json().id });
+            this.formularioSegVtaCpte.get('sucursal').setValue({ id: this.appService.getUsuario().sucursal.id });
+            console.log(this.formularioSegVtaCpte.value);
+            this.seguimientoVentaCpteService.agregar(this.formularioSegVtaCpte.value).subscribe(
               res => {
+                console.log(res);
                 if (res.status == 201) {
-                  this.formularioComprobante.get('ventaComprobante').setValue(this.formularioSeguimiento.value);
-                  this.reestablecerFormulario();
-                  this.listarPorReparto(this.data.elemento.id);
-                  this.establecerValoresPorDefecto();
-                  this.toastr.success("Registro agregado con éxito");
+                  this.formularioComprobante.get('ventaComprobante').setValue(this.formularioSegVtaCpte.value.ventaComprobante);
+                  this.agregarComprobanteReparto(this.formularioComprobante.value);
+                  this.toastr.success("Seguimiento Venta Comprobante: " + res.json().mensaje);
                 }
                 this.loaderService.hide();
               },
@@ -206,7 +207,25 @@ export class RepartoComprobanteComponent implements OnInit {
           })
     }
     console.log(this.formularioComprobante.value);
-
+  }
+  //Agrega un Comprobante
+  private agregarComprobanteReparto(formularioComprobante) {
+    this.loaderService.show();
+    this.servicio.agregar(formularioComprobante).subscribe(
+      res => {
+        if (res.status == 201) {
+          this.reestablecerFormulario();
+          this.listarPorReparto(this.data.elemento.id);
+          this.establecerValoresPorDefecto();
+          this.toastr.success("Reparto Comprobante: " + res.json().mensaje);
+        }
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
+      }
+    )
   }
   //Vacia la lista
   public vaciarListas(): void {
@@ -217,12 +236,14 @@ export class RepartoComprobanteComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formulario.reset();
-    // this.formularioComprobante.reset();
-    this.formularioSeguimiento.reset();
+    this.formularioSegVtaCpte.reset();
+    this.formularioSegViajeRemito.reset();
+    this.formularioSegOrdenRecoleccion.reset();
     document.getElementById('idNumeroComprobante').focus();
   }
   //Establece los valores por defecto del formulario viaje combustible
-  public establecerValoresPorDefecto(): void {
+  public establecerValoresPorDefecto() {
+    console.log(this.data.elemento);
     this.formulario.get('tipoComprobante').setValue(this.tipoComprobantes[0]);
     if (this.data) {
       this.formularioComprobante.get('reparto').patchValue(this.data.elemento);
@@ -283,7 +304,7 @@ export class RepartoComprobanteComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-
+      document.getElementById('tipoComprobante').focus();
     });
   }
   //Verifica si se selecciono un elemento del autocompletado
@@ -314,11 +335,9 @@ export class RepartoComprobanteComponent implements OnInit {
   templateUrl: 'eliminar-reparto-cpte-dialogo.html',
 })
 export class EliminarRepartoCpteDialogo {
-  //Define un formulario para validaciones de campos
-  public formulario: FormGroup;
   //Constructor
   constructor(public dialogRef: MatDialogRef<EliminarRepartoCpteDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private repartoCpteService: RepartoComprobanteService) {
+    private repartoCpteService: RepartoComprobanteService, private toastr: ToastrService) {
     dialogRef.disableClose = true;
   }
   ngOnInit() {
@@ -327,10 +346,16 @@ export class EliminarRepartoCpteDialogo {
   public eliminarCpteReparto() {
     this.repartoCpteService.eliminar(this.data.elemento.id).subscribe(
       res => {
-
+        if (res.status == 200) {
+          this.toastr.success("Registro quitado exitosamente.");
+          this.dialogRef.close();
+        }
       },
       err => {
-
+        if (err.status == 500) {
+          this.toastr.success("Se produjo un erro en el sistema.");
+          this.dialogRef.close();
+        }
       }
     )
   }
