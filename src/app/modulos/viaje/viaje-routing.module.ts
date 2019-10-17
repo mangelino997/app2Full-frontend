@@ -5,9 +5,6 @@ import { ViajeTramoComponent, DadorDestinatarioDialogo, DadorDestTablaDialogo } 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatProgressSpinnerModule, MatCardModule, MatStepperModule, MatIconModule, MatCheckboxModule, MatButtonModule, MatTooltipModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
-import { CommonModule } from '@angular/common';
-import { ViajeCombustibleComponent } from 'src/app/componentes/viaje/viaje-combustible/viaje-combustible.component';
-import { ViajeEfectivoComponent } from 'src/app/componentes/viaje/viaje-efectivo/viaje-efectivo.component';
 import { ViajeInsumoComponent } from 'src/app/componentes/viaje/viaje-insumo/viaje-insumo.component';
 import { ViajeRemitoGSComponent } from 'src/app/componentes/viaje/viaje-remito-gs/viaje-remito-gs.component';
 import { ViajeGastoComponent } from 'src/app/componentes/viaje/viaje-gasto/viaje-gasto.component';
@@ -22,17 +19,12 @@ import { PersonalService } from 'src/app/servicios/personal.service';
 import { Viaje } from 'src/app/modelos/viaje';
 import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
 import { ViajeTramo } from 'src/app/modelos/viajeTramo';
-import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
-import { ViajeEfectivo } from 'src/app/modelos/viajeEfectivo';
 import { ViajeInsumo } from 'src/app/modelos/viajeInsumo';
 import { ViajePeaje } from 'src/app/modelos/viajePeaje';
 import { ViajeGasto } from 'src/app/modelos/viajeGasto';
 import { TramoService } from 'src/app/servicios/tramo.service';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { ViajeUnidadNegocioService } from 'src/app/servicios/viaje-unidad-negocio.service';
-import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
-import { ViajeCombustibleService } from 'src/app/servicios/viaje-combustible';
-import { ViajeEfectivoService } from 'src/app/servicios/viaje-efectivo';
 import { ViajeInsumoService } from 'src/app/servicios/viaje-insumo';
 import { ViajeGastoService } from 'src/app/servicios/viaje-gasto';
 import { ViajePeajeService } from 'src/app/servicios/viaje-peaje';
@@ -41,14 +33,14 @@ import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
 import { ViajeTipoCargaService } from 'src/app/servicios/viaje-tipo-carga.service';
 import { ViajeTipoService } from 'src/app/servicios/viaje-tipo.service';
 import { ViajeTarifaService } from 'src/app/servicios/viaje-tarifa.service';
-import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { ViajeRemito } from 'src/app/modelos/viajeRemito';
 import { ViajeTramoCliente } from 'src/app/modelos/viajeTramoCliente';
 import { ViajeTramoClienteService } from 'src/app/servicios/viaje-tramo-cliente.service';
 import { ClienteService } from 'src/app/servicios/cliente.service';
-import { ObservacionesDialogo } from 'src/app/componentes/viaje/observaciones-dialogo.component';
-import { AnularDialogo } from 'src/app/componentes/viaje/anular-dialogo.component';
 import { NormalizarDialogo } from 'src/app/componentes/viaje/normalizar-dialogo.component';
+import { ViajeCombustibleComponent } from 'src/app/componentes/viaje/viaje-combustible/viaje-combustible.component';
+import { ViajeEfectivoComponent } from 'src/app/componentes/viaje/viaje-efectivo/viaje-efectivo.component';
+import { CommonModule } from '@angular/common';
 
 const routes: Routes = [
   {path: '', component: ViajeComponent}
@@ -58,15 +50,13 @@ const routes: Routes = [
   declarations: [
     ViajeComponent,
     ViajeTramoComponent,
-    // ViajeCombustibleComponent,
-    // ViajeEfectivoComponent,
+    ViajeCombustibleComponent,
+    ViajeEfectivoComponent,
     ViajeInsumoComponent,
     ViajeRemitoGSComponent,
     ViajeGastoComponent,
     ViajePeajeComponent,
     DadorDestinatarioDialogo,
-    // ObservacionesDialogo,
-    // AnularDialogo,
     NormalizarDialogo,
     DadorDestTablaDialogo,
     ListarViajesDialogo
@@ -105,20 +95,14 @@ const routes: Routes = [
     TramoService,
     EmpresaService,
     ViajeUnidadNegocioService,
-    // InsumoProductoService,
     RubroProductoService,
-    // ProveedorService,
     Viaje,
     ViajeTramo,
     ViajeTramoCliente,
-    // ViajeCombustible,
-    // ViajeEfectivo,
     ViajeInsumo,
     ViajeGasto,
     ViajePeaje,
     ViajeRemito,
-    // ViajeCombustibleService,
-    // ViajeEfectivoService,
     ViajeInsumoService,
     ViajeGastoService,
     ViajePeajeService,
@@ -131,8 +115,6 @@ const routes: Routes = [
   ],
   entryComponents: [
     DadorDestinatarioDialogo,
-    // ObservacionesDialogo,
-    // AnularDialogo,
     NormalizarDialogo,
     DadorDestTablaDialogo,
     ListarViajesDialogo

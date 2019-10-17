@@ -1,8 +1,9 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialog, MatSort, MatTableDataSource, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { ObservacionesDialogo } from '../observaciones-dialogo/observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -10,16 +11,15 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ViajeEfectivo } from 'src/app/modelos/viajeEfectivo';
 import { ViajeEfectivoService } from 'src/app/servicios/viaje-efectivo';
-import { AnularDialogo } from '../anular-dialogo.component';
-import { NormalizarDialogo } from '../normalizar-dialogo.component';
-import { ObservacionesDialogo } from '../../observaciones-dialogo/observaciones-dialogo.component';
+import { NormalizarDialogo } from '../viaje/normalizar-dialogo.component';
+import { AnularDialogo } from '../viaje/anular-dialogo.component';
 
 @Component({
-  selector: 'app-viaje-efectivo',
-  templateUrl: './viaje-efectivo.component.html',
-  styleUrls: ['./viaje-efectivo.component.css']
+  selector: 'app-efectivo-dialogo',
+  templateUrl: './efectivo-dialogo.component.html',
+  styleUrls: ['./efectivo-dialogo.component.css']
 })
-export class ViajeEfectivoComponent implements OnInit {
+export class EfectivoDialogo implements OnInit {
   @Output() dataEvent = new EventEmitter();
   //Define un formulario viaje  efectivo para validaciones de campos
   public formularioViajeEfectivo: FormGroup;
@@ -55,7 +55,7 @@ export class ViajeEfectivoComponent implements OnInit {
   constructor(private viajeEfectivoModelo: ViajeEfectivo, private empresaServicio: EmpresaService,
     private fechaServicio: FechaService, public dialog: MatDialog,
     private appServicio: AppService, private toastr: ToastrService, private servicio: ViajeEfectivoService,
-    private loaderService: LoaderService) { }
+    private loaderService: LoaderService, public dialogRef: MatDialogRef<EfectivoDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicializarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -71,6 +71,8 @@ export class ViajeEfectivoComponent implements OnInit {
     this.listarEmpresas();
     //Establece los valores por defecto del formulario viaje efectivo
     this.establecerValoresPorDefecto(1);
+    //Obtiene la lista de registros (combustibles reparto) cuando el reparto viene en .data
+    this.data ? this.listarPorReparto(this.data.elemento.id) : '';
   }
   //Establece el id del viaje
   public establecerIdViaje(idViaje) {
@@ -107,6 +109,10 @@ export class ViajeEfectivoComponent implements OnInit {
   }
   //Establece los valores por defecto del formulario viaje adelanto efectivo
   public establecerValoresPorDefecto(opcion): void {
+    if (this.data) {
+      this.formularioViajeEfectivo.get('reparto').patchValue(this.data.elemento);
+      this.btnCerrar = this.data.btnCerrar;
+    }
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.fechaActual = res.json();
       this.formularioViajeEfectivo.get('fechaCaja').setValue(this.fechaActual);
@@ -135,10 +141,12 @@ export class ViajeEfectivoComponent implements OnInit {
     this.formularioViajeEfectivo.get('sucursal').setValue(this.appServicio.getUsuario().sucursal);
     this.formularioViajeEfectivo.get('usuarioAlta').setValue(this.appServicio.getUsuario());
     !this.formularioViajeEfectivo.value.importe ? this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2)) : '';
+    this.data ? this.formularioViajeEfectivo.get('viaje').reset() : this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeEfectivo.value).subscribe(
       res => {
         if (res.status == 201) {
           this.reestablecerFormulario();
+          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
           this.establecerValoresPorDefecto(0);
           document.getElementById('idFechaCajaAE').focus();
           this.toastr.success("Registro agregado con éxito");
@@ -157,10 +165,12 @@ export class ViajeEfectivoComponent implements OnInit {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeEfectivo.value.usuarioMod = usuarioMod;
     !this.formularioViajeEfectivo.value.importe ? this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2)) : '';
+    this.data ? this.formularioViajeEfectivo.get('viaje').reset() : this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.actualizar(this.formularioViajeEfectivo.value).subscribe(
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario();
+          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
           this.establecerValoresPorDefecto(0);
           this.btnEfectivo = true;
           document.getElementById('idFechaCajaAE').focus();

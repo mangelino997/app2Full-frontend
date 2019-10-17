@@ -25,7 +25,6 @@ import { UsuarioService } from './servicios/usuario.service';
 import { UsuarioEmpresaService } from './servicios/usuario-empresa.service';
 import { ToastrService, ToastrModule } from 'ngx-toastr';
 import { LoaderService } from './servicios/loader.service';
-import { ObservacionDialogComponent } from './componentes/observacion-dialog/observacion-dialog.component';
 import { ReporteDialogoComponent } from './componentes/reporte-dialogo/reporte-dialogo.component';
 import { FechaService } from './servicios/fecha.service';
 import { getDutchPaginatorIntl } from './dutch-paginator-intl';
@@ -35,23 +34,21 @@ import { PlanCuentaDialogo } from './componentes/plan-cuenta-dialogo/plan-cuenta
 import { ConfirmarDialogoComponent } from './componentes/confirmar-dialogo/confirmar-dialogo.component';
 import { PlanillaCerradaComponent, ReabrirRepartoDialogo } from './componentes/planilla-cerrada/planilla-cerrada.component';
 import { TextMaskModule } from 'angular2-text-mask';
-import { ViajeEfectivoComponent } from './componentes/viaje/viaje-efectivo/viaje-efectivo.component';
 import { ViajeCombustible } from './modelos/viajeCombustible';
 import { ViajeEfectivo } from './modelos/viajeEfectivo';
 import { Viaje } from './modelos/viaje';
 import { ViajeCombustibleService } from './servicios/viaje-combustible';
 import { ViajeEfectivoService } from './servicios/viaje-efectivo';
 import { InsumoProductoService } from './servicios/insumo-producto.service';
-import { ViajeCombustibleComponent } from './componentes/viaje/viaje-combustible/viaje-combustible.component';
 import { ProveedorService } from './servicios/proveedor.service';
 import { EmpresaService } from './servicios/empresa.service';
-import { ObservacionesDialogo } from './componentes/viaje/observaciones-dialogo.component';
+import { ObservacionesDialogo } from './componentes/observaciones-dialogo/observaciones-dialogo.component';
 import { AnularDialogo } from './componentes/viaje/anular-dialogo.component';
 import { SeguimientoVentaComprobante } from './modelos/seguimientoVentaComprobante';
 import { SeguimientoViajeRemito } from './modelos/seguimientoViajeRemito';
 import { SeguimientoOrdenRecoleccion } from './modelos/seguimientoOrdenRecoleccion';
-// import { RepartoComprobanteComponent } from './componentes/reparto-comprobante/reparto-comprobante.component';
-
+import { CombustibleDialogo } from './componentes/combustible-dialogo/combustible-dialogo.component';
+import { EfectivoDialogo } from './componentes/efectivo-dialogo/efectivo-dialogo.component';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -69,17 +66,16 @@ const stompConfig: StompConfig = {
   declarations: [
     AppComponent,
     LoginComponent,
-    ObservacionDialogComponent,
     ReporteDialogoComponent,
     PdfDialogoComponent,
     PlanCuentaDialogo,
     ConfirmarDialogoComponent,
     PlanillaCerradaComponent,
     ReabrirRepartoDialogo,
-    ViajeEfectivoComponent,
-    ViajeCombustibleComponent,
     ObservacionesDialogo,
     AnularDialogo,
+    CombustibleDialogo,
+    EfectivoDialogo
   ],
   imports: [
     FormsModule,
@@ -109,7 +105,6 @@ const stompConfig: StompConfig = {
       preventDuplicates: true,
     })
   ],
-  exports: [],
   providers: [
     AppService,
     GuardiaService,
@@ -143,16 +138,15 @@ const stompConfig: StompConfig = {
   bootstrap: [AppComponent],
   entryComponents: [
     ReporteDialogoComponent,
-    ObservacionDialogComponent,
     PdfDialogoComponent,
     PlanCuentaDialogo,
     ConfirmarDialogoComponent,
     PlanillaCerradaComponent,
     ReabrirRepartoDialogo,
-    ViajeCombustibleComponent,
-    ViajeEfectivoComponent,
     ObservacionesDialogo,
     AnularDialogo,
+    CombustibleDialogo,
+    EfectivoDialogo
   ]
 })
 export class AppModule { }

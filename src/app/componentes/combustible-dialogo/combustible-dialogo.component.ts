@@ -1,9 +1,10 @@
-import { Component, OnInit, Output, EventEmitter, ViewChild } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { ProveedorService } from 'src/app/servicios/proveedor.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
-import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
+import { MatDialog, MatSort, MatTableDataSource, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
+import { ObservacionesDialogo } from '../observaciones-dialogo/observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
@@ -11,16 +12,15 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { Subscription } from 'rxjs';
 import { ViajeCombustibleService } from 'src/app/servicios/viaje-combustible';
 import { ViajeCombustible } from 'src/app/modelos/viajeCombustible';
-import { AnularDialogo } from '../anular-dialogo.component';
-import { NormalizarDialogo } from '../normalizar-dialogo.component';
-import { ObservacionesDialogo } from '../../observaciones-dialogo/observaciones-dialogo.component';
+import { AnularDialogo } from '../viaje/anular-dialogo.component';
+import { NormalizarDialogo } from '../viaje/normalizar-dialogo.component';
 
 @Component({
-  selector: 'app-viaje-combustible',
-  templateUrl: './viaje-combustible.component.html',
-  styleUrls: ['./viaje-combustible.component.css']
+  selector: 'app-combustible-dialogo',
+  templateUrl: './combustible-dialogo.component.html',
+  styleUrls: ['./combustible-dialogo.component.css']
 })
-export class ViajeCombustibleComponent implements OnInit {
+export class CombustibleDialogo implements OnInit {
   @Output() dataEvent = new EventEmitter();
   //Define un formulario viaje  combustible para validaciones de campos
   public formularioViajeCombustible: FormGroup;
@@ -61,7 +61,8 @@ export class ViajeCombustibleComponent implements OnInit {
   constructor(private proveedorServicio: ProveedorService, private viajeCombustibleModelo: ViajeCombustible,
     private fechaServicio: FechaService, private appService: AppService,
     private insumoProductoServicio: InsumoProductoService, public dialog: MatDialog, private appServicio: AppService,
-    private servicio: ViajeCombustibleService, private toastr: ToastrService, private loaderService: LoaderService) { }
+    private servicio: ViajeCombustibleService, private toastr: ToastrService, private loaderService: LoaderService,
+    public dialogRef: MatDialogRef<CombustibleDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
   //Al inicilizarse el componente
   ngOnInit() {
     //Establece la subscripcion a loader
@@ -85,6 +86,8 @@ export class ViajeCombustibleComponent implements OnInit {
     this.listarInsumos();
     //Establece los valores por defecto del formulario viaje combustible
     this.establecerValoresPorDefecto(1);
+    //Obtiene la lista de registros (combustibles reparto) cuando el reparto viene en .data
+    this.data ? this.listarPorReparto(this.data.elemento.id) : '';
   }
   //Establece el id del viaje de Cabecera
   public establecerIdViaje(idViaje) {
@@ -117,6 +120,10 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Establece los valores por defecto del formulario viaje combustible
   public establecerValoresPorDefecto(opcion): void {
+    if (this.data) {
+      this.formularioViajeCombustible.get('reparto').patchValue(this.data.elemento);
+      this.btnCerrar = this.data.btnCerrar;
+    }
     this.fechaServicio.obtenerFecha().subscribe(res => {
       this.formularioViajeCombustible.get('fecha').setValue(res.json());
     })
@@ -201,10 +208,12 @@ export class ViajeCombustibleComponent implements OnInit {
     this.formularioViajeCombustible.get('tipoComprobante').setValue({ id: 15 });
     this.formularioViajeCombustible.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formularioViajeCombustible.get('usuarioAlta').setValue(this.appService.getUsuario());
+    this.data ? this.formularioViajeCombustible.get('viaje').reset() : this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeCombustible.value).subscribe(
       res => {
         if (res.status == 201) {
           this.reestablecerFormulario();
+          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
           this.establecerValoresPorDefecto(0);
           document.getElementById('idProveedorOC').focus();
           this.toastr.success("Registro agregado con éxito");
@@ -221,10 +230,12 @@ export class ViajeCombustibleComponent implements OnInit {
   public modificarCombustible(): void {
     let usuarioMod = this.appServicio.getUsuario();
     this.formularioViajeCombustible.value.usuarioMod = usuarioMod;
+    this.data ? this.formularioViajeCombustible.get('viaje').reset() : this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.actualizar(this.formularioViajeCombustible.value).subscribe(
       res => {
         if (res.status == 200) {
           this.reestablecerFormulario();
+          this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
           this.establecerValoresPorDefecto(0);
           this.btnCombustible = true;
           document.getElementById('idProveedorOC').focus();

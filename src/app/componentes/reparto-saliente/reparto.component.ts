@@ -11,18 +11,15 @@ import { PersonalService } from 'src/app/servicios/personal.service';
 import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { FechaService } from 'src/app/servicios/fecha.service';
-import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
 import { Subscription } from 'rxjs';
 import { RepartoPersonal } from 'src/app/modelos/repartoPersonal';
 import { LoaderService } from 'src/app/servicios/loader.service';
-import { OrdenCombustibleComponent } from '../orden-combustible/orden-combustible.component';
 import { LoaderState } from 'src/app/modelos/loader';
 import { PlanillaCerradaComponent } from '../planilla-cerrada/planilla-cerrada.component';
-import { ViajeCombustibleComponent } from '../viaje/viaje-combustible/viaje-combustible.component';
-import { ViajeEfectivoComponent } from '../viaje/viaje-efectivo/viaje-efectivo.component';
-import { TipoComprobanteComponent } from '../tipo-comprobante/tipo-comprobante.component';
 import { RepartoComprobanteComponent } from '../reparto-comprobante/reparto-comprobante.component';
+import { EfectivoDialogo } from '../efectivo-dialogo/efectivo-dialogo.component';
+import { CombustibleDialogo } from '../combustible-dialogo/combustible-dialogo.component';
 
 @Component({
   selector: 'app-reparto',
@@ -299,7 +296,7 @@ export class RepartoComponent implements OnInit {
   }
   //Abre el modal de Viaje Combustible
   public abrirOrdenesCombustibles(elemento) {
-    const dialogRef = this.dialog.open(ViajeCombustibleComponent, {
+    const dialogRef = this.dialog.open(CombustibleDialogo, {
       width: '95%',
       maxWidth: '95%',
       data: {
@@ -312,7 +309,7 @@ export class RepartoComponent implements OnInit {
   }
   //Abre el modal de viaje Efectivo
   public abrirAdelantosEfectivo(elemento) {
-    const dialogRef = this.dialog.open(ViajeEfectivoComponent, {
+    const dialogRef = this.dialog.open(EfectivoDialogo, {
       width: '95%',
       maxWidth: '95%',
       data: {

@@ -7,8 +7,6 @@ import { PersonalService } from '../../servicios/personal.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { ViajeTramoComponent } from './viaje-tramo/viaje-tramo.component';
-import { ViajeCombustibleComponent } from './viaje-combustible/viaje-combustible.component';
-import { ViajeEfectivoComponent } from './viaje-efectivo/viaje-efectivo.component';
 import { ViajeGastoComponent } from './viaje-gasto/viaje-gasto.component';
 import { ViajeInsumoComponent } from './viaje-insumo/viaje-insumo.component';
 import { ViajePeajeComponent } from './viaje-peaje/viaje-peaje.component';
@@ -24,6 +22,8 @@ import { VehiculoProveedorService } from 'src/app/servicios/vehiculo-proveedor.s
 import { MatSort, MatTableDataSource, MatPaginator, MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { MensajeExcepcion } from 'src/app/modelos/mensaje-excepcion';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { ViajeEfectivoComponent } from './viaje-efectivo/viaje-efectivo.component';
+import { ViajeCombustibleComponent } from './viaje-combustible/viaje-combustible.component';
 
 @Component({
   selector: 'app-viaje',

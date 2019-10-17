@@ -5,7 +5,7 @@ import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
 import { InsumoProductoService } from 'src/app/servicios/insumo-producto.service';
 import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
-import { ObservacionesDialogo } from '../observaciones-dialogo.component';
+import { ObservacionesDialogo } from '../../observaciones-dialogo/observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';

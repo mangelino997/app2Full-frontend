@@ -1,0 +1,221 @@
+<form class="margin-top-10 padd-20" [formGroup]="formularioViajeCombustible">
+  <div class="row" *ngIf="data">
+    <div class="col-md-3 text-center">
+      <h5>Órdenes Combustibles</h5>
+    </div>
+    <div class="col-md-9 text-center">
+      <h6 class="text-center" *ngIf="data.elemento.esRepartoPropio">
+        Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculo.dominio}} :
+        {{data.elemento.vehiculo.numeroInterno}} - Chofer:
+        {{data.elemento.personal.alias}}
+      </h6>
+      <h6 class="text-center" *ngIf="!data.elemento.esRepartoPropio">
+        Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculoProveedor.dominio}} :
+        {{data.elemento.vehiculoProveedor.numeroInterno}} -
+        Chofer: {{data.elemento.proveedor.alias}}
+      </h6>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group has-float-label">
+        <label for="idProveedorOC" class="tamanio-label">Proveedor Combustible *</label>
+        <input id="idProveedorOC" class="form-control form-control-sm" type="text" matInput
+          [formControl]="formularioViajeCombustible.get('proveedor')" [matAutocomplete]="autoProveedorOC"
+          autocomplete="off" [readonly]="soloLectura"
+          placeholder="Buscar por N° Cuenta, Razón Social, Nombre Fantasía o Número Documento"
+          (blur)="verificarSeleccion(formularioViajeCombustible.get('proveedor'))">
+        <mat-autocomplete #autoProveedorOC="matAutocomplete" [displayWith]="displayFn.bind(this)">
+          <mat-option *ngFor="let itemProveedor of resultadosProveedores" [value]="itemProveedor">
+            {{itemProveedor.alias}}
+          </mat-option>
+        </mat-autocomplete>
+      </div>
+    </div>
+    <span class="spacer"></span>
+    <button style="height: 30px;" mat-raised-button>Consultar Ultimas Cargas</button>
+  </div>
+  <div class="row">
+    <div class="col-md-2">
+      <div class="form-group has-float-label">
+        <label for="idFechaOC" class="tamanio-label">Fecha</label>
+        <input id="idFechaOC" type="date" formControlName="fecha" autocomplete="off"
+          class="form-control form-control-sm" [readonly]="soloLectura">
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group has-float-label">
+        <label for="idInsumoOC" class="tamanio-label">Insumo Combustible *</label>
+        <mat-select id="idInsumoOC" class="form-control form-control-sm" formControlName="insumoProducto"
+          [compareWith]="compareFn"
+          (selectionChange)="establecerPrecioUnitario(formularioViajeCombustible, 'insumoProducto')">
+          <mat-option *ngFor="let itemInsumos of insumos" [value]="itemInsumos">
+            {{itemInsumos.nombre}}
+          </mat-option>
+        </mat-select>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group has-float-label">
+        <label for="idCantidadOC" class="tamanio-label">Cantidad *</label>
+        <input id="idCantidadOC" [textMask]="mascararDecimales(6)" type="text" formControlName="cantidad"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="soloLectura"
+          (blur)="calcularImporte(formularioViajeCombustible)" placeholder="0.00">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group has-float-label">
+        <label for="idPrecioUnitarioOC" class="tamanio-label">Precio Unitario *</label>
+        <input id="idPrecioUnitarioOC" type="text" formControlName="precioUnitario" autocomplete="off"
+          (blur)="calcularImporte(formularioViajeCombustible)" class="form-control form-control-sm number-right"
+          placeholder="$ 0.00" [textMask]="mascararImporte(8, 2)" [readonly]="estadoPrecioUnitario">
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group has-float-label">
+        <label for="idImporteOC" class="tamanio-label">Importe *</label>
+        <input id="idImporteOC" [textMask]="mascararImporte(8, 2)" type="text" [formControl]="importe"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="$ 0.00">
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6">
+      <div class="form-group has-float-label">
+        <label for="idObservaciones" class="tamanio-label">Observaciones</label>
+        <textarea id="idObservaciones" class="form-control form-control-sm" formControlName="observaciones" rows="2"
+          [readonly]="soloLectura"></textarea>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarCombustible()"
+        *ngIf="btnCombustible" [disabled]="!formularioViajeCombustible.valid">Agregar
+      </button>
+      <button class="margin-left-3" mat-raised-button color="primary" (click)="modificarCombustible()"
+        [disabled]="!formularioViajeCombustible.valid" *ngIf="!btnCombustible">Actualizar
+      </button>
+      <button class="margin-left-3" mat-raised-button (click)="cancelar()"
+        [disabled]="indiceSeleccionado==2 || indiceSeleccionado==4 || btnCombustible">Cancelar</button>
+    </div>
+  </div>
+  <div class="row">
+    <div class="tabla">
+      <div class="tabla-ancho">
+        <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+          <ng-container matColumnDef="orden" sticky>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Orden</th>
+            <td mat-cell *matCellDef="let elemento; let i=index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{i + 1}}</td>
+          </ng-container>
+          <ng-container matColumnDef="sucursal">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Sucursal</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.sucursal.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="fecha">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.fecha | date: 'dd/MM/yyyy'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="proveedor">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Proveedor</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.proveedor.razonSocial}}</td>
+          </ng-container>
+          <ng-container matColumnDef="insumoProducto">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Insumo Producto</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.insumoProducto.nombre}}</td>
+          </ng-container>
+          <ng-container matColumnDef="cantidad">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Cantidad</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">{{elemento.cantidad}} Lt.
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="precioUnitario">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio Unitario</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">$
+              {{establecerCerosTabla(elemento.precioUnitario)}}</td>
+          </ng-container>
+          <ng-container matColumnDef="observaciones">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs.</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observaciones)">ver</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="anulado">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Anulado</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              {{elemento.estaAnulado? 'Sí': 'No'}}</td>
+          </ng-container>
+          <ng-container matColumnDef="obsAnulado">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header>Obs. Anulado</th>
+            <td mat-cell *matCellDef="let elemento"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <span class="cursor-color" (click)="verObservacionesDialogo(elemento.observacionesAnulado)">ver</span>
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="EDITAR" stickyEnd>
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let elemento; let i = index"
+              [ngStyle]="{'background-color':elemento.estaAnulado ? '#E9ECEF' : '#FFFFFF' }">
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && !elemento.estaAnulado"
+                (click)="modCombustible(i, elemento)" matTooltip="Editar" matTooltipPosition="above">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button class="mat-icon-button-table margin-left-3"
+                *ngIf="!soloLectura && !elemento.estaAnulado" (click)="anularCombustible(elemento)" matTooltip="Anular"
+                matTooltipPosition="above">
+                <mat-icon>close</mat-icon>
+              </button>
+              <button mat-icon-button class="mat-icon-button-table" *ngIf="!soloLectura && elemento.estaAnulado"
+                (click)="normalizarCombustible(elemento)" matTooltip="Normalizar" matTooltipPosition="above">
+                <mat-icon>open_in_browser</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+          <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+  <br>
+  <div class="row justify-content-end">
+    <div class="col-md-2">
+      <div class="form-group has-float-label">
+        <label for="idTotalCombustibleOC" class="tamanio-label">Total Gasoil</label>
+        <input id="idTotalCombustibleOC" [textMask]="mascararLitros(8)" type="text" [formControl]="totalCombustible"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="0.00 lt.">
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group has-float-label">
+        <label for="idTotalAceiteOC" class="tamanio-label">Total Aceite</label>
+        <input id="idTotalAceiteOC" [textMask]="mascararLitros(8)" type="text" [formControl]="totalAceite"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="0.00 lt.">
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="form-group has-float-label">
+        <label for="idTotalUreaOC" class="tamanio-label">Total Urea</label>
+        <input id="idTotalUreaOC" [textMask]="mascararLitros(8)" type="text" [formControl]="totalUrea"
+          autocomplete="off" class="form-control form-control-sm number-right" [readonly]="true" placeholder="0.00 lt">
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center" *ngIf="btnCerrar">
+    <div class="col-md-1">
+      <button mat-raised-button color="accent" (click)="dialogRef.close()">Cerrar</button>
+    </div>
+  </div>
+</form>

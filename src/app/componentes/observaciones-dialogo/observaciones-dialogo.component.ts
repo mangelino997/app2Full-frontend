@@ -5,7 +5,8 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material";
 //Componente ObservacionesDialogo
 @Component({
     selector: 'observaciones-dialogo',
-    templateUrl: './observaciones-dialogo.component.html'
+    templateUrl: './observaciones-dialogo.component.html',
+    styleUrls: ['./observaciones-dialogo.component.css']
 })
 export class ObservacionesDialogo {
     //Define el tema

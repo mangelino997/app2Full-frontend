@@ -13,8 +13,8 @@ import { PersonalService } from 'src/app/servicios/personal.service';
 import { BasicoCategoriaService } from 'src/app/servicios/basico-categoria.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { SucursalService } from 'src/app/servicios/sucursal.service';
-import { ObservacionDialogComponent } from '../observacion-dialog/observacion-dialog.component';
 import { ReporteService } from 'src/app/servicios/reporte.service';
+import { ObservacionesDialogo } from '../observaciones-dialogo/observaciones-dialogo.component';
 
 @Component({
   selector: 'app-adelanto-personal',
@@ -500,7 +500,7 @@ export class AdelantoPersonalComponent implements OnInit {
   }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
-    const dialogRef = this.dialog.open(ObservacionDialogComponent, {
+    const dialogRef = this.dialog.open(ObservacionesDialogo, {
       width: '95%',
       maxWidth: '95%',
       data: {

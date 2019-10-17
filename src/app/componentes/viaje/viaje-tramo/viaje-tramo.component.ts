@@ -11,7 +11,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialog, MatTableDataSource, MatSort }
 import { ClienteService } from 'src/app/servicios/cliente.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppService } from 'src/app/servicios/app.service';
-import { ObservacionesDialogo } from '../observaciones-dialogo.component';
+import { ObservacionesDialogo } from '../../observaciones-dialogo/observaciones-dialogo.component';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';

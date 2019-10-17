@@ -4,7 +4,7 @@ import { RubroProductoService } from 'src/app/servicios/rubro-producto.service';
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { AppComponent } from 'src/app/app.component';
 import { MatDialog, MatSort, MatTableDataSource } from '@angular/material';
-import { ObservacionesDialogo } from '../observaciones-dialogo.component';
+import { ObservacionesDialogo } from '../../observaciones-dialogo/observaciones-dialogo.component';
 import { AppService } from 'src/app/servicios/app.service';
 import { ToastrService } from 'ngx-toastr';
 import { LoaderService } from 'src/app/servicios/loader.service';
