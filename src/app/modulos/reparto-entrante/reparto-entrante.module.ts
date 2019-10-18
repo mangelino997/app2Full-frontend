@@ -4,19 +4,17 @@ import { CommonModule } from '@angular/common';
 import { RepartoEntranteRoutingModule } from './reparto-entrante-routing.module';
 
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RepartoEntranteComponent } from 'src/app/componentes/reparto-entrante/reparto-entrante.component';
-import { RepartoEntrante } from 'src/app/modelos/repartoEntrante';
 import { TextMaskModule } from 'angular2-text-mask';
-import { RepartoPropioService } from 'src/app/servicios/reparto-propio.service';
-import { RepartoTerceroService } from 'src/app/servicios/reparto-tercero.service';
-import { RetiroDepositoComprobanteService } from 'src/app/servicios/retiro-deposito-comprobante.service';
-import { RepartoTerceroComprobanteService } from 'src/app/servicios/reparto-tercero-comprobante.service';
-import { RepartoPropioComprobanteService } from 'src/app/servicios/reparto-propio-comprobante.service';
-import { FechaService } from 'src/app/servicios/fecha.service';
-import { RetiroDepositoService } from 'src/app/servicios/retiro-deposito.service';
-import { PersonalService } from 'src/app/servicios/personal.service';
+import { Reparto } from 'src/app/modelos/reparto';
+import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
+import { SeguimientoViajeRemitoService } from 'src/app/servicios/seguimiento-viaje-remito.service';
+import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimiento-venta-comprobante.service';
+import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.service';
+import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
+import { RepartoComprobanteService } from 'src/app/servicios/reparto-comprobante.service';
 
 @NgModule({
   declarations: [
@@ -38,16 +36,16 @@ import { PersonalService } from 'src/app/servicios/personal.service';
     MatDialogModule,
     MatDividerModule,
     TextMaskModule,
+    MatIconModule
   ],
   providers: [
-    RepartoEntrante,
-    RepartoPropioService,
-    RepartoTerceroService,
-    RetiroDepositoService,
-    FechaService,
-    RepartoPropioComprobanteService,
-    RepartoTerceroComprobanteService,
-    RetiroDepositoComprobanteService,
+    Reparto,
+    SeguimientoOrdenRecoleccionService,
+    SeguimientoViajeRemitoService,
+    SeguimientoVentaComprobanteService,
+    OrdenRecoleccionService,
+    ViajeRemitoService,
+    RepartoComprobanteService,
 
   ],
   entryComponents: [

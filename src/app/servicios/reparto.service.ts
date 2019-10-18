@@ -71,9 +71,17 @@ export class RepartoService {
   public listar() {
     return this.http.get(this.url, this.options);
   }
+  //Obtiene registro por idReparto
+  public obtenerPorId(idReparto) {
+    return this.http.get(this.url + '/obtenerPorId/' + idReparto, this.options);
+  }
   //Obtiene la lista de registros
   public listarAbiertosPropios() {
     return this.http.get(this.url + '/listarAbiertosPropios', this.options);
+  }
+  //Obtiene la lista de registros
+  public listarAbiertosTerceros() {
+    return this.http.get(this.url + '/listarAbiertosTerceros', this.options);
   }
   //Agrega un registro
   public agregar(elemento) {

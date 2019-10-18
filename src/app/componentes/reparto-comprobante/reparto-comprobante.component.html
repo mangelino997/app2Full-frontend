@@ -5,12 +5,12 @@
         </div>
         <div class="col-md-9 text-center">
             <h6 class="text-center" *ngIf="data.elemento.esRepartoPropio">
-                Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculo.dominio}} :
+                Reparto: {{data.elemento.id}} - Vehículo: {{data.elemento.vehiculo.dominio}} :
                 {{data.elemento.vehiculo.numeroInterno}} - Chofer:
                 {{data.elemento.personal.alias}}
             </h6>
             <h6 class="text-center" *ngIf="!data.elemento.esRepartoPropio">
-                Reparto: {{data.elemento.numero}} - Vehículo: {{data.elemento.vehiculoProveedor.dominio}} :
+                Reparto: {{data.elemento.id}} - Vehículo: {{data.elemento.vehiculoProveedor.dominio}} :
                 {{data.elemento.vehiculoProveedor.numeroInterno}} -
                 Chofer: {{data.elemento.proveedor.alias}}
             </h6>
@@ -86,11 +86,11 @@
                     </ng-container>
                     <ng-container matColumnDef="PUNTOVENTA">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Vta.</th>
-                        <td mat-cell *matCellDef="let elemento">
+                        <td mat-cell *matCellDef="let elemento" class="number-right">
                             <span>
-                                {{elemento.ventaComprobante? elemento.ventaComprobante.puntoVenta: ''}}
-                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.puntoVenta : ''}}
-                                {{elemento.viajeRemito? elemento.viajeRemito.puntoVenta : ''}}
+                                {{elemento.ventaComprobante? establecerCerosIzq(elemento.ventaComprobante.puntoVenta, "0000", -5): ''}}
+                                {{elemento.ordenRecoleccion? '-' : ''}}
+                                {{elemento.viajeRemito? establecerCerosIzq(elemento.viajeRemito.puntoVenta, "0000", -5) : ''}}
                             </span>
                         </td>
                     </ng-container>
@@ -99,17 +99,17 @@
                         <td mat-cell *matCellDef="let elemento">
                             <span>
                                 {{elemento.ventaComprobante? elemento.ventaComprobante.letra: ''}}
-                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.letra : ''}}
+                                {{elemento.ordenRecoleccion? '-' : ''}}
                                 {{elemento.viajeRemito? elemento.viajeRemito.letra : ''}}
                             </span>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="COMPROBANTE">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Comprobante</th>
-                        <td mat-cell *matCellDef="let elemento">
+                        <td mat-cell *matCellDef="let elemento" class="number-right">
                             <span>
                                 {{elemento.ventaComprobante? elemento.ventaComprobante.numero: ''}}
-                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.numero : ''}}
+                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.id : ''}}
                                 {{elemento.viajeRemito? elemento.viajeRemito.numero : ''}}
                             </span>
                         </td>
@@ -119,7 +119,7 @@
                         <td mat-cell *matCellDef="let elemento">
                             <span>
                                 {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.alias: ''}}
-                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.clienteDestinatario.alias: ''}}
+                                {{elemento.ordenRecoleccion? '-': ''}}
                                 {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.alias: ''}}
                             </span></td>
                     </ng-container>
@@ -128,42 +128,42 @@
                         <td mat-cell *matCellDef="let elemento">
                             <span>
                                 {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.domicilio : ''}}
-                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.clienteDestinatario.domicilio : ''}}
+                                {{elemento.ordenRecoleccion? '-' : ''}}
                                 {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.domicilio : ''}}
-                            </span> Lt.
+                            </span>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="REMITENTE">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Remitente</th>
-                        <td mat-cell *matCellDef="let elemento">$
+                        <td mat-cell *matCellDef="let elemento">
                             <span>
                                 {{elemento.ventaComprobante? elemento.ventaComprobante.clienteRemitente.alias : ''}}
-                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.clienteRemitente.alias : ''}}
+                                {{elemento.ordenRecoleccion? '-' : ''}}
                                 {{elemento.viajeRemito? elemento.viajeRemito.clienteRemitente.alias : ''}}
                             </span>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="CTACTE">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Cta Cte.</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <span>
+                        <td mat-cell *matCellDef="let elemento" class="number-right">
+                            <span>$
                                 {{elemento.ventaComprobante? elemento.ventaComprobante.condicionVenta != 1? 
-                                    elemento.ventaComprobante.importe : '' : ''}}
+                                    (elemento.ventaComprobante.importe | number: '1.2-2'): '0.00' : ''}}
                             </span>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="CONTADO">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Contado</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <span>
+                        <td mat-cell *matCellDef="let elemento" class="number-right">
+                            <span>$
                                 {{elemento.ventaComprobante? elemento.ventaComprobante.condicionVenta == 1? 
-                                        elemento.ventaComprobante.importe : '' : ''}}
+                                        (elemento.ventaComprobante.importe | number: '1.2-2'): '0.00' : ''}}
                             </span>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="BULTOS">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
-                        <td mat-cell *matCellDef="let elemento">
+                        <td mat-cell *matCellDef="let elemento" class="number-right">
                             <span>
                                 {{elemento.ventaComprobante? sumaBultosVentaCpte(elemento.ventaComprobante.ventaComprobanteItemFAs) : ''}}
                                 {{elemento.ordenRecoleccion?  elemento.ordenRecoleccion.bultos: ''}}
@@ -173,32 +173,30 @@
                     </ng-container>
                     <ng-container matColumnDef="CONTRAREEMBOLSO">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Contrareembolso</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <span>
-                                {{elemento.ventaComprobante? elemento.ventaComprobante.ventaComprobanteItemCR.importe: ''}}
+                        <td mat-cell *matCellDef="let elemento" class="number-right">
+                            <span>$
+                                {{elemento.ventaComprobante? (elemento.ventaComprobante.ventaComprobanteItemCR.importe | number: '1.2-2') : '0.00'}}
                             </span>
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="KG">
                         <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg</th>
-                        <td mat-cell *matCellDef="let elemento">
+                        <td mat-cell *matCellDef="let elemento" class="number-right">
                             <span>
                                 {{elemento.ventaComprobante? sumaKiloEfectivoVentaCpte(elemento.ventaComprobante.ventaComprobanteItemFAs) : ''}}
                                 {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.kilosAforado != null? 
                                     elemento.ordenRecoleccion.kilosAforado : elemento.ordenRecoleccion.kilosEfectivo : ''}}
                                 {{elemento.viajeRemito? elemento.viajeRemito.condicionVenta == 1? 
                                     elemento.viajeRemito.kilosAforado : elemento.viajeRemito.kilosEfectivo : ''}}
-                            </span>
+                            </span> Kg.
                         </td>
                     </ng-container>
                     <ng-container matColumnDef="ELIMINAR" stickyEnd>
                         <th mat-header-cell *matHeaderCellDef></th>
                         <td mat-cell *matCellDef="let elemento; let i = index">
-                            <button mat-icon-button class="mat-icon-button-table margin-left-3"
-                                (click)="activarEliminarCpteReparto(elemento)" matTooltip="Anular"
-                                matTooltipPosition="above">
-                                <mat-icon>close</mat-icon>
-                            </button>
+                            <span class="cursor-color-rojo" (click)="activarEliminarCpteReparto(elemento)">
+                                x
+                            </span>
                         </td>
                     </ng-container>
                     <tr mat-header-row *matHeaderRowDef="columnas"></tr>

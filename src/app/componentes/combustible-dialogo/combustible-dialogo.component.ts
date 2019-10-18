@@ -206,8 +206,9 @@ export class CombustibleDialogo implements OnInit {
   public agregarCombustible(): void {
     this.formularioViajeCombustible.get('precioUnitario').enable();
     this.formularioViajeCombustible.get('tipoComprobante').setValue({ id: 15 });
-    this.formularioViajeCombustible.get('sucursal').setValue(this.appService.getUsuario().sucursal);
     this.formularioViajeCombustible.get('usuarioAlta').setValue(this.appService.getUsuario());
+    this.formularioViajeCombustible.get('sucursal').setValue(this.appService.getUsuario().sucursal);
+    this.formularioViajeCombustible.get('reparto').setValue({id: this.formularioViajeCombustible.get('reparto').value.id});
     this.data ? this.formularioViajeCombustible.get('viaje').reset() : this.formularioViajeCombustible.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeCombustible.value).subscribe(
       res => {

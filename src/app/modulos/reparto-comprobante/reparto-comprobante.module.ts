@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule } from '@angular/material';
+import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
 import { RepartoComprobante } from 'src/app/modelos/repartoComprobante';
@@ -35,6 +35,7 @@ import { RepartoComprobanteRoutingModule } from './reparto-comprobante-routing-m
     MatDialogModule,
     MatDividerModule,
     TextMaskModule,
+    MatIconModule,
   ],
   providers: [
     RepartoComprobante,

@@ -8,229 +8,115 @@
             <label for="idTipoViaje" class="tamanio-label">Tipo de Viaje *</label>
             <mat-select id="idTipoViaje" class="form-control form-control-sm" [formControl]="tipoViaje"
               (selectionChange)="cambioTipoViaje()">
-              <mat-option [value]="1">Propio</mat-option>
-              <mat-option [value]="2">Tercero</mat-option>
-              <mat-option [value]="3">Retiro Depósito</mat-option>
+              <mat-option [value]="true">Propio</mat-option>
+              <mat-option [value]="false">Tercero</mat-option>
             </mat-select>
           </div>
         </div>
-        <div class="col-md-3">
-          <div class="form-group has-float-label">
-            <label for="idFecha">Fecha Regreso</label>
-            <input id="idFecha" type="date" class="form-control form-control-sm" formControlName="fechaRegreso">
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group has-float-label">
-            <label for="idHora">Hora Regreso</label>
-            <input id="idHora" type="time" class="form-control form-control-sm" formControlName="horaRegreso">
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
-          <table class="table table-bordered table-striped table-sm table-condensed tabla-reporte">
-            <thead>
-              <tr>
-                <th class="text-center" style="width: 30px" scope="col">N° Planilla</th>
-                <th class="text-center" style="width: 50px" scope="col">Zona</th>
-                <th class="text-center" style="width: 80px" scope="col">Vehículo</th>
-                <th class="text-center" style="width: 100px" scope="col">Chofer</th>
-                <th class="text-center" style="width: 60px" scope="col">Fecha Salida</th>
-                <th class="text-center" style="width: 60px" scope="col">Hora Salida</th>
-                <th class="text-center" style="width: 30px" scope="col">-</th>
-              </tr>
-            </thead>
-            <tbody *ngIf="planillasPendientesPropio.length>0">
-              <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesPropio; let i=index"
-                id="fila{{i}}" (click)="cambioPlanilla(i)">
-                <td class="number-right">{{itemPlanilla.id}}</td>
-                <td align="center">{{itemPlanilla.zona.nombre}}</td>
-                <td align="center">{{itemPlanilla.vehiculo.alias}}</td>
-                <td align="center">{{itemPlanilla.personal.alias}}</td>
-                <td align="center">{{itemPlanilla.fechaSalida}}</td>
-                <td align="center">{{itemPlanilla.horaSalida}}</td>
-                <td align="center" class="cursor-color" (click)="cerrarReparto(itemPlanilla.id)">Quitar</td>
-              </tr>
-            </tbody>
-            <tbody *ngIf="planillasPendientesTercero.length>0">
-              <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesTercero; let i=index"
-                id="fila{{i}}" (click)="cambioPlanilla(i)">
-                <td class="number-right">{{itemPlanilla.id}}</td>
-                <td align="center">{{itemPlanilla.zona.nombre}}</td>
-                <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza:
-                  {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
-                <td align="center">{{itemPlanilla.choferProveedor.nombre}}</td>
-                <td align="center">{{itemPlanilla.fechaSalida}}</td>
-                <td align="center">{{itemPlanilla.horaSalida}}</td>
-                <td align="center" class="cursor-color" (click)="cerrarReparto(itemPlanilla.id)">Quitar</td>
-              </tr>
-            </tbody>
-            <tbody *ngIf="planillasPendientesDeposito.length>0">
-              <tr class="planilla-no-seleccionada" *ngFor="let itemPlanilla of planillasPendientesDeposito; let i=index"
-                id="fila{{i}}" (click)="cambioPlanilla(i)">
-                <td class="number-right">{{itemPlanilla.id}}</td>
-                <td align="center">{{itemPlanilla.zona.nombre}}</td>
-                <td align="center">{{itemPlanilla.vehiculoProveedor.marcaVehiculo.nombre}} - Poliza:
-                  {{itemPlanilla.vehiculoProveedor.marcaVehiculo.numeroPoliza}}</td>
-                <td align="center">{{itemPlanilla.choferProveedor.nombre}}</td>
-                <td align="center">{{itemPlanilla.fechaSalida}}</td>
-                <td align="center">{{itemPlanilla.horaSalida}}</td>
-                <td align="center" class="cursor-color" (click)="cerrarReparto(itemPlanilla.id)">Quitar</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
       </div>
       <br>
       <div class="row">
-        <div class="col-md-12" style="height: 200px; overflow-y: scroll;">
-          <table class="table table-bordered table-striped table-sm table-condensed tabla-reporte">
-            <thead>
-              <tr>
-                <th class="text-center" style="width: 30px" scope="col">Tipo Cpte.</th>
-                <th class="text-center" style="width: 30px" scope="col">N° Comprobante</th>
-                <th class="text-center" style="width: 100px" scope="col">Destinatario</th>
-                <th class="text-center" style="width: 100px" scope="col">Domicilio</th>
-                <th class="text-center" style="width: 100px" scope="col">Remitente</th>
-                <th class="text-center" style="width: 100px" scope="col">Cta.Cte.</th>
-                <th class="text-center" style="width: 60px" scope="col">Contado</th>
-                <th class="text-center" style="width: 60px" scope="col">Bultos</th>
-                <th class="text-center" style="width: 60px" scope="col">ContraReembolso</th>
-                <th class="text-center" style="width: 50px" scope="col">Kg</th>
-                <th class="text-center" style="width: 60px" scope="col">-</th>
-              </tr>
-            </thead>
-            <tbody *ngIf="comprobantesPropio.length>0">
-              <ng-container *ngFor="let itemComprobante of comprobantesPropio; let i=index">
-                <tr *ngIf="itemComprobante.ordenRecoleccion!=null">
-                  <td class="number-right">{{itemComprobante.ordenRecoleccion.tipoComprobante.nombre}}</td>
-                  <td align="center">{{itemComprobante.id}}</td>
-                  <td align="center">{{itemComprobante.ordenRecoleccion.cliente.razonSocial}}</td>
-                  <td align="center">{{itemComprobante.ordenRecoleccion.cliente.domicilio}}</td>
-                  <td align="center">{{itemComprobante.ordenRecoleccion.empresa.razonSocial}}</td>
-                  <td align="center"></td>
-                  <td class="number-right">{{itemComprobante.ordenRecoleccion.importeRetiro}}</td>
-                  <td class="number-right">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
-                  <td align="center"></td>
-                  <td class="number-right">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
-                  <td align="center" class="cursor-color" (click)="quitarComprobante('propio', itemComprobante.id)">
-                    Quitar</td>
-                </tr>
-                <tr *ngIf="itemComprobante.viajeRemito!=null">
-                  <td align="center">{{itemComprobante.viajeRemito.tipoComprobante.nombre}}</td>
-                  <td align="center">{{itemComprobante.id}}</td>
-                  <td align="center">{{itemComprobante.viajeRemito.clienteDestinatario.razonSocial}}</td>
-                  <td align="center">{{itemComprobante.viajeRemito.clienteDestinatario.domicilio}}</td>
-                  <td align="center">{{itemComprobante.viajeRemito.clienteRemitente.razonSocial}}</td>
-                  <td align="center"></td>
-                  <td class="number-right">{{itemComprobante.viajeRemito.importeRetiro}}</td>
-                  <td class="number-right">{{itemComprobante.viajeRemito.bultos}}</td>
-                  <td class="number-right"></td>
-                  <td class="number-right">{{itemComprobante.viajeRemito.kilosEfectivo}}</td>
-                  <td align="center" class="cursor-color" (click)="quitarComprobante('propio', itemComprobante.id)">
-                    Quitar</td>
-                </tr>
-                <tr *ngIf="itemComprobante.ventaComprobante!=null">
-                  <td align="center">{{itemComprobante.ventaComprobante.tipoComprobante.nombre}}</td>
-                  <td align="center">{{itemComprobante.id}}</td>
-                  <td align="center">{{itemComprobante.ventaComprobante.clienteDestinatario.razonSocial}}</td>
-                  <td align="center">{{itemComprobante.ventaComprobante.clienteDestinatario.domicilio}}</td>
-                  <td align="center">{{itemComprobante.ventaComprobante.clienteRemitente.razonSocial}}</td>
-                  <td align="center">Si</td>
-                  <td class="number-right">{{itemComprobante.ventaComprobante.importeTotal}}</td>
-                  <td class="number-right">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.bultos}}</td>
-                  <td align="center">Si</td>
-                  <td class="number-right">{{itemComprobante.ventaComprobante.ventaComprobanteItemFAs.kilosEfectivo}}</td>
-                  <td align="center" class="cursor-color" (click)="quitarComprobante('propio', itemComprobante.id)">
-                    Quitar</td>
-                </tr>
+        <div class="tabla">
+          <div class="tabla-ancho">
+            <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+              <ng-container matColumnDef="numeroReparto">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="width: 5px;">N° Reparto
+                </th>
+                <td mat-cell *matCellDef="let elemento; let i=index" class="number-right">
+                  {{elemento.id}}</td>
               </ng-container>
-
-            </tbody>
-            <tbody *ngIf="comprobantesTercero.length>0">
-              <tr *ngFor="let itemComprobante of comprobantesTercero; let i=index">
-                <td align="center">{{itemComprobante.ordenRecoleccion.tipoComprobante.nombre}}</td>
-                <td align="center">{{itemComprobante.id}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.razonSocial}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.domicilio}}</td>
-                <td align="center">{{itemComprobante.repartoPropio.empresa.razonSocial}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.esCuentaCorriente? 'Si' : 'No'}}</td>
-                <td align="center">{{itemComprobante.personal.alias}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.pagoEnOrigen? 'Si' : 'No'}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
-                <td align="center" class="cursor-color" (click)="quitarComprobante('tercero', itemComprobante.id)">
-                  Quitar</td>
-              </tr>
-            </tbody>
-            <tbody *ngIf="comprobantesDeposito.length>0">
-              <tr *ngFor="let itemComprobante of comprobantesDeposito; let i=index">
-                <td align="center">{{itemComprobante.ordenRecoleccion.tipoComprobante.nombre}}</td>
-                <td align="center">{{itemComprobante.id}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.razonSocial}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.domicilio}}</td>
-                <td align="center">{{itemComprobante.repartoPropio.empresa.razonSocial}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.esCuentaCorriente? 'Si' : 'No'}}</td>
-                <td align="center">{{itemComprobante.personal.alias}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.bultos}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.pagoEnOrigen? 'Si' : 'No'}}</td>
-                <td align="center">{{itemComprobante.ordenRecoleccion.cliente.kilosEfectivo}}</td>
-                <td align="center" class="cursor-color" (click)="quitarComprobante('retiro', itemComprobante.id)">Quitar
+              <ng-container matColumnDef="fechaRegistracion">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Registracion</th>
+                <td mat-cell *matCellDef="let elemento">
+                  {{elemento.fechaRegistracion | date: 'dd-MM-yyyy'}}
                 </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <br>
-      <div class="row">
-        <div class="col-md-2">
-          <div class="form-group has-float-label">
-            <label for="idEstado" class="tamanio-label">Estado</label>
-            <input id="idEstado" type="text" formControlName="estado" class="form-control form-control-sm">
+              </ng-container>
+              <ng-container matColumnDef="zona">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Zona</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.zona.nombre}}</td>
+              </ng-container>
+              <ng-container matColumnDef="vehiculo">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Vehículo</th>
+                <td mat-cell *matCellDef="let elemento">
+                  <span>{{elemento.vehiculo!=null ? elemento.vehiculo.alias: elemento.vehiculoProveedor.alias}}</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="chofer">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Chofer</th>
+                <td mat-cell *matCellDef="let elemento">
+                  <span>{{elemento.personal!=null? elemento.personal.alias: elemento.choferProveedor.alias}}</span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="fechaSalida">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Salida</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.fechaSalida | date: 'dd/MM/yyyy'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="horaSalida">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Hora Salida</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.horaSalida | date: 'hh:mm'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="fechaRegreso">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha Regreso</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.fechaRegreso | date: 'dd/MM/yyyy'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="horaRegreso">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Hora Regreso</th>
+                <td mat-cell *matCellDef="let elemento">{{elemento.horaRegreso | date: 'hh:mm'}}</td>
+              </ng-container>
+              <ng-container matColumnDef="ordenesCombustibles">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Ordenes Combustibles</th>
+                <td mat-cell *matCellDef="let elemento">
+                  <span class="cursor-color" (click)="abrirOrdenesCombustibles(elemento)">
+                    <i class="material-icons">
+                      local_gas_station
+                    </i>
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="adelantosEfectivos">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Adelantos Efectivo</th>
+                <td mat-cell *matCellDef="let elemento">
+                  <span class="cursor-color" (click)="abrirAdelantosEfectivo(elemento)">
+                    <i class="material-icons">
+                      attach_money
+                    </i>
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="comprobantes">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Comprobantes</th>
+                <td mat-cell *matCellDef="let elemento">
+                  <span class="cursor-color" (click)="abrirComprobantes(elemento)">
+                    <i class="material-icons">
+                      assignment
+                    </i>
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="cerrar" stickyEnd>
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td mat-cell *matCellDef="let elemento; let i=index">
+                  <span class="cursor-color" (click)="activarCerrarReparto(elemento)"
+                    *ngIf="elemento.repartoComprobantes.length > 0">
+                    Cerrar
+                  </span>
+                  <span *ngIf="elemento.repartoComprobantes.length == 0">
+                    Cerrar
+                  </span>
+                </td>
+              </ng-container>
+              <ng-container matColumnDef="eliminar" stickyEnd>
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td mat-cell *matCellDef="let elemento; let i=index">
+                  <span class="cursor-color-rojo" (click)="activarEliminarReparto(elemento)">
+                    x
+                  </span>
+                </td>
+              </ng-container>
+              <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+              <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+            </table>
           </div>
-        </div>
-        <div class="col-md-2">
-          <div class="form-group has-float-label">
-            <label for="idCobranza" class="tamanio-label">Cobranza</label>
-            <input id="idCobranza" type="text" formControlName="cobranza" class="form-control form-control-sm">
-          </div>
-        </div>
-        <div class="col-md-2">
-          <div class="form-group has-float-label">
-            <label for="idContado" class="tamanio-label">Contado</label>
-            <input id="idContado" type="number" formControlName="contado" class="form-control form-control-sm">
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-group has-float-label">
-            <label for="idCobranza" class="tamanio-label">Cobranza ContraReembolso</label>
-            <input id="idCobranza" type="text" formControlName="cobranzaContraReembolso"
-              class="form-control form-control-sm">
-          </div>
-        </div>
-        <div class="col-md-2">
-        </div>
-        <div class="col-md-1">
-          <button id="idBoton" class="btn btn-primary btn-block" type="button">
-            Totales
-          </button>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group has-float-label">
-            <label for="idObservaciones" class="tamanio-label">Observaciones</label>
-            <textarea rows="2" id="idObservaciones" type="text" formControlName="observaciones"
-              class="form-control form-control-sm"></textarea>
-          </div>
-        </div>
-        <div class="col-md-4"></div>
-        <div class="col-md-2">
-          <button id="idBoton" class="btn btn-primary btn-block" type="button">
-            Confirmar y Procesar
-          </button>
         </div>
       </div>
     </form>

@@ -1,25 +1,20 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { Reparto } from 'src/app/modelos/reparto';
 import { FormGroup, FormControl } from '@angular/forms';
-import { ZonaService } from 'src/app/servicios/zona.service';
 import { AppComponent } from 'src/app/app.component';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
-import { VehiculoService } from 'src/app/servicios/vehiculo.service';
-import { VehiculoProveedorService } from 'src/app/servicios/vehiculo-proveedor.service';
-import { PersonalService } from 'src/app/servicios/personal.service';
-import { ChoferProveedorService } from 'src/app/servicios/chofer-proveedor.service';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { FechaService } from 'src/app/servicios/fecha.service';
-import { RepartoPropioService } from 'src/app/servicios/reparto-propio.service';
-import { RepartoTerceroService } from 'src/app/servicios/reparto-tercero.service';
-import { RetiroDepositoService } from 'src/app/servicios/retiro-deposito.service';
-import { RepartoPropioComprobanteService } from 'src/app/servicios/reparto-propio-comprobante.service';
-import { RepartoTerceroComprobanteService } from 'src/app/servicios/reparto-tercero-comprobante.service';
-import { RetiroDepositoComprobanteService } from 'src/app/servicios/retiro-deposito-comprobante.service';
-import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
-import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
-import { RepartoEntrante } from 'src/app/modelos/repartoEntrante';
+import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
+import { Subscription } from 'rxjs';
+import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
+import { RepartoService } from 'src/app/servicios/reparto.service';
+import { SeguimientoViajeRemitoService } from 'src/app/servicios/seguimiento-viaje-remito.service';
+import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimiento-venta-comprobante.service';
+import { SeguimientoVentaComprobante } from 'src/app/modelos/seguimientoVentaComprobante';
+import { SeguimientoOrdenRecoleccion } from 'src/app/modelos/seguimientoOrdenRecoleccion';
+import { SeguimientoViajeRemito } from 'src/app/modelos/seguimientoViajeRemito';
+import { LoaderService } from 'src/app/servicios/loader.service';
+import { LoaderState } from 'src/app/modelos/loader';
 
 @Component({
   selector: 'app-reparto-entrante',
@@ -28,102 +23,150 @@ import { RepartoEntrante } from 'src/app/modelos/repartoEntrante';
 })
 export class RepartoEntranteComponent implements OnInit {
   //Define el formulario General
-  public formulario:FormGroup;
+  public formulario: FormGroup;
+  //Define como un formControl
+  public tipoViaje: FormControl = new FormControl();
   //Define el formulario Comrpobante
-  public formularioComprobante:FormGroup;
-  //Define el Id de la Planilla seleccionada en la primer Tabla
-  public idPlanillaSeleciconada: number;
-  //Define como un formControl
-  public tipoViaje:FormControl = new FormControl();
-  //Define como un formControl
-  public tipoItem:FormControl = new FormControl();
-  //Define la lista de resultados para Zonas, Comprobantes, Letras
-  public resultadosZona = [];
-  public resultadosComprobante = [];
-  public resultadosLetra = [];
-  //Define la lista de resultados para vehiculo o vehiculoProveedor
-  public resultadosVehiculo = [];
-  //Define la lista de resultados para remolque
-  public resultadosRemolque = [];
-  //Define la lista de resultados para chofer
-  public resultadosChofer = [];
-  //Define la lista de que muestra en la primer tabla (planilla pendientes de cerrar)
-  public planillasPendientesPropio = [];
-  public planillasPendientesTercero = [];
-  public planillasPendientesDeposito = [];
-  //Define la lista de comprobantes para la planilla seleccionada
-  public comprobantesPropio = [];
-  public comprobantesTercero = [];
-  public comprobantesDeposito = [];
-  //Define la lista de acompañantes
-  public listaAcompaniantes = [];
-  //Define la lista de tipo comprobantes Activos 
-  public listaTipoComprobantes = [];
-  //Define una bandera para control
-  public bandera:boolean=false;
-  
+  // public formularioComprobante:FormGroup;
+  // //Define el Id de la Planilla seleccionada en la primer Tabla
+  // public idPlanillaSeleciconada: number;
+
+  // //Define como un formControl
+  // public tipoItem:FormControl = new FormControl();
+  // //Define la lista de resultados para Zonas, Comprobantes, Letras
+  // public resultadosZona = [];
+  // public resultadosComprobante = [];
+  // public resultadosLetra = [];
+  // //Define la lista de resultados para vehiculo o vehiculoProveedor
+  // public resultadosVehiculo = [];
+  // //Define la lista de resultados para remolque
+  // public resultadosRemolque = [];
+  // //Define la lista de resultados para chofer
+  // public resultadosChofer = [];
+  // //Define la lista de que muestra en la primer tabla (planilla pendientes de cerrar)
+  // public planillasPendientesPropio = [];
+  // public planillasPendientesTercero = [];
+  // public planillasPendientesDeposito = [];
+  // //Define la lista de comprobantes para la planilla seleccionada
+  // public comprobantesPropio = [];
+  // public comprobantesTercero = [];
+  // public comprobantesDeposito = [];
+  // //Define la lista de acompañantes
+  // public listaAcompaniantes = [];
+  // //Define la lista de tipo comprobantes Activos 
+  // public listaTipoComprobantes = [];
+  // //Define una bandera para control
+  // public bandera:boolean=false;
+  //Define la lista completa de registros
+  public listaCompleta = new MatTableDataSource([]);
+  //Define las columnas de la tabla general
+  public columnas: string[] = ['numeroReparto', 'fechaRegistracion', 'zona', 'vehiculo', 'chofer', 'fechaSalida', 'horaSalida', 'fechaRegreso', 'horaregreso',
+    'ordenesCombustibles', 'adelantosEfectivos', 'comprobantes', 'entrar', 'descargar'];
+  //Define la matSort
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   constructor(
-    private modelo: RepartoEntrante, private toastr: ToastrService, private appService: AppService,
-    private appComponent: AppComponent, public dialog: MatDialog, 
-    private repartoPropioService: RepartoPropioService, private repartoTerceroService: RepartoTerceroService, private retiroDepositoService: RetiroDepositoService,
-    private fechaService: FechaService, private repartoPropioComp: RepartoPropioComprobanteService, private repartoTerceroComp: RepartoTerceroComprobanteService,
-    private retiroDepositoComp: RetiroDepositoComprobanteService
+    private modelo: Reparto, private toastr: ToastrService, private appService: AppService,
+    private appComponent: AppComponent, public dialog: MatDialog, private loaderService: LoaderService,
+    private seguimientoOrdenRecoleccionService: SeguimientoOrdenRecoleccionService, private servicio: RepartoService,
+    private seguimientoViajeRemitoService: SeguimientoViajeRemitoService, private seguimientoVentaCpteService: SeguimientoVentaComprobanteService,
+    private seguimientoVentaComprobante: SeguimientoVentaComprobante, private seguimientoOrdenRecoleccion: SeguimientoOrdenRecoleccion,
+    private seguimientoViajeRemito: SeguimientoViajeRemito
   ) {
-    
-   }
+
+  }
 
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Define el formulario y validaciones
     this.formulario = this.modelo.formulario;
-    //Reestablece los valores
-    this.reestablecerFormulario(undefined);
-    //Establece los valores por defecto
-    this.establecerValoresPorDefecto();
+    // //Reestablece los valores
+    // this.reestablecerFormulario(undefined);
+    // //Establece los valores por defecto
+    // this.establecerValoresPorDefecto();
   }
 
-  //Reestablece el formulario completo
-  public reestablecerFormulario(id){
-    this.resultadosChofer = [];
-    this.resultadosComprobante = [];
-    this.resultadosLetra = [];
-    this.resultadosRemolque = [];
-    this.resultadosVehiculo = [];
-    this.resultadosZona = [];
-    this.formulario.reset(); 
-    this.planillasPendientesPropio = [];
-    this.planillasPendientesTercero = [];
-    this.planillasPendientesDeposito = [];
-    this.comprobantesPropio = [];
-    this.comprobantesTercero = [];
-    this.comprobantesDeposito = [];
-    this.idPlanillaSeleciconada = null;
-    setTimeout(function() {
-      document.getElementById('idTipoViaje').focus();
-    }, 20);
+  //Controla el cambio en el select TipoViaje
+  public cambioTipoViaje() {
+    this.loaderService.show();
+    this.listaCompleta = new MatTableDataSource([]);
+    if (this.tipoViaje.value) {
+      this.servicio.listarAbiertosPropios().subscribe(
+        res => {
+          console.log(res.json());
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error(err.json().mensaje);
+          this.loaderService.hide();
+        }
+      )
+    } else {
+      this.servicio.listarAbiertosTerceros().subscribe(
+        res => {
+          console.log(res.json());
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error(err.json().mensaje);
+          this.loaderService.hide();
+        }
+      )
+    }
   }
-  //Establece los valores por defecto
-  private establecerValoresPorDefecto(): void {
-    this.fechaService.obtenerFecha().subscribe(res=>{
-      this.formulario.get('fechaRegreso').setValue(res.json());
-    });
-    this.fechaService.obtenerHora().subscribe(res=>{
-      let hora = res.json();
-      this.formatearHora(hora);
-    });
-    this.tipoViaje.setValue(1);
-    // this.cambioTipoViaje();
-    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
-    this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
-    this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
-    this.formulario.get('tipoComprobante').setValue( {id:12});
-  }
-  //Formatea la Hora
-  public formatearHora(hora){
-    let split = hora.split(':');
-    let horaFormateada = split[0] + ':' + split[1] + ':00';
-    this.formulario.get('horaRegreso').setValue(horaFormateada);
-  }
+
+  // //Reestablece el formulario completo
+  // public reestablecerFormulario(id){
+  //   this.resultadosChofer = [];
+  //   this.resultadosComprobante = [];
+  //   this.resultadosLetra = [];
+  //   this.resultadosRemolque = [];
+  //   this.resultadosVehiculo = [];
+  //   this.resultadosZona = [];
+  //   this.formulario.reset(); 
+  //   this.planillasPendientesPropio = [];
+  //   this.planillasPendientesTercero = [];
+  //   this.planillasPendientesDeposito = [];
+  //   this.comprobantesPropio = [];
+  //   this.comprobantesTercero = [];
+  //   this.comprobantesDeposito = [];
+  //   this.idPlanillaSeleciconada = null;
+  //   setTimeout(function() {
+  //     document.getElementById('idTipoViaje').focus();
+  //   }, 20);
+  // }
+  // //Establece los valores por defecto
+  // private establecerValoresPorDefecto(): void {
+  //   this.fechaService.obtenerFecha().subscribe(res=>{
+  //     this.formulario.get('fechaRegreso').setValue(res.json());
+  //   });
+  //   this.fechaService.obtenerHora().subscribe(res=>{
+  //     let hora = res.json();
+  //     this.formatearHora(hora);
+  //   });
+  //   this.tipoViaje.setValue(1);
+  //   // this.cambioTipoViaje();
+  //   this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+  //   this.formulario.get('empresa').setValue(this.appComponent.getEmpresa());
+  //   this.formulario.get('sucursal').setValue(this.appComponent.getUsuario().sucursal);
+  //   this.formulario.get('usuarioAlta').setValue(this.appComponent.getUsuario());
+  //   this.formulario.get('tipoComprobante').setValue( {id:12});
+  // }
+  // //Formatea la Hora
+  // public formatearHora(hora){
+  //   let split = hora.split(':');
+  //   let horaFormateada = split[0] + ':' + split[1] + ':00';
+  //   this.formulario.get('horaRegreso').setValue(horaFormateada);
+  // }
   //Controla el cambio en Tipo de Viaje
   // public cambioTipoViaje(){
   //   this.listarPrimerTabla();
@@ -151,7 +194,7 @@ export class RepartoEntranteComponent implements OnInit {
   //         }
   //       )
   //       break;
-      
+
   //     case 2:
   //       this.repartoTerceroService.listarPorEstaCerrada(false).subscribe(
   //         res=>{
@@ -212,7 +255,7 @@ export class RepartoEntranteComponent implements OnInit {
   //         }
   //       }
   //       break;
-      
+
   //     case 2:
   //       this.repartoTerceroComp.listarComprobantes(id).subscribe(
   //         res=>{
@@ -226,7 +269,7 @@ export class RepartoEntranteComponent implements OnInit {
   //         }
   //       );
   //       break;
-      
+
   //     case 3:
   //       this.retiroDepositoComp.listarComprobantes(id).subscribe(
   //         res=>{
@@ -258,7 +301,7 @@ export class RepartoEntranteComponent implements OnInit {
   //           }
   //         );
   //       break;
-      
+
   //     case 2:
   //       this.repartoTerceroService.cerrarReparto(idReparto).subscribe(
   //         res=>{
@@ -272,7 +315,7 @@ export class RepartoEntranteComponent implements OnInit {
   //         }
   //       );
   //       break;
-      
+
   //     case 3:
   //       this.retiroDepositoService.cerrarReparto(idReparto).subscribe(
   //         res=>{
