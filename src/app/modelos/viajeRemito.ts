@@ -21,7 +21,6 @@ export class ViajeRemito {
             version: elemento.version,
             sucursalIngreso: elemento.sucursalIngreso,
             empresa: elemento.empresa,
-            usuario: elemento.usuario,
             fecha: elemento.fecha,
             numeroCamion: elemento.numeroCamion,
             sucursalDestino: elemento.sucursalDestino,
@@ -31,7 +30,7 @@ export class ViajeRemito {
             numero: elemento.numero,
             clienteRemitente: elemento.clienteRemitente,
             clienteDestinatario: elemento.clienteDestinatario,
-            clienteDestinatarioSuc: elemento.clienteDestinatarioSuc,
+            sucursalClienteDest: elemento.sucursalClienteDest,
             bultos: elemento.bultos,
             kilosEfectivo: elemento.kilosEfectivo,
             kilosAforado: elemento.kilosAforado,
@@ -43,7 +42,9 @@ export class ViajeRemito {
             observaciones: elemento.observacion,
             estaFacturado: elemento.estaFacturado,
             estaEnReparto: elemento.estaEnReparto,
-            alias: elemento.alias
+            alias: elemento.alias,
+            usuarioAlta: elemento.usuarioAlta,
+            usuarioMod: elemento.usuarioMod
         })
     }
 }

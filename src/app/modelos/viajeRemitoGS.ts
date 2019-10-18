@@ -15,7 +15,6 @@ export class ViajeRemitoGS {
             version: new FormControl(),
             sucursalIngreso: new FormControl(),
             empresa: new FormControl(),
-            usuario: new FormControl(),
             fecha: new FormControl('', Validators.required),
             numeroCamion: new FormControl('', Validators.required),
             sucursalDestino: new FormControl('', Validators.required),
@@ -40,7 +39,9 @@ export class ViajeRemitoGS {
             estaFacturado: new FormControl(),
             seguimiento: new FormControl(''),
             estaEnReparto: new FormControl(),
-            alias: new FormControl()
+            alias: new FormControl(),
+            usuarioAlta: new FormControl(),
+            usuarioMod: new FormControl()
         });
         // crear el formulario filtro
         this.formularioFiltro = new FormGroup({

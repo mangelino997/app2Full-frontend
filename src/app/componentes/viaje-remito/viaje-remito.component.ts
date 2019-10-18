@@ -5,7 +5,7 @@ import { ClienteService } from '../../servicios/cliente.service';
 import { SucursalService } from '../../servicios/sucursal.service';
 import { TipoComprobanteService } from '../../servicios/tipo-comprobante.service';
 import { AppService } from '../../servicios/app.service';
-import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormGroup, FormControl } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialog, MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
 import { FechaService } from 'src/app/servicios/fecha.service';
@@ -382,7 +382,7 @@ export class ViajeRemitoComponent implements OnInit {
     this.formulario.get('letra').enable();
     this.formulario.get('sucursalIngreso').setValue(this.appService.getUsuario().sucursal);
     this.formulario.get('empresa').setValue(this.appService.getEmpresa());
-    this.formulario.get('usuario').setValue(this.appService.getUsuario());
+    this.formulario.get('usuarioAlta').setValue(this.appService.getUsuario());
     this.servicio.agregar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -406,6 +406,7 @@ export class ViajeRemitoComponent implements OnInit {
   private actualizar() {
     this.loaderService.show();
     this.formulario.get('letra').enable();
+    this.formulario.get('usuarioMod').setValue(this.appService.getUsuario());
     this.servicio.actualizar(this.formulario.value).subscribe(
       res => {
         let respuesta = res.json();
@@ -596,7 +597,7 @@ export class ViajeRemitoComponent implements OnInit {
   public abrirReporte(): void {
     let lista = this.prepararDatos(this.listaCompleta.data);
     let datos = {
-      nombre: 'Guias de Servicio',
+      nombre: 'Remitos',
       empresa: this.appService.getEmpresa().razonSocial,
       usuario: this.appService.getUsuario().nombre,
       datos: lista,
