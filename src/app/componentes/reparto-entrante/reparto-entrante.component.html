@@ -1,5 +1,5 @@
 <div id="repartoentrante" class="row justify-content-center container-fluid">
-  <div class="col-md-12">
+  <div class="col-md-10">
     <form [formGroup]="formulario">
       <h5 class="text-center">Reparto Entrante</h5>
       <div class="row">
@@ -61,7 +61,7 @@
               </ng-container>
               <ng-container matColumnDef="horaRegreso">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Hora Regreso</th>
-                <td mat-cell *matCellDef="let elemento">{{elemento.horaRegreso | date: 'hh:mm'}}</td>
+                <td mat-cell *matCellDef="let elemento">{{elemento.horaRegreso | date: 'hh:mm'}} {{elemento.horaRegreso? 'hs.' : ''}}</td>
               </ng-container>
               <ng-container matColumnDef="ordenesCombustibles">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Ordenes Combustibles</th>
@@ -83,33 +83,23 @@
                   </span>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="comprobantes">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header>Comprobantes</th>
-                <td mat-cell *matCellDef="let elemento">
-                  <span class="cursor-color" (click)="abrirComprobantes(elemento)">
+              <ng-container matColumnDef="entrar" stickyEnd>
+                <th mat-header-cell *matHeaderCellDef>-</th>
+                <td mat-cell *matCellDef="let elemento; let i=index">
+                  <span class="cursor-color" (click)="abrirAdelantosEfectivo(elemento)">
                     <i class="material-icons">
-                      assignment
+                      input
                     </i>
                   </span>
                 </td>
               </ng-container>
-              <ng-container matColumnDef="cerrar" stickyEnd>
+              <ng-container matColumnDef="descargar" stickyEnd>
                 <th mat-header-cell *matHeaderCellDef>-</th>
                 <td mat-cell *matCellDef="let elemento; let i=index">
-                  <span class="cursor-color" (click)="activarCerrarReparto(elemento)"
-                    *ngIf="elemento.repartoComprobantes.length > 0">
-                    Cerrar
-                  </span>
-                  <span *ngIf="elemento.repartoComprobantes.length == 0">
-                    Cerrar
-                  </span>
-                </td>
-              </ng-container>
-              <ng-container matColumnDef="eliminar" stickyEnd>
-                <th mat-header-cell *matHeaderCellDef>-</th>
-                <td mat-cell *matCellDef="let elemento; let i=index">
-                  <span class="cursor-color-rojo" (click)="activarEliminarReparto(elemento)">
-                    x
+                  <span class="cursor-color" (click)="abrirAdelantosEfectivo(elemento)">
+                    <i class="material-icons">
+                      system_update_alt
+                    </i>
                   </span>
                 </td>
               </ng-container>

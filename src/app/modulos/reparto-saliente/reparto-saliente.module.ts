@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { RepartoSalienteRoutingModule } from './reparto-saliente-routing.module';
 
-import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
-  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule } from '@angular/material';
+import {
+  MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule,
+  MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule
+} from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RepartoComponent, AcompanianteDialogo, CerrarRepartoDialogo, EliminarRepartoDialogo } from 'src/app/componentes/reparto-saliente/reparto.component';
 import { Reparto } from 'src/app/modelos/reparto';
@@ -65,8 +67,6 @@ import { EliminarRepartoCpteDialogo, RepartoComprobanteComponent } from 'src/app
     RepartoComprobante,
     RepartoPersonal,
     Seguimiento,
-    // ViajeCombustible,
-    // ViajeEfectivo,
     VehiculoService,
     VehiculoProveedorService,
     PersonalService,
@@ -86,12 +86,12 @@ import { EliminarRepartoCpteDialogo, RepartoComprobanteComponent } from 'src/app
     SeguimientoOrdenRecoleccionService,
     SeguimientoViajeRemitoService,
     SeguimientoVentaComprobanteService,
-    
+
   ],
   entryComponents: [
     AcompanianteDialogo,
     CerrarRepartoDialogo,
-    // EliminarRepartoCpteDialogo,
+    EliminarRepartoCpteDialogo,
     EliminarRepartoDialogo,
     RepartoComprobanteComponent
 

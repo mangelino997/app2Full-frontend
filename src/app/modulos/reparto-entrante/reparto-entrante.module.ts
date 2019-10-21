@@ -15,6 +15,7 @@ import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimient
 import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.service';
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
 import { RepartoComprobanteService } from 'src/app/servicios/reparto-comprobante.service';
+import { RepartoService } from 'src/app/servicios/reparto.service';
 
 @NgModule({
   declarations: [
@@ -46,6 +47,7 @@ import { RepartoComprobanteService } from 'src/app/servicios/reparto-comprobante
     OrdenRecoleccionService,
     ViajeRemitoService,
     RepartoComprobanteService,
+    RepartoService
 
   ],
   entryComponents: [

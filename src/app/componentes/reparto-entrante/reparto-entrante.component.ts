@@ -60,8 +60,8 @@ export class RepartoEntranteComponent implements OnInit {
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla general
-  public columnas: string[] = ['numeroReparto', 'fechaRegistracion', 'zona', 'vehiculo', 'chofer', 'fechaSalida', 'horaSalida', 'fechaRegreso', 'horaregreso',
-    'ordenesCombustibles', 'adelantosEfectivos', 'comprobantes', 'entrar', 'descargar'];
+  public columnas: string[] = ['numeroReparto', 'fechaRegistracion', 'zona', 'vehiculo', 'chofer', 'fechaSalida', 'horaSalida', 'fechaRegreso', 'horaRegreso',
+    'ordenesCombustibles', 'adelantosEfectivos', 'entrar', 'descargar'];
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   //Define el mostrar del circulo de progreso

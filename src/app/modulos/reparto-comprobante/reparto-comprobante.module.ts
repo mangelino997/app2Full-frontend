@@ -17,7 +17,6 @@ import { RepartoComprobanteRoutingModule } from './reparto-comprobante-routing-m
 @NgModule({
   declarations: [
     RepartoComprobanteComponent,
-    EliminarRepartoCpteDialogo
   ],
   imports: [
     CommonModule,
@@ -50,7 +49,6 @@ import { RepartoComprobanteRoutingModule } from './reparto-comprobante-routing-m
     
   ],
   entryComponents: [
-    EliminarRepartoCpteDialogo
   ]
 })
 export class RepartoComprobanteModule { }

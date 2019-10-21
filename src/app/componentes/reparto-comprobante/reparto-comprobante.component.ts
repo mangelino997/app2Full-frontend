@@ -11,13 +11,7 @@ import { AppService } from 'src/app/servicios/app.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { ToastrService } from 'ngx-toastr';
-import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
-import { SeguimientoViajeRemitoService } from 'src/app/servicios/seguimiento-viaje-remito.service';
-import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimiento-venta-comprobante.service';
 import { RepartoComprobanteService } from 'src/app/servicios/reparto-comprobante.service';
-import { SeguimientoVentaComprobante } from 'src/app/modelos/seguimientoVentaComprobante';
-import { SeguimientoOrdenRecoleccion } from 'src/app/modelos/seguimientoOrdenRecoleccion';
-import { SeguimientoViajeRemito } from 'src/app/modelos/seguimientoViajeRemito';
 import { RepartoService } from 'src/app/servicios/reparto.service';
 
 @Component({
@@ -56,10 +50,7 @@ export class RepartoComprobanteComponent implements OnInit {
     private modelo: RepartoComprobante, private tipoComprobanteService: TipoComprobanteService, private appService: AppService,
     private ordenRecoleccionService: OrdenRecoleccionService, private viajeRemitoService: ViajeRemitoService, private servicio: RepartoComprobanteService,
     private ventaComprobanteService: VentaComprobanteService, private loaderService: LoaderService, private toastr: ToastrService,
-    private seguimientoOrdenRecoleccionService: SeguimientoOrdenRecoleccionService, private repartoService: RepartoService, public dialog: MatDialog,
-    private seguimientoViajeRemitoService: SeguimientoViajeRemitoService, private seguimientoVentaCpteService: SeguimientoVentaComprobanteService,
-    private seguimientoVentaComprobante: SeguimientoVentaComprobante, private seguimientoOrdenRecoleccion: SeguimientoOrdenRecoleccion,
-    private seguimientoViajeRemito: SeguimientoViajeRemito, public dialogRef: MatDialogRef<RepartoComprobanteComponent>, @Inject(MAT_DIALOG_DATA) public data) {
+    private repartoService: RepartoService, public dialog: MatDialog, public dialogRef: MatDialogRef<RepartoComprobanteComponent>, @Inject(MAT_DIALOG_DATA) public data) {
 
   }
 
@@ -78,12 +69,6 @@ export class RepartoComprobanteComponent implements OnInit {
     });
     //Define el formulario Comprobante y validaciones
     this.formularioComprobante = this.modelo.formulario;
-    //Define el formulario Seg. Vta. Cpte. y validaciones
-    this.formularioSegVtaCpte = this.seguimientoVentaComprobante.formulario;
-    //Define el formulario Seg. Orden Recoleccion y validaciones
-    this.formularioSegOrdenRecoleccion = this.seguimientoOrdenRecoleccion.formulario;
-    //Define el formulario Seg. Viaje Remito y validaciones
-    this.formularioSegViajeRemito = this.seguimientoViajeRemito.formulario;
     //Obtiene la lista de tipo de comprobantes
     this.listarTipoComprobantes();
     //Establece valores por defecto
@@ -137,21 +122,9 @@ export class RepartoComprobanteComponent implements OnInit {
     if (tipoComprobante.id == 13) {
       this.ordenRecoleccionService.obtenerPorId(numero).subscribe(
         res => {
-          this.formularioSegOrdenRecoleccion.get('ordenRecoleccion').setValue({ id: res.json().id });
-          this.formularioSegOrdenRecoleccion.get('sucursal').setValue({ id: this.appService.getUsuario().sucursal.id });
-          this.seguimientoOrdenRecoleccionService.agregar(this.formularioSegOrdenRecoleccion.value).subscribe(
-            res => {
-              if (res.status == 201) {
-                this.formularioComprobante.get('ordenRecoleccion').setValue({ id: this.formularioSegOrdenRecoleccion.value.ordenRecoleccion.id });
-                this.agregarComprobanteReparto(this.formularioComprobante.value);
-                this.toastr.success("Seguimiento Orden Recolección: " + res.json().mensaje);
-              }
-              this.loaderService.hide();
-            },
-            err => {
-              err.status == 500 ? this.toastr.error("Se produjo un error en el sistema.") : '';
-            }
-          )
+          // this.formularioSegOrdenRecoleccion.get('ordenRecoleccion').setValue(res.json());
+          this.formularioComprobante.get('ordenRecoleccion').setValue({ id: res.json().id });
+          this.agregarComprobanteReparto(this.formularioComprobante.value);
         },
         err => {
           err.status == 404 ? this.toastr.error("Registro no encontrado") : '';
@@ -160,71 +133,48 @@ export class RepartoComprobanteComponent implements OnInit {
       this.viajeRemitoService.obtener(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
         this.formulario.get('numero').value).subscribe(
           res => {
-            this.formularioSegViajeRemito.get('viajeRemito').setValue(res.json());
-            this.formularioSegViajeRemito.get('sucursal').setValue({ id: this.appService.getUsuario().sucursal.id });
-            this.seguimientoViajeRemitoService.agregar(this.formularioSegViajeRemito.value).subscribe(
-              res => {
-                if (res.status == 201) {
-                  let viajeRemito = {
-                    letra: this.formularioSegViajeRemito.value.viajeRemito.letra,
-                    puntoVenta: this.formularioSegViajeRemito.value.viajeRemito.puntoVenta,
-                    numero: this.formularioSegViajeRemito.value.viajeRemito.numero
-                  }
-                  this.formularioComprobante.get('viajeRemito').setValue(viajeRemito);
-                  this.agregarComprobanteReparto(this.formularioComprobante.value);
-                  this.toastr.success("Seguimiento Viaje Remito: " + res.json().mensaje);
-                }
-                this.loaderService.hide();
-              },
-              err => {
-                err.status == 500 ? this.toastr.error("Se produjo un error en el sistema.") : '';
-              }
-            )
+            let respuesta = res.json();
+            // this.formularioSegViajeRemito.get('viajeRemito').setValue(res.json());
+            let viajeRemito = {
+              letra: respuesta.letra,
+              puntoVenta: respuesta.puntoVenta,
+              numero: respuesta.numero
+            }
+            this.formularioComprobante.get('viajeRemito').setValue(viajeRemito);
+            this.agregarComprobanteReparto(this.formularioComprobante.value);
           },
           err => {
             err.status == 404 ? this.toastr.error("Registro no encontrado") : '';
           })
     } else if (tipoComprobante.id == 1) {
+      console.log(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
+        this.formulario.get('numero').value, tipoComprobante.id);
       this.ventaComprobanteService.obtener(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
         this.formulario.get('numero').value, tipoComprobante.id).subscribe(
           res => {
-            this.formularioSegVtaCpte.get('ventaComprobante').setValue(res.json());
-            this.formularioSegVtaCpte.get('sucursal').setValue({ id: this.appService.getUsuario().sucursal.id });
-            console.log(this.formularioSegVtaCpte.value);
-            this.seguimientoVentaCpteService.agregar(this.formularioSegVtaCpte.value).subscribe(
-              res => {
-                console.log(res);
-                if (res.status == 201) {
-                  let ventaComprobante = {
-                    letra: this.formularioSegVtaCpte.value.ventaComprobante.letra,
-                    puntoVenta: this.formularioSegVtaCpte.value.ventaComprobante.puntoVenta,
-                    numero: this.formularioSegVtaCpte.value.ventaComprobante.numero
-                  }
-                  this.formularioComprobante.get('ventaComprobante').setValue(ventaComprobante);
-                  this.agregarComprobanteReparto(this.formularioComprobante.value);
-                  this.toastr.success("Seguimiento Venta Comprobante: " + res.json().mensaje);
-                }
-                this.loaderService.hide();
-              },
-              err => {
-                err.status == 500 ? this.toastr.error("Se produjo un error en el sistema.") : '';
-              }
-            )
+            console.log(res);
+            let respuesta = res.json();
+            // this.formularioSegVtaCpte.get('ventaComprobante').setValue(res.json());
+            let ventaComprobante = {
+              letra: respuesta.letra,
+              puntoVenta: respuesta.puntoVenta,
+              numero: respuesta.numero,
+              tipoComprobante: respuesta.tipoComprobante
+            }
+            this.formularioComprobante.get('ventaComprobante').setValue(ventaComprobante);
+            this.agregarComprobanteReparto(this.formularioComprobante.value);
           },
           err => {
             err.status == 404 ? this.toastr.error("Registro no encontrado") : '';
           })
     }
-    console.log(this.formularioComprobante.value);
   }
   //Agrega un Comprobante
   private agregarComprobanteReparto(formularioComprobante) {
     this.loaderService.show();
-    console.log(formularioComprobante);
     formularioComprobante.reparto.repartoComprobantes = [];
     this.servicio.agregar(formularioComprobante).subscribe(
       res => {
-        console.log(res.json());
         if (res.status == 201) {
           this.reestablecerFormulario();
           this.establecerValoresPorDefecto();
@@ -233,7 +183,6 @@ export class RepartoComprobanteComponent implements OnInit {
         this.loaderService.hide();
       },
       err => {
-        console.log(err.json());
         this.toastr.error(err.json().mensaje);
         this.loaderService.hide();
       }
@@ -248,14 +197,11 @@ export class RepartoComprobanteComponent implements OnInit {
   public reestablecerFormulario(): void {
     this.vaciarListas();
     this.formulario.reset();
-    this.formularioSegVtaCpte.reset();
-    this.formularioSegViajeRemito.reset();
-    this.formularioSegOrdenRecoleccion.reset();
-    document.getElementById('idNumeroComprobante').focus();
+    this.formularioComprobante.reset();
   }
   //Establece los valores por defecto del formulario viaje combustible
   public establecerValoresPorDefecto() {
-    console.log(this.data.elemento);
+    document.getElementById('idTipoComprobante').focus();
     this.formulario.get('tipoComprobante').setValue(this.tipoComprobantes[0]);
     if (this.data) {
       this.formularioComprobante.get('reparto').patchValue(this.data.elemento);
@@ -267,7 +213,6 @@ export class RepartoComprobanteComponent implements OnInit {
   private listarPorReparto(idReparto) {
     this.repartoService.obtenerPorId(idReparto).subscribe(
       res => {
-        console.log(res.json());
         this.listaCompleta = new MatTableDataSource(res.json().repartoComprobantes);
         this.listaCompleta.sort = this.sort;
       },
@@ -291,34 +236,30 @@ export class RepartoComprobanteComponent implements OnInit {
   public sumaBultosVentaCpte(listaItemFAs) {
     let bultosTotal;
     listaItemFAs.array.forEach(elemento => {
-      console.log(elemento);
       bultosTotal += elemento.bultos;
     });
-    console.log(bultosTotal);
     return bultosTotal;
   }
   //Imprime la suma de kilos efectivos de la lista VentaCpte ItemFAs 
   public sumaKiloEfectivoVentaCpte(listaItemFAs) {
     let kiloEfectivoTotal;
     listaItemFAs.array.forEach(elemento => {
-      console.log(elemento);
       kiloEfectivoTotal += elemento.kiloEfectivo;
     });
-    console.log(kiloEfectivoTotal);
     return kiloEfectivoTotal;
   }
   //Abre el modal para confirmar eliminar comprobante de reparto
   public activarEliminarCpteReparto(elemento) {
     const dialogRef = this.dialog.open(EliminarRepartoCpteDialogo, {
-      width: '95%',
-      maxWidth: '95%',
+      width: '45%',
+      maxWidth: '45%',
       data: {
         elemento: elemento,
         btnCerrar: true
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      document.getElementById('tipoComprobante').focus();
+      this.establecerValoresPorDefecto();
     });
   }
   //Verifica si se selecciono un elemento del autocompletado
