@@ -136,6 +136,7 @@ export class RepartoEntranteComponent implements OnInit {
       width: '95%',
       maxWidth: '95%',
       data: {
+        esRepartoEntrante: true,
         elemento: elemento,
         btnCerrar: true
       },
@@ -149,6 +150,7 @@ export class RepartoEntranteComponent implements OnInit {
       width: '95%',
       maxWidth: '95%',
       data: {
+        esRepartoEntrante: true,
         elemento: elemento,
         btnCerrar: true
       },
