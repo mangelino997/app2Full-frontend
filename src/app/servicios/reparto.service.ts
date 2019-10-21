@@ -97,7 +97,7 @@ export class RepartoService {
   }
   //Actualiza un registro
   public abrirReparto(idReparto) {
-    return this.http.put(this.url + '/abrirReparto', idReparto, this.options);
+    return this.http.get(this.url + '/abrirReparto/' + idReparto, this.options);
   }
   //Elimina un registro
   public eliminar(id) {

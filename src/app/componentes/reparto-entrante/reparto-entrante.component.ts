@@ -15,6 +15,8 @@ import { SeguimientoOrdenRecoleccion } from 'src/app/modelos/seguimientoOrdenRec
 import { SeguimientoViajeRemito } from 'src/app/modelos/seguimientoViajeRemito';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
+import { CombustibleDialogo } from '../combustible-dialogo/combustible-dialogo.component';
+import { EfectivoDialogo } from '../efectivo-dialogo/efectivo-dialogo.component';
 
 @Component({
   selector: 'app-reparto-entrante',
@@ -87,6 +89,10 @@ export class RepartoEntranteComponent implements OnInit {
       });
     //Define el formulario y validaciones
     this.formulario = this.modelo.formulario;
+    //Establece el foco en el primer campo
+    setTimeout(function () {
+      document.getElementById('idTipoViaje').focus();
+    }, 20);
     // //Reestablece los valores
     // this.reestablecerFormulario(undefined);
     // //Establece los valores por defecto
@@ -124,6 +130,33 @@ export class RepartoEntranteComponent implements OnInit {
     }
   }
 
+  //Abre el modal de Viaje Combustible
+  public abrirOrdenesCombustibles(elemento) {
+    const dialogRef = this.dialog.open(CombustibleDialogo, {
+      width: '95%',
+      maxWidth: '95%',
+      data: {
+        elemento: elemento,
+        btnCerrar: true
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+    });
+  }
+  //Abre el modal de viaje Efectivo
+  public abrirAdelantosEfectivo(elemento) {
+    const dialogRef = this.dialog.open(EfectivoDialogo, {
+      width: '95%',
+      maxWidth: '95%',
+      data: {
+        elemento: elemento,
+        btnCerrar: true
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+
+    });
+  }
   // //Reestablece el formulario completo
   // public reestablecerFormulario(id){
   //   this.resultadosChofer = [];

@@ -36,9 +36,7 @@ export class PlanillaCerradaComponent implements OnInit {
   constructor(private modelo: RepartoDTO, private choferProveedorService: ChoferProveedorService, private fechaService: FechaService,
     private personalService: PersonalService, private loaderService: LoaderService, public dialog: MatDialog, private toastr: ToastrService,
     private servicio: RepartoService, private appService: AppService) {
-
   }
-
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -91,8 +89,11 @@ export class PlanillaCerradaComponent implements OnInit {
   //Obtine la lista de registros por filtro y lo setea en la tabla
   public listarPorFiltros() {
     this.loaderService.show();
-    let chofer = this.formulario.value.idChofer;
-    this.formulario.get('idChofer').setValue(this.formulario.value.idChofer.id);
+    let chofer = null;
+    if(this.formulario.value.idChofer){
+      chofer = this.formulario.value.idChofer;
+      this.formulario.get('idChofer').setValue(chofer.id);
+    }
     this.servicio.listarPorFiltros(this.formulario.value).subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
@@ -118,6 +119,7 @@ export class PlanillaCerradaComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
+      this.listarPorFiltros();
       document.getElementById('idTipoViaje').focus();
     });
   }

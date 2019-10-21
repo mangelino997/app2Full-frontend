@@ -12,7 +12,7 @@ import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.ser
 import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
 import { SeguimientoViajeRemitoService } from 'src/app/servicios/seguimiento-viaje-remito.service';
 import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimiento-venta-comprobante.service';
-import { EliminarRepartoCpteDialogo, RepartoComprobanteComponent } from 'src/app/componentes/reparto-comprobante/reparto-comprobante.component';
+import { RepartoComprobanteComponent } from 'src/app/componentes/reparto-comprobante/reparto-comprobante.component';
 import { RepartoComprobanteRoutingModule } from './reparto-comprobante-routing-module';
 @NgModule({
   declarations: [
@@ -46,7 +46,7 @@ import { RepartoComprobanteRoutingModule } from './reparto-comprobante-routing-m
     SeguimientoOrdenRecoleccionService,
     SeguimientoViajeRemitoService,
     SeguimientoVentaComprobanteService,
-    
+
   ],
   entryComponents: [
   ]

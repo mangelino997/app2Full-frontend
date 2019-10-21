@@ -136,8 +136,9 @@ export class EfectivoDialogo implements OnInit {
   }
   //Agrega datos a la tabla de adelanto efectivo
   public agregarEfectivo(): void {
-    this.formularioViajeEfectivo.get('fecha').setValue(this.fechaActual);
+    // this.formularioViajeEfectivo.get('fecha').setValue(this.fechaActual);
     this.formularioViajeEfectivo.get('tipoComprobante').setValue({ id: 16 });
+    this.formularioViajeEfectivo.get('reparto').setValue({ id: this.formularioViajeEfectivo.get('reparto').value.id });
     this.formularioViajeEfectivo.get('sucursal').setValue(this.appServicio.getUsuario().sucursal);
     this.formularioViajeEfectivo.get('usuarioAlta').setValue(this.appServicio.getUsuario());
     !this.formularioViajeEfectivo.value.importe ? this.formularioViajeEfectivo.get('importe').setValue(this.appServicio.establecerDecimales('0.00', 2)) : '';

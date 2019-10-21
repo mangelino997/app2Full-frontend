@@ -14,7 +14,7 @@ export class RepartoDTO {
             esRepartoPropio: new FormControl('', Validators.required), //En Diálogo ‘Planillas Cerradas’  Campo ‘Tipo Viaje’
             fechaDesde: new FormControl('', Validators.required),
             fechaHasta: new FormControl('', Validators.required),
-            idChofer: new FormControl('', Validators.required),
+            idChofer: new FormControl(),
             estaCerrada: new FormControl(),
         });
     }

@@ -29,8 +29,6 @@ import { CombustibleDialogo } from '../combustible-dialogo/combustible-dialogo.c
 export class RepartoComponent implements OnInit {
   //Define el formulario General
   public formulario: FormGroup;
-  //Define el formulario Comrpobante
-  public formularioComprobante: FormGroup;
   //Define como un formControl
   public usuario: FormControl = new FormControl();
   //Define como un formControl
@@ -47,16 +45,6 @@ export class RepartoComponent implements OnInit {
   public resultadosChofer = [];
   //Define la lista de resultados para Zonas, Comprobantes, Letras
   public resultadosZona = [];
-  // public resultadosComprobante = [];
-  //Define el Id de la Planilla seleccionada en la primer Tabla
-  // //Define como un formControl
-  // public tipoItem:FormControl = new FormControl();
-  // //Define la lista de acompañantes
-  // public listaAcompaniantes = [];
-  // //Define la lista de tipo comprobantes Activos 
-  // public listaTipoComprobantes = [];
-  // //Define una bandera para control
-  // public bandera:boolean=false;
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla general
@@ -83,7 +71,6 @@ export class RepartoComponent implements OnInit {
       });
     //Establece el formulario
     this.formulario = this.modelo.formulario;
-    // this.formularioComprobante = this.modelo.formularioComprobante;
     //Reestablece los valores
     this.reestablecerFormulario(undefined);
     //Establece el N° de reparto
@@ -279,8 +266,10 @@ export class RepartoComponent implements OnInit {
     this.formulario.reset();
     this.formulario.get('id').setValue(id);
     this.establecerValoresPorDefecto();
-    document.getElementById('idTipoViaje').focus();
     this.listaCompleta = new MatTableDataSource([]);
+    setTimeout(function () {
+      document.getElementById('idTipoViaje').focus();
+    }, 20);
   }
   //Abre el modal de Viaje Combustible
   public abrirPlanillaCerrada() {
@@ -291,7 +280,7 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-
+      this.listarRepartos();
     });
   }
   //Abre el modal de Viaje Combustible
