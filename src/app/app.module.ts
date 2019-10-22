@@ -49,6 +49,18 @@ import { SeguimientoViajeRemito } from './modelos/seguimientoViajeRemito';
 import { SeguimientoOrdenRecoleccion } from './modelos/seguimientoOrdenRecoleccion';
 import { CombustibleDialogo } from './componentes/combustible-dialogo/combustible-dialogo.component';
 import { EfectivoDialogo } from './componentes/efectivo-dialogo/efectivo-dialogo.component';
+import { RepartoComprobanteComponent } from './componentes/reparto-comprobante/reparto-comprobante.component';
+import { SeguimientoEstadoService } from './servicios/seguimiento-estado.service';
+import { RepartoComprobante } from './modelos/repartoComprobante';
+import { RepartoComprobanteService } from './servicios/reparto-comprobante.service';
+import { TipoComprobanteService } from './servicios/tipo-comprobante.service';
+import { OrdenRecoleccionService } from './servicios/orden-recoleccion.service';
+import { ViajeRemitoService } from './servicios/viaje-remito.service';
+import { VentaComprobanteService } from './servicios/venta-comprobante.service';
+import { SeguimientoEstadoSituacionService } from './servicios/seguimiento-estado-situacion.service';
+import { SeguimientoVentaComprobanteService } from './servicios/seguimiento-venta-comprobante.service';
+import { SeguimientoViajeRemitoService } from './servicios/seguimiento-viaje-remito.service';
+import { SeguimientoOrdenRecoleccionService } from './servicios/seguimiento-orden-recoleccion.service';
 
 const stompConfig: StompConfig = {
   url: 'ws://localhost:8080/jitws/socket',
@@ -75,7 +87,8 @@ const stompConfig: StompConfig = {
     ObservacionesDialogo,
     AnularDialogo,
     CombustibleDialogo,
-    EfectivoDialogo
+    EfectivoDialogo,
+    RepartoComprobanteComponent
   ],
   imports: [
     FormsModule,
@@ -125,10 +138,22 @@ const stompConfig: StompConfig = {
     Viaje,
     LoaderService,
     ProveedorService,
+    RepartoComprobante,
+    RepartoComprobanteService,
     EmpresaService,
     SeguimientoVentaComprobante,
+    SeguimientoVentaComprobanteService,
     SeguimientoViajeRemito,
+    SeguimientoViajeRemitoService,
     SeguimientoOrdenRecoleccion,
+    SeguimientoOrdenRecoleccionService,
+    SeguimientoEstadoService,
+    SeguimientoEstadoSituacionService,
+    TipoComprobanteService,
+    OrdenRecoleccionService,
+    ViajeRemitoService,
+    RepartoComprobanteService,
+    VentaComprobanteService,
     {
       provide: StompConfig,
       useValue: stompConfig
@@ -146,7 +171,8 @@ const stompConfig: StompConfig = {
     ObservacionesDialogo,
     AnularDialogo,
     CombustibleDialogo,
-    EfectivoDialogo
+    EfectivoDialogo,
+    RepartoComprobanteComponent
   ]
 })
 export class AppModule { }

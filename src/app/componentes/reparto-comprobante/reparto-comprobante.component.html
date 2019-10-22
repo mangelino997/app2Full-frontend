@@ -17,205 +17,445 @@
         </div>
     </div>
     <br>
-    <div class="row">
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label for="idTipoComprobante" class="tamanio-label">Tipo Comprobante *</label>
-                <mat-select id="idTipoComprobante" class="form-control form-control-sm"
-                    formControlName="tipoComprobante" [compareWith]="compareFn"
-                    (selectionChange)="cambioTipoComprobante()">
-                    <mat-option *ngFor="let item of tipoComprobantes" [value]="item">
-                        {{item.nombre}}
-                    </mat-option>
-                </mat-select>
+    <div *ngIf="!data.esRepartoEntrante">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label for="idTipoComprobante" class="tamanio-label">Tipo Comprobante *</label>
+                    <mat-select id="idTipoComprobante" class="form-control form-control-sm"
+                        formControlName="tipoComprobante" [compareWith]="compareFn"
+                        (selectionChange)="cambioTipoComprobante()">
+                        <mat-option *ngFor="let item of tipoComprobantes" [value]="item">
+                            {{item.nombre}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="form-group has-float-label">
+                    <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Vta. *</label>
+                    <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off"
+                        [readOnly]="soloLectura" [textMask]="mascararEnteros(5)"
+                        (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)"
+                        class="form-control form-control-sm number-right" required>
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="form-group has-float-label">
+                    <label id="labelLetra" for="idLetra" class="descripcion-label">Letra *</label>
+                    <mat-select id="idLetra" class="form-control form-control-sm" formControlName="letra"
+                        [compareWith]="compareFn" required>
+                        <mat-option *ngFor="let item of letras" [value]="item">
+                            {{item}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label id="labelNumeroComprobante" for="idNumeroComprobante" class="descripcion-label">Número
+                        Comprobante *</label>
+                    <input id="idNumeroComprobante" type="text" formControlName="numero" autocomplete="off"
+                        [readOnly]="soloLectura" [textMask]="mascararEnteros(8)"
+                        class="form-control form-control-sm number-right">
+                </div>
+            </div>
+            <div class="col-md-1">
+                <button id="idBotonAgregarItem" mat-raised-button color="primary" (click)="agregar()"
+                    [disabled]="!formulario.valid">
+                    Agregar
+                </button>
+            </div>
+            <div class="col"></div>
+            <div class="col-md-2">
+                <button style="height: 30px;" mat-raised-button>Seleccionar Comprobantes</button>
             </div>
         </div>
-        <div class="col-md-1">
-            <div class="form-group has-float-label">
-                <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Vta. *</label>
-                <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off"
-                    [readOnly]="soloLectura" [textMask]="mascararEnteros(5)"
-                    (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)"
-                    class="form-control form-control-sm number-right" required>
-            </div>
-        </div>
-        <div class="col-md-1">
-            <div class="form-group has-float-label">
-                <label id="labelLetra" for="idLetra" class="descripcion-label">Letra *</label>
-                <mat-select id="idLetra" class="form-control form-control-sm" formControlName="letra"
-                    [compareWith]="compareFn" required>
-                    <mat-option *ngFor="let item of letras" [value]="item">
-                        {{item}}
-                    </mat-option>
-                </mat-select>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="form-group has-float-label">
-                <label id="labelNumeroComprobante" for="idNumeroComprobante" class="descripcion-label">Número
-                    Comprobante *</label>
-                <input id="idNumeroComprobante" type="text" formControlName="numero" autocomplete="off"
-                    [readOnly]="soloLectura" [textMask]="mascararEnteros(8)"
-                    class="form-control form-control-sm number-right">
-            </div>
-        </div>
-        <div class="col-md-1">
-            <button id="idBotonAgregarItem" mat-raised-button color="primary" (click)="agregar()"
-                [disabled]="!formulario.valid">
-                Agregar
-            </button>
-        </div>
-        <div class="col"></div>
-        <div class="col-md-2">
-            <button style="height: 30px;" mat-raised-button>Seleccionar Comprobantes</button>
-        </div>
-    </div>
-    <div class="row">
-        <div class="tabla">
-            <div class="tabla-ancho">
-                <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
-                    <ng-container matColumnDef="TIPOCPTE" sticky>
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte. </th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <span>
-                                {{elemento.ventaComprobante? elemento.ventaComprobante.tipoComprobante.nombre : ''}}
-                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.tipoComprobante.nombre : ''}}
-                                {{elemento.viajeRemito? elemento.viajeRemito.tipoComprobante.nombre : ''}}
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="PUNTOVENTA">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Vta.</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            <span>
-                                {{elemento.ventaComprobante? establecerCerosIzq(elemento.ventaComprobante.puntoVenta, "0000", -5): ''}}
-                                {{elemento.ordenRecoleccion? '-' : ''}}
-                                {{elemento.viajeRemito? establecerCerosIzq(elemento.viajeRemito.puntoVenta, "0000", -5) : ''}}
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="LETRA">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <span>
-                                {{elemento.ventaComprobante? elemento.ventaComprobante.letra: ''}}
-                                {{elemento.ordenRecoleccion? '-' : ''}}
-                                {{elemento.viajeRemito? elemento.viajeRemito.letra : ''}}
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="COMPROBANTE">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Comprobante</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            <span>
-                                {{elemento.ventaComprobante? elemento.ventaComprobante.numero: ''}}
-                                {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.id : ''}}
-                                {{elemento.viajeRemito? elemento.viajeRemito.numero : ''}}
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="DESTINATARIO">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Destinatario</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <span>
-                                {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.alias: ''}}
-                                {{elemento.ordenRecoleccion? '-': ''}}
-                                {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.alias: ''}}
-                            </span></td>
-                    </ng-container>
-                    <ng-container matColumnDef="DOMICILIO">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <span>
-                                {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.domicilio : ''}}
-                                {{elemento.ordenRecoleccion? '-' : ''}}
-                                {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.domicilio : ''}}
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="REMITENTE">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Remitente</th>
-                        <td mat-cell *matCellDef="let elemento">
-                            <span>
-                                {{elemento.ventaComprobante? elemento.ventaComprobante.clienteRemitente.alias : ''}}
-                                {{elemento.ordenRecoleccion? '-' : ''}}
-                                {{elemento.viajeRemito? elemento.viajeRemito.clienteRemitente.alias : ''}}
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="CTACTE">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Cta Cte.</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta != 1? 
+        <div class="row">
+            <div class="tabla">
+                <div class="tabla-ancho">
+                    <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                        <ng-container matColumnDef="TIPOCPTE" sticky>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte. </th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.tipoComprobante.nombre : ''}}
+                                    {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.tipoComprobante.nombre : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.tipoComprobante.nombre : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="PUNTOVENTA">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Vta.</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>
+                                    {{elemento.ventaComprobante? establecerCerosIzq(elemento.ventaComprobante.puntoVenta, "0000", -5): ''}}
+                                    {{elemento.ordenRecoleccion? '-' : ''}}
+                                    {{elemento.viajeRemito? establecerCerosIzq(elemento.viajeRemito.puntoVenta, "0000", -5) : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="LETRA">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.letra: ''}}
+                                    {{elemento.ordenRecoleccion? '-' : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.letra : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="COMPROBANTE">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Comprobante</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.numero: ''}}
+                                    {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.id : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.numero : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="DESTINATARIO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Destinatario</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.alias: ''}}
+                                    {{elemento.ordenRecoleccion? '-': ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.alias: ''}}
+                                </span></td>
+                        </ng-container>
+                        <ng-container matColumnDef="DOMICILIO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.domicilio : ''}}
+                                    {{elemento.ordenRecoleccion? '-' : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.domicilio : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="REMITENTE">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Remitente</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.clienteRemitente.alias : ''}}
+                                    {{elemento.ordenRecoleccion? '-' : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.clienteRemitente.alias : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="CTACTE">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Cta Cte.</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta != 1? 
                                     (elemento.ventaComprobante.importeTotal | number: '1.2-2'): '0.00' : ''}}
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="CONTADO">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Contado</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta == 1? 
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="CONTADO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Contado</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta == 1? 
                                         (elemento.ventaComprobante.importe | number: '1.2-2'): '0.00' : ''}}
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="BULTOS">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            <span *ngIf="elemento.ventaComprobante">
-                                {{elemento.ventaComprobante.ventaComprobanteItemFAs.length > 0? 
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="BULTOS">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span *ngIf="elemento.ventaComprobante">
+                                    {{elemento.ventaComprobante.ventaComprobanteItemFAs.length > 0? 
                                     sumaBultosVentaCpte(elemento.ventaComprobante.ventaComprobanteItemFAs) : '0'}}
-                            </span>
-                            <span
-                                *ngIf="elemento.ordenRecoleccion">{{elemento.ordenRecoleccion.bultos? elemento.ordenRecoleccion.bultos: '0'}}</span>
-                            <span
-                                *ngIf="elemento.viajeRemito">{{elemento.viajeRemito.bultos? elemento.viajeRemito.bultos: '0'}}</span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="CONTRAREEMBOLSO">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Contrareembolso</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            <span>$
-                                {{elemento.ventaComprobante? elemento.ventaComprobante.ventaComprobanteItemCR.length >0 ? 
+                                </span>
+                                <span
+                                    *ngIf="elemento.ordenRecoleccion">{{elemento.ordenRecoleccion.bultos? elemento.ordenRecoleccion.bultos: '0'}}</span>
+                                <span
+                                    *ngIf="elemento.viajeRemito">{{elemento.viajeRemito.bultos? elemento.viajeRemito.bultos: '0'}}</span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="CONTRAREEMBOLSO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Contrareembolso</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>$
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.ventaComprobanteItemCR.length >0 ? 
                                     (elemento.ventaComprobante.ventaComprobanteItemCR.importeContraReembolso | number: '1.2-2') : '0.00' : ''}}
-                            </span>
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="KG">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg</th>
-                        <td mat-cell *matCellDef="let elemento" class="number-right">
-                            <span *ngIf="elemento.ventaComprobante">
-                                {{elemento.ventaComprobante.ventaComprobanteItemFAs.length > 0?
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="KG">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span *ngIf="elemento.ventaComprobante">
+                                    {{elemento.ventaComprobante.ventaComprobanteItemFAs.length > 0?
                                     (sumaKiloEfectivoVentaCpte(elemento.ventaComprobante.ventaComprobanteItemFAs) | number: '1.2-2'): '0.00'}}
-                            </span>
-                            <span *ngIf="elemento.ordenRecoleccion">
-                                {{elemento.ordenRecoleccion.kilosAforado? 
+                                </span>
+                                <span *ngIf="elemento.ordenRecoleccion">
+                                    {{elemento.ordenRecoleccion.kilosAforado? 
                                     (elemento.ordenRecoleccion.kilosAforado | number: '1.2-2') : (elemento.ordenRecoleccion.kilosEfectivo | number: '1.2-2')}}
-                            </span>
-                            <span
-                                *ngIf="elemento.viajeRemito">{{elemento.viajeRemito.condicionVenta == 1? 
+                                </span>
+                                <span
+                                    *ngIf="elemento.viajeRemito">{{elemento.viajeRemito.condicionVenta == 1? 
                                 (elemento.viajeRemito.kilosAforado | number: '1.2-2'): (elemento.viajeRemito.kilosEfectivo | number: '1.2-2')}}
-                            </span> Kg.
-                        </td>
-                    </ng-container>
-                    <ng-container matColumnDef="ELIMINAR" stickyEnd>
-                        <th mat-header-cell *matHeaderCellDef></th>
-                        <td mat-cell *matCellDef="let elemento; let i = index">
-                            <span class="cursor-color-rojo" (click)="activarEliminarCpteReparto(elemento)">
-                                x
-                            </span>
-                        </td>
-                    </ng-container>
-                    <tr mat-header-row *matHeaderRowDef="columnas"></tr>
-                    <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
-                </table>
+                                </span> Kg.
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="ELIMINAR" stickyEnd>
+                            <th mat-header-cell *matHeaderCellDef></th>
+                            <td mat-cell *matCellDef="let elemento; let i = index">
+                                <span class="cursor-color-rojo" (click)="activarEliminarCpteReparto(elemento)">
+                                    x
+                                </span>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row justify-content-center" *ngIf="btnCerrar">
+            <div class="col-md-1">
+                <button mat-raised-button color="accent" (click)="dialogRef.close()">Cerrar</button>
             </div>
         </div>
     </div>
-    <br>
-    <div class="row justify-content-center" *ngIf="btnCerrar">
-        <div class="col-md-1">
-            <button mat-raised-button color="accent" (click)="dialogRef.close()">Cerrar</button>
+    <div *ngIf="data.esRepartoEntrante">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label id="labelEstado" for="idEstado" class="descripcion-label">Estado</label>
+                    <mat-select id="idEstado" class="form-control form-control-sm" formControlName="estado"
+                        [compareWith]="compareFn" (selectionChange)="cambioEstado()">
+                        <mat-option *ngFor="let item of seguimientoEstados" [value]="item">
+                            {{item.nombre}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label id="labelSituacion" for="idSituacion" class="descripcion-label">Situación</label>
+                    <mat-select id="idSituacion" class="form-control form-control-sm" formControlName="situacion"
+                        [compareWith]="compareFn">
+                        <mat-option *ngFor="let item of situaciones" [value]="item">
+                            {{item.seguimientoSituacion.nombre}}
+                        </mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label id="labelCobranzaContado" for="idCobranzaContado" class="descripcion-label">Cobranza
+                        Contado</label>
+                    <mat-select id="idCobranzaContado" class="form-control form-control-sm"
+                        formControlName="cobranzaContado" [compareWith]="compareFn">
+                        <mat-option [value]="true">Sí</mat-option>
+                        <mat-option [value]="false">No</mat-option>
+                    </mat-select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group has-float-label">
+                    <label id="labelImporteContado" for="idImporteContado" class="descripcion-label">Importe
+                        Contado</label>
+                    <input id="idImporteContado" type="text" formControlName="importeContado" autocomplete="off"
+                        [readOnly]="!repartoCpteMod" [textMask]="mascararImporte(8)"
+                        (blur)="establecerDecimales(formulario.get('importeContado'), 2)"
+                        class="form-control form-control-sm number-right">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="form-group has-float-label">
+                    <label id="labelCobranzaContrareembolso" for="idCobranzaContrareembolso"
+                        class="descripcion-label">Cobranza Contrareembolso</label>
+                    <mat-select id="idCobranzaContrareembolso" class="form-control form-control-sm"
+                        formControlName="cobranzaContrareembolso" [compareWith]="compareFn">
+                        <mat-option [value]="true">Sí</mat-option>
+                        <mat-option [value]="false">No</mat-option>
+                    </mat-select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="form-group has-float-label">
+                    <label id="labelObservaciones" for="idObservaciones" class="descripcion-label">Observaciones</label>
+                    <textarea id="idObservaciones" type="text" formControlName="observaciones" autocomplete="off"
+                        [readOnly]="!repartoCpteMod" rows="1"
+                        class="form-control form-control-sm number-right"></textarea>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <button mat-raised-button color="accent" [disabled]="!repartoCpteMod || !formulario.valid" (click)="actualizar()">Confirmar</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="tabla">
+                <div class="tabla-ancho">
+                    <table mat-table [dataSource]="listaCompleta" matSort class="mat-elevation-z1">
+                        <ng-container matColumnDef="TIPOCPTE" sticky>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo Cpte. </th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.tipoComprobante.nombre : ''}}
+                                    {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.tipoComprobante.nombre : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.tipoComprobante.nombre : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="EDITAR" sticky>
+                            <th mat-header-cell *matHeaderCellDef>-</th>
+                            <td mat-cell *matCellDef="let elemento; let i = index">
+                                <span class="cursor-color" (click)="activarActualizar(elemento)">
+                                    editar
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="ESTADO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="PUNTOVENTA">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Punto de Vta.</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>
+                                    {{elemento.ventaComprobante? establecerCerosIzq(elemento.ventaComprobante.puntoVenta, "0000", -5): ''}}
+                                    {{elemento.ordenRecoleccion? '-' : ''}}
+                                    {{elemento.viajeRemito? establecerCerosIzq(elemento.viajeRemito.puntoVenta, "0000", -5) : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="LETRA">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Letra</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.letra: ''}}
+                                    {{elemento.ordenRecoleccion? '-' : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.letra : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="COMPROBANTE">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Comprobante</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.numero: ''}}
+                                    {{elemento.ordenRecoleccion? elemento.ordenRecoleccion.id : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.numero : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="DESTINATARIO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Destinatario</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.alias: ''}}
+                                    {{elemento.ordenRecoleccion? '-': ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.alias: ''}}
+                                </span></td>
+                        </ng-container>
+                        <ng-container matColumnDef="DOMICILIO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Domicilio</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.clienteDestinatario.domicilio : ''}}
+                                    {{elemento.ordenRecoleccion? '-' : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.clienteDestinatario.domicilio : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="REMITENTE">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Remitente</th>
+                            <td mat-cell *matCellDef="let elemento">
+                                <span>
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.clienteRemitente.alias : ''}}
+                                    {{elemento.ordenRecoleccion? '-' : ''}}
+                                    {{elemento.viajeRemito? elemento.viajeRemito.clienteRemitente.alias : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="CTACTE">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Cta Cte.</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta != 1? 
+                                    (elemento.ventaComprobante.importeTotal | number: '1.2-2'): '0.00' : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="CONTADO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Contado</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta == 1? 
+                                        (elemento.ventaComprobante.importe | number: '1.2-2'): '0.00' : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="BULTOS">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Bultos</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span *ngIf="elemento.ventaComprobante">
+                                    {{elemento.ventaComprobante.ventaComprobanteItemFAs.length > 0? 
+                                    sumaBultosVentaCpte(elemento.ventaComprobante.ventaComprobanteItemFAs) : '0'}}
+                                </span>
+                                <span
+                                    *ngIf="elemento.ordenRecoleccion">{{elemento.ordenRecoleccion.bultos? elemento.ordenRecoleccion.bultos: '0'}}</span>
+                                <span
+                                    *ngIf="elemento.viajeRemito">{{elemento.viajeRemito.bultos? elemento.viajeRemito.bultos: '0'}}</span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="CONTRAREEMBOLSO">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Contrareembolso</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span>$
+                                    {{elemento.ventaComprobante? elemento.ventaComprobante.ventaComprobanteItemCR.length >0 ? 
+                                    (elemento.ventaComprobante.ventaComprobanteItemCR.importeContraReembolso | number: '1.2-2') : '0.00' : ''}}
+                                </span>
+                            </td>
+                        </ng-container>
+                        <ng-container matColumnDef="KG">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Kg</th>
+                            <td mat-cell *matCellDef="let elemento" class="number-right">
+                                <span *ngIf="elemento.ventaComprobante">
+                                    {{elemento.ventaComprobante.ventaComprobanteItemFAs.length > 0?
+                                    (sumaKiloEfectivoVentaCpte(elemento.ventaComprobante.ventaComprobanteItemFAs) | number: '1.2-2'): '0.00'}}
+                                </span>
+                                <span *ngIf="elemento.ordenRecoleccion">
+                                    {{elemento.ordenRecoleccion.kilosAforado? 
+                                    (elemento.ordenRecoleccion.kilosAforado | number: '1.2-2') : (elemento.ordenRecoleccion.kilosEfectivo | number: '1.2-2')}}
+                                </span>
+                                <span
+                                    *ngIf="elemento.viajeRemito">{{elemento.viajeRemito.condicionVenta == 1? 
+                                (elemento.viajeRemito.kilosAforado | number: '1.2-2'): (elemento.viajeRemito.kilosEfectivo | number: '1.2-2')}}
+                                </span> Kg.
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="columnas"></tr>
+                        <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div class="row justify-content-end">
+            <div class="col-md-2">
+                <button mat-raised-button color="accent">Conformar Todo</button>
+            </div>
+            <div class="col-md-1">
+                <button mat-raised-button color="accent">Totales</button>
+            </div>
+        </div>
+        <br>
+        <div class="row justify-content-center">
+            <div class="col-md-1">
+                <button mat-raised-button color="primary" (click)="dialogRef.close()">Aceptar</button>
+            </div>
+            <div class="col-md-1">
+                <button mat-raised-button color="primary" (click)="reestablecerFormularioSeguimiento()" [disabled]="!repartoCpteMod">Cancelar</button>
+            </div>
         </div>
     </div>
 </form>

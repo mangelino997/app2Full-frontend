@@ -5,3 +5,6 @@
 .tabla-ancho {
     width: 1890px !important;
 }
+button {
+    width: fit-content !important;
+}

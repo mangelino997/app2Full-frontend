@@ -318,6 +318,7 @@ export class RepartoComponent implements OnInit {
       width: '95%',
       maxWidth: '95%',
       data: {
+        esRepartoEntrante: false,
         elemento: elemento,
         btnCerrar: true
       },

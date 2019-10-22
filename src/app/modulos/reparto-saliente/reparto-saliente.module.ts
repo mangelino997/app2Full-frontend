@@ -19,7 +19,6 @@ import { RetiroDepositoService } from 'src/app/servicios/retiro-deposito.service
 import { FechaService } from 'src/app/servicios/fecha.service';
 import { RetiroDepositoComprobanteService } from 'src/app/servicios/retiro-deposito-comprobante.service';
 import { TipoComprobanteService } from 'src/app/servicios/tipo-comprobante.service';
-import { RepartoComprobante } from 'src/app/modelos/repartoComprobante';
 import { RepartoPersonal } from 'src/app/modelos/repartoPersonal';
 import { Seguimiento } from 'src/app/modelos/seguimiento';
 import { ZonaService } from 'src/app/servicios/zona.service';
@@ -27,13 +26,12 @@ import { RepartoService } from 'src/app/servicios/reparto.service';
 import { RepartoDTO } from 'src/app/modelos/repartoDTO';
 import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.service';
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
-import { RepartoComprobanteService } from 'src/app/servicios/reparto-comprobante.service';
 import { VentaComprobanteService } from 'src/app/servicios/venta-comprobante.service';
 import { AfipComprobanteService } from 'src/app/servicios/afip-comprobante.service';
 import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
 import { SeguimientoViajeRemitoService } from 'src/app/servicios/seguimiento-viaje-remito.service';
 import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimiento-venta-comprobante.service';
-import { EliminarRepartoCpteDialogo, RepartoComprobanteComponent } from 'src/app/componentes/reparto-comprobante/reparto-comprobante.component';
+import { EliminarRepartoCpteDialogo,  } from 'src/app/componentes/reparto-comprobante/reparto-comprobante.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +40,7 @@ import { EliminarRepartoCpteDialogo, RepartoComprobanteComponent } from 'src/app
     CerrarRepartoDialogo,
     EliminarRepartoCpteDialogo,
     EliminarRepartoDialogo,
-    RepartoComprobanteComponent
+    // RepartoComprobanteComponent
   ],
   imports: [
     CommonModule,
@@ -64,7 +62,7 @@ import { EliminarRepartoCpteDialogo, RepartoComprobanteComponent } from 'src/app
   ],
   providers: [
     Reparto,
-    RepartoComprobante,
+    // RepartoComprobante,
     RepartoPersonal,
     Seguimiento,
     VehiculoService,
@@ -80,7 +78,7 @@ import { EliminarRepartoCpteDialogo, RepartoComprobanteComponent } from 'src/app
     RepartoDTO,
     OrdenRecoleccionService,
     ViajeRemitoService,
-    RepartoComprobanteService,
+    // RepartoComprobanteService,
     VentaComprobanteService,
     AfipComprobanteService,
     SeguimientoOrdenRecoleccionService,
@@ -93,7 +91,7 @@ import { EliminarRepartoCpteDialogo, RepartoComprobanteComponent } from 'src/app
     CerrarRepartoDialogo,
     EliminarRepartoCpteDialogo,
     EliminarRepartoDialogo,
-    RepartoComprobanteComponent
+    // RepartoComprobanteComponent
 
   ]
 })
