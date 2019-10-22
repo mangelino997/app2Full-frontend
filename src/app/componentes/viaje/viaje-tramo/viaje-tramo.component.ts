@@ -573,8 +573,8 @@ export class ViajeTramoComponent implements OnInit {
     });
   }
   //Abre un dialogo para ver la lista de dadores y destinatarios
-  public verDadorDestTablaDialogo(elemento): void {
-    const dialogRef = this.dialog.open(DadorDestTablaDialogo, {
+  public verDadorDestinatarioRemitoDialogo(elemento): void {
+    const dialogRef = this.dialog.open(DadorDestinatarioRemitoDialogo, {
       width: '95%',
       maxWidth: '95%',
       data: {
@@ -714,24 +714,24 @@ export class DadorDestinatarioDialogo {
     }
   }
 }
-// Componente DadorDestTablaDialogo
+// Componente DadorDestinatarioRemitoDialogo
 @Component({
-  selector: 'dador-dest-tabla-dialogo',
-  templateUrl: 'dador-dest-tabla-dialogo.component.html'
+  selector: 'dador-destinatario-remito-dialogo',
+  templateUrl: 'dador-destinatario-remito-dialogo.component.html'
 })
-export class DadorDestTablaDialogo {
+export class DadorDestinatarioRemitoDialogo {
   //Define el tema
   public tema: string;
   //Define el tramo actual
   public tramoActual:string = null;
   //Define las columnas de la tabla
-  public columnas: string[] = ['dador', 'destinatario'];
+  public columnas: string[] = ['dador', 'destinatario', 'remito'];
   //Define la lista de dadores-destinatarios
   public listaCompleta = new MatTableDataSource([]);
   //Define la matSort
   @ViewChild(MatSort, {static: false}) sort: MatSort;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<DadorDestTablaDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
+  constructor(public dialogRef: MatDialogRef<DadorDestinatarioRemitoDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
   ngOnInit() {
     //Establece el tema
     this.tema = this.data.tema;
