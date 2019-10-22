@@ -120,10 +120,6 @@
         </div>
         <div class="col-md-6">
             <div class="inline">
-                <button class="margin-left-3" mat-raised-button (click)="verDadorDestinatarioDialogo()"
-                    [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">
-                    Dador-Destinatario
-                </button>
                 <button class="margin-left-3" mat-raised-button (click)="abrirObservacionesDialogo()"
                     [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4">Observaciones</button>
                 <button class="margin-left-3" mat-raised-button color="primary" (click)="agregarTramo()"
@@ -182,8 +178,11 @@
                 </ng-container>
                 <ng-container matColumnDef="destinatario">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Dador - Destinatario</th>
-                    <td mat-cell *matCellDef="let elemento">
-                        <span class="cursor-color" (click)="verDadorDestinatarioRemitoDialogo(elemento)">ver</span>
+                    <td style="text-align: center;" mat-cell *matCellDef="let elemento">
+                        <button mat-icon-button class="mat-icon-button-table" [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"
+                            (click)="verDadorDestinatarioDialogo()" matTooltip="Cargar Dador-Dest." matTooltipPosition="above">
+                            <mat-icon>emoji_transportation</mat-icon>
+                        </button>
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="unidadNegocio">

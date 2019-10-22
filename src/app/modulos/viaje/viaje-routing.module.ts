@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ViajeComponent, ListarViajesDialogo } from 'src/app/componentes/viaje/viaje.component';
-import { ViajeTramoComponent, DadorDestinatarioDialogo, DadorDestinatarioRemitoDialogo } from 'src/app/componentes/viaje/viaje-tramo/viaje-tramo.component';
+import { ViajeTramoComponent, DadorDestinatarioDialogo } from 'src/app/componentes/viaje/viaje-tramo/viaje-tramo.component';
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, MatSelectModule, MatProgressBarModule, MatProgressSpinnerModule, MatCardModule, MatStepperModule, MatIconModule, MatCheckboxModule, MatButtonModule, MatTooltipModule, MatDialogModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextMaskModule } from 'angular2-text-mask';
@@ -58,7 +58,6 @@ const routes: Routes = [
     ViajePeajeComponent,
     DadorDestinatarioDialogo,
     NormalizarDialogo,
-    DadorDestinatarioRemitoDialogo,
     ListarViajesDialogo
   ],
   imports: [
@@ -116,7 +115,6 @@ const routes: Routes = [
   entryComponents: [
     DadorDestinatarioDialogo,
     NormalizarDialogo,
-    DadorDestinatarioRemitoDialogo,
     ListarViajesDialogo
   ],
   exports: [RouterModule]

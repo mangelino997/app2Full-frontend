@@ -272,19 +272,19 @@ export class ViajeTramoComponent implements OnInit {
   //Establece el estado de tipo de carga al seleccionar una modalidad de carga
   public establecerEstadoTipoCarga(editar): void {
     let modalidadCarga = this.formularioViajeTramo.get('viajeTipo').value;
+    this.formularioViajeTramo.get('viajeTramoClientes').setValue([]);
     if (modalidadCarga.id == 3) {
       this.formularioViajeTramo.get('viajeTipoCarga').setValue(this.viajesTiposCargas[0]);
       this.formularioViajeTramo.get('viajeTipoCarga').disable();
-      this.formularioViajeTramo.get('viajeTramoClientes').disable();
-      this.formularioViajeTramo.get('viajeTramoClientes').setValue([]);
-      this.formularioViajeTramo.get('viajeTramoClientes').setValidators([]);
-      this.formularioViajeTramo.get('viajeTramoClientes').updateValueAndValidity();//Actualiza las validaciones en el Formulario
+      // this.formularioViajeTramo.get('viajeTramoClientes').disable();
+      // this.formularioViajeTramo.get('viajeTramoClientes').setValue([]);
+      // this.formularioViajeTramo.get('viajeTramoClientes').setValidators([]);
+      // this.formularioViajeTramo.get('viajeTramoClientes').updateValueAndValidity();//Actualiza las validaciones en el Formulario
     } else {
       this.formularioViajeTramo.get('viajeTipoCarga').enable();
-      this.formularioViajeTramo.get('viajeTramoClientes').enable();
-      // this.formularioViajeTramo.get('viajeTramoClientes').setValue([]);
-      this.formularioViajeTramo.get('viajeTramoClientes').setValidators(Validators.required);
-      this.formularioViajeTramo.get('viajeTramoClientes').updateValueAndValidity();//Actualiza las validaciones en el Formulario
+      // this.formularioViajeTramo.get('viajeTramoClientes').enable();
+      // this.formularioViajeTramo.get('viajeTramoClientes').setValidators(Validators.required);
+      // this.formularioViajeTramo.get('viajeTramoClientes').updateValueAndValidity();//Actualiza las validaciones en el Formulario
     }
     this.establecerTipoViaje(this.tipoViaje, editar);
   }
@@ -572,18 +572,6 @@ export class ViajeTramoComponent implements OnInit {
       }
     });
   }
-  //Abre un dialogo para ver la lista de dadores y destinatarios
-  public verDadorDestinatarioRemitoDialogo(elemento): void {
-    const dialogRef = this.dialog.open(DadorDestinatarioRemitoDialogo, {
-      width: '95%',
-      maxWidth: '95%',
-      data: {
-        tema: this.appServicio.getTema(),
-        elemento: elemento
-      }
-    });
-    dialogRef.afterClosed().subscribe(resultado => { });
-  }
   //Abre un dialogo para ver las observaciones
   public verObservacionesDialogo(elemento): void {
     const dialogRef = this.dialog.open(ObservacionesDialogo, {
@@ -629,7 +617,7 @@ export class DadorDestinatarioDialogo {
   //Define la lista de clientes
   public resultadosClientes: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['dador', 'destinatario', 'eliminar'];
+  public columnas: string[] = ['dador', 'destinatario', 'remitos', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Constructor
@@ -705,6 +693,10 @@ export class DadorDestinatarioDialogo {
       this.listaCompleta.sort = this.sort;
     }
   }
+  //Abre el dialogo para cargar remitos
+  public verRemitos(): void {
+    console.log('PASO');
+  }
   //Define como se muestra los datos en el autcompletado b
   public displayFb(elemento) {
     if (elemento != undefined) {
@@ -712,41 +704,5 @@ export class DadorDestinatarioDialogo {
     } else {
       return elemento;
     }
-  }
-}
-// Componente DadorDestinatarioRemitoDialogo
-@Component({
-  selector: 'dador-destinatario-remito-dialogo',
-  templateUrl: 'dador-destinatario-remito-dialogo.component.html'
-})
-export class DadorDestinatarioRemitoDialogo {
-  //Define el tema
-  public tema: string;
-  //Define el tramo actual
-  public tramoActual:string = null;
-  //Define las columnas de la tabla
-  public columnas: string[] = ['dador', 'destinatario', 'remito'];
-  //Define la lista de dadores-destinatarios
-  public listaCompleta = new MatTableDataSource([]);
-  //Define la matSort
-  @ViewChild(MatSort, {static: false}) sort: MatSort;
-  //Constructor
-  constructor(public dialogRef: MatDialogRef<DadorDestinatarioRemitoDialogo>, @Inject(MAT_DIALOG_DATA) public data) { }
-  ngOnInit() {
-    //Establece el tema
-    this.tema = this.data.tema;
-    let tramo = this.data.elemento.tramo;
-    //Establece el tramo actual
-    this.tramoActual = tramo.origen.nombre + ', ' + tramo.origen.provincia.nombre
-                        + ' --> ' + tramo.destino.nombre + ', ' + tramo.destino.provincia.nombre;  
-    //Establece la lista de dadores-destinatarios
-    let listaDadorDestinatario = this.data.elemento.viajeTramoClientes;
-    if (listaDadorDestinatario.length > 0) {
-      this.listaCompleta = new MatTableDataSource(listaDadorDestinatario);
-      this.listaCompleta.sort = this.sort;
-    }
-  }
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }
