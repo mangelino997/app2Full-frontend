@@ -16,10 +16,12 @@ import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.ser
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
 import { RepartoComprobanteService } from 'src/app/servicios/reparto-comprobante.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
+import { ConformarComprobantesDialogo } from 'src/app/componentes/reparto-comprobante/reparto-comprobante.component';
 
 @NgModule({
   declarations: [
     RepartoEntranteComponent,
+    ConformarComprobantesDialogo
   ],
   imports: [
     CommonModule,
@@ -51,7 +53,7 @@ import { RepartoService } from 'src/app/servicios/reparto.service';
 
   ],
   entryComponents: [
-    
+    ConformarComprobantesDialogo
   ]
 })
 export class RepartoEntranteModule { }
