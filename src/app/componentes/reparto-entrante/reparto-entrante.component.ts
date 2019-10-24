@@ -165,9 +165,6 @@ export class RepartoEntranteComponent implements OnInit {
   }
   //Abre el modal de Comprobantes
   public abrirComprobantes(elemento) {
-    console.log(this.elementoEnMemoria.value);
-    // if (this.elementoEnMemoria.value.id = elemento.id) //
-    //   elemento = this.elementoEnMemoria.value;
     const dialogRef = this.dialog.open(RepartoComprobanteComponent, {
       width: '95%',
       maxWidth: '95%',
@@ -178,8 +175,6 @@ export class RepartoEntranteComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
-      this.elementoEnMemoria.setValue(result.elemento); //Guarda en memoria el reparto y sus comprobantes modificados 
       document.getElementById('idTipoViaje').focus();
     });
   }

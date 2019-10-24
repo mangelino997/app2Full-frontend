@@ -112,8 +112,6 @@ export class RepartoComprobanteComponent implements OnInit {
     }
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
-    //Obtiene la lista de registros
-    this.listarPorReparto(this.data.elemento.id);
   }
 
   //Carga la lista para tipo de comprobantes
@@ -142,9 +140,7 @@ export class RepartoComprobanteComponent implements OnInit {
     this.formulario.get('situacion').reset();
     this.seguimientoEstadoSituacionService.listarPorSeguimientoEstado(this.formulario.value.estado.id).subscribe(
       res => {
-        console.log(res.json());
         this.situaciones = res.json();
-        // this.formulario.get('situacion').setValue(this.situaciones[0]);
       },
       err => {
         this.toastr.error(err.json().mensaje);
@@ -223,7 +219,6 @@ export class RepartoComprobanteComponent implements OnInit {
     if (tipoComprobante.id == 13) {
       this.ordenRecoleccionService.obtenerPorId(numero).subscribe(
         res => {
-          // this.formularioSegOrdenRecoleccion.get('ordenRecoleccion').setValue(res.json());
           this.formularioComprobante.get('ordenRecoleccion').setValue({ id: res.json().id });
           this.agregarComprobanteReparto(this.formularioComprobante.value);
         },
@@ -235,7 +230,6 @@ export class RepartoComprobanteComponent implements OnInit {
         this.formulario.get('numero').value).subscribe(
           res => {
             let respuesta = res.json();
-            // this.formularioSegViajeRemito.get('viajeRemito').setValue(res.json());
             let viajeRemito = {
               letra: respuesta.letra,
               puntoVenta: respuesta.puntoVenta,
@@ -252,7 +246,6 @@ export class RepartoComprobanteComponent implements OnInit {
         this.formulario.get('numero').value, tipoComprobante.id).subscribe(
           res => {
             let respuesta = res.json();
-            // this.formularioSegVtaCpte.get('ventaComprobante').setValue(res.json());
             let ventaComprobante = {
               letra: respuesta.letra,
               puntoVenta: respuesta.puntoVenta,
@@ -270,7 +263,6 @@ export class RepartoComprobanteComponent implements OnInit {
   //Agrega un Comprobante
   private agregarComprobanteReparto(formularioComprobante) {
     this.loaderService.show();
-    console.log(formularioComprobante);
     formularioComprobante.reparto.repartoComprobantes.length > 0 ? formularioComprobante.reparto.repartoComprobantes = [] : '';
     this.servicio.agregar(formularioComprobante).subscribe(
       res => {
@@ -302,14 +294,13 @@ export class RepartoComprobanteComponent implements OnInit {
   public establecerValoresPorDefecto() {
     this.formularioComprobante.get('reparto').patchValue(this.data.elemento);
     this.btnCerrar = this.data.btnCerrar;
-    // this.listarPorReparto(this.data.elemento.id);
+    this.listarPorReparto(this.data.elemento.id);
     if (this.data.esRepartoEntrante) {
       this.establecerEstadoCampos(); //Controla el estado de los campos de seleccion
       setTimeout(function () {
         document.getElementById('idEstado').focus();
       }, 20);
     } else {
-      this.listarPorReparto(this.data.elemento.id);
       this.listarTipoComprobantes(); //Obtiene la lista de tipo de comprobantes
       this.formulario.get('tipoComprobante').setValue(this.tipoComprobantes[0]);
       setTimeout(function () {
@@ -384,7 +375,6 @@ export class RepartoComprobanteComponent implements OnInit {
   }
   //Actualiza un registro de la tabla
   public activarActualizar(elemento, indice) {
-    console.log(elemento);
     this.formulario.reset();
     this.comprobanteMod = elemento;
     this.idComprobanteMod = indice;
@@ -416,21 +406,15 @@ export class RepartoComprobanteComponent implements OnInit {
       this.formularioSeguimiento.get('seguimientoSituacion').setValue(this.formulario.value.situacion);
       this.actualizarSeguimientoVentaComprobante();
     }
-    console.log(this.formularioSeguimiento.value);
   }
   //Actualiza un Seguimiento Venta Comprobante
   private actualizarSeguimientoVentaComprobante() {
-    console.log(this.formularioSeguimiento.value);
     this.loaderService.show();
+    this.formularioSeguimiento.value.ventaComprobante = {id: this.formularioSeguimiento.value.ventaComprobante.id};
     this.seguimientoVentaComprobanteService.agregar(this.formularioSeguimiento.value).subscribe(
       res => {
-        console.log(res);
         if (res.status == 201) {
           this.toastr.success(res.json().mensaje);
-          this.listaCompleta.data[this.idComprobanteMod].id = 0; //Le seteo el id a "0" para saber cual Reparto Cpte se modificó.
-          //Le seteo el "estado" para poder mostrarlo en la tabla.
-          this.listaCompleta.data[this.idComprobanteMod].estado = this.formularioSeguimiento.value.seguimientoEstado;
-          // this.listaComprobantesEditados.push(this.formularioSeguimiento.value);
           this.reestablecerFormularioSeguimiento();
         }
         this.loaderService.hide();
@@ -445,15 +429,11 @@ export class RepartoComprobanteComponent implements OnInit {
   //Actualiza un Seguimiento Orden Recoleccion
   private actualizarSeguimientoOrdenRecoleccion() {
     this.loaderService.show();
+    this.formularioSeguimiento.value.ordenRecoleccion = {id: this.formularioSeguimiento.value.ordenRecoleccion.id};
     this.seguimientoOrdenRecoleccionService.agregar(this.formularioSeguimiento.value).subscribe(
       res => {
-        console.log(res);
         if (res.status == 201) {
           this.toastr.success(res.json().mensaje);
-          this.listaCompleta.data[this.idComprobanteMod].id = 0; //Le seteo el id a "0" para saber cual Reparto Cpte se modificó.
-          //Le seteo el "estado" para poder mostrarlo en la tabla.
-          this.listaCompleta.data[this.idComprobanteMod].estado = this.formularioSeguimiento.value.seguimientoEstado;
-          // this.listaComprobantesEditados.push(this.formularioSeguimiento.value);
           this.reestablecerFormularioSeguimiento();
         }
         this.loaderService.hide();
@@ -468,14 +448,11 @@ export class RepartoComprobanteComponent implements OnInit {
   //Actualiza un Seguimiento Viaje Remito
   private actualizarViajeRemito() {
     this.loaderService.show();
+    this.formularioSeguimiento.value.viajeRemito = {id: this.formularioSeguimiento.value.viajeRemito.id};
     this.seguimientoViajeRemitoService.agregar(this.formularioSeguimiento.value).subscribe(
       res => {
-        console.log(res);
         if (res.status == 201) {
           this.toastr.success(res.json().mensaje);
-          this.listaCompleta.data[this.idComprobanteMod].id = 0; //Le seteo el id a "0" para saber cual Reparto Cpte se modificó.
-          //Le seteo el "estado" para poder mostrarlo en la tabla.
-          this.listaCompleta.data[this.idComprobanteMod].estado = this.formularioSeguimiento.value.seguimientoEstado;
           this.reestablecerFormularioSeguimiento();
         }
         this.loaderService.hide();
@@ -491,7 +468,6 @@ export class RepartoComprobanteComponent implements OnInit {
   public abrirConformarComprobantes() {
     this.data.elemento.repartoComprobantes = this.listaCompleta.data; //Le reasigno la lista de repartoComprobantes al reparto para en el back 
     //controlar a cuales comprobantes (los no editados) se les realiza la operacion 
-    console.log(this.data.elemento);
     const dialogRef = this.dialog.open(ConformarComprobantesDialogo, {
       width: '45%',
       maxWidth: '45%',
@@ -500,7 +476,6 @@ export class RepartoComprobanteComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result);
       this.establecerValoresPorDefecto();
     });
   }
@@ -549,7 +524,6 @@ export class RepartoComprobanteComponent implements OnInit {
     this.formulario.reset();
     this.formularioSeguimiento.reset();
     this.establecerValoresPorDefecto();
-    console.log(this.listaCompleta.data);
   }
   //Verifica si se selecciono un elemento del autocompletado
   public verificarSeleccion(valor): void {
@@ -571,10 +545,6 @@ export class RepartoComprobanteComponent implements OnInit {
     } else {
       return elemento;
     }
-  }
-  //Controla el boton Aceptar al cerrar el dialogo - Sólo en Reparto Entrante
-  public cerrarDialogo(result){
-    this.dialogRef.close(result);
   }
 }
 
@@ -622,7 +592,6 @@ export class ConformarComprobantesDialogo {
     dialogRef.disableClose = true;
   }
   ngOnInit() {
-    console.log(this.data.reparto);
 
   }
   public conformarComprobantes() {
