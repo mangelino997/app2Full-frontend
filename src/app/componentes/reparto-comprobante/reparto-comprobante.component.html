@@ -35,7 +35,7 @@
                 <div class="form-group has-float-label">
                     <label id="labelPuntoVenta" for="idPuntoVenta" class="descripcion-label">Punto Vta. *</label>
                     <input id="idPuntoVenta" type="text" formControlName="puntoVenta" autocomplete="off"
-                        [readOnly]="soloLectura" [textMask]="mascararEnteros(5)"
+                        [textMask]="mascararEnteros(5)"
                         (blur)="establecerCerosIzq(formulario.get('puntoVenta'), '0000', -5)"
                         class="form-control form-control-sm number-right" required>
                 </div>
@@ -56,8 +56,7 @@
                     <label id="labelNumeroComprobante" for="idNumeroComprobante" class="descripcion-label">Número
                         Comprobante *</label>
                     <input id="idNumeroComprobante" type="text" formControlName="numero" autocomplete="off"
-                        [readOnly]="soloLectura" [textMask]="mascararEnteros(8)"
-                        class="form-control form-control-sm number-right">
+                        [textMask]="mascararEnteros(8)" class="form-control form-control-sm number-right">
                 </div>
             </div>
             <div class="col-md-1">
@@ -147,16 +146,16 @@
                         <ng-container matColumnDef="CTACTE">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Cta Cte.</th>
                             <td mat-cell *matCellDef="let elemento" class="number-right">
-                                <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta != 1? 
-                                    (elemento.ventaComprobante.importeTotal | number: '1.2-2'): '0.00' : ''}}
+                                <span>{{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta != 1? 
+                                    '$'(elemento.ventaComprobante.importeTotal | number: '1.2-2'): '$0.00' : ''}}
                                 </span>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="CONTADO">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Contado</th>
                             <td mat-cell *matCellDef="let elemento" class="number-right">
-                                <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta == 1? 
-                                        (elemento.ventaComprobante.importe | number: '1.2-2'): '0.00' : ''}}
+                                <span>{{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta == 1? 
+                                    '$'(elemento.ventaComprobante.importe | number: '1.2-2'): '$0.00' : ''}}
                                 </span>
                             </td>
                         </ng-container>
@@ -176,9 +175,8 @@
                         <ng-container matColumnDef="CONTRAREEMBOLSO">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Contrareembolso</th>
                             <td mat-cell *matCellDef="let elemento" class="number-right">
-                                <span>$
-                                    {{elemento.ventaComprobante? elemento.ventaComprobante.ventaComprobanteItemCR.length >0 ? 
-                                    (elemento.ventaComprobante.ventaComprobanteItemCR.importeContraReembolso | number: '1.2-2') : '0.00' : ''}}
+                                <span>{{elemento.ventaComprobante? elemento.ventaComprobante.ventaComprobanteItemCR.length >0 ? 
+                                    '$'(elemento.ventaComprobante.ventaComprobanteItemCR.importeContraReembolso | number: '1.2-2') : '$0.00' : ''}}
                                 </span>
                             </td>
                         </ng-container>
@@ -260,7 +258,7 @@
                     <label id="labelImporteContado" for="idImporteContado" class="descripcion-label">Importe
                         Contado</label>
                     <input id="idImporteContado" type="text" formControlName="importeContado" autocomplete="off"
-                        [readOnly]="!repartoCpteMod" [textMask]="mascararImporte(8)"
+                        [readOnly]="soloLectura" [textMask]="mascararImporte(8)"
                         (blur)="establecerDecimales(formulario.get('importeContado'), 2)"
                         class="form-control form-control-sm number-right">
                 </div>
@@ -282,12 +280,13 @@
                 <div class="form-group has-float-label">
                     <label id="labelObservaciones" for="idObservaciones" class="descripcion-label">Observaciones</label>
                     <textarea id="idObservaciones" type="text" formControlName="observaciones" autocomplete="off"
-                        [readOnly]="!repartoCpteMod" rows="1"
+                        [readOnly]="!comprobanteMod" rows="1"
                         class="form-control form-control-sm number-right"></textarea>
                 </div>
             </div>
             <div class="col-md-2">
-                <button mat-raised-button color="accent" [disabled]="!repartoCpteMod || !formulario.valid" (click)="actualizar()">Confirmar</button>
+                <button mat-raised-button color="accent" [disabled]="!comprobanteMod || !formulario.valid"
+                    (click)="actualizar()">Confirmar</button>
             </div>
         </div>
         <div class="row">
@@ -307,7 +306,7 @@
                         <ng-container matColumnDef="EDITAR" sticky>
                             <th mat-header-cell *matHeaderCellDef>-</th>
                             <td mat-cell *matCellDef="let elemento; let i = index">
-                                <span class="cursor-color" (click)="activarActualizar(elemento)">
+                                <span class="cursor-color" (click)="activarActualizar(elemento, i)">
                                     editar
                                 </span>
                             </td>
@@ -316,6 +315,12 @@
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
                             <td mat-cell *matCellDef="let elemento">
                                 <span>
+                                    {{elemento.ventaComprobante? 
+                                        elemento.ventaComprobante.seguimientoVentaComprobantes[elemento.viajeRemito.seguimientoViajeRemitos.length-1].seguimientoEstado.nombre : ''}}
+                                    {{elemento.ordenRecoleccion? 
+                                        elemento.ordenRecoleccion.seguimientoOrdenRecolecciones[elemento.viajeRemito.seguimientoViajeRemitos.length-1].seguimientoEstado.nombre : ''}}
+                                    {{elemento.viajeRemito? 
+                                        elemento.viajeRemito.seguimientoViajeRemitos[elemento.viajeRemito.seguimientoViajeRemitos.length-1].seguimientoEstado.nombre : ''}}
                                 </span>
                             </td>
                         </ng-container>
@@ -381,16 +386,16 @@
                         <ng-container matColumnDef="CTACTE">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Cta Cte.</th>
                             <td mat-cell *matCellDef="let elemento" class="number-right">
-                                <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta != 1? 
-                                    (elemento.ventaComprobante.importeTotal | number: '1.2-2'): '0.00' : ''}}
+                                <span>{{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta != 1? 
+                                    '$'(elemento.ventaComprobante.importeTotal | number: '1.2-2'): '$0.00' : ''}}
                                 </span>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="CONTADO">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Contado</th>
                             <td mat-cell *matCellDef="let elemento" class="number-right">
-                                <span>$ {{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta == 1? 
-                                        (elemento.ventaComprobante.importe | number: '1.2-2'): '0.00' : ''}}
+                                <span>{{elemento.ventaComprobante ? elemento.ventaComprobante.condicionVenta == 1? 
+                                    '$'(elemento.ventaComprobante.importe | number: '1.2-2'): '$0.00' : ''}}
                                 </span>
                             </td>
                         </ng-container>
@@ -410,9 +415,8 @@
                         <ng-container matColumnDef="CONTRAREEMBOLSO">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header>Contrareembolso</th>
                             <td mat-cell *matCellDef="let elemento" class="number-right">
-                                <span>$
-                                    {{elemento.ventaComprobante? elemento.ventaComprobante.ventaComprobanteItemCR.length >0 ? 
-                                    (elemento.ventaComprobante.ventaComprobanteItemCR.importeContraReembolso | number: '1.2-2') : '0.00' : ''}}
+                                <span>{{elemento.ventaComprobante? elemento.ventaComprobante.ventaComprobanteItemCR.length >0 ? 
+                                    '$'(elemento.ventaComprobante.ventaComprobanteItemCR.importeContraReembolso | number: '1.2-2') : '$0.00' : ''}}
                                 </span>
                             </td>
                         </ng-container>
@@ -442,7 +446,7 @@
         <br>
         <div class="row justify-content-end">
             <div class="col-md-2">
-                <button mat-raised-button color="accent">Conformar Todo</button>
+                <button mat-raised-button color="accent" (click)="abrirConformarComprobantes()">Conformar Todo</button>
             </div>
             <div class="col-md-1">
                 <button mat-raised-button color="accent">Totales</button>
@@ -454,7 +458,8 @@
                 <button mat-raised-button color="primary" (click)="dialogRef.close()">Aceptar</button>
             </div>
             <div class="col-md-1">
-                <button mat-raised-button color="primary" (click)="reestablecerFormularioSeguimiento()" [disabled]="!repartoCpteMod">Cancelar</button>
+                <button mat-raised-button color="primary" (click)="reestablecerFormularioSeguimiento()"
+                    [disabled]="!repartoCpteMod">Cancelar</button>
             </div>
         </div>
     </div>

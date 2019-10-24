@@ -6,7 +6,7 @@ import { RepartoEntranteRoutingModule } from './reparto-entrante-routing.module'
 import { MatTabsModule, MatAutocompleteModule, MatTableModule, MatPaginatorModule, MatSortModule, 
   MatSelectModule, MatProgressBarModule, MatButtonModule, MatDialogModule, MatDividerModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { RepartoEntranteComponent } from 'src/app/componentes/reparto-entrante/reparto-entrante.component';
+import { RepartoEntranteComponent, RecibirRepartoDialogo } from 'src/app/componentes/reparto-entrante/reparto-entrante.component';
 import { TextMaskModule } from 'angular2-text-mask';
 import { Reparto } from 'src/app/modelos/reparto';
 import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
@@ -16,10 +16,13 @@ import { OrdenRecoleccionService } from 'src/app/servicios/orden-recoleccion.ser
 import { ViajeRemitoService } from 'src/app/servicios/viaje-remito.service';
 import { RepartoComprobanteService } from 'src/app/servicios/reparto-comprobante.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
+import { ConformarComprobantesDialogo } from 'src/app/componentes/reparto-comprobante/reparto-comprobante.component';
 
 @NgModule({
   declarations: [
     RepartoEntranteComponent,
+    ConformarComprobantesDialogo,
+    RecibirRepartoDialogo
   ],
   imports: [
     CommonModule,
@@ -51,7 +54,8 @@ import { RepartoService } from 'src/app/servicios/reparto.service';
 
   ],
   entryComponents: [
-    
+    ConformarComprobantesDialogo,
+    RecibirRepartoDialogo
   ]
 })
 export class RepartoEntranteModule { }

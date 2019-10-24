@@ -4,7 +4,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { AppComponent } from 'src/app/app.component';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
-import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
+import { MatDialog, MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
@@ -18,6 +18,7 @@ import { LoaderState } from 'src/app/modelos/loader';
 import { CombustibleDialogo } from '../combustible-dialogo/combustible-dialogo.component';
 import { EfectivoDialogo } from '../efectivo-dialogo/efectivo-dialogo.component';
 import { RepartoComprobanteComponent } from '../reparto-comprobante/reparto-comprobante.component';
+import { FechaService } from 'src/app/servicios/fecha.service';
 
 @Component({
   selector: 'app-reparto-entrante',
@@ -60,6 +61,8 @@ export class RepartoEntranteComponent implements OnInit {
   // public listaTipoComprobantes = [];
   // //Define una bandera para control
   // public bandera:boolean=false;
+  //Define al elemento (Reparto seleccionado) guardado en memoria como un formControl
+  public elementoEnMemoria: FormControl = new FormControl();
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla general
@@ -174,6 +177,92 @@ export class RepartoEntranteComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
       document.getElementById('idTipoViaje').focus();
     });
+  }
+  //Abre el modal de Recibir Reparto
+  public abrirRecibirReparto(elemento) {
+    const dialogRef = this.dialog.open(RecibirRepartoDialogo, {
+      width: '50%',
+      maxWidth: '50%',
+      data: {
+        elemento: elemento,
+      },
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      document.getElementById('idTipoViaje').focus();
+    });
+  }
+}
+
+@Component({
+  selector: 'recibir-reparto-dialogo',
+  templateUrl: 'recibir-reparto-dialogo.html',
+})
+export class RecibirRepartoDialogo {
+  //Define un formulario para validaciones de campos
+  public formulario: FormGroup;
+  //Define la fecha actual
+  public fechaActual: any;
+  //Constructor
+  constructor(public dialogRef: MatDialogRef<RecibirRepartoDialogo>, @Inject(MAT_DIALOG_DATA) public data,
+    private appService: AppService, private modelo: Reparto, private toastr: ToastrService, private fechaService: FechaService,
+    private servicio: RepartoService) {
+    dialogRef.disableClose = true;
+  }
+  ngOnInit() {
+    //Declara el formulario y las variables 
+    this.formulario = this.modelo.formulario;
+    //Reestablece el formulario
+    setTimeout(() => {
+      this.reestablecerFormulario();
+    }, 20);
+  }
+  //Reestablece el formulario y sus valores.
+  public reestablecerFormulario() {
+    this.formulario.reset();
+    this.formulario.patchValue(this.data.elemento);
+    this.fechaService.obtenerFecha().subscribe(
+      res => {
+        this.formulario.get('fechaSalida').setValue(res.json());
+        this.fechaActual = res.json();
+      }
+    );
+  }
+  //Comprueba que la fecha de Recolección sea igual o mayor a la fecha actual 
+  public verificarFechaSalida() {
+    if (this.formulario.get('fechaSalida').value < this.fechaActual) {
+      this.formulario.get('fechaSalida').setValue(this.fechaActual);
+      document.getElementById('idFechaSalida').focus();
+      this.toastr.error("La Fecha Salida no puede ser menor a la Fecha Actual.");
+    }
+  }
+  //Cierra un reparto
+  public recibirReparto() {
+    // this.formulario.get('repartoComprobantes').setValue([]); // se ejecuta esta linea como en cerrar reparto?
+    console.log(this.formulario.value);
+    this.servicio.recibirReparto(this.formulario.value).subscribe(
+      res => {
+        this.toastr.success(res.json().mensaje);
+        this.dialogRef.close();
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.dialogRef.close();
+      }
+    )
+  }
+  //Obtiene la mascara de hora-minuto
+  public mascararHora() {
+    return this.appService.mascararHora();
+  }
+  //Desenmascarar Hora
+  public desenmascararHora(formulario) {
+    let valor = formulario.value;
+    if (valor) {
+      formulario.setValue(this.appService.desenmascararHora(valor));
+    }
+  }
+  onNoClick(): void {
+    this.dialogRef.close();
   }
 }
 

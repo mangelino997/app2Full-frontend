@@ -520,8 +520,9 @@ export class CerrarRepartoDialogo {
     //Declara el formulario y las variables 
     this.formulario = this.modelo.formulario;
     //Reestablece el formulario
-    this.reestablecerFormulario();
-
+    setTimeout(() => {
+      this.reestablecerFormulario();
+    }, 20);
   }
   //Reestablece el formulario y sus valores.
   public reestablecerFormulario() {
@@ -544,7 +545,8 @@ export class CerrarRepartoDialogo {
   }
   //Cierra un reparto
   public cerrarReparto() {
-    this.formulario.get('repartoComprobantes').setValue([]);
+    // this.formulario.get('repartoComprobantes').setValue([]);
+    console.log(this.formulario.value);
     this.servicio.cerrarReparto(this.formulario.value).subscribe(
       res => {
         this.toastr.success(res.json().mensaje);
@@ -595,11 +597,11 @@ export class EliminarRepartoDialogo {
       },
       err => {
         if (err.status == 500) {
-          this.toastr.success("Se produjo un error en el sistema.");
+          this.toastr.error("Se produjo un error en el sistema.");
           this.dialogRef.close();
         }
         else if (err.status == 13079) {
-          this.toastr.success("Registro quitado exitosamente.");
+          this.toastr.error("Registro quitado exitosamente.");
           this.dialogRef.close();
         }
       }
