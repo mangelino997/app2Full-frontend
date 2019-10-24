@@ -137,7 +137,6 @@
     </div>
     <div class="row">
         <div class="tabla mat-elevation-z1">
-            <!-- <div class="tabla-ancho"> -->
             <table mat-table [dataSource]="listaCompleta" matSort>
                 <ng-container matColumnDef="id" sticky>
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>#</th>
@@ -179,8 +178,10 @@
                 <ng-container matColumnDef="destinatario">
                     <th mat-header-cell *matHeaderCellDef mat-sort-header>Dador - Destinatario</th>
                     <td style="text-align: center;" mat-cell *matCellDef="let elemento">
-                        <button mat-icon-button class="mat-icon-button-table" [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"
-                            (click)="verDadorDestinatarioDialogo()" matTooltip="Cargar Dador-Dest." matTooltipPosition="above">
+                        <button mat-icon-button class="mat-icon-button-table"
+                            [disabled]="indiceSeleccionado == 2 || indiceSeleccionado == 4"
+                            (click)="verDadorDestinatarioDialogo(elemento)" matTooltip="Cargar Dador-Dest."
+                            matTooltipPosition="above">
                             <mat-icon>emoji_transportation</mat-icon>
                         </button>
                     </td>
@@ -213,7 +214,6 @@
                 <tr mat-header-row *matHeaderRowDef="columnas"></tr>
                 <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
             </table>
-            <!-- </div> -->
         </div>
     </div>
 </form>

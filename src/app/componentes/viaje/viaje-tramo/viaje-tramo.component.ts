@@ -555,13 +555,13 @@ export class ViajeTramoComponent implements OnInit {
     }
   }
   //Abre un dialogo para agregar dadores y destinatarios
-  public verDadorDestinatarioDialogo(): void {
+  public verDadorDestinatarioDialogo(elemento): void {
     const dialogRef = this.dialog.open(DadorDestinatarioDialogo, {
       width: '95%',
       maxWidth: '95%',
       data: {
         tema: this.appServicio.getTema(),
-        listaDadorDestinatario: this.formularioViajeTramo.get('viajeTramoClientes').value
+        viajeTramo: elemento.id
       }
     });
     dialogRef.afterClosed().subscribe(viajeTramoClientes => {
@@ -617,19 +617,20 @@ export class DadorDestinatarioDialogo {
   //Define la lista de clientes
   public resultadosClientes: Array<any> = [];
   //Define las columnas de la tabla
-  public columnas: string[] = ['dador', 'destinatario', 'remitos', 'eliminar'];
+  public columnas: string[] = ['dador', 'destinatario', 'tipo', 'remitos', 'eliminar'];
   //Define la matSort
   @ViewChild(MatSort,{static: false}) sort: MatSort;
   //Constructor
-  constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data, private toastr: ToastrService,
-    private viajeTramoClienteModelo: ViajeTramoCliente, private viajeTramoClienteService: ViajeTramoClienteService, private clienteServicio: ClienteService) { }
+  constructor(public dialogRef: MatDialogRef<DadorDestinatarioDialogo>, @Inject(MAT_DIALOG_DATA) public data, 
+    private toastr: ToastrService, private viajeTramoClienteModelo: ViajeTramoCliente, 
+    private viajeTramoClienteService: ViajeTramoClienteService, private clienteServicio: ClienteService) { }
   ngOnInit() {
     //Establece el tema
     this.tema = this.data.tema;
     //Establece el formulario
     this.formulario = this.viajeTramoClienteModelo.formulario;
     //Inicializa la tabla
-    this.inicializarTabla();
+    this.listar(this.data.viajeTramo);
     //Autocompletado Cliente Dador - Buscar por alias
     this.formulario.get('clienteDador').valueChanges.subscribe(data => {
       if (typeof data == 'string' && data.length > 2) {
@@ -651,10 +652,17 @@ export class DadorDestinatarioDialogo {
     this.dialogRef.close();
   }
   //Establece la tabla de dadores y destinatarios
-  private inicializarTabla() {
-    if (this.data.listaDadorDestinatario) {
-      this.listaCompleta = new MatTableDataSource(this.data.listaDadorDestinatario);
-      this.listaCompleta.sort = this.sort;
+  private listar(idViajeTramo) {
+    if(idViajeTramo) {
+      this.viajeTramoClienteService.listarPorViajeTramo(idViajeTramo).subscribe(
+        res => {
+          this.listaCompleta = new MatTableDataSource(res.json());
+          this.listaCompleta.sort = this.sort;
+        },
+        err => {
+          console.log(err);
+        }
+      );
     }
   }
   //Verifica si se selecciono un elemento del autocompletado
@@ -665,32 +673,34 @@ export class DadorDestinatarioDialogo {
   }
   //Agrega el dador y el destinatario a la tabla
   public agregarDadorDestinatario(): void {
-    const lista = this.listaCompleta.data;
-    lista.push(this.formulario.value);
-    this.listaCompleta = new MatTableDataSource(lista);
-    this.listaCompleta.sort = this.sort;
-    this.formulario.reset();
+    this.formulario.get('viajeTramo').setValue({id: this.data.viajeTramo});
+    this.viajeTramoClienteService.agregar(this.formulario.value).subscribe(
+      res => {
+        this.formulario.reset();
+        this.resultadosClientes = [];
+        this.toastr.success(MensajeExcepcion.AGREGADO);
+        document.getElementById('idTramoDadorCarga').focus();
+        this.listar(this.data.viajeTramo);
+      },
+      err => {
+
+      }
+    );
   }
   //Elimina un dador-destinatario de la tabla
-  public eliminarDadorDestinatario(elemento, indice): void {
+  public eliminarDadorDestinatario(elemento): void {
     if (elemento.id) {
       this.viajeTramoClienteService.eliminar(elemento.id).subscribe(
         res => {
-          const lista = this.listaCompleta.data;
-          lista.splice(indice, 1);
-          this.listaCompleta = new MatTableDataSource(lista);
-          this.listaCompleta.sort = this.sort;
-          this.toastr.success("Registro eliminado con éxito.");
+          this.resultadosClientes = [];
+          this.toastr.success(MensajeExcepcion.ELIMINADO);
+          document.getElementById('idTramoDadorCarga').focus();
+          this.listar(this.data.viajeTramo);
         },
         err => {
-          this.toastr.error("No se pudo eliminar el registro");
+          this.toastr.error(MensajeExcepcion.NO_ELIMINADO);
         }
       )
-    } else {
-      const lista = this.listaCompleta.data;
-      lista.splice(indice, 1);
-      this.listaCompleta = new MatTableDataSource(lista);
-      this.listaCompleta.sort = this.sort;
     }
   }
   //Abre el dialogo para cargar remitos

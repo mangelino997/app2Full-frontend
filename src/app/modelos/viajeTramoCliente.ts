@@ -11,6 +11,7 @@ export class ViajeTramoCliente {
             version: new FormControl(),
             clienteDador: new FormControl('', Validators.required),
             clienteDestinatario: new FormControl('', Validators. required),
+            tieneRemitos: new FormControl('', Validators.required),
             viajeTramo: new FormControl()
         })
     }

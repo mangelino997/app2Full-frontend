@@ -5,7 +5,7 @@
         <div class="col">
             <form [formGroup]="formulario">
                 <div class="row">
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="form-group has-float-label">
                             <label for="idTramoDadorCarga" class="tamanio-label">Dador de Carga *</label>
                             <input id="idTramoDadorCarga" class="form-control form-control-sm" type="text" matInput
@@ -20,7 +20,7 @@
                             </mat-autocomplete>
                         </div>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <div class="form-group has-float-label">
                             <label for="idTramoDestinatario" class="tamanio-label">Destinatario *</label>
                             <input id="idTramoDestinatario" class="form-control form-control-sm" type="text" matInput
@@ -35,6 +35,15 @@
                                     {{itemDestinatario.alias}}
                                 </mat-option>
                             </mat-autocomplete>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group has-float-label">
+                            <label for="idTieneRemitos" class="tamanio-label">Tipo *</label>
+                            <mat-select id="idTieneRemitos" class="form-control form-control-sm" formControlName="tieneRemitos">
+                                <mat-option [value]="true">Con Remitos</mat-option>
+                                <mat-option [value]="false">Vacio Facturado</mat-option>
+                            </mat-select>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -54,6 +63,12 @@
                                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Destinatario</th>
                                 <td mat-cell *matCellDef="let elemento">
                                     {{elemento.clienteDestinatario? elemento.clienteDestinatario.razonSocial : '--'}}
+                                </td>
+                            </ng-container>
+                            <ng-container matColumnDef="tipo">
+                                <th mat-header-cell *matHeaderCellDef mat-sort-header>Tipo</th>
+                                <td mat-cell *matCellDef="let elemento">
+                                    {{elemento.tieneRemitos ? 'Con Remitos' : 'Vacio Facturado'}}
                                 </td>
                             </ng-container>
                             <ng-container matColumnDef="remitos">
