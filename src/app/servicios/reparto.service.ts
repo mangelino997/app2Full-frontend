@@ -87,13 +87,17 @@ export class RepartoService {
   public agregar(elemento) {
     return this.http.post(this.url, elemento, this.options);
   }
-  //Actualiza un registro
+  //Actualiza un registro 
   public actualizar(elemento) {
     return this.http.put(this.url, elemento, this.options);
   }
-  //Actualiza un registro
+  //Actualiza un registro - cierra un reparto
   public cerrarReparto(reparto) {
     return this.http.put(this.url + '/cerrarReparto', reparto, this.options);
+  }
+  //Actualiza un registro - recibe un reparto
+  public recibirReparto(reparto) {
+    return this.http.put(this.url + '/recibirReparto', reparto, this.options);
   }
   //Actualiza un registro
   public abrirReparto(idReparto) {

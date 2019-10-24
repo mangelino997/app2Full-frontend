@@ -131,9 +131,6 @@ export class RepartoComprobanteComponent implements OnInit {
     this.seguimientoEstadoService.listarParaRepartoEntrante().subscribe(
       res => {
         this.seguimientoEstados = res.json();
-        // this.formulario.get('estado').setValue(this.seguimientoEstados[0]);
-        //Obtiene la lista de situacion
-        // this.cambioEstado();
       },
       err => {
         this.toastr.error(err.json().mensaje);
@@ -312,6 +309,7 @@ export class RepartoComprobanteComponent implements OnInit {
         document.getElementById('idEstado').focus();
       }, 20);
     } else {
+      this.listarPorReparto(this.data.elemento.id);
       this.listarTipoComprobantes(); //Obtiene la lista de tipo de comprobantes
       this.formulario.get('tipoComprobante').setValue(this.tipoComprobantes[0]);
       setTimeout(function () {
@@ -333,23 +331,6 @@ export class RepartoComprobanteComponent implements OnInit {
       }
     )
   }
-  //Controla los comprobantes que se editaron para mostrar el atributo "estado" y "situacion" en la tabla de registros
-  // private verificarComprobantesEditados(listaComprobantes) {
-  //   console.log(listaComprobantes, this.listaComprobantesEditados);
-  //   // this.listaComprobantesEditados
-  //   this.listaComprobantesEditados.forEach(comprobanteEditado => {
-  //     listaComprobantes.forEach(comprobante => {
-  //       if (comprobanteEditado.viajeRemito && (comprobanteEditado.viajeRemito.id == comprobante.viajeRemito.id)) {
-  //         comprobante
-  //       } else if (comprobanteEditado.ventaComprobante && (comprobanteEditado.ventaComprobante.id == comprobante.ventaComprobante.id)) {
-
-  //       } else if (comprobanteEditado.ordenRecoleccion && (comprobanteEditado.ordenRecoleccion.id == comprobante.ordenRecoleccion.id)) {
-
-  //       }
-  //     });
-  //   })
-  //   this.listaCompleta = new MatTableDataSource(listaComprobantes);
-  // }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
     return this.appService.mascararEnteros(intLimite);
@@ -446,7 +427,6 @@ export class RepartoComprobanteComponent implements OnInit {
         console.log(res);
         if (res.status == 201) {
           this.toastr.success(res.json().mensaje);
-          // this.listaComprobantesEditados.push(this.formularioSeguimiento.value);
           this.listaCompleta.data[this.idComprobanteMod].id = 0; //Le seteo el id a "0" para saber cual Reparto Cpte se modificó.
           //Le seteo el "estado" para poder mostrarlo en la tabla.
           this.listaCompleta.data[this.idComprobanteMod].estado = this.formularioSeguimiento.value.seguimientoEstado;
@@ -470,7 +450,6 @@ export class RepartoComprobanteComponent implements OnInit {
         console.log(res);
         if (res.status == 201) {
           this.toastr.success(res.json().mensaje);
-          // this.listaComprobantesEditados.push(this.formularioSeguimiento.value);
           this.listaCompleta.data[this.idComprobanteMod].id = 0; //Le seteo el id a "0" para saber cual Reparto Cpte se modificó.
           //Le seteo el "estado" para poder mostrarlo en la tabla.
           this.listaCompleta.data[this.idComprobanteMod].estado = this.formularioSeguimiento.value.seguimientoEstado;
@@ -494,7 +473,6 @@ export class RepartoComprobanteComponent implements OnInit {
         console.log(res);
         if (res.status == 201) {
           this.toastr.success(res.json().mensaje);
-          // this.listaComprobantesEditados.push(this.formularioSeguimiento.value);
           this.listaCompleta.data[this.idComprobanteMod].id = 0; //Le seteo el id a "0" para saber cual Reparto Cpte se modificó.
           //Le seteo el "estado" para poder mostrarlo en la tabla.
           this.listaCompleta.data[this.idComprobanteMod].estado = this.formularioSeguimiento.value.seguimientoEstado;
@@ -522,6 +500,7 @@ export class RepartoComprobanteComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
+      console.log(result);
       this.establecerValoresPorDefecto();
     });
   }
@@ -593,6 +572,10 @@ export class RepartoComprobanteComponent implements OnInit {
       return elemento;
     }
   }
+  //Controla el boton Aceptar al cerrar el dialogo - Sólo en Reparto Entrante
+  public cerrarDialogo(result){
+    this.dialogRef.close(result);
+  }
 }
 
 @Component({
@@ -639,23 +622,68 @@ export class ConformarComprobantesDialogo {
     dialogRef.disableClose = true;
   }
   ngOnInit() {
-    console.log(this.data.elemento);
+    console.log(this.data.reparto);
 
   }
   public conformarComprobantes() {
     this.repartoCpteService.conformarComprobantes(this.data.reparto).subscribe(
       res => {
-        console.log(res.json());
         if (res.status == 200) {
           this.toastr.success("Registro/s Actualizado/s exitosamente.");
-          this.dialogRef.close();
+          this.data.reparto.repartoComprobantes.forEach(comprobante => {
+            if (comprobante.id > 0) {
+              comprobante.id = 0; //Le seteo el id a "0" para saber cual Reparto Cpte se modificó. 
+              comprobante.estado = { //Le seteo el "estado" para poder mostrarlo en la tabla.
+                id: 6,
+                nombre: "Entregado"
+              }
+            }
+          });
+          this.dialogRef.close(this.data.reparto.repartoComprobantes);
         }
       },
       err => {
-        this.toastr.error(err.json().mensaje);
+        this.lanzarError(err.json());
         this.dialogRef.close();
       }
     )
+  }
+  //Lanza error desde el servidor 
+  private lanzarError(err) {
+    let respuesta = err;
+    let campoVacio = "no puede estar vacío.";
+    let campoInexistente = " no encontrado.";
+    if (respuesta.codigo == 5008) {
+      this.toastr.error("No contiene comprobante/s.");
+    } else if (respuesta.codigo == 500) {
+      this.toastr.error("Se produjo un error en el sistema.");
+    } else if (respuesta.codigo == 5001) {
+      this.toastr.error("Error al sincronizar.");
+    } else if (respuesta.codigo == 16380) {
+      this.toastr.error("Orden de Recolección " + campoVacio);
+    } else if (respuesta.codigo == 16207) {
+      this.toastr.error("Fecha " + campoVacio);
+    } else if (respuesta.codigo == 16070) {
+      this.toastr.error("Sucursal " + campoVacio);
+    } else if (respuesta.codigo == 16062) {
+      this.toastr.error("Estado del Seguimiento " + campoVacio);
+    } else if (respuesta.codigo == 16092) {
+      this.toastr.error("Comprobante de venta " + campoVacio);
+    } else if (respuesta.codigo == 16096) {
+      this.toastr.error("Remito " + campoVacio);
+    } else if (respuesta.codigo == 13057) {
+      this.toastr.error("Registro de Orden de Recolección " + campoInexistente);
+    } else if (respuesta.codigo == 13096) {
+      this.toastr.error("Registro de sucursal " + campoInexistente);
+    } else if (respuesta.codigo == 13135) {
+      this.toastr.error("Registro de comprobante de Venta " + campoInexistente);
+    } else if (respuesta.codigo == 13140) {
+      this.toastr.error("Registro de remito " + campoInexistente);
+    } else if (respuesta.codigo == 13087) {
+      this.toastr.error("Registro de estado del seguimiento " + campoInexistente);
+    } else if (respuesta.codigo == 13088) {
+      this.toastr.error("Registro de Situación del seguimiento " + campoInexistente);
+    }
   }
   onNoClick(): void {
     this.dialogRef.close();

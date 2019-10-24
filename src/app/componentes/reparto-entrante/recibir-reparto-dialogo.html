@@ -1,0 +1,39 @@
+<div class="row padd-20">
+    <div class="col-md-12">
+        <form [formGroup]="formulario">
+            <h5 class="text-center">Recibir Reparto</h5>
+            <h6 class="text-center" *ngIf="data.elemento.esRepartoPropio">
+                Vehículo: {{data.elemento.vehiculo.dominio}} : {{data.elemento.vehiculo.numeroInterno}} - Chofer: {{data.elemento.personal.alias}}
+            </h6>
+            <h6 class="text-center" *ngIf="!data.elemento.esRepartoPropio">
+                Vehículo: {{data.elemento.vehiculoProveedor.dominio}} : {{data.elemento.vehiculoProveedor.numeroInterno}} - Chofer: {{data.elemento.proveedor.alias}}
+            </h6>
+            <br>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="form-group has-float-label">
+                        <label for="idFechaSalida">Fecha Regreso *</label>
+                        <input id="idFechaSalida" type="date" class="form-control form-control-sm"
+                            formControlName="fechaSalida" (blur)="verificarFechaSalida()">
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="form-group has-float-label">
+                        <label for="idHoraSalida">Hora Regreso *</label>
+                        <input id="idHoraSalida" type="text" [textMask]="{mask: mascararHora()}" class="form-control form-control-sm" 
+                            formControlName="horaSalida" placeholder="00:00 hs" (blur)="desenmascararHora(formulario.get('horaSalida'))">
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <button mat-raised-button color="accent" [mat-dialog-close]="">Cancelar</button>
+                    <button mat-raised-button color="primary" (click)="recibirReparto()">Recibir Reparto</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

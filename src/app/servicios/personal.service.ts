@@ -59,14 +59,6 @@ export class PersonalService {
     return this.http.get(this.url + '/listarChoferesPorDistanciaPorAlias/' + alias + '/' + distancia, this.options);
   }
   //Obtiene la lista de choferes por empresa
-  // public listarChoferesPorEmpresa(empresa) {
-  //   return this.http.get(this.url + '/listarChoferesPorEmpresa/' + empresa, this.options).map(res => {
-  //     return res.json().map(data => {
-  //       return data;
-  //     })
-  //   });
-  // }
-  //Obtiene la lista de choferes por empresa
   public listarChoferesPorEmpresa(idEmpresa) {
     return this.http.get(this.url + '/listarChoferesPorEmpresa/' + idEmpresa, this.options);
   }

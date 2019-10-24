@@ -145,6 +145,7 @@ export class EfectivoDialogo implements OnInit {
     this.data ? this.formularioViajeEfectivo.get('viaje').reset() : this.formularioViajeEfectivo.get('viaje').setValue({ id: this.ID_VIAJE });
     this.servicio.agregar(this.formularioViajeEfectivo.value).subscribe(
       res => {
+        console.log(res.json());
         if (res.status == 201) {
           this.reestablecerFormulario();
           this.data ? this.listarPorReparto(this.data.elemento.id) : this.listar();
