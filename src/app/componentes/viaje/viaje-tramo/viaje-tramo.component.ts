@@ -1,5 +1,5 @@
-import { Component, OnInit, Inject, Output, EventEmitter, ViewChild, Input } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Inject, Output, EventEmitter, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { ViajeTramo } from 'src/app/modelos/viajeTramo';
 import { TramoService } from 'src/app/servicios/tramo.service';
 import { EmpresaService } from 'src/app/servicios/empresa.service';
