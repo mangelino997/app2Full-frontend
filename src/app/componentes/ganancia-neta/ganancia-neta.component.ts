@@ -113,7 +113,7 @@ export class GananciaNetaComponent implements OnInit {
         this.anioFiscal = res.json();
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.json().message);
       }
     )
   }
@@ -124,7 +124,7 @@ export class GananciaNetaComponent implements OnInit {
         this.alicuotasGanancia = res.json();
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.json().message);
       }
     )
   }
@@ -135,7 +135,7 @@ export class GananciaNetaComponent implements OnInit {
         this.meses = res.json();
       },
       err => {
-        console.log(err);
+        this.toastr.error(err.json().message);
       }
     )
   }

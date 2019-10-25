@@ -3,27 +3,30 @@
         <form [formGroup]="formulario">
             <h5 class="text-center">Recibir Reparto</h5>
             <h6 class="text-center" *ngIf="data.elemento.esRepartoPropio">
-                Vehículo: {{data.elemento.vehiculo.dominio}} : {{data.elemento.vehiculo.numeroInterno}} - Chofer: {{data.elemento.personal.alias}}
+                Vehículo: {{data.elemento.vehiculo.dominio}} : {{data.elemento.vehiculo.numeroInterno}} - Chofer:
+                {{data.elemento.personal.alias}}
             </h6>
             <h6 class="text-center" *ngIf="!data.elemento.esRepartoPropio">
-                Vehículo: {{data.elemento.vehiculoProveedor.dominio}} : {{data.elemento.vehiculoProveedor.numeroInterno}} - Chofer: {{data.elemento.proveedor.alias}}
+                Vehículo: {{data.elemento.vehiculoProveedor.dominio}} :
+                {{data.elemento.vehiculoProveedor.numeroInterno}} - Chofer: {{data.elemento.proveedor.alias}}
             </h6>
             <br>
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="form-group has-float-label">
-                        <label for="idFechaSalida">Fecha Regreso *</label>
-                        <input id="idFechaSalida" type="date" class="form-control form-control-sm"
-                            formControlName="fechaSalida" (blur)="verificarFechaSalida()">
+                        <label for="idFechaRegreso">Fecha Regreso *</label>
+                        <input id="idFechaRegreso" type="date" class="form-control form-control-sm"
+                            formControlName="fechaRegreso" (blur)="verificarFechaRegreso()">
                     </div>
                 </div>
             </div>
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     <div class="form-group has-float-label">
-                        <label for="idHoraSalida">Hora Regreso *</label>
-                        <input id="idHoraSalida" type="text" [textMask]="{mask: mascararHora()}" class="form-control form-control-sm" 
-                            formControlName="horaSalida" placeholder="00:00 hs" (blur)="desenmascararHora(formulario.get('horaSalida'))">
+                        <label for="idHoraRegreso">Hora Regreso *</label>
+                        <input id="idHoraRegreso" type="text" [textMask]="{mask: mascararHora()}"
+                            class="form-control form-control-sm" formControlName="horaRegreso" placeholder="00:00 hs"
+                            (blur)="desenmascararHora(formulario.get('horaRegreso'))">
                     </div>
                 </div>
             </div>
@@ -32,6 +35,11 @@
                 <div class="col-md-6 text-center">
                     <button mat-raised-button color="accent" [mat-dialog-close]="">Cancelar</button>
                     <button mat-raised-button color="primary" (click)="recibirReparto()">Recibir Reparto</button>
+                </div>
+            </div>
+            <div class="row" *ngIf="show">
+                <div class="col text-center">
+                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                 </div>
             </div>
         </form>

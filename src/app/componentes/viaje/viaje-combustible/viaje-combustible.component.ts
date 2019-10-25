@@ -240,7 +240,6 @@ export class ViajeCombustibleComponent implements OnInit {
   }
   //Lanza error desde el servidor (error interno, duplicidad de datos, etc.)
   private lanzarError(err) {
-    console.log(err);
     let mensajeNulo = " no puede estar vacio.";
     let mensajeInexistente = " no es un registro válido.";
     let mensajeLongitud = " excedió su longitud.";

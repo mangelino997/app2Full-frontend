@@ -44,8 +44,6 @@ export class RepartoComprobanteComponent implements OnInit {
   public btnCerrar: boolean = false;
   //Define la lista de tramos (tabla)
   public listaCompleta = new MatTableDataSource([]);
-  //Define la subscripcion a loader.service
-  private subscription: Subscription;
   //Define el comprobanteMod seleccionado de la tabla para modificar - Sólo en Reparto Entrante
   public comprobanteMod: any = null;
   //Define el id del reparto Cpte seleccionado de la tabla para modificar - Sólo en Reparto Entrante
@@ -58,6 +56,8 @@ export class RepartoComprobanteComponent implements OnInit {
   public soloLectura: boolean = true;
   //Define la matSort
   @ViewChild(MatSort, { static: false }) sort: MatSort;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Define el mostrar del circulo de progreso
   public show = false;
   constructor(
@@ -69,9 +69,7 @@ export class RepartoComprobanteComponent implements OnInit {
     private seguimientoOrdenRecoleccion: SeguimientoOrdenRecoleccion, private seguimientoVentaComprobanteService: SeguimientoVentaComprobanteService,
     private seguimientoViajeRemitoService: SeguimientoViajeRemitoService, private seguimientoOrdenRecoleccionService: SeguimientoOrdenRecoleccionService,
     private repartoService: RepartoService, public dialog: MatDialog, public dialogRef: MatDialogRef<RepartoComprobanteComponent>, @Inject(MAT_DIALOG_DATA) public data) {
-
   }
-
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -113,7 +111,6 @@ export class RepartoComprobanteComponent implements OnInit {
     //Establece valores por defecto
     this.establecerValoresPorDefecto();
   }
-
   //Carga la lista para tipo de comprobantes
   private listarTipoComprobantes() {
     this.tipoComprobanteService.listarActivosReparto().subscribe(
@@ -121,6 +118,9 @@ export class RepartoComprobanteComponent implements OnInit {
         this.tipoComprobantes = res.json();
         this.formulario.get('tipoComprobante').setValue(this.tipoComprobantes[0]);
         this.cambioTipoComprobante();
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
       }
     )
   }
@@ -155,6 +155,7 @@ export class RepartoComprobanteComponent implements OnInit {
       this.listarSeguimientoEstado();
       if (this.comprobanteMod.ventaComprobante) {
         this.soloLectura = false;
+        this.formulario.enable();
         this.formulario.get('cobranzaContado').enable();
         this.formulario.get('observaciones').disable();
         this.comprobanteMod.ventaComprobante.ventaComprobanteItemCR.length > 0 ?
@@ -175,12 +176,8 @@ export class RepartoComprobanteComponent implements OnInit {
           this.formulario.get('observaciones').setValue(this.comprobanteMod.ordenRecoleccion.observaciones);
       }
     } else {
-      this.formulario.get('estado').disable();
-      this.formulario.get('situacion').disable();
-      this.formulario.get('cobranzaContado').disable();
-      this.formulario.get('cobranzaContrareembolso').disable();
+      this.formulario.disable();
     }
-
   }
   //Controla el cambio en el campo "Tipo de Comprobante"
   public cambioTipoComprobante() {
@@ -192,6 +189,7 @@ export class RepartoComprobanteComponent implements OnInit {
       this.ventaComprobanteService.listarLetras().subscribe(
         res => {
           this.letras = res.json();
+          this.letras.length == 0 ? 'Sin registros en el campo Letra.' : '';
         },
         err => {
           this.toastr.error("Error al obtener la lista de Letras en Venta Comprobante.");
@@ -201,6 +199,7 @@ export class RepartoComprobanteComponent implements OnInit {
       this.viajeRemitoService.listarLetras().subscribe(
         res => {
           this.letras = res.json();
+          this.letras.length == 0 ? 'Sin registros en el campo Letra.' : '';
         },
         err => {
           this.toastr.error("Error al obtener la lista de Letras en Viaje Remito.");
@@ -214,49 +213,65 @@ export class RepartoComprobanteComponent implements OnInit {
   }
   //Agrega un registro a la tabla
   public agregar() {
+    this.loaderService.show();
     let tipoComprobante = this.formulario.get('tipoComprobante').value;
     let numero = this.formulario.get('numero').value;
     if (tipoComprobante.id == 13) {
       this.ordenRecoleccionService.obtenerPorId(numero).subscribe(
         res => {
-          this.formularioComprobante.get('ordenRecoleccion').setValue({ id: res.json().id });
-          this.agregarComprobanteReparto(this.formularioComprobante.value);
+          if(res.text() != ''){ //Controla que exista una orden recoleccion
+            this.formularioComprobante.get('ordenRecoleccion').setValue({ id: res.json().id });
+            this.agregarComprobanteReparto(this.formularioComprobante.value);
+          }else{
+            this.toastr.error("No existe una Orden Recolección con el número ingresado.");
+          }
         },
         err => {
-          err.status == 404 ? this.toastr.error("Registro no encontrado") : '';
+          this.toastr.error("No existe una Orden Recolección con el número ingresado.");
+          this.loaderService.hide();
         })
     } else if (tipoComprobante.id == 5) {
-      this.viajeRemitoService.obtener(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
+      this.viajeRemitoService.obtenerParaReparto(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
         this.formulario.get('numero').value).subscribe(
           res => {
-            let respuesta = res.json();
-            let viajeRemito = {
-              letra: respuesta.letra,
-              puntoVenta: respuesta.puntoVenta,
-              numero: respuesta.numero
+            if(res.text() != ''){ //Controla que exista un viaje remito
+              let respuesta = res.json();
+              let viajeRemito = {
+                letra: respuesta.letra,
+                puntoVenta: respuesta.puntoVenta,
+                numero: respuesta.numero
+              }
+              this.formularioComprobante.get('viajeRemito').setValue(viajeRemito);
+              this.agregarComprobanteReparto(this.formularioComprobante.value);
+            }else{
+              this.toastr.error("No existe un Viaje Remito con el punto de venta, letra y número ingresado.");
             }
-            this.formularioComprobante.get('viajeRemito').setValue(viajeRemito);
-            this.agregarComprobanteReparto(this.formularioComprobante.value);
           },
           err => {
-            err.status == 404 ? this.toastr.error("Registro no encontrado") : '';
+            this.toastr.error("No existe un Viaje Remito con el punto de venta, letra y número ingresado.");
+            this.loaderService.hide();
           })
     } else if (tipoComprobante.id == 1) {
       this.ventaComprobanteService.obtener(this.formulario.get('puntoVenta').value, this.formulario.get('letra').value,
         this.formulario.get('numero').value, tipoComprobante.id).subscribe(
           res => {
-            let respuesta = res.json();
-            let ventaComprobante = {
-              letra: respuesta.letra,
-              puntoVenta: respuesta.puntoVenta,
-              numero: respuesta.numero,
-              tipoComprobante: respuesta.tipoComprobante
+            if(res.text() != ''){ //Controla que exista una venta comprobante
+              let respuesta = res.json();
+              let ventaComprobante = {
+                letra: respuesta.letra,
+                puntoVenta: respuesta.puntoVenta,
+                numero: respuesta.numero,
+                tipoComprobante: respuesta.tipoComprobante
+              }
+              this.formularioComprobante.get('ventaComprobante').setValue(ventaComprobante);
+              this.agregarComprobanteReparto(this.formularioComprobante.value);
+            }else{
+              this.toastr.error("No existe una Venta Comprobante con el punto de venta, letra y número ingresado.");
             }
-            this.formularioComprobante.get('ventaComprobante').setValue(ventaComprobante);
-            this.agregarComprobanteReparto(this.formularioComprobante.value);
           },
           err => {
-            err.status == 404 ? this.toastr.error("Registro no encontrado") : '';
+            this.toastr.error("No existe una Venta Comprobante con el punto de venta, letra y número ingresado.");
+            this.loaderService.hide();
           })
     }
   }
@@ -297,9 +312,6 @@ export class RepartoComprobanteComponent implements OnInit {
     this.listarPorReparto(this.data.elemento.id);
     if (this.data.esRepartoEntrante) {
       this.establecerEstadoCampos(); //Controla el estado de los campos de seleccion
-      setTimeout(function () {
-        document.getElementById('idEstado').focus();
-      }, 20);
     } else {
       this.listarTipoComprobantes(); //Obtiene la lista de tipo de comprobantes
       this.formulario.get('tipoComprobante').setValue(this.tipoComprobantes[0]);
@@ -310,17 +322,21 @@ export class RepartoComprobanteComponent implements OnInit {
   }
   //Obtiene los registros, para mostrar en la tabla, por idReparto
   private listarPorReparto(idReparto) {
-    this.repartoService.obtenerPorId(idReparto).subscribe(
-      res => {
-        let repartoComprobantes = res.json().repartoComprobantes;
-        this.listaCompleta = new MatTableDataSource(repartoComprobantes);
-        this.listaCompleta.sort = this.sort;
-      },
-      err => {
-        this.toastr.error("Sin registros para mostrar.");
-        this.loaderService.hide();
-      }
-    )
+    setTimeout(() => {
+      this.loaderService.show();
+      this.repartoService.obtenerPorId(idReparto).subscribe(
+        res => {
+          let repartoComprobantes = res.json().repartoComprobantes;
+          this.listaCompleta = new MatTableDataSource(repartoComprobantes);
+          this.listaCompleta.sort = this.sort;
+          this.loaderService.hide();
+        },
+        err => {
+          this.toastr.error("Sin registros para mostrar.");
+          this.loaderService.hide();
+        }
+      )
+    }, 20);
   }
   //Obtiene la mascara de enteros
   public mascararEnteros(intLimite) {
@@ -379,6 +395,7 @@ export class RepartoComprobanteComponent implements OnInit {
     this.comprobanteMod = elemento;
     this.idComprobanteMod = indice;
     this.establecerEstadoCampos();
+    document.getElementById('idEstado').focus();
   }
   //Actualiza un registro - Sólo para Reparto Entrante
   public actualizar() {
@@ -410,7 +427,7 @@ export class RepartoComprobanteComponent implements OnInit {
   //Actualiza un Seguimiento Venta Comprobante
   private actualizarSeguimientoVentaComprobante() {
     this.loaderService.show();
-    this.formularioSeguimiento.value.ventaComprobante = {id: this.formularioSeguimiento.value.ventaComprobante.id};
+    this.formularioSeguimiento.value.ventaComprobante = { id: this.formularioSeguimiento.value.ventaComprobante.id };
     this.seguimientoVentaComprobanteService.agregar(this.formularioSeguimiento.value).subscribe(
       res => {
         if (res.status == 201) {
@@ -429,7 +446,7 @@ export class RepartoComprobanteComponent implements OnInit {
   //Actualiza un Seguimiento Orden Recoleccion
   private actualizarSeguimientoOrdenRecoleccion() {
     this.loaderService.show();
-    this.formularioSeguimiento.value.ordenRecoleccion = {id: this.formularioSeguimiento.value.ordenRecoleccion.id};
+    this.formularioSeguimiento.value.ordenRecoleccion = { id: this.formularioSeguimiento.value.ordenRecoleccion.id };
     this.seguimientoOrdenRecoleccionService.agregar(this.formularioSeguimiento.value).subscribe(
       res => {
         if (res.status == 201) {
@@ -448,7 +465,7 @@ export class RepartoComprobanteComponent implements OnInit {
   //Actualiza un Seguimiento Viaje Remito
   private actualizarViajeRemito() {
     this.loaderService.show();
-    this.formularioSeguimiento.value.viajeRemito = {id: this.formularioSeguimiento.value.viajeRemito.id};
+    this.formularioSeguimiento.value.viajeRemito = { id: this.formularioSeguimiento.value.viajeRemito.id };
     this.seguimientoViajeRemitoService.agregar(this.formularioSeguimiento.value).subscribe(
       res => {
         if (res.status == 201) {
