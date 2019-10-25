@@ -1031,27 +1031,11 @@ export class VerTarifaDialogo {
   }
   //Contrala campos vacios
   public controlarCamposVaciosTramo(formulario) {
-    console.log("entra");
     formulario.get('importeFijoSeco').value == 'NaN' ? formulario.get('importeFijo').setValue('0.00') : '';
     formulario.get('precioUnitarioSeco').value == 'NaN' ? formulario.get('precioUnitario').setValue('0.00') : '';
     formulario.get('importeFijoRef').value == 'NaN' ? formulario.get('minimo').setValue('0.00') : '';
     formulario.get('precioUnitarioRef').value == 'NaN' ? formulario.get('minimo').setValue('0.00') : '';
     formulario.get('kmPactado').value == 'NaN' ? formulario.get('minimo').setValue('0.00') : '';
-    // if (formulario.get('importeFijoSeco').value == 'NaN') {
-    //   formulario.get('importeFijo').setValue('0.00');
-    // }
-    // if (formulario.get('precioUnitarioSeco').value == 'NaN') {
-    //   formulario.get('precioUnitario').setValue('0.00');
-    // }
-    // if (formulario.get('importeFijoRef').value == 'NaN') {
-    //   formulario.get('minimo').setValue('0.00');
-    // }
-    // if (formulario.get('precioUnitarioRef').value == 'NaN') {
-    //   formulario.get('minimo').setValue('0.00');
-    // }
-    // if (formulario.get('kmPactado').value == 'NaN') {
-    //   formulario.get('minimo').setValue('0.00');
-    // }
   }
   //Cancela - Resetea el formulario correspondiente
   public cancelar() {

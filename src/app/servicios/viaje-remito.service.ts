@@ -50,6 +50,10 @@ export class ViajeRemitoService {
   public obtener(puntoVenta, letra, numero) {
     return this.http.get(this.url + '/obtener/' + puntoVenta + '/' + letra + '/' + numero, this.options);
   }
+  //Obtiene un registro por puntoventa letra y numero
+  public obtenerParaReparto(puntoVenta, letra, numero) {
+    return this.http.get(this.url + '/obtenerParaReparto/' + puntoVenta + '/' + letra + '/' + numero, this.options);
+  }
   //Obtiene la lista de registros
   public listar() {
     return this.http.get(this.url, this.options);

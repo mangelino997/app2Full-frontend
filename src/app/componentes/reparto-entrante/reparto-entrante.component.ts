@@ -1,18 +1,11 @@
 import { Component, OnInit, Inject, ViewChild } from '@angular/core';
 import { Reparto } from 'src/app/modelos/reparto';
 import { FormGroup, FormControl } from '@angular/forms';
-import { AppComponent } from 'src/app/app.component';
 import { ToastrService } from 'ngx-toastr';
 import { AppService } from 'src/app/servicios/app.service';
 import { MatDialog, MatTableDataSource, MatSort, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { SeguimientoOrdenRecoleccionService } from 'src/app/servicios/seguimiento-orden-recoleccion.service';
 import { RepartoService } from 'src/app/servicios/reparto.service';
-import { SeguimientoViajeRemitoService } from 'src/app/servicios/seguimiento-viaje-remito.service';
-import { SeguimientoVentaComprobanteService } from 'src/app/servicios/seguimiento-venta-comprobante.service';
-import { SeguimientoVentaComprobante } from 'src/app/modelos/seguimientoVentaComprobante';
-import { SeguimientoOrdenRecoleccion } from 'src/app/modelos/seguimientoOrdenRecoleccion';
-import { SeguimientoViajeRemito } from 'src/app/modelos/seguimientoViajeRemito';
 import { LoaderService } from 'src/app/servicios/loader.service';
 import { LoaderState } from 'src/app/modelos/loader';
 import { CombustibleDialogo } from '../combustible-dialogo/combustible-dialogo.component';
@@ -30,39 +23,6 @@ export class RepartoEntranteComponent implements OnInit {
   public formulario: FormGroup;
   //Define como un formControl
   public tipoViaje: FormControl = new FormControl();
-  //Define el formulario Comrpobante
-  // public formularioComprobante:FormGroup;
-  // //Define el Id de la Planilla seleccionada en la primer Tabla
-  // public idPlanillaSeleciconada: number;
-
-  // //Define como un formControl
-  // public tipoItem:FormControl = new FormControl();
-  // //Define la lista de resultados para Zonas, Comprobantes, Letras
-  // public resultadosZona = [];
-  // public resultadosComprobante = [];
-  // public resultadosLetra = [];
-  // //Define la lista de resultados para vehiculo o vehiculoProveedor
-  // public resultadosVehiculo = [];
-  // //Define la lista de resultados para remolque
-  // public resultadosRemolque = [];
-  // //Define la lista de resultados para chofer
-  // public resultadosChofer = [];
-  // //Define la lista de que muestra en la primer tabla (planilla pendientes de cerrar)
-  // public planillasPendientesPropio = [];
-  // public planillasPendientesTercero = [];
-  // public planillasPendientesDeposito = [];
-  // //Define la lista de comprobantes para la planilla seleccionada
-  // public comprobantesPropio = [];
-  // public comprobantesTercero = [];
-  // public comprobantesDeposito = [];
-  // //Define la lista de acompañantes
-  // public listaAcompaniantes = [];
-  // //Define la lista de tipo comprobantes Activos 
-  // public listaTipoComprobantes = [];
-  // //Define una bandera para control
-  // public bandera:boolean=false;
-  //Define al elemento (Reparto seleccionado) guardado en memoria como un formControl
-  public elementoEnMemoria: FormControl = new FormControl();
   //Define la lista completa de registros
   public listaCompleta = new MatTableDataSource([]);
   //Define las columnas de la tabla general
@@ -75,16 +35,10 @@ export class RepartoEntranteComponent implements OnInit {
   //Define la subscripcion a loader.service
   private subscription: Subscription;
   constructor(
-    private modelo: Reparto, private toastr: ToastrService, private appService: AppService,
-    private appComponent: AppComponent, public dialog: MatDialog, private loaderService: LoaderService,
-    private seguimientoOrdenRecoleccionService: SeguimientoOrdenRecoleccionService, private servicio: RepartoService,
-    private seguimientoViajeRemitoService: SeguimientoViajeRemitoService, private seguimientoVentaCpteService: SeguimientoVentaComprobanteService,
-    private seguimientoVentaComprobante: SeguimientoVentaComprobante, private seguimientoOrdenRecoleccion: SeguimientoOrdenRecoleccion,
-    private seguimientoViajeRemito: SeguimientoViajeRemito
-  ) {
+    private modelo: Reparto, private toastr: ToastrService, public dialog: MatDialog, private loaderService: LoaderService,
+    private servicio: RepartoService) {
 
   }
-
   ngOnInit() {
     //Establece la subscripcion a loader
     this.subscription = this.loaderService.loaderState
@@ -97,12 +51,7 @@ export class RepartoEntranteComponent implements OnInit {
     setTimeout(function () {
       document.getElementById('idTipoViaje').focus();
     }, 20);
-    // //Reestablece los valores
-    // this.reestablecerFormulario(undefined);
-    // //Establece los valores por defecto
-    // this.establecerValoresPorDefecto();
   }
-
   //Controla el cambio en el select TipoViaje
   public cambioTipoViaje() {
     this.loaderService.show();
@@ -110,8 +59,9 @@ export class RepartoEntranteComponent implements OnInit {
     if (this.tipoViaje.value) {
       this.servicio.listarAbiertosPropios().subscribe(
         res => {
-          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
+          if (this.listaCompleta.data.length == 0)
+            this.toastr.error("Sin registros para mostrar.");
           this.loaderService.hide();
         },
         err => {
@@ -122,8 +72,9 @@ export class RepartoEntranteComponent implements OnInit {
     } else {
       this.servicio.listarAbiertosTerceros().subscribe(
         res => {
-          console.log(res.json());
           this.listaCompleta = new MatTableDataSource(res.json());
+          if (this.listaCompleta.data.length == 0)
+            this.toastr.error("Sin registros para mostrar.");
           this.loaderService.hide();
         },
         err => {
@@ -133,7 +84,6 @@ export class RepartoEntranteComponent implements OnInit {
       )
     }
   }
-
   //Abre el modal de Viaje Combustible
   public abrirOrdenesCombustibles(elemento) {
     const dialogRef = this.dialog.open(CombustibleDialogo, {
@@ -192,7 +142,6 @@ export class RepartoEntranteComponent implements OnInit {
     });
   }
 }
-
 @Component({
   selector: 'recibir-reparto-dialogo',
   templateUrl: 'recibir-reparto-dialogo.html',
@@ -202,13 +151,22 @@ export class RecibirRepartoDialogo {
   public formulario: FormGroup;
   //Define la fecha actual
   public fechaActual: any;
+  //Define el mostrar del circulo de progreso
+  public show = false;
+  //Define la subscripcion a loader.service
+  private subscription: Subscription;
   //Constructor
   constructor(public dialogRef: MatDialogRef<RecibirRepartoDialogo>, @Inject(MAT_DIALOG_DATA) public data,
     private appService: AppService, private modelo: Reparto, private toastr: ToastrService, private fechaService: FechaService,
-    private servicio: RepartoService) {
+    private servicio: RepartoService, private loaderService: LoaderService) {
     dialogRef.disableClose = true;
   }
   ngOnInit() {
+    //Establece la subscripcion a loader
+    this.subscription = this.loaderService.loaderState
+      .subscribe((state: LoaderState) => {
+        this.show = state.show;
+      });
     //Declara el formulario y las variables 
     this.formulario = this.modelo.formulario;
     //Reestablece el formulario
@@ -222,30 +180,31 @@ export class RecibirRepartoDialogo {
     this.formulario.patchValue(this.data.elemento);
     this.fechaService.obtenerFecha().subscribe(
       res => {
-        this.formulario.get('fechaSalida').setValue(res.json());
+        this.formulario.get('fechaRegreso').setValue(res.json());
         this.fechaActual = res.json();
       }
     );
   }
   //Comprueba que la fecha de Recolección sea igual o mayor a la fecha actual 
-  public verificarFechaSalida() {
-    if (this.formulario.get('fechaSalida').value < this.fechaActual) {
-      this.formulario.get('fechaSalida').setValue(this.fechaActual);
-      document.getElementById('idFechaSalida').focus();
-      this.toastr.error("La Fecha Salida no puede ser menor a la Fecha Actual.");
+  public verificarFechaRegreso() {
+    if (this.formulario.get('fechaRegreso').value < this.fechaActual) {
+      this.formulario.get('fechaRegreso').setValue(this.fechaActual);
+      this.toastr.error("La Fecha Regreso no puede ser menor a la fecha actual.");
+      document.getElementById('idFechaRegreso').focus();
     }
   }
   //Cierra un reparto
   public recibirReparto() {
-    // this.formulario.get('repartoComprobantes').setValue([]); // se ejecuta esta linea como en cerrar reparto?
-    console.log(this.formulario.value);
+    this.loaderService.show();
     this.servicio.recibirReparto(this.formulario.value).subscribe(
       res => {
         this.toastr.success(res.json().mensaje);
+        this.loaderService.hide();
         this.dialogRef.close();
       },
       err => {
         this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
         this.dialogRef.close();
       }
     )

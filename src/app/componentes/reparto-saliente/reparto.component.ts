@@ -205,10 +205,16 @@ export class RepartoComponent implements OnInit {
   }
   //Carga la tabla con la lista de repartos agregados
   private listarRepartos() {
+    this.loaderService.show();
     this.servicio.listarAbiertosPropios().subscribe(
       res => {
         this.listaCompleta = new MatTableDataSource(res.json());
         this.listaCompleta.sort = this.sort;
+        this.loaderService.hide();
+      },
+      err => {
+        this.toastr.error(err.json().mensaje);
+        this.loaderService.hide();
       }
     )
   }
@@ -309,7 +315,6 @@ export class RepartoComponent implements OnInit {
       },
     });
     dialogRef.afterClosed().subscribe(result => {
-
     });
   }
   //Abre el modal de Comprobantes
@@ -422,7 +427,7 @@ export class AcompanianteDialogo {
   private subscription: Subscription;
   //Constructor
   constructor(private personalService: PersonalService, public dialogRef: MatDialogRef<AcompanianteDialogo>, @Inject(MAT_DIALOG_DATA) public data,
-    private appService: AppService, private modelo: RepartoPersonal, private toastr: ToastrService) {
+    private modelo: RepartoPersonal, private toastr: ToastrService) {
     dialogRef.disableClose = true;
   }
   ngOnInit() {
@@ -539,14 +544,12 @@ export class CerrarRepartoDialogo {
   public verificarFechaSalida() {
     if (this.formulario.get('fechaSalida').value < this.fechaActual) {
       this.formulario.get('fechaSalida').setValue(this.fechaActual);
-      document.getElementById('idFechaSalida').focus();
       this.toastr.error("La Fecha Salida no puede ser menor a la Fecha Actual.");
+      document.getElementById('idFechaSalida').focus();
     }
   }
   //Cierra un reparto
   public cerrarReparto() {
-    // this.formulario.get('repartoComprobantes').setValue([]);
-    console.log(this.formulario.value);
     this.servicio.cerrarReparto(this.formulario.value).subscribe(
       res => {
         this.toastr.success(res.json().mensaje);
@@ -573,7 +576,6 @@ export class CerrarRepartoDialogo {
     this.dialogRef.close();
   }
 }
-
 @Component({
   selector: 'eliminar-reparto-dialogo',
   templateUrl: 'eliminar-reparto-dialogo.html',
@@ -588,24 +590,26 @@ export class EliminarRepartoDialogo {
   }
   //Elimina un reparto
   public eliminarReparto() {
-    this.servicio.eliminar(this.data.elemento.id).subscribe(
-      res => {
-        if (res.status == 200) {
-          this.toastr.success("Registro quitado exitosamente.");
-          this.dialogRef.close();
+    if(this.data.elemento.repartoComprobantes.length > 0){
+      this.toastr.error("Eror: el reparto contiene comprobantes.");
+    }else{
+      this.servicio.eliminar(this.data.elemento.id).subscribe(
+        res => {
+          if (res.status == 200) {
+            this.toastr.success("Registro quitado exitosamente.");
+          }
+        },
+        err => {
+          if (err.status == 500) {
+            this.toastr.error("Se produjo un error en el sistema.");
+          }
+          else if (err.status == 13079) {
+            this.toastr.error("Registro quitado exitosamente.");
+          }
         }
-      },
-      err => {
-        if (err.status == 500) {
-          this.toastr.error("Se produjo un error en el sistema.");
-          this.dialogRef.close();
-        }
-        else if (err.status == 13079) {
-          this.toastr.error("Registro quitado exitosamente.");
-          this.dialogRef.close();
-        }
-      }
-    )
+      )
+    }
+    this.dialogRef.close();
   }
   onNoClick(): void {
     this.dialogRef.close();

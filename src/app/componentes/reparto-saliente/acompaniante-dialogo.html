@@ -14,7 +14,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <button mat-raised-button color="primary" (click)="agregar()">Agregar</button>
+                    <button mat-raised-button color="primary" (click)="agregar()" [disabled]="!formulario.valid">Agregar</button>
                 </div>
             </div>
             <div class="row justify-content-center">

@@ -660,7 +660,7 @@ export class DadorDestinatarioDialogo {
           this.listaCompleta.sort = this.sort;
         },
         err => {
-          console.log(err);
+          this.toastr.error(err.json().message);
         }
       );
     }

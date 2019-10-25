@@ -24,7 +24,6 @@ export class AforoComponent implements OnInit {
   ngOnInit() {
     this.formulario = this.aforo.formulario;
     if (this.data.formularioAforar.kiloAforadoTotal) {
-      console.log(this.data.formularioAforar);
       this.formulario.patchValue(this.data.formularioAforar);
       this.data.formulario = this.formulario.value;
     } else {
